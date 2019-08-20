@@ -1,11 +1,17 @@
 import WebSocket from "ws"
 import http from "http"
+import noop from "../utils/noop"
 
 interface IClientAttachment {
     isAlive: boolean
 }
 
-let clientRepository: Map<WebSocket, IClientAttachment>
+const clientRepository = new Map<WebSocket, IClientAttachment>()
+
+export const disposeClient = (client: WebSocket) => {
+    clientRepository.delete(client)
+    client.terminate()
+}
 
 export const connect = (web: http.Server) => {
 
@@ -17,6 +23,36 @@ export const connect = (web: http.Server) => {
             isAlive: true
         })
 
+        client.on("pong", () => clientRepository.get(client).isAlive = true)
+
+        client.on("message", () => {
+            // todo: this
+        })
+
+        client.on("close", () => {
+            disposeClient(client)
+        })
+
     })
+
+    setInterval(() => {
+        wss.clients.forEach(client => {
+
+            let clientAttachments = clientRepository.get(client)
+
+            if(!clientAttachments) {
+                return client.terminate()
+            }
+
+            if(!clientAttachments.isAlive) {
+
+                clientAttachments.isAlive = false
+
+                client.ping(noop)
+
+            }
+
+        })
+    }, 30000)
 
 }
