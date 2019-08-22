@@ -1,0 +1,1 @@
+export const before = (event: string, callback: Function) => {}
