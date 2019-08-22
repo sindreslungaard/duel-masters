@@ -11,8 +11,8 @@ const burningMane: creature = {
 
     setup() {
         
-        before('turn-start', (event, next) => {
-            
+        before("turn-start", (event, next) => {
+
         })
 
     }
