@@ -15,4 +15,4 @@ export const bootstrap = async () => {
         logger.info(`Listening on port ${process.env.PORT || 3000}`)
     })
 
-}
+} 
