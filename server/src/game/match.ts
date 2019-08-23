@@ -1,12 +1,32 @@
 import events from "./events"
-import { player } from "./player"
+import { IPlayer } from "./player"
+import shortid from "shortid"
+import Phase from "./phase"
 
-export interface match {
-    player1: player,
-    player2: player
+export interface IMatch {
+    id: string,
+    inviteId: string,
+    name: string,
+    description: string,
+    players: Array<IPlayer>,
+    phase: Phase,
+    playerTurn?: IPlayer
 }
 
-export const createMatch = () => {
+let matches: Array<IMatch> = []
+
+export const createMatch = (name: string, description: string): IMatch => {
+
+    let match = {
+        id: shortid.generate(),
+        inviteId: shortid.generate(), 
+        name,
+        description,
+        players: new Array<IPlayer>(),
+        phase: Phase.IDLE
+    }
+
+    return match
 
 }
 

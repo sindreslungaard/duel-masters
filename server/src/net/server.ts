@@ -25,7 +25,7 @@ export const connect = (web: http.Server) => {
 
         client.on("pong", () => clientRepository.get(client).isAlive = true)
 
-        client.on("message", () => {
+        client.on("message", (data) => {
             // todo: this
         })
 

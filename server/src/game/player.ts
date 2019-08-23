@@ -1,6 +1,6 @@
 import WebSocket from "ws"
 
-export interface player {
+export interface IPlayer {
     name: string,
     client: WebSocket
 }
