@@ -1,5 +1,5 @@
 import { creature, civilization, family } from "../types"
-import { before } from "../../match"
+import { before, after } from "../../match"
 
 const burningMane: creature = {
 
@@ -13,6 +13,10 @@ const burningMane: creature = {
         
         before("turn-start", (event, next) => {
             // runs before turn start
+        })
+
+        after("turn-start", (event, next) => {
+            // runs after turn start
         })
 
     }
