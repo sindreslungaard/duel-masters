@@ -12,7 +12,7 @@ const burningMane: creature = {
     setup() {
         
         before("turn-start", (event, next) => {
-
+            // runs before turn start
         })
 
     }
