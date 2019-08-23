@@ -1,11 +1,13 @@
 import { createError } from './../error'
 import { Router, Request, Response } from "express"
 import User from "../../models/user"
-import { hash } from "bcryptjs"
+import { hash, compare } from "bcryptjs"
 import jwt from "jsonwebtoken"
 import uniqid from "uniqid"
 
 const router = Router()
+
+const ttl = Math.round(Date.now() / 1000 + 31536000) // 1 year
 
 router.post("/register", async (req: Request, res: Response) => {
 
@@ -43,10 +45,8 @@ router.post("/register", async (req: Request, res: Response) => {
 
         let hashedPassword = await hash(req.body.password, 10)
 
-        let ttl = Math.round(Date.now() / 1000 + 31536000)
-
         let token = await jwt.sign({
-            exp: ttl, // 1 year
+            exp: ttl,
             data: {
                 username: req.body.username,
                 email: req.body.email   
@@ -77,6 +77,59 @@ router.post("/register", async (req: Request, res: Response) => {
     }
     catch(error) {
         return createError(res, 500, "An error occured during registration")
+    }
+
+})
+
+router.post("/login", async (req: Request, res: Response) => {
+
+    // TODO: Rate limit
+
+    if(!req.body.username || !req.body.password) {
+        return createError(res, 400, "Missing username or password")
+    }
+
+    try {
+
+        let user = await User.findOne({ 'username': { $regex : new RegExp(req.body.username, "i") } })
+
+        if(!user) {
+            return createError(res, 404, "User does not exist")
+        }
+    
+        let correctPw = await compare(req.body.password, user.password)
+    
+        if(!correctPw) {
+            return createError(res, 401, "Username and password does not match")
+        }
+    
+        let token = await jwt.sign({
+            exp: ttl,
+            data: {
+                username: req.body.username,
+                email: req.body.email   
+            }
+        }, process.env.SECRET_KEY)
+    
+        user.sessions.push({
+            token,
+            ip: req.connection.remoteAddress,
+            expires: ttl
+        })
+    
+        await user.save()
+
+        return res.status(200).json({
+            uid: user.uid,
+            username: user.username,
+            email: user.email,
+            permissions: user.permissions,
+            token: token
+        })
+
+    }
+    catch(error) {
+        return createError(res, 500, "An error occured during authentication")
     }
 
 })
