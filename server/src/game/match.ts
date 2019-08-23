@@ -1,10 +1,16 @@
 import events from "./events"
+import { player } from "./player"
 
-export const before = <K extends keyof events>(eventName: K, listener: (event: events[K], next: Function) => void) => {
+export interface match {
+    player1: player,
+    player2: player
+}
+
+export const createMatch = () => {
 
 }
 
-export const on = <K extends keyof events>(eventName: K, listener: (event: events[K], next: Function) => void) => {
+export const before = <K extends keyof events>(eventName: K, listener: (event: events[K], next: Function) => void) => {
 
 }
 
