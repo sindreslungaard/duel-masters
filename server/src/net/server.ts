@@ -1,6 +1,7 @@
 import WebSocket from "ws"
 import http from "http"
 import noop from "../utils/noop"
+import logger from "../utils/logger"
 
 interface IClientAttachment {
     isAlive: boolean
@@ -25,8 +26,30 @@ export const connect = (web: http.Server) => {
 
         client.on("pong", () => clientRepository.get(client).isAlive = true)
 
-        client.on("message", (data) => {
-            // todo: this
+        client.on("message", (data: WebSocket.Data) => {
+            
+            let request: any = {}
+
+            try {
+                request = JSON.parse(data.toString())
+            } catch(err) {
+                logger.debug("Unable to deserialize ws message", err)
+                return
+            }
+
+            if(!request || !request.header) {
+                logger.debug("Missing request header")
+                return
+            }
+
+            try {
+                parse(client, request)
+            }
+            catch(err) {
+                logger.debug("Unable to parse message", err)
+                return
+            }
+
         })
 
         client.on("close", () => {
@@ -54,5 +77,11 @@ export const connect = (web: http.Server) => {
 
         })
     }, 30000)
+
+}
+
+const parse = (client: WebSocket, data: any) => {
+
+    // TODO: this
 
 }
