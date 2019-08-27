@@ -15,7 +15,7 @@ export interface IMatch {
 
 let matches: Array<IMatch> = []
 
-export const createMatch = (name: string, description: string): IMatch => {
+export const createMatch = (host: string, name: string, description: string): IMatch => {
 
     let match = {
         id: shortid.generate(),
