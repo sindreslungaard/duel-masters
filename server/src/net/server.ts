@@ -2,9 +2,13 @@ import WebSocket from "ws"
 import http from "http"
 import noop from "../utils/noop"
 import logger from "../utils/logger"
+import { sendError, sendHello } from "./responses"
+import User, { IUser } from "../models/user"
+import { addPlayer } from "../game/match"
 
 interface IClientAttachment {
-    isAlive: boolean
+    isAlive: boolean,
+    user?: IUser
 }
 
 const clientRepository = new Map<WebSocket, IClientAttachment>()
@@ -80,8 +84,64 @@ export const connect = (web: http.Server) => {
 
 }
 
-const parse = (client: WebSocket, data: any) => {
+const parse = async (client: WebSocket, data: any) => {
 
-    // TODO: this
+    switch(data.header) {
+
+        case "connect": {
+
+            const token = data.token
+
+            if(!token) {
+                return sendError(client, "Missing authorization token", "login")
+            }
+
+            let user = await User.findOne({'sessions': { $elemMatch: { token: token }}})
+
+            if(!user) {
+                return sendError(client, "Unauthorized", "login")
+            }
+
+            let clientAttachments = clientRepository.get(client)
+
+            if(!clientAttachments) {
+                return client.terminate()
+            }
+
+            clientAttachments.user = user
+
+            return sendHello(client)
+
+        }
+
+        case "join_match": {
+
+            if(!data.matchUid) {
+                return sendError(client, "Missing match id", "overview")
+            }
+
+            if(!data.inviteId) {
+                return sendError(client, "Missing invite id", "overview")
+            }
+
+            let clientAttachments = clientRepository.get(client)
+
+            if(!clientAttachments) {
+                return client.terminate()
+            }
+
+            if(!clientAttachments.user) {
+                return client.terminate()
+            }
+
+            return addPlayer(client, clientAttachments.user, data.matchUid, data.inviteId)
+
+        }
+
+        default: {
+            logger.debug("Ws message received with no matching header", data)
+        }
+
+    }
 
 }
