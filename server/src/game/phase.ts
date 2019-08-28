@@ -1,5 +1,6 @@
 enum Phase {
     IDLE,
+    CHOOSE_DECK,
     BEGIN_TURN_STEP,
     UNTAP_STEP,
     START_TURN_STEP,

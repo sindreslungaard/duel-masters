@@ -3,8 +3,9 @@ import { IPlayer } from "./player"
 import shortid from "shortid"
 import Phase from "./phase"
 import WebSocket from "ws"
-import { sendError } from "../net/responses"
+import { sendError, sendChooseDeck } from "../net/responses"
 import User, { IUser } from "../models/user"
+import Deck from "../models/deck"
 
 export interface IMatch {
     id: string,
@@ -37,7 +38,7 @@ export const getMatch = (id: string) => {
     return matches.find(x => x.id === id)
 }
 
-export const addPlayer = (client: WebSocket, user: IUser, matchId: string, inviteId: string) => {
+export const addPlayer = async (client: WebSocket, user: IUser, matchId: string, inviteId: string) => {
 
     let match = getMatch(matchId)
 
@@ -57,10 +58,17 @@ export const addPlayer = (client: WebSocket, user: IUser, matchId: string, invit
         return sendError(client, "Both players have already connected")
     }
 
+    let decks = await Deck.find().or([{ owner: user.uid }, { standard: true }]).select('uid name cards standard public -_id')
+
     let player: IPlayer = {
         user,
         client,
-        match
+        match,
+        decks,
+        shieldzone: [],
+        manazone: [],
+        graveyard: [],
+        battlezone: []
     }
 
     if(!match.player1) {
@@ -71,7 +79,9 @@ export const addPlayer = (client: WebSocket, user: IUser, matchId: string, invit
 
         match.player2 = player
 
-        // TODO: start the match
+        match.phase = Phase.CHOOSE_DECK
+        sendChooseDeck(match.player1.client, match.player1.decks)
+        sendChooseDeck(match.player2.client, match.player2.decks)
 
     }
 
