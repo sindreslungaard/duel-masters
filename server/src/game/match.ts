@@ -115,10 +115,12 @@ export const createDeck = (cardsIds: string[]): card[] => {
     for(let cardId of cardsIds) {
 
         let cardInstance = { ...getCard(cardId) }
-        
+        deck.push(cardInstance)
         cardInstance.setup()
 
     }
+
+    return deck
 
 }
 
