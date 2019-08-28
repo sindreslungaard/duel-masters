@@ -3,9 +3,10 @@ import { IPlayer } from "./player"
 import shortid from "shortid"
 import Phase from "./phase"
 import WebSocket from "ws"
-import { sendError, sendChooseDeck } from "../net/responses"
+import { sendError, sendChooseDeck, sendWarning } from "../net/responses"
 import User, { IUser } from "../models/user"
 import Deck from "../models/deck"
+import { getClientAttachments } from "../net/server"
 
 export interface IMatch {
     id: string,
@@ -71,6 +72,8 @@ export const addPlayer = async (client: WebSocket, user: IUser, matchId: string,
         battlezone: []
     }
 
+    getClientAttachments(client).player = player
+
     if(!match.player1) {
 
         match.player1 = player
@@ -84,6 +87,28 @@ export const addPlayer = async (client: WebSocket, user: IUser, matchId: string,
         sendChooseDeck(match.player2.client, match.player2.decks)
 
     }
+
+}
+
+export const playerChooseDeck = async (player: IPlayer, deckId: string) => {
+
+    if(player.deck) {
+        return
+    }
+
+    let deck = player.decks.find(x => x.uid === deckId)
+
+    if(!deck) {
+        return sendWarning(player.client, "You do not have the rights to use that deck")
+    }
+
+    player.deck = createDeck(deck.cards)
+
+}
+
+export const createDeck = (cards: string[]) => {
+
+    
 
 }
 

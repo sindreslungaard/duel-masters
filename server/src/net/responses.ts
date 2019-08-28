@@ -17,3 +17,7 @@ export const sendHello = (client: WebSocket) => {
 export const sendChooseDeck = (client: WebSocket, decks: IDeck[]) => {
     send(client, "choose_deck", { decks })
 }
+
+export const sendWarning = (client: WebSocket, message: string) => {
+    send(client, "warning", message)
+}

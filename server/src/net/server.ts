@@ -4,14 +4,20 @@ import noop from "../utils/noop"
 import logger from "../utils/logger"
 import { sendError, sendHello } from "./responses"
 import User, { IUser } from "../models/user"
-import { addPlayer } from "../game/match"
+import { addPlayer, playerChooseDeck } from "../game/match"
+import { IPlayer } from "../game/player"
 
 interface IClientAttachment {
     isAlive: boolean,
-    user?: IUser
+    user?: IUser,
+    player?: IPlayer
 }
 
 const clientRepository = new Map<WebSocket, IClientAttachment>()
+
+export const getClientAttachments = (client: WebSocket) => {
+    return clientRepository.get(client)
+}
 
 export const disposeClient = (client: WebSocket) => {
     clientRepository.delete(client)
@@ -136,6 +142,25 @@ const parse = async (client: WebSocket, data: any) => {
 
             return addPlayer(client, clientAttachments.user, data.matchUid, data.inviteId)
 
+        }
+
+        case "choose_deck": {
+
+            if(!data.uid) {
+                return sendError(client, "Missing deck id")
+            }
+
+            let clientAttachments = clientRepository.get(client)
+
+            if(!clientAttachments) {
+                return client.terminate()
+            }
+
+            if(!clientAttachments.player) {
+                return client.terminate()
+            }
+
+            playerChooseDeck(clientAttachments.player, data.uid)
         }
 
         default: {
