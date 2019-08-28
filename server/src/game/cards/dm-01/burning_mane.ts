@@ -3,7 +3,7 @@ import { before, after } from "../../match"
 
 const burningMane: creature = {
 
-    uid: "1d72eb3e-5185-449a-a16f-391bd2338343",
+    id: "1d72eb3e-5185-449a-a16f-391bd2338343",
     name: "Burning Mane",
     civilization: civilization.NATURE,
     family: family.BEAST_FOLK,

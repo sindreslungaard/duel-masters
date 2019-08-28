@@ -7,6 +7,8 @@ import { sendError, sendChooseDeck, sendWarning } from "../net/responses"
 import User, { IUser } from "../models/user"
 import Deck from "../models/deck"
 import { getClientAttachments } from "../net/server"
+import { card } from "./cards/types"
+import { getCard } from './cards/repository'
 
 export interface IMatch {
     id: string,
@@ -106,9 +108,17 @@ export const playerChooseDeck = async (player: IPlayer, deckId: string) => {
 
 }
 
-export const createDeck = (cards: string[]) => {
+export const createDeck = (cardsIds: string[]): card[] => {
 
-    
+    let deck: card[] = []
+
+    for(let cardId of cardsIds) {
+
+        let cardInstance = { ...getCard(cardId) }
+        
+        cardInstance.setup()
+
+    }
 
 }
 

@@ -24,10 +24,14 @@ export const load = async () => {
 
             let card = await import(__dirname + "/" + set + "/" + file)
 
-            cardDatabase[card.default.uid] = card.default
+            cardDatabase[card.default.id] = card.default
             
         } 
 
     }
 
+}
+
+export const getCard = (id: string): card => {
+    return cardDatabase[id]
 }

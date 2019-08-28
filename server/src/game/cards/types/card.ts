@@ -1,7 +1,7 @@
 import { civilization, family } from "./index"
 
 export default interface card {
-    uid: string,
+    id: string,
     name: string,
     civilization: civilization,
     family: family,
