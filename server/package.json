@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "ts-node ./src/index.ts",
+    "watch": "tsc --watch",
+    "dev": "nodemon ./dist/index.js",
     "build": "tsc",
     "start": "node ./dist/index.js"
   },
@@ -35,6 +36,6 @@
     "ws": "^7.1.2"
   },
   "devDependencies": {
-    "ts-node": "^8.3.0"
+    "nodemon": "^1.19.1"
   }
 }
