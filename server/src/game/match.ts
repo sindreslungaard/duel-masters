@@ -102,7 +102,7 @@ export const playerChooseDeck = async (player: IPlayer, deckId: string) => {
         return sendWarning(player.client, "You do not have the rights to use that deck")
     }
 
-    player.deck = createDeck(deck.cards)
+    //player.deck = createDeck(deck.cards)
 
 }
 
