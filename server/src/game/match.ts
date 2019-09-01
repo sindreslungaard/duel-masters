@@ -9,7 +9,7 @@ import Deck from "../models/deck"
 import { getClientAttachments } from "../net/server"
 import { card } from "./cards/types"
 import { getCard } from './cards/repository'
-import { stateUpdateFx, setPhaseFx, resolveSummoningSicknessFx } from "./effects"
+import { stateUpdateFx, setPhaseFx, resolveSummoningSicknessFx, untapFx } from "./effects"
 
 export interface IMatch {
     id: string,
@@ -171,6 +171,26 @@ const beginTurn = (match: IMatch) => {
     for(let creature of match.playerTurn.battlezone) {
         resolveSummoningSicknessFx(creature)
     }
+
+    untapStep(match)
+
+}
+
+// Step 2: Untap step
+// Your creatures in the battle zone and cards in your mana zone are untapped. This is forced.
+const untapStep = (match: IMatch) => {
+
+    setPhaseFx(match, Phase.UNTAP_STEP)
+
+    for(let creature of match.playerTurn.battlezone) {
+        untapFx(creature)
+    }
+
+    for(let card of match.playerTurn.manazone) {
+        untapFx(card)
+    }
+
+    stateUpdateFx([match.player1, match.player2])
 
 }
 
