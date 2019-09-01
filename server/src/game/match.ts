@@ -3,12 +3,13 @@ import { IPlayer, setupPlayer } from "./player"
 import shortid from "shortid"
 import Phase from "./phase"
 import WebSocket from "ws"
-import { sendError, sendChooseDeck, sendWarning } from "../net/responses"
+import { sendError, sendChooseDeck, sendWarning, sendStateUpdate } from "../net/responses"
 import User, { IUser } from "../models/user"
 import Deck from "../models/deck"
 import { getClientAttachments } from "../net/server"
 import { card } from "./cards/types"
 import { getCard } from './cards/repository'
+import { stateUpdateFx } from "./effects"
 
 export interface IMatch {
     id: string,
@@ -119,6 +120,8 @@ export const playerChooseDeck = async (player: IPlayer, deckId: string) => {
         card.setup(player.match, player)
     }
 
+    tryStartMatch(player.match)
+
 }
 
 export const createDeck = (cardsIds: string[]): card[] => {
@@ -150,6 +153,8 @@ export const tryStartMatch = (match: IMatch): boolean => {
     setupPlayer(match.player2)
 
     match.playerTurn = (Math.random() > 0.5) ? match.player1 : match.player2
+
+    stateUpdateFx([match.player1, match.player2])
 
     return true
 

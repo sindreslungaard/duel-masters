@@ -25,5 +25,5 @@ export const sendWarning = (client: WebSocket, message: string) => {
 }
 
 export const sendStateUpdate = (client: WebSocket, state: IStateUpdate) => {
-    send(client, "state_update", state)
+    send(client, "state_update", { state })
 }
