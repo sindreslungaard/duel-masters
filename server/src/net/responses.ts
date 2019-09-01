@@ -1,7 +1,9 @@
 import WebSocket from "ws"
 import { IDeck } from "../models/deck"
+import { IStateUpdate } from "../game/state"
 
 const send = (client: WebSocket, header: string, data?: any) => {
+    if(!data) data = {}
     data.header = header
     client.send(JSON.stringify(data))
 }
@@ -20,4 +22,8 @@ export const sendChooseDeck = (client: WebSocket, decks: IDeck[]) => {
 
 export const sendWarning = (client: WebSocket, message: string) => {
     send(client, "warning", message)
+}
+
+export const sendStateUpdate = (client: WebSocket, state: IStateUpdate) => {
+    send(client, "state_update", state)
 }

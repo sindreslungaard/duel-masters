@@ -10,7 +10,7 @@ const burningMane: creature = {
     manaCost: 2,
     manaRequirement: [civilization.NATURE],
 
-    setup() {
+    setup(match, player) {
         
         before("turn-start", (event, next) => {
             // runs before turn start

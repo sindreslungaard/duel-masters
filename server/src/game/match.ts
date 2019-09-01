@@ -1,5 +1,5 @@
 import events from "./events"
-import { IPlayer } from "./player"
+import { IPlayer, setupPlayer } from "./player"
 import shortid from "shortid"
 import Phase from "./phase"
 import WebSocket from "ws"
@@ -32,6 +32,8 @@ export const createMatch = (host: string, name: string, description: string): IM
         description,
         phase: Phase.IDLE
     }
+
+    matches.push(match)
 
     return match
 
@@ -68,6 +70,7 @@ export const addPlayer = async (client: WebSocket, user: IUser, matchId: string,
         client,
         match,
         decks,
+        hand: [],
         shieldzone: [],
         manazone: [],
         graveyard: [],
@@ -94,6 +97,10 @@ export const addPlayer = async (client: WebSocket, user: IUser, matchId: string,
 
 export const playerChooseDeck = async (player: IPlayer, deckId: string) => {
 
+    if(player.match.phase !== Phase.CHOOSE_DECK) {
+        return
+    }
+
     if(player.deck) {
         return
     }
@@ -104,7 +111,13 @@ export const playerChooseDeck = async (player: IPlayer, deckId: string) => {
         return sendWarning(player.client, "You do not have the rights to use that deck")
     }
 
-    //player.deck = createDeck(deck.cards)
+    player.deck = createDeck(deck.cards)
+
+    for(let card of player.deck) {
+        card.virtualId = shortid()
+        card.tapped = false
+        card.setup(player.match, player)
+    }
 
 }
 
@@ -114,13 +127,31 @@ export const createDeck = (cardsIds: string[]): card[] => {
 
     for(let cardId of cardsIds) {
 
-        let cardInstance = { ...getCard(cardId) }
+        let cardInstance: card = { ...getCard(cardId) }
         deck.push(cardInstance)
-        cardInstance.setup()
 
     }
 
     return deck
+
+}
+
+export const tryStartMatch = (match: IMatch): boolean => {
+
+    if(!match.player1 || !match.player1.deck) {
+        return false
+    }
+
+    if(!match.player2 || !match.player2.deck) {
+        return false
+    }
+
+    setupPlayer(match.player1)
+    setupPlayer(match.player2)
+
+    match.playerTurn = (Math.random() > 0.5) ? match.player1 : match.player2
+
+    return true
 
 }
 
