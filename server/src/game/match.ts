@@ -9,7 +9,7 @@ import Deck from "../models/deck"
 import { getClientAttachments } from "../net/server"
 import { card } from "./cards/types"
 import { getCard } from './cards/repository'
-import { stateUpdateFx } from "./effects"
+import { stateUpdateFx, setPhaseFx, resolveSummoningSicknessFx } from "./effects"
 
 export interface IMatch {
     id: string,
@@ -156,7 +156,21 @@ export const tryStartMatch = (match: IMatch): boolean => {
 
     stateUpdateFx([match.player1, match.player2])
 
+    beginTurn(match)
+
     return true
+
+}
+
+// Step 1: Begin your turn
+// Resolve any summoning sickness from creatures in the battle zone.
+const beginTurn = (match: IMatch) => {
+
+    setPhaseFx(match, Phase.BEGIN_TURN_STEP)
+
+    for(let creature of match.playerTurn.battlezone) {
+        resolveSummoningSicknessFx(creature)
+    }
 
 }
 

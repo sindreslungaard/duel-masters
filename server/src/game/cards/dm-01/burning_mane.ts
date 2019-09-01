@@ -9,6 +9,7 @@ const burningMane: creature = {
     family: family.BEAST_FOLK,
     manaCost: 2,
     manaRequirement: [civilization.NATURE],
+    summoningSickness: true,
 
     setup(match, player) {
         
