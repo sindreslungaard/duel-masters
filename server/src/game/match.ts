@@ -7,9 +7,10 @@ import { sendError, sendChooseDeck, sendWarning, sendStateUpdate } from "../net/
 import User, { IUser } from "../models/user"
 import Deck from "../models/deck"
 import { getClientAttachments } from "../net/server"
-import { ICard } from "./cards/types"
+import { ICard, Container } from "./cards/types"
 import { getCard } from './cards/repository'
-import { stateUpdateFx, setPhaseFx, resolveSummoningSicknessFx, untapFx } from "./effects"
+import { stateUpdateFx, setPhaseFx, resolveSummoningSicknessFx, untapFx, drawCardsFx } from "./effects"
+import moveCardToFx from "./effects/move_card_to_fx";
 
 export interface IMatch {
     id: string,
@@ -75,7 +76,8 @@ export const addPlayer = async (client: WebSocket, user: IUser, matchId: string,
         shieldzone: [],
         manazone: [],
         graveyard: [],
-        battlezone: []
+        battlezone: [],
+        hiddenzone: []
     }
 
     getClientAttachments(client).player = player
@@ -115,6 +117,7 @@ export const playerChooseDeck = async (player: IPlayer, deckId: string) => {
     player.deck = createDeck(deck.cards)
 
     for(let card of player.deck) {
+        card.player = player
         card.virtualId = shortid()
         card.tapped = false
         card.setup(player.match, player)
@@ -203,6 +206,23 @@ const startTurnStep = (match: IMatch) => {
     setPhaseFx(match, Phase.START_TURN_STEP)
 
     // TODO: dispatch turn-start event
+
+    drawStep(match)
+
+}
+
+// Step 4: Draw step
+// You draw a card. This is forced. If you have no deck, you lose when you draw the last card.
+const drawStep = (match: IMatch) => {
+
+    if(match.playerTurn.deck.length < 1) {
+        // TODO: Player lost
+        return
+    }
+
+    let card = drawCardsFx(match.playerTurn, 1)
+
+    moveCardToFx(card[0], Container.HAND)
 
 }
 

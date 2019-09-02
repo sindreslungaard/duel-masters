@@ -12,7 +12,7 @@ export interface IDenormalizedCard {
 }
 
 export default interface ICard {
-    match?: IMatch,
+    player?: IPlayer,
     id: string,
     virtualId?: string,
     name: string,
