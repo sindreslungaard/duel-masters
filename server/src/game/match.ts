@@ -192,6 +192,18 @@ const untapStep = (match: IMatch) => {
 
     stateUpdateFx([match.player1, match.player2])
 
+    startTurnStep(match)
+
+}
+
+// Step 3: Start of turn step
+// Any abilities that trigger at "the start of your turn" are resolved now.
+const startTurnStep = (match: IMatch) => {
+
+    setPhaseFx(match, Phase.START_TURN_STEP)
+
+    // TODO: dispatch turn-start event
+
 }
 
 export const before = <K extends keyof events>(eventName: K, listener: (event: events[K], next: Function) => void) => {
