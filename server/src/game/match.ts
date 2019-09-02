@@ -226,6 +226,19 @@ const drawStep = (match: IMatch) => {
 
     moveCardToFx(card[0], Container.HAND)
 
+    chargeStep(match)
+
+}
+
+// Step 5: Charge step
+// You may put a card into your mana zone. This is optional.
+const chargeStep = (match: IMatch) => {
+
+    setPhaseFx(match, Phase.CHARGE_STEP)
+
+    // Transition to the next step is done when the player either
+    // charge mana or make an action from the main step
+
 }
 
 export const before = <K extends keyof events>(eventName: K, listener: (event: events[K], next: Function) => void) => {
