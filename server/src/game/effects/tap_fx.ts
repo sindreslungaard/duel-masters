@@ -1,6 +1,6 @@
-import { card } from "../cards/types"
+import { ICard } from "../cards/types"
 
-const tapFx = (card: card) => {
+const tapFx = (card: ICard) => {
     card.tapped = true
 }
 

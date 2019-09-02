@@ -1,14 +1,14 @@
-import { creature, civilization, family } from "../types"
+import { ICreature, Civilization, Family } from "../types"
 import { before, after } from "../../match"
 
-const burningMane: creature = {
+const burningMane: ICreature = {
 
     id: "1d72eb3e-5185-449a-a16f-391bd2338343",
     name: "Burning Mane",
-    civilization: civilization.NATURE,
-    family: family.BEAST_FOLK,
+    civilization: Civilization.NATURE,
+    family: Family.BEAST_FOLK,
     manaCost: 2,
-    manaRequirement: [civilization.NATURE],
+    manaRequirement: [Civilization.NATURE],
     summoningSickness: true,
 
     setup(match, player) {

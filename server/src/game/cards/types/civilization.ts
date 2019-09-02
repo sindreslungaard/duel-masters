@@ -1,4 +1,4 @@
-enum civilization {
+enum Civilization {
     FIRE = "fire",
     WATER = "water",
     NATURE = "nature",
@@ -6,4 +6,4 @@ enum civilization {
     DARKNESS = "darkness"
 }
 
-export default civilization
+export default Civilization

@@ -2,7 +2,7 @@ import WebSocket from "ws"
 import { IMatch } from "./match"
 import User, { IUser } from "../models/user"
 import { IDeck } from "../models/deck"
-import { card, creature } from "./cards/types"
+import { ICard, ICreature } from "./cards/types"
 import { shuffleDeckFx, drawCardsFx } from "./effects"
 
 export interface IPlayer {
@@ -10,12 +10,12 @@ export interface IPlayer {
     user: IUser,
     match: IMatch,
     decks: IDeck[],
-    deck?: card[],
-    hand: card[],
-    shieldzone: card[],
-    manazone: card[],
-    graveyard: card[],
-    battlezone: creature[]
+    deck?: ICard[],
+    hand: ICard[],
+    shieldzone: ICard[],
+    manazone: ICard[],
+    graveyard: ICard[],
+    battlezone: ICreature[]
 }
 
 export const setupPlayer = (player: IPlayer) => {

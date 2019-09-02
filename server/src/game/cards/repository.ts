@@ -1,8 +1,8 @@
-import { card } from "./types"
+import { ICard } from "./types"
 import { readdirSync, statSync } from "fs"
 import { join } from "path"
 
-const cardDatabase: {[key: string]: card} = {}
+const cardDatabase: {[key: string]: ICard} = {}
 
 export const load = async () => {
 
@@ -32,6 +32,6 @@ export const load = async () => {
 
 }
 
-export const getCard = (id: string): card => {
+export const getCard = (id: string): ICard => {
     return cardDatabase[id]
 }

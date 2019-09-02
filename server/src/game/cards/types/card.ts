@@ -1,4 +1,4 @@
-import { civilization, family } from "./index"
+import { Civilization, Family } from "./index"
 import { IMatch } from "../../match"
 import { IPlayer } from './../../player'
 
@@ -11,15 +11,15 @@ export interface IDenormalizedCard {
     canBePlayed: boolean
 }
 
-export default interface card {
+export default interface ICard {
     match?: IMatch,
     id: string,
     virtualId?: string,
     name: string,
-    civilization: civilization,
-    family: family,
+    civilization: Civilization,
+    family: Family,
     manaCost: number,
-    manaRequirement: Array<civilization>,
+    manaRequirement: Array<Civilization>,
     tapped?: boolean
 
     setup: (match: IMatch, player: IPlayer) => void

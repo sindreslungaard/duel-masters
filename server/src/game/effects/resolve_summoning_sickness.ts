@@ -1,6 +1,6 @@
-import { creature } from "../cards/types"
+import { ICreature } from "../cards/types"
 
-const resolveSummoningSicknessFx = (creature: creature) => {
+const resolveSummoningSicknessFx = (creature: ICreature) => {
     creature.summoningSickness = false
 }
 

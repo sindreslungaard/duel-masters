@@ -7,7 +7,7 @@ import { sendError, sendChooseDeck, sendWarning, sendStateUpdate } from "../net/
 import User, { IUser } from "../models/user"
 import Deck from "../models/deck"
 import { getClientAttachments } from "../net/server"
-import { card } from "./cards/types"
+import { ICard } from "./cards/types"
 import { getCard } from './cards/repository'
 import { stateUpdateFx, setPhaseFx, resolveSummoningSicknessFx, untapFx } from "./effects"
 
@@ -124,13 +124,13 @@ export const playerChooseDeck = async (player: IPlayer, deckId: string) => {
 
 }
 
-export const createDeck = (cardsIds: string[]): card[] => {
+export const createDeck = (cardsIds: string[]): ICard[] => {
 
-    let deck: card[] = []
+    let deck: ICard[] = []
 
     for(let cardId of cardsIds) {
 
-        let cardInstance: card = { ...getCard(cardId) }
+        let cardInstance: ICard = { ...getCard(cardId) }
         deck.push(cardInstance)
 
     }

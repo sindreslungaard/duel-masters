@@ -1,5 +1,5 @@
-import card from "./card"
+import ICard from "./card"
 
-export interface spell extends card {
+export interface ISpell extends ICard {
 
 }

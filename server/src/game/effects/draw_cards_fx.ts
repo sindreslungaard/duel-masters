@@ -1,9 +1,9 @@
 import { IPlayer } from "../player"
-import { card } from "../cards/types"
+import { ICard } from "../cards/types"
 
-const drawCardsFx = (player: IPlayer, cardsToDraw: number): card[] => {
+const drawCardsFx = (player: IPlayer, cardsToDraw: number): ICard[] => {
 
-    let cards: card[] = []
+    let cards: ICard[] = []
 
     for(let i = 0; i < cardsToDraw; i++) {
 

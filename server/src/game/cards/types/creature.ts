@@ -1,5 +1,5 @@
-import card from "./card"
+import ICard from "./card"
 
-export default interface creature extends card {
+export default interface ICreature extends ICard {
     summoningSickness: boolean
 }

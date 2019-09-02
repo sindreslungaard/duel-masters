@@ -1,6 +1,6 @@
-import { card } from "../cards/types"
+import { ICard } from "../cards/types"
 
-const untapFx = (card: card) => {
+const untapFx = (card: ICard) => {
     card.tapped = false
 }
 
