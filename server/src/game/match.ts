@@ -215,6 +215,8 @@ const startTurnStep = (match: IMatch) => {
 // You draw a card. This is forced. If you have no deck, you lose when you draw the last card.
 const drawStep = (match: IMatch) => {
 
+    setPhaseFx(match, Phase.DRAW_STEP)
+
     if(match.playerTurn.deck.length < 1) {
         // TODO: Player lost
         return
