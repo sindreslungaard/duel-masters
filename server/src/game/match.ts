@@ -241,6 +241,17 @@ const chargeStep = (match: IMatch) => {
 
 }
 
+// Step 6: Main step
+// You may use cards, such as summoning creatures, casting spells, generating and crossing cross gear or fortifying castles.
+// You can do these actions as many times as you want, in any order, as long as you can pay their costs.
+const mainStep = (match: IMatch) => {
+
+    setPhaseFx(match, Phase.MAIN_STEP)
+
+    // Transition to the next step is done when the player makes an action from the attack step
+
+}
+
 export const before = <K extends keyof events>(eventName: K, listener: (event: events[K], next: Function) => void) => {
 
 }
