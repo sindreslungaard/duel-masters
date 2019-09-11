@@ -9,7 +9,7 @@ const send = (client: WebSocket, header: string, data?: any) => {
 }
 
 export const sendError = (client: WebSocket, message: string, action?: string) => {
-    send(client, "error", { message, action})
+    send(client, "error", { message, action })
 }
 
 export const sendHello = (client: WebSocket) => {
@@ -21,7 +21,7 @@ export const sendChooseDeck = (client: WebSocket, decks: IDeck[]) => {
 }
 
 export const sendWarning = (client: WebSocket, message: string) => {
-    send(client, "warning", message)
+    send(client, "warning", { message })
 }
 
 export const sendStateUpdate = (client: WebSocket, state: IStateUpdate) => {
