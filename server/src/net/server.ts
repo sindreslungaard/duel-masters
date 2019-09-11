@@ -161,7 +161,7 @@ const parse = async (client: WebSocket, data: any) => {
                 return client.terminate()
             }
 
-            playerChooseDeck(clientAttachments.player, data.uid)
+            return playerChooseDeck(clientAttachments.player, data.uid)
         }
 
         case "add_to_manazone": {
@@ -180,7 +180,7 @@ const parse = async (client: WebSocket, data: any) => {
                 return client.terminate()
             }
 
-            tryAddCardToManazone(clientAttachments.player, data.virtualId)
+            return tryAddCardToManazone(clientAttachments.player, data.virtualId)
 
         }
 
