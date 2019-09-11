@@ -77,7 +77,8 @@ export const addPlayer = async (client: WebSocket, user: IUser, matchId: string,
         manazone: [],
         graveyard: [],
         battlezone: [],
-        hiddenzone: []
+        hiddenzone: [],
+        chargedMana: false
     }
 
     getClientAttachments(client).player = player

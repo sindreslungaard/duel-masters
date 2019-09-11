@@ -16,7 +16,8 @@ export interface IPlayer {
     manazone: ICard[],
     graveyard: ICard[],
     battlezone: ICreature[],
-    hiddenzone: ICard[]
+    hiddenzone: ICard[],
+    chargedMana: boolean
 }
 
 export const setupPlayer = (player: IPlayer) => {

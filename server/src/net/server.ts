@@ -2,10 +2,11 @@ import WebSocket from "ws"
 import http from "http"
 import noop from "../utils/noop"
 import logger from "../utils/logger"
-import { sendError, sendHello } from "./responses"
+import { sendError, sendHello, sendWarning } from "./responses"
 import User, { IUser } from "../models/user"
 import { addPlayer, playerChooseDeck } from "../game/match"
 import { IPlayer } from "../game/player"
+import { tryAddCardToManazone } from "../game/actions"
 
 interface IClientAttachment {
     isAlive: boolean,
@@ -161,6 +162,26 @@ const parse = async (client: WebSocket, data: any) => {
             }
 
             playerChooseDeck(clientAttachments.player, data.uid)
+        }
+
+        case "add_to_manazone": {
+
+            if(!data.virtualId) {
+                return sendWarning(client, "Missing card virtualId")
+            }
+
+            let clientAttachments = clientRepository.get(client)
+
+            if(!clientAttachments) {
+                return client.terminate()
+            }
+
+            if(!clientAttachments.player) {
+                return client.terminate()
+            }
+
+            tryAddCardToManazone(clientAttachments.player, data.virtualId)
+
         }
 
         default: {

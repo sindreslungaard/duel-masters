@@ -11,7 +11,7 @@ const stateUpdateFx = (players: IPlayer[]) => {
 
         let state: IStateUpdate = {
             myTurn: player.match.playerTurn === player,
-            hasAddedManaThisRound: false, // TODO: decide whether or not to keep using this or refactor frontend to get rid of it serverside
+            hasAddedManaThisRound: player.chargedMana,
             me: {
                 playzone: denormalizeCardsFx(player.battlezone),
                 shieldzone: player.shieldzone.map(x => x.virtualId),
