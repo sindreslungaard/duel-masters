@@ -21,7 +21,7 @@ export const sendChooseDeck = (client: WebSocket, decks: IDeck[]) => {
 }
 
 export const sendWarning = (client: WebSocket, message: string) => {
-    send(client, "warning", { message })
+    send(client, "warn", { message })
 }
 
 export const sendStateUpdate = (client: WebSocket, state: IStateUpdate) => {
