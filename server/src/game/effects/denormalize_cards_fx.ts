@@ -1,6 +1,6 @@
-import card, { IDenormalizedCard } from "../cards/types/card"
+import ICard, { IDenormalizedCard } from "../cards/types/card"
 
-const denormalizeCardsFx = (cards: card[]): IDenormalizedCard[] => {
+const denormalizeCardsFx = (cards: ICard[]): IDenormalizedCard[] => {
 
     let denormalizedCards: IDenormalizedCard[] = []
 
