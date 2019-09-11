@@ -46,6 +46,8 @@ export const tryAddCardToManazone = (player: IPlayer, virtualId: string) => {
     moveCardToFx(card, Container.MANA_ZONE)
     tapFx(card)
 
+    player.chargedMana = true
+
     stateUpdateFx([player, getOpponentFx(player)])
 
 }
