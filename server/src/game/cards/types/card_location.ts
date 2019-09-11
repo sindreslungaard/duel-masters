@@ -5,7 +5,7 @@ enum CardLocation {
     MANAZONE = "manazone",
     GRAVEYARD = "graveyard",
     BATTLEZONE = "battlezone",
-    HODDENZONE = "hiddenzone"
+    HIDDENZONE = "hiddenzone"
 }
 
 export default CardLocation
