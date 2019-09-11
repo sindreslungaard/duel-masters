@@ -1,8 +1,7 @@
 import { IPlayer } from "../player"
-import { ICard } from "../cards/types"
-import CardLocation from "../cards/types/card_location"
+import { ICard, Container } from "../cards/types"
 
-const findCardFx = (players: IPlayer[], virtualId: string, location?: CardLocation,): ICard => {
+const findCardFx = (players: IPlayer[], virtualId: string, location?: Container): ICard => {
     
     let card
 
@@ -12,37 +11,37 @@ const findCardFx = (players: IPlayer[], virtualId: string, location?: CardLocati
         
         switch(location) {
 
-            case CardLocation.DECK: {
+            case Container.DECK: {
                 card = player.deck.find(predicate)
                 break
             }
 
-            case CardLocation.HAND: {
+            case Container.HAND: {
                 card = player.hand.find(predicate)
                 break
             }
 
-            case CardLocation.SHIELDZONE: {
+            case Container.SHIELD_ZONE: {
                 card = player.shieldzone.find(predicate)
                 break
             }
 
-            case CardLocation.MANAZONE: {
+            case Container.MANA_ZONE: {
                 card = player.manazone.find(predicate)
                 break
             }
 
-            case CardLocation.GRAVEYARD: {
+            case Container.GRAVEYARD: {
                 card = player.graveyard.find(predicate)
                 break
             }
 
-            case CardLocation.BATTLEZONE: {
+            case Container.BATTLE_ZONE: {
                 card = player.battlezone.find(predicate)
                 break
             }
 
-            case CardLocation.HIDDENZONE: {
+            case Container.HIDDEN_ZONE: {
                 card = player.hiddenzone.find(predicate)
                 break
             }
