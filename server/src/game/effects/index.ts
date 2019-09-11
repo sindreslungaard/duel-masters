@@ -8,3 +8,4 @@ export { default as resolveSummoningSicknessFx } from "./resolve_summoning_sickn
 export { default as untapFx } from "./untap_fx"
 export { default as tapFx } from "./tap_fx"
 export { default as moveaCardToFx } from "./move_card_to_fx"
+export { default as findCardFx } from "./find_card_fx"
