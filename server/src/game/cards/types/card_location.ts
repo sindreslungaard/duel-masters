@@ -8,4 +8,4 @@ enum CardLocation {
     HODDENZONE = "hiddenzone"
 }
 
-export default Location
+export default CardLocation
