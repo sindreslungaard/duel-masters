@@ -18,20 +18,9 @@ func ws(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	defer c.Close()
+	s := newSocket(c, 0)
 
-	for {
-
-		_, message, err := c.ReadMessage()
-
-		if err != nil {
-			// TODO: handle
-			break
-		}
-
-		log.Printf("received: %s", message)
-
-	}
+	s.listen()
 
 }
 
