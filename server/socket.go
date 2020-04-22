@@ -7,6 +7,9 @@ import (
 	"github.com/gorilla/websocket"
 )
 
+var sockets = make(map[int]*Socket)
+var socketsMutex = sync.Mutex{}
+
 // Socket links a ws connection to a user id and handles safe reading and writing of data
 type Socket struct {
 	conn   *websocket.Conn
@@ -29,7 +32,15 @@ func newSocket(c *websocket.Conn, userID int) *Socket {
 
 func (s *Socket) listen() {
 
-	defer s.Close()
+	defer func() {
+
+		socketsMutex.Lock()
+		delete(sockets, s.userID)
+		socketsMutex.Unlock()
+
+		s.Close()
+
+	}()
 
 	for {
 
@@ -59,5 +70,6 @@ func (s *Socket) Send(v interface{}) {
 func (s *Socket) Close() {
 
 	s.conn.Close()
+	log.Println("Closed a connection")
 
 }

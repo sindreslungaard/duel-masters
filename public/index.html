@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <script type = "text/javascript">
+        
+        // Let us open a web socket
+        var ws = new WebSocket("ws://localhost/ws");
+        
+        ws.onopen = function() {
+            
+            // Web Socket is connected, send data using send()
+            ws.send("Message to send");
+
+        };
+        
+        ws.onmessage = function (evt) { 
+            console.log(evt.data)
+        };
+        
+        ws.onclose = function() { 
+            console.log("socket closed")
+        };
+
+     </script>
+</body>
+</html>
