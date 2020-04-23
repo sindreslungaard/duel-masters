@@ -1,36 +1,28 @@
 package db
 
 import (
-	"context"
-	"log"
+	"fmt"
 
+	"github.com/jinzhu/gorm"
+	_ "github.com/jinzhu/gorm/dialects/postgres" // postgres db driver
 	"github.com/sirupsen/logrus"
-	"go.mongodb.org/mongo-driver/mongo"
-	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-// Client provides a mongodb client interface
-var Client *mongo.Client
+var conn *gorm.DB
 
 // Connect connects to the database
-func Connect(connectionString string) {
+func Connect(host string, port string, user string, password string, dbName string) {
 
-	clientOptions := options.Client().ApplyURI(connectionString)
+	connectionString := fmt.Sprintf("host=%s port=%s user=%s dbname=%s password=%s", host, port, user, dbName, password)
+	fmt.Println(connectionString)
 
-	c, err := mongo.Connect(context.TODO(), clientOptions)
-
+	database, err := gorm.Open("postgres", connectionString)
 	if err != nil {
 		logrus.Fatal(err)
 	}
 
-	Client = c
+	conn = database
 
-	err = Client.Ping(context.TODO(), nil)
-
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	logrus.Info("Connected to MongoDB")
+	// conn.Debug().AutoMigrate(&Account{}, &Contact{}) //Database migration
 
 }
