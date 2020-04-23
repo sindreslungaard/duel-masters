@@ -1,6 +1,10 @@
 package main
 
 import (
+	"os"
+
+	"github.com/joho/godotenv"
+	"github.com/sindreslungaard/duel-masters/db"
 	"github.com/sindreslungaard/duel-masters/server"
 	"github.com/sirupsen/logrus"
 )
@@ -11,7 +15,14 @@ func main() {
 	logrus.SetFormatter(&logrus.TextFormatter{ForceColors: true})
 	logrus.SetLevel(logrus.DebugLevel)
 
+	err := godotenv.Load()
+	if err != nil {
+		logrus.Fatal("Error loading .env file")
+	}
+
 	logrus.Info("Starting..")
-	server.Start("80")
+
+	db.Connect(os.Getenv("MONGO_URI"))
+	server.Start(os.Getenv("PORT"))
 
 }
