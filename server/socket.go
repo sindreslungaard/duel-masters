@@ -51,7 +51,7 @@ func (s *Socket) listen() {
 			break
 		}
 
-		log.Printf("received: %s", message)
+		Parse(s, message)
 
 	}
 

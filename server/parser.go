@@ -7,17 +7,18 @@ import (
 )
 
 // Parse handles a websocket message
-func Parse(data string) {
+func Parse(s *Socket, data []byte) {
 
-	runes := []rune(data)
+	runes := []rune(string(data))
 
 	header, err := strconv.Atoi(string(runes[0:4]))
 
 	if err != nil {
+		logrus.Debug("Received message in incorrect format %s", string(data))
 		return
 	}
 
-	logrus.Debugf("Received message with header %s", header)
+	logrus.Debugf("Received message with header %v", header)
 
 	switch header {
 
