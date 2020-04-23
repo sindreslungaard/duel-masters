@@ -1,12 +1,12 @@
 package server
 
 import (
-	"log"
 	"net/http"
 	"os"
 	"path"
 
 	"github.com/gorilla/websocket"
+	"github.com/sirupsen/logrus"
 )
 
 var upgrader = websocket.Upgrader{
@@ -42,7 +42,7 @@ func Start(port string) {
 	http.Handle("/", fs)
 	http.HandleFunc("/ws", ws)
 
-	log.Printf("Listening on port %s", port)
-	log.Fatal(http.ListenAndServe(":"+port, nil))
+	logrus.Infof("Listening on port %s", port)
+	logrus.Fatal(http.ListenAndServe(":"+port, nil))
 
 }

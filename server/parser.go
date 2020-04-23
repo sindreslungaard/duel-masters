@@ -2,6 +2,8 @@ package server
 
 import (
 	"strconv"
+
+	"github.com/sirupsen/logrus"
 )
 
 // Parse handles a websocket message
@@ -14,6 +16,8 @@ func Parse(data string) {
 	if err != nil {
 		return
 	}
+
+	logrus.Debugf("Received message with header %s", header)
 
 	switch header {
 
