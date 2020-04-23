@@ -5,6 +5,7 @@ import (
 	"os"
 	"path"
 
+	"github.com/gin-gonic/gin"
 	"github.com/gorilla/websocket"
 	"github.com/sirupsen/logrus"
 )
@@ -15,16 +16,16 @@ var upgrader = websocket.Upgrader{
 	CheckOrigin:     func(r *http.Request) bool { return true },
 }
 
-func ws(w http.ResponseWriter, r *http.Request) {
+func ws(c *gin.Context) {
 
-	c, err := upgrader.Upgrade(w, r, nil)
+	conn, err := upgrader.Upgrade(c.Writer, c.Request, nil)
 
 	if err != nil {
 		// TODO: handle
 		return
 	}
 
-	s := newSocket(c, 0)
+	s := newSocket(conn, 0)
 
 	// Handle the connection in a new goroutine to free up this memory
 	go s.listen()
@@ -38,12 +39,22 @@ func Start(port string) {
 	if err != nil {
 		panic(err)
 	}
-	fs := http.FileServer(http.Dir(path.Join(dir, "public")))
 
-	http.Handle("/", fs)
-	http.HandleFunc("/ws", ws)
+	gin.SetMode(gin.ReleaseMode)
+
+	r := gin.New()
+
+	r.Use(gin.Recovery())
+
+	r.GET("/ws", ws)
+
+	// route everything else to our SPA
+	r.NoRoute(func(c *gin.Context) {
+		c.File(path.Join(dir, "webapp", "dist", "index.html"))
+	})
 
 	logrus.Infof("Listening on port %s", port)
-	logrus.Fatal(http.ListenAndServe(":"+port, nil))
+
+	logrus.Fatal(r.Run(":" + port))
 
 }

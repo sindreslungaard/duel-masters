@@ -14,7 +14,6 @@ var conn *gorm.DB
 func Connect(host string, port string, user string, password string, dbName string) {
 
 	connectionString := fmt.Sprintf("host=%s port=%s user=%s dbname=%s password=%s", host, port, user, dbName, password)
-	fmt.Println(connectionString)
 
 	database, err := gorm.Open("postgres", connectionString)
 	if err != nil {
@@ -22,6 +21,8 @@ func Connect(host string, port string, user string, password string, dbName stri
 	}
 
 	conn = database
+
+	logrus.Info("Connected to database")
 
 	// conn.Debug().AutoMigrate(&Account{}, &Contact{}) //Database migration
 

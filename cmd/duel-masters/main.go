@@ -22,7 +22,7 @@ func main() {
 
 	logrus.Info("Starting..")
 
-	db.Connect(os.Getenv("MONGO_URI"))
-	server.Start(os.Getenv("PORT"))
+	db.Connect(os.Getenv("db_host"), os.Getenv("db_port"), os.Getenv("db_user"), os.Getenv("db_pass"), os.Getenv("db_name"))
+	server.Start(os.Getenv("port"))
 
 }
