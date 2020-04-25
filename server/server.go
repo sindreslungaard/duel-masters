@@ -61,6 +61,13 @@ func Start(port string) {
 	r.POST("/api/auth/signin", SigninHandler)
 	r.POST("/api/auth/signup", SignupHandler)
 
+	// Because Gin does not provide an easy way to handle requests where the file does not exist
+	// (NoRoute tests on specified routes, not if the file exists) we expose our webapp's folders manually..
+	r.Static("/assets", path.Join(dir, "webapp", "dist", "assets"))
+	r.Static("/css", path.Join(dir, "webapp", "dist", "css"))
+	r.Static("/js", path.Join(dir, "webapp", "dist", "js"))
+	r.StaticFile("/favicon.ico", path.Join(dir, "webapp", "dist", "favicon.ico"))
+
 	// route everything else to our SPA
 	r.NoRoute(func(c *gin.Context) {
 		c.File(path.Join(dir, "webapp", "dist", "index.html"))
