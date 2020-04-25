@@ -47,6 +47,8 @@ func Start(port string) {
 	r.Use(gin.Recovery())
 
 	r.GET("/ws", ws)
+	r.POST("/api/auth/signin", SigninHandler)
+	r.POST("/api/auth/signup", SignupHandler)
 
 	// route everything else to our SPA
 	r.NoRoute(func(c *gin.Context) {
