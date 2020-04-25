@@ -59,3 +59,73 @@ func SigninHandler(c *gin.Context) {
 	// TODO: Remove expired/unneeded sessions from db
 
 }
+
+type signupReqBody struct {
+	Username string `json:"username" binding:"required,alphanum,min=3,max=20"`
+	Password string `json:"password" binding:"required,min=6,max=255"`
+	Email    string `json:"email" binding:"required,email"`
+}
+
+// SignupHandler handles signup requests
+func SignupHandler(c *gin.Context) {
+
+	// TODO: recaptcha
+
+	var reqBody signupReqBody
+	if err := c.ShouldBindJSON(&reqBody); err != nil {
+		c.Status(400)
+		return
+	}
+
+	collection := db.Collection("users")
+
+	if err := collection.FindOne(context.TODO(), bson.M{"username": primitive.Regex{Pattern: "^" + reqBody.Username + "$", Options: "i"}}).Decode(&db.User{}); err == nil {
+		c.JSON(400, bson.M{"message": "The username is already taken"})
+		return
+	}
+
+	if err := collection.FindOne(context.TODO(), bson.M{"email": primitive.Regex{Pattern: "^" + reqBody.Email + "$", Options: "i"}}).Decode(&db.User{}); err == nil {
+		c.JSON(400, bson.M{"message": "The email is already taken"})
+		return
+	}
+
+	hash, err := bcrypt.GenerateFromPassword([]byte(reqBody.Password), 10)
+
+	if err != nil {
+		c.Status(500)
+		return
+	}
+
+	token, err := uuid.NewRandom()
+	if err != nil {
+		c.Status(500)
+		return
+	}
+
+	session := db.UserSession{
+		Token:   token.String(),
+		IP:      c.ClientIP(),
+		Expires: int(time.Now().Add(time.Second * 2592000).Unix()),
+	}
+
+	user := db.User{
+		UID:         uuid.New().String(),
+		Username:    reqBody.Username,
+		Email:       reqBody.Email,
+		Password:    string(hash),
+		Permissions: []string{},
+		Sessions: []db.UserSession{
+			session,
+		},
+	}
+
+	_, err = collection.InsertOne(context.TODO(), user)
+
+	if err != nil {
+		c.Status(500)
+		return
+	}
+
+	c.JSON(200, bson.M{"user": user, "token": session.Token})
+
+}
