@@ -5,25 +5,26 @@ import (
 	"sync"
 
 	"github.com/gorilla/websocket"
+	"github.com/sindreslungaard/duel-masters/db"
 )
 
-var sockets = make(map[int]*Socket)
+var sockets = make(map[*Socket]int)
 var socketsMutex = sync.Mutex{}
 
 // Socket links a ws connection to a user id and handles safe reading and writing of data
 type Socket struct {
-	conn   *websocket.Conn
-	userID int
-	mutex  *sync.Mutex
+	conn  *websocket.Conn
+	user  db.User
+	mutex *sync.Mutex
 }
 
 // newSocket creates and returns a new Socket instance
-func newSocket(c *websocket.Conn, userID int) *Socket {
+func newSocket(c *websocket.Conn, user db.User) *Socket {
 
 	s := &Socket{
-		conn:   c,
-		userID: userID,
-		mutex:  &sync.Mutex{},
+		conn:  c,
+		user:  user,
+		mutex: &sync.Mutex{},
 	}
 
 	return s
@@ -35,7 +36,7 @@ func (s *Socket) listen() {
 	defer func() {
 
 		socketsMutex.Lock()
-		delete(sockets, s.userID)
+		//delete(sockets, s.user.UID)
 		socketsMutex.Unlock()
 
 		s.Close()

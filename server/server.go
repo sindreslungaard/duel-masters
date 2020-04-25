@@ -10,6 +10,11 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
+// Hub is an interface that accepts incoming websocket messages
+type Hub interface {
+	Parse(s *Socket, data []byte)
+}
+
 var upgrader = websocket.Upgrader{
 	ReadBufferSize:  1024,
 	WriteBufferSize: 1024,
@@ -21,11 +26,17 @@ func ws(c *gin.Context) {
 	conn, err := upgrader.Upgrade(c.Writer, c.Request, nil)
 
 	if err != nil {
-		// TODO: handle
+		c.Status(500)
 		return
 	}
 
-	s := newSocket(conn, 0)
+	user, err := GetUserForToken(c)
+	if err != nil {
+		c.Status(401)
+		return
+	}
+
+	s := newSocket(conn, user)
 
 	// Handle the connection in a new goroutine to free up this memory
 	go s.listen()
