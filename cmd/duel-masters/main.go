@@ -3,9 +3,10 @@ package main
 import (
 	"os"
 
+	"duel-masters/db"
+	"duel-masters/server"
+
 	"github.com/joho/godotenv"
-	"github.com/sindreslungaard/duel-masters/db"
-	"github.com/sindreslungaard/duel-masters/server"
 	"github.com/sirupsen/logrus"
 )
 

@@ -4,8 +4,9 @@ import (
 	"log"
 	"sync"
 
+	"duel-masters/db"
+
 	"github.com/gorilla/websocket"
-	"github.com/sindreslungaard/duel-masters/db"
 )
 
 var sockets = make(map[*Socket]int)

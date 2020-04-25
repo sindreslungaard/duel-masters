@@ -4,9 +4,10 @@ import (
 	"context"
 	"time"
 
+	"duel-masters/db"
+
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
-	"github.com/sindreslungaard/duel-masters/db"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"golang.org/x/crypto/bcrypt"
