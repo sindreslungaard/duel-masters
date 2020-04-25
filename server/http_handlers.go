@@ -12,6 +12,21 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
+// GetUserForToken returns a user from the authorization header or returns an error
+func GetUserForToken(c *gin.Context) (db.User, error) {
+
+	collection := db.Collection("users")
+
+	var user db.User
+
+	if err := collection.FindOne(context.TODO(), bson.M{"sessions": bson.M{"$elemMatch": bson.M{"token": c.GetHeader("Authorization")}}}).Decode(&user); err != nil {
+		return db.User{}, err
+	}
+
+	return user, nil
+
+}
+
 type signinReqBody struct {
 	Username string `json:"username" binding:"required"`
 	Password string `json:"password" binding:"required"`
