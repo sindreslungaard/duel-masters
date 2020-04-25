@@ -3,6 +3,7 @@ package match
 // Card holds information about a specific card
 type Card struct {
 	PlayerID string
+	Tapped   bool
 }
 
 // Use allows different cards to hook into match events

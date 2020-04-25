@@ -2,11 +2,11 @@ package match
 
 // Match struct
 type Match struct {
-	MatchName  string
-	Player1ID  string
-	Player2ID  string
-	InviteID   string
-	PlayerTurn byte
+	MatchName    string
+	Player1ID    string
+	Player2ID    string
+	InviteID     string
+	PlayerTurnID string
 }
 
 // New returns a new match object
