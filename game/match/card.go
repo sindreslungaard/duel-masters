@@ -2,6 +2,7 @@ package match
 
 // Card holds information about a specific card
 type Card struct {
+	ID       string
 	PlayerID string
 	Tapped   bool
 }
