@@ -10,14 +10,18 @@ func Creature(card *match.Card, c *match.Context) {
 
 	if _, ok := c.Event.(events.UntapStep); ok {
 
-		if card.PlayerID == c.Match.PlayerTurnID {
+		if c.Match.PlayerTurn() == card.Player {
 			card.Tapped = false
 		}
 
 	}
 
-}
+	if _, ok := c.Event.(events.PlayCardEvent); ok {
 
-func addToBattlezone(c *match.Context) {
+		if c.Match.PlayerTurn() == card.Player {
+			card.Player.MoveCard(card.ID, match.HAND, match.BATTLEZONE)
+		}
+
+	}
 
 }

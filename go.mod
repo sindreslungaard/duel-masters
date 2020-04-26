@@ -11,6 +11,8 @@ require (
 	github.com/jinzhu/gorm v1.9.12 // indirect
 	github.com/joho/godotenv v1.3.0
 	github.com/sirupsen/logrus v1.5.0
+	github.com/teris-io/shortid v0.0.0-20171029131806-771a37caa5cf // indirect
+	github.com/ventu-io/go-shortid v0.0.0-20171029131806-771a37caa5cf
 	go.mongodb.org/mongo-driver v1.3.2
 	golang.org/x/crypto v0.0.0-20191205180655-e7c4368fe9dd
 )

@@ -6,12 +6,12 @@ import (
 )
 
 // AquaHulcus ...
-func AquaHulcus() *match.Card {
+func AquaHulcus(c *match.Card) {
 
-	c := &match.Card{}
+	c.Name = "bob"
 
-	c.Use(fx.Creature)
+	c.Use(fx.Creature, func(card *match.Card, c *match.Context) {
 
-	return c
+	})
 
 }

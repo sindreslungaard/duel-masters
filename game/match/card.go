@@ -2,9 +2,15 @@ package match
 
 // Card holds information about a specific card
 type Card struct {
-	ID       string
-	PlayerID string
-	Tapped   bool
+	ID     string
+	Player *Player
+	Tapped bool
+
+	Name            string
+	Civ             string
+	Family          string
+	ManaCost        int
+	ManaRequirement []string
 }
 
 // Use allows different cards to hook into match events
