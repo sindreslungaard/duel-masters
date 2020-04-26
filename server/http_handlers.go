@@ -47,7 +47,7 @@ func SigninHandler(c *gin.Context) {
 	var user db.User
 
 	if err := collection.FindOne(context.TODO(), bson.M{"username": primitive.Regex{Pattern: "^" + reqBody.Username + "$", Options: "i"}}).Decode(&user); err != nil {
-		c.Status(404)
+		c.Status(401)
 		return
 	}
 

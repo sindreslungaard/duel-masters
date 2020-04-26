@@ -31,7 +31,7 @@ export default {
     async submit() {
       try {
         let res = await call({
-          path: "/auth",
+          path: "/auth/signin",
           method: "POST",
           body: {
             username: this.username,
@@ -39,9 +39,9 @@ export default {
           }
         })
 
-        localStorage.setItem('email', res.data.email)
-        localStorage.setItem('username', res.data.username)
-        localStorage.setItem('uid', res.data.uid)
+        localStorage.setItem('email', res.data.user.email)
+        localStorage.setItem('username', res.data.user.username)
+        localStorage.setItem('uid', res.data.user.uid)
         localStorage.setItem('token', res.data.token)
 
         if(this.redirectTo) {
@@ -52,7 +52,8 @@ export default {
         
       } catch(e) {
         try {
-          this.errorMsg = e.response.data.message
+          if(e.response.status == 401)
+            this.errorMsg = "Wrong username or password"
         } catch(err) {
           this.errorMsg = "An unexpected error occured. Please try again later."
         }

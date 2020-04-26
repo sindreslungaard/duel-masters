@@ -192,7 +192,7 @@ export default {
       },
 
       getShareUrl(uid) {
-          return config.WEBAPP_ENDPOINT + "/deck/" + uid
+          return window.location.host + "/deck/" + uid
       },
 
       tryRemoveCard() {

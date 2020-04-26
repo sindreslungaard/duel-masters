@@ -38,7 +38,7 @@ export default {
       }
       try {
         let res = await call({
-          path: "/register",
+          path: "/auth/signup",
           method: "POST",
           body: {
             username: this.username,
@@ -47,9 +47,9 @@ export default {
           }
         })
 
-        localStorage.setItem('email', res.data.email)
-        localStorage.setItem('username', res.data.username)
-        localStorage.setItem('uid', res.data.uid)
+        localStorage.setItem('email', res.data.user.email)
+        localStorage.setItem('username', res.data.user.username)
+        localStorage.setItem('uid', res.data.user.uid)
         localStorage.setItem('token', res.data.token)
 
         if(this.redirectTo) {

@@ -5,7 +5,7 @@
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
-    "server": "node server.js"
+    "watch": "vue-cli-service build --watch"
   },
   "dependencies": {
     "axios": "^0.19.0",

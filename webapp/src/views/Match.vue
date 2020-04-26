@@ -207,7 +207,7 @@ export default {
       wait: "",
 
       loadingDots: "",
-      invite: config.WEBAPP_ENDPOINT + "/duel/" + this.$route.params.id + "/" + this.$route.params.invite,
+      invite: window.location.host + "/duel/" + this.$route.params.id + "/" + this.$route.params.invite,
       inviteCopied: false,
       inviteCopyTask: null,
 
@@ -362,7 +362,7 @@ export default {
   created() {
 
     // Connect to the server
-    const ws = new WebSocket(config.WS_ENDPOINT)
+    const ws = new WebSocket("ws://" + window.location.host)
     this.ws = ws
 
     ws.onopen = () => {
