@@ -62,7 +62,7 @@
 
         <div class="messages">
           <div id="messages" class="messages-helper">
-            <span v-for="(message, index) in chatMessages" :key="index">{{ message }}</span>
+            <span v-for="(message, index) in chatMessages" :key="index" v-html="message"></span>
           </div>
         </div>
         <form @submit.prevent="sendChat(chatMessage)">
@@ -192,7 +192,6 @@ import config from '../config'
 import ClipboardJS from "clipboard"
 
 const send = (client, message) => {
-  message.token = localStorage.getItem("token")
   client.send(JSON.stringify(message))
 }
 
@@ -367,7 +366,6 @@ export default {
 
     ws.onopen = () => {
       ws.send(localStorage.getItem("token"))
-      ws.send("Test :)")
     }
 
     ws.onmessage = (event) => {
@@ -378,8 +376,7 @@ export default {
         
         case "hello": {
           send(ws, {
-            header: "join_match",
-            id: this.$route.params.id
+            header: "join_match"
           })
           break
         }
@@ -405,7 +402,7 @@ export default {
         }
 
         case "chat": {
-          this.chat(data.message)
+          this.chat(`<span style="color: ${data.color}">[${data.sender}]</span> <span>${data.message}</span>`)
           break
         }
 

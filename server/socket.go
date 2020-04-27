@@ -7,6 +7,7 @@ import (
 	"duel-masters/db"
 
 	"github.com/gorilla/websocket"
+	"github.com/sirupsen/logrus"
 )
 
 var sockets = make(map[*Socket]Hub)
@@ -15,7 +16,7 @@ var socketsMutex = sync.Mutex{}
 // Socket links a ws connection to a user id and handles safe reading and writing of data
 type Socket struct {
 	conn  *websocket.Conn
-	user  db.User
+	User  db.User
 	hub   Hub
 	ready bool
 	mutex *sync.Mutex
@@ -70,8 +71,10 @@ func (s *Socket) Listen() {
 				continue
 			}
 
-			s.user = u
+			s.User = u
 			s.ready = true
+
+			s.Send(Message{Header: "hello"})
 
 			continue
 
@@ -87,7 +90,9 @@ func (s *Socket) Listen() {
 func (s *Socket) Send(v interface{}) {
 
 	s.mutex.Lock()
-	s.conn.WriteJSON(v)
+	if err := s.conn.WriteJSON(v); err != nil {
+		logrus.Debug(err)
+	}
 	s.mutex.Unlock()
 
 }

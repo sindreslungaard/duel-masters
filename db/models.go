@@ -16,3 +16,13 @@ type User struct {
 	Email       string        `json:"email"`
 	Sessions    []UserSession `json:"-"`
 }
+
+// Deck struct is a player deck
+type Deck struct {
+	UID      string   `json:"uid"`
+	Owner    string   `json:"owner"`
+	Name     string   `json:"name"`
+	Public   bool     `json:"public"`
+	Standard bool     `json:"standard"`
+	Cards    []string `json:"cards"`
+}

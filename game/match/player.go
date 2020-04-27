@@ -17,10 +17,26 @@ const (
 	HIDDENZONE = "hiddenzone"
 )
 
+// PlayerReference ties a player to a websocket connection
+type PlayerReference struct {
+	Player *Player
+	Socket *server.Socket
+}
+
+// NewPlayerReference returns a new player reference
+func NewPlayerReference(p *Player, s *server.Socket) *PlayerReference {
+
+	pr := &PlayerReference{
+		Player: p,
+		Socket: s,
+	}
+
+	return pr
+
+}
+
 // Player holds information about the players state in the match
 type Player struct {
-	socket *server.Socket
-
 	deck       []Card
 	hand       []Card
 	shieldzone []Card
@@ -31,6 +47,26 @@ type Player struct {
 	mutex      *sync.Mutex
 
 	HasChargedMana bool
+	Turn           byte
+}
+
+// NewPlayer returns a new player
+func NewPlayer(turn byte) *Player {
+
+	p := &Player{
+		hand:           make([]Card, 0),
+		shieldzone:     make([]Card, 0),
+		manazone:       make([]Card, 0),
+		graveyard:      make([]Card, 0),
+		battlezone:     make([]Card, 0),
+		hiddenzone:     make([]Card, 0),
+		mutex:          &sync.Mutex{},
+		HasChargedMana: false,
+		Turn:           turn,
+	}
+
+	return p
+
 }
 
 func (p *Player) container(c string) (*[]Card, error) {
