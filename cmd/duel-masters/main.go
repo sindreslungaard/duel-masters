@@ -3,8 +3,8 @@ package main
 import (
 	"os"
 
+	"duel-masters/api"
 	"duel-masters/db"
-	"duel-masters/server"
 
 	"github.com/joho/godotenv"
 	"github.com/sirupsen/logrus"
@@ -24,6 +24,7 @@ func main() {
 	logrus.Info("Starting..")
 
 	db.Connect(os.Getenv("mongo_uri"), os.Getenv("mongo_name"))
-	server.Start(os.Getenv("port"))
+
+	api.Start(os.Getenv("port"))
 
 }

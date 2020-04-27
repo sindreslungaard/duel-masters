@@ -10,7 +10,7 @@ func Creature(card *match.Card, c *match.Context) {
 
 	if _, ok := c.Event.(events.UntapStep); ok {
 
-		if c.Match.PlayerTurn() == card.Player {
+		if c.Match.IsPlayerTurn(card.Player) {
 			card.Tapped = false
 		}
 
@@ -18,7 +18,7 @@ func Creature(card *match.Card, c *match.Context) {
 
 	if _, ok := c.Event.(events.PlayCardEvent); ok {
 
-		if c.Match.PlayerTurn() == card.Player {
+		if c.Match.IsPlayerTurn(card.Player) {
 			card.Player.MoveCard(card.ID, match.HAND, match.BATTLEZONE)
 		}
 

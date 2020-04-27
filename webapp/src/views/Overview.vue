@@ -81,7 +81,7 @@ export default {
                 body: this.wizard
             })
 
-            this.$router.push({ path: '/duel/' + res.data.matchUid + "/" +  res.data.inviteId})
+            this.$router.push({ path: '/duel/' + res.data.id })
 
           } catch(e) {
               try {

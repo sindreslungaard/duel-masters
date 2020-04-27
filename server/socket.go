@@ -9,30 +9,38 @@ import (
 	"github.com/gorilla/websocket"
 )
 
-var sockets = make(map[*Socket]int)
+var sockets = make(map[*Socket]Hub)
 var socketsMutex = sync.Mutex{}
 
 // Socket links a ws connection to a user id and handles safe reading and writing of data
 type Socket struct {
 	conn  *websocket.Conn
 	user  db.User
+	hub   Hub
+	ready bool
 	mutex *sync.Mutex
 }
 
-// newSocket creates and returns a new Socket instance
-func newSocket(c *websocket.Conn, user db.User) *Socket {
+// NewSocket creates and returns a new Socket instance
+func NewSocket(c *websocket.Conn, hub Hub) *Socket {
 
 	s := &Socket{
 		conn:  c,
-		user:  user,
+		hub:   hub,
+		ready: false,
 		mutex: &sync.Mutex{},
 	}
+
+	socketsMutex.Lock()
+	sockets[s] = hub
+	socketsMutex.Unlock()
 
 	return s
 
 }
 
-func (s *Socket) listen() {
+// Listen sets up reader and writer for the socket
+func (s *Socket) Listen() {
 
 	defer func() {
 
@@ -53,7 +61,23 @@ func (s *Socket) listen() {
 			break
 		}
 
-		Parse(s, message)
+		if !s.ready {
+
+			// Look for authorization token as the first message
+			u, err := db.GetUserForToken(string(message))
+
+			if err != nil {
+				continue
+			}
+
+			s.user = u
+			s.ready = true
+
+			continue
+
+		}
+
+		s.hub.Parse(s, message)
 
 	}
 

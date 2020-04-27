@@ -1,32 +1,21 @@
-package server
+package api
 
 import (
 	"context"
+	"net/http"
 	"time"
 
 	"duel-masters/db"
+	"duel-masters/game/match"
+	"duel-masters/server"
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
+	"github.com/gorilla/websocket"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"golang.org/x/crypto/bcrypt"
 )
-
-// GetUserForToken returns a user from the authorization header or returns an error
-func GetUserForToken(c *gin.Context) (db.User, error) {
-
-	collection := db.Collection("users")
-
-	var user db.User
-
-	if err := collection.FindOne(context.TODO(), bson.M{"sessions": bson.M{"$elemMatch": bson.M{"token": c.GetHeader("Authorization")}}}).Decode(&user); err != nil {
-		return db.User{}, err
-	}
-
-	return user, nil
-
-}
 
 type signinReqBody struct {
 	Username string `json:"username" binding:"required"`
@@ -143,5 +132,67 @@ func SignupHandler(c *gin.Context) {
 	}
 
 	c.JSON(200, bson.M{"user": user, "token": session.Token})
+
+}
+
+type matchReqBody struct {
+	Name string `json:"name" binding:"required,min=3,max=100"`
+}
+
+// MatchHandler handles creation of new mathes
+func MatchHandler(c *gin.Context) {
+
+	user, err := db.GetUserForToken(c.GetHeader("Authorization"))
+	if err != nil {
+		c.Status(401)
+		return
+	}
+
+	var reqBody matchReqBody
+	if err := c.ShouldBindJSON(&reqBody); err != nil {
+		c.Status(400)
+		return
+	}
+
+	m := match.New(reqBody.Name, user.UID)
+
+	c.JSON(200, m)
+
+}
+
+var upgrader = websocket.Upgrader{
+	ReadBufferSize:  1024,
+	WriteBufferSize: 1024,
+	CheckOrigin:     func(r *http.Request) bool { return true },
+}
+
+// WS handles websocket upgrade
+func WS(c *gin.Context) {
+
+	hub := c.Param("hub")
+
+	if hub == "lobby" {
+		c.Status(403)
+		return
+	}
+
+	m, err := match.Find(hub)
+
+	if err != nil {
+		c.Status(404)
+		return
+	}
+
+	conn, err := upgrader.Upgrade(c.Writer, c.Request, nil)
+
+	if err != nil {
+		c.Status(500)
+		return
+	}
+
+	s := server.NewSocket(conn, m)
+
+	// Handle the connection in a new goroutine to free up this memory
+	go s.Listen()
 
 }

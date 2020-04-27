@@ -207,7 +207,7 @@ export default {
       wait: "",
 
       loadingDots: "",
-      invite: window.location.host + "/duel/" + this.$route.params.id + "/" + this.$route.params.invite,
+      invite: window.location.host + "/duel/" + this.$route.params.id,
       inviteCopied: false,
       inviteCopyTask: null,
 
@@ -362,11 +362,12 @@ export default {
   created() {
 
     // Connect to the server
-    const ws = new WebSocket("ws://" + window.location.host)
+    const ws = new WebSocket("ws://" + window.location.hostname + "/ws/" + this.$route.params.id)
     this.ws = ws
 
     ws.onopen = () => {
-      send(ws, { header: "connect" })
+      ws.send(localStorage.getItem("token"))
+      ws.send("Test :)")
     }
 
     ws.onmessage = (event) => {
@@ -378,8 +379,7 @@ export default {
         case "hello": {
           send(ws, {
             header: "join_match",
-            matchUid: this.$route.params.id,
-            inviteId: this.$route.params.invite
+            id: this.$route.params.id
           })
           break
         }
