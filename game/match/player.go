@@ -1,9 +1,13 @@
 package match
 
 import (
+	"duel-masters/game/cards"
 	"duel-masters/server"
 	"errors"
 	"sync"
+
+	"github.com/sirupsen/logrus"
+	"github.com/ventu-io/go-shortid"
 )
 
 // Card containers
@@ -48,6 +52,7 @@ type Player struct {
 
 	HasChargedMana bool
 	Turn           byte
+	Ready          bool
 }
 
 // NewPlayer returns a new player
@@ -63,6 +68,7 @@ func NewPlayer(turn byte) *Player {
 		mutex:          &sync.Mutex{},
 		HasChargedMana: false,
 		Turn:           turn,
+		Ready:          false,
 	}
 
 	return p
@@ -88,6 +94,42 @@ func (p *Player) container(c string) (*[]Card, error) {
 		return &p.hiddenzone, nil
 	default:
 		return nil, errors.New("Invalid container")
+	}
+
+}
+
+// CreateDeck initializes a new deck from a list of card ids
+func (p *Player) CreateDeck(deck []string) {
+
+	for _, card := range deck {
+
+		id, err := shortid.Generate()
+
+		if err != nil {
+			logrus.Debug("Failed to generate id for card")
+			continue
+		}
+
+		c := &Card{
+			ID:              id,
+			Player:          p,
+			Tapped:          false,
+			Name:            "",
+			Civ:             "",
+			Family:          "",
+			ManaCost:        1,
+			ManaRequirement: make([]string, 0),
+		}
+
+		cardctor := cards.Cards[card]
+
+		if cardctor == nil {
+			logrus.Warnf("Failed to construct card with uid %s", card)
+			continue
+		}
+
+		cardctor(c)
+
 	}
 
 }

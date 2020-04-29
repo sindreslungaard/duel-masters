@@ -6,6 +6,7 @@ import (
 	"duel-masters/server"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"sync"
 
 	"github.com/google/uuid"
@@ -73,6 +74,21 @@ func (m *Match) IsPlayerTurn(p *Player) bool {
 	return m.Turn == p.Turn
 }
 
+// PlayerForSocket returns the socket for a given player or an error if the socket is not p1 or p2
+func (m *Match) PlayerForSocket(s *server.Socket) (*Player, error) {
+
+	if m.Player1.Socket == s {
+		return m.Player1.Player, nil
+	}
+
+	if m.Player2.Socket == s {
+		return m.Player2.Player, nil
+	}
+
+	return nil, errors.New("Socket is not player1 or player2")
+
+}
+
 // ColorChat sends a chat message with color
 func (m *Match) ColorChat(sender string, message string, color string) {
 	msg := &server.ChatMessage{
@@ -89,6 +105,11 @@ func (m *Match) ColorChat(sender string, message string, color string) {
 // Chat sends a chat message with the default color
 func (m *Match) Chat(sender string, message string) {
 	m.ColorChat(sender, message, "#ccc")
+}
+
+// Start starts the match
+func (m *Match) Start() {
+
 }
 
 // Parse handles websocket messages in this Hub
@@ -210,6 +231,42 @@ func (m *Match) Parse(s *server.Socket, data []byte) {
 			}
 
 			m.ColorChat(s.User.Username, msg.Message, "#79dced")
+		}
+
+	case "choose_deck":
+		{
+
+			p, err := m.PlayerForSocket(s)
+
+			if err != nil {
+				return
+			}
+
+			var msg struct {
+				UID string `json:"uid"`
+			}
+
+			if err := json.Unmarshal(data, &msg); err != nil {
+				return
+			}
+
+			var deck db.Deck
+
+			if err := db.Collection("decks").FindOne(context.TODO(), bson.M{"uid": msg.UID}).Decode(&deck); err != nil {
+				return
+			}
+
+			p.CreateDeck(deck.Cards)
+
+			m.Chat("Server", fmt.Sprintf("%s has chosen their deck", s.User.Username))
+
+			p.Ready = true
+
+		}
+
+	default:
+		{
+			logrus.Debugf("Received message in incorrect format: %v", data)
 		}
 
 	}
