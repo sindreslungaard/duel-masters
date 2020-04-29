@@ -1,10 +1,11 @@
 package match
 
 import (
-	"duel-masters/game/cards"
 	"duel-masters/server"
 	"errors"
+	"math/rand"
 	"sync"
+	"time"
 
 	"github.com/sirupsen/logrus"
 	"github.com/ventu-io/go-shortid"
@@ -41,13 +42,13 @@ func NewPlayerReference(p *Player, s *server.Socket) *PlayerReference {
 
 // Player holds information about the players state in the match
 type Player struct {
-	deck       []Card
-	hand       []Card
-	shieldzone []Card
-	manazone   []Card
-	graveyard  []Card
-	battlezone []Card
-	hiddenzone []Card
+	deck       []*Card
+	hand       []*Card
+	shieldzone []*Card
+	manazone   []*Card
+	graveyard  []*Card
+	battlezone []*Card
+	hiddenzone []*Card
 	mutex      *sync.Mutex
 
 	HasChargedMana bool
@@ -59,12 +60,12 @@ type Player struct {
 func NewPlayer(turn byte) *Player {
 
 	p := &Player{
-		hand:           make([]Card, 0),
-		shieldzone:     make([]Card, 0),
-		manazone:       make([]Card, 0),
-		graveyard:      make([]Card, 0),
-		battlezone:     make([]Card, 0),
-		hiddenzone:     make([]Card, 0),
+		hand:           make([]*Card, 0),
+		shieldzone:     make([]*Card, 0),
+		manazone:       make([]*Card, 0),
+		graveyard:      make([]*Card, 0),
+		battlezone:     make([]*Card, 0),
+		hiddenzone:     make([]*Card, 0),
 		mutex:          &sync.Mutex{},
 		HasChargedMana: false,
 		Turn:           turn,
@@ -75,23 +76,23 @@ func NewPlayer(turn byte) *Player {
 
 }
 
-func (p *Player) container(c string) (*[]Card, error) {
+func (p *Player) container(c string) ([]*Card, error) {
 
 	switch c {
 	case DECK:
-		return &p.deck, nil
+		return p.deck, nil
 	case HAND:
-		return &p.hand, nil
+		return p.hand, nil
 	case SHIELDZONE:
-		return &p.shieldzone, nil
+		return p.shieldzone, nil
 	case MANAZONE:
-		return &p.manazone, nil
+		return p.manazone, nil
 	case GRAVEYARD:
-		return &p.graveyard, nil
+		return p.graveyard, nil
 	case BATTLEZONE:
-		return &p.battlezone, nil
+		return p.battlezone, nil
 	case HIDDENZONE:
-		return &p.hiddenzone, nil
+		return p.hiddenzone, nil
 	default:
 		return nil, errors.New("Invalid container")
 	}
@@ -100,6 +101,10 @@ func (p *Player) container(c string) (*[]Card, error) {
 
 // CreateDeck initializes a new deck from a list of card ids
 func (p *Player) CreateDeck(deck []string) {
+
+	p.mutex.Lock()
+
+	defer p.mutex.Unlock()
 
 	for _, card := range deck {
 
@@ -121,15 +126,86 @@ func (p *Player) CreateDeck(deck []string) {
 			ManaRequirement: make([]string, 0),
 		}
 
-		cardctor := cards.Cards[card]
+		cardctor, err := CardCtor(card)
 
-		if cardctor == nil {
-			logrus.Warnf("Failed to construct card with uid %s", card)
+		if err != nil {
+			logrus.Warn(err)
 			continue
 		}
 
 		cardctor(c)
 
+		p.deck = append(p.deck, c)
+
+	}
+
+}
+
+// ShuffleDeck randomizes the order of cards in the players deck
+func (p *Player) ShuffleDeck() {
+
+	p.mutex.Lock()
+
+	rand.Seed(time.Now().UnixNano())
+	rand.Shuffle(len(p.deck), func(i, j int) { p.deck[i], p.deck[j] = p.deck[j], p.deck[i] })
+
+	p.mutex.Unlock()
+
+}
+
+// InitShieldzone adds 5 cards from the players deck to their shieldzone
+func (p *Player) InitShieldzone() {
+
+	cards := p.PeekDeck(5)
+
+	for _, card := range cards {
+
+		p.MoveCard(card.ID, DECK, SHIELDZONE)
+
+	}
+
+}
+
+// PeekDeck returns references to the next n cards in the deck
+func (p *Player) PeekDeck(n int) []*Card {
+
+	result := make([]*Card, 0)
+
+	p.mutex.Lock()
+
+	if len(p.deck) < n {
+		n = len(p.deck)
+	}
+
+	for i := 0; i < n; i++ {
+		result = append(result, p.deck[i])
+	}
+
+	p.mutex.Unlock()
+
+	return result
+
+}
+
+// DrawCards moves n cards from the players deck to their hand
+func (p *Player) DrawCards(n int) {
+
+	toMove := make([]string, 0)
+
+	p.mutex.Lock()
+
+	if len(p.deck) < n {
+		n = len(p.deck)
+	}
+
+	for i := 0; i < n; i++ {
+		toMove = append(toMove, p.deck[i].ID)
+	}
+
+	p.mutex.Unlock()
+
+	for _, card := range toMove {
+		p.MoveCard(card, DECK, HAND)
 	}
 
 }
@@ -147,7 +223,7 @@ func (p *Player) HasCard(container string, cardID string) bool {
 
 	defer p.mutex.Unlock()
 
-	for _, card := range *c {
+	for _, card := range c {
 		if card.ID == cardID {
 			return true
 		}
@@ -178,19 +254,19 @@ func (p *Player) MoveCard(cardID string, from string, to string) error {
 
 	p.mutex.Lock()
 
-	temp := make([]Card, 0)
+	temp := make([]*Card, 0)
 	var ref *Card
 
-	for _, card := range *cFrom {
+	for _, card := range cFrom {
 		if card.ID != cardID {
 			temp = append(temp, card)
 		}
-		ref = &card
+		ref = card
 	}
 
-	*cFrom = temp
+	cFrom = temp
 
-	*cTo = append(*cTo, *ref)
+	cTo = append(cTo, ref)
 
 	p.mutex.Unlock()
 

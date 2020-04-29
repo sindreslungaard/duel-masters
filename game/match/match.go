@@ -110,6 +110,12 @@ func (m *Match) Chat(sender string, message string) {
 // Start starts the match
 func (m *Match) Start() {
 
+	m.Player1.Player.ShuffleDeck()
+	m.Player2.Player.ShuffleDeck()
+
+	m.Player1.Player.InitShieldzone()
+	m.Player2.Player.InitShieldzone()
+
 }
 
 // Parse handles websocket messages in this Hub
