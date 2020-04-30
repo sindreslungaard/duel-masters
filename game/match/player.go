@@ -5,7 +5,6 @@ import (
 	"errors"
 	"math/rand"
 	"sync"
-	"time"
 
 	"github.com/sirupsen/logrus"
 	"github.com/ventu-io/go-shortid"
@@ -146,7 +145,6 @@ func (p *Player) ShuffleDeck() {
 
 	p.mutex.Lock()
 
-	rand.Seed(time.Now().UnixNano())
 	rand.Shuffle(len(p.deck), func(i, j int) { p.deck[i], p.deck[j] = p.deck[j], p.deck[i] })
 
 	p.mutex.Unlock()

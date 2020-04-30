@@ -7,6 +7,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"math/rand"
 	"sync"
 
 	"github.com/google/uuid"
@@ -42,6 +43,7 @@ func New(matchName string, hostID string) *Match {
 		ID:        id,
 		MatchName: matchName,
 		HostID:    hostID,
+		Turn:      1,
 		Started:   false,
 	}
 
@@ -72,6 +74,17 @@ func Find(id string) (*Match, error) {
 // IsPlayerTurn returns a boolean based on if it is the specified player's turn
 func (m *Match) IsPlayerTurn(p *Player) bool {
 	return m.Turn == p.Turn
+}
+
+// CurrentPlayer returns either player1 or player2 based on who's turn it currently is
+func (m *Match) CurrentPlayer() *PlayerReference {
+
+	if m.Turn == 1 {
+		return m.Player1
+	}
+
+	return m.Player2
+
 }
 
 // PlayerForSocket returns the socket for a given player or an error if the socket is not p1 or p2
@@ -115,6 +128,16 @@ func (m *Match) Start() {
 
 	m.Player1.Player.InitShieldzone()
 	m.Player2.Player.InitShieldzone()
+
+	m.Player1.Player.DrawCards(5)
+	m.Player2.Player.DrawCards(5)
+
+	// match.turn is initialized as 1, so we only change it to 2 if player2 should start
+	if rand.Intn(100) >= 50 {
+		m.Turn = 2
+	}
+
+	m.Chat("Server", fmt.Sprintf("The duel has begun, %s goes first!", m.CurrentPlayer().Socket.User.Username))
 
 }
 

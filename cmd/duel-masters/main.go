@@ -1,7 +1,9 @@
 package main
 
 import (
+	"math/rand"
 	"os"
+	"time"
 
 	"duel-masters/api"
 	"duel-masters/db"
@@ -22,6 +24,8 @@ func main() {
 	if err != nil {
 		logrus.Fatal("Error loading .env file")
 	}
+
+	rand.Seed(time.Now().UnixNano())
 
 	logrus.Info("Starting..")
 
