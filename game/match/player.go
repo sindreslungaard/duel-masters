@@ -260,8 +260,9 @@ func (p *Player) MoveCard(cardID string, from string, to string) error {
 	for _, card := range *cFrom {
 		if card.ID != cardID {
 			temp = append(temp, card)
+		} else {
+			ref = card
 		}
-		ref = card
 	}
 
 	*cFrom = temp
