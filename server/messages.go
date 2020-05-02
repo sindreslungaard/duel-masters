@@ -54,3 +54,9 @@ type MatchStateMessage struct {
 	Header string     `json:"header"`
 	State  MatchState `json:"state"`
 }
+
+// WarningMessage is used to send a warning to a player
+type WarningMessage struct {
+	Header  string `json:"header"`
+	Message string `json:"message"`
+}

@@ -177,6 +177,16 @@ func (m *Match) BroadcastState() {
 
 }
 
+// WarnPlayer sends a warning to the specified player ref
+func WarnPlayer(p *PlayerReference, message string) {
+
+	p.Socket.Send(server.WarningMessage{
+		Header:  "warn",
+		Message: message,
+	})
+
+}
+
 // Parse handles websocket messages in this Hub
 func (m *Match) Parse(s *server.Socket, data []byte) {
 
@@ -347,7 +357,7 @@ func (m *Match) Parse(s *server.Socket, data []byte) {
 			}
 
 			if p.Player.HasChargedMana {
-				// TODO: warn player
+				WarnPlayer(p, "You have already charged mana this round")
 				return
 			}
 
