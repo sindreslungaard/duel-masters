@@ -87,15 +87,15 @@ func (m *Match) CurrentPlayer() *PlayerReference {
 
 }
 
-// PlayerForSocket returns the socket for a given player or an error if the socket is not p1 or p2
-func (m *Match) PlayerForSocket(s *server.Socket) (*Player, error) {
+// PlayerForSocket returns the player ref for a given socker or an error if the socket is not p1 or p2
+func (m *Match) PlayerForSocket(s *server.Socket) (*PlayerReference, error) {
 
 	if m.Player1.Socket == s {
-		return m.Player1.Player, nil
+		return m.Player1, nil
 	}
 
 	if m.Player2.Socket == s {
-		return m.Player2.Player, nil
+		return m.Player2, nil
 	}
 
 	return nil, errors.New("Socket is not player1 or player2")
@@ -321,14 +321,46 @@ func (m *Match) Parse(s *server.Socket, data []byte) {
 				return
 			}
 
-			p.CreateDeck(deck.Cards)
+			p.Player.CreateDeck(deck.Cards)
 
 			m.Chat("Server", fmt.Sprintf("%s has chosen their deck", s.User.Username))
 
-			p.Ready = true
+			p.Player.Ready = true
 
 			if m.Player1.Player.Ready && m.Player2.Player.Ready {
 				m.Start()
+			}
+
+		}
+
+	case "add_to_manazone":
+		{
+
+			p, err := m.PlayerForSocket(s)
+
+			if err != nil {
+				return
+			}
+
+			if m.Turn != p.Player.Turn {
+				return
+			}
+
+			if p.Player.HasChargedMana {
+				// TODO: warn player
+				return
+			}
+
+			var msg struct {
+				ID string `json:"virtualId"`
+			}
+
+			if err := json.Unmarshal(data, &msg); err != nil {
+				return
+			}
+
+			if err := p.Player.MoveCard(msg.ID, HAND, MANAZONE); err == nil {
+				m.BroadcastState()
 			}
 
 		}
