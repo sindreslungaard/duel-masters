@@ -370,6 +370,7 @@ func (m *Match) Parse(s *server.Socket, data []byte) {
 			}
 
 			if err := p.Player.MoveCard(msg.ID, HAND, MANAZONE); err == nil {
+				p.Player.HasChargedMana = true
 				m.BroadcastState()
 			}
 
