@@ -2,9 +2,10 @@ package match
 
 // Card holds information about a specific card
 type Card struct {
-	ID     string
-	Player *Player
-	Tapped bool
+	ID      string
+	ImageID string
+	Player  *Player
+	Tapped  bool
 
 	Name            string
 	Civ             string

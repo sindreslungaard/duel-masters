@@ -59,6 +59,7 @@ type Player struct {
 func NewPlayer(turn byte) *Player {
 
 	p := &Player{
+		deck:           make([]*Card, 0),
 		hand:           make([]*Card, 0),
 		shieldzone:     make([]*Card, 0),
 		manazone:       make([]*Card, 0),
@@ -75,23 +76,23 @@ func NewPlayer(turn byte) *Player {
 
 }
 
-func (p *Player) container(c string) ([]*Card, error) {
+func (p *Player) container(c string) (*[]*Card, error) {
 
 	switch c {
 	case DECK:
-		return p.deck, nil
+		return &p.deck, nil
 	case HAND:
-		return p.hand, nil
+		return &p.hand, nil
 	case SHIELDZONE:
-		return p.shieldzone, nil
+		return &p.shieldzone, nil
 	case MANAZONE:
-		return p.manazone, nil
+		return &p.manazone, nil
 	case GRAVEYARD:
-		return p.graveyard, nil
+		return &p.graveyard, nil
 	case BATTLEZONE:
-		return p.battlezone, nil
+		return &p.battlezone, nil
 	case HIDDENZONE:
-		return p.hiddenzone, nil
+		return &p.hiddenzone, nil
 	default:
 		return nil, errors.New("Invalid container")
 	}
@@ -116,6 +117,7 @@ func (p *Player) CreateDeck(deck []string) {
 
 		c := &Card{
 			ID:              id,
+			ImageID:         card,
 			Player:          p,
 			Tapped:          false,
 			Name:            "",
@@ -221,7 +223,7 @@ func (p *Player) HasCard(container string, cardID string) bool {
 
 	defer p.mutex.Unlock()
 
-	for _, card := range c {
+	for _, card := range *c {
 		if card.ID == cardID {
 			return true
 		}
@@ -255,19 +257,70 @@ func (p *Player) MoveCard(cardID string, from string, to string) error {
 	temp := make([]*Card, 0)
 	var ref *Card
 
-	for _, card := range cFrom {
+	for _, card := range *cFrom {
 		if card.ID != cardID {
 			temp = append(temp, card)
 		}
 		ref = card
 	}
 
-	cFrom = temp
+	*cFrom = temp
 
-	cTo = append(cTo, ref)
+	temp2 := append(*cTo, ref)
+
+	*cTo = temp2
 
 	p.mutex.Unlock()
 
+	logrus.Debugf("Moved %s from %s to %s", cardID, from, to)
+
 	return nil
+
+}
+
+// Denormalized returns a server.PlayerState
+func (p *Player) Denormalized() *server.PlayerState {
+
+	p.mutex.Lock()
+
+	shields := make([]string, 0)
+
+	for _, card := range p.shieldzone {
+		shields = append(shields, card.ID)
+	}
+
+	state := &server.PlayerState{
+		Deck:       len(p.deck),
+		Hand:       denormalizeCards(p.hand),
+		Shieldzone: shields,
+		Manazone:   denormalizeCards(p.manazone),
+		Graveyard:  denormalizeCards(p.graveyard),
+		Battlezone: denormalizeCards(p.battlezone),
+	}
+
+	p.mutex.Unlock()
+
+	return state
+
+}
+
+// denormalizeCards takes an array of *Card and returns an array of server.CardState
+func denormalizeCards(cards []*Card) []server.CardState {
+
+	arr := make([]server.CardState, 0)
+
+	for _, card := range cards {
+		cs := server.CardState{
+			CardID:      card.ID,
+			ImageID:     card.ImageID,
+			Name:        card.Name,
+			Civ:         card.Civ,
+			Tapped:      card.Tapped,
+			CanBePlayed: true,
+		}
+		arr = append(arr, cs)
+	}
+
+	return arr
 
 }

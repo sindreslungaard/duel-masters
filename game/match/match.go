@@ -139,6 +139,42 @@ func (m *Match) Start() {
 
 	m.Chat("Server", fmt.Sprintf("The duel has begun, %s goes first!", m.CurrentPlayer().Socket.User.Username))
 
+	m.BroadcastState()
+
+}
+
+// BroadcastState sends the current game's state to both players, hiding the opponent's hand
+func (m *Match) BroadcastState() {
+
+	player1 := *m.Player1.Player.Denormalized()
+	player2 := *m.Player2.Player.Denormalized()
+
+	p1state := &server.MatchStateMessage{
+		Header: "state_update",
+		State: server.MatchState{
+			MyTurn:       m.Turn == 1,
+			HasAddedMana: m.Player1.Player.HasChargedMana,
+			Me:           player1,
+			Opponent:     player2,
+		},
+	}
+
+	p2state := &server.MatchStateMessage{
+		Header: "state_update",
+		State: server.MatchState{
+			MyTurn:       m.Turn == 2,
+			HasAddedMana: m.Player2.Player.HasChargedMana,
+			Me:           player2,
+			Opponent:     player1,
+		},
+	}
+
+	p1state.State.Opponent.Hand = make([]server.CardState, 0)
+	p2state.State.Opponent.Hand = make([]server.CardState, 0)
+
+	m.Player1.Socket.Send(p1state)
+	m.Player2.Socket.Send(p2state)
+
 }
 
 // Parse handles websocket messages in this Hub
@@ -291,11 +327,15 @@ func (m *Match) Parse(s *server.Socket, data []byte) {
 
 			p.Ready = true
 
+			if m.Player1.Player.Ready && m.Player2.Player.Ready {
+				m.Start()
+			}
+
 		}
 
 	default:
 		{
-			logrus.Debugf("Received message in incorrect format: %v", data)
+			logrus.Debugf("Received message in incorrect format: %v", string(data))
 		}
 
 	}

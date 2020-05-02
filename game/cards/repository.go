@@ -7,5 +7,5 @@ import (
 
 // Cards is a map with all the card id's in the game and corresponding CardConstructor
 var Cards = map[string]match.CardConstructor{
-	"1d72eb3e-5185-449a-a16f-391bd2338343": dm01.AquaHulcus,
+	"57eeb3c3-2561-4841-a381-2e50d17533d1": dm01.AquaHulcus,
 }
