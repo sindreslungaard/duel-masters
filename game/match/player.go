@@ -18,6 +18,7 @@ const (
 	MANAZONE   = "manazone"
 	GRAVEYARD  = "graveyard"
 	BATTLEZONE = "battlezone"
+	SPELLZONE  = "spellzone"
 	HIDDENZONE = "hiddenzone"
 )
 
@@ -48,6 +49,7 @@ type Player struct {
 	graveyard  []*Card
 	battlezone []*Card
 	hiddenzone []*Card
+	spellzone  []*Card
 	mutex      *sync.Mutex
 
 	HasChargedMana bool
@@ -65,6 +67,7 @@ func NewPlayer(turn byte) *Player {
 		manazone:       make([]*Card, 0),
 		graveyard:      make([]*Card, 0),
 		battlezone:     make([]*Card, 0),
+		spellzone:      make([]*Card, 0),
 		hiddenzone:     make([]*Card, 0),
 		mutex:          &sync.Mutex{},
 		HasChargedMana: false,
@@ -91,6 +94,8 @@ func (p *Player) container(c string) (*[]*Card, error) {
 		return &p.graveyard, nil
 	case BATTLEZONE:
 		return &p.battlezone, nil
+	case SPELLZONE:
+		return &p.spellzone, nil
 	case HIDDENZONE:
 		return &p.hiddenzone, nil
 	default:

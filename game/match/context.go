@@ -19,5 +19,5 @@ func (c *Context) ScheduleAfter() {
 
 // InterruptFlow stops the context flow, cancelling the default behaviour
 func (c *Context) InterruptFlow() {
-
+	c.cancel = true
 }

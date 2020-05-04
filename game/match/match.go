@@ -187,6 +187,26 @@ func WarnPlayer(p *PlayerReference, message string) {
 
 }
 
+// HandleFx ...
+func (m *Match) HandleFx() {
+
+	players := make([]*PlayerReference, 0)
+
+	// The player in which turn it is is to be handled first
+	if m.Turn == m.Player1.Player.Turn {
+		players = append(players, m.Player1, m.Player2)
+	} else {
+		players = append(players, m.Player2, m.Player1)
+	}
+
+	for _, p := range players {
+		
+		cards := 
+
+	}
+
+}
+
 // Parse handles websocket messages in this Hub
 func (m *Match) Parse(s *server.Socket, data []byte) {
 
@@ -372,6 +392,21 @@ func (m *Match) Parse(s *server.Socket, data []byte) {
 			if err := p.Player.MoveCard(msg.ID, HAND, MANAZONE); err == nil {
 				p.Player.HasChargedMana = true
 				m.BroadcastState()
+			}
+
+		}
+
+	case "end_turn":
+		{
+
+			p, err := m.PlayerForSocket(s)
+
+			if err != nil {
+				return
+			}
+
+			if m.Turn != p.Player.Turn {
+				return
 			}
 
 		}
