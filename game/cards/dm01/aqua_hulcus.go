@@ -8,7 +8,7 @@ import (
 // AquaHulcus ...
 func AquaHulcus(c *match.Card) {
 
-	c.Name = "bob"
+	c.Name = "Aqua Hulcus"
 
 	c.Use(fx.Creature, func(card *match.Card, c *match.Context) {
 

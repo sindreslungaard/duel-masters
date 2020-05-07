@@ -6,6 +6,7 @@ type Card struct {
 	ImageID string
 	Player  *Player
 	Tapped  bool
+	Zone    string
 
 	Name            string
 	Civ             string

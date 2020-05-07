@@ -125,6 +125,7 @@ func (p *Player) CreateDeck(deck []string) {
 			ImageID:         card,
 			Player:          p,
 			Tapped:          false,
+			Zone:            HAND,
 			Name:            "",
 			Civ:             "",
 			Family:          "",
@@ -239,22 +240,22 @@ func (p *Player) HasCard(container string, cardID string) bool {
 }
 
 // MoveCard tries to move a card from container a to container b
-func (p *Player) MoveCard(cardID string, from string, to string) error {
+func (p *Player) MoveCard(cardID string, from string, to string) (*Card, error) {
 
 	cFrom, err := p.container(from)
 
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	if !p.HasCard(from, cardID) {
-		return errors.New("Card is not in the specified container")
+		return nil, errors.New("Card is not in the specified container")
 	}
 
 	cTo, err := p.container(to)
 
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	p.mutex.Lock()
@@ -276,11 +277,11 @@ func (p *Player) MoveCard(cardID string, from string, to string) error {
 
 	*cTo = temp2
 
+	ref.Zone = to
+
 	p.mutex.Unlock()
 
-	logrus.Debugf("Moved %s from %s to %s", cardID, from, to)
-
-	return nil
+	return ref, nil
 
 }
 

@@ -1,8 +1,8 @@
-package events
+package match
 
 // BeginTurn ...
 // Resolve any summoning sickness from creatures in the battle zone.
-type BeginTurn struct{}
+type BeginTurnStep struct{}
 
 // UntapStep ...
 // Your creatures in the battle zone and cards in your mana zone are untapped. This is forced.
@@ -33,6 +33,6 @@ type AttackStep struct{}
 // The turn finishes after you have no more creatures to attack with.
 type EndStep struct{}
 
-// EndOfTurnTriggers ...
+// EndOfTurnStep ...
 // Any abilities that trigger at "the end of your turn" are resolved now.
-type EndOfTurnTriggers struct{}
+type EndOfTurnStep struct{}

@@ -120,29 +120,6 @@ func (m *Match) Chat(sender string, message string) {
 	m.ColorChat(sender, message, "#ccc")
 }
 
-// Start starts the match
-func (m *Match) Start() {
-
-	m.Player1.Player.ShuffleDeck()
-	m.Player2.Player.ShuffleDeck()
-
-	m.Player1.Player.InitShieldzone()
-	m.Player2.Player.InitShieldzone()
-
-	m.Player1.Player.DrawCards(5)
-	m.Player2.Player.DrawCards(5)
-
-	// match.turn is initialized as 1, so we only change it to 2 if player2 should start
-	if rand.Intn(100) >= 50 {
-		m.Turn = 2
-	}
-
-	m.Chat("Server", fmt.Sprintf("The duel has begun, %s goes first!", m.CurrentPlayer().Socket.User.Username))
-
-	m.BroadcastState()
-
-}
-
 // BroadcastState sends the current game's state to both players, hiding the opponent's hand
 func (m *Match) BroadcastState() {
 
@@ -188,7 +165,7 @@ func WarnPlayer(p *PlayerReference, message string) {
 }
 
 // HandleFx ...
-func (m *Match) HandleFx() {
+func (m *Match) HandleFx(ctx *Context) {
 
 	players := make([]*PlayerReference, 0)
 
@@ -199,11 +176,190 @@ func (m *Match) HandleFx() {
 		players = append(players, m.Player2, m.Player1)
 	}
 
+	cards := make([]*Card, 0)
+
 	for _, p := range players {
-		
-		cards := 
+
+		cards = append(cards, p.Player.battlezone...)
+		cards = append(cards, p.Player.spellzone...)
+		cards = append(cards, p.Player.hand...)
+		cards = append(cards, p.Player.shieldzone...)
 
 	}
+
+	for _, card := range cards {
+
+		for _, h := range card.handlers {
+
+			if ctx.cancel {
+				continue
+			}
+
+			h(card, ctx)
+
+		}
+
+	}
+
+}
+
+// Start starts the match
+func (m *Match) Start() {
+
+	m.Player1.Player.ShuffleDeck()
+	m.Player2.Player.ShuffleDeck()
+
+	m.Player1.Player.InitShieldzone()
+	m.Player2.Player.InitShieldzone()
+
+	m.Player1.Player.DrawCards(5)
+	m.Player2.Player.DrawCards(5)
+
+	// match.turn is initialized as 1, so we only need to change it to 2
+	// The opposite of what's defined here will start because BeginNewTurn() changes it
+	if rand.Intn(100) >= 50 {
+		m.Turn = 2
+	}
+
+	m.Chat("Server", "The duel has begun!")
+
+	m.BeginNewTurn()
+
+}
+
+// BeginNewTurn starts a new turn
+func (m *Match) BeginNewTurn() {
+
+	if m.Turn == 1 {
+		m.Turn = 2
+	} else {
+		m.Turn = 1
+	}
+
+	ctx := NewContext(m, &BeginTurnStep{})
+
+	m.HandleFx(ctx)
+
+	m.CurrentPlayer().Player.HasChargedMana = false
+
+	m.BroadcastState()
+
+	m.UntapStep()
+
+}
+
+// UntapStep ...
+func (m *Match) UntapStep() {
+
+	ctx := NewContext(m, &UntapStep{})
+
+	m.HandleFx(ctx)
+
+	m.StartOfTurnStep()
+
+}
+
+// StartOfTurnStep ...
+func (m *Match) StartOfTurnStep() {
+
+	ctx := NewContext(m, &StartOfTurnStep{})
+
+	m.HandleFx(ctx)
+
+	m.Chat("Server", fmt.Sprintf("Your turn, %s", m.CurrentPlayer().Socket.User.Username))
+
+	m.DrawStep()
+
+}
+
+// DrawStep ...
+func (m *Match) DrawStep() {
+
+	ctx := NewContext(m, &DrawStep{})
+
+	m.HandleFx(ctx)
+
+	m.CurrentPlayer().Player.DrawCards(1)
+
+	m.BroadcastState()
+
+	m.Chat("Server", fmt.Sprintf("%s drew 1 card", m.CurrentPlayer().Socket.User.Username))
+
+	m.ChargeStep()
+
+}
+
+// ChargeStep ...
+func (m *Match) ChargeStep() {
+
+	ctx := NewContext(m, &ChargeStep{})
+
+	m.HandleFx(ctx)
+
+}
+
+// EndStep ...
+func (m *Match) EndStep() {
+
+	ctx := NewContext(m, &EndStep{})
+
+	m.HandleFx(ctx)
+
+	m.Chat("Server", fmt.Sprintf("%s ended their turn", m.CurrentPlayer().Socket.User.Username))
+
+	m.EndOfTurnTriggers()
+
+}
+
+// EndOfTurnTriggers ...
+func (m *Match) EndOfTurnTriggers() {
+
+	ctx := NewContext(m, &EndOfTurnStep{})
+
+	m.HandleFx(ctx)
+
+	m.BeginNewTurn()
+
+}
+
+// EndTurn is called when the player attempts to end their turn
+// If the context is not cancelled by a card, the EndStep is called
+func (m *Match) EndTurn() {
+
+	ctx := NewContext(m, &EndTurnEvent{})
+
+	m.HandleFx(ctx)
+
+	if !ctx.cancel {
+		m.EndStep()
+	}
+
+}
+
+// ChargeMana is called when the player attempts to charge mana
+func (m *Match) ChargeMana(p *PlayerReference, cardID string) {
+
+	if p.Player.HasChargedMana {
+		WarnPlayer(p, "You have already charged mana this round")
+		return
+	}
+
+	if card, err := p.Player.MoveCard(cardID, HAND, MANAZONE); err == nil {
+		p.Player.HasChargedMana = true
+		m.BroadcastState()
+		m.Chat("Server", fmt.Sprintf("%s was added to %s's manazone", card.Name, p.Socket.User.Username))
+	}
+
+}
+
+// PlayCard is called when the player attempts to play a card
+func (m *Match) PlayCard(p *PlayerReference, cardID string) {
+
+	m.HandleFx(NewContext(m, &PlayCardEvent{
+		CardID: cardID,
+	}))
+
+	m.BroadcastState()
 
 }
 
@@ -376,11 +532,6 @@ func (m *Match) Parse(s *server.Socket, data []byte) {
 				return
 			}
 
-			if p.Player.HasChargedMana {
-				WarnPlayer(p, "You have already charged mana this round")
-				return
-			}
-
 			var msg struct {
 				ID string `json:"virtualId"`
 			}
@@ -389,10 +540,7 @@ func (m *Match) Parse(s *server.Socket, data []byte) {
 				return
 			}
 
-			if err := p.Player.MoveCard(msg.ID, HAND, MANAZONE); err == nil {
-				p.Player.HasChargedMana = true
-				m.BroadcastState()
-			}
+			m.ChargeMana(p, msg.ID)
 
 		}
 
@@ -408,6 +556,33 @@ func (m *Match) Parse(s *server.Socket, data []byte) {
 			if m.Turn != p.Player.Turn {
 				return
 			}
+
+			m.EndTurn()
+
+		}
+
+	case "add_to_playzone":
+		{
+
+			p, err := m.PlayerForSocket(s)
+
+			if err != nil {
+				return
+			}
+
+			if m.Turn != p.Player.Turn {
+				return
+			}
+
+			var msg struct {
+				ID string `json:"virtualId"`
+			}
+
+			if err := json.Unmarshal(data, &msg); err != nil {
+				return
+			}
+
+			m.PlayCard(p, msg.ID)
 
 		}
 
