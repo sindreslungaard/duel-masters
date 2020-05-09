@@ -48,14 +48,14 @@ func NewPlayerReference(p *Player, s *server.Socket) *PlayerReference {
 
 // Player holds information about the players state in the match
 type Player struct {
-	Deck       []*Card
-	Hand       []*Card
-	Shieldzone []*Card
-	Manazone   []*Card
-	Graveyard  []*Card
-	Battlezone []*Card
-	Hiddenzone []*Card
-	Spellzone  []*Card
+	deck       []*Card
+	hand       []*Card
+	shieldzone []*Card
+	manazone   []*Card
+	graveyard  []*Card
+	battlezone []*Card
+	hiddenzone []*Card
+	spellzone  []*Card
 
 	mutex *sync.Mutex
 
@@ -70,14 +70,14 @@ type Player struct {
 func NewPlayer(turn byte) *Player {
 
 	p := &Player{
-		Deck:           make([]*Card, 0),
-		Hand:           make([]*Card, 0),
-		Shieldzone:     make([]*Card, 0),
-		Manazone:       make([]*Card, 0),
-		Graveyard:      make([]*Card, 0),
-		Battlezone:     make([]*Card, 0),
-		Spellzone:      make([]*Card, 0),
-		Hiddenzone:     make([]*Card, 0),
+		deck:           make([]*Card, 0),
+		hand:           make([]*Card, 0),
+		shieldzone:     make([]*Card, 0),
+		manazone:       make([]*Card, 0),
+		graveyard:      make([]*Card, 0),
+		battlezone:     make([]*Card, 0),
+		spellzone:      make([]*Card, 0),
+		hiddenzone:     make([]*Card, 0),
 		mutex:          &sync.Mutex{},
 		Action:         make(chan PlayerAction),
 		HasChargedMana: false,
@@ -89,26 +89,52 @@ func NewPlayer(turn byte) *Player {
 
 }
 
-// Container returns one of the player's card zones based on the specified string
-func (p *Player) Container(c string) (*[]*Card, error) {
+// ContainerRef returns a pointer to one of the player's card zones based on the specified string
+func (p *Player) ContainerRef(c string) (*[]*Card, error) {
 
 	switch c {
 	case DECK:
-		return &p.Deck, nil
+		return &p.deck, nil
 	case HAND:
-		return &p.Hand, nil
+		return &p.hand, nil
 	case SHIELDZONE:
-		return &p.Shieldzone, nil
+		return &p.shieldzone, nil
 	case MANAZONE:
-		return &p.Manazone, nil
+		return &p.manazone, nil
 	case GRAVEYARD:
-		return &p.Graveyard, nil
+		return &p.graveyard, nil
 	case BATTLEZONE:
-		return &p.Battlezone, nil
+		return &p.battlezone, nil
 	case SPELLZONE:
-		return &p.Spellzone, nil
+		return &p.spellzone, nil
 	case HIDDENZONE:
-		return &p.Hiddenzone, nil
+		return &p.hiddenzone, nil
+	default:
+		return nil, errors.New("Invalid container")
+	}
+
+}
+
+// Container returns a copy of one of the player's card zones based on the specified string
+func (p *Player) Container(c string) ([]*Card, error) {
+
+	switch c {
+	case DECK:
+		return p.deck, nil
+	case HAND:
+		return p.hand, nil
+	case SHIELDZONE:
+		return p.shieldzone, nil
+	case MANAZONE:
+		return p.manazone, nil
+	case GRAVEYARD:
+		return p.graveyard, nil
+	case BATTLEZONE:
+		return p.battlezone, nil
+	case SPELLZONE:
+		return p.spellzone, nil
+	case HIDDENZONE:
+		return p.hiddenzone, nil
 	default:
 		return nil, errors.New("Invalid container")
 	}
@@ -137,9 +163,9 @@ func (p *Player) CreateDeck(deck []string) {
 			Player:          p,
 			Tapped:          false,
 			Zone:            HAND,
-			Name:            "",
-			Civ:             "",
-			Family:          "",
+			Name:            "undefined_card",
+			Civ:             "undefind_civ",
+			Family:          "undefined_family",
 			ManaCost:        1,
 			ManaRequirement: make([]string, 0),
 		}
@@ -153,7 +179,7 @@ func (p *Player) CreateDeck(deck []string) {
 
 		cardctor(c)
 
-		p.Deck = append(p.Deck, c)
+		p.deck = append(p.deck, c)
 
 	}
 
@@ -164,7 +190,7 @@ func (p *Player) ShuffleDeck() {
 
 	p.mutex.Lock()
 
-	rand.Shuffle(len(p.Deck), func(i, j int) { p.Deck[i], p.Deck[j] = p.Deck[j], p.Deck[i] })
+	rand.Shuffle(len(p.deck), func(i, j int) { p.deck[i], p.deck[j] = p.deck[j], p.deck[i] })
 
 	p.mutex.Unlock()
 
@@ -190,12 +216,12 @@ func (p *Player) PeekDeck(n int) []*Card {
 
 	p.mutex.Lock()
 
-	if len(p.Deck) < n {
-		n = len(p.Deck)
+	if len(p.deck) < n {
+		n = len(p.deck)
 	}
 
 	for i := 0; i < n; i++ {
-		result = append(result, p.Deck[i])
+		result = append(result, p.deck[i])
 	}
 
 	p.mutex.Unlock()
@@ -211,12 +237,12 @@ func (p *Player) DrawCards(n int) {
 
 	p.mutex.Lock()
 
-	if len(p.Deck) < n {
-		n = len(p.Deck)
+	if len(p.deck) < n {
+		n = len(p.deck)
 	}
 
 	for i := 0; i < n; i++ {
-		toMove = append(toMove, p.Deck[i].ID)
+		toMove = append(toMove, p.deck[i].ID)
 	}
 
 	p.mutex.Unlock()
@@ -240,7 +266,7 @@ func (p *Player) HasCard(container string, cardID string) bool {
 
 	defer p.mutex.Unlock()
 
-	for _, card := range *c {
+	for _, card := range c {
 		if card.ID == cardID {
 			return true
 		}
@@ -250,10 +276,33 @@ func (p *Player) HasCard(container string, cardID string) bool {
 
 }
 
+// GetCard returns a pointer to a Card by its ID and container
+func (p *Player) GetCard(id string, container string) (*Card, error) {
+
+	c, err := p.Container(container)
+
+	if err != nil {
+		return nil, err
+	}
+
+	p.mutex.Lock()
+
+	defer p.mutex.Unlock()
+
+	for _, card := range c {
+		if card.ID == id {
+			return card, nil
+		}
+	}
+
+	return nil, errors.New("Card was not found")
+
+}
+
 // MoveCard tries to move a card from container a to container b
 func (p *Player) MoveCard(cardID string, from string, to string) (*Card, error) {
 
-	cFrom, err := p.Container(from)
+	cFrom, err := p.ContainerRef(from)
 
 	if err != nil {
 		return nil, err
@@ -263,7 +312,7 @@ func (p *Player) MoveCard(cardID string, from string, to string) (*Card, error) 
 		return nil, errors.New("Card is not in the specified container")
 	}
 
-	cTo, err := p.Container(to)
+	cTo, err := p.ContainerRef(to)
 
 	if err != nil {
 		return nil, err
@@ -296,6 +345,32 @@ func (p *Player) MoveCard(cardID string, from string, to string) (*Card, error) 
 
 }
 
+// CanPlayCard returns true or false based on if the specified card can be played with the specified mana
+func (p *Player) CanPlayCard(card *Card, mana []*Card) bool {
+
+	untappedMana := make([]*Card, 0)
+	for _, card := range mana {
+		if !card.Tapped {
+			untappedMana = append(untappedMana, card)
+		}
+	}
+
+	if card.ManaCost > len(untappedMana) {
+		return false
+	}
+
+	for _, manaCard := range untappedMana {
+		for _, civ := range card.ManaRequirement {
+			if manaCard.Civ == civ {
+				return true
+			}
+		}
+	}
+
+	return false
+
+}
+
 // Denormalized returns a server.PlayerState
 func (p *Player) Denormalized() *server.PlayerState {
 
@@ -303,17 +378,17 @@ func (p *Player) Denormalized() *server.PlayerState {
 
 	shields := make([]string, 0)
 
-	for _, card := range p.Shieldzone {
+	for _, card := range p.shieldzone {
 		shields = append(shields, card.ID)
 	}
 
 	state := &server.PlayerState{
-		Deck:       len(p.Deck),
-		Hand:       denormalizeCards(p.Hand),
+		Deck:       len(p.deck),
+		Hand:       denormalizeCards(p.hand),
 		Shieldzone: shields,
-		Manazone:   denormalizeCards(p.Manazone),
-		Graveyard:  denormalizeCards(p.Graveyard),
-		Battlezone: denormalizeCards(p.Battlezone),
+		Manazone:   denormalizeCards(p.manazone),
+		Graveyard:  denormalizeCards(p.graveyard),
+		Battlezone: denormalizeCards(p.battlezone),
 	}
 
 	p.mutex.Unlock()

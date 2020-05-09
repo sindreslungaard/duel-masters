@@ -80,7 +80,7 @@ func (s *Socket) Listen() {
 
 		}
 
-		s.hub.Parse(s, message)
+		go s.hub.Parse(s, message)
 
 	}
 

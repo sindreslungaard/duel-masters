@@ -185,6 +185,14 @@ func (m *Match) WarnPlayer(p *Player, message string) {
 
 }
 
+// ActionWarning adds an error message to the players current action popup
+func (m *Match) ActionWarning(p *Player, message string) {
+	m.PlayerRef(p).Socket.Send(server.ActionWarningMessage{
+		Header:  "action_error",
+		Message: message,
+	})
+}
+
 // HandleFx ...
 func (m *Match) HandleFx(ctx *Context) {
 
@@ -201,10 +209,10 @@ func (m *Match) HandleFx(ctx *Context) {
 
 	for _, p := range players {
 
-		cards = append(cards, p.Player.Battlezone...)
-		cards = append(cards, p.Player.Spellzone...)
-		cards = append(cards, p.Player.Hand...)
-		cards = append(cards, p.Player.Shieldzone...)
+		cards = append(cards, p.Player.battlezone...)
+		cards = append(cards, p.Player.spellzone...)
+		cards = append(cards, p.Player.hand...)
+		cards = append(cards, p.Player.shieldzone...)
 
 	}
 
@@ -260,6 +268,13 @@ func (m *Match) NewMultipartAction(player *Player, cards map[string][]*Card, min
 
 	m.PlayerRef(player).Socket.Send(msg)
 
+}
+
+// CloseAction closes the card selection popup for the given player
+func (m *Match) CloseAction(p *Player) {
+	m.PlayerRef(p).Socket.Send(server.Message{
+		Header: "close_action",
+	})
 }
 
 // Start starts the match
@@ -654,11 +669,25 @@ func (m *Match) Parse(s *server.Socket, data []byte) {
 				return
 			}
 
-			var msg PlayerAction
+			msg := PlayerAction{}
 
 			if err := json.Unmarshal(data, &msg); err != nil {
-				Warn(p, "Invalid selection")
+				m.ActionWarning(p.Player, "Invalid selection")
 				return
+			}
+
+			// Check to see if the client is trying something fishy with selecting the same card multiple times
+			for _, c := range msg.Cards {
+				count := 0
+				for _, c2 := range msg.Cards {
+					if c == c2 {
+						count++
+					}
+				}
+				if count >= 2 {
+					m.ActionWarning(p.Player, "You cannot select the same card multiple times")
+					return
+				}
 			}
 
 			p.Player.Action <- msg

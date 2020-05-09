@@ -45,6 +45,7 @@
       </div>
       <div @click="chooseAction()" class="btn">Choose</div>
       <div @click="cancelAction()" v-if="action.cancellable" class="btn">Close</div>
+      <span style="color: red">{{ actionError }}</span>
     </div>
 
     <!-- Lobby -->
@@ -286,7 +287,7 @@ export default {
       if(!this.action || !this.action.cancellable) {
         return
       }
-      this.ws.send(JSON.stringify({ header: "action", response: { cancel: true }}))
+      this.ws.send(JSON.stringify({ header: "action",  cancel: true }))
     },
 
     chooseAction() {
@@ -297,7 +298,7 @@ export default {
       for(let card of this.actionSelects) {
         cards.push(card.virtualId)
       }
-      this.ws.send(JSON.stringify({ header: "action", response: { cards, cancel: false }}))
+      this.ws.send(JSON.stringify({ header: "action", cards, cancel: false }))
     },
 
     addToManazone() {
@@ -856,7 +857,7 @@ export default {
   width: 300px;
   border-radius: 4px;
   background: #36393F;
-  z-index: 1000;
+  z-index: 3005;
   left: calc(50% - 300px / 2);
   top: 40vh;
   padding: 10px;

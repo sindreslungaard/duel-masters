@@ -9,11 +9,12 @@ import (
 func AquaHulcus(c *match.Card) {
 
 	c.Name = "Aqua Hulcus"
-	// ...
+	c.Civ = "undefind_civ"
+	c.Family = "undefined_family"
+	c.ManaCost = 1
+	c.ManaRequirement = []string{"test", "test2"}
 
 	// Use existing middlewares, or define new ones
-	c.Use(fx.Playable, fx.Creature, func(card *match.Card, c *match.Context) {
-
-	})
+	c.Use(fx.Playable, fx.Creature)
 
 }
