@@ -60,3 +60,23 @@ type WarningMessage struct {
 	Header  string `json:"header"`
 	Message string `json:"message"`
 }
+
+// ActionMessage is used to prompt the user to make a selection of the specified cards
+type ActionMessage struct {
+	Header        string      `json:"header"`
+	Cards         []CardState `json:"cards"`
+	Text          string      `json:"text"`
+	MinSelections int         `json:"minSelections"`
+	MaxSelections int         `json:"maxSelections"`
+	Cancellable   bool        `json:"cancellable"`
+}
+
+// MultipartActionMessage is used to prompt the user to make a selection of the specified cards
+type MultipartActionMessage struct {
+	Header        string                 `json:"header"`
+	Cards         map[string][]CardState `json:"cards"`
+	Text          string                 `json:"text"`
+	MinSelections int                    `json:"minSelections"`
+	MaxSelections int                    `json:"maxSelections"`
+	Cancellable   bool                   `json:"Cancellable"`
+}

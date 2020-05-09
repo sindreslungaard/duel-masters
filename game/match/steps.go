@@ -1,6 +1,6 @@
 package match
 
-// BeginTurn ...
+// BeginTurnStep ...
 // Resolve any summoning sickness from creatures in the battle zone.
 type BeginTurnStep struct{}
 

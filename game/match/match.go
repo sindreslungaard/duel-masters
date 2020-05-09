@@ -102,6 +102,17 @@ func (m *Match) PlayerForSocket(s *server.Socket) (*PlayerReference, error) {
 
 }
 
+// PlayerRef returns the player ref for a given player
+func (m *Match) PlayerRef(p *Player) *PlayerReference {
+
+	if m.Player1.Player == p {
+		return m.Player1
+	}
+
+	return m.Player2
+
+}
+
 // ColorChat sends a chat message with color
 func (m *Match) ColorChat(sender string, message string, color string) {
 	msg := &server.ChatMessage{
@@ -154,10 +165,20 @@ func (m *Match) BroadcastState() {
 
 }
 
-// WarnPlayer sends a warning to the specified player ref
-func WarnPlayer(p *PlayerReference, message string) {
+// Warn sends a warning to the specified player ref
+func Warn(p *PlayerReference, message string) {
 
 	p.Socket.Send(server.WarningMessage{
+		Header:  "warn",
+		Message: message,
+	})
+
+}
+
+// WarnPlayer sends a warning to the specified player
+func (m *Match) WarnPlayer(p *Player, message string) {
+
+	m.PlayerRef(p).Socket.Send(server.WarningMessage{
 		Header:  "warn",
 		Message: message,
 	})
@@ -180,10 +201,10 @@ func (m *Match) HandleFx(ctx *Context) {
 
 	for _, p := range players {
 
-		cards = append(cards, p.Player.battlezone...)
-		cards = append(cards, p.Player.spellzone...)
-		cards = append(cards, p.Player.hand...)
-		cards = append(cards, p.Player.shieldzone...)
+		cards = append(cards, p.Player.Battlezone...)
+		cards = append(cards, p.Player.Spellzone...)
+		cards = append(cards, p.Player.Hand...)
+		cards = append(cards, p.Player.Shieldzone...)
 
 	}
 
@@ -200,6 +221,44 @@ func (m *Match) HandleFx(ctx *Context) {
 		}
 
 	}
+
+}
+
+// NewAction prompts the user to make a selection of the specified []Cards
+func (m *Match) NewAction(player *Player, cards []*Card, minSelections int, maxSelections int, text string, cancellable bool) {
+
+	msg := &server.ActionMessage{
+		Header:        "action",
+		Cards:         denormalizeCards(cards),
+		Text:          text,
+		MinSelections: minSelections,
+		MaxSelections: maxSelections,
+		Cancellable:   cancellable,
+	}
+
+	m.PlayerRef(player).Socket.Send(msg)
+
+}
+
+// NewMultipartAction prompts the user to make a selection of the specified {string: []Cards}
+func (m *Match) NewMultipartAction(player *Player, cards map[string][]*Card, minSelections int, maxSelections int, text string, cancellable bool) {
+
+	cardMap := make(map[string][]server.CardState)
+
+	for key, cards := range cards {
+		cardMap[key] = denormalizeCards(cards)
+	}
+
+	msg := &server.MultipartActionMessage{
+		Header:        "action",
+		Cards:         cardMap,
+		Text:          text,
+		MinSelections: minSelections,
+		MaxSelections: maxSelections,
+		Cancellable:   cancellable,
+	}
+
+	m.PlayerRef(player).Socket.Send(msg)
 
 }
 
@@ -340,7 +399,7 @@ func (m *Match) EndTurn() {
 func (m *Match) ChargeMana(p *PlayerReference, cardID string) {
 
 	if p.Player.HasChargedMana {
-		WarnPlayer(p, "You have already charged mana this round")
+		Warn(p, "You have already charged mana this round")
 		return
 	}
 
@@ -583,6 +642,26 @@ func (m *Match) Parse(s *server.Socket, data []byte) {
 			}
 
 			m.PlayCard(p, msg.ID)
+
+		}
+
+	case "action":
+		{
+
+			p, err := m.PlayerForSocket(s)
+
+			if err != nil {
+				return
+			}
+
+			var msg PlayerAction
+
+			if err := json.Unmarshal(data, &msg); err != nil {
+				Warn(p, "Invalid selection")
+				return
+			}
+
+			p.Player.Action <- msg
 
 		}
 

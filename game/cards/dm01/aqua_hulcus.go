@@ -9,8 +9,10 @@ import (
 func AquaHulcus(c *match.Card) {
 
 	c.Name = "Aqua Hulcus"
+	// ...
 
-	c.Use(fx.Creature, func(card *match.Card, c *match.Context) {
+	// Use existing middlewares, or define new ones
+	c.Use(fx.Playable, fx.Creature, func(card *match.Card, c *match.Context) {
 
 	})
 
