@@ -403,13 +403,22 @@ func denormalizeCards(cards []*Card) []server.CardState {
 	arr := make([]server.CardState, 0)
 
 	for _, card := range cards {
+
+		canBePlayed := true
+
+		mana, err := card.Player.Container(MANAZONE)
+
+		if err == nil {
+			canBePlayed = card.Player.CanPlayCard(card, mana)
+		}
+
 		cs := server.CardState{
 			CardID:      card.ID,
 			ImageID:     card.ImageID,
 			Name:        card.Name,
 			Civ:         card.Civ,
 			Tapped:      card.Tapped,
-			CanBePlayed: true,
+			CanBePlayed: canBePlayed,
 		}
 		arr = append(arr, cs)
 	}
