@@ -3,6 +3,7 @@ package match
 import (
 	"duel-masters/server"
 	"errors"
+	"fmt"
 	"math/rand"
 	"sync"
 
@@ -64,10 +65,12 @@ type Player struct {
 	HasChargedMana bool
 	Turn           byte
 	Ready          bool
+
+	match *Match
 }
 
 // NewPlayer returns a new player
-func NewPlayer(turn byte) *Player {
+func NewPlayer(match *Match, turn byte) *Player {
 
 	p := &Player{
 		deck:           make([]*Card, 0),
@@ -83,6 +86,7 @@ func NewPlayer(turn byte) *Player {
 		HasChargedMana: false,
 		Turn:           turn,
 		Ready:          false,
+		match:          match,
 	}
 
 	return p
@@ -251,6 +255,12 @@ func (p *Player) DrawCards(n int) {
 		p.MoveCard(card, DECK, HAND)
 	}
 
+	if n > 1 {
+		p.match.Chat("Server", fmt.Sprintf("%s drew %v cards", p.match.PlayerRef(p).Socket.User.Username, n))
+	} else {
+		p.match.Chat("Server", fmt.Sprintf("%s drew %v card", p.match.PlayerRef(p).Socket.User.Username, n))
+	}
+
 }
 
 // HasCard checks if a container has a card
@@ -340,6 +350,12 @@ func (p *Player) MoveCard(cardID string, from string, to string) (*Card, error) 
 	ref.Zone = to
 
 	p.mutex.Unlock()
+
+	p.match.HandleFx(NewContext(p.match, &CardMoved{
+		CardID: ref.ID,
+		From:   from,
+		To:     to,
+	}))
 
 	return ref, nil
 

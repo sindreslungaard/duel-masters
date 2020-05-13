@@ -230,6 +230,12 @@ func (m *Match) HandleFx(ctx *Context) {
 
 	}
 
+	for _, h := range ctx.postFxs {
+
+		h()
+
+	}
+
 }
 
 // NewAction prompts the user to make a selection of the specified []Cards
@@ -357,8 +363,6 @@ func (m *Match) DrawStep() {
 
 	m.BroadcastState()
 
-	m.Chat("Server", fmt.Sprintf("%s drew 1 card", m.CurrentPlayer().Socket.User.Username))
-
 	m.ChargeStep()
 
 }
@@ -464,7 +468,7 @@ func (m *Match) Parse(s *server.Socket, data []byte) {
 					return
 				}
 
-				p := NewPlayer(1)
+				p := NewPlayer(m, 1)
 
 				m.Player1 = NewPlayerReference(p, s)
 
@@ -479,7 +483,7 @@ func (m *Match) Parse(s *server.Socket, data []byte) {
 					return
 				}
 
-				p := NewPlayer(2)
+				p := NewPlayer(m, 2)
 
 				m.Player2 = NewPlayerReference(p, s)
 

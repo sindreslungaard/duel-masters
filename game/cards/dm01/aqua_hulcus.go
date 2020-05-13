@@ -1,6 +1,8 @@
 package dm01
 
 import (
+	"duel-masters/game/civ"
+	"duel-masters/game/family"
 	"duel-masters/game/fx"
 	"duel-masters/game/match"
 )
@@ -9,12 +11,11 @@ import (
 func AquaHulcus(c *match.Card) {
 
 	c.Name = "Aqua Hulcus"
-	c.Civ = "undefind_civ"
-	c.Family = "undefined_family"
-	c.ManaCost = 1
-	c.ManaRequirement = []string{"test", "test2"}
+	c.Civ = civ.Water
+	c.Family = family.LiquidPeople
+	c.ManaCost = 3
+	c.ManaRequirement = []string{civ.Water}
 
-	// Use existing middlewares, or define new ones
-	c.Use(fx.Playable, fx.Creature)
+	c.Use(fx.Creature, fx.Draw1)
 
 }

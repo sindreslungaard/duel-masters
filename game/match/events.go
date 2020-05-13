@@ -13,3 +13,10 @@ type PlayCardEvent struct {
 type ChargeManaEvent struct {
 	CardID string
 }
+
+// CardMoved is fired from the *Player.MoveCard method after moving a card between containers
+type CardMoved struct {
+	CardID string
+	From   string
+	To     string
+}
