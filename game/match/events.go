@@ -20,3 +20,9 @@ type CardMoved struct {
 	From   string
 	To     string
 }
+
+// AttackPlayer is fired when the player attempts to use a creature to attack the player
+type AttackPlayer struct {
+	CardID   string
+	Blockers []*Card
+}

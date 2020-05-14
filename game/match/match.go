@@ -113,6 +113,15 @@ func (m *Match) PlayerRef(p *Player) *PlayerReference {
 
 }
 
+// Opponent returns the opponent of the given player
+func (m *Match) Opponent(p *Player) *Player {
+	if m.Player1.Player == p {
+		return m.Player2.Player
+	}
+
+	return m.Player1.Player
+}
+
 // ColorChat sends a chat message with color
 func (m *Match) ColorChat(sender string, message string, color string) {
 	msg := &server.ChatMessage{
@@ -221,7 +230,7 @@ func (m *Match) HandleFx(ctx *Context) {
 		for _, h := range card.handlers {
 
 			if ctx.cancel {
-				continue
+				return
 			}
 
 			h(card, ctx)
@@ -435,6 +444,25 @@ func (m *Match) PlayCard(p *PlayerReference, cardID string) {
 
 	m.HandleFx(NewContext(m, &PlayCardEvent{
 		CardID: cardID,
+	}))
+
+	m.BroadcastState()
+
+}
+
+// AttackPlayer is called when the player attempts to attach the opposing player
+func (m *Match) AttackPlayer(p *PlayerReference, cardID string) {
+
+	_, err := p.Player.GetCard(cardID, BATTLEZONE)
+
+	if err != nil {
+		Warn(p, "The creature you tried to attack with is not in the battlezone")
+		return
+	}
+
+	m.HandleFx(NewContext(m, &AttackPlayer{
+		CardID:   cardID,
+		Blockers: make([]*Card, 0),
 	}))
 
 	m.BroadcastState()
@@ -695,6 +723,31 @@ func (m *Match) Parse(s *server.Socket, data []byte) {
 			}
 
 			p.Player.Action <- msg
+
+		}
+
+	case "attack_player":
+		{
+
+			p, err := m.PlayerForSocket(s)
+
+			if err != nil {
+				return
+			}
+
+			if m.Turn != p.Player.Turn {
+				return
+			}
+
+			var msg struct {
+				ID string `json:"virtualId"`
+			}
+
+			if err := json.Unmarshal(data, &msg); err != nil {
+				return
+			}
+
+			m.AttackPlayer(p, msg.ID)
 
 		}
 

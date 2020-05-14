@@ -1,6 +1,7 @@
 package fx
 
 import (
+	"duel-masters/game/cnd"
 	"duel-masters/game/match"
 	"fmt"
 )
@@ -8,7 +9,16 @@ import (
 // Creature has default behaviours for creatures
 func Creature(card *match.Card, ctx *match.Context) {
 
-	// Untap the card at the UntapStep
+	// Resolve summoning sickness
+	if _, ok := ctx.Event.(*match.BeginTurnStep); ok {
+
+		if ctx.Match.IsPlayerTurn(card.Player) && card.HasCondition(cnd.SummoningSickness) {
+			card.RemoveCondition(cnd.SummoningSickness)
+		}
+
+	}
+
+	// Untap the card
 	if _, ok := ctx.Event.(*match.UntapStep); ok {
 
 		if ctx.Match.IsPlayerTurn(card.Player) {
@@ -17,7 +27,7 @@ func Creature(card *match.Card, ctx *match.Context) {
 
 	}
 
-	// Check for and tap required mana when played, move to the battlezone
+	// Add to battlezone
 	if event, ok := ctx.Event.(*match.PlayCardEvent); ok {
 
 		// Is this event for me or someone else?
@@ -82,12 +92,77 @@ func Creature(card *match.Card, ctx *match.Context) {
 					mana.Tapped = true
 				}
 
-				card.Player.MoveCard(card.ID, match.HAND, match.BATTLEZONE)
+				card.AddCondition(cnd.SummoningSickness)
 
-				ctx.Match.BroadcastState()
+				card.Player.MoveCard(card.ID, match.HAND, match.BATTLEZONE)
 
 				break
 
+			}
+
+		})
+
+	}
+
+	// Attack the player
+	if event, ok := ctx.Event.(*match.AttackPlayer); ok {
+
+		// Is this event for me or someone else?
+		if event.CardID != card.ID {
+			return
+		}
+
+		if card.HasCondition(cnd.SummoningSickness) {
+			ctx.Match.WarnPlayer(card.Player, fmt.Sprintf("%s cannot be played this turn as it has summoning sickness", card.Name))
+			ctx.InterruptFlow()
+			return
+		}
+
+		// Do this last in case any other cards want to interrupt the flow
+		ctx.ScheduleAfter(func() {
+
+			opponent := ctx.Match.Opponent(card.Player)
+
+			// Allow the opponent to block if they can
+			if len(event.Blockers) > 0 {
+
+				ctx.Match.NewAction(opponent, event.Blockers, 1, 1, "You are being attacked. Choose a creature to block the attack with or close to not block the attack.", true)
+
+				for {
+
+					action := <-opponent.Action
+
+					if action.Cancel {
+						ctx.Match.CloseAction(opponent)
+						break
+					}
+
+					if len(action.Cards) != 1 || !match.AssertCardsIn(event.Blockers, action.Cards[0]) {
+						ctx.Match.ActionWarning(opponent, "Your selection of cards does not fulfill the requirements")
+						continue
+					}
+
+					card, err := opponent.GetCard(action.Cards[0], match.BATTLEZONE)
+
+					if err != nil {
+						ctx.Match.ActionWarning(opponent, "The card you selected is not in the battlefield")
+						continue
+					}
+
+					// ...
+
+				}
+
+			}
+
+			shieldzone, err := opponent.Container(match.SHIELDZONE)
+
+			if err != nil {
+				return
+			}
+
+			if len(shieldzone) < 1 {
+				// TODO: Attack the player, WIN if no blockers
 			}
 
 		})
