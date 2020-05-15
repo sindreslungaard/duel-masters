@@ -106,7 +106,7 @@ func Creature(card *match.Card, ctx *match.Context) {
 		}
 
 		if card.HasCondition(cnd.SummoningSickness) {
-			ctx.Match.WarnPlayer(card.Player, fmt.Sprintf("%s cannot be played this turn as it has summoning sickness", card.Name))
+			ctx.Match.WarnPlayer(card.Player, fmt.Sprintf("%s cannot attack this turn as it has summoning sickness", card.Name))
 			ctx.InterruptFlow()
 			return
 		}
@@ -239,6 +239,123 @@ func Creature(card *match.Card, ctx *match.Context) {
 				}
 
 			}
+
+		})
+
+	}
+
+	// Attack a creature
+	if event, ok := ctx.Event.(*match.AttackCreature); ok {
+
+		// Is this event for me or someone else?
+		if event.CardID != card.ID {
+			return
+		}
+
+		if card.HasCondition(cnd.SummoningSickness) {
+			ctx.Match.WarnPlayer(card.Player, fmt.Sprintf("%s cannot attack this turn as it has summoning sickness", card.Name))
+			ctx.InterruptFlow()
+			return
+		}
+
+		// Do this last in case any other cards want to interrupt the flow
+		ctx.ScheduleAfter(func() {
+
+			opponent := ctx.Match.Opponent(card.Player)
+
+			battlezone, err := opponent.Container(match.BATTLEZONE)
+
+			if err != nil {
+				return
+			}
+
+			attackable := make([]*match.Card, 0)
+
+			for _, c := range battlezone {
+				if c.Tapped || card.HasCondition(cnd.AttackUntapped) {
+					attackable = append(attackable, c)
+				}
+			}
+
+			attackedCreatures := make([]*match.Card, 0)
+
+			ctx.Match.NewAction(card.Player, attackable, 1, 1, "Select the creature to attack", true)
+
+			for {
+
+				action := <-card.Player.Action
+
+				if action.Cancel {
+					ctx.Match.CloseAction(card.Player)
+					return
+				}
+
+				if len(action.Cards) != 1 || !match.AssertCardsIn(attackable, action.Cards[0]) {
+					ctx.Match.ActionWarning(card.Player, "Your selection of cards does not fulfill the requirements")
+					continue
+				}
+
+				c, err := opponent.GetCard(action.Cards[0], match.BATTLEZONE)
+
+				if err != nil {
+					return
+				}
+
+				attackedCreatures = append(attackedCreatures, c)
+
+				ctx.Match.CloseAction(card.Player)
+
+				break
+
+			}
+
+			if len(attackedCreatures) < 1 {
+				return
+			}
+
+			c := attackedCreatures[0]
+
+			card.Tapped = true
+
+			// Allow the opponent to block if they can
+			if len(event.Blockers) > 0 {
+
+				ctx.Match.NewAction(opponent, event.Blockers, 1, 1, fmt.Sprintf("%s (%v) is attacking %s (%v). Choose a creature to block the attack with or close to not block the attack.", card.Name, ctx.Match.GetPower(card, true), c.Name, ctx.Match.GetPower(c, false)), true)
+
+				for {
+
+					action := <-opponent.Action
+
+					if action.Cancel {
+						ctx.Match.CloseAction(opponent)
+						break
+					}
+
+					if len(action.Cards) != 1 || !match.AssertCardsIn(event.Blockers, action.Cards[0]) {
+						ctx.Match.ActionWarning(opponent, "Your selection of cards does not fulfill the requirements")
+						continue
+					}
+
+					blocker, err := opponent.GetCard(action.Cards[0], match.BATTLEZONE)
+
+					if err != nil {
+						ctx.Match.ActionWarning(opponent, "The card you selected is not in the battlefield")
+						continue
+					}
+
+					blocker.Tapped = true
+
+					ctx.Match.CloseAction(opponent)
+
+					ctx.Match.Battle(card, blocker)
+
+					return
+
+				}
+
+			}
+
+			ctx.Match.Battle(card, c)
 
 		})
 

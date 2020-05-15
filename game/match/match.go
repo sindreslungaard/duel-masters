@@ -585,6 +585,25 @@ func (m *Match) AttackPlayer(p *PlayerReference, cardID string) {
 
 }
 
+// AttackCreature is called when the player attempts to attack the opposing player
+func (m *Match) AttackCreature(p *PlayerReference, cardID string) {
+
+	_, err := p.Player.GetCard(cardID, BATTLEZONE)
+
+	if err != nil {
+		Warn(p, "The creature you tried to attack with is not in the battlezone")
+		return
+	}
+
+	m.HandleFx(NewContext(m, &AttackCreature{
+		CardID:   cardID,
+		Blockers: make([]*Card, 0),
+	}))
+
+	m.BroadcastState()
+
+}
+
 // Parse handles websocket messages in this Hub
 func (m *Match) Parse(s *server.Socket, data []byte) {
 
@@ -864,6 +883,31 @@ func (m *Match) Parse(s *server.Socket, data []byte) {
 			}
 
 			m.AttackPlayer(p, msg.ID)
+
+		}
+
+	case "attack_creature":
+		{
+
+			p, err := m.PlayerForSocket(s)
+
+			if err != nil {
+				return
+			}
+
+			if m.Turn != p.Player.Turn {
+				return
+			}
+
+			var msg struct {
+				ID string `json:"virtualId"`
+			}
+
+			if err := json.Unmarshal(data, &msg); err != nil {
+				return
+			}
+
+			m.AttackCreature(p, msg.ID)
 
 		}
 
