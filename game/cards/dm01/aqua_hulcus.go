@@ -11,6 +11,7 @@ import (
 func AquaHulcus(c *match.Card) {
 
 	c.Name = "Aqua Hulcus"
+	c.Power = 2000
 	c.Civ = civ.Water
 	c.Family = family.LiquidPeople
 	c.ManaCost = 3

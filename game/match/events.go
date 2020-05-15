@@ -26,3 +26,15 @@ type AttackPlayer struct {
 	CardID   string
 	Blockers []*Card
 }
+
+// Battle is fired when two creatures are fighting, i.e. from attacking a creature or blocking an attack
+type Battle struct {
+	Attacker *Card
+	Defender *Card
+}
+
+// CreatureDestroyed is fired when a creature dies in battle or is destroyed from another source, such as a spell
+type CreatureDestroyed struct {
+	Card   *Card
+	Source *Card
+}

@@ -3,6 +3,7 @@ package match
 import (
 	"context"
 	"duel-masters/db"
+	"duel-masters/game/cnd"
 	"duel-masters/server"
 	"encoding/json"
 	"errors"
@@ -120,6 +121,93 @@ func (m *Match) Opponent(p *Player) *Player {
 	}
 
 	return m.Player1.Player
+}
+
+// GetPower returns the power of a given card after applying conditions
+func (m *Match) GetPower(card *Card, isAttacking bool) int {
+
+	power := card.Power
+
+	for _, condition := range card.Conditions() {
+
+		switch condition.id {
+
+		case cnd.PowerAmplifier:
+			{
+				if val, ok := condition.val.(int); ok {
+					power += val
+				}
+			}
+
+		case cnd.PowerAttacker:
+			{
+				if !isAttacking {
+					continue
+				}
+
+				if val, ok := condition.val.(int); ok {
+					power += val
+				}
+			}
+
+		}
+
+	}
+
+	return power
+
+}
+
+// Battle handles a battle between two creatures
+func (m *Match) Battle(attacker *Card, defender *Card) {
+
+	attackerPower := m.GetPower(attacker, true)
+	defenderPower := m.GetPower(defender, false)
+
+	if attackerPower > defenderPower {
+		m.HandleFx(NewContext(m, &CreatureDestroyed{Card: defender, Source: attacker}))
+	} else if attackerPower == defenderPower {
+		m.HandleFx(NewContext(m, &CreatureDestroyed{Card: attacker, Source: defender}))
+		m.HandleFx(NewContext(m, &CreatureDestroyed{Card: defender, Source: attacker}))
+	} else if attackerPower < defenderPower {
+		m.HandleFx(NewContext(m, &CreatureDestroyed{Card: attacker, Source: defender}))
+	}
+
+	m.BroadcastState()
+
+}
+
+// BreakShields breaks the given shields and handles shieldtriggers
+func (m *Match) BreakShields(shields []*Card) {
+
+	if len(shields) < 1 {
+		return
+	}
+
+	for _, shield := range shields {
+
+		_, err := shield.Player.MoveCard(shield.ID, SHIELDZONE, HAND)
+
+		if err != nil {
+			continue
+		}
+
+		// TODO: Handle shieldtriggers
+
+	}
+
+	m.Chat("Server", fmt.Sprintf("%v of %v's shields were broken", len(shields), m.PlayerRef(shields[0].Player).Socket.User.Username))
+
+}
+
+// End ends the match
+func (m *Match) End(winner *Player, winnerStr string) {
+
+	Warn(m.PlayerRef(winner), winnerStr)
+	Warn(m.PlayerRef(m.Opponent(winner)), winnerStr)
+
+	// TODO: this
+
 }
 
 // ColorChat sends a chat message with color
@@ -252,7 +340,23 @@ func (m *Match) NewAction(player *Player, cards []*Card, minSelections int, maxS
 
 	msg := &server.ActionMessage{
 		Header:        "action",
-		Cards:         denormalizeCards(cards),
+		Cards:         denormalizeCards(cards, false),
+		Text:          text,
+		MinSelections: minSelections,
+		MaxSelections: maxSelections,
+		Cancellable:   cancellable,
+	}
+
+	m.PlayerRef(player).Socket.Send(msg)
+
+}
+
+// NewBacksideAction prompts the user to make a selection of the specified cards without their names or images
+func (m *Match) NewBacksideAction(player *Player, cards []*Card, minSelections int, maxSelections int, text string, cancellable bool) {
+
+	msg := &server.ActionMessage{
+		Header:        "action",
+		Cards:         denormalizeCards(cards, true),
 		Text:          text,
 		MinSelections: minSelections,
 		MaxSelections: maxSelections,
@@ -269,7 +373,7 @@ func (m *Match) NewMultipartAction(player *Player, cards map[string][]*Card, min
 	cardMap := make(map[string][]server.CardState)
 
 	for key, cards := range cards {
-		cardMap[key] = denormalizeCards(cards)
+		cardMap[key] = denormalizeCards(cards, false)
 	}
 
 	msg := &server.MultipartActionMessage{
@@ -339,6 +443,18 @@ func (m *Match) BeginNewTurn() {
 
 // UntapStep ...
 func (m *Match) UntapStep() {
+
+	if mana, err := m.CurrentPlayer().Player.Container(MANAZONE); err == nil {
+		for _, c := range mana {
+			c.Tapped = false
+		}
+	}
+
+	if cards, err := m.CurrentPlayer().Player.Container(BATTLEZONE); err == nil {
+		for _, c := range cards {
+			c.ClearConditions()
+		}
+	}
 
 	ctx := NewContext(m, &UntapStep{})
 
@@ -450,7 +566,7 @@ func (m *Match) PlayCard(p *PlayerReference, cardID string) {
 
 }
 
-// AttackPlayer is called when the player attempts to attach the opposing player
+// AttackPlayer is called when the player attempts to attack the opposing player
 func (m *Match) AttackPlayer(p *PlayerReference, cardID string) {
 
 	_, err := p.Player.GetCard(cardID, BATTLEZONE)

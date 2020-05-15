@@ -1,5 +1,12 @@
 package match
 
+// Condition is used to store turn-specific state to the card such as power amplifiers
+type Condition struct {
+	id  string
+	val interface{}
+	src interface{}
+}
+
 // Card holds information about a specific card
 type Card struct {
 	ID      string
@@ -9,12 +16,13 @@ type Card struct {
 	Zone    string
 
 	Name            string
+	Power           int
 	Civ             string
 	Family          string
 	ManaCost        int
 	ManaRequirement []string
 
-	conditions []string
+	conditions []Condition
 	handlers   []HandlerFunc
 }
 
@@ -24,16 +32,21 @@ func (c *Card) Use(handlers ...HandlerFunc) {
 	c.handlers = append(c.handlers, handlers...)
 }
 
+// Conditions returns a slice with the cards conditions
+func (c *Card) Conditions() []Condition {
+	return c.conditions
+}
+
 // AddCondition stores a string to the state of the card that will stay there until removed
-func (c *Card) AddCondition(cnd string) {
-	c.conditions = append(c.conditions, cnd)
+func (c *Card) AddCondition(cnd string, val interface{}, src interface{}) {
+	c.conditions = append(c.conditions, Condition{cnd, val, src})
 }
 
 // HasCondition returns true or false based on if a given string is added to the cards list of conditions
 func (c *Card) HasCondition(cnd string) bool {
 
 	for _, condition := range c.conditions {
-		if condition == cnd {
+		if condition.id == cnd {
 			return true
 		}
 	}
@@ -45,16 +58,23 @@ func (c *Card) HasCondition(cnd string) bool {
 // RemoveCondition removes all instances of the given string from the cards conditions
 func (c *Card) RemoveCondition(cnd string) {
 
-	tmp := make([]string, 0)
+	tmp := make([]Condition, 0)
 
 	for _, condition := range c.conditions {
 
-		if condition != cnd {
+		if condition.id != cnd {
 			tmp = append(tmp, condition)
 		}
 
 	}
 
 	c.conditions = tmp
+
+}
+
+// ClearConditions removes all conditions from the card
+func (c *Card) ClearConditions() {
+
+	c.conditions = make([]Condition, 0)
 
 }

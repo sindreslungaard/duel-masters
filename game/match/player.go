@@ -168,6 +168,7 @@ func (p *Player) CreateDeck(deck []string) {
 			Tapped:          false,
 			Zone:            HAND,
 			Name:            "undefined_card",
+			Power:           0,
 			Civ:             "undefind_civ",
 			Family:          "undefined_family",
 			ManaCost:        1,
@@ -400,11 +401,11 @@ func (p *Player) Denormalized() *server.PlayerState {
 
 	state := &server.PlayerState{
 		Deck:       len(p.deck),
-		Hand:       denormalizeCards(p.hand),
+		Hand:       denormalizeCards(p.hand, false),
 		Shieldzone: shields,
-		Manazone:   denormalizeCards(p.manazone),
-		Graveyard:  denormalizeCards(p.graveyard),
-		Battlezone: denormalizeCards(p.battlezone),
+		Manazone:   denormalizeCards(p.manazone, false),
+		Graveyard:  denormalizeCards(p.graveyard, false),
+		Battlezone: denormalizeCards(p.battlezone, false),
 	}
 
 	p.mutex.Unlock()
@@ -414,7 +415,8 @@ func (p *Player) Denormalized() *server.PlayerState {
 }
 
 // denormalizeCards takes an array of *Card and returns an array of server.CardState
-func denormalizeCards(cards []*Card) []server.CardState {
+// if partial is true, the cards' name and image will not be included
+func denormalizeCards(cards []*Card, partial bool) []server.CardState {
 
 	arr := make([]server.CardState, 0)
 
@@ -436,6 +438,15 @@ func denormalizeCards(cards []*Card) []server.CardState {
 			Tapped:      card.Tapped,
 			CanBePlayed: canBePlayed,
 		}
+
+		if partial {
+			cs.ImageID = "backside"
+			cs.Name = ""
+			cs.Civ = "water" // blue highlight color when selected in actions
+			cs.Tapped = false
+			cs.CanBePlayed = false
+		}
+
 		arr = append(arr, cs)
 	}
 
