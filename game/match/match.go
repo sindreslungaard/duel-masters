@@ -10,6 +10,7 @@ import (
 	"fmt"
 	"math/rand"
 	"sync"
+	"time"
 
 	"github.com/google/uuid"
 	"github.com/sirupsen/logrus"
@@ -29,6 +30,10 @@ type Match struct {
 	Player2   *PlayerReference `json:"-"`
 	Turn      byte             `json:"-"`
 	Started   bool             `json:"started"`
+
+	ending bool
+
+	quit chan bool
 }
 
 // New returns a new match object
@@ -46,6 +51,10 @@ func New(matchName string, hostID string) *Match {
 		HostID:    hostID,
 		Turn:      1,
 		Started:   false,
+
+		ending: false,
+
+		quit: make(chan bool),
 	}
 
 	matchesMutex.Lock()
@@ -54,9 +63,96 @@ func New(matchName string, hostID string) *Match {
 
 	matchesMutex.Unlock()
 
+	go m.startTicker()
+
 	logrus.Debugf("Created match %s", id)
 
 	return m
+
+}
+
+func (m *Match) startTicker() {
+
+	ticker := time.NewTicker(10 * time.Second) // tick every 10 seconds
+
+	defer ticker.Stop()
+	defer m.Dispose()
+
+	// When the quit signal is sent, stop = 1
+	// If stop == 1, stop is incremented
+	// Match disposes when stop > 1 to ensure a minimum of 1 tick elapses before disposal
+	stop := 0
+
+	for {
+
+		select {
+		case <-m.quit:
+			{
+				stop = 1
+				logrus.Debugf("Scheduling disposal of match %s", m.ID)
+			}
+		case t := <-ticker.C:
+			{
+
+				if stop > 1 {
+					logrus.Debugf("Stopping ticker of match %s", m.ID)
+					return
+				} else if stop == 1 {
+					stop++
+				}
+
+				// end match if last pong was > 30 seconds ago
+				if m.Player1.LastPong < time.Now().Unix()-30 && !m.ending {
+					go m.End(m.Player2.Player, "Your opponent left the match.")
+				}
+
+				if m.Player2.LastPong < time.Now().Unix()-30 && !m.ending {
+					go m.End(m.Player1.Player, "Your opponent left the match.")
+				}
+
+				// ping
+				if m.Player1 != nil && m.Player2 != nil {
+
+					ping := &server.Message{
+						Header: "mping",
+					}
+
+					m.Player1.Socket.Send(ping)
+					m.Player2.Socket.Send(ping)
+
+				}
+
+				logrus.Debugf("%v | %s", t.Unix(), m.ID)
+			}
+		}
+
+	}
+}
+
+// Dispose closes the match, disconnects the clients and removes all references to it
+func (m *Match) Dispose() {
+
+	m.WarnPlayer(m.Player1.Player, "Your opponent left. Closing the match.")
+	m.WarnPlayer(m.Player2.Player, "Your opponent left. Closing the match.")
+
+	m.Player1.Socket.Close()
+	m.Player2.Socket.Close()
+
+	m.Player1.Player.Dispose()
+	m.Player2.Player.Dispose()
+
+	m.Player1.Player = nil
+	m.Player2.Player = nil
+	m.Player1 = nil
+	m.Player2 = nil
+
+	matchesMutex.Lock()
+
+	delete(matches, m.ID)
+
+	matchesMutex.Unlock()
+
+	logrus.Debugf("Closed match with id %s", m.ID)
 
 }
 
@@ -203,10 +299,17 @@ func (m *Match) BreakShields(shields []*Card) {
 // End ends the match
 func (m *Match) End(winner *Player, winnerStr string) {
 
+	if m.ending {
+		logrus.Debugf("Cannot end match, %s is already ending", m.ID)
+		return
+	}
+
+	m.ending = true
+
 	Warn(m.PlayerRef(winner), winnerStr)
 	Warn(m.PlayerRef(m.Opponent(winner)), winnerStr)
 
-	// TODO: this
+	m.quit <- true
 
 }
 
@@ -607,12 +710,31 @@ func (m *Match) AttackCreature(p *PlayerReference, cardID string) {
 // Parse handles websocket messages in this Hub
 func (m *Match) Parse(s *server.Socket, data []byte) {
 
+	defer func() {
+		if r := recover(); r != nil {
+			logrus.Warnf("Recovered after parsing message in match. %v", r)
+		}
+	}()
+
 	var message server.Message
 	if err := json.Unmarshal(data, &message); err != nil {
 		return
 	}
 
 	switch message.Header {
+
+	case "mpong":
+		{
+
+			p, err := m.PlayerForSocket(s)
+
+			if err != nil {
+				return
+			}
+
+			p.LastPong = time.Now().Unix()
+
+		}
 
 	case "join_match":
 		{

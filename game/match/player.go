@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"math/rand"
 	"sync"
+	"time"
 
 	"github.com/sirupsen/logrus"
 	"github.com/ventu-io/go-shortid"
@@ -25,8 +26,9 @@ const (
 
 // PlayerReference ties a player to a websocket connection
 type PlayerReference struct {
-	Player *Player
-	Socket *server.Socket
+	Player   *Player
+	Socket   *server.Socket
+	LastPong int64
 }
 
 // PlayerAction is the parsed response we retrieve after prompting the client for a selection of cards
@@ -39,8 +41,9 @@ type PlayerAction struct {
 func NewPlayerReference(p *Player, s *server.Socket) *PlayerReference {
 
 	pr := &PlayerReference{
-		Player: p,
-		Socket: s,
+		Player:   p,
+		Socket:   s,
+		LastPong: time.Now().Unix(),
 	}
 
 	return pr
@@ -451,5 +454,48 @@ func denormalizeCards(cards []*Card, partial bool) []server.CardState {
 	}
 
 	return arr
+
+}
+
+// Dispose clears out references in the player object
+func (p *Player) Dispose() {
+
+	p.mutex.Lock()
+
+	defer p.mutex.Unlock()
+
+	close(p.Action)
+
+	for _, c := range p.deck {
+		c.Player = nil
+	}
+
+	for _, c := range p.hand {
+		c.Player = nil
+	}
+
+	for _, c := range p.shieldzone {
+		c.Player = nil
+	}
+
+	for _, c := range p.manazone {
+		c.Player = nil
+	}
+
+	for _, c := range p.graveyard {
+		c.Player = nil
+	}
+
+	for _, c := range p.battlezone {
+		c.Player = nil
+	}
+
+	for _, c := range p.hiddenzone {
+		c.Player = nil
+	}
+
+	for _, c := range p.spellzone {
+		c.Player = nil
+	}
 
 }

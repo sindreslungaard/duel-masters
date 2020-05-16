@@ -374,6 +374,13 @@ export default {
       const data = JSON.parse(event.data)
 
       switch(data.header) {
+
+        case "mping": {
+          send(ws, {
+            header: "mpong"
+          })
+          break
+        }
         
         case "hello": {
           send(ws, {
