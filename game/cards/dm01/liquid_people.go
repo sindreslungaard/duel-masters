@@ -132,3 +132,17 @@ func AquaSoldier(c *match.Card) {
 	c.Use(fx.Creature, fx.ReturnToHand)
 
 }
+
+// AquaVehicle ...
+func AquaVehicle(c *match.Card) {
+
+	c.Name = "Aqua Vehicle"
+	c.Power = 1000
+	c.Civ = civ.Water
+	c.Family = family.LiquidPeople
+	c.ManaCost = 2
+	c.ManaRequirement = []string{civ.Water}
+
+	c.Use(fx.Creature)
+
+}
