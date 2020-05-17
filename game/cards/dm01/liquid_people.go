@@ -39,11 +39,11 @@ func AquaKnight(c *match.Card) {
 // AquaSniper ...
 func AquaSniper(c *match.Card) {
 
-	c.Name = "Aqua Knight"
+	c.Name = "Aqua Sniper"
 	c.Power = 5000
 	c.Civ = civ.Water
 	c.Family = family.LiquidPeople
-	c.ManaCost = 1
+	c.ManaCost = 8
 	c.ManaRequirement = []string{civ.Water}
 
 	c.Use(fx.Creature, func(card *match.Card, ctx *match.Context) {
@@ -116,5 +116,19 @@ func AquaSniper(c *match.Card) {
 		}
 
 	})
+
+}
+
+// AquaSoldier ...
+func AquaSoldier(c *match.Card) {
+
+	c.Name = "Aqua Soldier"
+	c.Power = 1000
+	c.Civ = civ.Water
+	c.Family = family.LiquidPeople
+	c.ManaCost = 3
+	c.ManaRequirement = []string{civ.Water}
+
+	c.Use(fx.Creature, fx.ReturnToHand)
 
 }
