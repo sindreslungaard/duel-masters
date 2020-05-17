@@ -10,7 +10,7 @@ type Context struct {
 }
 
 // HandlerFunc is a function with a match context as argument
-type HandlerFunc func(card *Card, c *Context)
+type HandlerFunc func(card *Card, ctx *Context)
 
 // NewContext returns a new match context
 func NewContext(m *Match, e interface{}) *Context {
