@@ -20,3 +20,17 @@ func BurningMane(c *match.Card) {
 	c.Use(fx.Creature)
 
 }
+
+// FearFang ...
+func FearFang(c *match.Card) {
+
+	c.Name = "Fear Fang"
+	c.Power = 3000
+	c.Civ = civ.Nature
+	c.Family = family.BeastFolk
+	c.ManaCost = 3
+	c.ManaRequirement = []string{civ.Nature}
+
+	c.Use(fx.Creature)
+
+}
