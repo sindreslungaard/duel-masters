@@ -499,6 +499,21 @@ func (m *Match) CloseAction(p *Player) {
 	})
 }
 
+// Wait sends a waiting popup with a message to the specified player
+func (m *Match) Wait(p *Player, message string) {
+	m.PlayerRef(p).Socket.Send(server.WaitMessage{
+		Header:  "wait",
+		Message: message,
+	})
+}
+
+// EndWait closes the waiting popup for the specified player
+func (m *Match) EndWait(p *Player) {
+	m.PlayerRef(p).Socket.Send(server.Message{
+		Header: "end_wait",
+	})
+}
+
 // Start starts the match
 func (m *Match) Start() {
 

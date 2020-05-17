@@ -86,3 +86,9 @@ type ActionWarningMessage struct {
 	Header  string `json:"header"`
 	Message string `json:"message"`
 }
+
+// WaitMessage is used to send a waiting popup with a message
+type WaitMessage struct {
+	Header  string `json:"header"`
+	Message string `json:"message"`
+}

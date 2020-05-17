@@ -178,6 +178,8 @@ func Creature(card *match.Card, ctx *match.Context) {
 			// Allow the opponent to block if they can
 			if len(event.Blockers) > 0 {
 
+				ctx.Match.Wait(card.Player, "Waiting for your opponent to make an action")
+
 				identifierStr := "you"
 
 				if len(shieldsAttacked) > 0 {
@@ -222,9 +224,11 @@ func Creature(card *match.Card, ctx *match.Context) {
 
 					ctx.Match.Battle(card, c)
 
-					return
+					break
 
 				}
+
+				ctx.Match.EndWait(card.Player)
 
 			} else {
 
@@ -320,6 +324,8 @@ func Creature(card *match.Card, ctx *match.Context) {
 			// Allow the opponent to block if they can
 			if len(event.Blockers) > 0 {
 
+				ctx.Match.Wait(card.Player, "Waiting for your opponent to make an action")
+
 				ctx.Match.NewAction(opponent, event.Blockers, 1, 1, fmt.Sprintf("%s (%v) is attacking %s (%v). Choose a creature to block the attack with or close to not block the attack.", card.Name, ctx.Match.GetPower(card, true), c.Name, ctx.Match.GetPower(c, false)), true)
 
 				for {
@@ -349,9 +355,11 @@ func Creature(card *match.Card, ctx *match.Context) {
 
 					ctx.Match.Battle(card, blocker)
 
-					return
+					break
 
 				}
+
+				ctx.Match.EndWait(card.Player)
 
 			}
 
