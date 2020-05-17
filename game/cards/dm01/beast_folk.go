@@ -34,3 +34,17 @@ func FearFang(c *match.Card) {
 	c.Use(fx.Creature)
 
 }
+
+// SteelSmasher ...
+func SteelSmasher(c *match.Card) {
+
+	c.Name = "Steel Smasher"
+	c.Power = 3000
+	c.Civ = civ.Nature
+	c.Family = family.BeastFolk
+	c.ManaCost = 2
+	c.ManaRequirement = []string{civ.Nature}
+
+	c.Use(fx.Creature, fx.CantAttackPlayers)
+
+}
