@@ -142,19 +142,25 @@ func (m *Match) startTicker() {
 // Dispose closes the match, disconnects the clients and removes all references to it
 func (m *Match) Dispose() {
 
-	m.WarnPlayer(m.Player1.Player, "Your opponent left. Closing the match.")
-	m.WarnPlayer(m.Player2.Player, "Your opponent left. Closing the match.")
+	defer func() {
+		if r := recover(); r != nil {
+			logrus.Warningf("Recovered from disposing a match. %v", r)
+		}
+	}()
 
-	m.Player1.Socket.Close()
-	m.Player2.Socket.Close()
+	if m.Player1 != nil {
+		m.Player1.Socket.Close()
+		m.Player1.Player.Dispose()
+		m.Player1.Player = nil
+		m.Player1 = nil
+	}
 
-	m.Player1.Player.Dispose()
-	m.Player2.Player.Dispose()
-
-	m.Player1.Player = nil
-	m.Player2.Player = nil
-	m.Player1 = nil
-	m.Player2 = nil
+	if m.Player2 != nil {
+		m.Player2.Socket.Close()
+		m.Player2.Player.Dispose()
+		m.Player2.Player = nil
+		m.Player2 = nil
+	}
 
 	matchesMutex.Lock()
 
