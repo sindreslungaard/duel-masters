@@ -17,4 +17,5 @@ var Cards = map[string]match.CardConstructor{
 	"fcd0cb50-b687-4180-90a8-390aeb8705cc": dm01.FearFang,
 	"10e0e90f-ad7d-4b69-98d5-f01525eb1cdd": dm01.SteelSmasher,
 	"015fd6bb-37a9-45cf-bb6b-a5497412b880": dm01.BronzeArmTribe,
+	"6663848d-035e-44b6-9d9f-7b236ea5bc43": dm01.GoldenWingStriker,
 }
