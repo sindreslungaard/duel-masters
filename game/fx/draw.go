@@ -1,6 +1,9 @@
 package fx
 
-import "duel-masters/game/match"
+import (
+	"duel-masters/game/match"
+	"fmt"
+)
 
 func draw(card *match.Card, ctx *match.Context, n int) {
 
@@ -39,4 +42,31 @@ func Draw4(card *match.Card, ctx *match.Context) {
 // Draw5 draws 5 card when the card is added to the battlezone or spellzone
 func Draw5(card *match.Card, ctx *match.Context) {
 	draw(card, ctx, 5)
+}
+
+// DrawToMana draws 1 card and puts it in the players manazone
+func DrawToMana(card *match.Card, ctx *match.Context) {
+
+	if event, ok := ctx.Event.(*match.CardMoved); ok {
+
+		if event.CardID == card.ID && (event.To == match.BATTLEZONE || event.To == match.SPELLZONE) {
+
+			cards := card.Player.PeekDeck(1)
+
+			if len(cards) < 1 {
+				return
+			}
+
+			c, err := card.Player.MoveCard(cards[0].ID, match.DECK, match.MANAZONE)
+
+			if err != nil {
+				return
+			}
+
+			ctx.Match.Chat("Server", fmt.Sprintf("%s was added to %s's manazone from the top of their deck", c.Name, ctx.Match.PlayerRef(card.Player).Socket.User.Username))
+
+		}
+
+	}
+
 }

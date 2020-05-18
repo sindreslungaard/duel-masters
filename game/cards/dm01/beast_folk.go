@@ -48,3 +48,17 @@ func SteelSmasher(c *match.Card) {
 	c.Use(fx.Creature, fx.CantAttackPlayers)
 
 }
+
+// BronzeArmTribe ...
+func BronzeArmTribe(c *match.Card) {
+
+	c.Name = "Bronze-Arm Tribe"
+	c.Power = 1000
+	c.Civ = civ.Nature
+	c.Family = family.BeastFolk
+	c.ManaCost = 3
+	c.ManaRequirement = []string{civ.Nature}
+
+	c.Use(fx.Creature, fx.DrawToMana)
+
+}
