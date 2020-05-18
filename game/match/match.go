@@ -31,7 +31,8 @@ type Match struct {
 	Turn      byte             `json:"-"`
 	Started   bool             `json:"started"`
 
-	ending bool
+	created int64
+	ending  bool
 
 	quit chan bool
 }
@@ -52,7 +53,8 @@ func New(matchName string, hostID string) *Match {
 		Turn:      1,
 		Started:   false,
 
-		ending: false,
+		created: time.Now().Unix(),
+		ending:  false,
 
 		quit: make(chan bool),
 	}
@@ -77,6 +79,11 @@ func (m *Match) startTicker() {
 
 	defer ticker.Stop()
 	defer m.Dispose()
+	defer func() {
+		if r := recover(); r != nil {
+			logrus.Warnf("Recovered from match ticker. %v", r)
+		}
+	}()
 
 	// When the quit signal is sent, stop = 1
 	// If stop == 1, stop is incremented
@@ -91,8 +98,13 @@ func (m *Match) startTicker() {
 				stop = 1
 				logrus.Debugf("Scheduling disposal of match %s", m.ID)
 			}
-		case t := <-ticker.C:
+		case <-ticker.C:
 			{
+
+				// Close the match if it was not started within 10 minutes of creation
+				if !m.Started && m.created < time.Now().Unix()-60*10 {
+					go m.Close()
+				}
 
 				if stop > 1 {
 					logrus.Debugf("Stopping ticker of match %s", m.ID)
@@ -101,28 +113,26 @@ func (m *Match) startTicker() {
 					stop++
 				}
 
-				// end match if last pong was > 30 seconds ago
-				if m.Player1.LastPong < time.Now().Unix()-30 && !m.ending {
-					go m.End(m.Player2.Player, "Your opponent left the match.")
+				ping := &server.Message{
+					Header: "mping",
 				}
 
-				if m.Player2.LastPong < time.Now().Unix()-30 && !m.ending {
-					go m.End(m.Player1.Player, "Your opponent left the match.")
-				}
-
-				// ping
-				if m.Player1 != nil && m.Player2 != nil {
-
-					ping := &server.Message{
-						Header: "mping",
-					}
-
+				if m.Player1 != nil && m.Player1.Player != nil {
 					m.Player1.Socket.Send(ping)
+
+					if m.Player1.LastPong < time.Now().Unix()-30 && !m.ending {
+						go m.End(m.Player2.Player, "Your opponent left the match.")
+					}
+				}
+
+				if m.Player2 != nil && m.Player2.Player != nil {
 					m.Player2.Socket.Send(ping)
 
+					if m.Player2.LastPong < time.Now().Unix()-30 && !m.ending {
+						go m.End(m.Player1.Player, "Your opponent left the match.")
+					}
 				}
 
-				logrus.Debugf("%v | %s", t.Unix(), m.ID)
 			}
 		}
 
@@ -306,8 +316,24 @@ func (m *Match) End(winner *Player, winnerStr string) {
 
 	m.ending = true
 
-	Warn(m.PlayerRef(winner), winnerStr)
-	Warn(m.PlayerRef(m.Opponent(winner)), winnerStr)
+	if m.Started {
+		Warn(m.PlayerRef(winner), winnerStr)
+		Warn(m.PlayerRef(m.Opponent(winner)), winnerStr)
+	}
+
+	m.quit <- true
+
+}
+
+// Close ends and closes the match without notifying the players
+func (m *Match) Close() {
+
+	if m.ending {
+		logrus.Debugf("Cannot end match, %s is already ending", m.ID)
+		return
+	}
+
+	m.ending = true
 
 	m.quit <- true
 
@@ -516,6 +542,8 @@ func (m *Match) EndWait(p *Player) {
 
 // Start starts the match
 func (m *Match) Start() {
+
+	m.Started = true
 
 	m.Player1.Player.ShuffleDeck()
 	m.Player2.Player.ShuffleDeck()
