@@ -7,6 +7,8 @@ import (
 
 // Cards is a map with all the card id's in the game and corresponding CardConstructor
 var Cards = map[string]match.CardConstructor{
+
+	// dm01
 	"57eeb3c3-2561-4841-a381-2e50d17533d1": dm01.AquaHulcus,
 	"ecd1ae69-4f63-4e8d-a3f4-9a5c81f98a20": dm01.EmeraldGrass,
 	"09b218fc-9c5a-48ef-9555-4908932271e9": dm01.AquaKnight,
@@ -18,4 +20,8 @@ var Cards = map[string]match.CardConstructor{
 	"10e0e90f-ad7d-4b69-98d5-f01525eb1cdd": dm01.SteelSmasher,
 	"015fd6bb-37a9-45cf-bb6b-a5497412b880": dm01.BronzeArmTribe,
 	"6663848d-035e-44b6-9d9f-7b236ea5bc43": dm01.GoldenWingStriker,
+	"0e26fe1a-a9d1-4c78-80e9-7f4cc0e4c1c8": dm01.MightyShouter,
+
+	// dm02
+	// ...
 }

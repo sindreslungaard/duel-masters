@@ -76,3 +76,17 @@ func GoldenWingStriker(c *match.Card) {
 	c.Use(fx.Creature, fx.PowerAttacker2000)
 
 }
+
+// MightyShouter ...
+func MightyShouter(c *match.Card) {
+
+	c.Name = "Mighty Shouter"
+	c.Power = 2000
+	c.Civ = civ.Nature
+	c.Family = family.BeastFolk
+	c.ManaCost = 3
+	c.ManaRequirement = []string{civ.Nature}
+
+	c.Use(fx.Creature, fx.ReturnToMana)
+
+}
