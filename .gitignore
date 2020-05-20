@@ -1,2 +1,3 @@
 .env
 test.go
+*__debug_bin

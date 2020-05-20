@@ -10,7 +10,6 @@ import (
 	"duel-masters/game/cards"
 	"duel-masters/game/match"
 
-	"github.com/joho/godotenv"
 	"github.com/sirupsen/logrus"
 )
 
@@ -19,11 +18,6 @@ func main() {
 	// TODO: change loglevel and formatter if production flag is specified
 	logrus.SetFormatter(&logrus.TextFormatter{ForceColors: true})
 	logrus.SetLevel(logrus.DebugLevel)
-
-	err := godotenv.Load()
-	if err != nil {
-		logrus.Fatal("Error loading .env file")
-	}
 
 	rand.Seed(time.Now().UnixNano())
 
