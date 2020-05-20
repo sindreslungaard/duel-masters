@@ -25,6 +25,7 @@ var Cards = map[string]match.CardConstructor{
 	"983e72d7-3f4e-466d-a4e3-06552e392af2": dm01.NomadHeroGigio,
 	"0cc5279e-0a26-41a8-a2a5-f7711120b772": dm01.LahPurificationEnforcer,
 	"808ddd60-e8ca-49f0-9baa-57e632f85b28": dm01.RaylaTruthEnforcer,
+	"91db2302-6794-4aa4-b17b-6637d356e9ac": dm01.AstrocometDragon,
 
 	// dm02
 	// ...

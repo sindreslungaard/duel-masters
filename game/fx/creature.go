@@ -132,7 +132,7 @@ func Creature(card *match.Card, ctx *match.Context) {
 					minmax = 2
 				}
 
-				if card.HasCondition(cnd.DoubleBreaker) {
+				if card.HasCondition(cnd.TripleBreaker) {
 					minmax = 3
 				}
 
