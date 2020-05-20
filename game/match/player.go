@@ -457,6 +457,11 @@ func denormalizeCards(cards []*Card, partial bool) []server.CardState {
 
 }
 
+// Username returns the username of the player
+func (p *Player) Username() string {
+	return p.match.PlayerRef(p).Socket.User.Username
+}
+
 // Dispose clears out references in the player object
 func (p *Player) Dispose() {
 
