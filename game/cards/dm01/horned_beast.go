@@ -80,3 +80,17 @@ func StampedingLonghorn(c *match.Card) {
 	}, fx.Creature)
 
 }
+
+// TriHornShepherd ...
+func TriHornShepherd(c *match.Card) {
+
+	c.Name = "Tri-Horn Shepherd"
+	c.Power = 5000
+	c.Civ = civ.Nature
+	c.Family = family.HornedBeast
+	c.ManaCost = 5
+	c.ManaRequirement = []string{civ.Nature}
+
+	c.Use(fx.Creature)
+
+}
