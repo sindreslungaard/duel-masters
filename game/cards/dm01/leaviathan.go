@@ -20,3 +20,17 @@ func KingCoral(c *match.Card) {
 	c.Use(fx.Creature, fx.Blocker)
 
 }
+
+// KingDepthcon ...
+func KingDepthcon(c *match.Card) {
+
+	c.Name = "King Depthcon"
+	c.Power = 6000
+	c.Civ = civ.Water
+	c.Family = family.Leviathan
+	c.ManaCost = 7
+	c.ManaRequirement = []string{civ.Water}
+
+	c.Use(fx.CantBeBlocked, fx.Creature, fx.Doublebreaker)
+
+}
