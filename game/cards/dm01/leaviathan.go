@@ -34,3 +34,17 @@ func KingDepthcon(c *match.Card) {
 	c.Use(fx.CantBeBlocked, fx.Creature, fx.Doublebreaker)
 
 }
+
+// KingRippedHide ...
+func KingRippedHide(c *match.Card) {
+
+	c.Name = "King Ripped-Hide"
+	c.Power = 5000
+	c.Civ = civ.Water
+	c.Family = family.Leviathan
+	c.ManaCost = 7
+	c.ManaRequirement = []string{civ.Water}
+
+	c.Use(fx.Creature, fx.Draw2)
+
+}

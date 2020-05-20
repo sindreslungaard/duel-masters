@@ -38,6 +38,7 @@ var Cards = map[string]match.CardConstructor{
 	"84e1b416-c2d5-4ae1-aca0-025651c6aa58": dm01.TriHornShepherd,
 	"3e2940f4-5654-4456-bfc2-fa5e43911cfb": dm01.KingCoral,
 	"cd13f7c2-aa5e-43b8-8811-700f230a5de5": dm01.KingDepthcon,
+	"f04feb7f-971f-4192-893a-46c23180233a": dm01.KingRippedHide,
 
 	// dm02
 	// ...
