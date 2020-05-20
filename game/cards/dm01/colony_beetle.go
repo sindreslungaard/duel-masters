@@ -87,3 +87,63 @@ func StormShell(c *match.Card) {
 	})
 
 }
+
+// TowerShell ...
+func TowerShell(c *match.Card) {
+
+	c.Name = "Tower Shell"
+	c.Power = 5000
+	c.Civ = civ.Nature
+	c.Family = family.ColonyBeetle
+	c.ManaCost = 6
+	c.ManaRequirement = []string{civ.Nature}
+
+	c.Use(func(card *match.Card, ctx *match.Context) {
+
+		if event, ok := ctx.Event.(*match.AttackPlayer); ok {
+
+			if event.CardID != card.ID {
+				return
+			}
+
+			ctx.ScheduleAfter(func() {
+
+				blockers := make([]*match.Card, 0)
+
+				for _, blocker := range event.Blockers {
+					if blocker.Power >= 4000 {
+						blockers = append(blockers, blocker)
+					}
+				}
+
+				event.Blockers = blockers
+
+			})
+
+		}
+
+		if event, ok := ctx.Event.(*match.AttackCreature); ok {
+
+			if event.CardID != card.ID {
+				return
+			}
+
+			ctx.ScheduleAfter(func() {
+
+				blockers := make([]*match.Card, 0)
+
+				for _, blocker := range event.Blockers {
+					if blocker.Power >= 4000 {
+						blockers = append(blockers, blocker)
+					}
+				}
+
+				event.Blockers = blockers
+
+			})
+
+		}
+
+	}, fx.Creature)
+
+}
