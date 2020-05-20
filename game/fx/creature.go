@@ -376,7 +376,6 @@ func Creature(card *match.Card, ctx *match.Context) {
 
 			ctx.ScheduleAfter(func() {
 				card.Player.MoveCard(card.ID, match.BATTLEZONE, match.GRAVEYARD)
-				ctx.Match.Chat("Server", fmt.Sprintf("%s was destroyed by %s", event.Card.Name, event.Source.Name))
 			})
 
 		}

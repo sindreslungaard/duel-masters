@@ -278,11 +278,15 @@ func (m *Match) Battle(attacker *Card, defender *Card) {
 
 	if attackerPower > defenderPower {
 		m.HandleFx(NewContext(m, &CreatureDestroyed{Card: defender, Source: attacker}))
+		m.Chat("Server", fmt.Sprintf("%s (%v) was destroyed by %s (%v)", defender.Name, defenderPower, attacker.Name, attackerPower))
 	} else if attackerPower == defenderPower {
 		m.HandleFx(NewContext(m, &CreatureDestroyed{Card: attacker, Source: defender}))
+		m.Chat("Server", fmt.Sprintf("%s (%v) was destroyed by %s (%v)", attacker.Name, attackerPower, defender.Name, defenderPower))
 		m.HandleFx(NewContext(m, &CreatureDestroyed{Card: defender, Source: attacker}))
+		m.Chat("Server", fmt.Sprintf("%s (%v) was destroyed by %s (%v)", defender.Name, defenderPower, attacker.Name, attackerPower))
 	} else if attackerPower < defenderPower {
 		m.HandleFx(NewContext(m, &CreatureDestroyed{Card: attacker, Source: defender}))
+		m.Chat("Server", fmt.Sprintf("%s (%v) was destroyed by %s (%v)", attacker.Name, attackerPower, defender.Name, defenderPower))
 	}
 
 	m.BroadcastState()
