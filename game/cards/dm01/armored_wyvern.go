@@ -20,3 +20,17 @@ func Draglide(c *match.Card) {
 	c.Use(fx.Creature, fx.ForceAttack)
 
 }
+
+// GatlingSkyterror ...
+func GatlingSkyterror(c *match.Card) {
+
+	c.Name = "Gatling Skyterror"
+	c.Power = 7000
+	c.Civ = civ.Fire
+	c.Family = family.ArmoredWyvern
+	c.ManaCost = 7
+	c.ManaRequirement = []string{civ.Fire}
+
+	c.Use(fx.Creature, fx.Doublebreaker, fx.AttackUntapped)
+
+}

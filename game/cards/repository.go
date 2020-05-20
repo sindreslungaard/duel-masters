@@ -28,6 +28,7 @@ var Cards = map[string]match.CardConstructor{
 	"91db2302-6794-4aa4-b17b-6637d356e9ac": dm01.AstrocometDragon,
 	"0ffdcae3-9db2-401b-8a82-dfad707b83cd": dm01.BolshackDragon,
 	"6cf85053-abaa-4577-b151-86123004980e": dm01.Draglide,
+	"3b6e6c29-017d-41b9-bf93-186f7963723e": dm01.GatlingSkyterror,
 
 	// dm02
 	// ...
