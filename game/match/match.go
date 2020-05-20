@@ -293,6 +293,14 @@ func (m *Match) Battle(attacker *Card, defender *Card) {
 
 }
 
+// Destroy sends the given card to its players graveyard
+func (m *Match) Destroy(card *Card, source *Card) {
+
+	m.HandleFx(NewContext(m, &CreatureDestroyed{Card: card, Source: source}))
+	m.Chat("Server", fmt.Sprintf("%s (%v) was destroyed by %s", card.Name, m.GetPower(card, false), source.Name))
+
+}
+
 // BreakShields breaks the given shields and handles shieldtriggers
 func (m *Match) BreakShields(shields []*Card) {
 

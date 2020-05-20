@@ -9,4 +9,5 @@ const (
 	PowerAttacker     = "power_attacker"
 	AttackUntapped    = "attack_untapped"
 	Spell             = "spell"
+	Blocker           = "blocker"
 )
