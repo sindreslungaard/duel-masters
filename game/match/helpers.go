@@ -61,8 +61,15 @@ func SearchDeckForCnd(p *Player, m *Match, condition string, text string, min in
 			continue
 		}
 
-		for _, c := range cards {
-			result = append(result, c)
+		for _, c := range action.Cards {
+
+			selectedCard, err := p.GetCard(c, DECK)
+
+			if err != nil {
+				continue
+			}
+
+			result = append(result, selectedCard)
 		}
 
 		break

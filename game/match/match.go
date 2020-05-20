@@ -445,6 +445,10 @@ func (m *Match) HandleFx(ctx *Context) {
 		cards = append(cards, p.Player.spellzone...)
 		cards = append(cards, p.Player.hand...)
 		cards = append(cards, p.Player.shieldzone...)
+		cards = append(cards, p.Player.hiddenzone...)
+		cards = append(cards, p.Player.manazone...)
+		cards = append(cards, p.Player.graveyard...)
+		cards = append(cards, p.Player.deck...)
 
 	}
 

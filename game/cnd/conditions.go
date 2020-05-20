@@ -8,4 +8,5 @@ const (
 	PowerAmplifier    = "power_amplifier"
 	PowerAttacker     = "power_attacker"
 	AttackUntapped    = "attack_untapped"
+	Spell             = "spell"
 )
