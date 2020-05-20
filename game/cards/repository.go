@@ -34,6 +34,7 @@ var Cards = map[string]match.CardConstructor{
 	"1ecb54a2-bcbf-4396-bf09-50dfe984e287": dm01.StormShell,
 	"c761c174-87c3-4f4a-ab94-aa837c5ab587": dm01.TowerShell,
 	"18e0e199-7827-4a4c-a37d-3acfa4e500d6": dm01.RoaringGreatHorn,
+	"2aeae452-5630-4f86-b073-7e9dc07adc43": dm01.StampedingLonghorn,
 
 	// dm02
 	// ...
