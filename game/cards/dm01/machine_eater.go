@@ -20,3 +20,17 @@ func ArtisanPicora(c *match.Card) {
 	c.Use(fx.Creature, fx.DestroyManaOnSummon)
 
 }
+
+// NomadHeroGigio ...
+func NomadHeroGigio(c *match.Card) {
+
+	c.Name = "Nomad Hero Gigio"
+	c.Power = 3000
+	c.Civ = civ.Fire
+	c.Family = family.MachineEater
+	c.ManaCost = 5
+	c.ManaRequirement = []string{civ.Fire}
+
+	c.Use(fx.Creature, fx.AttackUntapped)
+
+}
