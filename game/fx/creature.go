@@ -59,8 +59,6 @@ func Creature(card *match.Card, ctx *match.Context) {
 				true,
 			)
 
-			defer ctx.Match.CloseAction(card.Player)
-
 			for {
 
 				action := <-card.Player.Action
@@ -74,6 +72,8 @@ func Creature(card *match.Card, ctx *match.Context) {
 					ctx.Match.ActionWarning(card.Player, "Your selection of cards does not fulfill the requirements")
 					continue
 				}
+
+				ctx.Match.CloseAction(card.Player)
 
 				for _, id := range action.Cards {
 					mana, err := card.Player.GetCard(id, match.MANAZONE)
