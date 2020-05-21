@@ -51,6 +51,7 @@ var Cards = map[string]match.CardConstructor{
 	"4d3201e8-0d9b-481e-b8e3-86cb90058e20": dm01.BoneSpider,
 	"ec46daa1-49ce-4b88-b2bc-e923672ad0f3": dm01.SkeletonSoldierTheDefiled,
 	"90b2ed59-828c-4237-ac2e-b7008a02ad2e": dm01.WanderingBraineater,
+	"5d3d7052-e5fa-4502-8d31-c72673232317": dm01.HanusaRadianceElemental,
 
 	// dm02
 	// ...
