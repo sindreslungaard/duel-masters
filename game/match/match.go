@@ -437,6 +437,14 @@ func (m *Match) ActionWarning(p *Player, message string) {
 	})
 }
 
+// DefaultActionWarning sends an actionw arning with a predefined message
+func (m *Match) DefaultActionWarning(p *Player) {
+	m.PlayerRef(p).Socket.Send(server.ActionWarningMessage{
+		Header:  "action_error",
+		Message: "Your selection of cards does not fulfill the requirements",
+	})
+}
+
 // HandleFx ...
 func (m *Match) HandleFx(ctx *Context) {
 
