@@ -48,3 +48,17 @@ func SkeletonSoldierTheDefiled(c *match.Card) {
 	c.Use(fx.Creature, fx.Suicide)
 
 }
+
+// WanderingBraineater ...
+func WanderingBraineater(c *match.Card) {
+
+	c.Name = "Wandering Braineater"
+	c.Power = 2000
+	c.Civ = civ.Darkness
+	c.Family = family.LivingDead
+	c.ManaCost = 2
+	c.ManaRequirement = []string{civ.Darkness}
+
+	c.Use(fx.Creature, fx.Blocker, fx.CantAttackPlayers, fx.CantAttackCreatures)
+
+}
