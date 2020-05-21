@@ -44,6 +44,7 @@ var Cards = map[string]match.CardConstructor{
 	"3f331274-f5f8-42e7-9f28-ce637add34d4": dm01.MarineFlower,
 	"ce48ff2c-ea9e-4c12-8629-028d2480b063": dm01.IllusionaryMerfolk,
 	"4b021e6f-39cf-401e-89cf-f164f7c0a797": dm01.PhantomFish,
+	"cfe9f5b8-2eeb-42c9-89ff-7e69734adc4d": dm01.RevolverFish,
 
 	// dm02
 	// ...

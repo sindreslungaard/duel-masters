@@ -59,3 +59,17 @@ func PhantomFish(c *match.Card) {
 	c.Use(fx.Creature, fx.Blocker, fx.CantAttackPlayers, fx.CantAttackCreatures)
 
 }
+
+// RevolverFish ...
+func RevolverFish(c *match.Card) {
+
+	c.Name = "Revolver Fish"
+	c.Power = 5000
+	c.Civ = civ.Water
+	c.Family = family.GelFish
+	c.ManaCost = 4
+	c.ManaRequirement = []string{civ.Water}
+
+	c.Use(fx.Creature, fx.Blocker, fx.CantAttackPlayers, fx.CantAttackCreatures)
+
+}
