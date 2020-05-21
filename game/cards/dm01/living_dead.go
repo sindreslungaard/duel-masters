@@ -20,3 +20,17 @@ func BoneAssassin(c *match.Card) {
 	c.Use(fx.Creature, fx.Slayer)
 
 }
+
+// BoneSpider ...
+func BoneSpider(c *match.Card) {
+
+	c.Name = "Bone Spider"
+	c.Power = 5000
+	c.Civ = civ.Darkness
+	c.Family = family.LivingDead
+	c.ManaCost = 3
+	c.ManaRequirement = []string{civ.Darkness}
+
+	c.Use(fx.Creature, fx.Suicide)
+
+}
