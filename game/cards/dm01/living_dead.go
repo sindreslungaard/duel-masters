@@ -34,3 +34,17 @@ func BoneSpider(c *match.Card) {
 	c.Use(fx.Creature, fx.Suicide)
 
 }
+
+// SkeletonSoldierTheDefiled ...
+func SkeletonSoldierTheDefiled(c *match.Card) {
+
+	c.Name = "Skeleton Soldier, the Defiled"
+	c.Power = 3000
+	c.Civ = civ.Darkness
+	c.Family = family.LivingDead
+	c.ManaCost = 4
+	c.ManaRequirement = []string{civ.Darkness}
+
+	c.Use(fx.Creature, fx.Suicide)
+
+}
