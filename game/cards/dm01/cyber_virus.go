@@ -34,3 +34,17 @@ func FaerieChild(c *match.Card) {
 	c.Use(fx.CantBeBlocked, fx.Creature)
 
 }
+
+// MarineFlower ...
+func MarineFlower(c *match.Card) {
+
+	c.Name = "Marine Flower"
+	c.Power = 2000
+	c.Civ = civ.Water
+	c.Family = family.CyberVirus
+	c.ManaCost = 1
+	c.ManaRequirement = []string{civ.Water}
+
+	c.Use(fx.Creature, fx.Blocker, fx.CantAttackPlayers, fx.CantAttackCreatures)
+
+}
