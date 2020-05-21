@@ -20,3 +20,17 @@ func CandyDrop(c *match.Card) {
 	c.Use(fx.CantBeBlocked, fx.Creature)
 
 }
+
+// FaerieChild ...
+func FaerieChild(c *match.Card) {
+
+	c.Name = "Faerie Child"
+	c.Power = 2000
+	c.Civ = civ.Water
+	c.Family = family.CyberVirus
+	c.ManaCost = 4
+	c.ManaRequirement = []string{civ.Water}
+
+	c.Use(fx.CantBeBlocked, fx.Creature)
+
+}
