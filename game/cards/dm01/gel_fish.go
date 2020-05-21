@@ -45,3 +45,17 @@ func IllusionaryMerfolk(c *match.Card) {
 	})
 
 }
+
+// PhantomFish ...
+func PhantomFish(c *match.Card) {
+
+	c.Name = "Phantom Fish"
+	c.Power = 4000
+	c.Civ = civ.Water
+	c.Family = family.GelFish
+	c.ManaCost = 3
+	c.ManaRequirement = []string{civ.Water}
+
+	c.Use(fx.Creature, fx.Blocker, fx.CantAttackPlayers, fx.CantAttackCreatures)
+
+}
