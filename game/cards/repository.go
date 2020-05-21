@@ -53,6 +53,7 @@ var Cards = map[string]match.CardConstructor{
 	"90b2ed59-828c-4237-ac2e-b7008a02ad2e": dm01.WanderingBraineater,
 	"5d3d7052-e5fa-4502-8d31-c72673232317": dm01.HanusaRadianceElemental,
 	"6a4270cf-f3be-4c66-8b30-eb2c769065dc": dm01.IocantTheOracle,
+	"25a2af16-cc42-4f4c-8c3d-59fb3a7ca74b": dm01.UrthPurifyingElemental,
 
 	// dm02
 	// ...

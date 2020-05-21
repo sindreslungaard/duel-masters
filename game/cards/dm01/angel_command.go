@@ -68,3 +68,23 @@ func iocantTheOracleSpecial(card *match.Card) {
 	}
 
 }
+
+// UrthPurifyingElemental ...
+func UrthPurifyingElemental(c *match.Card) {
+
+	c.Name = "Urth, Purifying Elemental"
+	c.Power = 6000
+	c.Civ = civ.Light
+	c.Family = family.AngelCommand
+	c.ManaCost = 6
+	c.ManaRequirement = []string{civ.Light}
+
+	c.Use(fx.Creature, fx.Doublebreaker, func(card *match.Card, ctx *match.Context) {
+
+		if _, ok := ctx.Event.(*match.EndOfTurnStep); ok {
+			card.Tapped = false
+		}
+
+	})
+
+}
