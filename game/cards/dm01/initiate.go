@@ -34,3 +34,17 @@ func IereVizierOfBullets(c *match.Card) {
 	c.Use(fx.Creature)
 
 }
+
+// LokVizierOfHunting ...
+func LokVizierOfHunting(c *match.Card) {
+
+	c.Name = "Lok, Vizier of Hunting"
+	c.Power = 4000
+	c.Civ = civ.Light
+	c.Family = family.Initiate
+	c.ManaCost = 4
+	c.ManaRequirement = []string{civ.Light}
+
+	c.Use(fx.Creature)
+
+}
