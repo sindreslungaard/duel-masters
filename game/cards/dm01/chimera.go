@@ -99,3 +99,17 @@ func Gigaberos(c *match.Card) {
 	})
 
 }
+
+// Gigagiele ...
+func Gigagiele(c *match.Card) {
+
+	c.Name = "Gigagiele"
+	c.Power = 3000
+	c.Civ = civ.Darkness
+	c.Family = family.Chimera
+	c.ManaCost = 5
+	c.ManaRequirement = []string{civ.Darkness}
+
+	c.Use(fx.Creature, fx.Slayer)
+
+}

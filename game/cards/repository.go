@@ -55,6 +55,7 @@ var Cards = map[string]match.CardConstructor{
 	"6a4270cf-f3be-4c66-8b30-eb2c769065dc": dm01.IocantTheOracle,
 	"25a2af16-cc42-4f4c-8c3d-59fb3a7ca74b": dm01.UrthPurifyingElemental,
 	"c4839847-e393-47b0-b172-95531aa6d39e": dm01.Gigaberos,
+	"5d73062e-acff-47e6-b49a-c0bb1a1762b5": dm01.Gigagiele,
 
 	// dm02
 	// ...
