@@ -5,6 +5,7 @@ import (
 	"duel-masters/game/family"
 	"duel-masters/game/fx"
 	"duel-masters/game/match"
+	"fmt"
 )
 
 // FreiVizierOfAir ...
@@ -69,6 +70,50 @@ func MieleVizierOfLightning(c *match.Card) {
 
 				for _, creature := range creatures {
 					creature.Tapped = true
+				}
+
+			}
+
+		}
+
+	})
+
+}
+
+// ToelVizierOfLight ...
+func ToelVizierOfLight(c *match.Card) {
+
+	c.Name = "Toel, Vizier of Light"
+	c.Power = 2000
+	c.Civ = civ.Light
+	c.Family = family.Initiate
+	c.ManaCost = 5
+	c.ManaRequirement = []string{civ.Light}
+
+	c.Use(fx.Creature, func(card *match.Card, ctx *match.Context) {
+
+		if _, ok := ctx.Event.(*match.EndOfTurnStep); ok {
+
+			if ctx.Match.IsPlayerTurn(card.Player) {
+
+				creatures, err := card.Player.Container(match.BATTLEZONE)
+
+				if err != nil {
+					return
+				}
+
+				madeChanges := false
+
+				for _, creature := range creatures {
+
+					if creature.Tapped {
+						creature.Tapped = false
+						madeChanges = true
+					}
+				}
+
+				if madeChanges {
+					ctx.Match.Chat("Server", fmt.Sprintf("%s untapped all creatures in %s's battlezone", card.Name, card.Player.Username()))
 				}
 
 			}
