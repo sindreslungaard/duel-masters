@@ -39,7 +39,7 @@ func RaylaTruthEnforcer(c *match.Card) {
 
 			if event.CardID == card.ID && (event.To == match.BATTLEZONE || event.To == match.SPELLZONE) {
 
-				cards := match.SearchForCnd(card.Player, ctx.Match, match.DECK, cnd.Spell, "Select 1 spell from your deck that will be shown to your opponent and sent to your hand", 1, 1, true)
+				cards := match.SearchForCnd(card.Player, ctx.Match, card.Player, match.DECK, cnd.Spell, "Select 1 spell from your deck that will be shown to your opponent and sent to your hand", 1, 1, true)
 
 				for _, c := range cards {
 					card.Player.MoveCard(c.ID, match.DECK, match.HAND)

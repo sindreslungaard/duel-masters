@@ -24,11 +24,11 @@ func AssertCardsIn(src []*Card, test ...string) bool {
 }
 
 // Search prompts the user to select n cards from the specified container
-func Search(p *Player, m *Match, containerName string, text string, min int, max int, cancellable bool) []*Card {
+func Search(p *Player, m *Match, containerOwner *Player, containerName string, text string, min int, max int, cancellable bool) []*Card {
 
 	result := make([]*Card, 0)
 
-	cards, err := p.Container(containerName)
+	cards, err := containerOwner.Container(containerName)
 
 	if err != nil || len(cards) < 1 {
 		return result
@@ -53,7 +53,7 @@ func Search(p *Player, m *Match, containerName string, text string, min int, max
 
 		for _, c := range action.Cards {
 
-			selectedCard, err := p.GetCard(c, containerName)
+			selectedCard, err := containerOwner.GetCard(c, containerName)
 
 			if err != nil {
 				continue
@@ -71,11 +71,11 @@ func Search(p *Player, m *Match, containerName string, text string, min int, max
 }
 
 // SearchForCnd prompts the user to select n cards from the specified container that matches the given condition
-func SearchForCnd(p *Player, m *Match, containerName string, condition string, text string, min int, max int, cancellable bool) []*Card {
+func SearchForCnd(p *Player, m *Match, containerOwner *Player, containerName string, condition string, text string, min int, max int, cancellable bool) []*Card {
 
 	result := make([]*Card, 0)
 
-	container, err := p.Container(containerName)
+	container, err := containerOwner.Container(containerName)
 
 	if err != nil || len(container) < 1 {
 		return result
@@ -112,7 +112,7 @@ func SearchForCnd(p *Player, m *Match, containerName string, condition string, t
 
 		for _, c := range action.Cards {
 
-			selectedCard, err := p.GetCard(c, containerName)
+			selectedCard, err := containerOwner.GetCard(c, containerName)
 
 			if err != nil {
 				continue
@@ -130,11 +130,11 @@ func SearchForCnd(p *Player, m *Match, containerName string, condition string, t
 }
 
 // SearchForFamily prompts the user to select n cards from the specified container that matches the given family
-func SearchForFamily(p *Player, m *Match, containerName string, family string, text string, min int, max int, cancellable bool) []*Card {
+func SearchForFamily(p *Player, m *Match, containerOwner *Player, containerName string, family string, text string, min int, max int, cancellable bool) []*Card {
 
 	result := make([]*Card, 0)
 
-	container, err := p.Container(containerName)
+	container, err := containerOwner.Container(containerName)
 
 	if err != nil || len(container) < 1 {
 		return result
@@ -171,7 +171,7 @@ func SearchForFamily(p *Player, m *Match, containerName string, family string, t
 
 		for _, c := range action.Cards {
 
-			selectedCard, err := p.GetCard(c, containerName)
+			selectedCard, err := containerOwner.GetCard(c, containerName)
 
 			if err != nil {
 				continue

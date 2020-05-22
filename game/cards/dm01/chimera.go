@@ -132,7 +132,7 @@ func Gigargon(c *match.Card) {
 
 			if event.CardID == card.ID && event.To == match.BATTLEZONE {
 
-				creatures := match.SearchForCnd(card.Player, ctx.Match, match.GRAVEYARD, cnd.Creature, "Gigargon: Select up to 2 cards from your graveyard that will be added to your hand", 1, 2, true)
+				creatures := match.SearchForCnd(card.Player, ctx.Match, card.Player, match.GRAVEYARD, cnd.Creature, "Gigargon: Select up to 2 cards from your graveyard that will be added to your hand", 1, 2, true)
 
 				for _, creature := range creatures {
 					card.Player.MoveCard(creature.ID, match.GRAVEYARD, match.HAND)
