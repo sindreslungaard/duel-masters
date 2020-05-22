@@ -20,3 +20,17 @@ func FreiVizierOfAir(c *match.Card) {
 	c.Use(fx.Creature, fx.Untap)
 
 }
+
+// IereVizierOfBullets ...
+func IereVizierOfBullets(c *match.Card) {
+
+	c.Name = "Iere, Vizier of Bullets"
+	c.Power = 3000
+	c.Civ = civ.Light
+	c.Family = family.Initiate
+	c.ManaCost = 3
+	c.ManaRequirement = []string{civ.Light}
+
+	c.Use(fx.Creature)
+
+}
