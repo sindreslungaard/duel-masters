@@ -2,9 +2,11 @@ package dm01
 
 import (
 	"duel-masters/game/civ"
+	"duel-masters/game/cnd"
 	"duel-masters/game/family"
 	"duel-masters/game/fx"
 	"duel-masters/game/match"
+	"fmt"
 )
 
 // Gigaberos ...
@@ -111,5 +113,36 @@ func Gigagiele(c *match.Card) {
 	c.ManaRequirement = []string{civ.Darkness}
 
 	c.Use(fx.Creature, fx.Slayer)
+
+}
+
+// Gigargon ...
+func Gigargon(c *match.Card) {
+
+	c.Name = "Gigargon"
+	c.Power = 3000
+	c.Civ = civ.Darkness
+	c.Family = family.Chimera
+	c.ManaCost = 1
+	c.ManaRequirement = []string{civ.Darkness}
+
+	c.Use(fx.Creature, func(card *match.Card, ctx *match.Context) {
+
+		if event, ok := ctx.Event.(*match.CardMoved); ok {
+
+			if event.CardID == card.ID && event.To == match.BATTLEZONE {
+
+				creatures := match.SearchForCnd(card.Player, ctx.Match, match.GRAVEYARD, cnd.Creature, "Gigargon: Select up to 2 cards from your graveyard that will be added to your hand", 1, 2, true)
+
+				for _, creature := range creatures {
+					card.Player.MoveCard(creature.ID, match.GRAVEYARD, match.HAND)
+					ctx.Match.Chat("Server", fmt.Sprintf("%s was returned to %s's hand from their graveyard", creature.Name, card.Player.Username()))
+				}
+
+			}
+
+		}
+
+	})
 
 }
