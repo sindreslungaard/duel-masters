@@ -20,3 +20,17 @@ func DeathligerLionOfChaos(c *match.Card) {
 	c.Use(fx.Creature, fx.Doublebreaker)
 
 }
+
+// ZagaanKnightOfDarkness ...
+func ZagaanKnightOfDarkness(c *match.Card) {
+
+	c.Name = "Zagaan, Knight of Darkness"
+	c.Power = 7000
+	c.Civ = civ.Darkness
+	c.Family = family.DemonCommand
+	c.ManaCost = 6
+	c.ManaRequirement = []string{civ.Darkness}
+
+	c.Use(fx.Creature, fx.Doublebreaker)
+
+}

@@ -58,6 +58,7 @@ var Cards = map[string]match.CardConstructor{
 	"5d73062e-acff-47e6-b49a-c0bb1a1762b5": dm01.Gigagiele,
 	"6161e271-5294-4073-94d2-b9c06f9d8fa3": dm01.Gigargon,
 	"dc1b51b3-52e7-4f1c-8770-515d4e1cb53d": dm01.DeathligerLionOfChaos,
+	"07a0115e-797a-49d8-90bf-9ea6de39978d": dm01.ZagaanKnightOfDarkness,
 
 	// dm02
 	// ...
