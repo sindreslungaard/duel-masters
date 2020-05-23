@@ -71,6 +71,7 @@ var Cards = map[string]match.CardConstructor{
 	"c1ebdda0-be88-4665-937e-2ef3ada8d378": dm01.DeathbladeBeetle,
 	"43abeec5-0597-43b3-93cf-766b95d19b5b": dm01.ForestHornet,
 	"b3ca1944-41a2-4939-ae85-1a73b1fe085f": dm01.RedEyeScorpion,
+	"162f70fb-33f7-4436-a114-41f255c0ce7e": dm01.DarkRavenShadowOfGrief,
 
 	// dm02
 	// ...
