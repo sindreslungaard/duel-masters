@@ -61,3 +61,17 @@ func MaskedHorrorShadowOfScorn(c *match.Card) {
 	})
 
 }
+
+// NightMasterShadowOfDecay ...
+func NightMasterShadowOfDecay(c *match.Card) {
+
+	c.Name = "Night Master, Shadow of Decay"
+	c.Power = 3000
+	c.Civ = civ.Darkness
+	c.Family = family.Ghost
+	c.ManaCost = 6
+	c.ManaRequirement = []string{civ.Darkness}
+
+	c.Use(fx.Creature, fx.Blocker)
+
+}
