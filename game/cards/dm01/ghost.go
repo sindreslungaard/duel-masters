@@ -5,6 +5,8 @@ import (
 	"duel-masters/game/family"
 	"duel-masters/game/fx"
 	"duel-masters/game/match"
+	"fmt"
+	"math/rand"
 )
 
 // DarkRavenShadowOfGrief ...
@@ -14,9 +16,48 @@ func DarkRavenShadowOfGrief(c *match.Card) {
 	c.Power = 1000
 	c.Civ = civ.Darkness
 	c.Family = family.Ghost
-	c.ManaCost = 4
+	c.ManaCost = 5
 	c.ManaRequirement = []string{civ.Darkness}
 
 	c.Use(fx.Creature, fx.Blocker)
+
+}
+
+// MaskedHorrorShadowOfScorn ...
+func MaskedHorrorShadowOfScorn(c *match.Card) {
+
+	c.Name = "Masked Horror, Shadow of Scorn"
+	c.Power = 1000
+	c.Civ = civ.Darkness
+	c.Family = family.Ghost
+	c.ManaCost = 5
+	c.ManaRequirement = []string{civ.Darkness}
+
+	c.Use(fx.Creature, func(card *match.Card, ctx *match.Context) {
+
+		if event, ok := ctx.Event.(*match.CardMoved); ok {
+
+			if event.CardID == card.ID && event.To == match.BATTLEZONE {
+
+				hand, err := ctx.Match.Opponent(card.Player).Container(match.HAND)
+
+				if err != nil {
+					return
+				}
+
+				if len(hand) < 1 {
+					return
+				}
+
+				discardedCard, err := ctx.Match.Opponent(card.Player).MoveCard(hand[rand.Intn(len(hand))].ID, match.HAND, match.GRAVEYARD)
+				if err == nil {
+					ctx.Match.Chat("Server", fmt.Sprintf("%s was discarded from %s's hand", discardedCard.Name, discardedCard.Player.Username()))
+				}
+
+			}
+
+		}
+
+	})
 
 }
