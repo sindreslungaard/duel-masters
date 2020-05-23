@@ -121,3 +121,17 @@ func Meteosaur(c *match.Card) {
 	})
 
 }
+
+// Stonesaur ...
+func Stonesaur(c *match.Card) {
+
+	c.Name = "Stonesaur"
+	c.Power = 4000
+	c.Civ = civ.Fire
+	c.Family = family.RockBeast
+	c.ManaCost = 5
+	c.ManaRequirement = []string{civ.Fire}
+
+	c.Use(fx.Creature, fx.PowerAttacker2000)
+
+}
