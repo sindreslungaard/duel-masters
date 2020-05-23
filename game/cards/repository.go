@@ -65,6 +65,7 @@ var Cards = map[string]match.CardConstructor{
 	"cf5eb3d3-e128-42db-bf1a-161d5dd4b972": dm01.LokVizierOfHunting,
 	"15efe8b0-02c1-439b-8e7c-4548e74f5c33": dm01.MieleVizierOfLightning,
 	"340ec79b-3a4e-4483-ac0e-5dd6b40eb4e1": dm01.ToelVizierOfLight,
+	"e1e112d7-11e1-4f01-9c91-00a2b1626043": dm01.Bombersaur,
 
 	// dm02
 	// ...

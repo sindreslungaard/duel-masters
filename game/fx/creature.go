@@ -194,6 +194,7 @@ func Creature(card *match.Card, ctx *match.Context) {
 					action := <-opponent.Action
 
 					if action.Cancel {
+						ctx.Match.EndWait(card.Player)
 						ctx.Match.CloseAction(opponent)
 
 						if len(shieldzone) < 1 {
@@ -221,6 +222,7 @@ func Creature(card *match.Card, ctx *match.Context) {
 
 					c.Tapped = true
 
+					ctx.Match.EndWait(card.Player)
 					ctx.Match.CloseAction(opponent)
 
 					ctx.Match.Battle(card, c)
@@ -228,8 +230,6 @@ func Creature(card *match.Card, ctx *match.Context) {
 					break
 
 				}
-
-				ctx.Match.EndWait(card.Player)
 
 			} else {
 
@@ -334,6 +334,7 @@ func Creature(card *match.Card, ctx *match.Context) {
 					action := <-opponent.Action
 
 					if action.Cancel {
+						ctx.Match.EndWait(card.Player)
 						ctx.Match.CloseAction(opponent)
 						break
 					}
@@ -352,6 +353,7 @@ func Creature(card *match.Card, ctx *match.Context) {
 
 					blocker.Tapped = true
 
+					ctx.Match.EndWait(card.Player)
 					ctx.Match.CloseAction(opponent)
 
 					ctx.Match.Battle(card, blocker)
@@ -359,8 +361,6 @@ func Creature(card *match.Card, ctx *match.Context) {
 					break
 
 				}
-
-				ctx.Match.EndWait(card.Player)
 
 			}
 
