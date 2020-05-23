@@ -187,3 +187,59 @@ func SearchForFamily(p *Player, m *Match, containerOwner *Player, containerName 
 	return result
 
 }
+
+// Filter prompts the user to select n cards from the specified container that matches the given filter
+func Filter(p *Player, m *Match, containerOwner *Player, containerName string, text string, min int, max int, cancellable bool, filter func(*Card) bool) []*Card {
+
+	result := make([]*Card, 0)
+
+	cards, err := containerOwner.Container(containerName)
+
+	if err != nil || len(cards) < 1 {
+		return result
+	}
+
+	filtered := make([]*Card, 0)
+
+	for _, mCard := range cards {
+		if filter(mCard) {
+			filtered = append(filtered, mCard)
+		}
+	}
+
+	m.NewAction(p, filtered, min, max, text, true)
+
+	defer m.CloseAction(p)
+
+	for {
+
+		action := <-p.Action
+
+		if cancellable && action.Cancel {
+			break
+		}
+
+		if len(action.Cards) < min || len(action.Cards) > max || !AssertCardsIn(filtered, action.Cards...) {
+			m.ActionWarning(p, "The cards you selected does not meet the requirements")
+			continue
+		}
+
+		for _, c := range action.Cards {
+
+			selectedCard, err := containerOwner.GetCard(c, containerName)
+
+			if err != nil {
+				continue
+			}
+
+			result = append(result, selectedCard)
+
+		}
+
+		break
+
+	}
+
+	return result
+
+}

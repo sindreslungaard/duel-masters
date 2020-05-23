@@ -82,3 +82,42 @@ func Bombersaur(c *match.Card) {
 	})
 
 }
+
+// Meteosaur ...
+func Meteosaur(c *match.Card) {
+
+	c.Name = "Meteosaur"
+	c.Power = 2000
+	c.Civ = civ.Fire
+	c.Family = family.RockBeast
+	c.ManaCost = 5
+	c.ManaRequirement = []string{civ.Fire}
+
+	c.Use(fx.Creature, func(card *match.Card, ctx *match.Context) {
+
+		if event, ok := ctx.Event.(*match.CardMoved); ok {
+
+			if event.CardID == card.ID && event.To == match.BATTLEZONE {
+
+				creatures := match.Filter(
+					card.Player,
+					ctx.Match,
+					ctx.Match.Opponent(card.Player),
+					match.BATTLEZONE,
+					"Meteosaur: Select 1 of your opponent's creatures with power 2000 or less and destroy it",
+					1,
+					1,
+					true,
+					func(x *match.Card) bool { return x.Power <= 2000 },
+				)
+
+				for _, creature := range creatures {
+					ctx.Match.Destroy(creature, card)
+				}
+
+			}
+		}
+
+	})
+
+}
