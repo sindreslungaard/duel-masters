@@ -20,3 +20,17 @@ func DeathbladeBeetle(c *match.Card) {
 	c.Use(fx.Creature, fx.Doublebreaker, fx.PowerAttacker4000)
 
 }
+
+// ForestHornet ...
+func ForestHornet(c *match.Card) {
+
+	c.Name = "Forest Hornet"
+	c.Power = 4000
+	c.Civ = civ.Nature
+	c.Family = family.GiantInsect
+	c.ManaCost = 4
+	c.ManaRequirement = []string{civ.Nature}
+
+	c.Use(fx.Creature)
+
+}
