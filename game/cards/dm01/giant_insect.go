@@ -34,3 +34,17 @@ func ForestHornet(c *match.Card) {
 	c.Use(fx.Creature)
 
 }
+
+// RedEyeScorpion ...
+func RedEyeScorpion(c *match.Card) {
+
+	c.Name = "Red-Eye Scorpion"
+	c.Power = 4000
+	c.Civ = civ.Nature
+	c.Family = family.GiantInsect
+	c.ManaCost = 5
+	c.ManaRequirement = []string{civ.Nature}
+
+	c.Use(fx.Creature, fx.ReturnToMana)
+
+}
