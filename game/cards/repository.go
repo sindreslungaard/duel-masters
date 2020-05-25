@@ -100,6 +100,7 @@ var Cards = map[string]match.CardConstructor{
 	"c971ff15-5735-4d61-bb16-c805130ca405": dm01.HunterFish,
 	"446eaf96-36c8-4093-b4b2-e77e7afb6e3f": dm01.Seamine,
 	"c9b98336-312d-4d08-8add-6b820a88815f": dm01.UnicornFish,
+	"dbdbad44-6a62-4eff-b8f1-95f56588a13a": dm01.VampireSilphy,
 
 	// dm02
 	// ...
