@@ -93,3 +93,17 @@ func OnslaughterTriceps(c *match.Card) {
 	})
 
 }
+
+// SuperExplosiveVolcanodon ...
+func SuperExplosiveVolcanodon(c *match.Card) {
+
+	c.Name = "Super Explosive Volcanodon"
+	c.Power = 2000
+	c.Civ = civ.Fire
+	c.Family = family.Dragonoid
+	c.ManaCost = 4
+	c.ManaRequirement = []string{civ.Fire}
+
+	c.Use(fx.Creature, fx.PowerAttacker4000)
+
+}
