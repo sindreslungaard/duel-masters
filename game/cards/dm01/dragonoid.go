@@ -64,3 +64,32 @@ func FireSweeperBurningHellion(c *match.Card) {
 	c.Use(fx.Creature, fx.PowerAttacker2000)
 
 }
+
+// OnslaughterTriceps ...
+func OnslaughterTriceps(c *match.Card) {
+
+	c.Name = "OnslaughterTriceps"
+	c.Power = 5000
+	c.Civ = civ.Fire
+	c.Family = family.Dragonoid
+	c.ManaCost = 3
+	c.ManaRequirement = []string{civ.Fire}
+
+	c.Use(fx.Creature, func(card *match.Card, ctx *match.Context) {
+		if event, ok := ctx.Event.(*match.CardMoved); ok {
+
+			if event.CardID == card.ID && event.To == match.BATTLEZONE {
+
+				cards := match.Search(card.Player, ctx.Match, card.Player, match.MANAZONE, "Onslaughter Triceps: Select 1 card from your manazone that will be sent to your graveyard", 1, 1, false)
+
+				for _, manaCard := range cards {
+					card.Player.MoveCard(manaCard.ID, match.MANAZONE, match.GRAVEYARD)
+					ctx.Match.Chat("Server", fmt.Sprintf("%s was sent from %s's manazone to their graveyard", manaCard.ID, card.Name))
+				}
+
+			}
+
+		}
+	})
+
+}
