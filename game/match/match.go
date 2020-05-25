@@ -272,6 +272,16 @@ func (m *Match) GetPower(card *Card, isAttacking bool) int {
 
 }
 
+// CastSpell Fires a SpellCast event
+func (m *Match) CastSpell(card *Card, fromShield bool) {
+
+	m.HandleFx(NewContext(m, &SpellCast{
+		CardID:     card.ID,
+		FromShield: fromShield,
+	}))
+
+}
+
 // Battle handles a battle between two creatures
 func (m *Match) Battle(attacker *Card, defender *Card) {
 

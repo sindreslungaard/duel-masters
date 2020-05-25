@@ -21,6 +21,12 @@ type CardMoved struct {
 	To     string
 }
 
+// SpellCast is fired when a spell is cast, either from being played or from shield triggers
+type SpellCast struct {
+	CardID     string
+	FromShield bool
+}
+
 // AttackPlayer is fired when the player attempts to use a creature to attack the player
 type AttackPlayer struct {
 	CardID   string
