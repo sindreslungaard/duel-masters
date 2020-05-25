@@ -34,3 +34,17 @@ func RubyGrass(c *match.Card) {
 	c.Use(fx.Creature, fx.Blocker, fx.CantAttackPlayers, fx.Untap)
 
 }
+
+// SenatineJadeTree ...
+func SenatineJadeTree(c *match.Card) {
+
+	c.Name = "Senatine Jade Tree"
+	c.Power = 4000
+	c.Civ = civ.Light
+	c.Family = family.StarlightTree
+	c.ManaCost = 3
+	c.ManaRequirement = []string{civ.Light}
+
+	c.Use(fx.Creature, fx.Blocker, fx.CantAttackPlayers)
+
+}
