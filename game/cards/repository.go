@@ -89,6 +89,8 @@ var Cards = map[string]match.CardConstructor{
 	"af3bc221-1cc2-4f58-83ea-2673ac2c66c5": dm01.ImmortalBaronVorg,
 	"f7dc24d2-2a84-46ff-9661-0b8418d68650": dm01.DiaNorkMoonlightGuardian,
 	"39090f65-779c-46c9-856c-67303dd5605c": dm01.GranGureSpaceGuardian,
+	"c05fe45d-690e-4856-bddb-5f46154e57e5": dm01.LaUraGigaSkyGuardian,
+	"eccceb7c-834c-4bf9-b0cd-c2dc6fad3dbf": dm01.SzubsKinTwilightGuardian,
 
 	// dm02
 	// ...

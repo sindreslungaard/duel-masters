@@ -34,3 +34,31 @@ func GranGureSpaceGuardian(c *match.Card) {
 	c.Use(fx.Creature, fx.Blocker, fx.CantAttackPlayers)
 
 }
+
+// LaUraGigaSkyGuardian ...
+func LaUraGigaSkyGuardian(c *match.Card) {
+
+	c.Name = "La Ura Giga, Sky Guardian"
+	c.Power = 2000
+	c.Civ = civ.Light
+	c.Family = family.Guardian
+	c.ManaCost = 1
+	c.ManaRequirement = []string{civ.Light}
+
+	c.Use(fx.Creature, fx.Blocker, fx.CantAttackPlayers)
+
+}
+
+// SzubsKinTwilightGuardian ...
+func SzubsKinTwilightGuardian(c *match.Card) {
+
+	c.Name = "Szubs Kin, Twilight Guardian"
+	c.Power = 6000
+	c.Civ = civ.Light
+	c.Family = family.Guardian
+	c.ManaCost = 5
+	c.ManaRequirement = []string{civ.Light}
+
+	c.Use(fx.Creature, fx.Blocker, fx.CantAttackPlayers)
+
+}
