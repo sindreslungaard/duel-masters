@@ -50,3 +50,17 @@ func ExplosiveFighterUcarn(c *match.Card) {
 	})
 
 }
+
+// FireSweeperBurningHellion ...
+func FireSweeperBurningHellion(c *match.Card) {
+
+	c.Name = "Fire Sweeper Burning Hellion"
+	c.Power = 3000
+	c.Civ = civ.Fire
+	c.Family = family.Dragonoid
+	c.ManaCost = 4
+	c.ManaRequirement = []string{civ.Fire}
+
+	c.Use(fx.Creature, fx.PowerAttacker2000)
+
+}
