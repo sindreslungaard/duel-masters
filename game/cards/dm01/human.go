@@ -20,3 +20,27 @@ func BrawlerZyler(c *match.Card) {
 	c.Use(fx.Creature, fx.PowerAttacker2000)
 
 }
+
+// FatalAttackerHorvath ...
+func FatalAttackerHorvath(c *match.Card) {
+
+	c.Name = "Fatal Attacker Horvath"
+	c.Power = 2000
+	c.Civ = civ.Fire
+	c.Family = family.Human
+	c.ManaCost = 3
+	c.ManaRequirement = []string{civ.Fire}
+
+	c.Use(fx.Creature)
+
+	c.PowerModifier = func(m *match.Match, attacking bool) int {
+
+		if attacking && match.ContainerHas(c.Player, match.BATTLEZONE, func(x *match.Card) bool { return x.Family == family.Armorloid }) {
+			return 2000
+		}
+
+		return 0
+
+	}
+
+}
