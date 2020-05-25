@@ -34,10 +34,12 @@ func IocantTheOracle(c *match.Card) {
 
 	c.Use(fx.Creature, fx.Blocker, fx.CantAttackPlayers, func(card *match.Card, ctx *match.Context) {
 
-		if event, ok := ctx.Event.(*match.CardMoved); ok {
-			if ctx.Match.IsPlayerTurn(card.Player) && (event.From == match.BATTLEZONE || event.To == match.BATTLEZONE) {
-				iocantTheOracleSpecial(card)
-			}
+		if _, ok := ctx.Event.(*match.AttackPlayer); ok {
+			iocantTheOracleSpecial(card)
+		}
+
+		if _, ok := ctx.Event.(*match.AttackCreature); ok {
+			iocantTheOracleSpecial(card)
 		}
 
 	})
