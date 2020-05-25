@@ -44,3 +44,17 @@ func FatalAttackerHorvath(c *match.Card) {
 	}
 
 }
+
+// ImmortalBaronVorg ...
+func ImmortalBaronVorg(c *match.Card) {
+
+	c.Name = "Immortal Baron, Vorg"
+	c.Power = 2000
+	c.Civ = civ.Fire
+	c.Family = family.Human
+	c.ManaCost = 2
+	c.ManaRequirement = []string{civ.Fire}
+
+	c.Use(fx.Creature)
+
+}
