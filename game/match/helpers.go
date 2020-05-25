@@ -93,7 +93,7 @@ func SearchForCnd(p *Player, m *Match, containerOwner *Player, containerName str
 		return result
 	}
 
-	m.NewAction(p, cards, min, max, text, true)
+	m.NewAction(p, cards, min, max, text, cancellable)
 
 	defer m.CloseAction(p)
 
@@ -152,7 +152,7 @@ func SearchForFamily(p *Player, m *Match, containerOwner *Player, containerName 
 		return result
 	}
 
-	m.NewAction(p, cards, min, max, text, true)
+	m.NewAction(p, cards, min, max, text, cancellable)
 
 	defer m.CloseAction(p)
 
@@ -207,7 +207,7 @@ func Filter(p *Player, m *Match, containerOwner *Player, containerName string, t
 		}
 	}
 
-	m.NewAction(p, filtered, min, max, text, true)
+	m.NewAction(p, filtered, min, max, text, cancellable)
 
 	defer m.CloseAction(p)
 
