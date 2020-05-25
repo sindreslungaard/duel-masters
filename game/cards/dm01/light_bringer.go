@@ -2,7 +2,6 @@ package dm01
 
 import (
 	"duel-masters/game/civ"
-	"duel-masters/game/cnd"
 	"duel-masters/game/family"
 	"duel-masters/game/fx"
 	"duel-masters/game/match"
@@ -32,41 +31,17 @@ func IocantTheOracle(c *match.Card) {
 	c.ManaCost = 2
 	c.ManaRequirement = []string{civ.Light}
 
-	c.Use(fx.Creature, fx.Blocker, fx.CantAttackPlayers, func(card *match.Card, ctx *match.Context) {
+	c.Use(fx.Creature, fx.Blocker, fx.CantAttackPlayers)
 
-		if _, ok := ctx.Event.(*match.AttackPlayer); ok {
-			iocantTheOracleSpecial(card)
+	c.PowerModifier = func(m *match.Match, attacking bool) int {
+
+		power := 0
+
+		if match.ContainerHas(c.Player, match.BATTLEZONE, func(x *match.Card) bool { return x.Family == family.AngelCommand }) {
+			power += 2000
 		}
 
-		if _, ok := ctx.Event.(*match.AttackCreature); ok {
-			iocantTheOracleSpecial(card)
-		}
-
-	})
-
-}
-
-// +2000 power amplifier if my battlezone has angel command
-func iocantTheOracleSpecial(card *match.Card) {
-
-	card.RemoveConditionBySource(card.ID + "-custom")
-
-	battlezone, err := card.Player.Container(match.BATTLEZONE)
-
-	if err != nil {
-		return
-	}
-
-	hasAngelCommand := false
-
-	for _, creature := range battlezone {
-		if creature.Family == family.AngelCommand {
-			hasAngelCommand = true
-		}
-	}
-
-	if hasAngelCommand {
-		card.AddCondition(cnd.PowerAmplifier, 2000, card.ID+"-custom")
+		return power
 	}
 
 }
