@@ -75,6 +75,7 @@ var Cards = map[string]match.CardConstructor{
 	"ea878730-fde0-4bd0-ad25-95e49f54a1b2": dm01.MaskedHorrorShadowOfScorn,
 	"f16795cc-4378-4e36-b13a-19f9b932228c": dm01.NightMasterShadowOfDecay,
 	"c5a869f4-a959-4667-a352-92df5369e0b9": dm01.DeadlyFighterBraidClaw,
+	"f682051b-7cc3-4155-aa8b-eb3335b0435c": dm01.ExplosiveFighterUcarn,
 
 	// dm02
 	// ...
