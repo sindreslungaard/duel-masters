@@ -70,3 +70,17 @@ func iocantTheOracleSpecial(card *match.Card) {
 	}
 
 }
+
+// ReusolTheOracle ...
+func ReusolTheOracle(c *match.Card) {
+
+	c.Name = "Reusol, the Oracle"
+	c.Power = 2000
+	c.Civ = civ.Light
+	c.Family = family.LightBringer
+	c.ManaCost = 2
+	c.ManaRequirement = []string{civ.Light}
+
+	c.Use(fx.Creature)
+
+}
