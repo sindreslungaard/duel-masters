@@ -84,6 +84,7 @@ var Cards = map[string]match.CardConstructor{
 	"d5d57060-ca58-48e1-8903-9b8362c92b0d": dm01.RubyGrass,
 	"725a28b7-8c06-4691-93d8-1c6b0dacdba5": dm01.SenatineJadeTree,
 	"ae66061e-6039-4dee-abf0-51169913bb35": dm01.ArmoredWalkerUrherion,
+	"5370bad9-1260-455e-8120-ea89badc7eaf": dm01.BrawlerZyler,
 
 	// dm02
 	// ...
