@@ -28,7 +28,7 @@ const (
 	StarlightTree   = "Starlight Tree"
 	Human           = "Human"
 	Guardian        = "Guardian"
-	ParasiteWork    = "Parasite Worm"
+	ParasiteWorm    = "Parasite Worm"
 	Armorloid       = "Armorloid"
 	TreeFolk        = "Tree Folk"
 	Fish            = "Fish"
