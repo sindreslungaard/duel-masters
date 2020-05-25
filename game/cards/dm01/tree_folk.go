@@ -20,3 +20,17 @@ func CoilingVines(c *match.Card) {
 	c.Use(fx.Creature, fx.ReturnToMana)
 
 }
+
+// PoisonousDahlia ...
+func PoisonousDahlia(c *match.Card) {
+
+	c.Name = "Poisonous Dahlia"
+	c.Power = 5000
+	c.Civ = civ.Nature
+	c.Family = family.TreeFolk
+	c.ManaCost = 4
+	c.ManaRequirement = []string{civ.Nature}
+
+	c.Use(fx.Creature, fx.CantAttackPlayers)
+
+}
