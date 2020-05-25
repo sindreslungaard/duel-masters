@@ -20,3 +20,17 @@ func DiaNorkMoonlightGuardian(c *match.Card) {
 	c.Use(fx.Creature, fx.Blocker, fx.CantAttackPlayers)
 
 }
+
+// GranGureSpaceGuardian ...
+func GranGureSpaceGuardian(c *match.Card) {
+
+	c.Name = "Gran Gure, Space Guardian"
+	c.Power = 9000
+	c.Civ = civ.Light
+	c.Family = family.Guardian
+	c.ManaCost = 6
+	c.ManaRequirement = []string{civ.Light}
+
+	c.Use(fx.Creature, fx.Blocker, fx.CantAttackPlayers)
+
+}
