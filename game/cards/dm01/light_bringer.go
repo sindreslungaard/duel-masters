@@ -13,7 +13,7 @@ func ChiliasTheOracle(c *match.Card) {
 	c.Name = "Chilias, the Oracle"
 	c.Power = 2500
 	c.Civ = civ.Light
-	c.Family = family.BeastFolk
+	c.Family = family.LightBringer
 	c.ManaCost = 4
 	c.ManaRequirement = []string{civ.Light}
 
