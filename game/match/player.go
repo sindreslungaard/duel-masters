@@ -176,6 +176,7 @@ func (p *Player) CreateDeck(deck []string) {
 			Family:          "undefined_family",
 			ManaCost:        1,
 			ManaRequirement: make([]string, 0),
+			PowerModifier:   func(m *Match, attacking bool) int { return 0 },
 		}
 
 		cardctor, err := CardCtor(card)

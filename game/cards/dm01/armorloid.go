@@ -19,11 +19,11 @@ func ArmoredWalkerUrherion(c *match.Card) {
 
 	c.Use(fx.Creature)
 
-	c.PowerModifier = func(m *match.Match) int {
+	c.PowerModifier = func(m *match.Match, attacking bool) int {
 
 		power := 0
 
-		if match.ContainerHas(c.Player, match.BATTLEZONE, func(x *match.Card) bool { return x.Family == family.Human }) {
+		if attacking && match.ContainerHas(c.Player, match.BATTLEZONE, func(x *match.Card) bool { return x.Family == family.Human }) {
 			power += 2000
 		}
 

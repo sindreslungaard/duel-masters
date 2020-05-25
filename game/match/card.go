@@ -21,6 +21,7 @@ type Card struct {
 	Family          string
 	ManaCost        int
 	ManaRequirement []string
+	PowerModifier   func(m *Match, attacking bool) int
 
 	conditions []Condition
 	handlers   []HandlerFunc

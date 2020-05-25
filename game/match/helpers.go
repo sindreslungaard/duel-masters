@@ -243,3 +243,24 @@ func Filter(p *Player, m *Match, containerOwner *Player, containerName string, t
 	return result
 
 }
+
+// ContainerHas returns true or false based on if the specified container includes a card that matches the given filter
+func ContainerHas(p *Player, containerName string, filter func(*Card) bool) bool {
+
+	cards, err := p.Container(containerName)
+
+	if err != nil {
+		return false
+	}
+
+	for _, card := range cards {
+
+		if filter(card) {
+			return true
+		}
+
+	}
+
+	return false
+
+}
