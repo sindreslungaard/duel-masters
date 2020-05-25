@@ -78,7 +78,7 @@ type MultipartActionMessage struct {
 	Text          string                 `json:"text"`
 	MinSelections int                    `json:"minSelections"`
 	MaxSelections int                    `json:"maxSelections"`
-	Cancellable   bool                   `json:"Cancellable"`
+	Cancellable   bool                   `json:"cancellable"`
 }
 
 // ActionWarningMessage is used to apply an error
