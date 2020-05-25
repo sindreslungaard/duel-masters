@@ -34,7 +34,7 @@ func Search(p *Player, m *Match, containerOwner *Player, containerName string, t
 		return result
 	}
 
-	m.NewAction(p, cards, min, max, text, true)
+	m.NewAction(p, cards, min, max, text, cancellable)
 
 	defer m.CloseAction(p)
 
