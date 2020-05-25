@@ -65,16 +65,12 @@ func Creature(card *match.Card, ctx *match.Context) {
 				action := <-card.Player.Action
 
 				if action.Cancel {
+					ctx.Match.CloseAction(card.Player)
 					ctx.InterruptFlow()
 					break
 				}
 
-				if len(action.Cards) != card.ManaCost || !match.AssertCardsIn(untappedMana, action.Cards...) {
-					ctx.Match.ActionWarning(card.Player, "Your selection of cards does not fulfill the requirements")
-					continue
-				}
-
-				ctx.Match.CloseAction(card.Player)
+				cards := make([]*match.Card, 0)
 
 				for _, id := range action.Cards {
 					mana, err := card.Player.GetCard(id, match.MANAZONE)
@@ -83,6 +79,17 @@ func Creature(card *match.Card, ctx *match.Context) {
 						continue
 					}
 
+					cards = append(cards, mana)
+				}
+
+				if len(action.Cards) != card.ManaCost || !match.AssertCardsIn(untappedMana, action.Cards...) || !card.Player.CanPlayCard(card, cards) {
+					ctx.Match.ActionWarning(card.Player, "Your selection of cards does not fulfill the requirements")
+					continue
+				}
+
+				ctx.Match.CloseAction(card.Player)
+
+				for _, mana := range cards {
 					mana.Tapped = true
 				}
 
