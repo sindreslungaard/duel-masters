@@ -265,8 +265,8 @@ func ContainerHas(p *Player, containerName string, filter func(*Card) bool) bool
 
 }
 
-// IAmSummoned returns true or falsed based on if the card is played
-func IAmSummoned(card *Card, ctx *Context) bool {
+// AmISummoned returns true or falsed based on if the card is played
+func AmISummoned(card *Card, ctx *Context) bool {
 
 	if event, ok := ctx.Event.(*CardMoved); ok {
 
@@ -279,8 +279,8 @@ func IAmSummoned(card *Card, ctx *Context) bool {
 	return false
 }
 
-// IAmCasted returns true or false based on if the card is casted as a spell
-func IAmCasted(card *Card, ctx *Context) bool {
+// AmICasted returns true or false based on if the card is casted as a spell
+func AmICasted(card *Card, ctx *Context) bool {
 
 	if event, ok := ctx.Event.(*SpellCast); ok {
 
