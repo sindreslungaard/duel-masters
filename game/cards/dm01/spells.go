@@ -77,3 +77,30 @@ func BurningPower(c *match.Card) {
 	})
 
 }
+
+// ChaosStrike ...
+func ChaosStrike(c *match.Card) {
+
+	c.Name = "Chaos Strike"
+	c.Civ = civ.Fire
+	c.ManaCost = 2
+	c.ManaRequirement = []string{civ.Fire}
+
+	c.Use(fx.Spell, func(card *match.Card, ctx *match.Context) {
+
+		if match.AmICasted(card, ctx) {
+
+			creatures := match.Search(card.Player, ctx.Match, ctx.Match.Opponent(card.Player), match.BATTLEZONE, "Select 1 of your opponent's creatures that will be tapped", 1, 1, false)
+
+			for _, creature := range creatures {
+
+				creature.Tapped = true
+				ctx.Match.Chat("Server", fmt.Sprintf("%s was tapped by %s", creature.Name, card.Name))
+
+			}
+
+		}
+
+	})
+
+}
