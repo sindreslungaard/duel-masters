@@ -189,3 +189,30 @@ func CrystalMemory(c *match.Card) {
 	})
 
 }
+
+// DarkReversal ...
+func DarkReversal(c *match.Card) {
+
+	c.Name = "Dark Reversal"
+	c.Civ = civ.Darkness
+	c.ManaCost = 2
+	c.ManaRequirement = []string{civ.Darkness}
+
+	c.Use(fx.Spell, fx.ShieldTrigger, func(card *match.Card, ctx *match.Context) {
+
+		if match.AmICasted(card, ctx) {
+
+			creatures := match.Filter(card.Player, ctx.Match, card.Player, match.GRAVEYARD, "Select 1 creature from your graveyard that will be sent to your hand", 1, 1, false, func(x *match.Card) bool { return x.HasCondition(cnd.Creature) })
+
+			for _, creature := range creatures {
+
+				card.Player.MoveCard(creature.ID, match.GRAVEYARD, match.HAND)
+				ctx.Match.Chat("Server", fmt.Sprintf("%s retrieved %s from their graveyard", card.Player.Username(), creature.Name))
+
+			}
+
+		}
+
+	})
+
+}
