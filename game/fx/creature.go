@@ -232,7 +232,7 @@ func Creature(card *match.Card, ctx *match.Context) {
 					ctx.Match.EndWait(card.Player)
 					ctx.Match.CloseAction(opponent)
 
-					ctx.Match.Battle(card, c)
+					ctx.Match.Battle(card, c, true)
 
 					break
 
@@ -368,15 +368,15 @@ func Creature(card *match.Card, ctx *match.Context) {
 					ctx.Match.EndWait(card.Player)
 					ctx.Match.CloseAction(opponent)
 
-					ctx.Match.Battle(card, blocker)
+					ctx.Match.Battle(card, blocker, true)
 
-					break
+					return
 
 				}
 
 			}
 
-			ctx.Match.Battle(card, c)
+			ctx.Match.Battle(card, c, false)
 
 		})
 
@@ -388,7 +388,22 @@ func Creature(card *match.Card, ctx *match.Context) {
 		if event.Card == card {
 
 			ctx.ScheduleAfter(func() {
+
 				card.Player.MoveCard(card.ID, match.BATTLEZONE, match.GRAVEYARD)
+
+				// Slayer
+				if card.HasCondition(cnd.Slayer) {
+
+					creature, err := ctx.Match.Opponent(card.Player).GetCard(event.Source.ID, match.BATTLEZONE)
+
+					if err == nil {
+
+						ctx.Match.Destroy(creature, card)
+
+					}
+
+				}
+
 			})
 
 		}

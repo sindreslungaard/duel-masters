@@ -285,21 +285,23 @@ func (m *Match) CastSpell(card *Card, fromShield bool) {
 }
 
 // Battle handles a battle between two creatures
-func (m *Match) Battle(attacker *Card, defender *Card) {
+func (m *Match) Battle(attacker *Card, defender *Card, blocked bool) {
 
 	attackerPower := m.GetPower(attacker, true)
 	defenderPower := m.GetPower(defender, false)
 
+	m.HandleFx(NewContext(m, &Battle{Attacker: attacker, Defender: defender, Blocked: blocked}))
+
 	if attackerPower > defenderPower {
-		m.HandleFx(NewContext(m, &CreatureDestroyed{Card: defender, Source: attacker}))
+		m.HandleFx(NewContext(m, &CreatureDestroyed{Card: defender, Source: attacker, Blocked: blocked}))
 		m.Chat("Server", fmt.Sprintf("%s (%v) was destroyed by %s (%v)", defender.Name, defenderPower, attacker.Name, attackerPower))
 	} else if attackerPower == defenderPower {
-		m.HandleFx(NewContext(m, &CreatureDestroyed{Card: attacker, Source: defender}))
+		m.HandleFx(NewContext(m, &CreatureDestroyed{Card: attacker, Source: defender, Blocked: blocked}))
 		m.Chat("Server", fmt.Sprintf("%s (%v) was destroyed by %s (%v)", attacker.Name, attackerPower, defender.Name, defenderPower))
-		m.HandleFx(NewContext(m, &CreatureDestroyed{Card: defender, Source: attacker}))
+		m.HandleFx(NewContext(m, &CreatureDestroyed{Card: defender, Source: attacker, Blocked: blocked}))
 		m.Chat("Server", fmt.Sprintf("%s (%v) was destroyed by %s (%v)", defender.Name, defenderPower, attacker.Name, attackerPower))
 	} else if attackerPower < defenderPower {
-		m.HandleFx(NewContext(m, &CreatureDestroyed{Card: attacker, Source: defender}))
+		m.HandleFx(NewContext(m, &CreatureDestroyed{Card: attacker, Source: defender, Blocked: blocked}))
 		m.Chat("Server", fmt.Sprintf("%s (%v) was destroyed by %s (%v)", attacker.Name, attackerPower, defender.Name, defenderPower))
 	}
 

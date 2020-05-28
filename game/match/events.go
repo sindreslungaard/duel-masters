@@ -43,10 +43,12 @@ type AttackCreature struct {
 type Battle struct {
 	Attacker *Card
 	Defender *Card
+	Blocked  bool
 }
 
 // CreatureDestroyed is fired when a creature dies in battle or is destroyed from another source, such as a spell
 type CreatureDestroyed struct {
-	Card   *Card
-	Source *Card
+	Card    *Card
+	Source  *Card
+	Blocked bool
 }

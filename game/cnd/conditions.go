@@ -12,4 +12,6 @@ const (
 	Spell             = "spell"
 	Blocker           = "blocker"
 	ShieldTrigger     = "shield_trigger"
+	Slayer            = "slayer"
+	Active            = "active"
 )
