@@ -280,6 +280,8 @@ func (m *Match) CastSpell(card *Card, fromShield bool) {
 		FromShield: fromShield,
 	}))
 
+	m.BroadcastState()
+
 }
 
 // Battle handles a battle between two creatures

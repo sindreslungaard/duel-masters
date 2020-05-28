@@ -289,6 +289,11 @@ func Creature(card *match.Card, ctx *match.Context) {
 				}
 			}
 
+			if len(attackable) < 1 {
+				ctx.Match.WarnPlayer(card.Player, "None of your opponents creatures can currently be attacked.")
+				return
+			}
+
 			attackedCreatures := make([]*match.Card, 0)
 
 			ctx.Match.NewAction(card.Player, attackable, 1, 1, "Select the creature to attack", true)
