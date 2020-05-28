@@ -50,3 +50,30 @@ func BrainSerum(c *match.Card) {
 	})
 
 }
+
+// BurningPower ...
+func BurningPower(c *match.Card) {
+
+	c.Name = "Burning Power"
+	c.Civ = civ.Fire
+	c.ManaCost = 1
+	c.ManaRequirement = []string{civ.Fire}
+
+	c.Use(fx.Spell, func(card *match.Card, ctx *match.Context) {
+
+		if match.AmICasted(card, ctx) {
+
+			creatures := match.Search(card.Player, ctx.Match, card.Player, match.BATTLEZONE, "Select 1 creature from your battlezone that will gain \"Power Attacker +2000\"", 1, 1, false)
+
+			for _, creature := range creatures {
+
+				creature.AddCondition(cnd.PowerAttacker, 2000, card.ID)
+				ctx.Match.Chat("Server", fmt.Sprintf("%s was given power attacker +2000", creature.Name))
+
+			}
+
+		}
+
+	})
+
+}
