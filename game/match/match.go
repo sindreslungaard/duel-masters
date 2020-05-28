@@ -324,19 +324,46 @@ func (m *Match) BreakShields(shields []*Card) {
 		return
 	}
 
+	m.Chat("Server", fmt.Sprintf("%v of %v's shields were broken", len(shields), m.PlayerRef(shields[0].Player).Socket.User.Username))
+
 	for _, shield := range shields {
 
-		_, err := shield.Player.MoveCard(shield.ID, SHIELDZONE, HAND)
+		card, err := shield.Player.MoveCard(shield.ID, SHIELDZONE, HAND)
 
 		if err != nil {
 			continue
 		}
 
-		// TODO: Handle shieldtriggers
+		// Handle shield triggers
+		if card.HasCondition(cnd.ShieldTrigger) {
+
+			m.NewAction(card.Player, []*Card{card}, 1, 1, "Shield trigger! Choose the spell to cast it for free or close to keep it in your hand", true)
+
+			for {
+
+				action := <-card.Player.Action
+
+				if action.Cancel {
+					m.CloseAction(card.Player)
+					break
+				}
+
+				if len(action.Cards) < 1 {
+					m.DefaultActionWarning(card.Player)
+					continue
+				}
+
+				m.CastSpell(card, true)
+
+				m.CloseAction(card.Player)
+
+				break
+
+			}
+
+		}
 
 	}
-
-	m.Chat("Server", fmt.Sprintf("%v of %v's shields were broken", len(shields), m.PlayerRef(shields[0].Player).Socket.User.Username))
 
 }
 

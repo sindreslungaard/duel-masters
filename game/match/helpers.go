@@ -207,6 +207,10 @@ func Filter(p *Player, m *Match, containerOwner *Player, containerName string, t
 		}
 	}
 
+	if len(filtered) < 1 {
+		return result
+	}
+
 	m.NewAction(p, filtered, min, max, text, cancellable)
 
 	defer m.CloseAction(p)
