@@ -104,3 +104,32 @@ func ChaosStrike(c *match.Card) {
 	})
 
 }
+
+// CreepingPlague ...
+func CreepingPlague(c *match.Card) {
+
+	c.Name = "Creeping Plague"
+	c.Civ = civ.Darkness
+	c.ManaCost = 1
+	c.ManaRequirement = []string{civ.Darkness}
+
+	c.Use(fx.Spell, func(card *match.Card, ctx *match.Context) {
+
+		if match.AmICasted(card, ctx) {
+			card.AddCondition(cnd.Active, nil, card.ID)
+		}
+
+		if event, ok := ctx.Event.(*match.Battle); ok {
+
+			if !event.Blocked || !card.HasCondition(cnd.Active) {
+				return
+			}
+
+			event.Attacker.AddCondition(cnd.Slayer, nil, card.ID)
+			ctx.Match.Chat("Server", fmt.Sprintf("%s was given \"Slayer\" by %s", event.Attacker.Name, card.Name))
+
+		}
+
+	})
+
+}
