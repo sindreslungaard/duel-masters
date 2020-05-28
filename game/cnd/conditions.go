@@ -11,4 +11,5 @@ const (
 	Creature          = "creature"
 	Spell             = "spell"
 	Blocker           = "blocker"
+	ShieldTrigger     = "shield_trigger"
 )

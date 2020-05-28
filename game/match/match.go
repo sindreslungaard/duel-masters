@@ -638,12 +638,6 @@ func (m *Match) UntapStep() {
 		}
 	}
 
-	if cards, err := m.CurrentPlayer().Player.Container(BATTLEZONE); err == nil {
-		for _, c := range cards {
-			c.ClearConditions()
-		}
-	}
-
 	ctx := NewContext(m, &UntapStep{})
 
 	m.HandleFx(ctx)
@@ -704,6 +698,12 @@ func (m *Match) EndStep() {
 
 // EndOfTurnTriggers ...
 func (m *Match) EndOfTurnTriggers() {
+
+	if cards, err := m.CurrentPlayer().Player.Container(BATTLEZONE); err == nil {
+		for _, c := range cards {
+			c.ClearConditions()
+		}
+	}
 
 	ctx := NewContext(m, &EndOfTurnStep{})
 
