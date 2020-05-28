@@ -30,3 +30,23 @@ func AuraBlast(c *match.Card) {
 	})
 
 }
+
+// BrainSerum ...
+func BrainSerum(c *match.Card) {
+
+	c.Name = "Brain Serum"
+	c.Civ = civ.Water
+	c.ManaCost = 4
+	c.ManaRequirement = []string{civ.Water}
+
+	c.Use(fx.Spell, fx.ShieldTrigger, func(card *match.Card, ctx *match.Context) {
+
+		if match.AmICasted(card, ctx) {
+
+			card.Player.DrawCards(2)
+
+		}
+
+	})
+
+}
