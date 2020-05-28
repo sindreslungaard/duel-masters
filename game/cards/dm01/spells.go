@@ -159,3 +159,33 @@ func CrimsonHammer(c *match.Card) {
 	})
 
 }
+
+// CrystalMemory ...
+func CrystalMemory(c *match.Card) {
+
+	c.Name = "Crystal Memory"
+	c.Civ = civ.Water
+	c.ManaCost = 4
+	c.ManaRequirement = []string{civ.Water}
+
+	c.Use(fx.Spell, fx.ShieldTrigger, func(card *match.Card, ctx *match.Context) {
+
+		if match.AmICasted(card, ctx) {
+
+			selectedCards := match.Search(card.Player, ctx.Match, card.Player, match.DECK, "Select 1 card from your deck that will be sent to your hand", 1, 1, false)
+
+			for _, selectedCard := range selectedCards {
+
+				card.Player.MoveCard(selectedCard.ID, match.DECK, match.HAND)
+
+			}
+
+			card.Player.ShuffleDeck()
+
+			ctx.Match.Chat("Server", card.Player.Username()+" retrieved a card from their deck")
+
+		}
+
+	})
+
+}
