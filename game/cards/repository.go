@@ -108,6 +108,7 @@ var Cards = map[string]match.CardConstructor{
 	"5cafc789-e730-4472-9a62-8b333b2691e6": dm01.BurningPower,
 	"71d90484-c144-4dcf-ad8e-23e7e55f0f2e": dm01.ChaosStrike,
 	"452aead9-2a65-46b1-84b2-383fe99ddc5f": dm01.CreepingPlague,
+	"87a102b5-71fd-410a-a8f0-c35182217f08": dm01.CrimsonHammer,
 
 	// dm02
 	// ...
