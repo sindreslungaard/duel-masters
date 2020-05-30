@@ -472,3 +472,30 @@ func PangeasSong(c *match.Card) {
 	})
 
 }
+
+// SolarRay ...
+func SolarRay(c *match.Card) {
+
+	c.Name = "SolarRay"
+	c.Civ = civ.Light
+	c.ManaCost = 2
+	c.ManaRequirement = []string{civ.Light}
+
+	c.Use(fx.Spell, fx.ShieldTrigger, func(card *match.Card, ctx *match.Context) {
+
+		if match.AmICasted(card, ctx) {
+
+			creatures := match.Search(card.Player, ctx.Match, ctx.Match.Opponent(card.Player), match.BATTLEZONE, "Select 1 of your opponents creatures that will be tapped", 1, 1, false)
+
+			for _, creature := range creatures {
+
+				creature.Tapped = true
+				ctx.Match.Chat("Server", creature.Name+" was tapped")
+
+			}
+
+		}
+
+	})
+
+}
