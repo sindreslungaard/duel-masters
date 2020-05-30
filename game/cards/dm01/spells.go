@@ -389,3 +389,30 @@ func MagmaGazer(c *match.Card) {
 	})
 
 }
+
+// MoonlightFlash ...
+func MoonlightFlash(c *match.Card) {
+
+	c.Name = "Moonlight Flash"
+	c.Civ = civ.Light
+	c.ManaCost = 4
+	c.ManaRequirement = []string{civ.Light}
+
+	c.Use(fx.Spell, func(card *match.Card, ctx *match.Context) {
+
+		if match.AmICasted(card, ctx) {
+
+			creatures := match.Search(card.Player, ctx.Match, ctx.Match.Opponent(card.Player), match.BATTLEZONE, "Select up to 2 of your opponents creatures that will be tapped", 1, 2, false)
+
+			for _, creature := range creatures {
+
+				creature.Tapped = true
+				ctx.Match.Chat("Server", creature.Name+" was tapped")
+
+			}
+
+		}
+
+	})
+
+}
