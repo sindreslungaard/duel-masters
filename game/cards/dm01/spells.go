@@ -305,3 +305,32 @@ func GhostTouch(c *match.Card) {
 	})
 
 }
+
+// HolyAwe ...
+func HolyAwe(c *match.Card) {
+
+	c.Name = "Holy Awe"
+	c.Civ = civ.Light
+	c.ManaCost = 6
+	c.ManaRequirement = []string{civ.Light}
+
+	c.Use(fx.Spell, fx.ShieldTrigger, func(card *match.Card, ctx *match.Context) {
+
+		if match.AmICasted(card, ctx) {
+
+			creatures, err := ctx.Match.Opponent(card.Player).Container(match.BATTLEZONE)
+
+			if err != nil {
+				return
+			}
+
+			for _, creature := range creatures {
+				creature.Tapped = true
+				ctx.Match.Chat("Server", fmt.Sprintf("%s was tapped by Holy Awe", creature.Name))
+			}
+
+		}
+
+	})
+
+}
