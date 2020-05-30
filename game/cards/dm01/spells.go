@@ -753,3 +753,30 @@ func UltimateForce(c *match.Card) {
 	})
 
 }
+
+// VirtualTripwire ...
+func VirtualTripwire(c *match.Card) {
+
+	c.Name = "Virtual Tripwire"
+	c.Civ = civ.Water
+	c.ManaCost = 3
+	c.ManaRequirement = []string{civ.Water}
+
+	c.Use(fx.Spell, func(card *match.Card, ctx *match.Context) {
+
+		if match.AmICasted(card, ctx) {
+
+			creatures := match.Search(card.Player, ctx.Match, ctx.Match.Opponent(card.Player), match.BATTLEZONE, "Select 1 of your opponent's creatures that will be tapped", 1, 1, false)
+
+			for _, creature := range creatures {
+
+				creature.Tapped = true
+				ctx.Match.Chat("Server", fmt.Sprintf("%s was tapped by %s", creature.Name, card.Name))
+
+			}
+
+		}
+
+	})
+
+}
