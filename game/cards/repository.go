@@ -118,6 +118,7 @@ var Cards = map[string]match.CardConstructor{
 	"95bfccf9-91cf-4ab9-8298-c95bc368bf0b": dm01.LaserWing,
 	"35a9315c-2c08-46e0-b96b-daf3e8e996ce": dm01.MagmaGazer,
 	"b12f1d66-46ee-49b9-878d-59cc3d515633": dm01.MoonlightFlash,
+	"a2e11f7f-63f4-4357-9e77-5314576dff45": dm01.NaturalSnare,
 
 	// dm02
 	// ...

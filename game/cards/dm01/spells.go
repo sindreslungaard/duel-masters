@@ -416,3 +416,31 @@ func MoonlightFlash(c *match.Card) {
 	})
 
 }
+
+// NaturalSnare ...
+func NaturalSnare(c *match.Card) {
+
+	c.Name = "Natural Snare"
+	c.Civ = civ.Nature
+	c.ManaCost = 6
+	c.ManaRequirement = []string{civ.Nature}
+
+	c.Use(fx.Spell, func(card *match.Card, ctx *match.Context) {
+
+		if match.AmICasted(card, ctx) {
+
+			creatures := match.Search(card.Player, ctx.Match, ctx.Match.Opponent(card.Player), match.BATTLEZONE, "Select 1 of your opponent's creatures and put it in their manazone", 1, 1, false)
+
+			for _, creature := range creatures {
+
+				creature.Player.MoveCard(creature.ID, match.BATTLEZONE, match.MANAZONE)
+				creature.Tapped = false
+				ctx.Match.Chat("Server", fmt.Sprintf("%s was moved to %s's manazone", creature.Name, creature.Player.Username()))
+
+			}
+
+		}
+
+	})
+
+}
