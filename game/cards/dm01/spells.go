@@ -6,6 +6,7 @@ import (
 	"duel-masters/game/fx"
 	"duel-masters/game/match"
 	"fmt"
+	"math/rand"
 )
 
 // AuraBlast ...
@@ -265,6 +266,39 @@ func DimensionGate(c *match.Card) {
 			}
 
 			card.Player.ShuffleDeck()
+
+		}
+
+	})
+
+}
+
+// GhostTouch ...
+func GhostTouch(c *match.Card) {
+
+	c.Name = "Ghost Touch"
+	c.Civ = civ.Darkness
+	c.ManaCost = 2
+	c.ManaRequirement = []string{civ.Darkness}
+
+	c.Use(fx.Spell, fx.ShieldTrigger, func(card *match.Card, ctx *match.Context) {
+
+		if match.AmICasted(card, ctx) {
+
+			hand, err := ctx.Match.Opponent(card.Player).Container(match.HAND)
+
+			if err != nil {
+				return
+			}
+
+			if len(hand) < 1 {
+				return
+			}
+
+			discardedCard, err := ctx.Match.Opponent(card.Player).MoveCard(hand[rand.Intn(len(hand))].ID, match.HAND, match.GRAVEYARD)
+			if err == nil {
+				ctx.Match.Chat("Server", fmt.Sprintf("%s was discarded from %s's hand", discardedCard.Name, discardedCard.Player.Username()))
+			}
 
 		}
 
