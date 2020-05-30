@@ -126,6 +126,7 @@ var Cards = map[string]match.CardConstructor{
 	"a3331db6-d3c2-4b3f-9fcc-f4aa9fc2bb52": dm01.Teleportation,
 	"5883180e-d88c-4f24-b17c-f5a837420147": dm01.TerrorPit,
 	"48c5c29b-2f4e-4a57-86b4-864c6f0dc124": dm01.TornadoFlame,
+	"be8c0d0b-dcab-402c-8e7b-878e35bacca7": dm01.UltimateForce,
 
 	// dm02
 	// ...

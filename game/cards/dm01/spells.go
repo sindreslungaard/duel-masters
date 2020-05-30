@@ -726,3 +726,30 @@ func TornadoFlame(c *match.Card) {
 	})
 
 }
+
+// UltimateForce ...
+func UltimateForce(c *match.Card) {
+
+	c.Name = "Ultimate Force"
+	c.Civ = civ.Nature
+	c.ManaCost = 5
+	c.ManaRequirement = []string{civ.Nature}
+
+	c.Use(fx.Spell, func(card *match.Card, ctx *match.Context) {
+
+		if match.AmICasted(card, ctx) {
+
+			cards := card.Player.PeekDeck(2)
+
+			for _, toMove := range cards {
+
+				card.Player.MoveCard(toMove.ID, match.DECK, match.MANAZONE)
+				ctx.Match.Chat("Server", fmt.Sprintf("%s put %s into the manazone from the top of their deck", card.Player.Username(), toMove.Name))
+
+			}
+
+		}
+
+	})
+
+}
