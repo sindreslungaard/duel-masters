@@ -216,3 +216,29 @@ func DarkReversal(c *match.Card) {
 	})
 
 }
+
+// DeathSmoke ...
+func DeathSmoke(c *match.Card) {
+
+	c.Name = "Death Smoke"
+	c.Civ = civ.Darkness
+	c.ManaCost = 4
+	c.ManaRequirement = []string{civ.Darkness}
+
+	c.Use(fx.Spell, func(card *match.Card, ctx *match.Context) {
+
+		if match.AmICasted(card, ctx) {
+
+			creatures := match.Filter(card.Player, ctx.Match, ctx.Match.Opponent(card.Player), match.BATTLEZONE, "Destroy one of your opponent's untapped creatures", 1, 1, false, func(x *match.Card) bool { return x.Tapped == false })
+
+			for _, creature := range creatures {
+
+				ctx.Match.Destroy(creature, card)
+
+			}
+
+		}
+
+	})
+
+}
