@@ -42,6 +42,9 @@ func Start(port string) {
 	r.POST("/api/auth/signin", SigninHandler)
 	r.POST("/api/auth/signup", SignupHandler)
 	r.POST("/api/match", MatchHandler)
+	r.GET("/api/cards", CardsHandler)
+	r.GET("/api/decks", GetDecksHandler)
+	r.POST("/api/decks", CreateDeckHandler)
 
 	// Because Gin does not provide an easy way to handle requests where the file does not exist
 	// (NoRoute tests on specified routes, not if the file exists) we expose our webapp's folders manually..

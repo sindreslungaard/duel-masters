@@ -23,11 +23,11 @@ func main() {
 
 	logrus.Info("Starting..")
 
-	for uid, ctor := range cards.Cards {
+	for uid, ctor := range cards.DM01 {
 		match.AddCard(uid, ctor)
 	}
 
-	logrus.Infof("Loaded %v cards..", len(cards.Cards))
+	api.CreateCardCache()
 
 	db.Connect(os.Getenv("mongo_uri"), os.Getenv("mongo_name"))
 

@@ -192,7 +192,7 @@ export default {
       },
 
       getShareUrl(uid) {
-          return window.location.host + "/deck/" + uid
+          return window.location.host + "/decks/" + uid
       },
 
       tryRemoveCard() {
@@ -234,14 +234,14 @@ export default {
       async save() {
           try {
               let res = await call({
-                  path: "/deck",
+                  path: "/decks",
                   method: "POST",
                   body: this.selectedDeck
               })
               this.deckCopy = JSON.parse(JSON.stringify(this.selectedDeck))
               this.warning = "Successfully saved your deck"
           } catch(e) {
-              this.warning = e.response.data.message
+              this.warning = "Invalid request. Please ensure that the deck name is 1-30 characters and that you have between 40-50 cards in your deck."
           }
       },
 
@@ -288,7 +288,7 @@ export default {
       try {
           let [cards, decks] = await Promise.all([
             call({ path: "/cards", method: "GET" }),
-            call({ path: "/deck", method: "GET" })
+            call({ path: "/decks", method: "GET" })
           ])
 
           this.cards = cards.data
@@ -494,6 +494,7 @@ input:active, textarea:active, select:active {
 
 .left::-webkit-scrollbar-track {
     -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+    box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
     border-radius: 10px;
     background-color: #484C52;
   }
@@ -506,11 +507,13 @@ input:active, textarea:active, select:active {
 .left::-webkit-scrollbar-thumb {
     border-radius: 10px;
     -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);
+    box-shadow: inset 0 0 6px rgba(0,0,0,.3);
     background-color: #222;
 }
 
 .right::-webkit-scrollbar-track {
     -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+    box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
     border-radius: 10px;
     background-color: #484C52;
   }
@@ -523,6 +526,7 @@ input:active, textarea:active, select:active {
 .right::-webkit-scrollbar-thumb {
     border-radius: 10px;
     -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);
+    box-shadow: inset 0 0 6px rgba(0,0,0,.3);
     background-color: #222;
 }
 

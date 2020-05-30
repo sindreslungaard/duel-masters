@@ -5,10 +5,9 @@ import (
 	"duel-masters/game/match"
 )
 
-// Cards is a map with all the card id's in the game and corresponding CardConstructor
-var Cards = map[string]match.CardConstructor{
+// DM01 is a map with all the card id's in the game and corresponding CardConstructor for dm01
+var DM01 = map[string]match.CardConstructor{
 
-	// dm01
 	"57eeb3c3-2561-4841-a381-2e50d17533d1": dm01.AquaHulcus,
 	"ecd1ae69-4f63-4e8d-a3f4-9a5c81f98a20": dm01.EmeraldGrass,
 	"09b218fc-9c5a-48ef-9555-4908932271e9": dm01.AquaKnight,
