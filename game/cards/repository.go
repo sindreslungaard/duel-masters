@@ -115,6 +115,7 @@ var Cards = map[string]match.CardConstructor{
 	"32acfe8b-90fc-4ba9-b6ad-7655c0abee12": dm01.DimensionGate,
 	"ae797f95-54b1-48e9-9216-f315b39826bd": dm01.GhostTouch,
 	"0ec572b0-ffaf-4abd-a540-ba26c98aacc5": dm01.HolyAwe,
+	"95bfccf9-91cf-4ab9-8298-c95bc368bf0b": dm01.LaserWing,
 
 	// dm02
 	// ...

@@ -14,4 +14,5 @@ const (
 	ShieldTrigger     = "shield_trigger"
 	Slayer            = "slayer"
 	Active            = "active"
+	CantBeBlocked     = "cant_be_blocked"
 )

@@ -184,7 +184,7 @@ func Creature(card *match.Card, ctx *match.Context) {
 			card.Tapped = true
 
 			// Allow the opponent to block if they can
-			if len(event.Blockers) > 0 {
+			if len(event.Blockers) > 0 && !card.HasCondition(cnd.CantBeBlocked) {
 
 				ctx.Match.Wait(card.Player, "Waiting for your opponent to make an action")
 
@@ -335,7 +335,7 @@ func Creature(card *match.Card, ctx *match.Context) {
 			card.Tapped = true
 
 			// Allow the opponent to block if they can
-			if len(event.Blockers) > 0 {
+			if len(event.Blockers) > 0 && !card.HasCondition(cnd.CantBeBlocked) {
 
 				ctx.Match.Wait(card.Player, "Waiting for your opponent to make an action")
 

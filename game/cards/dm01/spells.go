@@ -334,3 +334,30 @@ func HolyAwe(c *match.Card) {
 	})
 
 }
+
+// LaserWing ...
+func LaserWing(c *match.Card) {
+
+	c.Name = "Laser Wing"
+	c.Civ = civ.Light
+	c.ManaCost = 5
+	c.ManaRequirement = []string{civ.Light}
+
+	c.Use(fx.Spell, func(card *match.Card, ctx *match.Context) {
+
+		if match.AmICasted(card, ctx) {
+
+			creatures := match.Search(card.Player, ctx.Match, card.Player, match.BATTLEZONE, "Select up to 2 creatures that can't be blocked this turn", 1, 2, false)
+
+			for _, creature := range creatures {
+
+				creature.AddCondition(cnd.CantBeBlocked, nil, card.ID)
+				ctx.Match.Chat("Server", creature.Name+" can't be blocked this turn")
+
+			}
+
+		}
+
+	})
+
+}
