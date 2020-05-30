@@ -600,3 +600,77 @@ func SpiralGate(c *match.Card) {
 	})
 
 }
+
+// Teleportation ...
+func Teleportation(c *match.Card) {
+
+	c.Name = "Teleportation"
+	c.Civ = civ.Water
+	c.ManaCost = 5
+	c.ManaRequirement = []string{civ.Water}
+
+	c.Use(fx.Spell, func(card *match.Card, ctx *match.Context) {
+
+		if match.AmICasted(card, ctx) {
+
+			cards := make(map[string][]*match.Card)
+
+			myCards, err := card.Player.Container(match.BATTLEZONE)
+
+			if err != nil {
+				return
+			}
+
+			opponentCards, err := ctx.Match.Opponent(card.Player).Container(match.BATTLEZONE)
+
+			if err != nil {
+				return
+			}
+
+			if len(myCards) < 1 && len(opponentCards) < 1 {
+				return
+			}
+
+			cards["Your creatures"] = myCards
+			cards["Opponent's creatures"] = opponentCards
+
+			ctx.Match.NewMultipartAction(card.Player, cards, 1, 2, "Teleportation: Select up to 2 creatures in the battlezone and return it to its owner's hand", false)
+
+			for {
+
+				action := <-card.Player.Action
+
+				if len(action.Cards) < 1 || len(action.Cards) > 2 {
+					ctx.Match.DefaultActionWarning(card.Player)
+					continue
+				}
+
+				for _, vid := range action.Cards {
+
+					ref, err := c.Player.MoveCard(vid, match.BATTLEZONE, match.HAND)
+
+					if err != nil {
+
+						ref, err := ctx.Match.Opponent(c.Player).MoveCard(vid, match.BATTLEZONE, match.HAND)
+
+						if err == nil {
+							ctx.Match.Chat("Server", fmt.Sprintf("%s was moved to %s's hand", ref.Name, ctx.Match.PlayerRef(ref.Player).Socket.User.Username))
+						}
+
+					} else {
+						ctx.Match.Chat("Server", fmt.Sprintf("%s was moved to %s's hand", ref.Name, ctx.Match.PlayerRef(ref.Player).Socket.User.Username))
+					}
+
+				}
+
+				break
+
+			}
+
+			ctx.Match.CloseAction(c.Player)
+
+		}
+
+	})
+
+}
