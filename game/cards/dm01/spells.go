@@ -674,3 +674,55 @@ func Teleportation(c *match.Card) {
 	})
 
 }
+
+// TerrorPit ...
+func TerrorPit(c *match.Card) {
+
+	c.Name = "Terror Pit"
+	c.Civ = civ.Darkness
+	c.ManaCost = 6
+	c.ManaRequirement = []string{civ.Darkness}
+
+	c.Use(fx.Spell, fx.ShieldTrigger, func(card *match.Card, ctx *match.Context) {
+
+		if match.AmICasted(card, ctx) {
+
+			creatures := match.Search(card.Player, ctx.Match, ctx.Match.Opponent(card.Player), match.BATTLEZONE, "Destroy one of your opponent's creatures", 1, 1, false)
+
+			for _, creature := range creatures {
+
+				ctx.Match.Destroy(creature, card)
+
+			}
+
+		}
+
+	})
+
+}
+
+// TornadoFlame ...
+func TornadoFlame(c *match.Card) {
+
+	c.Name = "Tornado Flame"
+	c.Civ = civ.Fire
+	c.ManaCost = 5
+	c.ManaRequirement = []string{civ.Fire}
+
+	c.Use(fx.Spell, fx.ShieldTrigger, func(card *match.Card, ctx *match.Context) {
+
+		if match.AmICasted(card, ctx) {
+
+			creatures := match.Filter(card.Player, ctx.Match, ctx.Match.Opponent(card.Player), match.BATTLEZONE, "Destroy one of your opponent's creatures that has power 4000 or less", 1, 1, false, func(x *match.Card) bool { return x.Power <= 4000 })
+
+			for _, creature := range creatures {
+
+				ctx.Match.Destroy(creature, card)
+
+			}
+
+		}
+
+	})
+
+}
