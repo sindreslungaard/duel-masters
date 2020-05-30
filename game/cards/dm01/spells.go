@@ -444,3 +444,31 @@ func NaturalSnare(c *match.Card) {
 	})
 
 }
+
+// PangeasSong ...
+func PangeasSong(c *match.Card) {
+
+	c.Name = "Pangea's Song"
+	c.Civ = civ.Nature
+	c.ManaCost = 1
+	c.ManaRequirement = []string{civ.Nature}
+
+	c.Use(fx.Spell, func(card *match.Card, ctx *match.Context) {
+
+		if match.AmICasted(card, ctx) {
+
+			creatures := match.Search(card.Player, ctx.Match, card.Player, match.BATTLEZONE, "Select 1 of your creatures and put it in your manazone", 1, 1, false)
+
+			for _, creature := range creatures {
+
+				creature.Player.MoveCard(creature.ID, match.BATTLEZONE, match.MANAZONE)
+				creature.Tapped = false
+				ctx.Match.Chat("Server", fmt.Sprintf("%s was moved to %s's manazone", creature.Name, creature.Player.Username()))
+
+			}
+
+		}
+
+	})
+
+}
