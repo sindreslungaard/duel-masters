@@ -92,3 +92,17 @@ type WaitMessage struct {
 	Header  string `json:"header"`
 	Message string `json:"message"`
 }
+
+// LobbyChatMessage is used to store chat messages
+type LobbyChatMessage struct {
+	Username  string `json:"username"`
+	Color     string `json:"color"`
+	Message   string `json:"message"`
+	Timestamp int    `json:"timestamp"`
+}
+
+// LobbyChatMessages is used to store chat messages
+type LobbyChatMessages struct {
+	Header   string             `json:"header"`
+	Messages []LobbyChatMessage `json:"messages"`
+}

@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"duel-masters/db"
+	"duel-masters/game"
 	"duel-masters/game/match"
 	"duel-masters/server"
 
@@ -170,18 +171,25 @@ var upgrader = websocket.Upgrader{
 // WS handles websocket upgrade
 func WS(c *gin.Context) {
 
-	hub := c.Param("hub")
+	hubID := c.Param("hub")
 
-	if hub == "lobby" {
-		c.Status(403)
-		return
-	}
+	var hub server.Hub
 
-	m, err := match.Find(hub)
+	if hubID == "lobby" {
 
-	if err != nil {
-		c.Status(404)
-		return
+		hub = game.GetLobby()
+
+	} else {
+
+		m, err := match.Find(hubID)
+
+		if err != nil {
+			c.Status(404)
+			return
+		}
+
+		hub = m
+
 	}
 
 	conn, err := upgrader.Upgrade(c.Writer, c.Request, nil)
@@ -191,7 +199,7 @@ func WS(c *gin.Context) {
 		return
 	}
 
-	s := server.NewSocket(conn, m)
+	s := server.NewSocket(conn, hub)
 
 	// Handle the connection in a new goroutine to free up this memory
 	go s.Listen()

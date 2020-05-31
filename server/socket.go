@@ -108,8 +108,6 @@ func (s *Socket) Close() {
 		return
 	}
 
-	delete(sockets, s)
-
 	if s == nil || s.conn == nil {
 		return
 	}
@@ -117,6 +115,8 @@ func (s *Socket) Close() {
 	socketsMutex.Lock()
 
 	defer socketsMutex.Unlock()
+
+	delete(sockets, s)
 
 	s.conn.Close()
 

@@ -73,30 +73,22 @@
 
 							<div class="chatbox">
 
-								<div class="messages spaced">
-									<div id="messages" class="messages-helper">
+								<div id="messages" class="messages spaced">
+									<div class="messages-helper">
 
-										<Username color="#FFFF00">Sindre</Username>
-										<div class="user-messages">
-											<div><span>Message 1</span></div>
-											<div><span>:P</span></div>
-											<div><span>what's up?</span></div>
-										</div>
-
-										<Username color="red">Bob</Username>
-										<div class="user-messages">
-											<div><span>nm, you?</span></div>
-										</div>
-
-										<Username color="orange">Mia-143</Username>
-										<div class="user-messages">
-											<div><span style="color: cyan">@Bob</span><span> want to play?</span></div>
-										</div>
+                                        <div v-for="(msg, i) in chatMessages" :key="i">
+                                            <Username :color="msg.color">{{ msg.username }}</Username>
+                                            <div class="user-messages">
+                                                <div v-for="(message, j) in msg.messages" :key="j">
+                                                    <span>{{ message }}</span>
+                                                </div>
+                                            </div>
+                                        </div>
 
 									</div>
 								</div>
-								<form>
-									<input type="text" placeholder="Type to chat">
+								<form @submit.prevent="sendChat(chatMessage)">
+									<input type="text" v-model="chatMessage" placeholder="Type to chat">
 								</form>  
 							</div>
 
@@ -150,6 +142,10 @@ import { call } from '../remote'
 import Header from '../components/Header.vue'
 import Username from '../components/Username.vue'
 
+const send = (client, message) => {
+  client.send(JSON.stringify(message))
+}
+
 export default {
   name: 'overview',
   components: {
@@ -161,13 +157,23 @@ export default {
   },
   data() {
       return {
+          ws: null,
           wizardVisible: false,
           wizardError: "",
           wizard: {
               name: "",
               description: "",
               visibility: "public"
-          }
+          },
+          chatMessage: "",
+          chatMessages: [{
+              username: "Test",
+              color: "orange",
+              timestamp: 0,
+              messages: [
+                  "Hey!"
+              ]
+          }]
       }
   },
   methods: {
@@ -200,7 +206,83 @@ export default {
               }
           }
 
+      },
+      sendChat(message) {
+        if(!message) {
+            return
+        }
+        this.chatMessage = ""
+        this.ws.send(JSON.stringify({ header: "chat", message }))
+      },
+      chat(data) {
+        
+        let createNew = true
+
+        if(this.chatMessages.length > 0) {
+            let lastMsg = this.chatMessages[this.chatMessages.length - 1]
+
+            if(lastMsg.username == data.username && lastMsg.timestamp > Math.floor(Date.now() / 1000) - 15) {
+                lastMsg.messages.push(data.message)
+                createNew = false
+            }
+        }
+
+        if(createNew) {
+            this.chatMessages.push({
+                username: data.username,
+                color: data.color,
+                timestamp: data.timestamp,
+                messages: [data.message]
+            })
+        }
+        
+        this.$nextTick(() => {
+            let container = document.getElementById('messages')
+            container.scrollTop = container.scrollHeight
+        })
       }
+  },
+  created() {
+
+        // Connect to the server
+        const ws = new WebSocket("ws://" + window.location.hostname + "/ws/lobby")
+        this.ws = ws
+
+        ws.onopen = () => {
+            ws.send(localStorage.getItem("token"))
+        }
+
+        ws.onmessage = (event) => {
+
+            const data = JSON.parse(event.data)
+
+            switch(data.header) {
+
+                case "mping": {
+                    send(ws, {
+                        header: "mpong"
+                    })
+                    break
+                }
+
+                case "hello": {
+                    send(ws, {
+                        header: "subscribe"
+                    })
+                    break
+                }
+
+                case "chat": {
+                    for(let message of data.messages) {
+                        this.chat(message)
+                    }
+                    break
+                }
+
+            }
+
+        }
+
   }
 }
 </script>
@@ -456,6 +538,7 @@ main {
   flex-direction: column;
   justify-content: space-between;
 	height: 100%;
+    overflow: hidden;
 }
 
 .chatbox input {
@@ -491,6 +574,32 @@ main {
 .user-messages > div {
 	margin: 3px 0;
 	color: #e1e1e1;
+}
+
+.messages {
+    overflow: auto;
+    margin-bottom: 0;
+    padding-bottom: 0;
+}
+
+*::-webkit-scrollbar-track {
+    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+    box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+    border-radius: 10px;
+    background-color: #484C52;
+  }
+
+*::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+  background-color: #484C52;
+}
+
+*::-webkit-scrollbar-thumb {
+    border-radius: 10px;
+    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);
+    box-shadow: inset 0 0 6px rgba(0,0,0,.3);
+    background-color: #222;
 }
 
 </style>
