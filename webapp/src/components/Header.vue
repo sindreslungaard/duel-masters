@@ -12,7 +12,7 @@
           </ul>
       </nav>
 
-      <div class="psa"><span>This is an early version of the site, bugs are to be expected. Join our <a target="_blank" href="https://discord.gg/R3gJrX2">discord</a> to contribute with feedback and suggestions.</span></div>
+      <div class="psa"><span>Join our <a target="_blank" href="https://discord.gg/R3gJrX2">discord</a> to contribute with feedback and suggestions, or simply drop by to have a chat.</span></div>
 
   </div>
 </template>

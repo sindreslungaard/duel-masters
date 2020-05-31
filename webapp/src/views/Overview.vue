@@ -31,11 +31,116 @@
           </div>
       </div>
 
-      <Header></Header>
+      <main>
 
-      <div class="main">
-          <div @click="toggleWizard()" class="btn">NEW DUEL</div>
-      </div>   
+				  <Header style="width: 100%"></Header>
+
+          <!-- <div @click="toggleWizard()" class="btn">NEW DUEL</div> -->
+
+					<div class="spaced">
+
+						<div class="categories">
+							<h3 class="user-list">Online</h3>
+							<h3 class="chat">Chat</h3>
+							<h3 class="duels">Duels</h3>
+						</div>
+
+
+						<!-- Users online -->
+						<div class="box user-list">
+							<div class="spaced">
+
+								<div class="user-category"><span>Admins</span></div>
+								<Username color="#FFFF00">Sindre</Username>
+								<Username color="#FFFF00">Alexander</Username>
+
+								<br>
+
+								<div class="user-category"><span>Contributors</span></div>
+								<Username color="red">Bob</Username>
+								<Username color="orange">Mia-143</Username>
+
+							</div>
+						</div>
+
+
+
+
+
+
+						<!-- Chat -->
+						<div class="box chat">
+
+							<div class="chatbox">
+
+								<div class="messages spaced">
+									<div id="messages" class="messages-helper">
+
+										<Username color="#FFFF00">Sindre</Username>
+										<div class="user-messages">
+											<div><span>Message 1</span></div>
+											<div><span>:P</span></div>
+											<div><span>what's up?</span></div>
+										</div>
+
+										<Username color="red">Bob</Username>
+										<div class="user-messages">
+											<div><span>nm, you?</span></div>
+										</div>
+
+										<Username color="orange">Mia-143</Username>
+										<div class="user-messages">
+											<div><span style="color: cyan">@Bob</span><span> want to play?</span></div>
+										</div>
+
+									</div>
+								</div>
+								<form>
+									<input type="text" placeholder="Type to chat">
+								</form>  
+							</div>
+
+						</div>
+
+
+
+
+
+
+
+
+						<!-- Duels -->
+						<div class="box duels">
+
+							<table>
+								<tr>
+									<td>Sindre</td>
+									<td>Play with me please ƒ wow even longer much woah!</td>
+									<td><div class="btn save">Join match</div></td>
+								</tr>
+								<tr>
+									<td>Bob</td>
+									<td>for fun</td>
+									<td><div class="btn save">Join match</div></td>
+								</tr>
+								<tr>
+									<td>Bob</td>
+									<td>for fun</td>
+									<td><div class="btn">Spectate</div></td>
+								</tr>
+								<tr>
+									<td>Bob</td>
+									<td>for fun</td>
+									<td><div class="btn save">Join match</div></td>
+								</tr>
+							</table>
+
+						</div>
+
+
+					</div>
+
+      </main>   
 
   </div>
 </template>
@@ -43,11 +148,13 @@
 <script>
 import { call } from '../remote'
 import Header from '../components/Header.vue'
+import Username from '../components/Username.vue'
 
 export default {
   name: 'overview',
   components: {
-      Header
+			Header,
+			Username
   },
   computed: {
       username: () => localStorage.getItem('username')
@@ -98,7 +205,7 @@ export default {
 }
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 
 .disabled {
     background: #7289DA !important;
@@ -112,10 +219,6 @@ export default {
 
 .disabled:active {
     background: #7289DA !important;
-}
-
-.main {
-    margin: 0 15px;
 }
 
 .new-duel .backdrop {
@@ -266,6 +369,128 @@ a {
 
 .btn:active {
   background: #5B6EAE;
+}
+
+main {
+		width: 100%;
+		height: 100vh;
+		margin: auto;
+		overflow: hidden;
+}
+
+.box {
+		overflow: auto;
+		background: #2B2C31;
+		min-height: 20px;
+		border-radius: 4px;
+		font-size: 14px;
+		color: #ccc;
+		display: inline-block;
+		height: calc(100vh - 140px)
+}
+
+.user-list {
+		width: 10%
+}
+
+.chat {
+	width: calc(35% - 15px);
+	margin-left: 15px;
+}
+
+.duels {
+	width: calc(55% - 15px);
+	margin-left: 15px;
+}
+
+.spaced {
+	margin: 15px;
+}
+
+.categories > h3 {
+	margin-top: 0;
+	margin-bottom: 7px;
+	display: inline-block;
+	color: #eee;
+	font-weight: 400;
+	font-size: 16px;
+}
+
+.duels > table {
+	width: 100%;
+	border-collapse: collapse;
+}
+
+.duels td {
+	border: none;
+  text-align: left;
+  padding: 15px;
+}
+
+.duels tr:nth-child(even) {
+  background-color: #222429;
+}
+
+.duels .btn {
+	float: right;
+}
+
+.save {
+    background: #3CA374 !important;
+}
+
+.save:hover {
+    background: #35966a !important;
+}
+
+.user-category {
+	margin-bottom: 10px;
+	border-bottom: 1px solid #555;
+	color: #777;
+	padding-bottom: 5px;
+	font-weight: 400;
+}
+
+.chatbox {
+	display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+	height: 100%;
+}
+
+.chatbox input {
+  border: none;
+  border-radius: 4px;
+  margin: 10px;
+  width: calc(100% - 40px);
+  background: #484C52;
+  padding: 10px;
+  color: #ccc;
+  &:focus {
+    outline: none
+  }
+  &:active {
+    outline: none
+  }
+}
+
+.duels .btn {
+	width: 70px;
+}
+
+.user-list .user-name {
+	margin-bottom: 10px;
+}
+
+.user-messages {
+	margin-left: 20px;
+	margin-top: 0px;
+	margin-bottom: 15px;
+}
+
+.user-messages > div {
+	margin: 3px 0;
+	color: #e1e1e1;
 }
 
 </style>
