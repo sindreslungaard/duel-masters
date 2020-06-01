@@ -10,10 +10,8 @@ import (
 )
 
 const (
-	messageBufferSize int = 5
+	messageBufferSize int = 100
 )
-
-var lobby = &Lobby{}
 
 var messages = make([]server.LobbyChatMessage, 0)
 var messagesMutex = &sync.Mutex{}
@@ -21,8 +19,17 @@ var messagesMutex = &sync.Mutex{}
 var subscribers = make([]*server.Socket, 0)
 var subscribersMutex = &sync.Mutex{}
 
+var userCache server.UserListMessage = server.GetUserList()
+
+var lobby = &Lobby{}
+
 // Lobby struct is used to create a Hub that can parse messages from the websocket server
 type Lobby struct{}
+
+// Name just returns "lobby", obligatory for a hub
+func (l *Lobby) Name() string {
+	return "lobby"
+}
 
 // GetLobby returns a reference to the lobby
 func GetLobby() *Lobby {
@@ -36,6 +43,32 @@ func Broadcast(msg interface{}) {
 
 	for _, subscriber := range subscribers {
 		go subscriber.Send(msg)
+	}
+}
+
+// StartTicker starts the lobby ticker
+func (l *Lobby) StartTicker() {
+
+	ticker := time.NewTicker(30 * time.Second) // tick every 30 seconds
+
+	defer ticker.Stop()
+
+	defer func() {
+		if r := recover(); r != nil {
+			logrus.Errorf("Recovered from lobby ticker. %v", r)
+		}
+	}()
+
+	for {
+
+		select {
+		case <-ticker.C:
+			{
+				userCache = server.GetUserList()
+				Broadcast(userCache)
+			}
+		}
+
 	}
 }
 
@@ -73,6 +106,9 @@ func (l *Lobby) Parse(s *server.Socket, data []byte) {
 				Header:   "chat",
 				Messages: messages,
 			})
+
+			// Send user list
+			s.Send(userCache)
 
 		}
 

@@ -1,6 +1,13 @@
 <template>
   <div>
 
+      <div v-show="errorMessage" class="overlay"></div>
+
+      <div v-show="errorMessage" class="error">
+        <p>{{ errorMessage }}</p>
+        <div @click="refreshPage()" class="btn">Reconnect</div>
+      </div>
+
       <div v-show="wizardVisible" class="new-duel">
           <div class="backdrop"></div>
           <div class="wizard">
@@ -50,15 +57,17 @@
 						<div class="box user-list">
 							<div class="spaced">
 
-								<div class="user-category"><span>Admins</span></div>
-								<Username color="#FFFF00">Sindre</Username>
-								<Username color="#FFFF00">Alexander</Username>
+                                <div v-if="wsLoading">Loading{{ loadingDots }}</div>
 
-								<br>
+                                <div v-for="(category, index) in users" :key="index">
 
-								<div class="user-category"><span>Contributors</span></div>
-								<Username color="red">Bob</Username>
-								<Username color="orange">Mia-143</Username>
+                                    <div class="user-category"><span>{{ category.category }}</span></div>
+
+                                    <Username v-for="(user, index) in category.users" :key="index" :color="user.color ? user.color : 'orange'">{{ user.username }}</Username>
+                                    
+                                    <br>
+
+                                </div>
 
 							</div>
 						</div>
@@ -70,6 +79,8 @@
 
 						<!-- Chat -->
 						<div class="box chat">
+
+                            <div v-if="wsLoading" class="spaced" style="position: absolute">Loading{{ loadingDots }}</div>
 
 							<div class="chatbox">
 
@@ -103,6 +114,8 @@
 
 						<!-- Duels -->
 						<div class="box duels">
+
+                            <div v-if="wsLoading" class="spaced">Loading{{ loadingDots }}</div>
 
 							<table>
 								<tr>
@@ -166,17 +179,17 @@ export default {
               visibility: "public"
           },
           chatMessage: "",
-          chatMessages: [{
-              username: "Test",
-              color: "orange",
-              timestamp: 0,
-              messages: [
-                  "Hey!"
-              ]
-          }]
+          chatMessages: [],
+          users: [],
+          errorMessage: "",
+          wsLoading: true,
+          loadingDots: "."
       }
   },
   methods: {
+      refreshPage() {
+          location.reload()
+      },
       toggleWizard() {
           this.wizardError = ""
           this.wizard = {
@@ -244,43 +257,105 @@ export default {
   },
   created() {
 
+        // Loading dots
+        setInterval(() => {
+            if(this.loadingDots.length >= 4)
+                this.loadingDots = ""
+            else this.loadingDots += "."
+        }, 500)
+
         // Connect to the server
-        const ws = new WebSocket("ws://" + window.location.hostname + "/ws/lobby")
-        this.ws = ws
+        try {
+            const ws = new WebSocket("ws://" + window.location.hostname + "/ws/lobby")
+            this.ws = ws
 
-        ws.onopen = () => {
-            ws.send(localStorage.getItem("token"))
-        }
+            ws.onopen = () => {
+                ws.send(localStorage.getItem("token"))
+                this.wsLoading = false
+            }
 
-        ws.onmessage = (event) => {
+            ws.onclose = () => {
+                this.errorMessage = "Lost connection to the server"
+            }
 
-            const data = JSON.parse(event.data)
+            ws.onerror = () => {
+                this.errorMessage = "Lost connection to the server"
+            }
 
-            switch(data.header) {
+            ws.onmessage = (event) => {
 
-                case "mping": {
-                    send(ws, {
-                        header: "mpong"
-                    })
-                    break
-                }
+                const data = JSON.parse(event.data)
 
-                case "hello": {
-                    send(ws, {
-                        header: "subscribe"
-                    })
-                    break
-                }
+                switch(data.header) {
 
-                case "chat": {
-                    for(let message of data.messages) {
-                        this.chat(message)
+                    case "mping": {
+                        send(ws, {
+                            header: "mpong"
+                        })
+                        break
                     }
-                    break
+
+                    case "hello": {
+                        send(ws, {
+                            header: "subscribe"
+                        })
+                        break
+                    }
+
+                    case "chat": {
+                        for(let message of data.messages) {
+                            this.chat(message)
+                        }
+                        break
+                    }
+
+                    case "users": {
+                        this.users = [{
+                            category: "player",
+                            users: []
+                        }]
+
+                        for(let user of data.users) {
+                            
+                            let chatroles = user.permissions.filter(x => x.includes("chat.role."))
+
+                            if(chatroles.length > 0) {
+
+                                let role = chatroles[0].split("chat.role.")[1]
+
+                                let category = this.users.find(x => x.category == role)
+
+                                let toPushCategory = false
+                                if(!category) {
+                                    category = {
+                                        category: role,
+                                        users: []
+                                    }
+                                    toPushCategory = true
+                                }
+
+                                category.users.push(user)
+                                if(toPushCategory) {
+                                    this.users.push(category)
+                                }
+
+                            } else {
+                                let category = this.users.find(x => x.category == "player")
+                                category.users.push(user)
+                            }
+
+                            this.users.sort((a, b) => a.category.localeCompare(b.category))
+
+                        }
+                        break
+                    }
+
                 }
 
             }
-
+        }
+        catch(err) {
+            this.errorMessage = "Connection lost"
         }
 
   }
@@ -531,6 +606,7 @@ main {
 	color: #777;
 	padding-bottom: 5px;
 	font-weight: 400;
+    text-transform: capitalize;
 }
 
 .chatbox {
@@ -600,6 +676,42 @@ main {
     -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);
     box-shadow: inset 0 0 6px rgba(0,0,0,.3);
     background-color: #222;
+}
+
+.overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  background: #000;
+  opacity: 0.5;
+  z-index: 100;
+}
+
+.error p {
+  padding: 5px;
+  border-radius: 4px;
+  margin: 0;
+  margin-bottom: 10px;
+  background: #2B2E33 !important;
+  border: 1px solid #222428;
+}
+
+.error {
+  border: 1px solid #666;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 300px;
+  border-radius: 4px;
+  background: #36393F;
+  z-index: 3005;
+  left: calc(50% - 300px / 2);
+  top: 40vh;
+  padding: 10px;
+  font-size: 14px;
+  color: #ccc;
 }
 
 </style>

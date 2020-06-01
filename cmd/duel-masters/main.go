@@ -7,6 +7,7 @@ import (
 
 	"duel-masters/api"
 	"duel-masters/db"
+	"duel-masters/game"
 	"duel-masters/game/cards"
 	"duel-masters/game/match"
 
@@ -26,6 +27,8 @@ func main() {
 	for uid, ctor := range cards.DM01 {
 		match.AddCard(uid, ctor)
 	}
+
+	go game.GetLobby().StartTicker()
 
 	api.CreateCardCache()
 

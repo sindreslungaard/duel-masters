@@ -14,6 +14,7 @@ type User struct {
 	Username    string        `json:"username"`
 	Password    string        `json:"-"`
 	Email       string        `json:"email"`
+	Color       string        `json:"color"`
 	Sessions    []UserSession `json:"-"`
 }
 

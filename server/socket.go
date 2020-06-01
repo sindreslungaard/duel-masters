@@ -125,3 +125,47 @@ func (s *Socket) Close() {
 	logrus.Debug("Closed a connection")
 
 }
+
+// GetUserList returns a list of users currently online
+func GetUserList() UserListMessage {
+
+	usersMap := make(map[string]UserMessage)
+
+	socketsMutex.Lock()
+	defer socketsMutex.Unlock()
+
+	for s, h := range sockets {
+
+		userEntry := UserMessage{
+			Username:    s.User.Username,
+			Color:       s.User.Color,
+			Hub:         h.Name(),
+			Permissions: s.User.Permissions,
+		}
+
+		if user, ok := usersMap[s.User.Username]; ok {
+
+			// Replace if this socket is in a match because the client shows
+			// an icon for if the player is in a match or just the lobby
+			if user.Hub == "match" {
+				usersMap[s.User.Username] = userEntry
+			}
+
+		} else {
+			usersMap[s.User.Username] = userEntry
+		}
+
+	}
+
+	users := make([]UserMessage, 0)
+
+	for _, user := range usersMap {
+		users = append(users, user)
+	}
+
+	return UserListMessage{
+		Header: "users",
+		Users:  users,
+	}
+
+}

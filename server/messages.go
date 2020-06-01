@@ -106,3 +106,17 @@ type LobbyChatMessages struct {
 	Header   string             `json:"header"`
 	Messages []LobbyChatMessage `json:"messages"`
 }
+
+// UserMessage holds information about users
+type UserMessage struct {
+	Username    string   `json:"username"`
+	Color       string   `json:"color"`
+	Hub         string   `json:"hub"`
+	Permissions []string `json:"permissions"`
+}
+
+// UserListMessage is used to send a list of online users
+type UserListMessage struct {
+	Header string        `json:"header"`
+	Users  []UserMessage `json:"users"`
+}

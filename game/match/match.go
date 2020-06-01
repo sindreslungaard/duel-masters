@@ -73,6 +73,11 @@ func New(matchName string, hostID string) *Match {
 
 }
 
+// Name just returns "match", obligatory for a hub
+func (m *Match) Name() string {
+	return "match"
+}
+
 func (m *Match) startTicker() {
 
 	ticker := time.NewTicker(10 * time.Second) // tick every 10 seconds
