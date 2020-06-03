@@ -1,7 +1,7 @@
 <template>
   <div>
 
-      <div v-show="errorMessage" class="overlay"></div>
+      <div v-show="errorMessage || wizardVisible" class="overlay"></div>
 
       <div v-show="errorMessage" class="error">
         <p>{{ errorMessage }}</p>
@@ -9,7 +9,6 @@
       </div>
 
       <div v-show="wizardVisible" class="new-duel">
-          <div class="backdrop"></div>
           <div class="wizard">
               <div class="spacer">
                 <span class="headline">Create a new duel</span>
@@ -42,14 +41,13 @@
 
 				  <Header style="width: 100%"></Header>
 
-          <!-- <div @click="toggleWizard()" class="btn">NEW DUEL</div> -->
-
 					<div class="spaced">
+                        
 
 						<div class="categories">
 							<h3 class="user-list">Online</h3>
 							<h3 class="chat">Chat</h3>
-							<h3 class="duels">Duels</h3>
+							<h3 class="duels" style="position: relative;">Duels<span @click="toggleWizard()" class="new-duel-btn">New Duel</span></h3>
 						</div>
 
 
@@ -63,7 +61,7 @@
 
                                     <div class="user-category"><span>{{ category.category }}</span></div>
 
-                                    <Username v-for="(user, index) in category.users" :key="index" :color="user.color ? user.color : 'orange'">{{ user.username }}</Username>
+                                    <Username v-for="(user, index) in category.users" :key="index" :color="user.color">{{ user.username }}</Username>
                                     
                                     <br>
 
@@ -118,25 +116,11 @@
                             <div v-if="wsLoading" class="spaced">Loading{{ loadingDots }}</div>
 
 							<table>
-								<tr>
-									<td>Sindre</td>
-									<td>Play with me please ƒ wow even longer much woah!</td>
-									<td><div class="btn save">Join match</div></td>
-								</tr>
-								<tr>
-									<td>Bob</td>
-									<td>for fun</td>
-									<td><div class="btn save">Join match</div></td>
-								</tr>
-								<tr>
-									<td>Bob</td>
-									<td>for fun</td>
-									<td><div class="btn">Spectate</div></td>
-								</tr>
-								<tr>
-									<td>Bob</td>
-									<td>for fun</td>
-									<td><div class="btn save">Join match</div></td>
+                                <tr v-if="!wsLoading && matches.length < 1"><td>No matches to show, click the button above to create one.</td></tr>
+								<tr v-for="(match, index) in matches" :key="index">
+									<td><Username :color="match.color">{{ match.owner }}</Username></td>
+									<td>{{ match.name }}</td>
+									<td><div :class="'btn' + (match.spectate ? '' : ' save')">{{ match.spectate ? "Spectate" : "Join match" }}</div></td>
 								</tr>
 							</table>
 
@@ -181,6 +165,7 @@ export default {
           chatMessage: "",
           chatMessages: [],
           users: [],
+          matches: [],
           errorMessage: "",
           wsLoading: true,
           loadingDots: "."
@@ -234,7 +219,7 @@ export default {
         if(this.chatMessages.length > 0) {
             let lastMsg = this.chatMessages[this.chatMessages.length - 1]
 
-            if(lastMsg.username == data.username && lastMsg.timestamp > Math.floor(Date.now() / 1000) - 15) {
+            if(lastMsg.username == data.username && lastMsg.timestamp > data.timestamp - 15) {
                 lastMsg.messages.push(data.message)
                 createNew = false
             }
@@ -350,6 +335,11 @@ export default {
                         break
                     }
 
+                    case "matches": {
+                        this.matches = data.matches
+                        break
+                    }
+
                 }
 
             }
@@ -397,6 +387,7 @@ export default {
     border-radius: 4px;
     color: #fff;
     border: 1px solid #666;
+    z-index: 100;
 }
 
 .wizard .headline {
@@ -584,7 +575,7 @@ main {
   padding: 15px;
 }
 
-.duels tr:nth-child(even) {
+.duels tr:nth-child(odd) {
   background-color: #222429;
 }
 
@@ -713,5 +704,24 @@ main {
   font-size: 14px;
   color: #ccc;
 }
+
+.new-duel-btn {
+    margin-left: 7px;
+    color: #fff;
+    background: #3CA374;
+    padding: 3px 5px;
+    border-radius: 4px;
+    font-size: 12px;
+    text-transform: uppercase;
+    font-weight: 400;
+    position: absolute;
+    top: -1px;
+}
+
+.new-duel-btn:hover {
+    cursor: pointer;
+    background: #35966A;
+}
+
 
 </style>

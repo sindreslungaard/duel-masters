@@ -4,7 +4,7 @@
     
     <div v-show="errorMessage" class="error">
       <p>{{ errorMessage }}</p>
-      <div @click="$router.push('/overview')" class="btn">Back to overview</div>
+      <div @click="redirect('overview')" class="btn">Back to overview</div>
     </div>
 
     <div v-show="warning" class="error warn">
@@ -238,6 +238,9 @@ export default {
     }
   },
   methods: {
+    redirect(to) {
+      location.href = "/overview"
+    },
     sendChat(message) {
       if(!message) {
         return

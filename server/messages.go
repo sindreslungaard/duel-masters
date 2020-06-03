@@ -120,3 +120,18 @@ type UserListMessage struct {
 	Header string        `json:"header"`
 	Users  []UserMessage `json:"users"`
 }
+
+// MatchMessage holds information about a match
+type MatchMessage struct {
+	ID       string `json:"id"`
+	Owner    string `json:"owner"`
+	Color    string `json:"color"`
+	Name     string `json:"name"`
+	Spectate bool   `json:"spectate"`
+}
+
+// MatchesListMessage is used to list open matches
+type MatchesListMessage struct {
+	Header  string         `json:"header"`
+	Matches []MatchMessage `json:"matches"`
+}

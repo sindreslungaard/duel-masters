@@ -21,6 +21,8 @@ import (
 var matches = make(map[string]*Match)
 var matchesMutex = sync.Mutex{}
 
+var lobbyMatches = make(chan server.MatchesListMessage)
+
 // Match struct
 type Match struct {
 	ID        string           `json:"id"`
@@ -30,6 +32,7 @@ type Match struct {
 	Player2   *PlayerReference `json:"-"`
 	Turn      byte             `json:"-"`
 	Started   bool             `json:"started"`
+	Visible   bool             `json:"visible"`
 
 	created int64
 	ending  bool
@@ -52,6 +55,7 @@ func New(matchName string, hostID string) *Match {
 		HostID:    hostID,
 		Turn:      1,
 		Started:   false,
+		Visible:   true,
 
 		created: time.Now().Unix(),
 		ending:  false,
@@ -76,6 +80,51 @@ func New(matchName string, hostID string) *Match {
 // Name just returns "match", obligatory for a hub
 func (m *Match) Name() string {
 	return "match"
+}
+
+// LobbyMatchList returns the channel to receive match list updates
+func LobbyMatchList() chan server.MatchesListMessage {
+	return lobbyMatches
+}
+
+// UpdateMatchList sends a server.MatchesListMessage through the lobby channel
+func UpdateMatchList() {
+
+	matchesMutex.Lock()
+	defer matchesMutex.Unlock()
+
+	matchesMessage := make([]server.MatchMessage, 0)
+
+	for _, match := range matches {
+
+		if match.Player1 == nil {
+			continue
+		}
+
+		if match.Player2 != nil && !match.Started {
+			continue
+		}
+
+		if match.ending {
+			continue
+		}
+
+		matchesMessage = append(matchesMessage, server.MatchMessage{
+			ID:       match.ID,
+			Owner:    match.Player1.Socket.User.Username,
+			Color:    match.Player1.Socket.User.Color,
+			Name:     match.MatchName,
+			Spectate: match.Started,
+		})
+	}
+
+	update := server.MatchesListMessage{
+		Header:  "matches",
+		Matches: matchesMessage,
+	}
+
+	lobbyMatches <- update
+
 }
 
 func (m *Match) startTicker() {
@@ -174,6 +223,8 @@ func (m *Match) Dispose() {
 	matchesMutex.Unlock()
 
 	logrus.Debugf("Closed match with id %s", m.ID)
+
+	UpdateMatchList()
 
 }
 
@@ -622,6 +673,8 @@ func (m *Match) EndWait(p *Player) {
 func (m *Match) Start() {
 
 	m.Started = true
+
+	UpdateMatchList()
 
 	m.Player1.Player.ShuffleDeck()
 	m.Player2.Player.ShuffleDeck()
@@ -1160,5 +1213,15 @@ func (m *Match) Parse(s *server.Socket, data []byte) {
 		}
 
 	}
+
+}
+
+// OnSocketClose is called when a socket disconnects
+func (m *Match) OnSocketClose(s *server.Socket) {
+
+	Warn(m.Player1, "Your opponent disconnected, the match will close soon.")
+	Warn(m.Player2, "Your opponent disconnected, the match will close soon.")
+
+	m.quit <- true
 
 }

@@ -20,6 +20,7 @@ type Socket struct {
 	ready  bool
 	mutex  *sync.Mutex
 	closed bool
+	lost   bool
 }
 
 // NewSocket creates and returns a new Socket instance
@@ -31,6 +32,7 @@ func NewSocket(c *websocket.Conn, hub Hub) *Socket {
 		ready:  false,
 		mutex:  &sync.Mutex{},
 		closed: false,
+		lost:   false,
 	}
 
 	socketsMutex.Lock()
@@ -44,14 +46,13 @@ func NewSocket(c *websocket.Conn, hub Hub) *Socket {
 // Listen sets up reader and writer for the socket
 func (s *Socket) Listen() {
 
-	defer s.Close()
-
 	for {
 
 		_, message, err := s.conn.ReadMessage()
 
 		if err != nil {
-			//logrus.Debug(err)
+			s.lost = true
+			s.hub.OnSocketClose(s)
 			return
 		}
 
@@ -82,7 +83,7 @@ func (s *Socket) Listen() {
 // Send sends a struct v to the client
 func (s *Socket) Send(v interface{}) {
 
-	if s.closed {
+	if s.closed || s.lost {
 		return
 	}
 
@@ -143,11 +144,11 @@ func GetUserList() UserListMessage {
 			Permissions: s.User.Permissions,
 		}
 
-		if user, ok := usersMap[s.User.Username]; ok {
+		if _, ok := usersMap[s.User.Username]; ok {
 
 			// Replace if this socket is in a match because the client shows
 			// an icon for if the player is in a match or just the lobby
-			if user.Hub == "match" {
+			if userEntry.Hub == "match" {
 				usersMap[s.User.Username] = userEntry
 			}
 

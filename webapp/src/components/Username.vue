@@ -1,7 +1,7 @@
 <template>
     
     <div class="user-name">
-        <span :style="'color: ' + this.color"><slot></slot></span>
+        <span :style="'color: ' + (color ? color : 'orange')"><slot></slot></span>
     </div>
     
 </template>
