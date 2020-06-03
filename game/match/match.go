@@ -157,7 +157,7 @@ func (m *Match) startTicker() {
 
 				// Close the match if it was not started within 10 minutes of creation
 				if !m.Started && m.created < time.Now().Unix()-60*10 {
-					go m.Close()
+					m.quit <- true
 				}
 
 				if stop > 1 {

@@ -57,11 +57,11 @@
 
                                 <div v-if="wsLoading">Loading{{ loadingDots }}</div>
 
-                                <div v-for="(category, index) in users" :key="index">
+                                <div class="user-name-container" v-for="(category, index) in users" :key="index">
 
                                     <div class="user-category"><span>{{ category.category }}</span></div>
 
-                                    <Username v-for="(user, index) in category.users" :key="index" :color="user.color">{{ user.username }}</Username>
+                                    <Username v-for="(user, index) in category.users" :key="index" :hub="user.hub" :color="user.color">{{ user.username }}</Username>
                                     
                                     <br>
 
@@ -538,7 +538,7 @@ main {
 }
 
 .user-list {
-		width: 10%
+	width: 10%;
 }
 
 .chat {
@@ -630,6 +630,10 @@ main {
 
 .user-list .user-name {
 	margin-bottom: 10px;
+}
+
+.user-name-container {
+    overflow: hidden;
 }
 
 .user-messages {
