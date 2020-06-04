@@ -105,6 +105,11 @@ func UpdateMatchList() {
 			continue
 		}
 
+		// remove this when spectating is out
+		if match.Player2 != nil {
+			continue
+		}
+
 		if match.Player2 != nil && !match.Started {
 			continue
 		}
