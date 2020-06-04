@@ -163,7 +163,7 @@ func (l *Lobby) Parse(s *server.Socket, data []byte) {
 
 			chatMsg := server.LobbyChatMessage{
 				Username:  s.User.Username,
-				Color:     "orange",
+				Color:     s.User.Color,
 				Message:   msg.Message,
 				Timestamp: int(time.Now().Unix()),
 			}
