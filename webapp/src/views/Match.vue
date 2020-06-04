@@ -239,7 +239,7 @@ export default {
   },
   methods: {
     redirect(to) {
-      location.href = "/overview"
+      this.$router.push('/' + to)
     },
     sendChat(message) {
       if(!message) {
@@ -510,7 +510,7 @@ export default {
 }
 </script>
 
-<style lang="scss">
+<style scoped lang="scss">
 
 .card-preview {
   width: 300px;
