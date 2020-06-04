@@ -928,6 +928,7 @@ func (m *Match) Parse(s *server.Socket, data []byte) {
 					Header:  "error",
 					Message: "This match has already started, you cannot join it.",
 				})
+				s.Close()
 				return
 			}
 
@@ -941,6 +942,7 @@ func (m *Match) Parse(s *server.Socket, data []byte) {
 						Header:  "error",
 						Message: "You have already joined this match",
 					})
+					s.Close()
 					return
 				}
 
@@ -960,6 +962,7 @@ func (m *Match) Parse(s *server.Socket, data []byte) {
 						Header:  "error",
 						Message: "This match has already started, you cannot join it",
 					})
+					s.Close()
 					return
 				}
 
