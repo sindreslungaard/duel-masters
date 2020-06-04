@@ -9,6 +9,7 @@
             "type": "go",
             "request": "launch",
             "mode": "debug",
+            "cwd": "${workspaceRoot}",
             "program": "${workspaceRoot}/cmd/duel-masters/main.go",
             "env": {},
             "args": [],
