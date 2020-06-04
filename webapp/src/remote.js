@@ -1,6 +1,8 @@
 import axios from 'axios'
 import config from './config'
 
+export const ws_protocol = location.protocol == 'https:' ? 'wss://' : 'ws://'
+
 export const call = (opts) => {
 
     return new Promise((resolve, reject) => {

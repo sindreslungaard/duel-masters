@@ -133,7 +133,7 @@
 </template>
 
 <script>
-import { call } from '../remote'
+import { call, ws_protocol } from '../remote'
 import Header from '../components/Header.vue'
 import Username from '../components/Username.vue'
 
@@ -255,7 +255,7 @@ export default {
 
         // Connect to the server
         try {
-            const ws = new WebSocket("wss://" + window.location.host + "/ws/lobby")
+            const ws = new WebSocket(ws_protocol + window.location.host + "/ws/lobby")
             this.ws = ws
 
             ws.onopen = () => {
