@@ -366,7 +366,7 @@ export default {
   created() {
 
     // Connect to the server
-    const ws = new WebSocket(remote.ws_protocol + window.location.host + "/ws/" + this.$route.params.id)
+    const ws = new WebSocket(ws_protocol + window.location.host + "/ws/" + this.$route.params.id)
     this.ws = ws
 
     ws.onopen = () => {
