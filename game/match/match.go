@@ -41,7 +41,7 @@ type Match struct {
 }
 
 // New returns a new match object
-func New(matchName string, hostID string) *Match {
+func New(matchName string, hostID string, visible bool) *Match {
 
 	id, err := shortid.Generate()
 
@@ -55,7 +55,7 @@ func New(matchName string, hostID string) *Match {
 		HostID:    hostID,
 		Turn:      1,
 		Started:   false,
-		Visible:   true,
+		Visible:   visible,
 
 		created: time.Now().Unix(),
 		ending:  false,
@@ -96,6 +96,10 @@ func UpdateMatchList() {
 	matchesMessage := make([]server.MatchMessage, 0)
 
 	for _, match := range matches {
+
+		if !match.Visible {
+			continue
+		}
 
 		if match.Player1 == nil {
 			continue
@@ -1221,11 +1225,11 @@ func (m *Match) Parse(s *server.Socket, data []byte) {
 // OnSocketClose is called when a socket disconnects
 func (m *Match) OnSocketClose(s *server.Socket) {
 
-	if m.Player1 != nil {
+	if m.Player1 != nil && !m.ending {
 		Warn(m.Player1, "Your opponent disconnected, the match will close soon.")
 	}
 
-	if m.Player2 != nil {
+	if m.Player2 != nil && !m.ending {
 		Warn(m.Player2, "Your opponent disconnected, the match will close soon.")
 	}
 

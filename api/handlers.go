@@ -138,7 +138,8 @@ func SignupHandler(c *gin.Context) {
 }
 
 type matchReqBody struct {
-	Name string `json:"name" binding:"required,min=3,max=100"`
+	Name       string `json:"name" binding:"required,min=3,max=100"`
+	Visibility string `json:"visibility" binding:"required"`
 }
 
 // MatchHandler handles creation of new mathes
@@ -156,7 +157,12 @@ func MatchHandler(c *gin.Context) {
 		return
 	}
 
-	m := match.New(reqBody.Name, user.UID)
+	visible := true
+	if reqBody.Visibility == "private" {
+		visible = false
+	}
+
+	m := match.New(reqBody.Name, user.UID, visible)
 
 	c.JSON(200, m)
 
