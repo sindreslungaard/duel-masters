@@ -506,6 +506,9 @@ export default {
       e.clearSelection()
     })
 
+  },
+  beforeDestroy() {
+    this.ws.close()
   }
 }
 </script>

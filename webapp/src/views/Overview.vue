@@ -352,6 +352,9 @@ export default {
             this.errorMessage = "Connection lost"
         }
 
+  },
+  beforeDestroy() {
+    this.ws.close()
   }
 }
 </script>
