@@ -255,7 +255,7 @@ export default {
 
         // Connect to the server
         try {
-            const ws = new WebSocket("ws://" + window.location.host + "/ws/lobby")
+            const ws = new WebSocket("wss://" + window.location.host + "/ws/lobby")
             this.ws = ws
 
             ws.onopen = () => {
