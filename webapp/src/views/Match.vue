@@ -365,7 +365,7 @@ export default {
   created() {
 
     // Connect to the server
-    const ws = new WebSocket("ws://" + window.location.hostname + "/ws/" + this.$route.params.id)
+    const ws = new WebSocket("ws://" + window.location.host + "/ws/" + this.$route.params.id)
     this.ws = ws
 
     ws.onopen = () => {

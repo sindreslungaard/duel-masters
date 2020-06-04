@@ -15,7 +15,7 @@ export const call = (opts) => {
         headers["content-type"] = "application/json"
         
         axios({
-            url: "//" + window.location.hostname + "/api" + opts.path,
+            url: "/api" + opts.path,
             method: opts.method.toUpperCase(),
             headers: headers,
             data: opts.body,
