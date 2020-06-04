@@ -1,10 +1,10 @@
 <template>
     
-    <div class="user-name">
-        <div class="user-status" :style="(hub ? (hub == 'match' ? 'background: cyan' : 'background: #00FF00') : '')">
+    <div class="user-name" :style="hub ? 'width: 200px' : ''">
+        <div v-if="hub" class="user-status" :style="(hub ? (hub == 'match' ? 'background: cyan' : 'background: #00FF00') : '')">
           <div class="user-status-tooltip">{{ hub == "match" ? 'In a duel' : 'Online'}}</div>
         </div>
-        <span :style="'display: inline-block; color: ' + (color ? color : 'orange')"><slot></slot></span>
+        <span :style="'color: ' + (color ? color : 'orange')"><slot></slot></span>
     </div>
     
 </template>
@@ -19,7 +19,6 @@ export default {
 <style scoped>
 .user-name {
 	text-shadow: 1px 1px #000;
-  width: 200px;
   overflow: hidden;
 }
 
