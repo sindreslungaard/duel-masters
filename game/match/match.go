@@ -924,6 +924,10 @@ func (m *Match) Parse(s *server.Socket, data []byte) {
 
 			// TODO: spectators?
 			if m.Started {
+				s.Send(server.WarningMessage{
+					Header:  "error",
+					Message: "This match has already started, you cannot join it.",
+				})
 				return
 			}
 
@@ -933,6 +937,10 @@ func (m *Match) Parse(s *server.Socket, data []byte) {
 				if m.Player1 != nil {
 					// TODO: Allow reconnect?
 					logrus.Debug("Attempt to join as Player1 multiple times")
+					s.Send(server.WarningMessage{
+						Header:  "error",
+						Message: "You have already joined this match",
+					})
 					return
 				}
 
@@ -948,6 +956,10 @@ func (m *Match) Parse(s *server.Socket, data []byte) {
 				if m.Player2 != nil {
 					// TODO: Allow reconnect?
 					logrus.Debug("Attempt to join as Player2 multiple times")
+					s.Send(server.WarningMessage{
+						Header:  "error",
+						Message: "This match has already started, you cannot join it",
+					})
 					return
 				}
 
@@ -1231,13 +1243,21 @@ func (m *Match) Parse(s *server.Socket, data []byte) {
 func (m *Match) OnSocketClose(s *server.Socket) {
 
 	if m.Player1 != nil && !m.ending {
-		Warn(m.Player1, "Your opponent disconnected, the match will close soon.")
+
+		if m.Player2 != nil && m.Player2.Socket == s {
+			Warn(m.Player1, "Your opponent disconnected, the match will close soon.")
+
+		}
+
 	}
 
 	if m.Player2 != nil && !m.ending {
-		Warn(m.Player2, "Your opponent disconnected, the match will close soon.")
-	}
 
-	m.quit <- true
+		if m.Player1 != nil && m.Player1.Socket == s {
+			Warn(m.Player2, "Your opponent disconnected, the match will close soon.")
+			m.quit <- true
+		}
+
+	}
 
 }
