@@ -1003,6 +1003,8 @@ func (m *Match) Parse(s *server.Socket, data []byte) {
 
 			}
 
+			UpdateMatchList()
+
 		}
 
 	case "chat":
@@ -1219,8 +1221,13 @@ func (m *Match) Parse(s *server.Socket, data []byte) {
 // OnSocketClose is called when a socket disconnects
 func (m *Match) OnSocketClose(s *server.Socket) {
 
-	Warn(m.Player1, "Your opponent disconnected, the match will close soon.")
-	Warn(m.Player2, "Your opponent disconnected, the match will close soon.")
+	if m.Player1 != nil {
+		Warn(m.Player1, "Your opponent disconnected, the match will close soon.")
+	}
+
+	if m.Player2 != nil {
+		Warn(m.Player2, "Your opponent disconnected, the match will close soon.")
+	}
 
 	m.quit <- true
 
