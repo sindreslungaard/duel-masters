@@ -16,12 +16,10 @@
                 <form>
                     <input v-model="wizard.name" type="text" placeholder="Name">
                     <br><br>
-                    <textarea v-model="wizard.description" rows="3" cols="50" placeholder="Description"></textarea>
-                    <br><br>
                     <span class="helper">Visibility</span>
                     <select v-model="wizard.visibility">
-                        <option value="public">Public</option>
-                        <option value="private">Private</option>
+                        <option value="public">Show in list of duels</option>
+                        <option value="private">Hide from list of duels</option>
                     </select>
 
                     <span v-if="wizardError" class="errorMsg">{{ wizardError }}</span>
@@ -185,6 +183,12 @@ export default {
           this.wizardVisible = !this.wizardVisible
       },
       async createDuel() {
+
+          if(this.wizard.name.length < 5 || this.wizard.length > 30) {
+              this.wizardError = "Duel name must be between 5-30 characters"
+              return
+          }
+
           try {
             let res = await call({
                 path: "/match",
