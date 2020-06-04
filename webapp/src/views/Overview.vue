@@ -118,7 +118,7 @@
 								<tr v-for="(match, index) in matches" :key="index">
 									<td><Username :color="match.color">{{ match.owner }}</Username></td>
 									<td>{{ match.name }}</td>
-									<td><div :class="'btn' + (match.spectate ? '' : ' save')">{{ match.spectate ? "Spectate" : "Join match" }}</div></td>
+									<td><div @click="$router.push('/duel/' + match.id)" :class="'btn' + (match.spectate ? '' : ' save')">{{ match.spectate ? "Spectate" : "Join match" }}</div></td>
 								</tr>
 							</table>
 
