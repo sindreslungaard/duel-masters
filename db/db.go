@@ -17,6 +17,10 @@ func Connect(connectionString string, dbName string) {
 
 	client, err := mongo.Connect(context.TODO(), options.Client().ApplyURI(connectionString))
 
+	if err != nil {
+		logrus.Fatal(err)
+	}
+
 	err = client.Ping(context.TODO(), readpref.Primary())
 
 	if err != nil {
