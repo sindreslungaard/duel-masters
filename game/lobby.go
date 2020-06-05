@@ -4,6 +4,7 @@ import (
 	"duel-masters/game/match"
 	"duel-masters/server"
 	"encoding/json"
+	"fmt"
 	"sync"
 	"time"
 
@@ -14,7 +15,12 @@ const (
 	messageBufferSize int = 100
 )
 
-var messages = make([]server.LobbyChatMessage, 0)
+var messages = append(make([]server.LobbyChatMessage, 0), server.LobbyChatMessage{
+	Username:  "[Server]",
+	Color:     "#777",
+	Message:   fmt.Sprintf("Last server restart: %v. Have fun!", time.Now().Local().UTC().Format("Mon Jan 2 15:04:05 -0700 MST")),
+	Timestamp: int(time.Now().Unix()),
+})
 var messagesMutex = &sync.Mutex{}
 
 var subscribers = make([]*server.Socket, 0)
