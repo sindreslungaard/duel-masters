@@ -478,7 +478,9 @@ export default {
     }
 
     ws.onclose = () => { 
-      this.errorMessage = "Connection to the server has been closed."
+      if (this.errorMessage == "") {
+        this.errorMessage = "Connection to the server has been closed."
+      }
       console.log("connection closed")
     }
 
