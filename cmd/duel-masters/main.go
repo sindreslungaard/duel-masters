@@ -16,8 +16,7 @@ import (
 
 func main() {
 
-	// TODO: change loglevel and formatter if production flag is specified
-	logrus.SetFormatter(&logrus.TextFormatter{ForceColors: true})
+	logrus.SetFormatter(&logrus.JSONFormatter{})
 	logrus.SetLevel(logrus.DebugLevel)
 
 	rand.Seed(time.Now().UnixNano())

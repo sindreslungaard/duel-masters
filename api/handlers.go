@@ -358,7 +358,7 @@ func InviteHandler(c *gin.Context) {
 	match, err := match.Get(c.Param("id"))
 
 	if err != nil {
-		res = `
+		res = fmt.Sprintf(`
 		<!DOCTYPE html>
 		<html>
 			<head>
@@ -367,13 +367,14 @@ func InviteHandler(c *gin.Context) {
 				<meta name="og:title" property="og:title" content="Invitation expired!">
 				<meta name="og:description" property="og:description" content="This duel is no longer available">
 				<meta name="og:image" property="og:image" content="https://i.imgur.com/g4I6jEL.png">
+				<meta property="og:url" property="og:url" content="https://%s" />
 			</head>
 			<body>
 				<p>Please wait while we redirect you.. Make sure javascript is enabled.</p>
 				<script>window.location.replace("/overview");</script>
 			</body>
 		</html>
-		`
+		`, c.Param("id"))
 	} else if match.Started {
 		res = fmt.Sprintf(`
 		<!DOCTYPE html>
@@ -384,6 +385,7 @@ func InviteHandler(c *gin.Context) {
 				<meta name="og:title" property="og:title" content="Invitation expired! The duel has already begun.">
 				<meta name="og:description" property="og:description" content="%s is duelling %s!">
 				<meta name="og:image" property="og:image" content="https://i.imgur.com/qdOnH8k.png">
+				
 			</head>
 			<body>
 				<p>Please wait while we redirect you.. Make sure javascript is enabled.</p>
@@ -400,6 +402,7 @@ func InviteHandler(c *gin.Context) {
 				<meta property="og:type" content="website" />
 				<meta name="og:title" property="og:title" content="%s invited you to a duel!">
 				<meta name="og:image" property="og:image" content="https://i.imgur.com/8PlN43q.png">
+				
 			</head>
 			<body>
 				<p>Please wait while we redirect you.. Make sure javascript is enabled.</p>
@@ -417,6 +420,7 @@ func InviteHandler(c *gin.Context) {
 				<meta name="og:title" property="og:title" content="Invitation is loading..">
 				<meta name="og:description" property="og:description" content="This duel is in the progress of being created">
 				<meta name="og:image" property="og:image" content="https://i.imgur.com/FEiBdKe.png">
+				
 			</head>
 			<body>
 				<p>Please wait while we redirect you.. Make sure javascript is enabled.</p>
