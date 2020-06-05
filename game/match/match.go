@@ -21,6 +21,18 @@ import (
 var matches = make(map[string]*Match)
 var matchesMutex = sync.Mutex{}
 
+// Get returns a *Match from the specified id
+func Get(id string) (*Match, error) {
+	matchesMutex.Lock()
+	defer matchesMutex.Unlock()
+
+	if m, ok := matches[id]; ok {
+		return m, nil
+	}
+
+	return nil, errors.New("Not found")
+}
+
 var lobbyMatches = make(chan server.MatchesListMessage)
 
 // Match struct
