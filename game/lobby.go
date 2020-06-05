@@ -79,6 +79,7 @@ func (l *Lobby) StartTicker() {
 	}
 }
 
+// UpdateUserCache updates the list of users online
 func UpdateUserCache() {
 	userCache = server.GetUserList()
 }
