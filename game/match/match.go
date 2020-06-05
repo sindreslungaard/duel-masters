@@ -40,6 +40,17 @@ type Match struct {
 	quit chan bool
 }
 
+// Matches returns a list of the current matches
+func Matches() []string {
+	result := make([]string, 0)
+	matchesMutex.Lock()
+	defer matchesMutex.Unlock()
+	for id := range matches {
+		result = append(result, id)
+	}
+	return result
+}
+
 // New returns a new match object
 func New(matchName string, hostID string, visible bool) *Match {
 

@@ -242,7 +242,21 @@ func handleChatCommand(s *server.Socket, command string) {
 					message += s.User.Username
 				}
 			}
-			chat(s, message)
+			chat(s, "Sockets: "+message)
+		}
+
+	case "/matches":
+		{
+			message := ""
+			matches := match.Matches()
+			for _, m := range matches {
+				if message != "" {
+					message += ", "
+				}
+
+				message += m
+			}
+			chat(s, "Matches: "+message)
 		}
 	}
 
