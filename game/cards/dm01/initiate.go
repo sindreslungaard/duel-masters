@@ -94,6 +94,10 @@ func ToelVizierOfLight(c *match.Card) {
 
 		if _, ok := ctx.Event.(*match.EndOfTurnStep); ok {
 
+			if !card.Player.HasCard(match.BATTLEZONE, card.ID) {
+				return
+			}
+
 			if ctx.Match.IsPlayerTurn(card.Player) {
 
 				creatures, err := card.Player.Container(match.BATTLEZONE)
