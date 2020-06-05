@@ -20,6 +20,17 @@ const (
 var sockets = make(map[*Socket]Hub)
 var socketsMutex = sync.Mutex{}
 
+// Sockets returns a list of the current sockets
+func Sockets() []*Socket {
+	result := make([]*Socket, 0)
+	socketsMutex.Lock()
+	defer socketsMutex.Unlock()
+	for s := range sockets {
+		result = append(result, s)
+	}
+	return result
+}
+
 // Socket links a ws connection to a user id and handles safe reading and writing of data
 type Socket struct {
 	conn   *websocket.Conn
@@ -51,6 +62,11 @@ func NewSocket(c *websocket.Conn, hub Hub) *Socket {
 
 	return s
 
+}
+
+// Ready returns true or false based on if the socket is ready or not
+func (s *Socket) Ready() bool {
+	return s.ready
 }
 
 // Listen sets up reader and writer for the socket

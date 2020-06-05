@@ -161,6 +161,16 @@ func (l *Lobby) Parse(s *server.Socket, data []byte) {
 				return
 			}
 
+			if len(msg.Message) < 1 {
+				return
+			}
+
+			runes := []rune(msg.Message)
+			if string(runes[0:1]) == "/" {
+				handleChatCommand(s, msg.Message)
+				return
+			}
+
 			messagesMutex.Lock()
 			defer messagesMutex.Unlock()
 
@@ -186,6 +196,54 @@ func (l *Lobby) Parse(s *server.Socket, data []byte) {
 
 		}
 
+	}
+
+}
+
+func chat(s *server.Socket, message string) {
+	s.Send(server.LobbyChatMessages{
+		Header: "chat",
+		Messages: []server.LobbyChatMessage{
+			{
+				Username:  "[Server -> you]",
+				Color:     "#777",
+				Message:   message,
+				Timestamp: int(time.Now().Unix()),
+			},
+		},
+	})
+}
+
+func handleChatCommand(s *server.Socket, command string) {
+
+	hasRights := false
+
+	for _, permission := range s.User.Permissions {
+		if permission == "admin" {
+			hasRights = true
+		}
+	}
+
+	if !hasRights {
+		chat(s, "Unknown command and/or missing privileges")
+		return
+	}
+
+	switch command {
+	case "/sockets":
+		{
+			message := ""
+			sockets := server.Sockets()
+			for _, s := range sockets {
+				if s.Ready() {
+					if message != "" {
+						message += ", "
+					}
+					message += s.User.Username
+				}
+			}
+			chat(s, message)
+		}
 	}
 
 }
