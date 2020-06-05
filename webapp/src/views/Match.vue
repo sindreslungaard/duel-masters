@@ -208,7 +208,7 @@ export default {
       wait: "",
 
       loadingDots: "",
-      invite: window.location.host + "/duel/" + this.$route.params.id,
+      invite: location.protocol + "//" + location.host + "/duel/" + this.$route.params.id,
       inviteCopied: false,
       inviteCopyTask: null,
 
