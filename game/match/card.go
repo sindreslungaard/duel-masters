@@ -23,8 +23,9 @@ type Card struct {
 	ManaRequirement []string
 	PowerModifier   func(m *Match, attacking bool) int
 
-	conditions []Condition
-	handlers   []HandlerFunc
+	attachedCards []*Card
+	conditions    []Condition
+	handlers      []HandlerFunc
 }
 
 // Use allows different cards to hook into match events
@@ -94,5 +95,34 @@ func (c *Card) RemoveConditionBySource(src string) {
 func (c *Card) ClearConditions() {
 
 	c.conditions = make([]Condition, 0)
+
+}
+
+// Attach adds a *Card to the card's list of attached cards
+func (c *Card) Attach(toAttach ...*Card) {
+	c.attachedCards = append(c.attachedCards, toAttach...)
+}
+
+// Detach removes a *Card from the card's list of attached cards
+func (c *Card) Detach(toDetach *Card) {
+
+	tmp := make([]*Card, 0)
+
+	for _, card := range c.attachedCards {
+
+		if card.ID != toDetach.ID {
+			tmp = append(tmp, card)
+		}
+
+	}
+
+	c.attachedCards = tmp
+
+}
+
+// Attachments returns a copy of the card's attached cards
+func (c *Card) Attachments() []*Card {
+
+	return c.attachedCards
 
 }
