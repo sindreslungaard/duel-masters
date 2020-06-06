@@ -9,6 +9,11 @@ type PlayCardEvent struct {
 	CardID string
 }
 
+// CardPlayedEvent is fired right before moving the card to the battle/spell zone, after choosing mana to tap
+type CardPlayedEvent struct {
+	CardID string
+}
+
 // ChargeManaEvent is fired when the player attempts to charge mana
 type ChargeManaEvent struct {
 	CardID string

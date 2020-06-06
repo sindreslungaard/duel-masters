@@ -89,13 +89,22 @@ func Creature(card *match.Card, ctx *match.Context) {
 
 				ctx.Match.CloseAction(card.Player)
 
-				for _, mana := range cards {
-					mana.Tapped = true
+				cardPlayedCtx := match.NewContext(ctx.Match, &match.CardPlayedEvent{
+					CardID: card.ID,
+				})
+				ctx.Match.HandleFx(cardPlayedCtx)
+
+				if !cardPlayedCtx.Cancelled() {
+
+					for _, mana := range cards {
+						mana.Tapped = true
+					}
+
+					card.AddCondition(cnd.SummoningSickness, nil, nil)
+
+					card.Player.MoveCard(card.ID, match.HAND, match.BATTLEZONE)
+
 				}
-
-				card.AddCondition(cnd.SummoningSickness, nil, nil)
-
-				card.Player.MoveCard(card.ID, match.HAND, match.BATTLEZONE)
 
 				break
 
