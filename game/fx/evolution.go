@@ -88,7 +88,7 @@ func Evolution(card *match.Card, ctx *match.Context) {
 	// Card moved
 	if event, ok := ctx.Event.(*match.CardMoved); ok {
 
-		if event.CardID != card.ID || event.To == match.BATTLEZONE {
+		if event.CardID != card.ID || event.To == match.BATTLEZONE || event.To == match.HIDDENZONE {
 			return
 		}
 
