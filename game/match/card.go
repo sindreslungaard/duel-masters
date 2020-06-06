@@ -126,3 +126,8 @@ func (c *Card) Attachments() []*Card {
 	return c.attachedCards
 
 }
+
+// ClearAttachments removes all attached cards
+func (c *Card) ClearAttachments() {
+	c.attachedCards = make([]*Card, 0)
+}
