@@ -174,7 +174,6 @@ func (s *Socket) Close() {
 	defer func() {
 		if r := recover(); r != nil {
 			logrus.Warnf("Recovered from socket close. %v", r)
-			socketsMutex.Unlock()
 			return
 		}
 	}()

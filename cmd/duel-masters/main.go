@@ -23,8 +23,10 @@ func main() {
 
 	logrus.Info("Starting..")
 
-	for uid, ctor := range cards.DM01 {
-		match.AddCard(uid, ctor)
+	for _, set := range cards.Sets {
+		for uid, ctor := range *set {
+			match.AddCard(uid, ctor)
+		}
 	}
 
 	go game.GetLobby().StartTicker()

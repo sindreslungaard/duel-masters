@@ -2,8 +2,15 @@ package cards
 
 import (
 	"duel-masters/game/cards/dm01"
+	"duel-masters/game/cards/dm02"
 	"duel-masters/game/match"
 )
+
+// Sets is a map of pointers to the available card sets
+var Sets = map[string]*map[string]match.CardConstructor{
+	"dm-01": &DM01,
+	"dm-02": &DM02,
+}
 
 // DM01 is a map with all the card id's in the game and corresponding CardConstructor for dm01
 var DM01 = map[string]match.CardConstructor{
@@ -127,7 +134,9 @@ var DM01 = map[string]match.CardConstructor{
 	"48c5c29b-2f4e-4a57-86b4-864c6f0dc124": dm01.TornadoFlame,
 	"be8c0d0b-dcab-402c-8e7b-878e35bacca7": dm01.UltimateForce,
 	"68d78fd4-db8a-43a6-8eb6-e1435cfc2959": dm01.VirtualTripwire,
+}
 
-	// dm02
-	// ...
+// DM02 is a map with all the card id's in the game and corresponding CardConstructor for dm02
+var DM02 = map[string]match.CardConstructor{
+	"48ab3f2b-4ae3-41a4-ae6f-61b49c958bdb": dm02.BarkwhipTheSmasher,
 }
