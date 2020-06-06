@@ -358,22 +358,21 @@ func InviteHandler(c *gin.Context) {
 	match, err := match.Get(c.Param("id"))
 
 	if err != nil {
-		res = fmt.Sprintf(`
-		<!DOCTYPE html>
-		<html>
-			<head>
-				<title>Redirecting you..</title>
-				<meta property="og:type" content="website" />
-				<meta name="og:title" property="og:title" content="Invitation expired!">
-				<meta name="og:description" property="og:description" content="This duel is no longer available">
-				<meta name="og:image" property="og:image" content="https://i.imgur.com/g4I6jEL.png">
-				<meta property="og:url" property="og:url" content="https://%s" />
-			</head>
-			<body>
-				<p>Please wait while we redirect you.. Make sure javascript is enabled.</p>
-				<script>window.location.replace("/overview");</script>
-			</body>
-		</html>
+		res = fmt.Sprintf(`<!DOCTYPE html>
+<html>
+	<head>
+		<title>Redirecting you..</title>
+		<meta property="og:type" content="website" />
+		<meta name="og:title" property="og:title" content="Invitation expired!">
+		<meta name="og:description" property="og:description" content="This duel is no longer available">
+		<meta name="og:image" property="og:image" content="https://i.imgur.com/g4I6jEL.png">
+		<meta name="og:url" property="og:url" content="https://shobu.io/invite/%s" />
+	</head>
+	<body style="background: #36393F">
+		<p>Please wait while we redirect you.. Make sure javascript is enabled.</p>
+		<script>window.location.replace("/overview");</script>
+	</body>
+</html>
 		`, c.Param("id"))
 	} else if match.Started {
 		res = fmt.Sprintf(`
