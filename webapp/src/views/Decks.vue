@@ -88,7 +88,7 @@
             </select>
             <img @click="showWizard = true" class="fl edit-ico" width="25px" src="/assets/images/edit_icon.png">
               <div class="right-btns">
-                  <a :href="getShareUrl(selectedDeckUid)" v-if="selectedDeck.public" target="_blank"><img class="fl edit-ico share" width="25px" src="/assets/images/share_icon.png"></a>
+                  <a :href="getShareUrl(selectedDeckUid)" v-if="selectedDeck && selectedDeck.public" target="_blank"><img class="fl edit-ico share" width="25px" src="/assets/images/share_icon.png"></a>
                   <div @click="newDeck()" class="btn new">New Deck</div>
                   <template v-if="selectedDeck && deckCopy && !decksEqual(selectedDeck, deckCopy)">
                       <div @click="save()" class="btn save">Save</div>
@@ -127,6 +127,14 @@
 import { call } from '../remote'
 import Header from '../components/Header.vue'
 import config from '../config'
+
+const permissions = () => {
+    let p = localStorage.getItem('permissions')
+    if(!p) {
+        return []
+    }
+    return p
+}
 
 export default {
   name: 'decks',
@@ -188,6 +196,13 @@ export default {
           if(!this.selected) {
               return
           }
+
+          if(this.selectedDeck.cards.filter(x => x == this.selected.uid).length >= 4) {
+              if(!permissions().includes("admin")) {
+                  return
+              }
+          }
+
           this.selectedDeck.cards.push(this.selected.uid)
       },
 
