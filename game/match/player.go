@@ -66,6 +66,7 @@ type Player struct {
 	Action chan PlayerAction
 
 	HasChargedMana bool
+	CanChargeMana  bool
 	Turn           byte
 	Ready          bool
 
@@ -87,6 +88,7 @@ func NewPlayer(match *Match, turn byte) *Player {
 		mutex:          &sync.Mutex{},
 		Action:         make(chan PlayerAction),
 		HasChargedMana: false,
+		CanChargeMana:  true,
 		Turn:           turn,
 		Ready:          false,
 		match:          match,

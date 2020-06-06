@@ -710,6 +710,7 @@ func (m *Match) BeginNewTurn() {
 	m.HandleFx(ctx)
 
 	m.CurrentPlayer().Player.HasChargedMana = false
+	m.CurrentPlayer().Player.CanChargeMana = true
 
 	m.BroadcastState()
 
@@ -823,6 +824,11 @@ func (m *Match) ChargeMana(p *PlayerReference, cardID string) {
 		return
 	}
 
+	if !p.Player.CanChargeMana {
+		Warn(p, "You can't charge mana after playing or attacking with creatures/spells")
+		return
+	}
+
 	if card, err := p.Player.MoveCard(cardID, HAND, MANAZONE); err == nil {
 		p.Player.HasChargedMana = true
 		m.BroadcastState()
@@ -834,6 +840,8 @@ func (m *Match) ChargeMana(p *PlayerReference, cardID string) {
 // PlayCard is called when the player attempts to play a card
 func (m *Match) PlayCard(p *PlayerReference, cardID string) {
 
+	p.Player.CanChargeMana = false
+
 	m.HandleFx(NewContext(m, &PlayCardEvent{
 		CardID: cardID,
 	}))
@@ -844,6 +852,8 @@ func (m *Match) PlayCard(p *PlayerReference, cardID string) {
 
 // AttackPlayer is called when the player attempts to attack the opposing player
 func (m *Match) AttackPlayer(p *PlayerReference, cardID string) {
+
+	p.Player.CanChargeMana = false
 
 	_, err := p.Player.GetCard(cardID, BATTLEZONE)
 
@@ -863,6 +873,8 @@ func (m *Match) AttackPlayer(p *PlayerReference, cardID string) {
 
 // AttackCreature is called when the player attempts to attack the opposing player
 func (m *Match) AttackCreature(p *PlayerReference, cardID string) {
+
+	p.Player.CanChargeMana = false
 
 	_, err := p.Player.GetCard(cardID, BATTLEZONE)
 
