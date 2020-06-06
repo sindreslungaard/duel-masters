@@ -325,7 +325,14 @@ func (m *Match) GetPower(card *Card, isAttacking bool) int {
 
 	power += card.PowerModifier(m, isAttacking)
 
-	return power
+	e := &GetPowerEvent{
+		Card:      card,
+		Attacking: isAttacking,
+		Power:     power,
+	}
+	m.HandleFx(NewContext(m, e))
+
+	return e.Power
 
 }
 

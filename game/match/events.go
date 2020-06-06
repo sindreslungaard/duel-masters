@@ -57,3 +57,10 @@ type CreatureDestroyed struct {
 	Source  *Card
 	Blocked bool
 }
+
+// GetPowerEvent is fired whenever a card's power is to be used
+type GetPowerEvent struct {
+	Card      *Card
+	Attacking bool
+	Power     int
+}
