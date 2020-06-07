@@ -150,4 +150,5 @@ var DM02 = map[string]match.CardConstructor{
 	"5d095b28-262e-454d-96c7-9174ed83e3f6": dm02.LadiaBaleTheInspirational,
 	"6e381955-231b-4e4e-a14b-82509a5e193b": dm02.RumblingTerahorn,
 	"9fed2257-362f-43c7-b50e-5526ccf799aa": dm02.MiniTitanGett,
+	"17ee5046-c3fd-4422-af14-c54a4be8d9a2": dm02.LogicCube,
 }
