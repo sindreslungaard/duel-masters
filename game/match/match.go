@@ -593,6 +593,10 @@ func (m *Match) HandleFx(ctx *Context) {
 
 	for _, h := range ctx.postFxs {
 
+		if ctx.cancel {
+			return
+		}
+
 		h()
 
 	}

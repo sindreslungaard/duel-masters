@@ -164,6 +164,7 @@ func Creature(card *match.Card, ctx *match.Context) {
 					action := <-card.Player.Action
 
 					if action.Cancel {
+						ctx.InterruptFlow()
 						ctx.Match.CloseAction(card.Player)
 						return
 					}
@@ -312,6 +313,7 @@ func Creature(card *match.Card, ctx *match.Context) {
 				action := <-card.Player.Action
 
 				if action.Cancel {
+					ctx.InterruptFlow()
 					ctx.Match.CloseAction(card.Player)
 					return
 				}
