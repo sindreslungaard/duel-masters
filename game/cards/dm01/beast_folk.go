@@ -10,7 +10,7 @@ import (
 // BurningMane ...
 func BurningMane(c *match.Card) {
 
-	c.Name = "BurningMane"
+	c.Name = "Burning Mane"
 	c.Power = 2000
 	c.Civ = civ.Nature
 	c.Family = family.BeastFolk
