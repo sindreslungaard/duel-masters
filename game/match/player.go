@@ -9,7 +9,6 @@ import (
 	"time"
 
 	"github.com/sirupsen/logrus"
-	"github.com/ventu-io/go-shortid"
 )
 
 // Card containers
@@ -174,40 +173,37 @@ func (p *Player) CreateDeck(deck []string) {
 
 	for _, card := range deck {
 
-		id, err := shortid.Generate()
+		c, err := NewCard(p, card)
 
 		if err != nil {
-			logrus.Debug("Failed to generate id for card")
+			logrus.Warnf("Failed to create card with id %s", card)
 			continue
 		}
-
-		c := &Card{
-			ID:              id,
-			ImageID:         card,
-			Player:          p,
-			Tapped:          false,
-			Zone:            HAND,
-			Name:            "undefined_card",
-			Power:           0,
-			Civ:             "undefind_civ",
-			Family:          "undefined_family",
-			ManaCost:        1,
-			ManaRequirement: make([]string, 0),
-			PowerModifier:   func(m *Match, attacking bool) int { return 0 },
-		}
-
-		cardctor, err := CardCtor(card)
-
-		if err != nil {
-			logrus.Warn(err)
-			continue
-		}
-
-		cardctor(c)
 
 		p.deck = append(p.deck, c)
 
 	}
+
+}
+
+// SpawnCard creates a new card from an id and adds it to the players hand
+// used for debugging and development
+func (p *Player) SpawnCard(id string) {
+
+	p.mutex.Lock()
+
+	defer p.mutex.Unlock()
+
+	c, err := NewCard(p, id)
+
+	if err != nil {
+		logrus.Warnf("Failed to create card with id %s", id)
+		return
+	}
+
+	c.Zone = HAND
+
+	p.hand = append(p.hand, c)
 
 }
 

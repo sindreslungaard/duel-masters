@@ -1053,6 +1053,28 @@ func (m *Match) Parse(s *server.Socket, data []byte) {
 				return
 			}
 
+			runes := []rune(msg.Message)
+			if string(runes[0:4]) == "/add" {
+
+				hasRights := false
+
+				for _, permission := range s.User.Permissions {
+					if permission == "admin" {
+						hasRights = true
+					}
+				}
+
+				if !hasRights {
+					return
+				}
+
+				// Spawn card
+				m.CurrentPlayer().Player.SpawnCard(string(runes[5:]))
+				m.BroadcastState()
+
+				return
+			}
+
 			m.ColorChat(s.User.Username, msg.Message, "#79dced")
 		}
 

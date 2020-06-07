@@ -1,5 +1,10 @@
 package match
 
+import (
+	"github.com/sirupsen/logrus"
+	"github.com/ventu-io/go-shortid"
+)
+
 // Condition is used to store turn-specific state to the card such as power amplifiers
 type Condition struct {
 	id  string
@@ -26,6 +31,44 @@ type Card struct {
 	attachedCards []*Card
 	conditions    []Condition
 	handlers      []HandlerFunc
+}
+
+// NewCard returns a new, initialized card
+func NewCard(p *Player, image string) (*Card, error) {
+
+	id, err := shortid.Generate()
+
+	if err != nil {
+		logrus.Debug("Failed to generate id for card")
+		return nil, err
+	}
+
+	c := &Card{
+		ID:              id,
+		ImageID:         image,
+		Player:          p,
+		Tapped:          false,
+		Zone:            DECK,
+		Name:            "undefined_card",
+		Power:           0,
+		Civ:             "undefind_civ",
+		Family:          "undefined_family",
+		ManaCost:        1,
+		ManaRequirement: make([]string, 0),
+		PowerModifier:   func(m *Match, attacking bool) int { return 0 },
+	}
+
+	cardctor, err := CardCtor(image)
+
+	if err != nil {
+		logrus.Warn(err)
+		return nil, err
+	}
+
+	cardctor(c)
+
+	return c, nil
+
 }
 
 // Use allows different cards to hook into match events
