@@ -144,4 +144,5 @@ var DM02 = map[string]match.CardConstructor{
 	"1eca6a24-9270-477f-a588-80859481ef94": dm02.SpiralGrass,
 	"2c7e38e1-0546-47ab-9388-383d093405b2": dm02.FortressShell,
 	"3f0fb8f6-d01e-4005-8340-b84584f50a2a": dm02.CrystalLancer,
+	"4b715b5c-2e82-4686-9c9f-4ce1e5503621": dm02.BurstShot,
 }
