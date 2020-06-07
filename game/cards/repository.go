@@ -142,4 +142,5 @@ var DM02 = map[string]match.CardConstructor{
 	"0bea1262-311a-47b1-888d-dd065cfe3d7f": dm02.EngineerKipo,
 	"0dca6f6c-c426-4c88-b283-043527f04bb3": dm02.FighterDualFang,
 	"1eca6a24-9270-477f-a588-80859481ef94": dm02.SpiralGrass,
+	"2c7e38e1-0546-47ab-9388-383d093405b2": dm02.FortressShell,
 }
