@@ -51,9 +51,8 @@
                         </th>
                         <th>
                             Set
-                            <select>
-                                <option value="all">All</option>
-                                <option value="dm-01">dm-01</option>
+                            <select v-model="filterSet">
+                                <option v-for="(set, index) in sets" :key="index" :value="set">{{ set }}</option>
                             </select>
                         </th>
                         <th>
@@ -151,7 +150,9 @@ export default {
 
           filterCardName: "",
           filterCivilization: "all",
+          filterSet: "All",
 
+          sets: [],
           cards: [],
           cardsFiltered: [],
           selected: null,
@@ -292,11 +293,16 @@ export default {
 
       filter() {
         let filtered = this.cards.filter(x => x.name.toLowerCase().includes(this.filterCardName.toLowerCase()))
-        if(this.filterCivilization !== "all") {
+
+        if(this.filterCivilization.toLowerCase() !== "all") {
             filtered = filtered.filter(x => x.civilization === this.filterCivilization)
         }
+
+        if(this.filterSet.toLowerCase() !== "all") {
+            filtered = filtered.filter(x => x.set === this.filterSet)
+        }
         
-          this.cardsFiltered = filtered
+        this.cardsFiltered = filtered
       }
   },
   async created() {
@@ -305,6 +311,16 @@ export default {
             call({ path: "/cards", method: "GET" }),
             call({ path: "/decks", method: "GET" })
           ])
+          
+          let sets = {}
+          for(let card of cards.data) {
+              if(!sets[card.set]) {
+                  sets[card.set] = true
+              }
+          }
+          this.sets = Object.keys(sets)
+          this.sets.push("All")
+          this.sets.sort()
 
           this.cards = cards.data
           this.cardsFiltered = this.cards
@@ -331,6 +347,9 @@ export default {
     },
     filterCivilization: function(val) {
       this.filter()
+    },
+    filterSet: function(val) {
+        this.filter()
     },
     selectedDeckUid: function(val) {
         if(!this.decksEqual(this.selectedDeck, this.deckCopy)) {
