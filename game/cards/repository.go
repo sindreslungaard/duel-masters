@@ -139,4 +139,5 @@ var DM01 = map[string]match.CardConstructor{
 // DM02 is a map with all the card id's in the game and corresponding CardConstructor for dm02
 var DM02 = map[string]match.CardConstructor{
 	"48ab3f2b-4ae3-41a4-ae6f-61b49c958bdb": dm02.BarkwhipTheSmasher,
+	"0bea1262-311a-47b1-888d-dd065cfe3d7f": dm02.EngineerKipo,
 }
