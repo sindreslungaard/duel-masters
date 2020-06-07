@@ -34,3 +34,17 @@ func BarkwhipTheSmasher(c *match.Card) {
 	})
 
 }
+
+// FighterDualFang ...
+func FighterDualFang(c *match.Card) {
+
+	c.Name = "Fighter Dual Fang"
+	c.Power = 8000
+	c.Civ = civ.Nature
+	c.Family = family.BeastFolk
+	c.ManaCost = 6
+	c.ManaRequirement = []string{civ.Nature}
+
+	c.Use(fx.Creature, fx.Evolution, fx.DrawToMana, fx.DrawToMana)
+
+}
