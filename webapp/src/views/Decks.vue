@@ -47,12 +47,12 @@
                     <tr>
                         <th>
                             Card Name
-                            <input v-model="filterCardName" type="text" placeholder="Type to search">
+                            <input v-model="filterCardName" type="search" placeholder="Type to search">
                         </th>
                         <th>
                             Set
                             <select v-model="filterSet">
-                                <option v-for="(set, index) in sets" :key="index" :value="set">{{ set }}</option>
+                                <option class="set" v-for="(set, index) in sets" :key="index" :value="set">{{ set }}</option>
                             </select>
                         </th>
                         <th>
@@ -62,15 +62,15 @@
                                 <option value="fire">Fire</option>
                                 <option value="water">Water</option>
                                 <option value="nature">Nature</option>
-                                <option value="light">light</option>
+                                <option value="light">Light</option>
                                 <option value="darkness">Darkness</option>
                             </select>
                         </th>
                     </tr>
-                    <tr @dblclick="previewCard = card" @contextmenu.prevent="previewCard = card" @click="selectedFromDeck = null; selected = card" v-for="(card, index) in cardsFiltered" :key="index" :class="[{ 'selected': selected === card }]">
+                    <tr @dblclick="previewCard = card" @contextmenu.prevent="previewCard = card" @click="selectedFromDeck = null; selected = card" v-for="(card, index) in filteredCards" :key="index" :class="[{ 'selected': selected === card }]">
                         <td>{{ card.name }}</td>
-                        <td>{{ card.set }}</td>
-                        <td>{{ card.civilization }}</td>
+                        <td class="set">{{ card.set }}</td>
+                        <td class="civilization">{{ card.civilization }}</td>
                     </tr>
                     </table>
               </div>
@@ -108,8 +108,8 @@
                             <tr @dblclick="previewCard = card" @contextmenu.prevent="previewCard = card" @click="selected = null; selectedFromDeck = card" v-for="(card, index) in getCardsForDeck(selectedDeck.cards)" :key="index" :class="[{ 'selected': selectedFromDeck && selectedFromDeck.uid === card.uid }]">
                                 <td>{{ card.count }}</td>
                                 <td>{{ card.name }}</td>
-                                <td>{{ card.set }}</td>
-                                <td>{{ card.civilization }}</td>
+                                <td class="set">{{ card.set }}</td>
+                                <td class="civilization">{{ card.civilization }}</td>
                             </tr>
                         </template>
                     </table>
@@ -149,12 +149,12 @@ export default {
           showWizard: false,
 
           filterCardName: "",
+          filterSet: "all",
           filterCivilization: "all",
           filterSet: "All",
 
           sets: [],
           cards: [],
-          cardsFiltered: [],
           selected: null,
           selectedFromDeck: null,
 
@@ -289,20 +289,6 @@ export default {
               }
           }
           return true
-      },
-
-      filter() {
-        let filtered = this.cards.filter(x => x.name.toLowerCase().includes(this.filterCardName.toLowerCase()))
-
-        if(this.filterCivilization.toLowerCase() !== "all") {
-            filtered = filtered.filter(x => x.civilization === this.filterCivilization)
-        }
-
-        if(this.filterSet.toLowerCase() !== "all") {
-            filtered = filtered.filter(x => x.set === this.filterSet)
-        }
-        
-        this.cardsFiltered = filtered
       }
   },
   async created() {
@@ -323,7 +309,6 @@ export default {
           this.sets.sort()
 
           this.cards = cards.data
-          this.cardsFiltered = this.cards
           this.decks = decks.data
 
           if(this.decks.length < 1) {
@@ -342,15 +327,6 @@ export default {
       }
   },
   watch: {
-    filterCardName: function(val) {
-      this.filter()
-    },
-    filterCivilization: function(val) {
-      this.filter()
-    },
-    filterSet: function(val) {
-        this.filter()
-    },
     selectedDeckUid: function(val) {
         if(!this.decksEqual(this.selectedDeck, this.deckCopy)) {
             this.warning = "You have unsaved changes in the currently selected deck. Save or discard before editing another deck."
@@ -359,6 +335,21 @@ export default {
         }
         this.selectedDeck = this.decks.find(x => x.uid === val)
         this.deckCopy = JSON.parse(JSON.stringify(this.selectedDeck))
+    }
+  },
+  computed: {
+    filteredCards() {
+      let filteredCards = this.cards.filter(card => card.name.toLowerCase().includes(this.filterCardName.toLowerCase()));
+
+      if(this.filterSet !== "All") {
+          filteredCards = filteredCards.filter(card => card.set === this.filterSet);
+      }
+
+      if(this.filterCivilization !== "all") {
+          filteredCards = filteredCards.filter(card => card.civilization === this.filterCivilization);
+      }
+        
+      return filteredCards;
     }
   }
 }
@@ -793,4 +784,11 @@ a {
   background: #5B6EAE !important;
 }
 
+.set {
+  text-transform: uppercase;
+}
+
+.civilization {
+  text-transform: capitalize;
+}
 </style>
