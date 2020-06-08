@@ -1,6 +1,7 @@
 package fx
 
 import (
+	"duel-masters/game/cnd"
 	"duel-masters/game/match"
 	"fmt"
 )
@@ -37,12 +38,21 @@ func Spell(card *match.Card, ctx *match.Context) {
 				return
 			}
 
+			manaCost := card.ManaCost
+			for _, condition := range card.Conditions() {
+				if condition.ID == cnd.ReducedCost {
+					if manaCost > 1 {
+						manaCost--
+					}
+				}
+			}
+
 			ctx.Match.NewAction(
 				card.Player,
 				untappedMana,
-				card.ManaCost,
-				card.ManaCost,
-				fmt.Sprintf("Select %v cards from your manazone to play %v. You must select at least 1 %v, civilization card.", card.ManaCost, card.Name, card.Civ),
+				manaCost,
+				manaCost,
+				fmt.Sprintf("Select %v cards from your manazone to play %v. You must select at least 1 %v, civilization card.", manaCost, card.Name, card.Civ),
 				true,
 			)
 
@@ -68,7 +78,7 @@ func Spell(card *match.Card, ctx *match.Context) {
 					cards = append(cards, mana)
 				}
 
-				if len(action.Cards) != card.ManaCost || !match.AssertCardsIn(untappedMana, action.Cards...) || !card.Player.CanPlayCard(card, cards) {
+				if len(action.Cards) != manaCost || !match.AssertCardsIn(untappedMana, action.Cards...) || !card.Player.CanPlayCard(card, cards) {
 					ctx.Match.ActionWarning(card.Player, "Your selection of cards does not fulfill the requirements")
 					continue
 				}

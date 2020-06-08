@@ -15,4 +15,5 @@ const (
 	Slayer            = "slayer"
 	Active            = "active"
 	CantBeBlocked     = "cant_be_blocked"
+	ReducedCost       = "reduced_cost"
 )

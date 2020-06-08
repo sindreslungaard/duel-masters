@@ -1,6 +1,7 @@
 package match
 
 import (
+	"duel-masters/game/cnd"
 	"duel-masters/server"
 	"errors"
 	"fmt"
@@ -389,7 +390,16 @@ func (p *Player) CanPlayCard(card *Card, mana []*Card) bool {
 		}
 	}
 
-	if card.ManaCost > len(untappedMana) {
+	manaCost := card.ManaCost
+	for _, condition := range card.Conditions() {
+		if condition.ID == cnd.ReducedCost {
+			if manaCost > 1 {
+				manaCost--
+			}
+		}
+	}
+
+	if manaCost > len(untappedMana) {
 		return false
 	}
 

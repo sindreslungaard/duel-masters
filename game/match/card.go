@@ -7,9 +7,9 @@ import (
 
 // Condition is used to store turn-specific state to the card such as power amplifiers
 type Condition struct {
-	id  string
-	val interface{}
-	src interface{}
+	ID  string
+	Val interface{}
+	Src interface{}
 }
 
 // Card holds information about a specific card
@@ -91,7 +91,7 @@ func (c *Card) AddCondition(cnd string, val interface{}, src interface{}) {
 func (c *Card) HasCondition(cnd string) bool {
 
 	for _, condition := range c.conditions {
-		if condition.id == cnd {
+		if condition.ID == cnd {
 			return true
 		}
 	}
@@ -107,7 +107,7 @@ func (c *Card) RemoveCondition(cnd string) {
 
 	for _, condition := range c.conditions {
 
-		if condition.id != cnd {
+		if condition.ID != cnd {
 			tmp = append(tmp, condition)
 		}
 
@@ -124,7 +124,7 @@ func (c *Card) RemoveConditionBySource(src string) {
 
 	for _, condition := range c.conditions {
 
-		if condition.src != src {
+		if condition.Src != src {
 			tmp = append(tmp, condition)
 		}
 

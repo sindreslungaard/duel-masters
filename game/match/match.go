@@ -299,11 +299,11 @@ func (m *Match) GetPower(card *Card, isAttacking bool) int {
 
 	for _, condition := range card.Conditions() {
 
-		switch condition.id {
+		switch condition.ID {
 
 		case cnd.PowerAmplifier:
 			{
-				if val, ok := condition.val.(int); ok {
+				if val, ok := condition.Val.(int); ok {
 					power += val
 				}
 			}
@@ -314,7 +314,7 @@ func (m *Match) GetPower(card *Card, isAttacking bool) int {
 					continue
 				}
 
-				if val, ok := condition.val.(int); ok {
+				if val, ok := condition.Val.(int); ok {
 					power += val
 				}
 			}
