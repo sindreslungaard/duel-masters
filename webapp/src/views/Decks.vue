@@ -47,7 +47,7 @@
                     <tr>
                         <th>
                             Card Name
-                            <input v-model="filterCardName" type="text" placeholder="Type to search">
+                            <input v-model="filterCardName" type="search" placeholder="Type to search">
                         </th>
                         <th>
                             Set
