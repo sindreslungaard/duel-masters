@@ -2,6 +2,7 @@ package server
 
 import (
 	"sync"
+	"time"
 
 	"duel-masters/db"
 
@@ -9,8 +10,26 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
+const (
+	writeWait      = 10 * time.Second
+	pongWait       = 60 * time.Second
+	pingPeriod     = (pongWait * 9) / 10
+	maxMessageSize = 512
+)
+
 var sockets = make(map[*Socket]Hub)
 var socketsMutex = sync.Mutex{}
+
+// Sockets returns a list of the current sockets
+func Sockets() []*Socket {
+	result := make([]*Socket, 0)
+	socketsMutex.Lock()
+	defer socketsMutex.Unlock()
+	for s := range sockets {
+		result = append(result, s)
+	}
+	return result
+}
 
 // Socket links a ws connection to a user id and handles safe reading and writing of data
 type Socket struct {
@@ -39,20 +58,33 @@ func NewSocket(c *websocket.Conn, hub Hub) *Socket {
 	sockets[s] = hub
 	socketsMutex.Unlock()
 
+	logrus.Debugf("Opened a connection")
+
 	return s
 
 }
 
+// Ready returns true or false based on if the socket is ready or not
+func (s *Socket) Ready() bool {
+	return s.ready
+}
+
 // Listen sets up reader and writer for the socket
 func (s *Socket) Listen() {
+
+	s.conn.SetReadLimit(maxMessageSize)
+	s.conn.SetReadDeadline(time.Now().Add(pongWait))
+	s.conn.SetPongHandler(func(string) error { s.conn.SetReadDeadline(time.Now().Add(pongWait)); return nil })
+
+	defer s.Close()
+
+	go s.handlePing()
 
 	for {
 
 		_, message, err := s.conn.ReadMessage()
 
 		if err != nil {
-			s.lost = true
-			s.hub.OnSocketClose(s)
 			return
 		}
 
@@ -80,6 +112,39 @@ func (s *Socket) Listen() {
 
 }
 
+func (s *Socket) handlePing() {
+
+	ticker := time.NewTicker(pingPeriod)
+	defer ticker.Stop()
+	defer func() {
+		if r := recover(); r != nil {
+			logrus.Warnf("recovered from handlePing: %v", r)
+		}
+	}()
+
+	for {
+
+		if s.closed || s.lost {
+			return
+		}
+
+		select {
+		case <-ticker.C:
+			s.mutex.Lock()
+			s.conn.SetWriteDeadline(time.Now().Add(writeWait))
+			err := s.conn.WriteMessage(websocket.PingMessage, nil)
+			s.mutex.Unlock()
+			if err != nil {
+				if !s.closed && !s.lost {
+					s.conn.Close()
+				}
+				return
+			}
+		}
+	}
+
+}
+
 // Send sends a struct v to the client
 func (s *Socket) Send(v interface{}) {
 
@@ -95,6 +160,7 @@ func (s *Socket) Send(v interface{}) {
 	}()
 
 	s.mutex.Lock()
+	s.conn.SetWriteDeadline(time.Now().Add(writeWait))
 	if err := s.conn.WriteJSON(v); err != nil {
 		logrus.Debug(err)
 	}
@@ -105,23 +171,30 @@ func (s *Socket) Send(v interface{}) {
 // Close closes the client connection
 func (s *Socket) Close() {
 
+	defer func() {
+		if r := recover(); r != nil {
+			logrus.Warnf("Recovered from socket close. %v", r)
+			return
+		}
+	}()
+
 	if s.closed {
 		return
 	}
 
-	if s == nil || s.conn == nil {
-		return
-	}
+	s.closed = true
 
 	socketsMutex.Lock()
 
-	defer socketsMutex.Unlock()
-
 	delete(sockets, s)
 
-	s.conn.Close()
+	socketsMutex.Unlock()
 
-	s.closed = true
+	s.hub.OnSocketClose(s)
+
+	if s.conn != nil {
+		s.conn.Close()
+	}
 
 	logrus.Debug("Closed a connection")
 

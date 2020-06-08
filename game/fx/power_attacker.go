@@ -9,7 +9,9 @@ func powerAttacker(card *match.Card, ctx *match.Context, n int) {
 
 	if _, ok := ctx.Event.(*match.UntapStep); ok {
 
-		card.AddCondition(cnd.PowerAttacker, n, card.ID)
+		if ctx.Match.IsPlayerTurn(card.Player) {
+			card.AddCondition(cnd.PowerAttacker, n, card.ID)
+		}
 
 	}
 

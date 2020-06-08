@@ -425,7 +425,7 @@ func NaturalSnare(c *match.Card) {
 	c.ManaCost = 6
 	c.ManaRequirement = []string{civ.Nature}
 
-	c.Use(fx.Spell, func(card *match.Card, ctx *match.Context) {
+	c.Use(fx.Spell, fx.ShieldTrigger, func(card *match.Card, ctx *match.Context) {
 
 		if match.AmICasted(card, ctx) {
 

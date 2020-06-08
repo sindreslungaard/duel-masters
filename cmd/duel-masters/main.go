@@ -16,16 +16,17 @@ import (
 
 func main() {
 
-	// TODO: change loglevel and formatter if production flag is specified
-	logrus.SetFormatter(&logrus.TextFormatter{ForceColors: true})
+	logrus.SetFormatter(&logrus.JSONFormatter{})
 	logrus.SetLevel(logrus.DebugLevel)
 
 	rand.Seed(time.Now().UnixNano())
 
 	logrus.Info("Starting..")
 
-	for uid, ctor := range cards.DM01 {
-		match.AddCard(uid, ctor)
+	for _, set := range cards.Sets {
+		for uid, ctor := range *set {
+			match.AddCard(uid, ctor)
+		}
 	}
 
 	go game.GetLobby().StartTicker()

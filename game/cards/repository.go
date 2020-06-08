@@ -2,8 +2,15 @@ package cards
 
 import (
 	"duel-masters/game/cards/dm01"
+	"duel-masters/game/cards/dm02"
 	"duel-masters/game/match"
 )
+
+// Sets is a map of pointers to the available card sets
+var Sets = map[string]*map[string]match.CardConstructor{
+	"dm-01": &DM01,
+	"dm-02": &DM02,
+}
 
 // DM01 is a map with all the card id's in the game and corresponding CardConstructor for dm01
 var DM01 = map[string]match.CardConstructor{
@@ -127,7 +134,21 @@ var DM01 = map[string]match.CardConstructor{
 	"48c5c29b-2f4e-4a57-86b4-864c6f0dc124": dm01.TornadoFlame,
 	"be8c0d0b-dcab-402c-8e7b-878e35bacca7": dm01.UltimateForce,
 	"68d78fd4-db8a-43a6-8eb6-e1435cfc2959": dm01.VirtualTripwire,
+}
 
-	// dm02
-	// ...
+// DM02 is a map with all the card id's in the game and corresponding CardConstructor for dm02
+var DM02 = map[string]match.CardConstructor{
+	"48ab3f2b-4ae3-41a4-ae6f-61b49c958bdb": dm02.BarkwhipTheSmasher,
+	"0bea1262-311a-47b1-888d-dd065cfe3d7f": dm02.EngineerKipo,
+	"0dca6f6c-c426-4c88-b283-043527f04bb3": dm02.FighterDualFang,
+	"1eca6a24-9270-477f-a588-80859481ef94": dm02.SpiralGrass,
+	"2c7e38e1-0546-47ab-9388-383d093405b2": dm02.FortressShell,
+	"3f0fb8f6-d01e-4005-8340-b84584f50a2a": dm02.CrystalLancer,
+	"4b715b5c-2e82-4686-9c9f-4ce1e5503621": dm02.BurstShot,
+	"05d946f7-5977-4f51-8bca-ecb39845f1a2": dm02.BolzardDragon,
+	"5cf64846-0eb2-4e8d-bf15-4ca573f96e58": dm02.KingNautilus,
+	"5d095b28-262e-454d-96c7-9174ed83e3f6": dm02.LadiaBaleTheInspirational,
+	"6e381955-231b-4e4e-a14b-82509a5e193b": dm02.RumblingTerahorn,
+	"9fed2257-362f-43c7-b50e-5526ccf799aa": dm02.MiniTitanGett,
+	"17ee5046-c3fd-4422-af14-c54a4be8d9a2": dm02.LogicCube,
 }

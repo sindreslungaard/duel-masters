@@ -46,6 +46,8 @@ func RaylaTruthEnforcer(c *match.Card) {
 					ctx.Match.Chat("Server", fmt.Sprintf("%s was moved from %s's deck to their hand", c.Name, card.Player.Username()))
 				}
 
+				card.Player.ShuffleDeck()
+
 			}
 		}
 

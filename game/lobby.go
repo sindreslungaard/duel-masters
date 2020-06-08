@@ -4,6 +4,7 @@ import (
 	"duel-masters/game/match"
 	"duel-masters/server"
 	"encoding/json"
+	"fmt"
 	"sync"
 	"time"
 
@@ -14,7 +15,12 @@ const (
 	messageBufferSize int = 100
 )
 
-var messages = make([]server.LobbyChatMessage, 0)
+var messages = append(make([]server.LobbyChatMessage, 0), server.LobbyChatMessage{
+	Username:  "[Server]",
+	Color:     "#777",
+	Message:   fmt.Sprintf("Last server restart: %v. Have fun!", time.Now().Local().UTC().Format("Mon Jan 2 15:04:05 -0700 MST")),
+	Timestamp: int(time.Now().Unix()),
+})
 var messagesMutex = &sync.Mutex{}
 
 var subscribers = make([]*server.Socket, 0)
@@ -155,6 +161,16 @@ func (l *Lobby) Parse(s *server.Socket, data []byte) {
 				return
 			}
 
+			if len(msg.Message) < 1 {
+				return
+			}
+
+			runes := []rune(msg.Message)
+			if string(runes[0:1]) == "/" {
+				handleChatCommand(s, msg.Message)
+				return
+			}
+
 			messagesMutex.Lock()
 			defer messagesMutex.Unlock()
 
@@ -180,6 +196,68 @@ func (l *Lobby) Parse(s *server.Socket, data []byte) {
 
 		}
 
+	}
+
+}
+
+func chat(s *server.Socket, message string) {
+	s.Send(server.LobbyChatMessages{
+		Header: "chat",
+		Messages: []server.LobbyChatMessage{
+			{
+				Username:  "[Server -> you]",
+				Color:     "#777",
+				Message:   message,
+				Timestamp: int(time.Now().Unix()),
+			},
+		},
+	})
+}
+
+func handleChatCommand(s *server.Socket, command string) {
+
+	hasRights := false
+
+	for _, permission := range s.User.Permissions {
+		if permission == "admin" {
+			hasRights = true
+		}
+	}
+
+	if !hasRights {
+		chat(s, "Unknown command and/or missing privileges")
+		return
+	}
+
+	switch command {
+	case "/sockets":
+		{
+			message := ""
+			sockets := server.Sockets()
+			for _, s := range sockets {
+				if s.Ready() {
+					if message != "" {
+						message += ", "
+					}
+					message += s.User.Username
+				}
+			}
+			chat(s, "Sockets: "+message)
+		}
+
+	case "/matches":
+		{
+			message := ""
+			matches := match.Matches()
+			for _, m := range matches {
+				if message != "" {
+					message += ", "
+				}
+
+				message += m
+			}
+			chat(s, "Matches: "+message)
+		}
 	}
 
 }

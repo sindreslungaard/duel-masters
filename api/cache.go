@@ -23,22 +23,26 @@ var mutex *sync.Mutex = &sync.Mutex{}
 // CreateCardCache loads all cards and creates a cache of the static data
 func CreateCardCache() {
 
-	for uid, c := range cards.DM01 {
+	for setID, set := range cards.Sets {
 
-		card := &match.Card{}
+		for uid, c := range *set {
 
-		c(card)
+			card := &match.Card{}
 
-		register = append(register, CardInfo{
-			UID:          uid,
-			Name:         card.Name,
-			Civilization: card.Civ,
-			Set:          "dm-01",
-		})
+			c(card)
+
+			register = append(register, CardInfo{
+				UID:          uid,
+				Name:         card.Name,
+				Civilization: card.Civ,
+				Set:          setID,
+			})
+
+		}
 
 	}
 
-	logrus.Infof("Loaded %v cards into the cache", len(register))
+	logrus.Infof("Loaded %v cards into the cache from %v sets", len(register), len(cards.Sets))
 
 }
 

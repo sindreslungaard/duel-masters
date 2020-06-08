@@ -8,7 +8,9 @@ import (
 func Untap(card *match.Card, ctx *match.Context) {
 
 	if _, ok := ctx.Event.(*match.EndOfTurnStep); ok {
-		card.Tapped = false
+		if card.Zone == match.BATTLEZONE {
+			card.Tapped = false
+		}
 	}
 
 }

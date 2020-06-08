@@ -35,3 +35,8 @@ func (c *Context) ScheduleAfter(handlers ...func()) {
 func (c *Context) InterruptFlow() {
 	c.cancel = true
 }
+
+// Cancelled returns whether or not the context was cancelled
+func (c *Context) Cancelled() bool {
+	return c.cancel
+}

@@ -21,6 +21,18 @@ import (
 var matches = make(map[string]*Match)
 var matchesMutex = sync.Mutex{}
 
+// Get returns a *Match from the specified id
+func Get(id string) (*Match, error) {
+	matchesMutex.Lock()
+	defer matchesMutex.Unlock()
+
+	if m, ok := matches[id]; ok {
+		return m, nil
+	}
+
+	return nil, errors.New("Not found")
+}
+
 var lobbyMatches = make(chan server.MatchesListMessage)
 
 // Match struct
@@ -38,6 +50,17 @@ type Match struct {
 	ending  bool
 
 	quit chan bool
+}
+
+// Matches returns a list of the current matches
+func Matches() []string {
+	result := make([]string, 0)
+	matchesMutex.Lock()
+	defer matchesMutex.Unlock()
+	for id := range matches {
+		result = append(result, id)
+	}
+	return result
 }
 
 // New returns a new match object
@@ -148,52 +171,21 @@ func (m *Match) startTicker() {
 		}
 	}()
 
-	// When the quit signal is sent, stop = 1
-	// If stop == 1, stop is incremented
-	// Match disposes when stop > 1 to ensure a minimum of 1 tick elapses before disposal
-	stop := 0
-
 	for {
 
 		select {
 		case <-m.quit:
 			{
-				stop = 1
-				logrus.Debugf("Scheduling disposal of match %s", m.ID)
+				logrus.Debugf("Closing match %s", m.ID)
+				return
 			}
 		case <-ticker.C:
 			{
 
 				// Close the match if it was not started within 10 minutes of creation
 				if !m.Started && m.created < time.Now().Unix()-60*10 {
-					m.quit <- true
-				}
-
-				if stop > 1 {
-					logrus.Debugf("Stopping ticker of match %s", m.ID)
+					logrus.Debugf("Closing match %s", m.ID)
 					return
-				} else if stop == 1 {
-					stop++
-				}
-
-				ping := &server.Message{
-					Header: "mping",
-				}
-
-				if m.Player1 != nil && m.Player1.Player != nil {
-					m.Player1.Socket.Send(ping)
-
-					if m.Player1.LastPong < time.Now().Unix()-30 && !m.ending {
-						go m.End(m.Player2.Player, "Your opponent left the match.")
-					}
-				}
-
-				if m.Player2 != nil && m.Player2.Player != nil {
-					m.Player2.Socket.Send(ping)
-
-					if m.Player2.LastPong < time.Now().Unix()-30 && !m.ending {
-						go m.End(m.Player1.Player, "Your opponent left the match.")
-					}
 				}
 
 			}
@@ -205,6 +197,8 @@ func (m *Match) startTicker() {
 // Dispose closes the match, disconnects the clients and removes all references to it
 func (m *Match) Dispose() {
 
+	logrus.Debugf("Disposing match %s", m.ID)
+
 	defer func() {
 		if r := recover(); r != nil {
 			logrus.Warningf("Recovered from disposing a match. %v", r)
@@ -214,18 +208,16 @@ func (m *Match) Dispose() {
 	if m.Player1 != nil {
 		m.Player1.Socket.Close()
 		m.Player1.Player.Dispose()
-		m.Player1.Player = nil
-		m.Player1 = nil
 	}
 
 	if m.Player2 != nil {
 		m.Player2.Socket.Close()
 		m.Player2.Player.Dispose()
-		m.Player2.Player = nil
-		m.Player2 = nil
 	}
 
 	matchesMutex.Lock()
+
+	close(m.quit)
 
 	delete(matches, m.ID)
 
@@ -333,7 +325,14 @@ func (m *Match) GetPower(card *Card, isAttacking bool) int {
 
 	power += card.PowerModifier(m, isAttacking)
 
-	return power
+	e := &GetPowerEvent{
+		Card:      card,
+		Attacking: isAttacking,
+		Power:     power,
+	}
+	m.HandleFx(NewContext(m, e))
+
+	return e.Power
 
 }
 
@@ -435,6 +434,8 @@ func (m *Match) BreakShields(shields []*Card) {
 // End ends the match
 func (m *Match) End(winner *Player, winnerStr string) {
 
+	logrus.Debugf("Attempting to end match %s", m.ID)
+
 	if m.ending {
 		logrus.Debugf("Cannot end match, %s is already ending", m.ID)
 		return
@@ -443,23 +444,9 @@ func (m *Match) End(winner *Player, winnerStr string) {
 	m.ending = true
 
 	if m.Started {
-		Warn(m.PlayerRef(winner), winnerStr)
-		Warn(m.PlayerRef(m.Opponent(winner)), winnerStr)
+		WarnError(m.PlayerRef(winner), winnerStr)
+		WarnError(m.PlayerRef(m.Opponent(winner)), winnerStr)
 	}
-
-	m.quit <- true
-
-}
-
-// Close ends and closes the match without notifying the players
-func (m *Match) Close() {
-
-	if m.ending {
-		logrus.Debugf("Cannot end match, %s is already ending", m.ID)
-		return
-	}
-
-	m.ending = true
 
 	m.quit <- true
 
@@ -522,6 +509,16 @@ func Warn(p *PlayerReference, message string) {
 
 	p.Socket.Send(server.WarningMessage{
 		Header:  "warn",
+		Message: message,
+	})
+
+}
+
+// WarnError sends an error message to the specified player ref
+func WarnError(p *PlayerReference, message string) {
+
+	p.Socket.Send(server.WarningMessage{
+		Header:  "error",
 		Message: message,
 	})
 
@@ -595,6 +592,10 @@ func (m *Match) HandleFx(ctx *Context) {
 	}
 
 	for _, h := range ctx.postFxs {
+
+		if ctx.cancel {
+			return
+		}
 
 		h()
 
@@ -720,6 +721,7 @@ func (m *Match) BeginNewTurn() {
 	m.HandleFx(ctx)
 
 	m.CurrentPlayer().Player.HasChargedMana = false
+	m.CurrentPlayer().Player.CanChargeMana = true
 
 	m.BroadcastState()
 
@@ -833,6 +835,11 @@ func (m *Match) ChargeMana(p *PlayerReference, cardID string) {
 		return
 	}
 
+	if !p.Player.CanChargeMana {
+		Warn(p, "You can't charge mana after playing or attacking with creatures/spells")
+		return
+	}
+
 	if card, err := p.Player.MoveCard(cardID, HAND, MANAZONE); err == nil {
 		p.Player.HasChargedMana = true
 		m.BroadcastState()
@@ -844,6 +851,8 @@ func (m *Match) ChargeMana(p *PlayerReference, cardID string) {
 // PlayCard is called when the player attempts to play a card
 func (m *Match) PlayCard(p *PlayerReference, cardID string) {
 
+	p.Player.CanChargeMana = false
+
 	m.HandleFx(NewContext(m, &PlayCardEvent{
 		CardID: cardID,
 	}))
@@ -854,6 +863,8 @@ func (m *Match) PlayCard(p *PlayerReference, cardID string) {
 
 // AttackPlayer is called when the player attempts to attack the opposing player
 func (m *Match) AttackPlayer(p *PlayerReference, cardID string) {
+
+	p.Player.CanChargeMana = false
 
 	_, err := p.Player.GetCard(cardID, BATTLEZONE)
 
@@ -873,6 +884,8 @@ func (m *Match) AttackPlayer(p *PlayerReference, cardID string) {
 
 // AttackCreature is called when the player attempts to attack the opposing player
 func (m *Match) AttackCreature(p *PlayerReference, cardID string) {
+
+	p.Player.CanChargeMana = false
 
 	_, err := p.Player.GetCard(cardID, BATTLEZONE)
 
@@ -1041,6 +1054,28 @@ func (m *Match) Parse(s *server.Socket, data []byte) {
 			}
 
 			if err := json.Unmarshal(data, &msg); err != nil {
+				return
+			}
+
+			runes := []rune(msg.Message)
+			if string(runes[0:4]) == "/add" {
+
+				hasRights := false
+
+				for _, permission := range s.User.Permissions {
+					if permission == "admin" {
+						hasRights = true
+					}
+				}
+
+				if !hasRights {
+					return
+				}
+
+				// Spawn card
+				m.CurrentPlayer().Player.SpawnCard(string(runes[5:]))
+				m.BroadcastState()
+
 				return
 			}
 
@@ -1245,22 +1280,38 @@ func (m *Match) Parse(s *server.Socket, data []byte) {
 // OnSocketClose is called when a socket disconnects
 func (m *Match) OnSocketClose(s *server.Socket) {
 
-	if m.Player1 != nil && !m.ending {
-
-		if m.Player2 != nil && m.Player2.Socket == s {
-			Warn(m.Player1, "Your opponent disconnected, the match will close soon.")
-
-		}
-
+	// End if someone disconnects and there's no players in the match
+	if m.Player1 == nil && m.Player2 == nil {
+		m.quit <- true
+		return
 	}
 
-	if m.Player2 != nil && !m.ending {
+	if m.Player1 != nil {
 
-		if m.Player1 != nil && m.Player1.Socket == s {
-			Warn(m.Player2, "Your opponent disconnected, the match will close soon.")
+		// If player1 disconnects
+		if m.Player1.Socket == s {
+
+			// Let player2 know if they are present and this was not during the end of the game
+			if m.Player2 != nil && !m.ending {
+				WarnError(m.Player2, "Your opponent disconnected, the match will close soon.")
+			}
+
 			m.quit <- true
 		}
+	}
 
+	if m.Player2 != nil {
+
+		// If player2 disconnects
+		if m.Player2.Socket == s {
+
+			// Let player1 know if they are present and this was not during the end of the game
+			if m.Player1 != nil && !m.ending {
+				WarnError(m.Player1, "Your opponent disconnected, the match will close soon.")
+			}
+
+			m.quit <- true
+		}
 	}
 
 }

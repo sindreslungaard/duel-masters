@@ -9,6 +9,8 @@
               <li @click="$router.push('decks')">Decks</li>
               <li class="no-cursor">|</li>
               <li @click="$router.push('logout')">Logout</li>
+              <li class="no-cursor">|</li>
+              <li><a target="_blank" href="https://patreon.com/shobu"><img class="patreon-btn" src="/assets/images/patreon.png"></a></li>
           </ul>
       </nav>
 
@@ -190,6 +192,18 @@ a {
 
 .btn:active {
   background: #5B6EAE !important;
+}
+
+.patreon-btn {
+    width: 125px;
+    margin-bottom: -10px;
+    border-radius: 4px;
+    margin-right: -3px;
+    opacity: 0.9;
+}
+
+.patreon-btn:hover {
+    opacity: 1;
 }
 
 </style>
