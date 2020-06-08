@@ -21,7 +21,7 @@ func BarkwhipTheSmasher(c *match.Card) {
 
 		if event, ok := ctx.Event.(*match.GetPowerEvent); ok {
 
-			if card.Zone != match.BATTLEZONE || !card.Tapped || event.Card == card {
+			if card.Zone != match.BATTLEZONE || !card.Tapped || event.Card == card || event.Card.Player != card.Player {
 				return
 			}
 
