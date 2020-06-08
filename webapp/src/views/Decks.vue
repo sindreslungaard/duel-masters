@@ -53,7 +53,7 @@
                             Set
                             <select>
                                 <option value="all">All</option>
-                                <option value="dm-01">dm-01</option>
+                                <option value="dm-01">DM-01</option>
                             </select>
                         </th>
                         <th>
@@ -63,15 +63,15 @@
                                 <option value="fire">Fire</option>
                                 <option value="water">Water</option>
                                 <option value="nature">Nature</option>
-                                <option value="light">light</option>
+                                <option value="light">Light</option>
                                 <option value="darkness">Darkness</option>
                             </select>
                         </th>
                     </tr>
                     <tr @dblclick="previewCard = card" @contextmenu.prevent="previewCard = card" @click="selectedFromDeck = null; selected = card" v-for="(card, index) in cardsFiltered" :key="index" :class="[{ 'selected': selected === card }]">
                         <td>{{ card.name }}</td>
-                        <td>{{ card.set }}</td>
-                        <td>{{ card.civilization }}</td>
+                        <td class="set">{{ card.set }}</td>
+                        <td class="civilization">{{ card.civilization }}</td>
                     </tr>
                     </table>
               </div>
@@ -109,8 +109,8 @@
                             <tr @dblclick="previewCard = card" @contextmenu.prevent="previewCard = card" @click="selected = null; selectedFromDeck = card" v-for="(card, index) in getCardsForDeck(selectedDeck.cards)" :key="index" :class="[{ 'selected': selectedFromDeck && selectedFromDeck.uid === card.uid }]">
                                 <td>{{ card.count }}</td>
                                 <td>{{ card.name }}</td>
-                                <td>{{ card.set }}</td>
-                                <td>{{ card.civilization }}</td>
+                                <td class="set">{{ card.set }}</td>
+                                <td class="civilization">{{ card.civilization }}</td>
                             </tr>
                         </template>
                     </table>
@@ -759,4 +759,11 @@ a {
   background: #5B6EAE !important;
 }
 
+.set {
+  text-transform: uppercase;
+}
+
+.civilization {
+  text-transform: capitalize;
+}
 </style>
