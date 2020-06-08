@@ -152,4 +152,5 @@ var DM02 = map[string]match.CardConstructor{
 	"9fed2257-362f-43c7-b50e-5526ccf799aa": dm02.MiniTitanGett,
 	"17ee5046-c3fd-4422-af14-c54a4be8d9a2": dm02.LogicCube,
 	"39b8b1c0-bc1d-445b-b60d-91cabfe62fb5": dm02.DarkTitanMaginn,
+	"41e8d5c2-bfeb-48bb-ab9e-aaee79852c89": dm02.CrystalPaladin,
 }
