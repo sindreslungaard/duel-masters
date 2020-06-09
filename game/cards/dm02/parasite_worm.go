@@ -35,3 +35,17 @@ func ChaosWorm(c *match.Card) {
 	}))
 
 }
+
+// UltracideWorm ...
+func UltracideWorm(c *match.Card) {
+
+	c.Name = "Ultracide Worm"
+	c.Power = 11000
+	c.Civ = civ.Darkness
+	c.Family = family.ParasiteWorm
+	c.ManaCost = 6
+	c.ManaRequirement = []string{civ.Darkness}
+
+	c.Use(fx.Creature, fx.Evolution, fx.Doublebreaker)
+
+}
