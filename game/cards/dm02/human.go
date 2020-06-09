@@ -20,3 +20,37 @@ func MiniTitanGett(c *match.Card) {
 	c.Use(fx.Creature, fx.ForceAttack, fx.PowerAttacker1000)
 
 }
+
+// ArmoredCannonBalbaro ...
+func ArmoredCannonBalbaro(c *match.Card) {
+
+	c.Name = "Armored Cannon Balbaro"
+	c.Power = 3000
+	c.Civ = civ.Fire
+	c.Family = family.Human
+	c.ManaCost = 3
+	c.ManaRequirement = []string{civ.Fire}
+
+	c.PowerModifier = func(m *match.Match, attacking bool) int {
+
+		power := 0
+
+		if attacking {
+
+			fx.FindFilter(
+				c.Player,
+				match.BATTLEZONE,
+				func(x *match.Card) bool { return x.Family == family.Human && x != c },
+			).Map(func(x *match.Card) {
+				power += 2000
+			})
+
+		}
+
+		return power
+
+	}
+
+	c.Use(fx.Creature, fx.Evolution)
+
+}
