@@ -1,21 +1,29 @@
 <template>
-    <div class="login-page">
-        <div class="form">
-            <form @submit.prevent="submit()" class="login-form">
-              <p class="title">Sign in to Shobu.io</p>
-              <input v-model="username" type="text" placeholder="Username"/>
-              <input v-model="password" type="password" placeholder="Password"/>
-              <button>Sign in</button>
-              <p v-if="errorMsg" class="error">{{ errorMsg }}</p>
-              <p class="message">Not registered? <router-link :to="{path: '/register', query: { redirect_to: $route.query.redirect_to}}">Create an account</router-link></p>
-            </form>
-        </div>
+  <div class="login-page">
+    <div class="form">
+      <form @submit.prevent="submit()" class="login-form">
+        <p class="title">Sign in to Shobu.io</p>
+        <input v-model="username" type="text" placeholder="Username" />
+        <input v-model="password" type="password" placeholder="Password" />
+        <button>Sign in</button>
+        <p v-if="errorMsg" class="error">{{ errorMsg }}</p>
+        <p class="message">
+          Not registered?
+          <router-link
+            :to="{
+              path: '/register',
+              query: { redirect_to: $route.query.redirect_to }
+            }"
+            >Create an account</router-link
+          >
+        </p>
+      </form>
     </div>
+  </div>
 </template>
 
 <script>
-
-import { call } from '../remote'
+import { call } from "../remote";
 
 export default {
   name: "login",
@@ -25,7 +33,7 @@ export default {
       password: "",
       errorMsg: "",
       redirectTo: null
-    }
+    };
   },
   methods: {
     async submit() {
@@ -37,48 +45,47 @@ export default {
             username: this.username,
             password: this.password
           }
-        })
+        });
 
-        localStorage.setItem('email', res.data.user.email)
-        localStorage.setItem('username', res.data.user.username)
-        localStorage.setItem('uid', res.data.user.uid)
-        localStorage.setItem('permissions', res.data.user.permissions)
-        localStorage.setItem('token', res.data.token)
+        localStorage.setItem("email", res.data.user.email);
+        localStorage.setItem("username", res.data.user.username);
+        localStorage.setItem("uid", res.data.user.uid);
+        localStorage.setItem("permissions", res.data.user.permissions);
+        localStorage.setItem("token", res.data.token);
 
-        if(this.redirectTo) {
-          this.$router.push(this.redirectTo)
+        if (this.redirectTo) {
+          this.$router.push(this.redirectTo);
         } else {
-          this.$router.push('overview')
+          this.$router.push("overview");
         }
-        
-      } catch(e) {
+      } catch (e) {
         try {
-          if(e.response.status == 401)
-            this.errorMsg = "Wrong username or password"
-        } catch(err) {
-          this.errorMsg = "An unexpected error occured. Please try again later."
+          if (e.response.status == 401)
+            this.errorMsg = "Wrong username or password";
+        } catch (err) {
+          this.errorMsg =
+            "An unexpected error occured. Please try again later.";
         }
       }
     }
   },
   created() {
-    console.log(this.$route)
-    this.redirectTo = this.$route.query.redirect_to
+    console.log(this.$route);
+    this.redirectTo = this.$route.query.redirect_to;
   }
-}
+};
 </script>
 
 <style scoped>
-
 .login-page {
   color: #333;
 }
 
 .title {
-    margin: 0;
-    margin-bottom: 20px;
-    padding: 0;
-    text-align: left;
+  margin: 0;
+  margin-bottom: 20px;
+  padding: 0;
+  text-align: left;
 }
 
 .error {
@@ -96,7 +103,7 @@ export default {
 .form {
   position: relative;
   z-index: 1;
-  background: #FFFFFF;
+  background: #ffffff;
   max-width: 360px;
   margin: 0 auto 100px;
   padding: 45px;
@@ -119,17 +126,19 @@ export default {
   font-family: "Roboto", sans-serif;
   text-transform: uppercase;
   outline: 0;
-  background: #E22A38;
+  background: #e22a38;
   width: 100%;
   border: 0;
   padding: 15px;
-  color: #FFFFFF;
+  color: #ffffff;
   font-size: 14px;
   -webkit-transition: all 0.3 ease;
   transition: all 0.3 ease;
   cursor: pointer;
 }
-.form button:hover,.form button:active,.form button:focus {
+.form button:hover,
+.form button:active,
+.form button:focus {
   background: #db2533;
 }
 .form .message {
@@ -140,7 +149,7 @@ export default {
   font-size: 12px;
 }
 .form .message a {
-  color: #E22A38;
+  color: #e22a38;
   text-decoration: none;
 }
 
@@ -150,7 +159,8 @@ export default {
   max-width: 300px;
   margin: 0 auto;
 }
-.container:before, .container:after {
+.container:before,
+.container:after {
   content: "";
   display: block;
   clear: both;
@@ -175,7 +185,6 @@ export default {
   text-decoration: none;
 }
 .container .info span .fa {
-  color: #EF3B3A;
+  color: #ef3b3a;
 }
-
 </style>
