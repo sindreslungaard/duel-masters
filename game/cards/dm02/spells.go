@@ -101,3 +101,31 @@ func ThoughtProbe(c *match.Card) {
 	}))
 
 }
+
+// CriticalBlade ...
+func CriticalBlade(c *match.Card) {
+
+	c.Name = "Critical Blade"
+	c.Civ = civ.Darkness
+	c.ManaCost = 2
+	c.ManaRequirement = []string{civ.Darkness}
+
+	c.Use(fx.Spell, fx.ShieldTrigger, fx.When(fx.SpellCast, func(card *match.Card, ctx *match.Context) {
+
+		fx.SelectFilter(
+			card.Player,
+			ctx.Match,
+			ctx.Match.Opponent(card.Player),
+			match.BATTLEZONE,
+			"Critical Blade: Select 1 of your opponent's blockers that will be destroyed",
+			1,
+			1,
+			false,
+			func(x *match.Card) bool { return x.HasCondition(cnd.Blocker) },
+		).Map(func(x *match.Card) {
+			ctx.Match.Destroy(x, card)
+		})
+
+	}))
+
+}

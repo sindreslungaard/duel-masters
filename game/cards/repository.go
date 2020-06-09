@@ -170,4 +170,5 @@ var DM02 = map[string]match.CardConstructor{
 	"7956b4f5-b910-403d-b388-b67c837b7e99": dm02.ScissorEye,
 	"9311b3ec-fe9e-45bd-a989-dc00aec3ca60": dm02.DogarnTheMarauder,
 	"24353d06-89ef-4867-9513-485750d01e10": dm02.ArmoredCannonBalbaro,
+	"99791f19-21ee-4ee3-a6b0-e26702c2a380": dm02.CriticalBlade,
 }
