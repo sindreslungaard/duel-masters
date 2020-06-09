@@ -11,7 +11,7 @@ module.exports = {
     ecmaVersion: 2017,
   },
   rules: {
-    "quotes": ["warn", "double"],
-    "semi": ["warn", "always"]
+    "quotes": ["error", "double"],
+    "semi": ["error", "always"]
   },
 };
