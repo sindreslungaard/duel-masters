@@ -134,6 +134,7 @@ var DM01 = map[string]match.CardConstructor{
 	"48c5c29b-2f4e-4a57-86b4-864c6f0dc124": dm01.TornadoFlame,
 	"be8c0d0b-dcab-402c-8e7b-878e35bacca7": dm01.UltimateForce,
 	"68d78fd4-db8a-43a6-8eb6-e1435cfc2959": dm01.VirtualTripwire,
+	"40439f79-8f48-4e62-9009-cb06798ef7ac": dm02.EthelStarSeaElemental,
 }
 
 // DM02 is a map with all the card id's in the game and corresponding CardConstructor for dm02
