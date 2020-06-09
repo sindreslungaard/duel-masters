@@ -1,24 +1,30 @@
 <template>
-    
-    <div class="user-name" :style="hub ? 'width: 200px' : ''">
-        <div v-if="hub" class="user-status" :style="(hub ? (hub == 'match' ? 'background: cyan' : 'background: #00FF00') : '')">
-          <div class="user-status-tooltip">{{ hub == "match" ? 'In a duel' : 'Online'}}</div>
-        </div>
-        <span :style="'color: ' + (color ? color : 'orange')"><slot></slot></span>
+  <div class="user-name" :style="hub ? 'width: 200px' : ''">
+    <div
+      v-if="hub"
+      class="user-status"
+      :style="
+        hub ? (hub == 'match' ? 'background: cyan' : 'background: #00FF00') : ''
+      "
+    >
+      <div class="user-status-tooltip">
+        {{ hub == "match" ? "In a duel" : "Online" }}
+      </div>
     </div>
-    
+    <span :style="'color: ' + (color ? color : 'orange')"><slot></slot></span>
+  </div>
 </template>
 
 <script>
 export default {
-  name: 'username',
+  name: "username",
   props: ["hub", "color"]
-}
+};
 </script>
 
 <style scoped>
 .user-name {
-	text-shadow: 1px 1px #000;
+  text-shadow: 1px 1px #000;
   overflow: hidden;
 }
 

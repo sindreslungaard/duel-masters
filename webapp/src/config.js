@@ -1,5 +1,3 @@
 export default {
-
-    WS_ENDPOINT: "ws://localhost"
-
-}
+  WS_ENDPOINT: "ws://localhost"
+};
