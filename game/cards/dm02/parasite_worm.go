@@ -5,6 +5,8 @@ import (
 	"duel-masters/game/family"
 	"duel-masters/game/fx"
 	"duel-masters/game/match"
+	"fmt"
+	"math/rand"
 )
 
 // ChaosWorm ...
@@ -47,5 +49,35 @@ func UltracideWorm(c *match.Card) {
 	c.ManaRequirement = []string{civ.Darkness}
 
 	c.Use(fx.Creature, fx.Evolution, fx.Doublebreaker)
+
+}
+
+// HorridWorm ...
+func HorridWorm(c *match.Card) {
+
+	c.Name = "Horrid Worm"
+	c.Power = 2000
+	c.Civ = civ.Darkness
+	c.Family = family.ParasiteWorm
+	c.ManaCost = 3
+	c.ManaRequirement = []string{civ.Darkness}
+
+	c.Use(fx.Creature, fx.When(fx.Attacking, func(card *match.Card, ctx *match.Context) {
+
+		ctx.ScheduleAfter(func() {
+
+			hand := fx.Find(ctx.Match.Opponent(card.Player), match.HAND)
+
+			if len(hand) < 1 {
+				return
+			}
+
+			discardedCard, err := ctx.Match.Opponent(card.Player).MoveCard(hand[rand.Intn(len(hand))].ID, match.HAND, match.GRAVEYARD)
+			if err == nil {
+				ctx.Match.Chat("Server", fmt.Sprintf("%s was discarded from %s's hand by Horrid Worm", discardedCard.Name, discardedCard.Player.Username()))
+			}
+		})
+
+	}))
 
 }
