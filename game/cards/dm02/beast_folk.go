@@ -48,3 +48,23 @@ func FighterDualFang(c *match.Card) {
 	c.Use(fx.Creature, fx.Evolution, fx.Doublebreaker, fx.DrawToMana, fx.DrawToMana)
 
 }
+
+// SilverAxe ...
+func SilverAxe(c *match.Card) {
+
+	c.Name = "Silver Axe"
+	c.Power = 1000
+	c.Civ = civ.Nature
+	c.Family = family.BeastFolk
+	c.ManaCost = 3
+	c.ManaRequirement = []string{civ.Nature}
+
+	c.Use(fx.Creature, fx.When(fx.Attacking, func(card *match.Card, ctx *match.Context) {
+
+		ctx.ScheduleAfter(func() {
+			card.Player.DrawCards(1)
+		})
+
+	}))
+
+}
