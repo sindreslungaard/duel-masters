@@ -2,6 +2,7 @@ package dm02
 
 import (
 	"duel-masters/game/civ"
+	"duel-masters/game/cnd"
 	"duel-masters/game/family"
 	"duel-masters/game/fx"
 	"duel-masters/game/match"
@@ -22,7 +23,7 @@ func AmberPiercer(c *match.Card) {
 
 		ctx.ScheduleAfter(func() {
 
-			fx.Select(
+			fx.SelectFilter(
 				card.Player,
 				ctx.Match,
 				card.Player,
@@ -31,6 +32,7 @@ func AmberPiercer(c *match.Card) {
 				1,
 				1,
 				true,
+				func(x *match.Card) bool { return x.HasCondition(cnd.Creature) },
 			).Map(func(x *match.Card) {
 				if x.ID == card.ID {
 					return
