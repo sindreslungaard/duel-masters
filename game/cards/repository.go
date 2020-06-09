@@ -163,4 +163,5 @@ var DM02 = map[string]match.CardConstructor{
 	"215c4cfb-2a22-4ee1-b4ea-28ac24a1eeee": dm02.UltracideWorm,
 	"733a4f35-7470-40e3-9cd7-479aa965bfbb": dm02.HorridWorm,
 	"749d1209-4847-4401-8d70-8c95fd26c220": dm02.MagrisVizierOfMagnetism,
+	"839f780b-067b-4b3c-9090-7cd614375da9": dm02.AmberPiercer,
 }
