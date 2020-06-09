@@ -1,0 +1,37 @@
+package dm02
+
+import (
+	"duel-masters/game/civ"
+	"duel-masters/game/family"
+	"duel-masters/game/fx"
+	"duel-masters/game/match"
+)
+
+// FonchTheOracle ...
+func FonchTheOracle(c *match.Card) {
+
+	c.Name = "Fonch, the Oracle"
+	c.Power = 2000
+	c.Civ = civ.Light
+	c.Family = family.LightBringer
+	c.ManaCost = 4
+	c.ManaRequirement = []string{civ.Light}
+
+	c.Use(fx.Creature, fx.When(fx.Summoned, func(card *match.Card, ctx *match.Context) {
+
+		fx.Select(
+			card.Player,
+			ctx.Match,
+			ctx.Match.Opponent(card.Player),
+			match.BATTLEZONE,
+			"Fonch, the Oracle: Select a creature from the opponent's battle zone that will be tapped",
+			1,
+			1,
+			true,
+		).Map(func(x *match.Card) {
+			x.Tapped = true
+		})
+
+	}))
+
+}
