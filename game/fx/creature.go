@@ -112,6 +112,7 @@ func Creature(card *match.Card, ctx *match.Context) {
 					card.AddCondition(cnd.SummoningSickness, nil, nil)
 
 					card.Player.MoveCard(card.ID, match.HAND, match.BATTLEZONE)
+					ctx.Match.Chat("Server", fmt.Sprintf("%s summoned %s to the battle zone", card.Player.Username(), card.Name))
 
 				}
 
