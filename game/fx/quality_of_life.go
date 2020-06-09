@@ -165,3 +165,29 @@ func Attacking(card *match.Card, ctx *match.Context) bool {
 	return false
 
 }
+
+// AttackingPlayer returns true if the card is attacking a player
+func AttackingPlayer(card *match.Card, ctx *match.Context) bool {
+
+	if event, ok := ctx.Event.(*match.AttackPlayer); ok {
+		if event.CardID == card.ID {
+			return true
+		}
+	}
+
+	return false
+
+}
+
+// AttackingCreature returns true if the card is attacking a Creature
+func AttackingCreature(card *match.Card, ctx *match.Context) bool {
+
+	if event, ok := ctx.Event.(*match.AttackCreature); ok {
+		if event.CardID == card.ID {
+			return true
+		}
+	}
+
+	return false
+
+}
