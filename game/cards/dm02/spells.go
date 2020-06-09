@@ -78,3 +78,26 @@ func LogicCube(c *match.Card) {
 	})
 
 }
+
+// ThoughtProbe ...
+func ThoughtProbe(c *match.Card) {
+
+	c.Name = "Thought Probe"
+	c.Civ = civ.Water
+	c.ManaCost = 4
+	c.ManaRequirement = []string{civ.Water}
+
+	c.Use(fx.Spell, fx.ShieldTrigger, fx.When(fx.SpellCast, func(card *match.Card, ctx *match.Context) {
+
+		creatures := fx.Find(
+			ctx.Match.Opponent(card.Player),
+			match.BATTLEZONE,
+		)
+
+		if len(creatures) >= 3 {
+			card.Player.DrawCards(3)
+		}
+
+	}))
+
+}

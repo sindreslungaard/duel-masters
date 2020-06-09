@@ -14,8 +14,8 @@ func (c CardCollection) Map(h func(*match.Card)) {
 
 }
 
-// Find returns a CardCollection matching the filter
-func Find(p *match.Player, collection string, h func(card *match.Card) bool) CardCollection {
+// FindFilter returns a CardCollection matching the filter
+func FindFilter(p *match.Player, collection string, h func(card *match.Card) bool) CardCollection {
 
 	result := CardCollection{}
 
@@ -33,6 +33,11 @@ func Find(p *match.Player, collection string, h func(card *match.Card) bool) Car
 
 	return result
 
+}
+
+// Find returns a CardCollection for the specified container
+func Find(p *match.Player, collection string) CardCollection {
+	return FindFilter(p, collection, func(x *match.Card) bool { return true })
 }
 
 // When performs the specified function if the test is successful
