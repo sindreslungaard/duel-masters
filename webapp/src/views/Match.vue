@@ -400,6 +400,7 @@
 import config from "../config";
 import ClipboardJS from "clipboard";
 import { ws_protocol } from "../remote";
+import CardShowDialog from "../components/dialogs/CardShowDialog";
 
 const send = (client, message) => {
   client.send(JSON.stringify(message));
@@ -706,6 +707,18 @@ export default {
         case "end_wait": {
           this.wait = "";
           break;
+        }
+
+        case "show_cards": {
+          this.$modal.show(
+            CardShowDialog,
+            {
+              message: data.message,
+              cards: data.cards
+            },
+            {},
+            {}
+          );
         }
       }
     };
