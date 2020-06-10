@@ -2,6 +2,7 @@ package dm02
 
 import (
 	"duel-masters/game/civ"
+	"duel-masters/game/cnd"
 	"duel-masters/game/family"
 	"duel-masters/game/fx"
 	"duel-masters/game/match"
@@ -32,42 +33,26 @@ func CrystalPaladin(c *match.Card) {
 	c.ManaCost = 4
 	c.ManaRequirement = []string{civ.Water}
 
-	c.Use(fx.Creature, fx.Evolution, func(card *match.Card, ctx *match.Context) {
+	c.Use(fx.Creature, fx.Evolution, fx.When(fx.Summoned, func(card *match.Card, ctx *match.Context) {
 
-		if event, ok := ctx.Event.(*match.CardMoved); ok {
+		fx.FindFilter(
+			card.Player,
+			match.BATTLEZONE,
+			func(x *match.Card) bool { return x.HasCondition(cnd.Blocker) },
+		).Map(func(x *match.Card) {
+			x.Player.MoveCard(x.ID, match.BATTLEZONE, match.HAND)
+			ctx.Match.Chat("Server", fmt.Sprintf("%s was moved from %s battle zone to their hand by Crystal Paladin", x.Name, x.Player.Username()))
+		})
 
-			if event.CardID != card.ID || event.To != match.BATTLEZONE {
-				return
-			}
+		fx.FindFilter(
+			ctx.Match.Opponent(card.Player),
+			match.BATTLEZONE,
+			func(x *match.Card) bool { return x.HasCondition(cnd.Blocker) },
+		).Map(func(x *match.Card) {
+			x.Player.MoveCard(x.ID, match.BATTLEZONE, match.HAND)
+			ctx.Match.Chat("Server", fmt.Sprintf("%s was moved from %s battle zone to their hand by Crystal Paladin", x.Name, x.Player.Username()))
+		})
 
-			myBattlezone, err := card.Player.Container(match.BATTLEZONE)
-
-			if err != nil {
-				return
-			}
-
-			opponentBattlezone, err := ctx.Match.Opponent(card.Player).Container(match.BATTLEZONE)
-
-			if err != nil {
-				return
-			}
-
-			blockers := append(myBattlezone, opponentBattlezone...)
-
-			for _, blocker := range blockers {
-
-				_, err := blocker.Player.MoveCard(blocker.ID, match.BATTLEZONE, match.HAND)
-
-				if err != nil {
-					continue
-				}
-
-				ctx.Match.Chat("Server", fmt.Sprintf("%s was moved from %s battle zone to their hand by Crystal Paladin", blocker.Name, blocker.Player.Username()))
-
-			}
-
-		}
-
-	})
+	}))
 
 }
