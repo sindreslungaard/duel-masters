@@ -135,3 +135,10 @@ type MatchesListMessage struct {
 	Header  string         `json:"header"`
 	Matches []MatchMessage `json:"matches"`
 }
+
+// ShowCardsMessage is used to show the user n cards without an action to perform
+type ShowCardsMessage struct {
+	Header  string   `json:"header"`
+	Message string   `json:"message"`
+	Cards   []string `json:"cards"`
+}

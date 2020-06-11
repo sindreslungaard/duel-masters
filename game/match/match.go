@@ -679,6 +679,15 @@ func (m *Match) EndWait(p *Player) {
 	})
 }
 
+// ShowCards shows the specified cards to the player with a message of why it is being shown
+func (m *Match) ShowCards(p *Player, message string, cards []string) {
+	m.PlayerRef(p).Socket.Send(server.ShowCardsMessage{
+		Header:  "show_cards",
+		Message: message,
+		Cards:   cards,
+	})
+}
+
 // Start starts the match
 func (m *Match) Start() {
 
