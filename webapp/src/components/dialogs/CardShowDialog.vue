@@ -39,20 +39,21 @@ export default {
 
   .cards {
     display: flex;
+    justify-content: center;
 
     img {
       display: block;
-      margin: 20px auto;
-      padding: 0 10px;
-      flex: 1 1 0;
-      width: 0;
+      margin: 20px 10px;
+      flex: 0 1 0;
+      border-radius: 4%;
+      width: 40vh;
 
       &:first-child {
-        padding-left: 0;
+        margin-left: 0;
       }
 
       &:last-child {
-        padding-right: 0;
+        margin-right: 0;
       }
     }
   }

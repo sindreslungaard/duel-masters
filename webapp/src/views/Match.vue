@@ -716,7 +716,9 @@ export default {
               message: data.message,
               cards: data.cards
             },
-            {},
+            {
+              width: data.cards.length * 25 + "%"
+            },
             {}
           );
         }
