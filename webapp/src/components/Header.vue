@@ -83,10 +83,10 @@ li:not(:last-child)::after {
 
 .announcments {
   background: #2b2c31;
-  padding: 15px;
+  padding: var(--spacing);
   border-radius: 4px;
   font-size: 14px;
-  color: #ccc;
+  color: var(--color-text-light);
   margin-top: 15px;
 }
 </style>
