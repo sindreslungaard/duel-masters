@@ -76,17 +76,17 @@ const router = new Router({
 
 router.beforeEach((to, from, next) => {
 
-  if(to.matched.length < 1) {
+  if (to.matched.length < 1) {
     return next("/");
   }
 
   const hasToken = localStorage.getItem("token") ? true : false;
 
-  if(to.matched.some(record => record.meta.auth) && !hasToken)  {
+  if (to.matched.some(record => record.meta.auth) && !hasToken) {
     return next("/login?redirect_to=" + encodeURIComponent(to.fullPath));
   }
 
-  if(to.matched.some(record => record.meta.noauth) && hasToken)  {
+  if (to.matched.some(record => record.meta.noauth) && hasToken) {
     return next("/overview");
   }
 
