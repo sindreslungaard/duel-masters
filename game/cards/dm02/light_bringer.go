@@ -35,3 +35,40 @@ func FonchTheOracle(c *match.Card) {
 	}))
 
 }
+
+// WynTheOracle ...
+func WynTheOracle(c *match.Card) {
+
+	c.Name = "Wyn, the Oracle"
+	c.Power = 1500
+	c.Civ = civ.Light
+	c.Family = family.LightBringer
+	c.ManaCost = 2
+	c.ManaRequirement = []string{civ.Light}
+
+	c.Use(fx.Creature, fx.When(fx.Attacking, func(card *match.Card, ctx *match.Context) {
+
+		ctx.ScheduleAfter(func() {
+
+			fx.SelectBackside(
+				card.Player,
+				ctx.Match,
+				ctx.Match.Opponent(card.Player),
+				match.SHIELDZONE,
+				"Wyn, the Oracle: Select 1 of your opponent's shields that will be shown to you",
+				1,
+				1,
+				true,
+			).Map(func(x *match.Card) {
+				ctx.Match.ShowCards(
+					card.Player,
+					"Your opponent's shield:",
+					[]string{x.ImageID},
+				)
+			})
+
+		})
+
+	}))
+
+}
