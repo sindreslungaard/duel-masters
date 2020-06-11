@@ -860,11 +860,15 @@ func (m *Match) ChargeMana(p *PlayerReference, cardID string) {
 // PlayCard is called when the player attempts to play a card
 func (m *Match) PlayCard(p *PlayerReference, cardID string) {
 
-	p.Player.CanChargeMana = false
-
-	m.HandleFx(NewContext(m, &PlayCardEvent{
+	ctx := NewContext(m, &PlayCardEvent{
 		CardID: cardID,
-	}))
+	})
+
+	m.HandleFx(ctx)
+
+	if !ctx.Cancelled() {
+		p.Player.CanChargeMana = false
+	}
 
 	m.BroadcastState()
 
@@ -873,8 +877,6 @@ func (m *Match) PlayCard(p *PlayerReference, cardID string) {
 // AttackPlayer is called when the player attempts to attack the opposing player
 func (m *Match) AttackPlayer(p *PlayerReference, cardID string) {
 
-	p.Player.CanChargeMana = false
-
 	_, err := p.Player.GetCard(cardID, BATTLEZONE)
 
 	if err != nil {
@@ -882,10 +884,16 @@ func (m *Match) AttackPlayer(p *PlayerReference, cardID string) {
 		return
 	}
 
-	m.HandleFx(NewContext(m, &AttackPlayer{
+	ctx := NewContext(m, &AttackPlayer{
 		CardID:   cardID,
 		Blockers: make([]*Card, 0),
-	}))
+	})
+
+	m.HandleFx(ctx)
+
+	if !ctx.Cancelled() {
+		p.Player.CanChargeMana = false
+	}
 
 	m.BroadcastState()
 
@@ -894,8 +902,6 @@ func (m *Match) AttackPlayer(p *PlayerReference, cardID string) {
 // AttackCreature is called when the player attempts to attack the opposing player
 func (m *Match) AttackCreature(p *PlayerReference, cardID string) {
 
-	p.Player.CanChargeMana = false
-
 	_, err := p.Player.GetCard(cardID, BATTLEZONE)
 
 	if err != nil {
@@ -903,10 +909,16 @@ func (m *Match) AttackCreature(p *PlayerReference, cardID string) {
 		return
 	}
 
-	m.HandleFx(NewContext(m, &AttackCreature{
+	ctx := NewContext(m, &AttackCreature{
 		CardID:   cardID,
 		Blockers: make([]*Card, 0),
-	}))
+	})
+
+	m.HandleFx(ctx)
+
+	if !ctx.Cancelled() {
+		p.Player.CanChargeMana = false
+	}
 
 	m.BroadcastState()
 
