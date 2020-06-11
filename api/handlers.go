@@ -81,7 +81,7 @@ func SignupHandler(c *gin.Context) {
 
 	var reqBody signupReqBody
 	if err := c.ShouldBindJSON(&reqBody); err != nil {
-		c.Status(400)
+		c.JSON(400, bson.M{"message": "Make sure your username only consist of a-Z and 0-9 (3-20 characters long). Password minimum 6 characters."})
 		return
 	}
 
