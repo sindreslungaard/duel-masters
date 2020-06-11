@@ -1,7 +1,6 @@
 <template>
   <Panel title="Chat" class="chat">
-    <!-- TODO: Make a Loader component -->
-    <div v-if="isLoading">Loading</div>
+    <LoadingIndicator v-if="isLoading" />
 
     <div class="chatbox">
       <div id="messages" class="messages spaced">
@@ -31,12 +30,14 @@
 <script>
 import Username from "./Username";
 import Panel from "../Panel";
+import LoadingIndicator from "../LoadingIndicator";
 
 export default {
   name: "UserList",
   components: {
     Username,
-    Panel
+    Panel,
+    LoadingIndicator
   },
   data() {
     return {
