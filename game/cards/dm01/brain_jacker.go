@@ -11,7 +11,7 @@ import (
 func BloodySquito(c *match.Card) {
 
 	c.Name = "Bloody Squito"
-	c.Power = 6000
+	c.Power = 4000
 	c.Civ = civ.Darkness
 	c.Family = family.BrainJacker
 	c.ManaCost = 4
