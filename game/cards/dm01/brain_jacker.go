@@ -14,7 +14,7 @@ func BloodySquito(c *match.Card) {
 	c.Power = 4000
 	c.Civ = civ.Darkness
 	c.Family = family.BrainJacker
-	c.ManaCost = 4
+	c.ManaCost = 2
 	c.ManaRequirement = []string{civ.Darkness}
 
 	c.Use(fx.Creature, fx.Blocker, fx.CantAttackPlayers, fx.CantAttackCreatures, fx.Suicide)
