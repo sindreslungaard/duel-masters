@@ -575,12 +575,12 @@ input,
 textarea,
 select {
   border: none;
-  background: #484c52;
+  background: var(--color-background-input);
   padding: 5px !important;
   width: auto !important;
   margin-left: 5px;
   border-radius: 4px;
-  color: #ccc;
+  color: var(--color-text-light);
   resize: none;
 }
 input:focus,
@@ -598,12 +598,12 @@ select:active {
   -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
   box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
   border-radius: 10px;
-  background-color: #484c52;
+  background-color: var(--color-background-input);
 }
 
 .left::-webkit-scrollbar {
   width: 6px;
-  background-color: #484c52;
+  background-color: var(--color-background-input);
 }
 
 .left::-webkit-scrollbar-thumb {
@@ -617,12 +617,12 @@ select:active {
   -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
   box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
   border-radius: 10px;
-  background-color: #484c52;
+  background-color: var(--color-background-input);
 }
 
 .right::-webkit-scrollbar {
   width: 6px;
-  background-color: #484c52;
+  background-color: var(--color-background-input);
 }
 
 .right::-webkit-scrollbar-thumb {
@@ -710,7 +710,7 @@ th {
 }
 
 .wizard .headline {
-  color: #ccc;
+  color: var(--color-text-light);
 }
 
 .wizard .spacer {
@@ -718,7 +718,7 @@ th {
 }
 
 .wizard .helper {
-  color: #ccc;
+  color: var(--color-text-light);
   font-size: 13px;
 }
 
@@ -743,11 +743,11 @@ input,
 textarea,
 select {
   border: none;
-  background: #484c52;
+  background: var(--color-background-input);
   padding: 10px;
   border-radius: 4px;
   width: 200px;
-  color: #ccc;
+  color: var(--color-text-light);
   resize: none;
 }
 input:focus,
@@ -788,7 +788,7 @@ select:active {
   top: 40vh;
   padding: 10px;
   font-size: 14px;
-  color: #ccc;
+  color: var(--color-text-light);
 }
 
 .wizard .errorMsg {
@@ -834,7 +834,7 @@ nav > ul > li.no-cursor:hover {
   min-height: 20px;
   border-radius: 4px;
   font-size: 14px;
-  color: #ccc;
+  color: var(--color-text-light);
 }
 
 .psa > span {

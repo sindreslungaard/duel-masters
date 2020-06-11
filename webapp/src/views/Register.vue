@@ -128,7 +128,7 @@ export default {
   width: 100%;
   border: 0;
   margin: 0 0 15px;
-  padding: 15px;
+  padding: var(--spacing);
   box-sizing: border-box;
   font-size: 14px;
 }
@@ -139,7 +139,7 @@ export default {
   background: #e22a38;
   width: 100%;
   border: 0;
-  padding: 15px;
+  padding: var(--spacing);
   color: #ffffff;
   font-size: 14px;
   -webkit-transition: all 0.3 ease;

@@ -61,7 +61,7 @@ export default {
   text-align: center;
   margin: 0;
   margin-bottom: 5px;
-  color: #ccc;
+  color: var(--color-text-light);
 }
 
 .count {
@@ -147,7 +147,7 @@ hr {
 }
 
 .wizard .headline {
-  color: #ccc;
+  color: var(--color-text-light);
 }
 
 .wizard .spacer {
@@ -155,7 +155,7 @@ hr {
 }
 
 .wizard .helper {
-  color: #ccc;
+  color: var(--color-text-light);
   font-size: 13px;
 }
 
@@ -180,11 +180,11 @@ input,
 textarea,
 select {
   border: none;
-  background: #484c52;
+  background: var(--color-background-input);
   padding: 10px;
   border-radius: 4px;
   width: 200px;
-  color: #ccc;
+  color: var(--color-text-light);
   resize: none;
 }
 input:focus,
@@ -246,7 +246,7 @@ nav > ul > li.no-cursor:hover {
   min-height: 20px;
   border-radius: 4px;
   font-size: 14px;
-  color: #ccc;
+  color: var(--color-text-light);
 }
 
 .psa > span {

@@ -14,6 +14,10 @@
   700
 );
 
+* {
+  box-sizing: border-box;
+}
+
 body {
   background: #36393f;
   margin: 0;

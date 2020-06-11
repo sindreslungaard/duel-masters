@@ -778,12 +778,12 @@ export default {
 
 .action-select {
   border: none;
-  background: #484c52;
+  background: var(--color-background-input);
   padding: 5px !important;
   width: auto !important;
   margin-left: 5px;
   border-radius: 4px;
-  color: #ccc;
+  color: var(--color-text-light);
   resize: none;
 }
 .action-select:focus {
@@ -812,7 +812,7 @@ export default {
   overflow-x: auto;
   padding-bottom: 15px;
   span {
-    color: #ccc;
+    color: var(--color-text-light);
     font-size: 13px;
     display: block;
     margin: 0 30px;
@@ -883,10 +883,10 @@ export default {
 
 .deck-chooser {
   overflow: auto;
-  padding: 15px 50px;
+  padding: var(--spacing) 50px;
   h3 {
     margin: 0;
-    color: #ccc;
+    color: var(--color-text-light);
   }
   .btn {
     margin-top: 10px;
@@ -895,7 +895,7 @@ export default {
   span {
     display: block;
     margin-top: 10px;
-    color: #ccc;
+    color: var(--color-text-light);
     font-size: 14px;
   }
 }
@@ -959,7 +959,7 @@ export default {
   height: calc(100% - 77px);
   padding: 10px;
   font-size: 14px;
-  color: #ccc;
+  color: var(--color-text-light);
   position: relative;
 }
 
@@ -975,34 +975,14 @@ export default {
   }
 }
 
-*::-webkit-scrollbar-track {
-  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
-  box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
-  border-radius: 10px;
-  background-color: #484c52;
-}
-
-*::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
-  background-color: #484c52;
-}
-
-*::-webkit-scrollbar-thumb {
-  border-radius: 10px;
-  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
-  box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
-  background-color: #222;
-}
-
 .chatbox input {
   border: none;
   border-radius: 4px;
   margin: 10px;
   width: calc(100% - 40px);
-  background: #484c52;
+  background: var(--color-background-input);
   padding: 10px;
-  color: #ccc;
+  color: var(--color-text-light);
   &:focus {
     outline: none;
   }
@@ -1076,12 +1056,6 @@ export default {
   background: #3ca374;
 }
 
-.dots {
-  display: inline-block;
-  width: 40px;
-  text-align: left;
-}
-
 .btn {
   display: inline-block;
   background: #7289da;
@@ -1122,7 +1096,7 @@ export default {
   top: 40vh;
   padding: 10px;
   font-size: 14px;
-  color: #ccc;
+  color: var(--color-text-light);
 }
 
 .overlay {
@@ -1161,7 +1135,7 @@ export default {
 }
 
 .right-stage p {
-  color: #ccc;
+  color: var(--color-text-light);
   font-size: 14px;
   margin-bottom: 3px;
 }
