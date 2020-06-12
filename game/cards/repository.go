@@ -176,4 +176,5 @@ var DM02 = map[string]match.CardConstructor{
 	"9275747d-f2bb-4298-9b70-7075b17d1e0d": dm02.XenoMantis,
 	"206c53d6-8068-4fec-bc5b-287de58eed5f": dm02.WynTheOracle,
 	"a219c895-5822-458e-862f-6ade1529c42e": dm02.LeapingTornadoHorn,
+	"aa1cca8a-3140-4180-9c9f-3f126dd16a68": dm02.ReconOperation,
 }

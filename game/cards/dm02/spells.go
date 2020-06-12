@@ -129,3 +129,40 @@ func CriticalBlade(c *match.Card) {
 	}))
 
 }
+
+// ReconOperation ...
+func ReconOperation(c *match.Card) {
+
+	c.Name = "Recon Operation"
+	c.Civ = civ.Water
+	c.ManaCost = 2
+	c.ManaRequirement = []string{civ.Water}
+
+	c.Use(fx.Spell, fx.ShieldTrigger, fx.When(fx.SpellCast, func(card *match.Card, ctx *match.Context) {
+
+		shields := fx.SelectBackside(
+			card.Player,
+			ctx.Match,
+			ctx.Match.Opponent(card.Player),
+			match.SHIELDZONE,
+			"Recon Operation: Select 3 of your opponent's shields that will be shown to you",
+			3,
+			1,
+			true,
+		)
+
+		ids := make([]string, 0)
+
+		for _, s := range shields {
+			ids = append(ids, s.ImageID)
+		}
+
+		ctx.Match.ShowCards(
+			card.Player,
+			"Your opponent's shields:",
+			ids,
+		)
+
+	}))
+
+}
