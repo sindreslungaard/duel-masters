@@ -9,6 +9,7 @@
         <label for="duel-name">Name</label>
         <input
           id="duel-name"
+          autofocus
           v-model="duelData.name"
           type="text"
           placeholder="Name"
