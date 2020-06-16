@@ -13,11 +13,8 @@ select {
   color: var(--color-text-light);
   resize: none;
 }
-input:focus,
-textarea:focus,
-select:focus {
-  outline: none;
-}
+
+
 input:active,
 textarea:active,
 select:active {
