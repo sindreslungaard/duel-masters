@@ -7,7 +7,7 @@ import "./scss/style.scss";
 
 Vue.config.productionTip = false;
 
-Vue.use(VModal, { dynamic: true, dynamicDefaults: { height: "auto", scrollable: true } });
+Vue.use(VModal, { dynamic: true, dynamicDefaults: { height: "auto", scrollable: true, width: "300px" } });
 
 new Vue({
   router,

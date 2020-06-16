@@ -1,8 +1,17 @@
 @import "_variables";
 @import "_scrollbar";
+@import "_input";
+
+body {
+  font-size: 16px;
+}
 
 
 // TODO: Cleanup the following
+h2 {
+  margin-top: 0;
+}
+
 h3 {
   margin-top: 0;
   font-size: 16px;

@@ -54,6 +54,7 @@ export default {
 <style lang="scss" scoped>
 nav {
   display: flex;
+  flex-wrap: wrap;
   justify-content: space-between;
   align-items: center;
 }
@@ -61,9 +62,11 @@ nav {
 ul {
   list-style: none;
   display: flex;
+  flex-wrap: wrap;
   justify-content: flex-end;
   align-items: center;
   margin: 0;
+  padding: 0;
 }
 
 li:not(:last-child)::after {

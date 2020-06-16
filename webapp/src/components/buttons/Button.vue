@@ -1,5 +1,12 @@
 <template>
-  <button @click="$emit('click')" class="button">{{ text }}</button>
+  <button
+    class="button"
+    :class="buttonClass"
+    :type="buttonType"
+    @click="$emit('click')"
+  >
+    {{ text }}
+  </button>
 </template>
 
 <script>
@@ -9,6 +16,27 @@ export default {
     text: {
       type: String,
       required: true
+    },
+    submit: {
+      type: Boolean,
+      required: false,
+      default: false
+    },
+    type: {
+      type: String,
+      required: false,
+      default: "primary",
+      validator(value) {
+        return ["primary", "secondary"].includes(value);
+      }
+    }
+  },
+  computed: {
+    buttonClass() {
+      return `button--${this.type}`;
+    },
+    buttonType() {
+      return this.submit ? "submit" : "button";
     }
   }
 };
@@ -17,7 +45,6 @@ export default {
 <style lang="scss" scoped>
 .button {
   display: inline-block;
-  background-color: #7289da;
   color: #e3e3e5;
   font-size: 14px;
   line-height: 20px;
@@ -29,8 +56,20 @@ export default {
   cursor: pointer;
   border: none;
 
-  &:hover {
-    background-color: #677bc4;
+  &--primary {
+    background-color: var(--primary);
+
+    &:hover {
+      background-color: #677bc4;
+    }
+  }
+
+  &--secondary {
+    background-color: var(--secondary);
+
+    &:hover {
+      background-color: #ed3e3e;
+    }
   }
 }
 </style>

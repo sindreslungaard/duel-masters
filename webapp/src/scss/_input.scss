@@ -1,0 +1,56 @@
+.field:not(:last-child) {
+  margin-bottom: var(--spacing);
+}
+
+input,
+textarea,
+select {
+  border: none;
+  background: var(--color-background-input);
+  padding: 10px;
+  border-radius: 4px;
+  width: 100%;
+  color: var(--color-text-light);
+  resize: none;
+}
+input:focus,
+textarea:focus,
+select:focus {
+  outline: none;
+}
+input:active,
+textarea:active,
+select:active {
+  outline: none;
+}
+
+label {
+  display: block;
+  margin-bottom: calc(0.5 * var(--spacing));
+}
+
+.field.buttons {
+  display: flex;
+  margin-top: var(--spacing);
+
+  .button {
+    width: 100%;
+  }
+
+  .button:first-child {
+    margin-right: calc(0.5 * var(--spacing));
+  }
+
+  .button:last-child {
+    margin-left: calc(0.5 * var(--spacing));
+  }
+}
+
+.field.error {
+  color: var(--secondary);
+  font-size: 0.9rem;
+
+  p {
+    margin: 0;
+  }
+}

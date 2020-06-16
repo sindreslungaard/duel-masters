@@ -26,8 +26,13 @@ body {
 }
 
 .vm--modal {
-  background-color: #222428;
+  background-color: #36393f;
   border-radius: 4px;
   padding: 20px;
+  border: 1px solid #666;
+}
+
+.vm--overlay {
+  background: rgba(0, 0, 0, 0.4);
 }
 </style>
