@@ -45,7 +45,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.user-list__category {
+.user-list__category:not(:last-child) {
   margin-bottom: calc(2 * var(--spacing));
 }
 
