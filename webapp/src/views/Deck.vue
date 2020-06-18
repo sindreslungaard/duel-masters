@@ -141,7 +141,7 @@ hr {
   left: calc(50% - 250px / 2);
   background: #36393f;
   width: 250px;
-  border-radius: 4px;
+  border-radius: var(--border-radius);
   color: #fff;
   border: 1px solid #666;
 }
@@ -182,7 +182,7 @@ select {
   border: none;
   background: var(--color-background-input);
   padding: 10px;
-  border-radius: 4px;
+  border-radius: var(--border-radius);
   width: 200px;
   color: var(--color-text-light);
   resize: none;
@@ -244,7 +244,7 @@ nav > ul > li.no-cursor:hover {
   background: #2b2c31;
   padding: 5px;
   min-height: 20px;
-  border-radius: 4px;
+  border-radius: var(--border-radius);
   font-size: 14px;
   color: var(--color-text-light);
 }
@@ -266,7 +266,7 @@ a {
   font-size: 14px;
   line-height: 20px;
   padding: 5px 10px;
-  border-radius: 4px;
+  border-radius: var(--border-radius);
   transition: 0.1s;
   text-align: center !important;
   user-select: none;

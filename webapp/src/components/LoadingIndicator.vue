@@ -10,10 +10,17 @@ export default {
 };
 </script>
 
-<style scoped>
-div::after {
-  content: ".";
-  animation: 1.5s infinite loadingDots;
+<style lang="scss" scoped>
+.loading-indicator {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%);
+
+  &::after {
+    content: ".";
+    animation: 1.5s infinite loadingDots;
+  }
 }
 
 @keyframes loadingDots {

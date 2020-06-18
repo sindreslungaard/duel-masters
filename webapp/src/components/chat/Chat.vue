@@ -1,20 +1,21 @@
 <template>
   <Panel title="Chat" class="chat">
-    <LoadingIndicator v-if="isLoading" />
+    <LoadingIndicator v-if="!hasFinishedLoading" />
 
-    <div class="chatbox">
-      <div id="messages" class="messages spaced">
-        <div class="messages-helper">
-          <div v-for="(msg, i) in messages" :key="i">
-            <Username :color="msg.color">{{ msg.username }}</Username>
-            <div class="user-messages">
-              <div v-for="(message, j) in msg.messages" :key="j">
-                <span>{{ message }}</span>
-              </div>
-            </div>
-          </div>
+    <template v-if="hasFinishedLoading">
+      <div class="message" v-for="(msg, i) in messages" :key="i">
+        <div class="message__meta">
+          <Username :color="msg.color">{{ msg.username }}</Username>
+          <span>{{ formatTimestamp(msg.timestamp) }}</span>
+        </div>
+
+        <div class="message__content">
+          <p v-for="(message, j) in msg.messages" :key="j">
+            {{ message }}
+          </p>
         </div>
       </div>
+
       <form @submit.prevent="$emit('submit')">
         <input
           @input="$emit('input', chatMessage)"
@@ -23,7 +24,7 @@
           placeholder="Type to chat"
         />
       </form>
-    </div>
+    </template>
   </Panel>
 </template>
 
@@ -33,16 +34,11 @@ import Panel from "../Panel";
 import LoadingIndicator from "../LoadingIndicator";
 
 export default {
-  name: "UserList",
+  name: "Chat",
   components: {
     Username,
     Panel,
     LoadingIndicator
-  },
-  data() {
-    return {
-      chatMessage: this.value
-    };
   },
   props: {
     messages: {
@@ -54,51 +50,75 @@ export default {
       required: true
     },
     value: {}
+  },
+  data() {
+    return {
+      /**
+       * The chat message being types.
+       *
+       * @type {String}
+       */
+      chatMessage: this.value
+    };
+  },
+  methods: {
+    /**
+     * Formats a timestamp to a string according to the locale.
+     *
+     * @param {Number} dateTime
+     * @return {String}
+     */
+    formatTimestamp(dateTime) {
+      return new Date(dateTime * 1000).toLocaleString();
+    }
+  },
+  computed: {
+    /**
+     * Whether the component is ready to be displayed.
+     */
+    hasFinishedLoading() {
+      return !this.isLoading && Object.keys(this.messages).length > 0;
+    }
+  },
+  watch: {
+    /**
+     * When the v-model is updated from outside, we need to move it
+     * to our "internal" v-model.
+     *
+     * @param {String} value
+     * @returns {void}
+     */
+    value(value) {
+      this.chatMessage = value;
+    },
+    /**
+     * When new message are added we scroll to the bottom of the chat.
+     *
+     * @returns {void}
+     */
+    messages() {
+      this.$nextTick(() => {
+        const chatContainer = document.querySelector(".chat .panel__content");
+        chatContainer.scrollTop = chatContainer.scrollHeight;
+      });
+    }
   }
 };
 </script>
 
 <style lang="scss" scoped>
-.chatbox {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  overflow: hidden;
-}
-
-.chatbox input {
-  border: none;
-  border-radius: 4px;
-  width: 100%;
-  background: var(--color-background-input);
-  padding: 10px;
-  color: var(--color-text-light);
-  &:focus {
-    outline: none;
+.message {
+  &__meta {
+    display: flex;
+    justify-content: space-between;
   }
-  &:active {
-    outline: none;
+
+  &__content {
+    margin: 0 var(--spacing) var(--spacing);
   }
 }
 
-.user-name-container {
-  overflow: hidden;
-}
-
-.user-messages {
-  margin-left: 20px;
-  margin-top: 0px;
-  margin-bottom: 15px;
-}
-
-.user-messages > div {
-  margin: 3px 0;
-  color: #fff;
-}
-
-.messages {
-  overflow: auto;
-  margin-bottom: 0;
-  padding-bottom: 0;
+p {
+  margin: 0;
 }
 </style>

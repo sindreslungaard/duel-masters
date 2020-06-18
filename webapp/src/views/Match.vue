@@ -397,14 +397,8 @@
 </template>
 
 <script>
-import config from "../config";
 import ClipboardJS from "clipboard";
-import { ws_protocol } from "../remote";
 import CardShowDialog from "../components/dialogs/CardShowDialog";
-
-const send = (client, message) => {
-  client.send(JSON.stringify(message));
-};
 
 export default {
   name: "game",
@@ -598,7 +592,7 @@ export default {
   created() {
     // Connect to the server
     const ws = new WebSocket(
-      ws_protocol + window.location.host + "/ws/" + this.$route.params.id
+      this.$config.WS_ENDPOINT + "shobu.io" + "/ws/" + this.$route.params.id
     );
     this.ws = ws;
 
@@ -765,7 +759,7 @@ export default {
 .card-preview {
   width: 300px;
   text-align: center;
-  border-radius: 4px;
+  border-radius: var(--border-radius);
   height: 480px;
   z-index: 2005;
   position: absolute;
@@ -784,7 +778,7 @@ export default {
   padding: 5px !important;
   width: auto !important;
   margin-left: 5px;
-  border-radius: 4px;
+  border-radius: var(--border-radius);
   color: var(--color-text-light);
   resize: none;
 }
@@ -809,7 +803,7 @@ export default {
   left: calc(50% - 790px / 2);
   top: calc(50vh - 300px / 2);
   text-align: center;
-  border-radius: 4px;
+  border-radius: var(--border-radius);
   border: 1px solid #666;
   overflow-x: auto;
   padding-bottom: 15px;
@@ -826,7 +820,7 @@ export default {
   .action-cards {
     background: #222428;
     margin: 15px;
-    border-radius: 4px;
+    border-radius: var(--border-radius);
     padding: 10px;
     max-height: 300px;
     overflow: auto;
@@ -909,7 +903,7 @@ export default {
 .backdrop {
   background: #2f3136;
   padding: 10px;
-  border-radius: 4px;
+  border-radius: var(--border-radius);
 }
 
 .block {
@@ -920,7 +914,7 @@ export default {
   height: calc(100vh - 128px - 15px);
   background: #2f3136;
   margin: 5px;
-  border-radius: 4px;
+  border-radius: var(--border-radius);
 }
 
 .handaction {
@@ -979,7 +973,7 @@ export default {
 
 .chatbox input {
   border: none;
-  border-radius: 4px;
+  border-radius: var(--border-radius);
   margin: 10px;
   width: calc(100% - 40px);
   background: var(--color-background-input);
@@ -998,7 +992,7 @@ export default {
   height: 30px;
   margin: 5px;
   padding: 10px;
-  border-radius: 4px;
+  border-radius: var(--border-radius);
 }
 
 .lobby {
@@ -1018,7 +1012,7 @@ export default {
   padding-left: 10px;
   background: #2b2e33;
   border: 1px solid #222428;
-  border-radius: 4px;
+  border-radius: var(--border-radius);
   display: inline-block;
   color: #e3e3e5;
   transition: 0.1s;
@@ -1037,7 +1031,7 @@ export default {
   font-size: 14px;
   line-height: 20px;
   padding: 5px 10px;
-  border-radius: 4px;
+  border-radius: var(--border-radius);
   margin-left: 20px;
   transition: 0.1s;
   text-align: center !important;
@@ -1065,7 +1059,7 @@ export default {
   font-size: 14px;
   line-height: 20px;
   padding: 5px 10px;
-  border-radius: 4px;
+  border-radius: var(--border-radius);
   transition: 0.1s;
   text-align: center !important;
   user-select: none;
@@ -1073,7 +1067,7 @@ export default {
 
 .error p {
   padding: 5px;
-  border-radius: 4px;
+  border-radius: var(--border-radius);
   margin: 0;
   margin-bottom: 10px;
   background: #2b2e33 !important;
@@ -1091,7 +1085,7 @@ export default {
   top: 0;
   left: 0;
   width: 300px;
-  border-radius: 4px;
+  border-radius: var(--border-radius);
   background: #36393f;
   z-index: 3005;
   left: calc(50% - 300px / 2);

@@ -4,7 +4,7 @@
 
 <script>
 export default {
-  name: "InternalLink",
+  name: "BaseLink",
   props: {
     href: {
       type: String,

@@ -1,5 +1,5 @@
 <template>
-  <div class="user-name">
+  <div class="username">
     <div
       v-if="hub"
       class="user-status"
@@ -17,13 +17,13 @@
 
 <script>
 export default {
-  name: "username",
+  name: "Username",
   props: ["hub", "color"]
 };
 </script>
 
 <style scoped>
-.user-name {
+.username {
   text-shadow: 1px 1px #000;
   overflow: hidden;
 }
@@ -40,7 +40,7 @@ export default {
   position: absolute;
   background: #333;
   border: 1px solid #eee;
-  border-radius: 4px;
+  border-radius: var(--border-radius);
   padding: 2px;
   width: 60px;
   text-align: center;

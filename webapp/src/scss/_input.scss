@@ -8,7 +8,7 @@ select {
   border: none;
   background: var(--color-background-input);
   padding: 10px;
-  border-radius: 4px;
+  border-radius: var(--border-radius);
   width: 100%;
   color: var(--color-text-light);
   resize: none;
@@ -19,6 +19,10 @@ input:active,
 textarea:active,
 select:active {
   outline: none;
+}
+
+*:focus {
+  outline: 1px solid #FFF;
 }
 
 label {
@@ -44,7 +48,7 @@ label {
 }
 
 .field.error {
-  color: var(--secondary);
+  color: var(--error);
   font-size: 0.9rem;
 
   p {

@@ -1,10 +1,22 @@
 :root {
-  --primary: #7289da;
-  --secondary: #ff4c4c;
+  // Main colors to use on the site
+  --success: #3ca374;
+  --success-hover: #35966a;
+  --info: #7289da;
+  --info-hover: #677bc4;
+  --error: #ff4c4c;
+  --error-hover: #ed3e3e;
 
+  // Colors for background usage
   --color-background: #36393F;
   --color-background-input: #484C52;
+
+  // Colors for foreground usage
+  --color-foreground: #2b2c31;
+  --color-foreground-dark: #222429;
+
   --color-text: #FFF;
   --color-text-light: #CCC;
   --spacing: 15px;
+  --border-radius: 5px;
 }

@@ -23,18 +23,22 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.panel__content {
-  overflow: auto;
-  background: #2b2c31;
-  border-radius: 4px;
-  font-size: 14px;
-  color: var(--color-text-light);
-  padding: var(--spacing);
-  flex-grow: 1;
-}
+.panel {
+  position: relative;
 
-.panel__header {
-  display: flex;
-  align-items: center;
+  &__header {
+    display: flex;
+    align-items: center;
+  }
+
+  &__content {
+    overflow: auto;
+    background-color: var(--color-foreground);
+    border-radius: var(--border-radius);
+    font-size: 14px;
+    color: var(--color-text-light);
+    padding: var(--spacing);
+    flex-grow: 1;
+  }
 }
 </style>

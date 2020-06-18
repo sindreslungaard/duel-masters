@@ -186,7 +186,6 @@
 <script>
 import { call } from "../remote";
 import Header from "../components/Header.vue";
-import config from "../config";
 
 const permissions = () => {
   let p = localStorage.getItem("permissions");
@@ -533,7 +532,7 @@ export default {
 .card-preview {
   width: 300px;
   text-align: center;
-  border-radius: 4px;
+  border-radius: var(--border-radius);
   height: 480px;
   z-index: 2005;
   position: absolute;
@@ -579,7 +578,7 @@ select {
   padding: 5px !important;
   width: auto !important;
   margin-left: 5px;
-  border-radius: 4px;
+  border-radius: var(--border-radius);
   color: var(--color-text-light);
   resize: none;
 }
@@ -652,7 +651,7 @@ th {
 
 .bg {
   background: #2b2c31;
-  border-radius: 4px;
+  border-radius: var(--border-radius);
 }
 
 .left,
@@ -703,7 +702,7 @@ th {
   left: calc(50% - 250px / 2);
   background: #36393f;
   width: 250px;
-  border-radius: 4px;
+  border-radius: var(--border-radius);
   color: #fff;
   border: 1px solid #666;
   z-index: 5;
@@ -745,7 +744,7 @@ select {
   border: none;
   background: var(--color-background-input);
   padding: 10px;
-  border-radius: 4px;
+  border-radius: var(--border-radius);
   width: 200px;
   color: var(--color-text-light);
   resize: none;
@@ -768,7 +767,7 @@ select:active {
 
 .error p {
   padding: 5px;
-  border-radius: 4px;
+  border-radius: var(--border-radius);
   margin: 0;
   margin-bottom: 10px;
   background: #2b2e33 !important;
@@ -781,7 +780,7 @@ select:active {
   top: 0;
   left: 0;
   width: 300px;
-  border-radius: 4px;
+  border-radius: var(--border-radius);
   background: #36393f;
   z-index: 1000;
   left: calc(50% - 300px / 2);
@@ -832,7 +831,7 @@ nav > ul > li.no-cursor:hover {
   background: #2b2c31;
   padding: 5px;
   min-height: 20px;
-  border-radius: 4px;
+  border-radius: var(--border-radius);
   font-size: 14px;
   color: var(--color-text-light);
 }
@@ -854,7 +853,7 @@ a {
   font-size: 14px;
   line-height: 20px;
   padding: 5px 10px;
-  border-radius: 4px;
+  border-radius: var(--border-radius);
   transition: 0.1s;
   text-align: center !important;
   user-select: none;

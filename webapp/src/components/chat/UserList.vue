@@ -1,21 +1,25 @@
 <template>
   <Panel title="Online" class="user-list">
-    <LoadingIndicator v-if="isLoading" />
+    <LoadingIndicator v-if="!hasFinishedLoading" />
 
-    <div
-      class="user-list__category"
-      v-for="(category, index) in users"
-      :key="index"
-    >
-      <h4>{{ category.category }}</h4>
-      <ul>
-        <li v-for="(user, index) in category.users" :key="index">
-          <Username :hub="user.hub" :color="user.color">{{
-            user.username
-          }}</Username>
-        </li>
-      </ul>
-    </div>
+    <template v-if="hasFinishedLoading">
+      <template v-for="(userList, category) in users">
+        <div
+          class="user-list__category"
+          :key="category"
+          v-if="userList.length > 0"
+        >
+          <h4>{{ category }}</h4>
+          <ul>
+            <li v-for="user in userList" :key="user.username">
+              <Username :hub="user.hub" :color="user.color">{{
+                user.username
+              }}</Username>
+            </li>
+          </ul>
+        </div>
+      </template>
+    </template>
   </Panel>
 </template>
 
@@ -33,12 +37,20 @@ export default {
   },
   props: {
     users: {
-      type: Array,
+      type: Object,
       required: true
     },
     isLoading: {
       type: Boolean,
       required: true
+    }
+  },
+  computed: {
+    /**
+     * Whether the component is ready to be displayed.
+     */
+    hasFinishedLoading() {
+      return !this.isLoading && Object.keys(this.users).length > 0;
     }
   }
 };

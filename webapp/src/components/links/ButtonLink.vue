@@ -1,26 +1,25 @@
 <template>
-  <button
-    class="button"
-    :class="buttonClass"
-    :type="buttonType"
-    @click="$emit('click')"
-  >
-    {{ text }}
-  </button>
+  <BaseLink class="button-link" :class="buttonClass" :href="href">{{
+    text
+  }}</BaseLink>
 </template>
 
 <script>
+import BaseLink from "./BaseLink";
+
 export default {
-  name: "Button",
+  name: "ButtonLink",
+  components: {
+    BaseLink
+  },
   props: {
     text: {
       type: String,
       required: true
     },
-    submit: {
-      type: Boolean,
-      required: false,
-      default: false
+    href: {
+      type: String,
+      required: true
     },
     type: {
       type: String,
@@ -33,17 +32,14 @@ export default {
   },
   computed: {
     buttonClass() {
-      return `button--${this.type}`;
-    },
-    buttonType() {
-      return this.submit ? "submit" : "button";
+      return `button-link--${this.type}`;
     }
   }
 };
 </script>
 
 <style lang="scss" scoped>
-.button {
+.button-link {
   display: inline-block;
   color: #e3e3e5;
   font-size: 14px;
@@ -56,6 +52,10 @@ export default {
   cursor: pointer;
   border: none;
   font-weight: bold;
+
+  &:hover {
+    text-decoration: none;
+  }
 
   &--info {
     background-color: var(--info);

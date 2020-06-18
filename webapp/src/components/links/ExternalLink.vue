@@ -1,16 +1,16 @@
 <template>
-  <InternalLink target="_blank" rel="noopener noreferrer" :href="href">
+  <BaseLink target="_blank" rel="noopener noreferrer" :href="href">
     <slot></slot>
-  </InternalLink>
+  </BaseLink>
 </template>
 
 <script>
-import InternalLink from "./InternalLink";
+import BaseLink from "./BaseLink";
 
 export default {
   name: "ExternalLink",
   components: {
-    InternalLink
+    BaseLink
   },
   props: {
     href: {

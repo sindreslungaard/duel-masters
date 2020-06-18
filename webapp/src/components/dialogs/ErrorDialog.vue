@@ -1,6 +1,6 @@
 <template>
   <div class="error-dialog">
-    {{ message }}
+    <p>{{ message }}</p>
     <Button text="Reload" @click="reloadPage" />
   </div>
 </template>

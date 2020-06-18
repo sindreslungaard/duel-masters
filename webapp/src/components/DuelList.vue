@@ -1,41 +1,52 @@
 <template>
   <Panel title="Duels" class="duels">
-    <LoadingIndicator v-if="isLoading" />
+    <LoadingIndicator v-if="!hasFinishedLoading" />
 
-    <Button @click="$emit('newDuel')" text="New Duel" />
-    <table>
-      <tr v-if="!isLoading && matches.length < 1">
-        <td>No matches to show, click the button above to create one.</td>
-      </tr>
-      <tr v-for="(match, index) in matches" :key="index">
-        <td>
-          <Username :color="match.color">{{ match.owner }}</Username>
-        </td>
-        <td>{{ match.name }}</td>
-        <td>
-          <div
-            @click="$router.push('/duel/' + match.id)"
-            :class="'btn' + (match.spectate ? '' : ' save')"
-          >
-            {{ match.spectate ? "Spectate" : "Join match" }}
+    <template v-if="hasFinishedLoading">
+      <Button type="success" @click="openNewDuelDialog" text="New Duel" />
+      <div v-if="!hasMatches" class="empty-message">
+        <p>No matches to show, click the button above to create one.</p>
+      </div>
+      <div class="matches" v-if="hasMatches">
+        <div class="match" v-for="match in matches" :key="match.id">
+          <div class="match__owner">
+            <Username :color="match.color">{{ match.owner }}</Username>
           </div>
-        </td>
-      </tr>
-    </table>
+          <div class="match__name">{{ match.name }}</div>
+          <div class="match__actions">
+            <router-link
+              :to="{ name: 'duel', params: { id: match.id } }"
+              v-slot="{ href }"
+            >
+              <ButtonLink
+                :href="href"
+                :type="match.spectate ? 'success' : 'info'"
+                :text="match.spectate ? 'Spectate' : 'Join match'"
+              ></ButtonLink>
+            </router-link>
+          </div>
+        </div>
+      </div>
+    </template>
   </Panel>
 </template>
 
 <script>
 import Panel from "./Panel";
 import Button from "./buttons/Button";
+import ButtonLink from "@/components/links/ButtonLink";
 import LoadingIndicator from "./LoadingIndicator";
+import NewDuelDialog from "@/components/dialogs/NewDuelDialog";
+import Username from "@/components/chat/Username";
 
 export default {
   name: "DuelList",
   components: {
     Panel,
     Button,
-    LoadingIndicator
+    LoadingIndicator,
+    Username,
+    ButtonLink
   },
   props: {
     matches: {
@@ -46,36 +57,61 @@ export default {
       type: Boolean,
       required: true
     }
+  },
+  methods: {
+    /**
+     * Opens the dialog for creating a new duel.
+     *
+     * @returns {void}
+     */
+    openNewDuelDialog() {
+      this.$modal.show(NewDuelDialog);
+    }
+  },
+  computed: {
+    /**
+     * Whether the component is ready to be displayed.
+     *
+     * @returns {void}
+     */
+    hasFinishedLoading() {
+      return !this.isLoading && this.matches;
+    },
+    /**
+     * Whether there are any matches.
+     *
+     * @returns {void}
+     */
+    hasMatches() {
+      return this.matches.length > 0;
+    }
   }
 };
 </script>
 
 <style lang="scss" scoped>
-.duels table {
-  width: 100%;
-  margin-top: 15px;
-  border-collapse: collapse;
+.matches {
+  margin-top: var(--spacing);
+  display: flex;
+  flex-direction: column;
 }
 
-.duels td {
-  border: none;
-  text-align: left;
+.match {
+  display: flex;
+  align-items: center;
   padding: var(--spacing);
-}
 
-.duels tr:nth-child(odd) {
-  background-color: #222429;
-}
+  &:nth-child(odd) {
+    background-color: var(--color-foreground-dark);
+  }
 
-.save {
-  background: #3ca374 !important;
-}
+  &__owner {
+    width: 12ch;
+    margin-right: var(--spacing);
+  }
 
-.save:hover {
-  background: #35966a !important;
-}
-
-.duels .btn {
-  width: 70px;
+  &__actions {
+    margin-left: auto;
+  }
 }
 </style>

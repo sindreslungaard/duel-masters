@@ -1,26 +1,26 @@
 <template>
   <header class="header">
     <nav>
-      <span class="welcome-message">Welcome, {{ username }}!</span>
+      <span>Welcome, {{ username }}!</span>
       <ul>
         <li>
           <router-link to="overview" v-slot="{ href }">
-            <InternalLink :href="href">Overview</InternalLink>
+            <BaseLink :href="href">Overview</BaseLink>
           </router-link>
         </li>
         <li>
           <router-link to="decks" v-slot="{ href }">
-            <InternalLink :href="href">Decks</InternalLink>
+            <BaseLink :href="href">Decks</BaseLink>
           </router-link>
         </li>
         <li>
           <router-link to="logout" v-slot="{ href }">
-            <InternalLink :href="href">Logout</InternalLink>
+            <BaseLink :href="href">Logout</BaseLink>
           </router-link>
         </li>
         <li>
           <ExternalLink href="https://patreon.com/shobu">
-            <img class="patreon-btn" src="/assets/images/patreon.png" />
+            <img class="button--patreon" src="/assets/images/patreon.png" />
           </ExternalLink>
         </li>
       </ul>
@@ -36,13 +36,13 @@
 </template>
 
 <script>
-import InternalLink from "./links/InternalLink";
-import ExternalLink from "./links/ExternalLink";
+import BaseLink from "@/components/links/BaseLink";
+import ExternalLink from "@/components/links/ExternalLink";
 
 export default {
   name: "Header",
   components: {
-    InternalLink,
+    BaseLink,
     ExternalLink
   },
   computed: {
@@ -71,25 +71,25 @@ ul {
 
 li:not(:last-child)::after {
   content: "|";
-  margin: 0 15px;
+  margin: 0 var(--spacing);
 }
 
-.patreon-btn {
+.button--patreon {
   width: 125px;
-  border-radius: 4px;
+  border-radius: var(--border-radius);
   opacity: 0.9;
 }
 
-.patreon-btn:hover {
+.button--patreon:hover {
   opacity: 1;
 }
 
 .announcments {
   background: #2b2c31;
   padding: var(--spacing);
-  border-radius: 4px;
+  border-radius: var(--border-radius);
   font-size: 14px;
   color: var(--color-text-light);
-  margin-top: 15px;
+  margin-top: var(--spacing);
 }
 </style>

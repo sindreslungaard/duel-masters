@@ -24,7 +24,7 @@
       </div>
       <div class="field buttons">
         <Button submit text="Create" />
-        <Button @click="$emit('close')" text="Cancel" type="secondary" />
+        <Button @click="$emit('close')" text="Cancel" type="error" />
       </div>
     </form>
   </div>
