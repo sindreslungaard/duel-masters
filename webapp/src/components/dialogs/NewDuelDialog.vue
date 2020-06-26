@@ -33,13 +33,14 @@
 <script>
 import Button from "../buttons/Button";
 import { call } from "../../remote";
+import Storage from "@/utils/Storage";
 
 export default {
   name: "NewDuelDialog",
   data() {
     return {
       duelData: {
-        name: "",
+        name: Storage.getItem(this.$config.STORAGE_KEY_DUEL_NAME) ?? "",
         description: "",
         visibility: "public"
       },
@@ -58,6 +59,8 @@ export default {
         this.errorMessage = "Duel name must be between 5-30 characters";
         return;
       }
+
+      Storage.setItem(this.$config.STORAGE_KEY_DUEL_NAME, this.duelData.name);
 
       try {
         let res = await call({
