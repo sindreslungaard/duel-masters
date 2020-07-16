@@ -62,6 +62,10 @@ class LobbyMessageHandler {
         category = chatRoles[0].split("chat.role.")[1];
       }
 
+      if (!users[category]) {
+        users[category] = [];
+      }
+
       users[category].push(user);
     });
 
