@@ -1,6 +1,6 @@
 <template>
-  <div>
-    <div v-show="warning || previewCard" class="overlay"></div>
+  <main class="deck-editor">
+    <!--<div v-show="warning || previewCard" class="overlay"></div>
 
     <div v-if="previewCard" class="card-preview">
       <img :src="`/assets/cards/all/${previewCard.uid}.jpg`" />
@@ -34,10 +34,11 @@
           </form>
         </div>
       </div>
-    </div>
+    </div>-->
 
-    <Header></Header>
-
+    <Header />
+    <CardList @leftClick="testMethod" />
+    <!--
     <div class="main">
       <div class="left bg">
         <div class="cards-table">
@@ -179,13 +180,14 @@
           </div>
         </div>
       </div>
-    </div>
-  </div>
+    </div>-->
+  </main>
 </template>
 
 <script>
 import { call } from "../remote";
 import Header from "../components/Header.vue";
+import CardList from "@/components/cards/CardList";
 
 const permissions = () => {
   let p = localStorage.getItem("permissions");
@@ -196,9 +198,10 @@ const permissions = () => {
 };
 
 export default {
-  name: "decks",
+  name: "DeckEditor",
   components: {
-    Header
+    Header,
+    CardList
   },
   computed: {
     username: () => localStorage.getItem("username")
@@ -226,6 +229,9 @@ export default {
     };
   },
   methods: {
+    testMethod(card) {
+      console.log("stuff", card);
+    },
     selectDeck(deck) {
       this.selectedDeck = deck;
       this.deckCopy = JSON.parse(JSON.stringify(deck));
@@ -428,7 +434,7 @@ export default {
 };
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 .helper {
   display: block !important;
   margin-bottom: 5px;
@@ -874,5 +880,39 @@ a {
 
 .civilization {
   text-transform: capitalize;
+}
+
+main {
+  display: grid;
+  grid-gap: var(--spacing);
+  padding: var(--spacing);
+  grid-template-columns: minmax(auto, 50%) minmax(auto, 50%);
+  grid-template-rows: auto minmax(0, 1fr);
+  width: 100%;
+  height: 100vh;
+
+  @include tablet {
+    height: auto;
+    grid-template-columns: minmax(auto, 25%) minmax(auto, 75%);
+    grid-template-rows: repeat(3, auto);
+  }
+
+  @include mobile {
+    grid-template-rows: repeat(4, auto);
+  }
+}
+
+.header {
+  grid-column: 1 / 3;
+  grid-row: 1;
+
+  @include tablet {
+    grid-column: 1 / 3;
+  }
+}
+
+.card-list {
+  grid-column: 1;
+  grid-row: 2;
 }
 </style>

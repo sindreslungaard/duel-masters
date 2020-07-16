@@ -30,3 +30,29 @@ h4 {
   text-transform: capitalize;
 
 }
+
+
+.set {
+  text-transform: uppercase;
+}
+
+.civilization {
+  text-transform: capitalize;
+}
+
+td.fill {
+  width: 100%;
+}
+
+td.no-break {
+  white-space: nowrap;
+}
+
+.image--card {
+  border-radius: 5%;
+}
+
+img {
+  max-width: 100%;
+  display: block;
+}

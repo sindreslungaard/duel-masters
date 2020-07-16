@@ -25,6 +25,8 @@ export default {
 <style lang="scss" scoped>
 .panel {
   position: relative;
+  display: flex;
+  flex-direction: column;
 
   &__header {
     display: flex;

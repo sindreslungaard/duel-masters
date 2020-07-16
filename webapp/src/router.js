@@ -47,7 +47,7 @@ const router = new Router({
     {
       path: "/decks",
       name: "decks",
-      component: () => import("./views/Decks.vue"),
+      component: () => import("./views/DeckEditor.vue"),
       meta: { auth: true }
     },
 

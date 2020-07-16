@@ -21,6 +21,11 @@ select:active {
   outline: none;
 }
 
+input[type="radio"],
+input[type="check"] {
+  width: auto;
+}
+
 *:focus {
   outline: 1px solid #FFF;
 }
