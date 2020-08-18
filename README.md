@@ -19,3 +19,6 @@ docker run -d \
     -e mongo_uri=<mongodb_connection_string> \
     docker.pkg.github.com/sindreslungaard/duel-masters/production:latest
 ```
+
+## Contribute
+Thanks for your interest in contributing! There are many ways to contribute to this project. [Get started here](https://github.com/sindreslungaard/duel-masters/blob/master/CONTRIBUTING.md)
