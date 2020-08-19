@@ -64,19 +64,16 @@ func HorridWorm(c *match.Card) {
 
 	c.Use(fx.Creature, fx.When(fx.Attacking, func(card *match.Card, ctx *match.Context) {
 
-		ctx.ScheduleAfter(func() {
+		hand := fx.Find(ctx.Match.Opponent(card.Player), match.HAND)
 
-			hand := fx.Find(ctx.Match.Opponent(card.Player), match.HAND)
+		if len(hand) < 1 {
+			return
+		}
 
-			if len(hand) < 1 {
-				return
-			}
-
-			discardedCard, err := ctx.Match.Opponent(card.Player).MoveCard(hand[rand.Intn(len(hand))].ID, match.HAND, match.GRAVEYARD)
-			if err == nil {
-				ctx.Match.Chat("Server", fmt.Sprintf("%s was discarded from %s's hand by Horrid Worm", discardedCard.Name, discardedCard.Player.Username()))
-			}
-		})
+		discardedCard, err := ctx.Match.Opponent(card.Player).MoveCard(hand[rand.Intn(len(hand))].ID, match.HAND, match.GRAVEYARD)
+		if err == nil {
+			ctx.Match.Chat("Server", fmt.Sprintf("%s was discarded from %s's hand by Horrid Worm", discardedCard.Name, discardedCard.Player.Username()))
+		}
 
 	}))
 
