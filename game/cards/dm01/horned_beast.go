@@ -11,7 +11,7 @@ import (
 func RoaringGreatHorn(c *match.Card) {
 
 	c.Name = "Roaring Great-Horn"
-	c.Power = 6000
+	c.Power = 8000
 	c.Civ = civ.Nature
 	c.Family = family.HornedBeast
 	c.ManaCost = 7
