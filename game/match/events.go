@@ -64,3 +64,9 @@ type GetPowerEvent struct {
 	Attacking bool
 	Power     int
 }
+
+// GetCostEvent is fired whenever a card's cost is to be used
+type GetCostEvent struct {
+	Card *Card
+	Cost int
+}

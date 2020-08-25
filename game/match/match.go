@@ -292,6 +292,21 @@ func (m *Match) Opponent(p *Player) *Player {
 	return m.Player1.Player
 }
 
+// GetCost returns the cost of a given card after applying conditions
+func (m *Match) GetCost(card *Card) int {
+
+	manaCost := card.ManaCost
+
+	e := &GetCostEvent{
+		Card: card,
+		Cost: manaCost,
+	}
+
+	m.HandleFx(NewContext(m, e))
+
+	return e.Cost
+}
+
 // GetPower returns the power of a given card after applying conditions
 func (m *Match) GetPower(card *Card, isAttacking bool) int {
 
