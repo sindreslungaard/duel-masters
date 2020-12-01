@@ -19,7 +19,7 @@ func LadiaBaleTheInspirational(c *match.Card) {
 	c.ManaCost = 6
 	c.ManaRequirement = []string{civ.Light}
 
-	c.Use(fx.Creature, fx.Evolution, fx.Doublebreaker)
+	c.Use(fx.Creature, fx.Blocker, fx.Evolution, fx.Doublebreaker)
 
 }
 
