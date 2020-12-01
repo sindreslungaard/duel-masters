@@ -406,6 +406,24 @@ const send = (client, message) => {
   client.send(JSON.stringify(message));
 };
 
+function sound(src) {
+    this.sound = document.createElement("audio");
+    this.sound.src = src;
+    this.sound.setAttribute("preload", "auto");
+    this.sound.setAttribute("controls", "none");
+    this.sound.style.display = "none";
+    this.sound.volume = 0.3;
+    document.body.appendChild(this.sound);
+    this.play = function() {
+        this.sound.play();
+    };
+    this.stop = function() {
+        this.sound.pause();
+    };
+}
+
+let turnSound = new sound("/assets/turn.mp3");
+
 export default {
   name: "game",
   data() {
@@ -657,6 +675,12 @@ export default {
           }
           this.handSelection = null;
           this.playzoneSelection = null;
+
+          if(this.state.myTurn !== data.state.myTurn) {
+            turnSound.play();
+            console.log("turn change");
+          }
+
           this.state = data.state;
           break;
         }
