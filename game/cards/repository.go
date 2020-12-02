@@ -71,7 +71,6 @@ var DM01 = map[string]match.CardConstructor{
 	"cf5eb3d3-e128-42db-bf1a-161d5dd4b972": dm01.LokVizierOfHunting,
 	"15efe8b0-02c1-439b-8e7c-4548e74f5c33": dm01.MieleVizierOfLightning,
 	"340ec79b-3a4e-4483-ac0e-5dd6b40eb4e1": dm01.ToelVizierOfLight,
-	"e1e112d7-11e1-4f01-9c91-00a2b1626043": dm01.Bombersaur,
 	"d067285f-10ea-4666-99c8-bc23e27e3262": dm01.Meteosaur,
 	"41c0664d-1969-487d-bde5-866127c1c49e": dm01.Stonesaur,
 	"c1ebdda0-be88-4665-937e-2ef3ada8d378": dm01.DeathbladeBeetle,
@@ -186,4 +185,5 @@ var DM02 = map[string]match.CardConstructor{
 	"cc5c643e-5120-421d-b26f-76be381dead7": dm02.RumbleGate,
 	"cf536a4d-1512-44d8-b0e6-615d0725e3f0": dm02.MetalwingSkyterror,
 	"d7e4a7da-6131-42e9-adf1-de0178549bd5": dm02.SilverFist,
+	"e1e112d7-11e1-4f01-9c91-00a2b1626043": dm02.Bombersaur,
 }
