@@ -166,3 +166,31 @@ func ReconOperation(c *match.Card) {
 	}))
 
 }
+
+// ManaCrisis ...
+func ManaCrisis(c *match.Card) {
+
+	c.Name = "Mana Crisis"
+	c.Civ = civ.Nature
+	c.ManaCost = 4
+	c.ManaRequirement = []string{civ.Nature}
+
+	c.Use(fx.Spell, fx.ShieldTrigger, fx.When(fx.SpellCast, func(card *match.Card, ctx *match.Context) {
+
+		fx.Select(
+			card.Player,
+			ctx.Match,
+			ctx.Match.Opponent(card.Player),
+			match.MANAZONE,
+			"Mana Crisis: Select 1 card from your opponent's manazone and put it in their graveyard",
+			1,
+			1,
+			false,
+		).Map(func(x *match.Card) {
+			x.Player.MoveCard(x.ID, match.MANAZONE, match.GRAVEYARD)
+			ctx.Match.Chat("Server", fmt.Sprintf("%s was put into %s's graveyard from their manazone by %s", x.Name, x.Player.Username(), card.Name))
+		})
+
+	}))
+
+}
