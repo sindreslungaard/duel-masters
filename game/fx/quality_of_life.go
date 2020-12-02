@@ -116,6 +116,60 @@ func SelectFilter(p *match.Player, m *match.Match, containerOwner *match.Player,
 
 }
 
+// SelectMultipart prompts the user to select n cards from the specified list of cards
+func SelectMultipart(p *match.Player, m *match.Match, cards map[string][]*match.Card, text string, min int, max int, cancellable bool) CardCollection {
+
+	result := make([]*match.Card, 0)
+
+	notEmpty := false
+
+	for _, cardList := range cards {
+		if len(cardList) > 0 {
+			notEmpty = true
+		}
+	}
+
+	if notEmpty != true {
+		return result
+	}
+
+	m.NewMultipartAction(p, cards, min, max, text, cancellable)
+
+	defer m.CloseAction(p)
+
+	for {
+
+		action := <-p.Action
+
+		if cancellable && action.Cancel {
+			break
+		}
+
+		if len(action.Cards) < min || len(action.Cards) > max {
+			m.ActionWarning(p, "The cards you selected does not meet the requirements")
+			continue
+		}
+
+		for _, vid := range action.Cards {
+
+			for _, cardList := range cards {
+				for _, card := range cardList {
+					if card.ID == vid {
+						result = append(result, card)
+					}
+				}
+			}
+
+		}
+
+		break
+
+	}
+
+	return result
+
+}
+
 // SelectBackside prompts the user to select n cards from the specified container
 func SelectBackside(p *match.Player, m *match.Match, containerOwner *match.Player, containerName string, text string, min int, max int, cancellable bool) CardCollection {
 	return SelectBacksideFilter(p, m, containerOwner, containerName, text, min, max, cancellable, func(x *match.Card) bool { return true })
