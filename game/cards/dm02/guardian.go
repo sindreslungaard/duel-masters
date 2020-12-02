@@ -56,3 +56,17 @@ func PhalEegaDawnGuardian(c *match.Card) {
 	}))
 
 }
+
+// ResoPacosClearSkyGuardian ...
+func ResoPacosClearSkyGuardian(c *match.Card) {
+
+	c.Name = "Reso Pacos, Clear Sky Guardian"
+	c.Power = 3000
+	c.Civ = civ.Light
+	c.Family = family.Guardian
+	c.ManaCost = 3
+	c.ManaRequirement = []string{civ.Light}
+
+	c.Use(fx.Creature)
+
+}
