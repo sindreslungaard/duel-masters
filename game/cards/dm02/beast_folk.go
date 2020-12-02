@@ -68,3 +68,17 @@ func SilverAxe(c *match.Card) {
 	}))
 
 }
+
+// SilverFist ...
+func SilverFist(c *match.Card) {
+
+	c.Name = "Silver Fist"
+	c.Power = 3000
+	c.Civ = civ.Nature
+	c.Family = family.BeastFolk
+	c.ManaCost = 4
+	c.ManaRequirement = []string{civ.Nature}
+
+	c.Use(fx.Creature, fx.PowerAttacker2000)
+
+}
