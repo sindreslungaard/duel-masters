@@ -370,7 +370,7 @@ func InviteHandler(c *gin.Context) {
 	</head>
 	<body style="background: #36393F">
 		<p>Please wait while we redirect you.. Make sure javascript is enabled.</p>
-		<script>window.location.replace("/overview");</script>
+		<script>if(!navigator.userAgent.includes("discord")) { window.location.replace("/overview"); }</script>
 	</body>
 </html>
 		`, c.Param("id"))
@@ -388,7 +388,7 @@ func InviteHandler(c *gin.Context) {
 			</head>
 			<body>
 				<p>Please wait while we redirect you.. Make sure javascript is enabled.</p>
-				<script>window.location.replace("/overview");</script>
+				<script>if(!navigator.userAgent.includes("discord")) { window.location.replace("/overview"); }</script>
 			</body>
 		</html>
 		`, match.Player1.Socket.User.Username, match.Player2.Socket.User.Username)
@@ -405,7 +405,7 @@ func InviteHandler(c *gin.Context) {
 			</head>
 			<body>
 				<p>Please wait while we redirect you.. Make sure javascript is enabled.</p>
-				<script>window.location.replace("/duel/%s");</script>
+				<script>if(!navigator.userAgent.includes("discord")) { window.location.replace("/duel/%s"); }</script>
 			</body>
 		</html>
 		`, match.Player1.Socket.User.Username, c.Param("id"))
@@ -423,7 +423,7 @@ func InviteHandler(c *gin.Context) {
 			</head>
 			<body>
 				<p>Please wait while we redirect you.. Make sure javascript is enabled.</p>
-				<script>window.location.replace("/overview");</script>
+				<script>if(!navigator.userAgent.includes("discord")) { window.location.replace("/overview"); }</script>
 			</body>
 		</html>
 		`
