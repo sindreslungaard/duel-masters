@@ -54,3 +54,33 @@ func ArmoredCannonBalbaro(c *match.Card) {
 	c.Use(fx.Creature, fx.Evolution)
 
 }
+
+// ArmoredBlasterValdios ...
+func ArmoredBlasterValdios(c *match.Card) {
+
+	c.Name = "Armored Blaster Valdios"
+	c.Power = 6000
+	c.Civ = civ.Fire
+	c.Family = family.Human
+	c.ManaCost = 4
+	c.ManaRequirement = []string{civ.Fire}
+
+	c.Use(fx.Creature, fx.Evolution, fx.Doublebreaker, fx.ModifyPowers(func(event *match.GetPowerEvent) {
+
+		if c.Zone != match.BATTLEZONE {
+			return
+		}
+
+		if event.Card.Player != c.Player {
+			return
+		}
+
+		if event.Card.Family != family.Human {
+			return
+		}
+
+		event.Power += 1000
+
+	}))
+
+}
