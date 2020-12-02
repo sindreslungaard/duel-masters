@@ -180,4 +180,5 @@ var DM02 = map[string]match.CardConstructor{
 	"ac636f90-215f-4934-bcd3-abfec69a5fda": dm02.AquaBouncer,
 	"b85b0492-132c-46ac-85e6-c8b5b466598a": dm02.LagunaLightningEnforcer,
 	"b691251e-8b9b-4436-8ca8-d9d3aba3ac72": dm02.ResoPacosClearSkyGuardian,
+	"ba8c4d25-a352-4725-a3aa-6eb015f99d6c": dm02.Galsaur,
 }
