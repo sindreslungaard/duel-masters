@@ -183,4 +183,5 @@ var DM02 = map[string]match.CardConstructor{
 	"ba8c4d25-a352-4725-a3aa-6eb015f99d6c": dm02.Galsaur,
 	"bf5ce598-f604-4c55-b0c9-9ed0e059aeec": dm02.ManaCrisis,
 	"c125f786-e6d5-4477-8ab0-1e92d6eed348": dm02.CavalryGeneralCuratops,
+	"cc5c643e-5120-421d-b26f-76be381dead7": dm02.RumbleGate,
 }

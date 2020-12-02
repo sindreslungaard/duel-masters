@@ -194,3 +194,26 @@ func ManaCrisis(c *match.Card) {
 	}))
 
 }
+
+// RumbleGate ...
+func RumbleGate(c *match.Card) {
+
+	c.Name = "Rumble Gate"
+	c.Civ = civ.Fire
+	c.ManaCost = 4
+	c.ManaRequirement = []string{civ.Fire}
+
+	c.Use(fx.Spell, fx.When(fx.SpellCast, func(card *match.Card, ctx *match.Context) {
+
+		fx.Find(
+			card.Player,
+			match.BATTLEZONE,
+		).Map(func(x *match.Card) {
+			x.AddCondition(cnd.PowerAmplifier, 1000, card.ID)
+			x.AddCondition(cnd.AttackUntapped, nil, card.ID)
+			ctx.Match.Chat("Server", fmt.Sprintf("%s can attack untapped creatures and was given +1000 power until the end of this turn by %s", x.Name, card.Name))
+		})
+
+	}))
+
+}
