@@ -147,7 +147,7 @@
           <div class="cards-table">
             <table>
               <tr>
-                <th>Quantity</th>
+                <th>Quantity ({{ selectedDeck.cards.length }})</th>
                 <th>Card Name</th>
                 <th>Set</th>
                 <th>Civilization</th>
