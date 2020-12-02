@@ -78,3 +78,33 @@ func HorridWorm(c *match.Card) {
 	}))
 
 }
+
+// PoisonWorm ...
+func PoisonWorm(c *match.Card) {
+
+	c.Name = "Poison Worm"
+	c.Power = 4000
+	c.Civ = civ.Darkness
+	c.Family = family.ParasiteWorm
+	c.ManaCost = 4
+	c.ManaRequirement = []string{civ.Darkness}
+
+	c.Use(fx.Creature, fx.When(fx.Summoned, func(card *match.Card, ctx *match.Context) {
+
+		fx.SelectFilter(
+			card.Player,
+			ctx.Match,
+			card.Player,
+			match.BATTLEZONE,
+			"Poison Worm: Destroy one of your creatures with power 3000 or less",
+			1,
+			1,
+			false,
+			func(x *match.Card) bool { return x.Power <= 3000 },
+		).Map(func(x *match.Card) {
+			ctx.Match.Destroy(x, card)
+		})
+
+	}))
+
+}
