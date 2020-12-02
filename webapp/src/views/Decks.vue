@@ -79,12 +79,12 @@
               @dblclick="previewCard = card"
               @contextmenu.prevent="previewCard = card"
               @click="
-                selectedFromDeck = null;
+                selectedFromDeck = card;
                 selected = card;
               "
               v-for="(card, index) in filteredCards"
               :key="index"
-              :class="[{ selected: selected === card }]"
+              :class="[{ selected: selected && selected.uid === card.uid }]"
             >
               <td>{{ card.name }}</td>
               <td class="set">{{ card.set }}</td>
@@ -157,7 +157,7 @@
                   @dblclick="previewCard = card"
                   @contextmenu.prevent="previewCard = card"
                   @click="
-                    selected = null;
+                    selected = card;
                     selectedFromDeck = card;
                   "
                   v-for="(card, index) in getCardsForDeck(selectedDeck.cards)"
