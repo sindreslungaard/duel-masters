@@ -194,4 +194,5 @@ var DM02 = map[string]match.CardConstructor{
 	"fae765a5-fa73-4627-94d1-f74f2ed00792": dm02.LostSoul,
 	"fcf2f484-c471-4a5d-bc41-1fcd56604d73": dm02.GeneralDarkFiend,
 	"fd9f6d26-8fd8-43f2-84e5-b83493a1106e": dm02.LarbaGeerTheImmaculate,
+	"ff33e31f-4f1c-4c07-b293-2e65a13e1077": dm02.RainbowStone,
 }

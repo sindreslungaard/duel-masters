@@ -240,3 +240,33 @@ func LostSoul(c *match.Card) {
 	}))
 
 }
+
+// RainbowStone ...
+func RainbowStone(c *match.Card) {
+
+	c.Name = "Rainbow Stone"
+	c.Civ = civ.Nature
+	c.ManaCost = 4
+	c.ManaRequirement = []string{civ.Nature}
+
+	c.Use(fx.Spell, fx.When(fx.SpellCast, func(card *match.Card, ctx *match.Context) {
+
+		fx.Select(
+			card.Player,
+			ctx.Match,
+			card.Player,
+			match.DECK,
+			"Rainbow Stone: Put a card from your deck into your manazone",
+			1,
+			1,
+			true,
+		).Map(func(x *match.Card) {
+			x.Player.MoveCard(x.ID, match.DECK, match.MANAZONE)
+			ctx.Match.Chat("Server", fmt.Sprintf("%s put %s in their manazone from their deck", x.Player.Username(), x.Name))
+		})
+
+		card.Player.ShuffleDeck()
+
+	}))
+
+}
