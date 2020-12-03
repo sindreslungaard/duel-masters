@@ -217,3 +217,26 @@ func RumbleGate(c *match.Card) {
 	}))
 
 }
+
+// LostSoul ...
+func LostSoul(c *match.Card) {
+
+	c.Name = "Lost Soul"
+	c.Civ = civ.Darkness
+	c.ManaCost = 7
+	c.ManaRequirement = []string{civ.Darkness}
+
+	c.Use(fx.Spell, fx.When(fx.SpellCast, func(card *match.Card, ctx *match.Context) {
+
+		fx.Find(
+			ctx.Match.Opponent(card.Player),
+			match.HAND,
+		).Map(func(x *match.Card) {
+			ctx.Match.Opponent(card.Player).MoveCard(x.ID, match.HAND, match.GRAVEYARD)
+		})
+
+		ctx.Match.Chat("Server", fmt.Sprintf("%s's hand was discarded by %s", ctx.Match.Opponent(card.Player).Username(), card.Name))
+
+	}))
+
+}
