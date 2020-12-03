@@ -90,3 +90,17 @@ func AquaBouncer(c *match.Card) {
 	}))
 
 }
+
+// AquaShooter ...
+func AquaShooter(c *match.Card) {
+
+	c.Name = "Aqua Shooter"
+	c.Power = 2000
+	c.Civ = civ.Water
+	c.Family = family.LiquidPeople
+	c.ManaCost = 4
+	c.ManaRequirement = []string{civ.Water}
+
+	c.Use(fx.Creature, fx.Blocker)
+
+}
