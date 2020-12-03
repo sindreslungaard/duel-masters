@@ -177,6 +177,7 @@ func (m *Match) startTicker() {
 		case <-m.quit:
 			{
 				logrus.Debugf("Closing match %s", m.ID)
+				m.ending = true
 				return
 			}
 		case <-ticker.C:
@@ -453,8 +454,6 @@ func (m *Match) End(winner *Player, winnerStr string) {
 		logrus.Debugf("Cannot end match, %s is already ending", m.ID)
 		return
 	}
-
-	m.ending = true
 
 	if m.Started {
 		WarnError(m.PlayerRef(winner), winnerStr)
@@ -1316,7 +1315,9 @@ func (m *Match) OnSocketClose(s *server.Socket) {
 
 	// End if someone disconnects and there's no players in the match
 	if m.Player1 == nil && m.Player2 == nil {
-		m.quit <- true
+		if !m.ending {
+			m.quit <- true
+		}
 		return
 	}
 
@@ -1330,7 +1331,9 @@ func (m *Match) OnSocketClose(s *server.Socket) {
 				WarnError(m.Player2, "Your opponent disconnected, the match will close soon.")
 			}
 
-			m.quit <- true
+			if !m.ending {
+				m.quit <- true
+			}
 		}
 	}
 
@@ -1344,7 +1347,9 @@ func (m *Match) OnSocketClose(s *server.Socket) {
 				WarnError(m.Player1, "Your opponent disconnected, the match will close soon.")
 			}
 
-			m.quit <- true
+			if !m.ending {
+				m.quit <- true
+			}
 		}
 	}
 
