@@ -70,3 +70,32 @@ func ResoPacosClearSkyGuardian(c *match.Card) {
 	c.Use(fx.Creature)
 
 }
+
+// LarbaGeerTheImmaculate ...
+func LarbaGeerTheImmaculate(c *match.Card) {
+
+	c.Name = "Larba Geer, the Immaculate"
+	c.Power = 5000
+	c.Civ = civ.Light
+	c.Family = family.Guardian
+	c.ManaCost = 3
+	c.ManaRequirement = []string{civ.Light}
+
+	c.Use(fx.Creature, fx.Evolution, fx.When(fx.Summoned, func(card *match.Card, ctx *match.Context) {
+
+		ctx.ScheduleAfter(func() {
+
+			fx.FindFilter(
+				ctx.Match.Opponent(card.Player),
+				match.BATTLEZONE,
+				func(x *match.Card) bool { return x.HasCondition(cnd.Blocker) },
+			).Map(func(x *match.Card) {
+				x.Tapped = true
+				ctx.Match.Chat("Server", fmt.Sprintf("%s was tapped by %s", x.Name, card.Name))
+			})
+
+		})
+
+	}))
+
+}
