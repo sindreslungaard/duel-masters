@@ -476,7 +476,7 @@ func PangeasSong(c *match.Card) {
 // SolarRay ...
 func SolarRay(c *match.Card) {
 
-	c.Name = "SolarRay"
+	c.Name = "Solar Ray"
 	c.Civ = civ.Light
 	c.ManaCost = 2
 	c.ManaRequirement = []string{civ.Light}
