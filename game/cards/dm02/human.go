@@ -75,6 +75,10 @@ func ArmoredBlasterValdios(c *match.Card) {
 			return
 		}
 
+		if event.Card.ID == c.ID {
+			return
+		}
+
 		if event.Card.Family != family.Human {
 			return
 		}
