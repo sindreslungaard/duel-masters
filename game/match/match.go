@@ -46,8 +46,9 @@ type Match struct {
 	Started   bool             `json:"started"`
 	Visible   bool             `json:"visible"`
 
-	created int64
-	ending  bool
+	created     int64
+	ending      bool
+	isFirstTurn bool
 
 	quit chan bool
 }
@@ -80,8 +81,9 @@ func New(matchName string, hostID string, visible bool) *Match {
 		Started:   false,
 		Visible:   visible,
 
-		created: time.Now().Unix(),
-		ending:  false,
+		created:     time.Now().Unix(),
+		ending:      false,
+		isFirstTurn: true,
 
 		quit: make(chan bool),
 	}
@@ -791,7 +793,10 @@ func (m *Match) DrawStep() {
 
 	m.HandleFx(ctx)
 
-	m.CurrentPlayer().Player.DrawCards(1)
+	//TODO: dont draw first turn
+	if m.isFirstTurn == false {
+		m.CurrentPlayer().Player.DrawCards(1)
+	}
 
 	m.BroadcastState()
 
@@ -829,6 +834,8 @@ func (m *Match) EndOfTurnTriggers() {
 			c.ClearConditions()
 		}
 	}
+
+	m.isFirstTurn = false
 
 	ctx := NewContext(m, &EndOfTurnStep{})
 
