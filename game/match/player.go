@@ -428,6 +428,7 @@ func (p *Player) Denormalized() *server.PlayerState {
 
 	state := &server.PlayerState{
 		Deck:       len(p.deck),
+		HandCount:  len(p.hand),
 		Hand:       denormalizeCards(p.hand, false),
 		Shieldzone: shields,
 		Manazone:   denormalizeCards(p.manazone, false),

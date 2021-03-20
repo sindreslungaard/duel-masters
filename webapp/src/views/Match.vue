@@ -264,6 +264,7 @@
 
       <div class="right-stage">
         <div class="right-stage-content">
+          <p>Hand [{{ state.opponent.handCount }}]</p>
           <p>Graveyard [{{ state.opponent.graveyard.length }}]</p>
           <div class="card">
             <img
