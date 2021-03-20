@@ -34,6 +34,7 @@ type CardState struct {
 // PlayerState stores information about the state of the current player
 type PlayerState struct {
 	Deck       int         `json:"deck"`
+	HandCount  int         `json:"handCount"`
 	Hand       []CardState `json:"hand"`
 	Shieldzone []string    `json:"shieldzone"`
 	Manazone   []CardState `json:"manazone"`
