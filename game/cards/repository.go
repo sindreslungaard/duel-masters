@@ -3,6 +3,7 @@ package cards
 import (
 	"duel-masters/game/cards/dm01"
 	"duel-masters/game/cards/dm02"
+	"duel-masters/game/cards/dm03"
 	"duel-masters/game/match"
 )
 
@@ -10,6 +11,7 @@ import (
 var Sets = map[string]*map[string]match.CardConstructor{
 	"dm-01": &DM01,
 	"dm-02": &DM02,
+	"dm-03": &DM03,
 }
 
 // DM01 is a map with all the card id's in the game and corresponding CardConstructor for dm01
@@ -195,4 +197,14 @@ var DM02 = map[string]match.CardConstructor{
 	"fcf2f484-c471-4a5d-bc41-1fcd56604d73": dm02.GeneralDarkFiend,
 	"fd9f6d26-8fd8-43f2-84e5-b83493a1106e": dm02.LarbaGeerTheImmaculate,
 	"ff33e31f-4f1c-4c07-b293-2e65a13e1077": dm02.RainbowStone,
+}
+
+// DM03 is a map with all the card id's in the game and corresponding CardConstructor for dm03
+var DM03 = map[string]match.CardConstructor{
+
+	"70270aa3-ff24-476c-be22-5b9f48fc682a": dm03.MiarCometElemental,
+	"9c7e3304-3aff-4362-a687-b5ca5333fe98": dm03.ChaosFish,
+	"9df4d8ac-3c86-4c1f-b916-c9a384b0340f": dm03.GirielGhastlyWarrior,
+	"41c2e4dc-460f-459a-b7cf-ef17b5c9a4eb": dm03.GarkagoDragon,
+	"54652ec5-3bc3-4124-9c67-b05ba56def5f": dm03.EarthstompGiant,
 }
