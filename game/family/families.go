@@ -34,4 +34,5 @@ const (
 	Fish            = "Fish"
 	DarkLord        = "Dark Lord"
 	BrainJacker     = "Brain Jacker"
+	Giant           = "Giant"
 )
