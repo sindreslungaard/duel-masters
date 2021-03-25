@@ -44,3 +44,24 @@ func ReturnToMana(card *match.Card, ctx *match.Context) {
 	}
 
 }
+
+// ReturnToShield returns the card to the players shield zone instead of the graveyard
+func ReturnToShield(card *match.Card, ctx *match.Context) {
+
+	// When destroyed
+	if event, ok := ctx.Event.(*match.CreatureDestroyed); ok {
+
+		if event.Card == card {
+
+			card.Player.MoveCard(card.ID, match.BATTLEZONE, match.SHIELDZONE)
+			card.Tapped = false
+
+			ctx.Match.Chat("Server", fmt.Sprintf("%s was destroyed by %s but returned to the shield zone", event.Card.Name, event.Source.Name))
+
+			ctx.InterruptFlow()
+
+		}
+
+	}
+
+}
