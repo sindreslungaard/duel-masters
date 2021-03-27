@@ -57,3 +57,33 @@ func LogicSphere(c *match.Card) {
 		}
 	})
 }
+
+// SundropArmor ...
+func SundropArmor(c *match.Card) {
+
+	c.Name = "Sundrop Armor"
+	c.Civ = civ.Light
+	c.ManaCost = 4
+	c.ManaRequirement = []string{civ.Light}
+
+	c.Use(fx.Spell, func(card *match.Card, ctx *match.Context) {
+
+		if match.AmICasted(card, ctx) {
+
+			fx.SelectFilter(
+				card.Player,
+				ctx.Match,
+				card.Player,
+				match.HAND,
+				"Select 1 card from your hand that will be put as a shield",
+				1,
+				1,
+				false,
+				func(c *match.Card) bool { return c.ID != card.ID },
+			).Map(func(x *match.Card) {
+				ctx.Match.MoveCard(x, match.SHIELDZONE, card)
+			})
+
+		}
+	})
+}

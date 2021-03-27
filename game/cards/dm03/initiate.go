@@ -32,3 +32,60 @@ func LenaVizierOfBrilliance(c *match.Card) {
 	}))
 
 }
+
+// SiegBaliculaTheIntense ...
+func SiegBaliculaTheIntense(c *match.Card) {
+
+	c.Name = "Sieg Balicula, the Intense"
+	c.Power = 5000
+	c.Civ = civ.Light
+	c.Family = family.Initiate
+	c.ManaCost = 3
+	c.ManaRequirement = []string{civ.Light}
+
+	c.Use(fx.Creature, fx.Evolution, func(card *match.Card, ctx *match.Context) {
+
+		if !card.Player.HasCard(match.BATTLEZONE, card.ID) {
+			return
+		}
+
+		newBlockers := fx.FindFilter(
+			card.Player,
+			match.BATTLEZONE,
+			func(x *match.Card) bool {
+				return (x.Civ == civ.Light && x.ID != card.ID && x.Tapped == false)
+			},
+		)
+
+		for _, blocker := range newBlockers {
+
+			if blocker.HasCondition(cnd.Blocker) == false {
+
+				if _, ok := ctx.Event.(*match.UntapStep); ok {
+
+					blocker.AddCondition(cnd.Blocker, true, card.ID)
+				}
+			}
+		}
+
+		if event, ok := ctx.Event.(*match.AttackPlayer); ok {
+
+			// Only add to list of blockers if it is our player that is being attacked, i.e. not our players turn
+			if !ctx.Match.IsPlayerTurn(card.Player) {
+				event.Blockers = append(event.Blockers, newBlockers...)
+			}
+
+		}
+
+		if event, ok := ctx.Event.(*match.AttackCreature); ok {
+
+			// Only add to list of blockers if it is our creature that is being attacked, i.e. not our players turn
+			if !ctx.Match.IsPlayerTurn(card.Player) {
+				event.Blockers = append(event.Blockers, newBlockers...)
+			}
+
+		}
+
+	})
+
+}
