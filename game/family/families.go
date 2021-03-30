@@ -35,4 +35,5 @@ const (
 	DarkLord        = "Dark Lord"
 	BrainJacker     = "Brain Jacker"
 	Giant           = "Giant"
+	MechaThunder    = "Mecha Thunder"
 )

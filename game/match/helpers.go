@@ -297,3 +297,17 @@ func AmICasted(card *Card, ctx *Context) bool {
 	return false
 
 }
+
+// AmIDestroyed returns true or false based on if the card is destroyed
+func AmIDestroyed(card *Card, ctx *Context) bool {
+
+	if event, ok := ctx.Event.(*CreatureDestroyed); ok {
+
+		if event.Card.ID == card.ID {
+			return true
+		}
+
+	}
+
+	return false
+}
