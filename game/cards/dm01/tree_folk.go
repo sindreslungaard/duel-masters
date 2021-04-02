@@ -40,7 +40,7 @@ func PoisonousDahlia(c *match.Card) {
 // ThornyMandra ...
 func ThornyMandra(c *match.Card) {
 
-	c.Name = "ThornyMandra"
+	c.Name = "Thorny Mandra"
 	c.Power = 4000
 	c.Civ = civ.Nature
 	c.Family = family.TreeFolk

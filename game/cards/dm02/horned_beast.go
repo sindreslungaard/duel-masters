@@ -52,15 +52,16 @@ func LeapingTornadoHorn(c *match.Card) {
 
 		power := 0
 
-		for _, creature := range fx.Find(c.Player, match.BATTLEZONE) {
-			if creature == c {
-				continue
-			}
-			power += 1000
+		if (attacking) {
+			for _, creature := range fx.Find(c.Player, match.BATTLEZONE) {
+				if creature == c {
+					continue
+				}
+				power += 1000
+			}	
 		}
-
+	
 		return power
-
 	}
 
 	c.Use(fx.Creature)
