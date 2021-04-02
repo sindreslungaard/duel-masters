@@ -20,24 +20,23 @@ func ElfX(c *match.Card) {
 
 	c.Use(fx.Creature, func(card *match.Card, ctx *match.Context) {
 
-		if !ctx.Match.IsPlayerTurn(card.Player) {
+		// Only active if ElfX is in the battlezone
+		if card.Zone != match.BATTLEZONE {
 			return
 		}
 
-		if event, ok := ctx.Event.(*match.PlayCardEvent); ok {
+		if event, ok := ctx.Event.(*match.GetCostEvent); ok {
 
-			if card.Zone == match.BATTLEZONE && event.CardID != card.ID {
-
-				toReduce, err := ctx.Match.CurrentPlayer().Player.GetCard(event.CardID, match.HAND)
-
-				if err != nil {
-					return
-				}
-
-				toReduce.AddCondition(cnd.ReducedCost, true, card.ID)
-
+			// Only reduce your other creatures
+			if event.Card.Player != card.Player || !event.Card.HasCondition(cnd.Creature) || event.Card == card {
+				return
 			}
 
+			reduction := 1
+
+			if event.Cost-reduction > 0 {
+				event.Cost -= reduction
+			}
 		}
 
 	})
