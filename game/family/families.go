@@ -36,4 +36,5 @@ const (
 	BrainJacker     = "Brain Jacker"
 	Giant           = "Giant"
 	MechaThunder    = "Mecha Thunder"
+	CyberCluster	= "Cyber Cluster"
 )

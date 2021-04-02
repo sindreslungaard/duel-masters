@@ -218,4 +218,9 @@ var DM03 = map[string]match.CardConstructor{
 	"b9b1a83a-626c-471a-82ff-3e2372c9d838": dm03.SparkleFlower,
 	"a097478c-af87-4316-b42d-888418d07919": dm03.SundropArmor,
 	"7fdf0d01-a999-4f31-8a37-945396796998": dm03.UrPaleSeekerOfSunlight,
+	"f76fd433-24ba-41e3-81eb-622cad7247e2": dm03.AnglerCluster,
+	"23a97f92-d53d-4b9f-8e33-ca090bd30c1e": dm03.AquaDeformer,
+	"d96cdbba-0e60-4d8e-9394-4830b11f559d": dm03.Emeral,
+	"4852b823-7b96-4669-809b-edc14c042567": dm03.FloodValve,
+	"39e0b4b6-eaa5-4673-9538-aa9d2c7fc5d8": dm03.KingNeptas,
 }
