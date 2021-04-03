@@ -36,6 +36,7 @@ export default {
 <style lang="scss" scoped>
 .card-show-dialog {
   text-align: center;
+  background: #222428;
 
   .cards {
     display: flex;
@@ -46,7 +47,7 @@ export default {
       margin: 20px 10px;
       flex: 0 1 0;
       border-radius: 4%;
-      width: 40vh;
+      width: 30vh;
 
       &:first-child {
         margin-left: 0;
