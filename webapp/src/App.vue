@@ -22,7 +22,8 @@ body {
 }
 
 .vm--modal {
-  background-color: #222428;
+  background-color: #36393f;
+  border-color: #222428;
   border-radius: 4px;
   padding: 20px;
 }

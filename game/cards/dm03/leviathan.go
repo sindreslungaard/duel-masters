@@ -2,6 +2,7 @@ package dm03
 
 import (
 	"duel-masters/game/civ"
+	"duel-masters/game/cnd"
 	"duel-masters/game/family"
 	"duel-masters/game/fx"
 	"duel-masters/game/match"
@@ -81,4 +82,76 @@ func KingNeptas(c *match.Card) {
 
 	}), fx.Creature)
 
+}
+
+// KingPonitas ...
+func KingPonitas(c *match.Card) {
+
+	c.Name = "King Ponitas"
+	c.Power = 4000
+	c.Civ = civ.Water
+	c.Family = family.Leviathan
+	c.ManaCost = 8
+	c.ManaRequirement = []string{civ.Water}
+
+	c.Use(fx.Creature, fx.When(fx.Attacking, func(card *match.Card, ctx *match.Context) {
+
+		waterCards := match.Filter(card.Player, ctx.Match, card.Player, match.DECK, "Select 1 wated card from your deck that will be shown to your opponent and sent to your hand", 1, 1, false, func(x *match.Card) bool { return x.Civ == civ.Water })
+
+		for _, waterCard := range waterCards {
+
+			card.Player.MoveCard(waterCard.ID, match.DECK, match.HAND)
+			ctx.Match.Chat("Server", fmt.Sprintf("%s retrieved %s from the deck to their hand", card.Player.Username(), waterCard.Name))
+
+		}
+
+		card.Player.ShuffleDeck()
+	}))
+}
+
+// LegendaryBynor ...
+func LegendaryBynor(c *match.Card) {
+
+	c.Name = "Legendary Bynor"
+	c.Power = 8000
+	c.Civ = civ.Water
+	c.Family = family.Leviathan
+	c.ManaCost = 6
+	c.ManaRequirement = []string{civ.Water}
+
+	c.Use(fx.Creature, fx.Evolution, fx.Doublebreaker, func(card *match.Card, ctx *match.Context) {
+
+		if card.Zone != match.BATTLEZONE {
+			return
+		}
+
+		if event, ok := ctx.Event.(*match.AttackCreature); ok {
+			legendaryBynorSpecial(card, ctx, event.CardID)
+		}
+
+		if event, ok := ctx.Event.(*match.AttackPlayer); ok {
+			legendaryBynorSpecial(card, ctx, event.CardID)
+		}
+
+	})
+
+}
+
+func legendaryBynorSpecial(card *match.Card, ctx *match.Context, cardID string) {
+
+	p := ctx.Match.CurrentPlayer()
+
+	creature, err := p.Player.GetCard(cardID, match.BATTLEZONE)
+
+	if err != nil {
+		return
+	}
+
+	if creature.Civ != civ.Water || creature.ID == card.ID {
+		return
+	}
+
+	if ctx.Match.IsPlayerTurn(card.Player) {
+		creature.AddCondition(cnd.CantBeBlocked, true, card.ID)
+	}
 }

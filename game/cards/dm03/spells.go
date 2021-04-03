@@ -116,3 +116,82 @@ func FloodValve(c *match.Card) {
 		}
 	})
 }
+
+// LiquidScope ...
+func LiquidScope(c *match.Card) {
+
+	c.Name = "Liquid Scope"
+	c.Civ = civ.Water
+	c.ManaCost = 4
+	c.ManaRequirement = []string{civ.Water}
+
+	c.Use(fx.Spell, fx.ShieldTrigger, func(card *match.Card, ctx *match.Context) {
+
+		if match.AmICasted(card, ctx) {
+
+			shields, err := ctx.Match.Opponent(card.Player).Container(match.SHIELDZONE)
+			
+			if err != nil {
+				return
+			}
+
+			hand, err := ctx.Match.Opponent(card.Player).Container(match.HAND)
+			
+			if err != nil {
+				return
+			}
+
+			ids := make([]string, 0)
+	
+			for _, s := range shields {
+				ids = append(ids, s.ImageID)
+			}
+	
+			ctx.Match.ShowCards(
+				card.Player,
+				"Your opponent's shields:",
+				ids,
+			)
+
+			ids = make([]string, 0)
+	
+			for _, s := range hand {
+				ids = append(ids, s.ImageID)
+			}
+	
+			ctx.Match.ShowCards(
+				card.Player,
+				"Your opponent's hand:",
+				ids,
+			)
+		}
+	})
+}
+
+// PsychicShaper ...
+func PsychicShaper(c *match.Card) {
+
+	c.Name = "Psychic Shaper"
+	c.Civ = civ.Water
+	c.ManaCost = 6
+	c.ManaRequirement = []string{civ.Water}
+
+	c.Use(fx.Spell, func(card *match.Card, ctx *match.Context) {
+
+		if match.AmICasted(card, ctx) {
+
+			cards := card.Player.PeekDeck(4)
+
+			for _, toMove := range cards {
+
+				if toMove.Civ == civ.Water {
+					card.Player.MoveCard(toMove.ID, match.DECK, match.HAND)
+					ctx.Match.Chat("Server", fmt.Sprintf("%s put %s into the hand from the top of their deck", card.Player.Username(), toMove.Name))
+				} else {
+					card.Player.MoveCard(toMove.ID, match.DECK, match.GRAVEYARD)
+					ctx.Match.Chat("Server", fmt.Sprintf("%s put %s into the graveyard from the top of their deck", card.Player.Username(), toMove.Name))
+				}
+			}
+		}
+	})
+}

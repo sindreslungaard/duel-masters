@@ -201,7 +201,6 @@ var DM02 = map[string]match.CardConstructor{
 
 // DM03 is a map with all the card id's in the game and corresponding CardConstructor for dm03
 var DM03 = map[string]match.CardConstructor{
-
 	"70270aa3-ff24-476c-be22-5b9f48fc682a": dm03.MiarCometElemental,
 	"9c7e3304-3aff-4362-a687-b5ca5333fe98": dm03.ChaosFish,
 	"9df4d8ac-3c86-4c1f-b916-c9a384b0340f": dm03.GirielGhastlyWarrior,
@@ -223,4 +222,10 @@ var DM03 = map[string]match.CardConstructor{
 	"d96cdbba-0e60-4d8e-9394-4830b11f559d": dm03.Emeral,
 	"4852b823-7b96-4669-809b-edc14c042567": dm03.FloodValve,
 	"39e0b4b6-eaa5-4673-9538-aa9d2c7fc5d8": dm03.KingNeptas,
+	"2f2dae63-bb68-4d89-b7b1-48dd14eab40e": dm03.KingPonitas,
+	"232a9fdd-e289-454f-9593-5b766c969a1e": dm03.LegendaryBynor,
+	"e14514a5-592b-40ed-b693-7cb8f649d93a": dm03.LiquidScope,
+	"c4f3db71-e9e7-4ab6-95fc-1174b4f42aca": dm03.PsychicShaper,
+	"0f9a0c09-1d5b-4162-94ca-5399f8f37d63": dm03.Shtra,
+	"fb3a5abd-c16a-4365-98c0-79753fdcd91d": dm03.StingerBall,
 }
