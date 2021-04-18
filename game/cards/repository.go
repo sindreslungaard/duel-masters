@@ -233,4 +233,10 @@ var DM03 = map[string]match.CardConstructor{
 	"826de4ef-a10d-410a-aed1-066783babbdc": dm03.EldritchPoison,
 	"b3975c0b-2978-4b1a-8225-78d420ff941d": dm03.GamilKnightOfHatred,
 	"21a9e35f-4219-490c-8963-3e1fee66c71b": dm03.GhastlyDrain,
+	"03b16fba-71e7-4328-a605-4643bb5cfbf8": dm03.HangWormFetidLarva,
+	"12d21399-f499-432b-bbb0-8ca1088b33c7": dm03.JackViperShadowofDoom,
+	"ec9ebf80-3060-48cf-888a-bd00b61b3746": dm03.Mudman,
+	"c08d8e5a-9f4b-4fe4-bf20-d5c7fca9ea15": dm03.Scratchclaw,
+	"f773e1f2-37d0-45c2-a34f-63e91094aab1": dm03.SnakeAttack,
+	"bfef8796-4214-4cfe-af86-4a8608a6fd7f": dm03.WailingShadowBelbetphlo,
 }
