@@ -130,23 +130,23 @@ func LiquidScope(c *match.Card) {
 		if match.AmICasted(card, ctx) {
 
 			shields, err := ctx.Match.Opponent(card.Player).Container(match.SHIELDZONE)
-			
+
 			if err != nil {
 				return
 			}
 
 			hand, err := ctx.Match.Opponent(card.Player).Container(match.HAND)
-			
+
 			if err != nil {
 				return
 			}
 
 			ids := make([]string, 0)
-	
+
 			for _, s := range shields {
 				ids = append(ids, s.ImageID)
 			}
-	
+
 			ctx.Match.ShowCards(
 				card.Player,
 				"Your opponent's shields:",
@@ -154,11 +154,11 @@ func LiquidScope(c *match.Card) {
 			)
 
 			ids = make([]string, 0)
-	
+
 			for _, s := range hand {
 				ids = append(ids, s.ImageID)
 			}
-	
+
 			ctx.Match.ShowCards(
 				card.Player,
 				"Your opponent's hand:",
@@ -192,6 +192,71 @@ func PsychicShaper(c *match.Card) {
 					ctx.Match.Chat("Server", fmt.Sprintf("%s put %s into the graveyard from the top of their deck", card.Player.Username(), toMove.Name))
 				}
 			}
+		}
+	})
+}
+
+// EldritchPoison ...
+func EldritchPoison(c *match.Card) {
+
+	c.Name = "Eldritch Poison"
+	c.Civ = civ.Darkness
+	c.ManaCost = 1
+	c.ManaRequirement = []string{civ.Darkness}
+
+	c.Use(fx.Spell, fx.ShieldTrigger, func(card *match.Card, ctx *match.Context) {
+
+		if match.AmICasted(card, ctx) {
+
+			creatures := match.Filter(card.Player, ctx.Match, card.Player, match.BATTLEZONE, "Select 1 of your darkness creatures that will be destroyed", 0, 1, true, func(x *match.Card) bool { return x.Civ == civ.Darkness })
+
+			if len(creatures) > 0 {
+
+				for _, creature := range creatures {
+					ctx.Match.Destroy(creature, card)
+				}
+
+				creatures = match.Filter(card.Player, ctx.Match, card.Player, match.BATTLEZONE, "Select 1 of your creatures from your mana zone that will be returned to your hand", 1, 1, false, func(x *match.Card) bool { return x.HasCondition(cnd.Creature) })
+
+				for _, creature := range creatures {
+					card.Player.MoveCard(creature.ID, match.MANAZONE, match.HAND)
+					ctx.Match.Chat("Server", fmt.Sprintf("%s was moved to %s's hand from their mana zone", creature.Name, ctx.Match.PlayerRef(card.Player).Socket.User.Username))
+				}
+			}
+		}
+	})
+}
+
+// GhastlyDrain ...
+func GhastlyDrain(c *match.Card) {
+
+	c.Name = "Ghastly Drain"
+	c.Civ = civ.Darkness
+	c.ManaCost = 3
+	c.ManaRequirement = []string{civ.Darkness}
+
+	c.Use(fx.Spell, func(card *match.Card, ctx *match.Context) {
+
+		if match.AmICasted(card, ctx) {
+
+			shields, err := card.Player.Container(match.SHIELDZONE)
+
+			if err != nil {
+				return
+			}
+			nrShields := len(shields)
+
+			fx.SelectBackside(
+				card.Player,
+				ctx.Match, card.Player,
+				match.SHIELDZONE,
+				"Select any number of shields and move them into your hand",
+				0,
+				nrShields,
+				true,
+			).Map(func(x *match.Card) {
+				ctx.Match.MoveCard(x, match.HAND, card)
+			})
 		}
 	})
 }

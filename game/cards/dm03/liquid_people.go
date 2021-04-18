@@ -5,6 +5,7 @@ import (
 	"duel-masters/game/family"
 	"duel-masters/game/fx"
 	"duel-masters/game/match"
+	"fmt"
 )
 
 // AquaDeformer ...
@@ -25,8 +26,9 @@ func AquaDeformer(c *match.Card) {
 
 				cards := match.Search(card.Player, ctx.Match, card.Player, match.MANAZONE, "Aqua Deformer: Select 2 cards from your manazone that will be sent to your hand", 2, 2, false)
 
-				for _, card := range cards {
-					card.Player.MoveCard(card.ID, match.MANAZONE, match.HAND)
+				for _, crd := range cards {
+					card.Player.MoveCard(crd.ID, match.MANAZONE, match.HAND)
+					ctx.Match.Chat("Server", fmt.Sprintf("%s was moved to %s's hand from their mana zone", crd.Name, ctx.Match.PlayerRef(card.Player).Socket.User.Username))
 				}
 
 				ctx.Match.Wait(card.Player, "Waiting for your opponent to make an action")
@@ -34,8 +36,9 @@ func AquaDeformer(c *match.Card) {
 
 				opponentCards := match.Search(ctx.Match.Opponent(card.Player), ctx.Match, ctx.Match.Opponent(card.Player), match.MANAZONE, "Aqua Deformer: Select 2 cards from your manazone that will be sent to your hand", 2, 2, false)
 
-				for _, card := range opponentCards {
-					card.Player.MoveCard(card.ID, match.MANAZONE, match.HAND)
+				for _, crd := range opponentCards {
+					card.Player.MoveCard(crd.ID, match.MANAZONE, match.HAND)
+					ctx.Match.Chat("Server", fmt.Sprintf("%s was moved to %s's hand from their mana zone", crd.Name, ctx.Match.PlayerRef(ctx.Match.Opponent(card.Player)).Socket.User.Username))
 				}
 
 			}
