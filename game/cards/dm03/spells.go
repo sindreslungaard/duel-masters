@@ -261,6 +261,7 @@ func GhastlyDrain(c *match.Card) {
 	})
 }
 
+
 // SnakeAttack ...
 func SnakeAttack(c *match.Card) {
 
