@@ -216,7 +216,7 @@ func EldritchPoison(c *match.Card) {
 					ctx.Match.Destroy(creature, card)
 				}
 
-				creatures = match.Filter(card.Player, ctx.Match, card.Player, match.BATTLEZONE, "Select 1 of your creatures from your mana zone that will be returned to your hand", 1, 1, false, func(x *match.Card) bool { return x.HasCondition(cnd.Creature) })
+				creatures = match.Filter(card.Player, ctx.Match, card.Player, match.MANAZONE, "Select 1 of your creatures from your mana zone that will be returned to your hand", 1, 1, false, func(x *match.Card) bool { return x.HasCondition(cnd.Creature) })
 
 				for _, creature := range creatures {
 					card.Player.MoveCard(creature.ID, match.MANAZONE, match.HAND)
@@ -257,6 +257,46 @@ func GhastlyDrain(c *match.Card) {
 			).Map(func(x *match.Card) {
 				ctx.Match.MoveCard(x, match.HAND, card)
 			})
+		}
+	})
+}
+
+
+// SnakeAttack ...
+func SnakeAttack(c *match.Card) {
+
+	c.Name = "Snake Attack"
+	c.Civ = civ.Darkness
+	c.ManaCost = 4
+	c.ManaRequirement = []string{civ.Darkness}
+
+	c.Use(fx.Spell, func(card *match.Card, ctx *match.Context) {
+
+		if match.AmICasted(card, ctx) {
+
+			fx.SelectBackside(
+				card.Player,
+				ctx.Match, card.Player,
+				match.SHIELDZONE,
+				"Select one shield and send it to graveyard",
+				1,
+				1,
+				true,
+			).Map(func(x *match.Card) {
+				ctx.Match.MoveCard(x, match.GRAVEYARD, card)
+			})
+
+			creatures, err := card.Player.Container(match.BATTLEZONE)
+
+			if err != nil {
+				return
+			}
+
+			for _, creature := range creatures {
+
+				creature.AddCondition(cnd.DoubleBreaker, nil, card.ID)
+				ctx.Match.Chat("Server", fmt.Sprintf("%s was given double breaker until the end of the turn", creature.Name))
+			}
 		}
 	})
 }
