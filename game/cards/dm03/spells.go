@@ -300,3 +300,36 @@ func SnakeAttack(c *match.Card) {
 		}
 	})
 }
+
+// BlazeCannon ...
+func BlazeCannon(c *match.Card) {
+
+	c.Name = "Blaze Cannon"
+	c.Civ = civ.Fire
+	c.ManaCost = 7
+	c.ManaRequirement = []string{civ.Fire}
+
+	c.Use(fx.Spell, func(card *match.Card, ctx *match.Context) {
+
+		if match.AmICasted(card, ctx) {
+
+			if match.ContainerHas(c.Player, match.MANAZONE, func(x *match.Card) bool { return x.Civ != civ.Fire }) {
+				return
+			} 
+
+			creatures, err := card.Player.Container(match.BATTLEZONE)
+
+			if err != nil {
+				return
+			}
+
+			for _, creature := range creatures {
+
+				creature.AddCondition(cnd.PowerAttacker, 4000, card.ID)
+				creature.AddCondition(cnd.DoubleBreaker, nil, card.ID)
+				ctx.Match.Chat("Server", fmt.Sprintf("%s was given power attacker +4000 and double breaker until the end of the turn", creature.Name))
+
+			}
+		}
+	})
+}

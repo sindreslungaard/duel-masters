@@ -53,13 +53,13 @@ func SiegBaliculaTheIntense(c *match.Card) {
 			card.Player,
 			match.BATTLEZONE,
 			func(x *match.Card) bool {
-				return (x.Civ == civ.Light && x.ID != card.ID && x.Tapped == false)
+				return (x.Civ == civ.Light && x.ID != card.ID && !x.Tapped)
 			},
 		)
 
 		for _, blocker := range newBlockers {
 
-			if blocker.HasCondition(cnd.Blocker) == false {
+			if !blocker.HasCondition(cnd.Blocker) {
 
 				if _, ok := ctx.Event.(*match.UntapStep); ok {
 

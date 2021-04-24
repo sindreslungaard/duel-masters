@@ -25,8 +25,10 @@ func ChaosFish(c *match.Card) {
 	//When this creature attacks, draw as many cards as other water creatures you have in the battle zone
 	c.Use(fx.Creature, fx.When(fx.Attacking, func(card *match.Card, ctx *match.Context) {
 
-		nrCardsToDraw := (getWaterCardsInYourBattleZone(card) - 1) //-1 to exclude self
-		card.Player.DrawCards(nrCardsToDraw)
+		ctx.ScheduleAfter(func() {
+			nrCardsToDraw := (getWaterCardsInYourBattleZone(card) - 1) //-1 to exclude self
+			card.Player.DrawCards(nrCardsToDraw)
+		})
 	}))
 
 }

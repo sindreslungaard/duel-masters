@@ -31,7 +31,7 @@ func SparkleFlower(c *match.Card) {
 	
 		if event, ok := ctx.Event.(*match.AttackPlayer); ok {
 	
-			if card.HasCondition(cnd.Blocker) == false {
+			if !card.HasCondition(cnd.Blocker) {
 				return
 			}
 
@@ -44,7 +44,7 @@ func SparkleFlower(c *match.Card) {
 	
 		if event, ok := ctx.Event.(*match.AttackCreature); ok {
 	
-			if card.HasCondition(cnd.Blocker) == false {
+			if !card.HasCondition(cnd.Blocker) {
 				return
 			}
 

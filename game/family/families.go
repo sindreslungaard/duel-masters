@@ -38,4 +38,5 @@ const (
 	MechaThunder    = "Mecha Thunder"
 	CyberCluster	= "Cyber Cluster"
 	Hedrian			= "Hedrian"
+	FireBird		= "Fire Bird"
 )
