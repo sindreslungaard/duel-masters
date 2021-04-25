@@ -21,14 +21,16 @@ func RaVuSeekerOfLightning(c *match.Card) {
 
 	c.Use(fx.Creature, fx.When(fx.Attacking, func(card *match.Card, ctx *match.Context) {
 
-		spells := match.Filter(card.Player, ctx.Match, card.Player, match.GRAVEYARD, "You may select 1 spell from your graveyard that will be sent to your hand", 0, 1, false, func(x *match.Card) bool { return x.HasCondition(cnd.Spell) })
+		ctx.ScheduleAfter(func() {
+			spells := match.Filter(card.Player, ctx.Match, card.Player, match.GRAVEYARD, "You may select 1 spell from your graveyard that will be sent to your hand", 0, 1, false, func(x *match.Card) bool { return x.HasCondition(cnd.Spell) })
 
-		for _, spell := range spells {
+			for _, spell := range spells {
 
-			card.Player.MoveCard(spell.ID, match.GRAVEYARD, match.HAND)
-			ctx.Match.Chat("Server", fmt.Sprintf("%s retrieved %s from the graveyard to their hand", spell.Player.Username(), spell.Name))
+				card.Player.MoveCard(spell.ID, match.GRAVEYARD, match.HAND)
+				ctx.Match.Chat("Server", fmt.Sprintf("%s retrieved %s from the graveyard to their hand", spell.Player.Username(), spell.Name))
 
-		}
+			}
+		})
 	}))
 
 }

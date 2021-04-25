@@ -25,6 +25,19 @@ func GarkagoDragon(c *match.Card) {
 	c.Use(fx.Creature, fx.Doublebreaker, fx.AttackUntapped)
 }
 
+// BoltailDragon ...
+func BoltailDragon(c *match.Card) {
+
+	c.Name = "Boltail Dragon"
+	c.Power = 9000
+	c.Civ = civ.Fire
+	c.Family = family.ArmoredDragon
+	c.ManaCost = 7
+	c.ManaRequirement = []string{civ.Fire}
+
+	c.Use(fx.Creature, fx.Doublebreaker)
+}
+
 // Return the number of water creatures in your battle zone
 func getFireCardsInYourBattleZone(card *match.Card) int {
 
