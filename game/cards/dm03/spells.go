@@ -261,7 +261,6 @@ func GhastlyDrain(c *match.Card) {
 	})
 }
 
-
 // SnakeAttack ...
 func SnakeAttack(c *match.Card) {
 
@@ -315,7 +314,7 @@ func BlazeCannon(c *match.Card) {
 
 			if match.ContainerHas(c.Player, match.MANAZONE, func(x *match.Card) bool { return x.Civ != civ.Fire }) {
 				return
-			} 
+			}
 
 			creatures, err := card.Player.Container(match.BATTLEZONE)
 
@@ -330,6 +329,88 @@ func BlazeCannon(c *match.Card) {
 				ctx.Match.Chat("Server", fmt.Sprintf("%s was given power attacker +4000 and double breaker until the end of the turn", creature.Name))
 
 			}
+		}
+	})
+}
+
+// SearingWave ...
+func SearingWave(c *match.Card) {
+
+	c.Name = "Searing Wave"
+	c.Civ = civ.Fire
+	c.ManaCost = 5
+	c.ManaRequirement = []string{civ.Fire}
+
+	c.Use(fx.Spell, func(card *match.Card, ctx *match.Context) {
+
+		if match.AmICasted(card, ctx) {
+
+			fx.SelectBackside(
+				card.Player,
+				ctx.Match, card.Player,
+				match.SHIELDZONE,
+				"Select one shield and send it to graveyard",
+				1,
+				1,
+				false,
+			).Map(func(x *match.Card) {
+				ctx.Match.MoveCard(x, match.GRAVEYARD, card)
+			})
+
+			creatures, err := ctx.Match.Opponent(card.Player).Container(match.BATTLEZONE)
+
+			if err != nil {
+				return
+			}
+
+			for _, creature := range creatures {
+
+				if creature.Power <= 3000 {
+					ctx.Match.MoveCard(creature, match.GRAVEYARD, card)
+				}
+
+			}
+		}
+	})
+}
+
+// VolcanicArrows ...
+func VolcanicArrows(c *match.Card) {
+
+	c.Name = "Volcanic Arrows"
+	c.Civ = civ.Fire
+	c.ManaCost = 2
+	c.ManaRequirement = []string{civ.Fire}
+
+	c.Use(fx.Spell, fx.ShieldTrigger, func(card *match.Card, ctx *match.Context) {
+
+		if match.AmICasted(card, ctx) {
+
+			fx.SelectBackside(
+				card.Player,
+				ctx.Match, card.Player,
+				match.SHIELDZONE,
+				"Select one shield and send it to graveyard",
+				1,
+				1,
+				false,
+			).Map(func(x *match.Card) {
+				ctx.Match.MoveCard(x, match.GRAVEYARD, card)
+			})
+
+			fx.SelectFilter(
+				card.Player,
+				ctx.Match,
+				ctx.Match.Opponent(card.Player),
+				match.BATTLEZONE,
+				"Volcanic arrows: Select 1 of your opponent's creatures with power 6000 or less and destroy it",
+				0,
+				1,
+				false,
+				func(x *match.Card) bool { return x.Power <= 6000 },
+			).Map(func(x *match.Card) {
+				ctx.Match.Destroy(x, card)
+			})
 		}
 	})
 }

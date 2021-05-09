@@ -96,7 +96,7 @@ func Shtra(c *match.Card) {
 				opponentCards := match.Search(ctx.Match.Opponent(card.Player), ctx.Match, ctx.Match.Opponent(card.Player), match.MANAZONE, "Shtra: Select 1 card from your manazone that will be sent to your hand", 1, 1, false)
 
 				for _, crd := range opponentCards {
-					card.Player.MoveCard(crd.ID, match.MANAZONE, match.HAND)
+					ctx.Match.Opponent(card.Player).MoveCard(crd.ID, match.MANAZONE, match.HAND)
 					ctx.Match.Chat("Server", fmt.Sprintf("%s was moved to %s's hand from their mana zone", crd.Name, ctx.Match.PlayerRef(ctx.Match.Opponent(card.Player)).Socket.User.Username))
 				}
 
