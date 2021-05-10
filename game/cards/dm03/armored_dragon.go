@@ -2,6 +2,7 @@ package dm03
 
 import (
 	"duel-masters/game/civ"
+	"duel-masters/game/cnd"
 	"duel-masters/game/family"
 	"duel-masters/game/fx"
 	"duel-masters/game/match"
@@ -36,6 +37,52 @@ func BoltailDragon(c *match.Card) {
 	c.ManaRequirement = []string{civ.Fire}
 
 	c.Use(fx.Creature, fx.Doublebreaker)
+}
+
+// UberdragonJabaha ...
+func UberdragonJabaha(c *match.Card) {
+
+	c.Name = "Uberdragon Jabaha"
+	c.Power = 11000
+	c.Civ = civ.Fire
+	c.Family = family.ArmoredDragon
+	c.ManaCost = 7
+	c.ManaRequirement = []string{civ.Fire}
+
+	c.Use(fx.Creature, fx.Doublebreaker, fx.Evolution, func(card *match.Card, ctx *match.Context) {
+
+		if card.Zone != match.BATTLEZONE {
+			return
+		}
+
+		if event, ok := ctx.Event.(*match.AttackCreature); ok {
+			uberDragonJabahaSpecial(card, ctx, event.CardID)
+		}
+
+		if event, ok := ctx.Event.(*match.AttackPlayer); ok {
+			uberDragonJabahaSpecial(card, ctx, event.CardID)
+		}
+	})
+}
+
+func uberDragonJabahaSpecial(card *match.Card, ctx *match.Context, cardID string) {
+
+	p := ctx.Match.CurrentPlayer()
+
+	creature, err := p.Player.GetCard(cardID, match.BATTLEZONE)
+
+	if err != nil {
+		return
+	}
+
+	if creature.Civ != civ.Fire || creature.ID == card.ID {
+		return
+	}
+
+	if ctx.Match.IsPlayerTurn(card.Player) {
+		creature.RemoveConditionBySource(card.ID)
+		creature.AddCondition(cnd.PowerAttacker, 2000, card.ID)
+	}
 }
 
 // Return the number of water creatures in your battle zone
