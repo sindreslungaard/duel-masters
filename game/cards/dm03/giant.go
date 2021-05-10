@@ -35,3 +35,16 @@ func EarthstompGiant(c *match.Card) {
 		}
 	}))
 }
+
+// DawnGiant ...
+func DawnGiant(c *match.Card) {
+
+	c.Name = "Dawn Giant"
+	c.Power = 11000
+	c.Civ = civ.Nature
+	c.Family = family.Giant
+	c.ManaCost = 7
+	c.ManaRequirement = []string{civ.Nature}
+
+	c.Use(fx.Creature, fx.Doublebreaker, fx.CantAttackCreatures)
+}
