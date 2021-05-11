@@ -414,3 +414,65 @@ func VolcanicArrows(c *match.Card) {
 		}
 	})
 }
+
+// AuroraOfReversal ...
+func AuroraOfReversal(c *match.Card) {
+
+	c.Name = "Aurora of Reversal"
+	c.Civ = civ.Nature
+	c.ManaCost = 5
+	c.ManaRequirement = []string{civ.Nature}
+
+	c.Use(fx.Spell, func(card *match.Card, ctx *match.Context) {
+
+		if match.AmICasted(card, ctx) {
+
+			shields, err := ctx.Match.Opponent(card.Player).Container(match.SHIELDZONE)
+
+			if err != nil {
+				return
+			}
+
+			fx.SelectBackside(
+				card.Player,
+				ctx.Match, 
+				card.Player,
+				match.SHIELDZONE,
+				"Select any number of shields that will be sent to mana zone",
+				0,
+				len(shields),
+				false,
+			).Map(func(x *match.Card) {
+				ctx.Match.MoveCard(x, match.MANAZONE, card)
+			})
+		}
+	})
+}
+
+// ManaNexus ...
+func ManaNexus(c *match.Card) {
+
+	c.Name = "Mana Nexus"
+	c.Civ = civ.Nature
+	c.ManaCost = 4
+	c.ManaRequirement = []string{civ.Nature}
+
+	c.Use(fx.Spell, fx.ShieldTrigger, func(card *match.Card, ctx *match.Context) {
+
+		if match.AmICasted(card, ctx) {
+
+			fx.Select(
+				card.Player,
+				ctx.Match,
+				card.Player,
+				match.MANAZONE,
+				"Select a card from the mana zone that will be put as a shield",
+				1,
+				1,
+				false,
+			).Map(func(x *match.Card) {
+				ctx.Match.MoveCard(x, match.SHIELDZONE, card)
+			})
+		}
+	})
+}
