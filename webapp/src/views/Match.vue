@@ -127,11 +127,10 @@
       <div class="chatbox">
         <div class="messages">
           <div id="messages" class="messages-helper">
-            <span
-              v-for="(message, index) in chatMessages"
-              :key="index"
-              v-html="message"
-            ></span>
+            <div class="message" :style="{'background': message.sender.toLowerCase() === 'server' ? 'none' : '#202124'}" v-for="(message, index) in chatMessages" :key="index">
+              <div class="message-sender" :style="{'color': message.color}">{{ message.sender.toLowerCase() == "server" ? "-" : (message.sender + ":")}} </div>
+              <div class="message-text">{{ message.message }}</div>
+            </div>
           </div>
         </div>
         <form @submit.prevent="sendChat(chatMessage)">
@@ -445,7 +444,7 @@ export default {
       inviteCopied: false,
       inviteCopyTask: null,
 
-      chatMessages: [],
+      chatMessages: [], // { sender, message, color }
       chatMessage: "",
 
       started: false,
@@ -481,8 +480,8 @@ export default {
       this.chatMessage = "";
       this.ws.send(JSON.stringify({ header: "chat", message }));
     },
-    chat(message) {
-      this.chatMessages.push(message);
+    chat(sender, color, message) {
+      this.chatMessages.push({ sender, color, message });
       this.$nextTick(() => {
         let container = document.getElementById("messages");
         container.scrollTop = container.scrollHeight;
@@ -664,9 +663,7 @@ export default {
         }
 
         case "chat": {
-          this.chat(
-            `<span style="color: ${data.color}">[${data.sender}]</span> <span>${data.message}</span>`
-          );
+          this.chat(data.sender, data.color, data.message);
           break;
         }
 
@@ -1000,6 +997,21 @@ export default {
     display: block;
     margin-top: 7px;
   }
+}
+
+.message {
+   display: flex;
+   margin-top: 5px;
+   border-radius: 3px;
+   padding: 3px;
+}
+
+.message-sender {
+  margin-right: 5px;
+}
+
+.message-text {
+  flex-grow: 1;
 }
 
 *::-webkit-scrollbar-track {
