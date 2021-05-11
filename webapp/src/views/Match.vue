@@ -128,7 +128,7 @@
         <div class="messages">
           <div id="messages" class="messages-helper">
             <div class="message" :style="{'background': message.sender.toLowerCase() === 'server' ? 'none' : '#202124'}" v-for="(message, index) in chatMessages" :key="index">
-              <div class="message-sender" :style="{'color': message.color}">{{ message.sender.toLowerCase() == "server" ? "-" : (message.sender + ":")}} </div>
+              <div class="message-sender" :style="{'color': message.color || 'orange'}">{{ message.sender.toLowerCase() == "server" ? "-" : (message.sender + ":")}} </div>
               <div class="message-text">{{ message.message }}</div>
             </div>
           </div>

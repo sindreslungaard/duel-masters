@@ -1123,7 +1123,7 @@ func (m *Match) Parse(s *server.Socket, data []byte) {
 				return
 			}
 
-			m.ColorChat(s.User.Username, msg.Message, "#79dced")
+			m.ColorChat(s.User.Username, msg.Message, s.User.Color)
 		}
 
 	case "choose_deck":
