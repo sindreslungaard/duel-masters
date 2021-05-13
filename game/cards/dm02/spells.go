@@ -146,8 +146,8 @@ func ReconOperation(c *match.Card) {
 			ctx.Match.Opponent(card.Player),
 			match.SHIELDZONE,
 			"Recon Operation: Select 3 of your opponent's shields that will be shown to you",
-			3,
 			1,
+			3,
 			true,
 		)
 
