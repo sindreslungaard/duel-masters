@@ -20,22 +20,24 @@ func JackViperShadowofDoom(c *match.Card) {
 
 	c.Use(fx.Creature, fx.Evolution, func(card *match.Card, ctx *match.Context) {
 
-		if event, ok := ctx.Event.(*match.CardMoved); ok {
+		if event, ok := ctx.Event.(*match.CreatureDestroyed); ok {
 
-			if event.From == match.BATTLEZONE && event.To == match.GRAVEYARD {
+			ctx.ScheduleAfter(func() {
 
-				destroyedCard, err := card.Player.GetCard(event.CardID, match.BATTLEZONE)
+				destroyedCard, err := card.Player.GetCard(event.Card.ID, match.GRAVEYARD)
 
 				if err != nil {
 					return
 				}
 
-				if event.CardID != card.ID && destroyedCard.Civ == civ.Darkness {
+				if event.Card.ID != card.ID && destroyedCard.Civ == civ.Darkness {
 
-					card.Player.MoveCard(event.CardID, match.BATTLEZONE, match.HAND)
-					ctx.Match.Chat("Server", fmt.Sprintf("%s was moved to %s's hand from the battle zone", destroyedCard.Name, ctx.Match.PlayerRef(card.Player).Socket.User.Username))
+					card.Player.MoveCard(event.Card.ID, match.GRAVEYARD, match.HAND)
+					ctx.Match.Chat("Server", fmt.Sprintf("%s was moved to %s's hand from the graveyard", destroyedCard.Name, ctx.Match.PlayerRef(card.Player).Socket.User.Username))
 				}
-			}
+
+			})
+
 		}
 	})
 
