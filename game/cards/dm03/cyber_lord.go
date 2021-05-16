@@ -77,33 +77,39 @@ func Shtra(c *match.Card) {
 	c.ManaCost = 4
 	c.ManaRequirement = []string{civ.Water}
 
-	c.Use(fx.Creature, func(card *match.Card, ctx *match.Context) {
+	c.Use(fx.Creature, fx.When(fx.Summoned, func(card *match.Card, ctx *match.Context) {
 
-		if event, ok := ctx.Event.(*match.CardMoved); ok {
+		fx.Select(
+			card.Player,
+			ctx.Match,
+			card.Player,
+			match.MANAZONE,
+			"Shtra: Select 1 card from your manazone that will be sent to your hand",
+			1,
+			1,
+			false,
+		).Map(func(c *match.Card) {
+			c.Player.MoveCard(c.ID, match.MANAZONE, match.HAND)
+			ctx.Match.Chat("Server", fmt.Sprintf("%s was moved to %s's manazone from their hand by Shtra", c.Name, c.Player.Username()))
+		})
 
-			if event.CardID == card.ID && event.To == match.BATTLEZONE {
+		ctx.Match.Wait(card.Player, "Waiting for your opponent to make an action")
+		defer ctx.Match.EndWait(card.Player)
 
-				cards := match.Search(card.Player, ctx.Match, card.Player, match.MANAZONE, "Shtra: Select 1 card from your manazone that will be sent to your hand", 1, 1, false)
+		fx.Select(
+			ctx.Match.Opponent(card.Player),
+			ctx.Match,
+			ctx.Match.Opponent(card.Player),
+			match.MANAZONE,
+			"Shtra: Select 1 card from your manazone that will be sent to your hand",
+			1,
+			1,
+			false,
+		).Map(func(c *match.Card) {
+			c.Player.MoveCard(c.ID, match.MANAZONE, match.HAND)
+			ctx.Match.Chat("Server", fmt.Sprintf("%s was moved to %s's manazone from their hand by Shtra", c.Name, c.Player.Username()))
+		})
 
-				for _, crd := range cards {
-					card.Player.MoveCard(crd.ID, match.MANAZONE, match.HAND)
-					ctx.Match.Chat("Server", fmt.Sprintf("%s was moved to %s's hand from their mana zone", crd.Name, ctx.Match.PlayerRef(card.Player).Socket.User.Username))
-				}
-
-				ctx.Match.Wait(card.Player, "Waiting for your opponent to make an action")
-				defer ctx.Match.EndWait(card.Player)
-
-				opponentCards := match.Search(ctx.Match.Opponent(card.Player), ctx.Match, ctx.Match.Opponent(card.Player), match.MANAZONE, "Shtra: Select 1 card from your manazone that will be sent to your hand", 1, 1, false)
-
-				for _, crd := range opponentCards {
-					ctx.Match.Opponent(card.Player).MoveCard(crd.ID, match.MANAZONE, match.HAND)
-					ctx.Match.Chat("Server", fmt.Sprintf("%s was moved to %s's hand from their mana zone", crd.Name, ctx.Match.PlayerRef(ctx.Match.Opponent(card.Player)).Socket.User.Username))
-				}
-
-			}
-
-		}
-
-	})
+	}))
 
 }
