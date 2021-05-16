@@ -878,19 +878,19 @@ export default {
 }
 
 .glow-fire {
-  box-shadow: 0px 0px 4px 0px red;
+  box-shadow: 0px 0px 4px 0px skyblue;
 }
 .glow-water {
-  box-shadow: 0px 0px 4px 0px cyan;
+  box-shadow: 0px 0px 4px 0px skyblue;
 }
 .glow-nature {
-  box-shadow: 0px 0px 4px 0px green;
+  box-shadow: 0px 0px 4px 0px skyblue;
 }
 .glow-light {
-  box-shadow: 0px 0px 4px 0px yellow;
+  box-shadow: 0px 0px 4px 0px skyblue;
 }
 .glow-darkness {
-  box-shadow: 0px 0px 4px 0px black;
+  box-shadow: 0px 0px 4px 0px skyblue;
 }
 
 .waiting {
