@@ -123,15 +123,12 @@
           src="/assets/images/edit_icon.png"
         />
         <div class="right-btns">
-          <a
-            :href="getShareUrl(selectedDeckUid)"
-            v-if="selectedDeck && selectedDeck.public"
-            target="_blank"
-            ><img
-              class="fl edit-ico share"
-              width="25px"
-              src="/assets/images/share_icon.png"
-          /></a>
+          <a :href="getShareUrl(selectedDeckUid)" v-if="selectedDeck && selectedDeck.public" target="_blank">
+            <img class="fl edit-ico share" width="25px" src="/assets/images/share_icon.png"/>
+          </a>
+          <a v-if="selectedDeck && selectedDeck.uid" @click="deleteDeck(selectedDeckUid)" target="_blank">
+            <img class="fl edit-ico share" width="25px" src="/assets/images/delete_icon.png"/>
+          </a>
           <div @click="newDeck()" class="btn new">New Deck</div>
           <template
             v-if="
@@ -326,6 +323,28 @@ export default {
       } catch (e) {
         this.warning =
           "Invalid request. Please ensure that the deck name is 1-30 characters and that you have between 40-50 cards in your deck.";
+      }
+    },
+
+    async deleteDeck() {
+      try {
+        let res = await call({
+          path: "/deck/" + this.selectedDeckUid,
+          method: "DELETE",
+        });
+
+        this.decks = this.decks.filter(x => x.uid !== this.selectedDeckUid);
+        if(this.decks.length > 0) {
+          this.selectedDeckUid = this.decks[0].uid;
+          this.selectDeck(this.decks[0]);
+        } else {
+          this.newDeck();
+        }
+
+        this.warning = "Successfully deleted your deck";
+      } catch (e) {
+        this.warning =
+          "Couldn't delete the deck you selected";
       }
     },
 

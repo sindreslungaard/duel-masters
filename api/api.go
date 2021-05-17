@@ -45,6 +45,7 @@ func Start(port string) {
 	r.GET("/api/cards", CardsHandler)
 	r.GET("/api/decks", GetDecksHandler)
 	r.POST("/api/decks", CreateDeckHandler)
+	r.DELETE("/api/deck/:id", DeleteDeckHandler)
 	r.GET("/invite/:id", InviteHandler)
 
 	// Because Gin does not provide an easy way to handle requests where the file does not exist

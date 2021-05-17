@@ -350,6 +350,36 @@ func CreateDeckHandler(c *gin.Context) {
 
 }
 
+// DeleteDeckHandler deletes the specified deck
+func DeleteDeckHandler(c *gin.Context) {
+
+	user, err := db.GetUserForToken(c.GetHeader("Authorization"))
+	if err != nil {
+		c.Status(401)
+		return
+	}
+
+	deckUID := c.Param("id")
+
+	result, err := db.Collection("decks").DeleteOne(
+		context.Background(),
+		bson.M{"uid": deckUID, "owner": user.UID},
+	)
+
+	if err != nil {
+		c.Status(401)
+		return
+	}
+
+	if result.DeletedCount < 1 {
+		c.Status(401)
+		return
+	}
+
+	c.Status(200)
+
+}
+
 // InviteHandler handles duel invitations
 func InviteHandler(c *gin.Context) {
 
