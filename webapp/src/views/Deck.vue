@@ -6,7 +6,7 @@
       <hr />
       <div class="deck-container">
         <div v-for="(card, index) in cards" :key="index" class="deck-card">
-          <p>{{ card.name }} [x{{ card.count }}]</p>
+          <p>x{{ card.count }}</p>
           <img :src="`/assets/cards/all/${card.uid}.jpg`" />
         </div>
       </div>
@@ -31,7 +31,7 @@ export default {
   async created() {
     try {
       let res = await call({
-        path: `/decks/${this.$route.params.uid}`,
+        path: `/deck/${this.$route.params.uid}`,
         method: "GET"
       });
       this.name = res.data.name + " by " + res.data.owner;
@@ -44,7 +44,6 @@ export default {
         } else {
           this.cards.push({
             uid: card,
-            name: res.data.references.find(x => x.uid === card).name,
             count: 1
           });
         }

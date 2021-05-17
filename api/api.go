@@ -43,6 +43,7 @@ func Start(port string) {
 	r.POST("/api/auth/signup", SignupHandler)
 	r.POST("/api/match", MatchHandler)
 	r.GET("/api/cards", CardsHandler)
+	r.GET("/api/deck/:id", GetDeckHandler)
 	r.GET("/api/decks", GetDecksHandler)
 	r.POST("/api/decks", CreateDeckHandler)
 	r.DELETE("/api/deck/:id", DeleteDeckHandler)

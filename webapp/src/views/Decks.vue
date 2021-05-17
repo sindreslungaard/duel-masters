@@ -123,7 +123,7 @@
           src="/assets/images/edit_icon.png"
         />
         <div class="right-btns">
-          <a :href="getShareUrl(selectedDeckUid)" v-if="selectedDeck && selectedDeck.public" target="_blank">
+          <a :href="'/deck/' + selectedDeckUid" v-if="selectedDeck && selectedDeck.public" target="_blank">
             <img class="fl edit-ico share" width="25px" src="/assets/images/share_icon.png"/>
           </a>
           <a v-if="selectedDeck && selectedDeck.uid" @click="deleteDeck(selectedDeckUid)" target="_blank">
@@ -266,10 +266,6 @@ export default {
       }
 
       this.selectedDeck.cards.push(this.selected.uid);
-    },
-
-    getShareUrl(uid) {
-      return window.location.host + "/decks/" + uid;
     },
 
     tryRemoveCard() {

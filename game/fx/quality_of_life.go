@@ -310,3 +310,16 @@ func AttackingCreature(card *match.Card, ctx *match.Context) bool {
 	return false
 
 }
+
+// Destroyed returns true if the card was destroyed
+func Destroyed(card *match.Card, ctx *match.Context) bool {
+
+	if event, ok := ctx.Event.(*match.CreatureDestroyed); ok {
+		if event.Card.ID == card.ID {
+			return true
+		}
+	}
+
+	return false
+
+}

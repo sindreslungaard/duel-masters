@@ -218,6 +218,41 @@ func CardsHandler(c *gin.Context) {
 	c.JSON(200, GetCache())
 }
 
+// GetDeckHandler returns a single deck, if public
+func GetDeckHandler(c *gin.Context) {
+
+	deckUID := c.Param("id")
+
+	var deck db.Deck
+
+	err := db.Collection("decks").FindOne(
+		context.Background(),
+		bson.M{"uid": deckUID, "public": true},
+	).Decode(&deck)
+
+	if err != nil {
+		c.Status(404)
+		return
+	}
+
+	var user db.User
+
+	err = db.Collection("users").FindOne(
+		context.Background(),
+		bson.M{"uid": deck.Owner},
+	).Decode(&user)
+
+	if err != nil {
+		c.Status(404)
+		return
+	}
+
+	deck.Owner = user.Username
+
+	c.JSON(200, deck)
+
+}
+
 // GetDecksHandler returns an array of the users decks
 func GetDecksHandler(c *gin.Context) {
 
