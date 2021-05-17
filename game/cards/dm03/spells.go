@@ -476,3 +476,32 @@ func ManaNexus(c *match.Card) {
 		}
 	})
 }
+
+// RoarOfTheEarth ...
+func RoarOfTheEarth(c *match.Card) {
+
+	c.Name = "Roar of the Earth"
+	c.Civ = civ.Nature
+	c.ManaCost = 2
+	c.ManaRequirement = []string{civ.Nature}
+
+	c.Use(fx.Spell, fx.ShieldTrigger, func(card *match.Card, ctx *match.Context) {
+
+		if match.AmICasted(card, ctx) {
+
+			fx.SelectFilter(
+				card.Player,
+				ctx.Match,
+				card.Player,
+				match.MANAZONE,
+				"Select a creature that costs 6 ore more mana from the mana zone that will be put in your hand",
+				1,
+				1,
+				false,
+				func(x *match.Card) bool { return x.HasCondition(cnd.Creature) && x.ManaCost >= 6 },
+			).Map(func(x *match.Card) {
+				ctx.Match.MoveCard(x, match.HAND, card)
+			})
+		}
+	})
+}
