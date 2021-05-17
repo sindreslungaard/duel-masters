@@ -40,6 +40,11 @@ targeted/leaving the field, etc.
 // Evolution has default behaviour for evolution cards according to the rules commented above
 func Evolution(card *match.Card, ctx *match.Context) {
 
+	if _, ok := ctx.Event.(*match.UntapStep); ok {
+
+		card.AddCondition(cnd.Evolution, true, card.ID)
+	}
+
 	if event, ok := ctx.Event.(*match.PlayCardEvent); ok {
 
 		if event.CardID != card.ID {
@@ -82,7 +87,7 @@ func Evolution(card *match.Card, ctx *match.Context) {
 		card.Tapped = creature.Tapped
 		card.Player.MoveCard(creature.ID, match.BATTLEZONE, match.HIDDENZONE)
 		card.Attach(creature)
-
+		card.AddCondition(cnd.Evolution, true, card.ID)
 	}
 
 	// Card moved

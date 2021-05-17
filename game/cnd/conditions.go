@@ -16,4 +16,5 @@ const (
 	Active            = "active"
 	CantBeBlocked     = "cant_be_blocked"
 	ReducedCost       = "reduced_cost"
+	Evolution		  = "evolution"
 )
