@@ -135,11 +135,13 @@ var DM01 = map[string]match.CardConstructor{
 	"48c5c29b-2f4e-4a57-86b4-864c6f0dc124": dm01.TornadoFlame,
 	"be8c0d0b-dcab-402c-8e7b-878e35bacca7": dm01.UltimateForce,
 	"68d78fd4-db8a-43a6-8eb6-e1435cfc2959": dm01.VirtualTripwire,
-	"40439f79-8f48-4e62-9009-cb06798ef7ac": dm02.EthelStarSeaElemental,
+	"c62208ec-efc8-4b08-bb01-6cd5251b0969": dm01.BlackFeatherShadowOfRage,
+	"e2b992ee-91a3-49d3-8228-7be60a0b9ec5": dm01.WrithingBoneGhoul,
 }
 
 // DM02 is a map with all the card id's in the game and corresponding CardConstructor for dm02
 var DM02 = map[string]match.CardConstructor{
+	"40439f79-8f48-4e62-9009-cb06798ef7ac": dm02.EthelStarSeaElemental,
 	"48ab3f2b-4ae3-41a4-ae6f-61b49c958bdb": dm02.BarkwhipTheSmasher,
 	"0bea1262-311a-47b1-888d-dd065cfe3d7f": dm02.EngineerKipo,
 	"0dca6f6c-c426-4c88-b283-043527f04bb3": dm02.FighterDualFang,
