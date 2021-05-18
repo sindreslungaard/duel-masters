@@ -26,6 +26,7 @@ const (
 
 // PlayerReference ties a player to a websocket connection
 type PlayerReference struct {
+	UID      string
 	Player   *Player
 	Socket   *server.Socket
 	LastPong int64
@@ -41,6 +42,7 @@ type PlayerAction struct {
 func NewPlayerReference(p *Player, s *server.Socket) *PlayerReference {
 
 	pr := &PlayerReference{
+		UID:      s.User.UID,
 		Player:   p,
 		Socket:   s,
 		LastPong: time.Now().Unix(),

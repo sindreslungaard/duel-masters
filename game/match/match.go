@@ -48,6 +48,7 @@ type Match struct {
 
 	created     int64
 	ending      bool
+	closed      bool
 	isFirstTurn bool
 
 	quit chan bool
@@ -199,6 +200,12 @@ func (m *Match) startTicker() {
 
 // Dispose closes the match, disconnects the clients and removes all references to it
 func (m *Match) Dispose() {
+
+	if m.closed {
+		return
+	}
+
+	m.closed = true
 
 	logrus.Debugf("Disposing match %s", m.ID)
 
@@ -976,6 +983,44 @@ func (m *Match) Parse(s *server.Socket, data []byte) {
 
 		}
 
+	case "reconnect":
+		{
+
+			if m.Player1 != nil && m.Player1.UID == s.User.UID {
+
+				if m.Player1.Socket != nil {
+					m.Player1.Socket.Close()
+				}
+
+				m.Player1.Socket = s
+
+				if m.Player2 != nil && m.Player2.Socket != nil {
+					m.Player2.Socket.Send(server.Message{
+						Header: "opponent_reconnected",
+					})
+				}
+
+				m.BroadcastState()
+
+			} else if m.Player2 != nil && m.Player2.UID == s.User.UID {
+
+				if m.Player2.Socket != nil {
+					m.Player2.Socket.Close()
+				}
+
+				m.Player2.Socket = s
+
+				if m.Player1 != nil && m.Player1.Socket != nil {
+					m.Player1.Socket.Send(server.Message{
+						Header: "opponent_reconnected",
+					})
+				}
+
+				m.BroadcastState()
+
+			}
+		}
+
 	case "join_match":
 		{
 
@@ -1324,44 +1369,40 @@ func (m *Match) Parse(s *server.Socket, data []byte) {
 // OnSocketClose is called when a socket disconnects
 func (m *Match) OnSocketClose(s *server.Socket) {
 
-	// End if someone disconnects and there's no players in the match
-	if m.Player1 == nil && m.Player2 == nil {
-		if !m.ending {
-			m.quit <- true
-		}
+	if m.closed {
 		return
 	}
 
-	if m.Player1 != nil {
+	var p *PlayerReference
+	var o *PlayerReference
 
-		// If player1 disconnects
-		if m.Player1.Socket == s {
+	// assign the above variables, player and opponent of the closing socket
+	if m.Player1 != nil && m.Player1.Socket == s {
+		p = m.Player1
 
-			// Let player2 know if they are present and this was not during the end of the game
-			if m.Player2 != nil && !m.ending {
-				WarnError(m.Player2, "Your opponent disconnected, the match will close soon.")
-			}
+		if m.Player2 != nil && m.Player2.Socket != nil {
+			o = m.Player2
+		}
 
-			if !m.ending {
-				m.quit <- true
-			}
+	} else if m.Player2 != nil && m.Player2.Socket == s {
+		p = m.Player2
+
+		if m.Player1 != nil && m.Player1.Socket != nil {
+			o = m.Player1
 		}
 	}
 
-	if m.Player2 != nil {
-
-		// If player2 disconnects
-		if m.Player2.Socket == s {
-
-			// Let player1 know if they are present and this was not during the end of the game
-			if m.Player1 != nil && !m.ending {
-				WarnError(m.Player1, "Your opponent disconnected, the match will close soon.")
-			}
-
-			if !m.ending {
-				m.quit <- true
-			}
-		}
+	if p == nil {
+		return
 	}
+
+	if o != nil {
+		// let the opponent know that this player has disconnected
+		o.Socket.Send(server.Message{
+			Header: "opponent_disconnected",
+		})
+	}
+
+	p.Socket = nil
 
 }
