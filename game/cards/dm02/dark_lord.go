@@ -14,7 +14,7 @@ func GeneralDarkFiend(c *match.Card) {
 	c.Power = 6000
 	c.Civ = civ.Darkness
 	c.Family = family.DarkLord
-	c.ManaCost = 1
+	c.ManaCost = 5
 	c.ManaRequirement = []string{civ.Darkness}
 
 	c.Use(fx.Creature, fx.When(fx.AttackingPlayer, func(card *match.Card, ctx *match.Context) {

@@ -197,6 +197,8 @@ var DM02 = map[string]match.CardConstructor{
 	"fcf2f484-c471-4a5d-bc41-1fcd56604d73": dm02.GeneralDarkFiend,
 	"fd9f6d26-8fd8-43f2-84e5-b83493a1106e": dm02.LarbaGeerTheImmaculate,
 	"ff33e31f-4f1c-4c07-b293-2e65a13e1077": dm02.RainbowStone,
+	"ed3931f2-2b60-48d4-b82f-361d3a8c5bd7": dm02.EssenceElf,
+	"a73bf1d3-b4a6-48cd-89d3-1983f160304d": dm02.DiamondCutter,
 }
 
 // DM03 is a map with all the card id's in the game and corresponding CardConstructor for dm03

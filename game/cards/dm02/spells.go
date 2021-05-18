@@ -270,3 +270,26 @@ func RainbowStone(c *match.Card) {
 	}))
 
 }
+
+// DiamondCutter ...
+func DiamondCutter(c *match.Card) {
+
+	c.Name = "Diamond Cutter"
+	c.Civ = civ.Light
+	c.ManaCost = 5
+	c.ManaRequirement = []string{civ.Light}
+
+	c.Use(fx.Spell, fx.When(fx.SpellCast, func(card *match.Card, ctx *match.Context) {
+
+		fx.Find(
+			card.Player,
+			match.BATTLEZONE,
+		).Map(func(x *match.Card) {
+
+			x.RemoveCondition(cnd.SummoningSickness)
+			x.RemoveCondition(cnd.CantAttackCreatures)
+			x.RemoveCondition(cnd.CantAttackPlayers)
+		})
+	}))
+
+}
