@@ -31,7 +31,7 @@ func MetalwingSkyterror(c *match.Card) {
 			true,
 			func(x *match.Card) bool { return x.HasCondition(cnd.Blocker) },
 		).Map(func(x *match.Card) {
-			ctx.Match.Destroy(x, card)
+			ctx.Match.Destroy(x, card, false)
 		})
 
 	}))

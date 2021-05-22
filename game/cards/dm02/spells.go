@@ -34,13 +34,13 @@ func BurstShot(c *match.Card) {
 
 			for _, creature := range myCreatures {
 				if ctx.Match.GetPower(creature, false) <= 2000 {
-					ctx.Match.Destroy(creature, card)
+					ctx.Match.Destroy(creature, card, false)
 				}
 			}
 
 			for _, creature := range opponentCreatures {
 				if ctx.Match.GetPower(creature, false) <= 2000 {
-					ctx.Match.Destroy(creature, card)
+					ctx.Match.Destroy(creature, card, false)
 				}
 			}
 
@@ -123,7 +123,7 @@ func CriticalBlade(c *match.Card) {
 			false,
 			func(x *match.Card) bool { return x.HasCondition(cnd.Blocker) },
 		).Map(func(x *match.Card) {
-			ctx.Match.Destroy(x, card)
+			ctx.Match.Destroy(x, card, false)
 		})
 
 	}))

@@ -413,13 +413,13 @@ func Creature(card *match.Card, ctx *match.Context) {
 				card.Player.MoveCard(card.ID, match.BATTLEZONE, match.GRAVEYARD)
 
 				// Slayer
-				if card.HasCondition(cnd.Slayer) {
+				if card.HasCondition(cnd.Slayer) && event.InBattle == true {
 
 					creature, err := ctx.Match.Opponent(card.Player).GetCard(event.Source.ID, match.BATTLEZONE)
 
 					if err == nil {
 
-						ctx.Match.Destroy(creature, card)
+						ctx.Match.Destroy(creature, card, false)
 
 					}
 

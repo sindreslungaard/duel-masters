@@ -35,7 +35,7 @@ func PouchShell(c *match.Card) {
 			).Map(func(x *match.Card) {
 				baseCard := x.Attachments()[0]
 				x.ClearAttachments()
-				ctx.Match.Destroy(x, card)
+				ctx.Match.Destroy(x, card, false)
 				baseCard.Player.MoveCard(baseCard.ID, match.HIDDENZONE, match.BATTLEZONE)
 			})
 		}
