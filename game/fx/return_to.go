@@ -32,12 +32,13 @@ func ReturnToMana(card *match.Card, ctx *match.Context) {
 
 		if event.Card == card {
 
-			card.Player.MoveCard(card.ID, match.BATTLEZONE, match.MANAZONE)
-			card.Tapped = false
+			ctx.ScheduleAfter(func() {
 
-			ctx.Match.Chat("Server", fmt.Sprintf("%s was destroyed by %s but returned to the manazone", event.Card.Name, event.Source.Name))
+				card.Player.MoveCard(card.ID, match.GRAVEYARD, match.MANAZONE)
+				card.Tapped = false
+				ctx.Match.Chat("Server", fmt.Sprintf("%s was moved from %s's graveyard to their manazone", event.Card.Name, card.Player.Username()))
 
-			ctx.InterruptFlow()
+			})
 
 		}
 
