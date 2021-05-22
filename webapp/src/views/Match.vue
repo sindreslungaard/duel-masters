@@ -2,10 +2,20 @@
   <div>
     <div
       v-show="
-        wait || previewCard || previewCards || errorMessage || warning || action
+        wait || previewCard || previewCards || errorMessage || warning || action || opponentDisconnected || reconnecting
       "
       class="overlay"
     ></div>
+
+    <div v-if="opponentDisconnected && !errorMessage" class="error">
+      <p>Your opponent disconnected or left the match. Waiting for them to reconnect{{ loadingDots }}</p>
+      <div @click="redirect('overview')" class="btn">Leave duel</div>
+    </div>
+
+    <div v-if="reconnecting && !errorMessage" class="error">
+      <p>Disconnected from server. Attempting to reconnect{{ loadingDots }}</p>
+      <div @click="redirect('overview')" class="btn">Leave duel</div>
+    </div>
 
     <div v-show="errorMessage" class="error">
       <p>{{ errorMessage }}</p>
@@ -103,7 +113,7 @@
     </div>
 
     <!-- Lobby -->
-    <div v-if="decks.length < 1" class="lobby">
+    <div v-if="!started && decks.length < 1" class="lobby">
       <h1>
         Waiting for your opponent to join<span class="dots">{{
           loadingDots
@@ -399,7 +409,7 @@
 <script>
 import config from "../config";
 import ClipboardJS from "clipboard";
-import { ws_protocol } from "../remote";
+import { call, ws_protocol } from "../remote";
 import CardShowDialog from "../components/dialogs/CardShowDialog";
 
 const send = (client, message) => {
@@ -429,6 +439,8 @@ export default {
   data() {
     return {
       ws: null,
+      reconnecting: false,
+      preventReconnect: false,
 
       errorMessage: "",
       warning: "",
@@ -450,6 +462,7 @@ export default {
       started: false,
 
       opponent: "",
+      opponentDisconnected: false,
       decks: [],
       deck: null,
 
@@ -613,152 +626,196 @@ export default {
       );
     }
   },
-  created() {
-    // Connect to the server
-    const ws = new WebSocket(
-      ws_protocol + window.location.host + "/ws/" + this.$route.params.id
-    );
-    this.ws = ws;
+  created() {  
 
-    ws.onopen = () => {
-      ws.send(localStorage.getItem("token"));
-    };
+    let lastReconnect = 0;
 
-    ws.onmessage = event => {
-      const data = JSON.parse(event.data);
+    const connect = async () => {
 
-      switch (data.header) {
-        case "mping": {
-          send(ws, {
-            header: "mpong"
-          });
-          break;
-        }
+      if(this.preventReconnect) {
+        return;
+      }
 
-        case "hello": {
-          send(ws, {
-            header: "join_match"
-          });
-          break;
-        }
+      if(lastReconnect > 0) {
+        console.log("Attempting to reconnect..");
+      }
+      
+      if(lastReconnect > Date.now() - 5000) {
+        setTimeout(connect, 1000);
+        return;
+      }
 
-        case "error": {
-          this.errorMessage = data.message;
-          break;
-        }
-
-        case "warn": {
-          this.warning = data.message;
-          break;
-        }
-
-        case "player_joined": {
-          this.opponent = data.username;
-          break;
-        }
-
-        case "choose_deck": {
-          this.decks = data.decks;
-          break;
-        }
-
-        case "chat": {
-          this.chat(data.sender, data.color, data.message);
-          break;
-        }
-
-        case "state_update": {
-          if (!this.started) {
-            this.started = true;
-          }
-          this.handSelection = null;
-          this.playzoneSelection = null;
-
-          if(this.state.myTurn !== data.state.myTurn) {
-            turnSound.play();
-            console.log("turn change");
-          }
-
-          this.state = data.state;
-          break;
-        }
-
-        case "action": {
-          (this.actionError = ""), (this.actionSelects = []);
-          if (!(data.cards instanceof Array)) {
-            this.actionObject = data.cards;
-            console.log(Object.keys(data.cards)[0]);
-            this.actionDrowdownSelection = Object.keys(data.cards)[0];
-          }
-          this.action = {
-            cards:
-              data.cards instanceof Array
-                ? data.cards
-                : Object.keys(data.cards)[0],
-            text: data.text,
-            minSelection: data.minSelection,
-            maxSelections: data.maxSelections,
-            cancellable: data.cancellable
-          };
-          break;
-        }
-
-        case "action_error": {
-          if (!this.action) {
-            return;
-          }
-          this.actionError = data.message;
-          break;
-        }
-
-        case "close_action": {
-          this.action = null;
-          this.actionError = "";
-          this.actionSelects = [];
-          this.actionObject = null;
-          this.actionDrowdownSelection = null;
-          break;
-        }
-
-        case "wait": {
-          this.wait =
-            data.message || "Waiting for your opponent to make an action";
-          break;
-        }
-
-        case "end_wait": {
-          this.wait = "";
-          break;
-        }
-
-        case "show_cards": {
-          this.$modal.show(
-            CardShowDialog,
-            {
-              message: data.message,
-              cards: data.cards
-            },
-            {
-              width: data.cards.length * 25 + "%"
-            },
-            {}
-          );
+      // make sure the match actually exists
+      try {
+        await call({
+          path: `/match/${this.$route.params.id}`,
+          method: "GET"
+        });
+      } catch(err) {
+        if(err.response && err.response.status == 404) {
+          this.errorMessage = "This duel has been closed";
         }
       }
+
+      lastReconnect = Date.now();
+
+      // Connect to the server
+      const ws = new WebSocket(
+        ws_protocol + window.location.host + "/ws/" + this.$route.params.id
+      );
+      this.ws = ws;
+
+      ws.onopen = () => {
+        this.reconnecting = false;
+        ws.send(localStorage.getItem("token"));
+      };
+
+      ws.onclose = () => {
+        console.log("connection closed");
+        this.reconnecting = true;
+        connect();
+      };
+
+      ws.onerror = event => {
+        console.error(event);
+      };
+
+      ws.onmessage = event => {
+        const data = JSON.parse(event.data);
+
+        switch (data.header) {
+          case "mping": {
+            send(ws, {
+              header: "mpong"
+            });
+            break;
+          }
+
+          case "hello": {
+            send(ws, {
+                header: "join_match"
+            });
+            break;
+          }
+
+          case "error": {
+            this.errorMessage = data.message;
+            break;
+          }
+
+          case "warn": {
+            this.warning = data.message;
+            break;
+          }
+
+          case "opponent_disconnected": {
+            this.opponentDisconnected = true;
+            break;
+          }
+
+          case "opponent_reconnected": {
+            this.opponentDisconnected = false;
+            break;
+          }
+
+          case "player_joined": {
+            this.opponent = data.username;
+            break;
+          }
+
+          case "choose_deck": {
+            this.decks = data.decks;
+            break;
+          }
+
+          case "chat": {
+            this.chat(data.sender, data.color, data.message);
+            break;
+          }
+
+          case "state_update": {
+            if (!this.started) {
+              this.started = true;
+            }
+            this.handSelection = null;
+            this.playzoneSelection = null;
+
+            if(this.state.myTurn !== data.state.myTurn) {
+              turnSound.play();
+              console.log("turn change");
+            }
+
+            this.state = data.state;
+            break;
+          }
+
+          case "action": {
+            (this.actionError = ""), (this.actionSelects = []);
+            if (!(data.cards instanceof Array)) {
+              this.actionObject = data.cards;
+              console.log(Object.keys(data.cards)[0]);
+              this.actionDrowdownSelection = Object.keys(data.cards)[0];
+            }
+            this.action = {
+              cards:
+                data.cards instanceof Array
+                  ? data.cards
+                  : Object.keys(data.cards)[0],
+              text: data.text,
+              minSelection: data.minSelection,
+              maxSelections: data.maxSelections,
+              cancellable: data.cancellable
+            };
+            break;
+          }
+
+          case "action_error": {
+            if (!this.action) {
+              return;
+            }
+            this.actionError = data.message;
+            break;
+          }
+
+          case "close_action": {
+            this.action = null;
+            this.actionError = "";
+            this.actionSelects = [];
+            this.actionObject = null;
+            this.actionDrowdownSelection = null;
+            break;
+          }
+
+          case "wait": {
+            this.wait =
+              data.message || "Waiting for your opponent to make an action";
+            break;
+          }
+
+          case "end_wait": {
+            this.wait = "";
+            break;
+          }
+
+          case "show_cards": {
+            this.$modal.show(
+              CardShowDialog,
+              {
+                message: data.message,
+                cards: data.cards
+              },
+              {
+                width: data.cards.length * 25 + "%"
+              },
+              {}
+            );
+          }
+        }
+      };
+
     };
 
-    ws.onclose = () => {
-      if (this.errorMessage == "") {
-        this.errorMessage = "Connection to the server has been closed.";
-      }
-      console.log("connection closed");
-    };
-
-    ws.onerror = event => {
-      console.log(event);
-      this.errorMessage =
-        "An error occured when attempting to communicate with the server.";
-    };
+    connect();
 
     // Loading dots
     setInterval(() => {
@@ -778,6 +835,7 @@ export default {
     });
   },
   beforeDestroy() {
+    this.preventReconnect = true;
     this.ws.close();
   }
 };

@@ -415,6 +415,19 @@ func DeleteDeckHandler(c *gin.Context) {
 
 }
 
+func GetMatchHandler(c *gin.Context) {
+
+	m, err := match.Find(c.Param("id"))
+
+	if err != nil {
+		c.Status(404)
+		return
+	}
+
+	c.JSON(200, bson.M{"name": m.MatchName, "host": m.HostID, "started": m.Started})
+
+}
+
 // InviteHandler handles duel invitations
 func InviteHandler(c *gin.Context) {
 

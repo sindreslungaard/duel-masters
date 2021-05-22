@@ -983,55 +983,58 @@ func (m *Match) Parse(s *server.Socket, data []byte) {
 
 		}
 
-	case "reconnect":
-		{
-
-			if m.Player1 != nil && m.Player1.UID == s.User.UID {
-
-				if m.Player1.Socket != nil {
-					m.Player1.Socket.Close()
-				}
-
-				m.Player1.Socket = s
-
-				if m.Player2 != nil && m.Player2.Socket != nil {
-					m.Player2.Socket.Send(server.Message{
-						Header: "opponent_reconnected",
-					})
-				}
-
-				m.BroadcastState()
-
-			} else if m.Player2 != nil && m.Player2.UID == s.User.UID {
-
-				if m.Player2.Socket != nil {
-					m.Player2.Socket.Close()
-				}
-
-				m.Player2.Socket = s
-
-				if m.Player1 != nil && m.Player1.Socket != nil {
-					m.Player1.Socket.Send(server.Message{
-						Header: "opponent_reconnected",
-					})
-				}
-
-				m.BroadcastState()
-
-			}
-		}
-
 	case "join_match":
 		{
 
-			// TODO: spectators?
+			// player reconnect
 			if m.Started {
-				s.Send(server.WarningMessage{
-					Header:  "error",
-					Message: "This match has already started, you cannot join it.",
-				})
-				s.Close()
-				return
+				if m.Player1 != nil && m.Player1.UID == s.User.UID {
+
+					if m.Player1.Socket != nil {
+						m.Player1.Socket.Close()
+					}
+
+					m.Player1.Socket = s
+
+					if m.Player2 != nil && m.Player2.Socket != nil {
+						m.Player2.Socket.Send(server.Message{
+							Header: "opponent_reconnected",
+						})
+					}
+
+					m.BroadcastState()
+					m.Chat("Server", s.User.Username+" reconnected")
+
+					return
+
+				} else if m.Player2 != nil && m.Player2.UID == s.User.UID {
+
+					if m.Player2.Socket != nil {
+						m.Player2.Socket.Close()
+					}
+
+					m.Player2.Socket = s
+
+					if m.Player1 != nil && m.Player1.Socket != nil {
+						m.Player1.Socket.Send(server.Message{
+							Header: "opponent_reconnected",
+						})
+					}
+
+					m.BroadcastState()
+					m.Chat("Server", s.User.Username+" reconnected")
+
+					return
+
+				} else {
+					// TODO: spectators?
+					s.Send(server.WarningMessage{
+						Header:  "error",
+						Message: "This match has already started, you cannot join it.",
+					})
+					s.Close()
+					return
+				}
 			}
 
 			// This is player1
@@ -1373,6 +1376,11 @@ func (m *Match) OnSocketClose(s *server.Socket) {
 		return
 	}
 
+	if !m.Started {
+		m.quit <- true
+		return
+	}
+
 	var p *PlayerReference
 	var o *PlayerReference
 
@@ -1404,5 +1412,10 @@ func (m *Match) OnSocketClose(s *server.Socket) {
 	}
 
 	p.Socket = nil
+
+	// if both players have disconnected, close match
+	if (p == nil || p.Socket == nil) && (o == nil || o.Socket == nil) {
+		m.quit <- true
+	}
 
 }
