@@ -51,12 +51,21 @@ type Battle struct {
 	Blocked  bool
 }
 
+type CreatureDestroyedContext int
+
+const (
+	DestroyedInBattle = iota
+	DestroyedBySpell
+	DestroyedBySlayer
+	DestroyedByMiscAbility
+)
+
 // CreatureDestroyed is fired when a creature dies in battle or is destroyed from another source, such as a spell
 type CreatureDestroyed struct {
 	Card    *Card
 	Source  *Card
-	InBattle bool
 	Blocked bool
+	Context CreatureDestroyedContext
 }
 
 // GetPowerEvent is fired whenever a card's power is to be used

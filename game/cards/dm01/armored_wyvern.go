@@ -81,7 +81,7 @@ func ScarletSkyterror(c *match.Card) {
 			}
 
 			for _, blocker := range blockers {
-				ctx.Match.Destroy(blocker, card, false)
+				ctx.Match.Destroy(blocker, card, match.DestroyedByMiscAbility)
 			}
 
 		}

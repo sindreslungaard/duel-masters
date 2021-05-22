@@ -20,7 +20,7 @@ func MarrowOozeTheTwister(c *match.Card) {
 	c.Use(fx.Creature, fx.Blocker, fx.When(fx.AttackingPlayer, func(card *match.Card, ctx *match.Context) {
 
 		ctx.ScheduleAfter(func() {
-			ctx.Match.Destroy(card, card, false)
+			ctx.Match.Destroy(card, card, match.DestroyedByMiscAbility)
 		})
 
 	}))

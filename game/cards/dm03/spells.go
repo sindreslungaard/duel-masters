@@ -213,7 +213,7 @@ func EldritchPoison(c *match.Card) {
 			if len(creatures) > 0 {
 
 				for _, creature := range creatures {
-					ctx.Match.Destroy(creature, card, false)
+					ctx.Match.Destroy(creature, card, match.DestroyedBySpell)
 				}
 
 				creatures = match.Filter(card.Player, ctx.Match, card.Player, match.MANAZONE, "Select 1 of your creatures from your mana zone that will be returned to your hand", 1, 1, false, func(x *match.Card) bool { return x.HasCondition(cnd.Creature) })
@@ -409,7 +409,7 @@ func VolcanicArrows(c *match.Card) {
 				false,
 				func(x *match.Card) bool { return x.Power <= 6000 },
 			).Map(func(x *match.Card) {
-				ctx.Match.Destroy(x, card, false)
+				ctx.Match.Destroy(x, card, match.DestroyedBySpell)
 			})
 		}
 	})
@@ -435,7 +435,7 @@ func AuroraOfReversal(c *match.Card) {
 
 			fx.SelectBackside(
 				card.Player,
-				ctx.Match, 
+				ctx.Match,
 				card.Player,
 				match.SHIELDZONE,
 				"Select any number of shields that will be sent to mana zone",

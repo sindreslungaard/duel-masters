@@ -31,7 +31,7 @@ func ChaosWorm(c *match.Card) {
 			1,
 			true,
 		).Map(func(x *match.Card) {
-			ctx.Match.Destroy(x, card, false)
+			ctx.Match.Destroy(x, card, match.DestroyedByMiscAbility)
 		})
 
 	}))
@@ -102,7 +102,7 @@ func PoisonWorm(c *match.Card) {
 			false,
 			func(x *match.Card) bool { return x.Power <= 3000 },
 		).Map(func(x *match.Card) {
-			ctx.Match.Destroy(x, card, false)
+			ctx.Match.Destroy(x, card, match.DestroyedByMiscAbility)
 		})
 
 	}))

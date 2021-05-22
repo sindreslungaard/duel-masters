@@ -367,15 +367,15 @@ func (m *Match) Battle(attacker *Card, defender *Card, blocked bool) {
 	m.HandleFx(NewContext(m, &Battle{Attacker: attacker, Defender: defender, Blocked: blocked}))
 
 	if attackerPower > defenderPower {
-		m.HandleFx(NewContext(m, &CreatureDestroyed{Card: defender, Source: attacker, InBattle: true, Blocked: blocked}))
+		m.HandleFx(NewContext(m, &CreatureDestroyed{Card: defender, Source: attacker, Blocked: blocked}))
 		m.Chat("Server", fmt.Sprintf("%s (%v) was destroyed by %s (%v)", defender.Name, defenderPower, attacker.Name, attackerPower))
 	} else if attackerPower == defenderPower {
-		m.HandleFx(NewContext(m, &CreatureDestroyed{Card: attacker, Source: defender, InBattle: true, Blocked: blocked}))
+		m.HandleFx(NewContext(m, &CreatureDestroyed{Card: attacker, Source: defender, Blocked: blocked}))
 		m.Chat("Server", fmt.Sprintf("%s (%v) was destroyed by %s (%v)", attacker.Name, attackerPower, defender.Name, defenderPower))
-		m.HandleFx(NewContext(m, &CreatureDestroyed{Card: defender, Source: attacker, InBattle: true, Blocked: blocked}))
+		m.HandleFx(NewContext(m, &CreatureDestroyed{Card: defender, Source: attacker, Blocked: blocked}))
 		m.Chat("Server", fmt.Sprintf("%s (%v) was destroyed by %s (%v)", defender.Name, defenderPower, attacker.Name, attackerPower))
 	} else if attackerPower < defenderPower {
-		m.HandleFx(NewContext(m, &CreatureDestroyed{Card: attacker, Source: defender, InBattle: true, Blocked: blocked}))
+		m.HandleFx(NewContext(m, &CreatureDestroyed{Card: attacker, Source: defender, Blocked: blocked}))
 		m.Chat("Server", fmt.Sprintf("%s (%v) was destroyed by %s (%v)", attacker.Name, attackerPower, defender.Name, defenderPower))
 	}
 
@@ -384,9 +384,9 @@ func (m *Match) Battle(attacker *Card, defender *Card, blocked bool) {
 }
 
 // Destroy sends the given card to its players graveyard
-func (m *Match) Destroy(card *Card, source *Card, inBattle bool) {
+func (m *Match) Destroy(card *Card, source *Card, context CreatureDestroyedContext) {
 
-	m.HandleFx(NewContext(m, &CreatureDestroyed{Card: card, Source: source, InBattle: inBattle}))
+	m.HandleFx(NewContext(m, &CreatureDestroyed{Card: card, Source: source, Context: context}))
 	m.Chat("Server", fmt.Sprintf("%s (%v) was destroyed by %s", card.Name, m.GetPower(card, false), source.Name))
 
 }

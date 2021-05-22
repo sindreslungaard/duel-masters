@@ -20,13 +20,13 @@ func Suicide(card *match.Card, ctx *match.Context) {
 	// When destroyed
 	if event, ok := ctx.Event.(*match.CreatureDestroyed); ok {
 
-		if event.Source == card && event.InBattle == true{
+		if event.Source == card && event.Context == match.DestroyedInBattle {
 
 			creature, err := card.Player.GetCard(event.Source.ID, match.BATTLEZONE)
 
 			if err == nil {
 
-				ctx.Match.Destroy(creature, event.Card, false)
+				ctx.Match.Destroy(creature, event.Card, match.DestroyedBySlayer)
 
 			}
 

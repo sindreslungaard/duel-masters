@@ -51,7 +51,7 @@ func RothusTheTraveler(c *match.Card) {
 				creatures := match.Search(card.Player, ctx.Match, card.Player, match.BATTLEZONE, "Rothus, the Traveler: Select 1 creature from your battlezone that will be sent to your graveyard", 1, 1, false)
 
 				for _, creature := range creatures {
-					ctx.Match.Destroy(creature, card, false)
+					ctx.Match.Destroy(creature, card, match.DestroyedByMiscAbility)
 				}
 
 				ctx.Match.Wait(card.Player, "Waiting for your opponent to make an action")
@@ -60,7 +60,7 @@ func RothusTheTraveler(c *match.Card) {
 				opponentCreatures := match.Search(ctx.Match.Opponent(card.Player), ctx.Match, ctx.Match.Opponent(card.Player), match.BATTLEZONE, "Rothus, the Traveler: Select 1 creature from your battlezone that will be sent to your graveyard", 1, 1, false)
 
 				for _, creature := range opponentCreatures {
-					ctx.Match.Destroy(creature, card, false)
+					ctx.Match.Destroy(creature, card, match.DestroyedByMiscAbility)
 				}
 
 			}

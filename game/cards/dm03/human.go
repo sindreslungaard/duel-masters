@@ -46,7 +46,7 @@ func MuramasaDukeOfBlades(c *match.Card) {
 		)
 
 		for _, creature := range creatures {
-			ctx.Match.Destroy(creature, card, false)
+			ctx.Match.Destroy(creature, card, match.DestroyedByMiscAbility)
 		}
 	}))
 
