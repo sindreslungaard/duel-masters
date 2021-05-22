@@ -48,6 +48,7 @@ type Match struct {
 
 	created     int64
 	ending      bool
+	closed      bool
 	isFirstTurn bool
 
 	quit chan bool
@@ -199,6 +200,12 @@ func (m *Match) startTicker() {
 
 // Dispose closes the match, disconnects the clients and removes all references to it
 func (m *Match) Dispose() {
+
+	if m.closed {
+		return
+	}
+
+	m.closed = true
 
 	logrus.Debugf("Disposing match %s", m.ID)
 
@@ -979,14 +986,55 @@ func (m *Match) Parse(s *server.Socket, data []byte) {
 	case "join_match":
 		{
 
-			// TODO: spectators?
+			// player reconnect
 			if m.Started {
-				s.Send(server.WarningMessage{
-					Header:  "error",
-					Message: "This match has already started, you cannot join it.",
-				})
-				s.Close()
-				return
+				if m.Player1 != nil && m.Player1.UID == s.User.UID {
+
+					if m.Player1.Socket != nil {
+						m.Player1.Socket.Close()
+					}
+
+					m.Player1.Socket = s
+
+					if m.Player2 != nil && m.Player2.Socket != nil {
+						m.Player2.Socket.Send(server.Message{
+							Header: "opponent_reconnected",
+						})
+					}
+
+					m.BroadcastState()
+					m.Chat("Server", s.User.Username+" reconnected")
+
+					return
+
+				} else if m.Player2 != nil && m.Player2.UID == s.User.UID {
+
+					if m.Player2.Socket != nil {
+						m.Player2.Socket.Close()
+					}
+
+					m.Player2.Socket = s
+
+					if m.Player1 != nil && m.Player1.Socket != nil {
+						m.Player1.Socket.Send(server.Message{
+							Header: "opponent_reconnected",
+						})
+					}
+
+					m.BroadcastState()
+					m.Chat("Server", s.User.Username+" reconnected")
+
+					return
+
+				} else {
+					// TODO: spectators?
+					s.Send(server.WarningMessage{
+						Header:  "error",
+						Message: "This match has already started, you cannot join it.",
+					})
+					s.Close()
+					return
+				}
 			}
 
 			// This is player1
@@ -1324,44 +1372,50 @@ func (m *Match) Parse(s *server.Socket, data []byte) {
 // OnSocketClose is called when a socket disconnects
 func (m *Match) OnSocketClose(s *server.Socket) {
 
-	// End if someone disconnects and there's no players in the match
-	if m.Player1 == nil && m.Player2 == nil {
-		if !m.ending {
-			m.quit <- true
-		}
+	if m.closed {
 		return
 	}
 
-	if m.Player1 != nil {
+	if !m.Started {
+		m.quit <- true
+		return
+	}
 
-		// If player1 disconnects
-		if m.Player1.Socket == s {
+	var p *PlayerReference
+	var o *PlayerReference
 
-			// Let player2 know if they are present and this was not during the end of the game
-			if m.Player2 != nil && !m.ending {
-				WarnError(m.Player2, "Your opponent disconnected, the match will close soon.")
-			}
+	// assign the above variables, player and opponent of the closing socket
+	if m.Player1 != nil && m.Player1.Socket == s {
+		p = m.Player1
 
-			if !m.ending {
-				m.quit <- true
-			}
+		if m.Player2 != nil && m.Player2.Socket != nil {
+			o = m.Player2
+		}
+
+	} else if m.Player2 != nil && m.Player2.Socket == s {
+		p = m.Player2
+
+		if m.Player1 != nil && m.Player1.Socket != nil {
+			o = m.Player1
 		}
 	}
 
-	if m.Player2 != nil {
+	if p == nil {
+		return
+	}
 
-		// If player2 disconnects
-		if m.Player2.Socket == s {
+	if o != nil {
+		// let the opponent know that this player has disconnected
+		o.Socket.Send(server.Message{
+			Header: "opponent_disconnected",
+		})
+	}
 
-			// Let player1 know if they are present and this was not during the end of the game
-			if m.Player1 != nil && !m.ending {
-				WarnError(m.Player1, "Your opponent disconnected, the match will close soon.")
-			}
+	p.Socket = nil
 
-			if !m.ending {
-				m.quit <- true
-			}
-		}
+	// if both players have disconnected, close match
+	if (p == nil || p.Socket == nil) && (o == nil || o.Socket == nil) {
+		m.quit <- true
 	}
 
 }

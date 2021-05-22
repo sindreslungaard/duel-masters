@@ -41,6 +41,7 @@ func Start(port string) {
 	r.GET("/ws/:hub", WS)
 	r.POST("/api/auth/signin", SigninHandler)
 	r.POST("/api/auth/signup", SignupHandler)
+	r.GET("/api/match/:id", GetMatchHandler)
 	r.POST("/api/match", MatchHandler)
 	r.GET("/api/cards", CardsHandler)
 	r.GET("/api/deck/:id", GetDeckHandler)
