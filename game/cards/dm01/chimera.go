@@ -66,7 +66,7 @@ func Gigaberos(c *match.Card) {
 							continue
 						}
 
-						ctx.Match.Destroy(card, card)
+						ctx.Match.Destroy(card, card, false)
 						ctx.InterruptFlow()
 
 						break
@@ -86,7 +86,7 @@ func Gigaberos(c *match.Card) {
 							continue
 						}
 
-						ctx.Match.Destroy(creature, card)
+						ctx.Match.Destroy(creature, card, false)
 
 					}
 

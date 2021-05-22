@@ -55,6 +55,7 @@ type Battle struct {
 type CreatureDestroyed struct {
 	Card    *Card
 	Source  *Card
+	InBattle bool
 	Blocked bool
 }
 

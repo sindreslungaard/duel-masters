@@ -26,7 +26,7 @@ func StingerWorm(c *match.Card) {
 				creatures := match.Search(card.Player, ctx.Match, card.Player, match.BATTLEZONE, "Stinger Worm: Select 1 creature from your battlezone that will be sent to your graveyard", 1, 1, false)
 
 				for _, creature := range creatures {
-					ctx.Match.Destroy(creature, card)
+					ctx.Match.Destroy(creature, card, false)
 				}
 
 			}
@@ -55,7 +55,7 @@ func SwampWorm(c *match.Card) {
 		creatures := match.Search(ctx.Match.Opponent(card.Player), ctx.Match, ctx.Match.Opponent(card.Player), match.BATTLEZONE, "Swamp Worm: Select 1 creature from your battlezone that will be sent to your graveyard", 1, 1, false)
 
 		for _, creature := range creatures {
-			ctx.Match.Destroy(creature, card)
+			ctx.Match.Destroy(creature, card, false)
 		}
 
 	}))

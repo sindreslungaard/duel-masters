@@ -102,7 +102,7 @@ func BlackFeatherShadowOfRage(c *match.Card) {
 					1,
 					false,
 				).Map(func(x *match.Card) {
-					ctx.Match.Destroy(x, card)
+					ctx.Match.Destroy(x, card, false)
 				})
 
 			})

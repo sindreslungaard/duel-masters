@@ -151,7 +151,7 @@ func CrimsonHammer(c *match.Card) {
 
 			for _, creature := range creatures {
 
-				ctx.Match.Destroy(creature, card)
+				ctx.Match.Destroy(creature, card, false)
 
 			}
 
@@ -234,7 +234,7 @@ func DeathSmoke(c *match.Card) {
 
 			for _, creature := range creatures {
 
-				ctx.Match.Destroy(creature, card)
+				ctx.Match.Destroy(creature, card, false)
 
 			}
 
@@ -691,7 +691,7 @@ func TerrorPit(c *match.Card) {
 
 			for _, creature := range creatures {
 
-				ctx.Match.Destroy(creature, card)
+				ctx.Match.Destroy(creature, card, false)
 
 			}
 
@@ -717,7 +717,7 @@ func TornadoFlame(c *match.Card) {
 
 			for _, creature := range creatures {
 
-				ctx.Match.Destroy(creature, card)
+				ctx.Match.Destroy(creature, card, false)
 
 			}
 
