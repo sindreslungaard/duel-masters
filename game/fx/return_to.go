@@ -15,7 +15,7 @@ func ReturnToHand(card *match.Card, ctx *match.Context) {
 
 			ctx.ScheduleAfter(func() {
 
-				card.Player.MoveCard(card.ID, match.BATTLEZONE, match.HAND)
+				card.Player.MoveCard(card.ID, match.GRAVEYARD, match.HAND)
 				ctx.Match.Chat("Server", fmt.Sprintf("%s was destroyed by %s and returned to the hand", event.Card.Name, event.Source.Name))
 			})
 
@@ -57,7 +57,7 @@ func ReturnToShield(card *match.Card, ctx *match.Context) {
 
 			ctx.ScheduleAfter(func() {
 
-				card.Player.MoveCard(card.ID, match.BATTLEZONE, match.SHIELDZONE)
+				card.Player.MoveCard(card.ID, match.GRAVEYARD, match.SHIELDZONE)
 				card.Tapped = false
 				ctx.Match.Chat("Server", fmt.Sprintf("%s was destroyed by %s but returned to the shield zone", event.Card.Name, event.Source.Name))
 			})
