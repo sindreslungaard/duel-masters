@@ -345,31 +345,33 @@ func SearingWave(c *match.Card) {
 
 		if match.AmICasted(card, ctx) {
 
-			fx.SelectBackside(
-				card.Player,
-				ctx.Match, card.Player,
-				match.SHIELDZONE,
-				"Select one shield and send it to graveyard",
-				1,
-				1,
-				false,
-			).Map(func(x *match.Card) {
-				ctx.Match.MoveCard(x, match.GRAVEYARD, card)
-			})
+			ctx.ScheduleAfter(func() {
 
-			creatures, err := ctx.Match.Opponent(card.Player).Container(match.BATTLEZONE)
+				fx.SelectBackside(
+					card.Player,
+					ctx.Match, card.Player,
+					match.SHIELDZONE,
+					"Select one shield and send it to graveyard",
+					1,
+					1,
+					false,
+				).Map(func(x *match.Card) {
+					ctx.Match.MoveCard(x, match.GRAVEYARD, card)
+				})
 
-			if err != nil {
-				return
-			}
+				creatures, err := ctx.Match.Opponent(card.Player).Container(match.BATTLEZONE)
 
-			for _, creature := range creatures {
-
-				if creature.Power <= 3000 {
-					ctx.Match.MoveCard(creature, match.GRAVEYARD, card)
+				if err != nil {
+					return
 				}
 
-			}
+				for _, creature := range creatures {
+
+					if ctx.Match.GetPower(creature, false) <= 3000 {
+						ctx.Match.Destroy(creature, card, match.DestroyedBySpell)
+					}
+				}
+			})
 		}
 	})
 }
@@ -407,7 +409,7 @@ func VolcanicArrows(c *match.Card) {
 				0,
 				1,
 				false,
-				func(x *match.Card) bool { return x.Power <= 6000 },
+				func(x *match.Card) bool { return ctx.Match.GetPower(x, false) <= 6000 },
 			).Map(func(x *match.Card) {
 				ctx.Match.Destroy(x, card, match.DestroyedBySpell)
 			})

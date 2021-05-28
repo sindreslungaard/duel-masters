@@ -100,7 +100,7 @@ func PoisonWorm(c *match.Card) {
 			1,
 			1,
 			false,
-			func(x *match.Card) bool { return x.Power <= 3000 },
+			func(x *match.Card) bool { return ctx.Match.GetPower(x, false) <= 3000 },
 		).Map(func(x *match.Card) {
 			ctx.Match.Destroy(x, card, match.DestroyedByMiscAbility)
 		})
