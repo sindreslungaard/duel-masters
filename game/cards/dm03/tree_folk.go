@@ -35,7 +35,7 @@ func MaskedPomegranate(c *match.Card) {
 
 				for _, blocker := range event.Blockers {
 
-					if blocker.Power > 4000 {
+					if ctx.Match.GetPower(blocker, false) > 4000 {
 						cards = append(cards, blocker)
 					}
 				}
@@ -55,7 +55,7 @@ func MaskedPomegranate(c *match.Card) {
 
 				for _, blocker := range event.Blockers {
 
-					if blocker.Power > 4000 {
+					if ctx.Match.GetPower(blocker, false) > 4000 {
 						cards = append(cards, blocker)
 					}
 				}
