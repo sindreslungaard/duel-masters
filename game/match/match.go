@@ -37,14 +37,15 @@ var lobbyMatches = make(chan server.MatchesListMessage)
 
 // Match struct
 type Match struct {
-	ID        string           `json:"id"`
-	MatchName string           `json:"name"`
-	HostID    string           `json:"-"`
-	Player1   *PlayerReference `json:"-"`
-	Player2   *PlayerReference `json:"-"`
-	Turn      byte             `json:"-"`
-	Started   bool             `json:"started"`
-	Visible   bool             `json:"visible"`
+	ID                string           `json:"id"`
+	MatchName         string           `json:"name"`
+	HostID            string           `json:"-"`
+	Player1           *PlayerReference `json:"-"`
+	Player2           *PlayerReference `json:"-"`
+	persistentEffects map[int]PersistentEffect
+	Turn              byte `json:"-"`
+	Started           bool `json:"started"`
+	Visible           bool `json:"visible"`
 
 	created     int64
 	ending      bool
@@ -75,12 +76,13 @@ func New(matchName string, hostID string, visible bool) *Match {
 	}
 
 	m := &Match{
-		ID:        id,
-		MatchName: matchName,
-		HostID:    hostID,
-		Turn:      1,
-		Started:   false,
-		Visible:   visible,
+		ID:                id,
+		MatchName:         matchName,
+		HostID:            hostID,
+		persistentEffects: make(map[int]PersistentEffect),
+		Turn:              1,
+		Started:           false,
+		Visible:           visible,
 
 		created:     time.Now().Unix(),
 		ending:      false,
@@ -602,6 +604,14 @@ func (m *Match) HandleFx(ctx *Context) {
 
 	}
 
+	// Handle persistent effects
+	for _, card := range cards {
+		for _, fx := range m.persistentEffects {
+			fx.effect(card, ctx, fx.exit)
+		}
+	}
+
+	// Handle regular card effects c.Use(...
 	for _, card := range cards {
 
 		for _, h := range card.handlers {
@@ -616,6 +626,7 @@ func (m *Match) HandleFx(ctx *Context) {
 
 	}
 
+	// Handle ctx.ScheduleAfter effects
 	for _, h := range ctx.postFxs {
 
 		if ctx.cancel {
