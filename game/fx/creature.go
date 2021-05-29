@@ -203,6 +203,9 @@ func Creature(card *match.Card, ctx *match.Context) {
 
 			card.Tapped = true
 
+			// Broadcast state so that opponent can see that this card is tapped if they get any shield triggers
+			ctx.Match.BroadcastState()
+
 			// Allow the opponent to block if they can
 			if len(event.Blockers) > 0 && !card.HasCondition(cnd.CantBeBlocked) {
 
