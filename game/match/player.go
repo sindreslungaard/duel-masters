@@ -364,7 +364,7 @@ func (p *Player) MoveCard(cardID string, from string, to string) (*Card, error) 
 
 	*cFrom = temp
 
-	temp2 := append([]*Card{ref}, *cTo...)
+	temp2 := append(*cTo, ref)
 
 	*cTo = temp2
 
