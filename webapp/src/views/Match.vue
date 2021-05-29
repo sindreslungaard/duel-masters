@@ -671,6 +671,10 @@ export default {
 
     const connect = async () => {
 
+      if(this.errorMessage.includes("won")) {
+        return;
+      }
+
       if(this.preventReconnect) {
         return;
       }
