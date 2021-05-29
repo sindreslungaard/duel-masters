@@ -337,7 +337,7 @@
       </div>
 
       <div class="stage me bt">
-        <div class="playzone">
+        <div @drop='drop($event, "playzone")' @dragover.prevent @dragenter.prevent ref="myplayzone" class="playzone">
           <div class="card placeholder">
             <img src="/assets/cards/backside.png" />
           </div>
@@ -370,7 +370,7 @@
           </div>
         </div>
 
-        <div class="manazone">
+        <div @drop='drop($event, "manazone")' @dragover.prevent @dragenter.prevent ref="mymanazone" class="manazone">
           <div class="card mana placeholder">
             <img src="/assets/cards/backside.png" />
           </div>
@@ -397,6 +397,9 @@
           :key="index"
         >
           <img
+            draggable
+            @dragstart='startDrag($event, card)'
+            @dragend="stopDrag($event, card)"
             :class="[handSelection === card ? 'glow-' + card.civilization : '']"
             :src="`/assets/cards/all/${card.uid}.jpg`"
           />
@@ -624,6 +627,42 @@ export default {
           virtualId: this.playzoneSelection.virtualId
         })
       );
+    },
+    startDrag(evt, card) {
+      evt.dataTransfer.dropEffect = "move";
+      evt.dataTransfer.effectAllowed = "move";
+      evt.dataTransfer.setData("vid", card.virtualId);
+
+      if(card.canBePlayed) {
+        this.$refs.myplayzone.style.backgroundColor = "#507053";
+      } else {
+        this.$refs.myplayzone.style.backgroundColor = "#7d5252";
+      }
+      
+      if(!this.state.hasAddedManaThisRound) {
+        this.$refs.mymanazone.style.backgroundColor = "#507053";
+      } else {
+        this.$refs.mymanazone.style.backgroundColor = "#7d5252";
+      }
+      
+    },
+    stopDrag() {
+      this.$refs.myplayzone.style.backgroundColor = "transparent";
+      this.$refs.mymanazone.style.backgroundColor = "transparent";
+    },
+    drop(event, zone) {
+      const vid = event.dataTransfer.getData("vid");
+      const card = this.state.me.hand.find(x => x.virtualId === vid);
+
+      console.log(vid, card);
+
+      this.handSelection = card;
+      
+      if(zone == "manazone") {
+        this.addToManazone();
+      } else if(zone == "playzone") {
+        this.addToPlayzone();
+      }
     }
   },
   created() {  
