@@ -72,9 +72,8 @@ func EssenceElf(c *match.Card) {
 					return
 				}
 
-				toReduce.RemoveConditionBySource(card.Name)
 				if toReduce.HasCondition(cnd.Spell) {
-					toReduce.AddCondition(cnd.ReducedCost, true, card.Name)
+					toReduce.AddCondition(cnd.ReducedCost, true, card.ID)
 				}
 
 			}
