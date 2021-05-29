@@ -25,35 +25,10 @@ func SparkleFlower(c *match.Card) {
 			if match.ContainerHas(card.Player, match.MANAZONE, func(x *match.Card) bool { return x.Civ != civ.Light }) {
 				card.RemoveCondition(cnd.Blocker)
 			} else {
-				card.AddCondition(cnd.Blocker, true, card.ID)	
+				card.AddCondition(cnd.Blocker, true, card.ID)
 			}
 		}
-	
-		if event, ok := ctx.Event.(*match.AttackPlayer); ok {
-	
-			if !card.HasCondition(cnd.Blocker) {
-				return
-			}
 
-			// Only add to list of blockers if it is our player that is being attacked, i.e. not our players turn
-			if !ctx.Match.IsPlayerTurn(card.Player) && !card.Tapped && card.Player.HasCard(match.BATTLEZONE, card.ID) {
-				event.Blockers = append(event.Blockers, card)
-			}
-	
-		}
-	
-		if event, ok := ctx.Event.(*match.AttackCreature); ok {
-	
-			if !card.HasCondition(cnd.Blocker) {
-				return
-			}
-
-			// Only add to list of blockers if it is our creature that is being attacked, i.e. not our players turn
-			if !ctx.Match.IsPlayerTurn(card.Player) && !card.Tapped && card.Player.HasCard(match.BATTLEZONE, card.ID) {
-				event.Blockers = append(event.Blockers, card)
-			}
-	
-		}
 	})
 
 }

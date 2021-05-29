@@ -138,10 +138,19 @@ func Creature(card *match.Card, ctx *match.Context) {
 			return
 		}
 
+		opponent := ctx.Match.Opponent(card.Player)
+
+		// Add blockers to the attack
+		FindFilter(
+			opponent,
+			match.BATTLEZONE,
+			func(x *match.Card) bool { return x.HasCondition(cnd.Blocker) && !x.Tapped },
+		).Map(func(x *match.Card) {
+			event.Blockers = append(event.Blockers, x)
+		})
+
 		// Do this last in case any other cards want to interrupt the flow
 		ctx.ScheduleAfter(func() {
-
-			opponent := ctx.Match.Opponent(card.Player)
 
 			shieldzone, err := opponent.Container(match.SHIELDZONE)
 
@@ -293,10 +302,19 @@ func Creature(card *match.Card, ctx *match.Context) {
 			return
 		}
 
+		opponent := ctx.Match.Opponent(card.Player)
+
+		// Add blockers to the attack
+		FindFilter(
+			opponent,
+			match.BATTLEZONE,
+			func(x *match.Card) bool { return x.HasCondition(cnd.Blocker) && !x.Tapped },
+		).Map(func(x *match.Card) {
+			event.Blockers = append(event.Blockers, x)
+		})
+
 		// Do this last in case any other cards want to interrupt the flow
 		ctx.ScheduleAfter(func() {
-
-			opponent := ctx.Match.Opponent(card.Player)
 
 			battlezone, err := opponent.Container(match.BATTLEZONE)
 
