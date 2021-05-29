@@ -63,8 +63,8 @@
     </div>
 
     <!-- action (card selection) -->
-    <div v-if="action" class="action">
-      <span>{{ action.text }}</span>
+    <div v-if="action" id="action" class="action noselect">
+      <span v-draggable data-ref="action">{{ action.text }}</span>
       <template v-if="actionObject">
         <select class="action-select" v-model="actionDrowdownSelection">
           <option
@@ -897,8 +897,10 @@ export default {
     color: #ccc;
     font-size: 13px;
     display: block;
-    margin: 0 30px;
-    margin-top: 15px;
+    padding: 15px 30px;
+    &:hover {
+      cursor: move;
+    }
   }
   .btn {
     margin: 0 7px;
@@ -906,6 +908,7 @@ export default {
   .action-cards {
     background: #222428;
     margin: 15px;
+    margin-top: 0;
     border-radius: 4px;
     padding: 10px;
     max-height: 300px;
@@ -1354,5 +1357,15 @@ export default {
   display: inline-block;
   border-radius: 7px;
   margin: 10px;
+}
+
+.noselect {
+  -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none; /* Safari */
+     -khtml-user-select: none; /* Konqueror HTML */
+       -moz-user-select: none; /* Old versions of Firefox */
+        -ms-user-select: none; /* Internet Explorer/Edge */
+            user-select: none; /* Non-prefixed version, currently
+                                  supported by Chrome, Edge, Opera and Firefox */
 }
 </style>

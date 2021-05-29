@@ -14,6 +14,10 @@
   700
 );
 
+html, body {
+  height: 100%;
+}
+
 body {
   background: #36393f;
   margin: 0;
