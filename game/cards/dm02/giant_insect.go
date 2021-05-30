@@ -30,7 +30,7 @@ func XenoMantis(c *match.Card) {
 				blockers := make([]*match.Card, 0)
 
 				for _, blocker := range event.Blockers {
-					if blocker.Power > 5000 {
+					if ctx.Match.GetPower(blocker, false) > 5000 {
 						blockers = append(blockers, blocker)
 					}
 				}
@@ -52,7 +52,7 @@ func XenoMantis(c *match.Card) {
 				blockers := make([]*match.Card, 0)
 
 				for _, blocker := range event.Blockers {
-					if blocker.Power > 5000 {
+					if ctx.Match.GetPower(blocker, false) > 5000 {
 						blockers = append(blockers, blocker)
 					}
 				}

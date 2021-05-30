@@ -382,6 +382,58 @@ func (p *Player) MoveCard(cardID string, from string, to string) (*Card, error) 
 
 }
 
+// MoveCard tries to move a card from container a to the front of container b
+func (p *Player) MoveCardToFront(cardID string, from string, to string) (*Card, error) {
+
+	cFrom, err := p.ContainerRef(from)
+
+	if err != nil {
+		return nil, err
+	}
+
+	if !p.HasCard(from, cardID) {
+		return nil, errors.New("Card is not in the specified container")
+	}
+
+	cTo, err := p.ContainerRef(to)
+
+	if err != nil {
+		return nil, err
+	}
+
+	p.mutex.Lock()
+
+	temp := make([]*Card, 0)
+	var ref *Card
+
+	for _, card := range *cFrom {
+		if card.ID != cardID {
+			temp = append(temp, card)
+		} else {
+			ref = card
+		}
+	}
+
+	*cFrom = temp
+
+	temp2 := append([]*Card{ref}, *cTo...)
+
+	*cTo = temp2
+
+	ref.Zone = to
+
+	p.mutex.Unlock()
+
+	p.match.HandleFx(NewContext(p.match, &CardMoved{
+		CardID: ref.ID,
+		From:   from,
+		To:     to,
+	}))
+
+	return ref, nil
+
+}
+
 // CanPlayCard returns true or false based on if the specified card can be played with the specified mana
 func (p *Player) CanPlayCard(card *Card, mana []*Card) bool {
 

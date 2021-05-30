@@ -49,7 +49,7 @@ func Corile(c *match.Card) {
 			1,
 			false,
 		).Map(func(x *match.Card) {
-			ctx.Match.MoveCard(x, match.DECK, card)
+			ctx.Match.MoveCardToFront(x, match.DECK, card)
 		})
 
 	}))

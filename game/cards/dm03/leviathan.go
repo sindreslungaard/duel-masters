@@ -26,13 +26,13 @@ func KingNeptas(c *match.Card) {
 		myCards := fx.FindFilter(
 			card.Player,
 			match.BATTLEZONE,
-			func(x *match.Card) bool { return x.Power <= 2000 },
+			func(x *match.Card) bool { return ctx.Match.GetPower(x, false) <= 2000 },
 		)
 
 		opponentCards := fx.FindFilter(
 			ctx.Match.Opponent(card.Player),
 			match.BATTLEZONE,
-			func(x *match.Card) bool { return x.Power <= 2000 },
+			func(x *match.Card) bool { return ctx.Match.GetPower(x, false) <= 2000 },
 		)
 
 		if len(myCards) < 1 && len(opponentCards) < 1 {

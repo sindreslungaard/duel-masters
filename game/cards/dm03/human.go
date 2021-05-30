@@ -42,7 +42,7 @@ func MuramasaDukeOfBlades(c *match.Card) {
 			1,
 			1,
 			true,
-			func(x *match.Card) bool { return x.Power <= 2000 },
+			func(x *match.Card) bool { return ctx.Match.GetPower(x, false) <= 2000 },
 		)
 
 		for _, creature := range creatures {

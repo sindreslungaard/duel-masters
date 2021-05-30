@@ -407,6 +407,19 @@ func (m *Match) MoveCard(card *Card, destination string, source *Card) {
 
 }
 
+// MoveCardToFront moves a card and sends a chat message about what source moved it
+func (m *Match) MoveCardToFront(card *Card, destination string, source *Card) {
+
+	_, err := card.Player.MoveCardToFront(card.ID, card.Zone, destination)
+
+	if err != nil {
+		return
+	}
+
+	m.Chat("Server", fmt.Sprintf("%s was moved to %s %s by %s", card.Name, card.Player.Username(), destination, source.Name))
+
+}
+
 // BreakShields breaks the given shields and handles shieldtriggers
 func (m *Match) BreakShields(shields []*Card) {
 
