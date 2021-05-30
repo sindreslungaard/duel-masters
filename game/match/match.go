@@ -46,6 +46,7 @@ type Match struct {
 	Turn              byte `json:"-"`
 	Started           bool `json:"started"`
 	Visible           bool `json:"visible"`
+	Step              interface{}
 
 	created     int64
 	ending      bool
@@ -755,13 +756,15 @@ func (m *Match) Start() {
 // BeginNewTurn starts a new turn
 func (m *Match) BeginNewTurn() {
 
+	m.Step = &BeginTurnStep{}
+
 	if m.Turn == 1 {
 		m.Turn = 2
 	} else {
 		m.Turn = 1
 	}
 
-	ctx := NewContext(m, &BeginTurnStep{})
+	ctx := NewContext(m, m.Step)
 
 	m.HandleFx(ctx)
 
@@ -777,13 +780,15 @@ func (m *Match) BeginNewTurn() {
 // UntapStep ...
 func (m *Match) UntapStep() {
 
+	m.Step = &UntapStep{}
+
 	if mana, err := m.CurrentPlayer().Player.Container(MANAZONE); err == nil {
 		for _, c := range mana {
 			c.Tapped = false
 		}
 	}
 
-	ctx := NewContext(m, &UntapStep{})
+	ctx := NewContext(m, m.Step)
 
 	m.HandleFx(ctx)
 
@@ -794,7 +799,9 @@ func (m *Match) UntapStep() {
 // StartOfTurnStep ...
 func (m *Match) StartOfTurnStep() {
 
-	ctx := NewContext(m, &StartOfTurnStep{})
+	m.Step = &StartOfTurnStep{}
+
+	ctx := NewContext(m, m.Step)
 
 	m.HandleFx(ctx)
 
@@ -807,7 +814,9 @@ func (m *Match) StartOfTurnStep() {
 // DrawStep ...
 func (m *Match) DrawStep() {
 
-	ctx := NewContext(m, &DrawStep{})
+	m.Step = &DrawStep{}
+
+	ctx := NewContext(m, m.Step)
 
 	m.HandleFx(ctx)
 
@@ -825,7 +834,9 @@ func (m *Match) DrawStep() {
 // ChargeStep ...
 func (m *Match) ChargeStep() {
 
-	ctx := NewContext(m, &ChargeStep{})
+	m.Step = &ChargeStep{}
+
+	ctx := NewContext(m, m.Step)
 
 	m.HandleFx(ctx)
 
@@ -834,7 +845,9 @@ func (m *Match) ChargeStep() {
 // EndStep ...
 func (m *Match) EndStep() {
 
-	ctx := NewContext(m, &EndStep{})
+	m.Step = &EndStep{}
+
+	ctx := NewContext(m, m.Step)
 
 	m.HandleFx(ctx)
 
@@ -847,6 +860,8 @@ func (m *Match) EndStep() {
 // EndOfTurnTriggers ...
 func (m *Match) EndOfTurnTriggers() {
 
+	m.Step = &EndOfTurnStep{}
+
 	if cards, err := m.CurrentPlayer().Player.Container(BATTLEZONE); err == nil {
 		for _, c := range cards {
 			c.ClearConditions()
@@ -855,7 +870,7 @@ func (m *Match) EndOfTurnTriggers() {
 
 	m.isFirstTurn = false
 
-	ctx := NewContext(m, &EndOfTurnStep{})
+	ctx := NewContext(m, m.Step)
 
 	m.HandleFx(ctx)
 
@@ -908,6 +923,10 @@ func (m *Match) PlayCard(p *PlayerReference, cardID string) {
 	m.HandleFx(ctx)
 
 	if !ctx.Cancelled() {
+		if _, ok := m.Step.(*MainStep); !ok {
+			m.Step = &MainStep{}
+		}
+
 		p.Player.CanChargeMana = false
 	}
 
@@ -933,6 +952,10 @@ func (m *Match) AttackPlayer(p *PlayerReference, cardID string) {
 	m.HandleFx(ctx)
 
 	if !ctx.Cancelled() {
+		if _, ok := m.Step.(*AttackStep); !ok {
+			m.Step = &AttackStep{}
+		}
+
 		p.Player.CanChargeMana = false
 	}
 
@@ -958,6 +981,10 @@ func (m *Match) AttackCreature(p *PlayerReference, cardID string) {
 	m.HandleFx(ctx)
 
 	if !ctx.Cancelled() {
+		if _, ok := m.Step.(*AttackStep); !ok {
+			m.Step = &AttackStep{}
+		}
+
 		p.Player.CanChargeMana = false
 	}
 

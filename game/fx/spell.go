@@ -22,6 +22,13 @@ func Spell(card *match.Card, ctx *match.Context) {
 			return
 		}
 
+		// make sure we haven't attacked yet
+		if _, ok := ctx.Match.Step.(*match.AttackStep); ok {
+			ctx.Match.WarnPlayer(card.Player, "You can't cast spells after attacking")
+			ctx.InterruptFlow()
+			return
+		}
+
 		ctx.ScheduleAfter(func() {
 
 			manazone, err := card.Player.Container(match.MANAZONE)

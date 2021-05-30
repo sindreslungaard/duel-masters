@@ -29,6 +29,13 @@ func Creature(card *match.Card, ctx *match.Context) {
 			return
 		}
 
+		// make sure we haven't attacked yet
+		if _, ok := ctx.Match.Step.(*match.AttackStep); ok {
+			ctx.Match.WarnPlayer(card.Player, "You can't summon creatures after attacking")
+			ctx.InterruptFlow()
+			return
+		}
+
 		// Do this last in case any other cards want to interrupt the flow
 		ctx.ScheduleAfter(func() {
 
