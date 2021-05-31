@@ -5,6 +5,7 @@ import (
 	"duel-masters/game/cnd"
 	"duel-masters/game/fx"
 	"duel-masters/game/match"
+	"fmt"
 )
 
 // FullDefensor ...
@@ -39,4 +40,32 @@ func FullDefensor(c *match.Card) {
 
 		}
 	})
+}
+
+// CloneFactory ...
+func CloneFactory(c *match.Card) {
+
+	c.Name = "Clone Factory"
+	c.Civ = civ.Water
+	c.ManaCost = 3
+	c.ManaRequirement = []string{civ.Water}
+
+	c.Use(fx.Spell, fx.When(fx.SpellCast, func(card *match.Card, ctx *match.Context) {
+
+		fx.Select(
+			card.Player,
+			ctx.Match,
+			card.Player,
+			match.MANAZONE,
+			"Clone Factory: Return up to 2 cards from your mana zone to your hand",
+			1,
+			2,
+			true,
+		).Map(func(x *match.Card) {
+			x.Tapped = false
+			card.Player.MoveCard(x.ID, match.MANAZONE, match.HAND)
+			ctx.Match.Chat("Server", fmt.Sprintf("%s was moved to %s's hand from their manazone by Clone Factory", x.Name, card.Player.Username()))
+		})
+
+	}))
 }

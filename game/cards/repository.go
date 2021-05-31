@@ -272,4 +272,5 @@ var DM03 = map[string]match.CardConstructor{
 var DM04 = map[string]match.CardConstructor{
 	"0ce1bba5-376f-4c9b-9865-730f9e62a7d7": dm04.FullDefensor,
 	"2e5452fe-1225-401a-b98b-b8a08639a467": dm04.SkeletonThiefTheRevealer,
+	"2fe88eac-54da-4e49-a6b3-22b1b8c7da65": dm04.CloneFactory,
 }
