@@ -18,31 +18,33 @@ func JackViperShadowofDoom(c *match.Card) {
 	c.ManaCost = 3
 	c.ManaRequirement = []string{civ.Darkness}
 
-	c.Use(fx.Creature, fx.Evolution, func(card *match.Card, ctx *match.Context) {
+	c.Use(fx.Creature, fx.Evolution, fx.When(fx.Summoned, func(card *match.Card, ctx *match.Context) {
 
-		if event, ok := ctx.Event.(*match.CreatureDestroyed); ok {
+		ctx.Match.ApplyPersistentEffect(func(card2 *match.Card, ctx2 *match.Context, exit func()) {
 
 			if card.Zone != match.BATTLEZONE {
+				exit()
 				return
 			}
 
-			ctx.ScheduleAfter(func() {
+			event, ok := ctx2.Event.(*match.CardMoved)
 
-				destroyedCard, err := card.Player.GetCard(event.Card.ID, match.GRAVEYARD)
+			if !ok || event.From != match.BATTLEZONE {
+				return
+			}
 
-				if err != nil {
-					return
-				}
-
-				if event.Card.ID != card.ID && destroyedCard.Civ == civ.Darkness && event.Card.Player == card.Player {
-					card.Player.MoveCard(event.Card.ID, match.GRAVEYARD, match.HAND)
-					ctx.Match.Chat("Server", fmt.Sprintf("%s was moved to %s's hand from the graveyard by Jack Viper, Shadow of Doom", destroyedCard.Name, ctx.Match.PlayerRef(card.Player).Socket.User.Username))
-				}
-
+			fx.FindFilter(
+				card.Player,
+				match.GRAVEYARD,
+				func(x *match.Card) bool { return x.ID == event.CardID && x.ID != card.ID && card.Civ == civ.Darkness },
+			).Map(func(x *match.Card) {
+				card.Player.MoveCard(x.ID, match.GRAVEYARD, match.HAND)
+				ctx.Match.Chat("Server", fmt.Sprintf("%s was moved to %s's hand from the graveyard by Jack Viper, Shadow of Doom", x.Name, x.Player.Username()))
 			})
 
-		}
-	})
+		})
+
+	}))
 
 }
 
