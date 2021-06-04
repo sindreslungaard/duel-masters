@@ -442,7 +442,7 @@ func (m *Match) BreakShields(shields []*Card) {
 
 			m.Wait(m.Opponent(card.Player), "Waiting for your opponent to make an action")
 
-			m.NewAction(card.Player, []*Card{card}, 1, 1, "Shield trigger! Choose the spell to cast it for free or close to keep it in your hand", true)
+			m.NewAction(card.Player, []*Card{card}, 1, 1, "Shield trigger! Choose the card to use for free or close to keep it in your hand", true)
 
 			for {
 
@@ -458,7 +458,11 @@ func (m *Match) BreakShields(shields []*Card) {
 					continue
 				}
 
-				m.CastSpell(card, true)
+				if card.HasCondition(cnd.Spell) {
+					m.CastSpell(card, true)				
+				} else {
+					m.MoveCard(card, BATTLEZONE, card)
+				}
 
 				m.CloseAction(card.Player)
 

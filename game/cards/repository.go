@@ -273,4 +273,9 @@ var DM04 = map[string]match.CardConstructor{
 	"0ce1bba5-376f-4c9b-9865-730f9e62a7d7": dm04.FullDefensor,
 	"2e5452fe-1225-401a-b98b-b8a08639a467": dm04.SkeletonThiefTheRevealer,
 	"2fe88eac-54da-4e49-a6b3-22b1b8c7da65": dm04.CloneFactory,
+	"81ebd0e6-94dc-44e6-958a-6df15dae091c": dm04.GalklifeDragon,
+	"70ed7fd3-afb9-4b62-9c3c-6b26b8eccf04": dm04.DoboulgyserGiantRockBeast,
+	"746d520f-7486-4eba-ae59-58473092a999": dm04.BlastoExplosiveSoldier,
+	"bc430287-5cac-42b5-a6f8-5edcfe5cea58": dm04.ChaoticSkyterror,
+	"0103d28a-1c07-4cc3-916e-1fd67ef9595a": dm04.KamikazeChainsawWarrior,
 }
