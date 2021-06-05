@@ -450,6 +450,9 @@ func (p *Player) CanPlayCard(card *Card, mana []*Card) bool {
 			if manaCost > 1 {
 				manaCost--
 			}
+			if condition.ID == cnd.IncreasedCost {
+				manaCost++
+			}
 		}
 	}
 
