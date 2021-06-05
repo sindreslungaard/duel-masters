@@ -65,6 +65,10 @@ func Creature(card *match.Card, ctx *match.Context) {
 						manaCost--
 					}
 				}
+
+				if condition.ID == cnd.IncreasedCost {
+					manaCost++
+				}
 			}
 
 			ctx.Match.NewAction(
