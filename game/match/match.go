@@ -416,7 +416,7 @@ func (m *Match) MoveCardToFront(card *Card, destination string, source *Card) {
 		return
 	}
 
-	m.Chat("Server", fmt.Sprintf("%s was moved to %s %s by %s", card.Name, card.Player.Username(), destination, source.Name))
+	m.Chat("Server", fmt.Sprintf("%s was moved to %s's %s by %s", card.Name, card.Player.Username(), destination, source.Name))
 
 }
 
@@ -459,7 +459,7 @@ func (m *Match) BreakShields(shields []*Card) {
 				}
 
 				if card.HasCondition(cnd.Spell) {
-					m.CastSpell(card, true)				
+					m.CastSpell(card, true)
 				} else {
 					m.MoveCard(card, BATTLEZONE, card)
 				}
