@@ -155,7 +155,7 @@ func SwordOfMalevolentDeath(c *match.Card) {
 			card.Player,
 			match.BATTLEZONE,
 		).Map(func(x *match.Card) {
-			
+
 			x.PowerModifier = func(m *match.Match, attacking bool) int {
 
 				if attacking {
@@ -165,5 +165,58 @@ func SwordOfMalevolentDeath(c *match.Card) {
 				return 0
 			}
 		})
+	}))
+}
+
+// HydroHurricane ...
+func HydroHurricane(c *match.Card) {
+
+	c.Name = "Hydro Hurricane"
+	c.Civ = civ.Water
+	c.ManaCost = 6
+	c.ManaRequirement = []string{civ.Water}
+
+	c.Use(fx.Spell, fx.When(fx.SpellCast, func(card *match.Card, ctx *match.Context) {
+
+		nrLight := len(fx.FindFilter(
+			card.Player,
+			match.BATTLEZONE,
+			func(x *match.Card) bool { return x.Civ == civ.Light },
+		))
+
+		fx.Select(
+			card.Player,
+			ctx.Match,
+			ctx.Match.Opponent(card.Player),
+			match.MANAZONE,
+			fmt.Sprintf("Hydro Hurricane: Choose up to %d cards from your opponent's mana zone that will be returned to his hand.", nrLight),
+			0,
+			nrLight,
+			false,
+		).Map(func(x *match.Card) {
+			x.Player.MoveCard(x.ID, match.MANAZONE, match.HAND)
+			ctx.Match.Chat("Server", fmt.Sprintf("%s got moved to %s hand from his mana zone by Hydro Hurricane", x.Name, x.Player.Username()))
+		})
+
+		nrDark := len(fx.FindFilter(
+			card.Player,
+			match.BATTLEZONE,
+			func(x *match.Card) bool { return x.Civ == civ.Darkness },
+		))
+
+		fx.Select(
+			card.Player,
+			ctx.Match,
+			ctx.Match.Opponent(card.Player),
+			match.BATTLEZONE,
+			fmt.Sprintf("Hydro Hurricane: Choose up to %d cards from your opponent's battle zone that will be returned to his hand.", nrDark),
+			0,
+			nrDark,
+			false,
+		).Map(func(x *match.Card) {
+			x.Player.MoveCard(x.ID, match.BATTLEZONE, match.HAND)
+			ctx.Match.Chat("Server", fmt.Sprintf("%s got moved to %s hand from his battle zone by Hydro Hurricane", x.Name, x.Player.Username()))
+		})
+
 	}))
 }

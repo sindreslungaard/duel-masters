@@ -369,6 +369,7 @@ func (p *Player) MoveCard(cardID string, from string, to string) (*Card, error) 
 	*cTo = temp2
 
 	ref.Zone = to
+	ref.Tapped = false
 
 	p.mutex.Unlock()
 
@@ -421,6 +422,7 @@ func (p *Player) MoveCardToFront(cardID string, from string, to string) (*Card, 
 	*cTo = temp2
 
 	ref.Zone = to
+	ref.Tapped = false
 
 	p.mutex.Unlock()
 
