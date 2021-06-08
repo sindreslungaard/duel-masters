@@ -21,7 +21,7 @@ func Galsaur(c *match.Card) {
 
 	c.PowerModifier = func(m *match.Match, attacking bool) int {
 
-		if len(fx.Find(c.Player, match.BATTLEZONE)) == 1 {
+		if (len(fx.Find(c.Player, match.BATTLEZONE)) == 1) && attacking {
 			return 4000
 		}
 

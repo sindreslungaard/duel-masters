@@ -837,7 +837,6 @@ func (m *Match) DrawStep() {
 
 	m.HandleFx(ctx)
 
-	//TODO: dont draw first turn
 	if m.isFirstTurn == false {
 		m.CurrentPlayer().Player.DrawCards(1)
 	}

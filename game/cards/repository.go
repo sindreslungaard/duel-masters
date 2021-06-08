@@ -283,4 +283,13 @@ var DM04 = map[string]match.CardConstructor{
 	"43cde867-4cad-4ed7-867e-b01d1577b571": dm04.MissileBoy,
 	"1484ec6d-c1b5-4fc4-abaf-a16c08cfc5f7": dm04.PippieKuppie,
 	"4dd64294-fe68-4337-b6fc-48e1a473a1ce": dm04.SwordOfMalevolentDeath,
+	"7b6fe59d-8b11-4f8b-9a0b-1ce22673c274": dm04.KingAquakamui,
+	"187a6327-b0e0-42a3-8cae-9293b41927ac": dm04.AstralWarper,
+	"a31acf59-bf6a-4e52-9158-53103e5e9951": dm04.AquaGuard,
+	"a9469dd3-73fa-4a8c-a9dd-7b852487308a": dm04.AquaJolter,
+	"4143565f-a7a0-48f9-9601-67ad15ca0933": dm04.HunterCluster,
+	"831f5090-667f-41e3-863d-2db3d8be68db": dm04.HydroHurricane,
+	"979c8fda-550e-40af-a88e-d26bee3cbbb4": dm04.KeeperOfTheSunlitAbyss,
+	"8155edc9-5ab2-4295-95e4-2cd07c438e61": dm04.Marinomancer,
+	"e4408b19-a426-4cc3-8b81-281499e80a88": dm04.SmileAngler,
 }
