@@ -156,14 +156,7 @@ func SwordOfMalevolentDeath(c *match.Card) {
 			match.BATTLEZONE,
 		).Map(func(x *match.Card) {
 
-			x.PowerModifier = func(m *match.Match, attacking bool) int {
-
-				if attacking {
-					return nrDarkCards * 1000
-				}
-
-				return 0
-			}
+			x.AddCondition(cnd.PowerAttacker, nrDarkCards * 1000, card.ID)
 		})
 	}))
 }
@@ -216,6 +209,50 @@ func HydroHurricane(c *match.Card) {
 		).Map(func(x *match.Card) {
 			x.Player.MoveCard(x.ID, match.BATTLEZONE, match.HAND)
 			ctx.Match.Chat("Server", fmt.Sprintf("%s got moved to %s hand from his battle zone by Hydro Hurricane", x.Name, x.Player.Username()))
+		})
+	}))
+}
+
+// MysticInscription ...
+func MysticInscription(c *match.Card) {
+
+	c.Name = "Mystic Inscription"
+	c.Civ = civ.Nature
+	c.ManaCost = 6
+	c.ManaRequirement = []string{civ.Nature}
+
+	c.Use(fx.Spell, fx.When(fx.SpellCast, func(card *match.Card, ctx *match.Context) {
+
+		topCard := card.Player.PeekDeck(1)
+
+		for _, c := range topCard {
+			card.Player.MoveCard(c.ID, match.DECK, match.SHIELDZONE)
+		}
+	}))
+}
+
+// SwordOfBenevolentLife ...
+func SwordOfBenevolentLife(c *match.Card) {
+
+	c.Name = "Sword of Benevolent Life"
+	c.Civ = civ.Nature
+	c.ManaCost = 2
+	c.ManaRequirement = []string{civ.Nature}
+
+	c.Use(fx.Spell, fx.When(fx.SpellCast, func(card *match.Card, ctx *match.Context) {
+
+		nrLightCards := len(fx.FindFilter(
+			card.Player,
+			match.BATTLEZONE,
+			func(x *match.Card) bool { return x.Civ == civ.Light },
+		))
+
+		fx.Find(
+			card.Player,
+			match.BATTLEZONE,
+		).Map(func(x *match.Card) {
+
+			x.AddCondition(cnd.PowerAmplifier, nrLightCards * 1000, card.ID)
 		})
 
 	}))
