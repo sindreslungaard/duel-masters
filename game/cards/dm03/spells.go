@@ -81,7 +81,7 @@ func SundropArmor(c *match.Card) {
 				false,
 				func(c *match.Card) bool { return c.ID != card.ID },
 			).Map(func(x *match.Card) {
-				ctx.Match.MoveCard(x, match.SHIELDZONE, card)
+				x.Player.MoveCard(x.ID, match.HAND, match.SHIELDZONE)
 			})
 
 		}
