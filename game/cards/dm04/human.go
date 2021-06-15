@@ -38,7 +38,7 @@ func MissileBoy(c *match.Card) {
 				return
 			}
 
-			playedCard.AddUniqueSourceCondition(cnd.IncreasedCost, true, card.ID)
+			playedCard.AddUniqueSourceCondition(cnd.IncreasedCost, 1, card.ID)
 		}
 
 	})

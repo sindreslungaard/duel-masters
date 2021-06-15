@@ -156,7 +156,7 @@ func SwordOfMalevolentDeath(c *match.Card) {
 			match.BATTLEZONE,
 		).Map(func(x *match.Card) {
 
-			x.AddCondition(cnd.PowerAttacker, nrDarkCards * 1000, card.ID)
+			x.AddCondition(cnd.PowerAttacker, nrDarkCards*1000, card.ID)
 		})
 	}))
 }
@@ -252,7 +252,134 @@ func SwordOfBenevolentLife(c *match.Card) {
 			match.BATTLEZONE,
 		).Map(func(x *match.Card) {
 
-			x.AddCondition(cnd.PowerAmplifier, nrLightCards * 1000, card.ID)
+			x.AddCondition(cnd.PowerAmplifier, nrLightCards*1000, card.ID)
+		})
+
+	}))
+}
+
+// ChainsOfSacrifice ...
+func ChainsOfSacrifice(c *match.Card) {
+
+	c.Name = "Chains of Sacrifice"
+	c.Civ = civ.Darkness
+	c.ManaCost = 8
+	c.ManaRequirement = []string{civ.Darkness}
+
+	c.Use(fx.Spell, fx.When(fx.SpellCast, func(card *match.Card, ctx *match.Context) {
+
+		fx.Select(
+			card.Player,
+			ctx.Match,
+			card.Player,
+			match.BATTLEZONE,
+			"Chains of Sacrifice: Select one of your creatures and destroy it.",
+			1,
+			1,
+			false,
+		).Map(func(x *match.Card) {
+
+			ctx.Match.Destroy(x, card, match.DestroyedBySpell)
+			ctx.Match.Chat("Server", fmt.Sprintf("%s's %s has been destroyed.", x.Player.Username(), x.Name))
+		})
+
+		fx.Select(
+			card.Player,
+			ctx.Match,
+			ctx.Match.Opponent(card.Player),
+			match.BATTLEZONE,
+			"Chains of Sacrifice: Select up to 2 of your opponent's creatures and destroy them.",
+			0,
+			2,
+			false,
+		).Map(func(x *match.Card) {
+
+			ctx.Match.Destroy(x, card, match.DestroyedBySpell)
+			ctx.Match.Chat("Server", fmt.Sprintf("%s's %s has been destroyed.", x.Player.Username(), x.Name))
+		})
+
+	}))
+}
+
+// Darkpact ...
+func Darkpact(c *match.Card) {
+
+	c.Name = "Darkpact"
+	c.Civ = civ.Darkness
+	c.ManaCost = 2
+	c.ManaRequirement = []string{civ.Darkness}
+
+	c.Use(fx.Spell, fx.When(fx.SpellCast, func(card *match.Card, ctx *match.Context) {
+
+		manaZone, err := card.Player.Container(match.MANAZONE)
+
+		if err != nil {
+			return
+		}
+
+		nrMana := len(manaZone)
+
+		selected := fx.Select(
+			card.Player,
+			ctx.Match,
+			card.Player,
+			match.MANAZONE,
+			"Darkpact: Select any number of cards from the manazone and send them to graveyard.",
+			0,
+			nrMana,
+			false,
+		)
+
+		nrSelected := len(selected)
+
+		selected.Map(func(x *match.Card) {
+			card.Player.MoveCard(x.ID, match.MANAZONE, match.GRAVEYARD)
+			ctx.Match.Chat("Server", fmt.Sprintf("%s was moved from %s's mana zone to his graveyard.", x.Name, x.Player.Username()))
+		})
+
+		card.Player.DrawCards(nrSelected)
+
+	}))
+}
+
+// SoulGulp ...
+func SoulGulp(c *match.Card) {
+
+	c.Name = "Soul Gulp"
+	c.Civ = civ.Darkness
+	c.ManaCost = 4
+	c.ManaRequirement = []string{civ.Darkness}
+
+	c.Use(fx.Spell, fx.When(fx.SpellCast, func(card *match.Card, ctx *match.Context) {
+
+		nrLight := len(fx.FindFilter(
+			ctx.Match.Opponent(card.Player),
+			match.BATTLEZONE,
+			func(x *match.Card) bool { return x.Civ == civ.Light },
+		))
+
+		ctx.Match.Wait(card.Player, "Waiting for your opponent to make an action")
+		defer ctx.Match.EndWait(card.Player)
+
+		nrDiscard := nrLight
+		nrHand := len(fx.Find(ctx.Match.Opponent(card.Player), match.HAND))
+		
+		if nrDiscard > nrHand {
+			nrDiscard = nrHand
+		}
+
+		fx.Select(
+			ctx.Match.Opponent(card.Player),
+			ctx.Match,
+			ctx.Match.Opponent(card.Player),
+			match.HAND,
+			"SoulGulp: Select %d cards from your hand that will be sent to your graveyard",
+			nrDiscard,
+			nrDiscard,
+			false,
+		).Map(func(x *match.Card) {
+			x.Player.MoveCard(x.ID, match.HAND, match.GRAVEYARD)
+			ctx.Match.Chat("Server", fmt.Sprintf("%s was moved from %s's hand to his graveyard.", x.Name, x.Player.Username()))
 		})
 
 	}))
