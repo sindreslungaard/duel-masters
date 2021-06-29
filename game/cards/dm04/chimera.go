@@ -23,14 +23,11 @@ func Gigabolver(c *match.Card) {
 			return
 		}
 
-		if event, ok := ctx.Event.(*match.SpellCast); ok {
+		if event, ok := ctx.Event.(*match.ShieldTriggerEvent); ok {
 
-			if !event.FromShield || card.Civ != civ.Light {
-				return
+			if event.Card.Civ == civ.Light {
+				ctx.InterruptFlow()
 			}
-
-			//TODO: stop shield trigger
-			//ctx.InterruptFlow()
 
 		}
 

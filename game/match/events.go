@@ -24,6 +24,12 @@ type BrokenShieldEvent struct {
 	CardID string
 }
 
+// ShieldTriggerEvent is fired when a shield with shieldtrigger is broken
+// can be cancelled to prevent the player from playing the card immediately
+type ShieldTriggerEvent struct {
+	Card *Card
+}
+
 // CardMoved is fired from the *Player.MoveCard method after moving a card between containers
 type CardMoved struct {
 	CardID string

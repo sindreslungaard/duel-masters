@@ -306,7 +306,7 @@ var DM04 = map[string]match.CardConstructor{
 	"8e10db1c-1445-45c0-b7d2-3b888ed87998": dm04.TroxGeneralOfDestruction,
 	"9182f914-2bd2-41e6-b950-9edb2035aff1": dm04.ChainsOfSacrifice,
 	"a646e98b-70ce-402d-b995-3678757c86d3": dm04.Darkpact,
-	//"79e32904-a0e9-4596-99ad-76bda92e672c": dm04.Gigabolver,
+	"79e32904-a0e9-4596-99ad-76bda92e672c": dm04.Gigabolver,
 	"70f08780-cf4b-4c4a-8188-5235157ce863": dm04.GregoriaPrincessOfWar,
 	"bd3d2c66-b38a-40eb-9333-3509e0e213c9": dm04.GregorianWorm,
 	"ba955ab0-5bb3-4aaf-82f3-293522e65a9c": dm04.Locomotiver,

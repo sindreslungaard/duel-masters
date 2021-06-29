@@ -440,6 +440,16 @@ func (m *Match) BreakShields(shields []*Card) {
 		// Handle shield triggers
 		if card.HasCondition(cnd.ShieldTrigger) {
 
+			ctx := NewContext(m, &ShieldTriggerEvent{
+				Card: card,
+			})
+
+			m.HandleFx(ctx)
+
+			if ctx.Cancelled() {
+				return
+			}
+
 			m.Wait(m.Opponent(card.Player), "Waiting for your opponent to make an action")
 
 			m.NewAction(card.Player, []*Card{card}, 1, 1, "Shield trigger! Choose the card to use for free or close to keep it in your hand", true)
