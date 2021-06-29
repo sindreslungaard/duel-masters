@@ -1,4 +1,4 @@
-package dm03
+package dm04
 
 import (
 	"duel-masters/game/civ"
@@ -7,16 +7,16 @@ import (
 	"duel-masters/game/match"
 )
 
-// HangWormFetidLarva ...
-func HangWormFetidLarva(c *match.Card) {
+// GregorianWorm ...
+func GregorianWorm(c *match.Card) {
 
-	c.Name = "Hang Worm, Fetid Larva"
-	c.Power = 4000
+	c.Name = "Gregorian Worm"
+	c.Power = 3000
 	c.Civ = civ.Darkness
 	c.Family = family.ParasiteWorm
-	c.ManaCost = 5
+	c.ManaCost = 4
 	c.ManaRequirement = []string{civ.Darkness}
 
-	c.Use(fx.Creature)
+	c.Use(fx.Creature, fx.ShieldTrigger)
 
 }

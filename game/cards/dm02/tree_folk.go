@@ -35,7 +35,7 @@ func ElfX(c *match.Card) {
 				}
 
 				if toReduce.HasCondition(cnd.Creature) {
-					toReduce.AddCondition(cnd.ReducedCost, true, card.ID)
+					toReduce.AddCondition(cnd.ReducedCost, 1, card.ID)
 				}
 
 			}
@@ -73,7 +73,7 @@ func EssenceElf(c *match.Card) {
 				}
 
 				if toReduce.HasCondition(cnd.Spell) {
-					toReduce.AddCondition(cnd.ReducedCost, true, card.ID)
+					toReduce.AddCondition(cnd.ReducedCost, 1, card.ID)
 				}
 
 			}

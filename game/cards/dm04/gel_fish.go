@@ -25,7 +25,7 @@ func SmileAngler(c *match.Card) {
 			ctx.Match,
 			ctx.Match.Opponent(card.Player),
 			match.MANAZONE,
-			fmt.Sprintf("Smile Angler: Choose a card from your opponent's mana zone that will be returned to his hand."),
+			"Smile Angler: Choose a card from your opponent's mana zone that will be returned to his hand.",
 			0,
 			1,
 			false,

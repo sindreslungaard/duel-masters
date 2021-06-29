@@ -19,6 +19,11 @@ type ChargeManaEvent struct {
 	CardID string
 }
 
+// BrokenShieldEvent is fired right after a shield was broken
+type BrokenShieldEvent struct {
+	CardID string
+}
+
 // CardMoved is fired from the *Player.MoveCard method after moving a card between containers
 type CardMoved struct {
 	CardID string
