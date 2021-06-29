@@ -325,31 +325,30 @@ func Creature(card *match.Card, ctx *match.Context) {
 			event.Blockers = append(event.Blockers, x)
 		})
 
+		battlezone, err := opponent.Container(match.BATTLEZONE)
+
+		if err != nil {
+			return
+		}
+
+		// Add attackable creatures
+		for _, c := range battlezone {
+			if c.Tapped || card.HasCondition(cnd.AttackUntapped) {
+				event.AttackableCreatures = append(event.AttackableCreatures, c)
+			}
+		}
+
 		// Do this last in case any other cards want to interrupt the flow
 		ctx.ScheduleAfter(func() {
 
-			battlezone, err := opponent.Container(match.BATTLEZONE)
-
-			if err != nil {
-				return
-			}
-
-			attackable := make([]*match.Card, 0)
-
-			for _, c := range battlezone {
-				if c.Tapped || card.HasCondition(cnd.AttackUntapped) {
-					attackable = append(attackable, c)
-				}
-			}
-
-			if len(attackable) < 1 {
+			if len(event.AttackableCreatures) < 1 {
 				ctx.Match.WarnPlayer(card.Player, "None of your opponents creatures can currently be attacked.")
 				return
 			}
 
 			attackedCreatures := make([]*match.Card, 0)
 
-			ctx.Match.NewAction(card.Player, attackable, 1, 1, "Select the creature to attack", true)
+			ctx.Match.NewAction(card.Player, event.AttackableCreatures, 1, 1, "Select the creature to attack", true)
 
 			for {
 
@@ -361,7 +360,7 @@ func Creature(card *match.Card, ctx *match.Context) {
 					return
 				}
 
-				if len(action.Cards) != 1 || !match.AssertCardsIn(attackable, action.Cards[0]) {
+				if len(action.Cards) != 1 || !match.AssertCardsIn(event.AttackableCreatures, action.Cards[0]) {
 					ctx.Match.ActionWarning(card.Player, "Your selection of cards does not fulfill the requirements")
 					continue
 				}

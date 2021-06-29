@@ -45,8 +45,9 @@ type AttackPlayer struct {
 
 // AttackCreature is fired when the player attempts to use a creature to attack the player
 type AttackCreature struct {
-	CardID   string
-	Blockers []*Card
+	CardID              string
+	Blockers            []*Card
+	AttackableCreatures []*Card // list of cards that can be attacked
 }
 
 // Battle is fired when two creatures are fighting, i.e. from attacking a creature or blocking an attack

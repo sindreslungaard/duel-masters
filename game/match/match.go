@@ -990,8 +990,9 @@ func (m *Match) AttackCreature(p *PlayerReference, cardID string) {
 	}
 
 	ctx := NewContext(m, &AttackCreature{
-		CardID:   cardID,
-		Blockers: make([]*Card, 0),
+		CardID:              cardID,
+		Blockers:            make([]*Card, 0),
+		AttackableCreatures: make([]*Card, 0),
 	})
 
 	m.HandleFx(ctx)

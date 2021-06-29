@@ -17,10 +17,14 @@ func PurplePiercer(c *match.Card) {
 	c.ManaCost = 3
 	c.ManaRequirement = []string{civ.Darkness}
 
-	c.Use(fx.Creature, func(card *match.Card, ctx *match.Context) {
-
-		//TODO cant be blocked by light, cant be attacked by light
-
-	})
+	c.Use(
+		fx.Creature,
+		fx.CantBeBlockedIf(func(blocker *match.Card) bool {
+			return blocker.Civ == civ.Light
+		}),
+		fx.CantBeAttackedIf(func(attacker *match.Card) bool {
+			return attacker.Civ == civ.Light
+		}),
+	)
 
 }
