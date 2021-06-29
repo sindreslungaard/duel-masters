@@ -311,7 +311,7 @@ var DM04 = map[string]match.CardConstructor{
 	"bd3d2c66-b38a-40eb-9333-3509e0e213c9": dm04.GregorianWorm,
 	"ba955ab0-5bb3-4aaf-82f3-293522e65a9c": dm04.Locomotiver,
 	"593ca472-b8d1-4fec-ae07-0102afd12a48": dm04.MongrelMan,
-	//"b0b950c5-5498-4edc-a7dc-14991961fd2e": dm04.PhotocideLordOfTheWastes,
+	"b0b950c5-5498-4edc-a7dc-14991961fd2e": dm04.PhotocideLordOfTheWastes,
 	"3bd6cfa5-7641-441d-a76a-b6df468ec292": dm04.PurplePiercer,
 	"da8d62d3-47b9-450e-961c-9bcc171ff0ee": dm04.ShadowMoonCursedShade,
 	"a41ca346-193d-4c2f-bccb-382ca2591120": dm04.SoulGulp,

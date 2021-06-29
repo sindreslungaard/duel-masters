@@ -77,7 +77,6 @@ func TroxGeneralOfDestruction(c *match.Card) {
 	}))
 }
 
-
 // PhotocideLordOfTheWastes ...
 func PhotocideLordOfTheWastes(c *match.Card) {
 
@@ -88,6 +87,30 @@ func PhotocideLordOfTheWastes(c *match.Card) {
 	c.ManaCost = 5
 	c.ManaRequirement = []string{civ.Darkness}
 
-	//TODO: can attack untapped light creatures
-	c.Use(fx.Creature, fx.CantAttackPlayers)
+	c.Use(fx.Creature, fx.CantAttackPlayers, func(card *match.Card, ctx *match.Context) {
+
+		event, ok := ctx.Event.(*match.AttackCreature)
+
+		if !ok || event.CardID != card.ID {
+			return
+		}
+
+		fx.FindFilter(
+			ctx.Match.Opponent(card.Player),
+			match.BATTLEZONE,
+			func(x *match.Card) bool {
+				return x.Civ == civ.Light && x.Tapped == false
+			},
+		).Map(func(x *match.Card) {
+			// don't add if already in the list of attackable creatures
+			for _, creature := range event.AttackableCreatures {
+				if creature.ID == x.ID {
+					return
+				}
+			}
+
+			event.AttackableCreatures = append(event.AttackableCreatures, x)
+		})
+
+	})
 }
