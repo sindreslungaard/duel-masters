@@ -363,7 +363,7 @@ func SoulGulp(c *match.Card) {
 
 		nrDiscard := nrLight
 		nrHand := len(fx.Find(ctx.Match.Opponent(card.Player), match.HAND))
-		
+
 		if nrDiscard > nrHand {
 			nrDiscard = nrHand
 		}
@@ -383,4 +383,72 @@ func SoulGulp(c *match.Card) {
 		})
 
 	}))
+}
+
+// WhiskingWhirlwind ...
+func WhiskingWhirlwind(c *match.Card) {
+
+	c.Name = "Whisking Whirlwind"
+	c.Civ = civ.Light
+	c.ManaCost = 1
+	c.ManaRequirement = []string{civ.Light}
+
+	c.Use(fx.Spell, fx.When(fx.SpellCast, func(card *match.Card, ctx *match.Context) {
+
+		ctx.Match.ApplyPersistentEffect(func(_ *match.Card, ctx2 *match.Context, exit func()) {
+
+			// on all events, add blocker to our creatures
+			if _, ok := ctx.Event.(*match.EndOfTurnStep); ok {
+				fx.Find(
+					card.Player,
+					match.BATTLEZONE,
+				).Map(func(x *match.Card) {
+					x.Tapped = false
+				})
+			}
+
+			// remove persistent effect on start of next turn
+			_, ok := ctx2.Event.(*match.StartOfTurnStep)
+			if ok && ctx2.Match.IsPlayerTurn(card.Player) {
+				exit()
+			}
+
+		})
+	}))
+}
+
+// ScreamingSunburst ...
+func ScreamingSunburst(c *match.Card) {
+
+	c.Name = "Screaming Sunburst"
+	c.Civ = civ.Light
+	c.ManaCost = 3
+	c.ManaRequirement = []string{civ.Light}
+
+	c.Use(fx.Spell, fx.When(fx.SpellCast, func(card *match.Card, ctx *match.Context) {
+
+		getNonLightCreatures(card, ctx).Map(func(x *match.Card) {
+			x.Tapped = true
+		})
+	}))
+}
+
+func getNonLightCreatures(card *match.Card, ctx *match.Context) fx.CardCollection {
+
+	creatures := fx.FindFilter(
+		card.Player,
+		match.BATTLEZONE,
+		func(x *match.Card) bool { return x.Civ != civ.Light },
+	)
+
+	creatures = append(creatures,
+
+		fx.FindFilter(
+			ctx.Match.Opponent(card.Player),
+			match.BATTLEZONE,
+			func(x *match.Card) bool { return x.Civ != civ.Light },
+		)...,
+	)
+
+	return creatures
 }
