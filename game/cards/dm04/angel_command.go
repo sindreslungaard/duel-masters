@@ -71,6 +71,14 @@ func AlcadeiasLordOfSpirits(c *match.Card) {
 			return
 		}
 
+		if event, ok := ctx.Event.(*match.ShieldTriggerEvent); ok {
+
+			if event.Card.Civ != civ.Light && event.Card.HasCondition(cnd.Spell) {
+				ctx.InterruptFlow()
+			}
+
+		}
+
 		if event, ok := ctx.Event.(*match.PlayCardEvent); ok {
 
 			p := ctx.Match.CurrentPlayer()
@@ -80,7 +88,7 @@ func AlcadeiasLordOfSpirits(c *match.Card) {
 			if err != nil || !playedCard.HasCondition(cnd.Spell) {
 				return
 			}
-			if playedCard.Civ != civ.Light {	
+			if playedCard.Civ != civ.Light {
 				ctx.Match.WarnPlayer(ctx.Match.Opponent(card.Player), "Only light spells may be cast while Alcadeias, Lord of Spirits is in the battle zone")
 				ctx.InterruptFlow()
 			}
