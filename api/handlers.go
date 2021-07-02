@@ -342,7 +342,7 @@ func CreateDeckHandler(c *gin.Context) {
 			return
 		}
 
-		if decksCount >= 15 {
+		if decksCount >= 30 {
 			c.Status(403)
 			return
 		}
