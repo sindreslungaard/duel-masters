@@ -34,7 +34,7 @@ func MilieusTheDaystretcher(c *match.Card) {
 				return
 			}
 
-			if playedCard.Civ != civ.Light {
+			if playedCard.Civ != civ.Darkness {
 				return
 			}
 

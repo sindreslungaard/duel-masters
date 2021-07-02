@@ -52,7 +52,7 @@ func MistRiasSonicGuardian(c *match.Card) {
 		}
 
 		if event, ok := ctx.Event.(*match.CardMoved); ok {
-			if event.To == match.BATTLEZONE {
+			if event.To == match.BATTLEZONE && event.CardID != card.ID {
 				card.Player.DrawCards(1)
 			}
 		}
