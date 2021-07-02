@@ -246,6 +246,9 @@ export default {
     }
   },
   created() {
+
+    document.title = document.title.replace("🔴", "");
+
     // Loading dots
     setInterval(() => {
       if (this.loadingDots.length >= 4) this.loadingDots = "";

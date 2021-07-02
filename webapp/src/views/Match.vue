@@ -770,6 +770,7 @@ export default {
 
           case "choose_deck": {
             playerJoinedSound.play();
+            document.title = "🔴 " + document.title;
             this.decks = data.decks;
             break;
           }
