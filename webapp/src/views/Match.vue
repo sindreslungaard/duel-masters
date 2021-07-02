@@ -436,6 +436,7 @@ function sound(src) {
 }
 
 let turnSound = new sound("/assets/turn.mp3");
+let playerJoinedSound = new sound("/assets/player_joined.mp3");
 
 export default {
   name: "game",
@@ -761,12 +762,14 @@ export default {
             break;
           }
 
+          // don't think this is ever fired, todo: remove or implement
           case "player_joined": {
             this.opponent = data.username;
             break;
           }
 
           case "choose_deck": {
+            playerJoinedSound.play();
             this.decks = data.decks;
             break;
           }
