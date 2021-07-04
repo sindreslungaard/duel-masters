@@ -116,7 +116,10 @@ export default {
     let cardsResponse = await call({ path: "/cards", method: "GET" });
     this.cards = cardsResponse.data;
 
-    // TODO: Check if 0 decks.
+    if(this.decks.length === 0) {
+      this.newDeck();
+    }
+
     this.$store.commit("setDeck", this.decks[0]);
     this.deckCopy = JSON.parse(JSON.stringify(this.$store.getters.deck));
     this.selectedDeckUid = this.$store.getters.deckUid;
@@ -147,6 +150,11 @@ export default {
         this.deckCopy = JSON.parse(JSON.stringify(this.$store.getters.deck));
         this.selectedDeckUid = this.$store.getters.deckUid;
         this.decks.pop();
+
+        if(this.decks.length === 0) {
+          this.newDeck();
+        }
+
         return;
       }
 
@@ -162,12 +170,12 @@ export default {
         this.fetchDecks();
 
         // TODO: Check confirmation dialog
-        /*if(this.decks.length > 0) {
-          this.selectedDeckUid = this.decks[0].uid;
-          this.selectDeck(this.decks[0]);
+        if(this.decks.length > 0) {
+          //this.selectedDeckUid = this.decks[0].uid;
+          //this.selectDeck(this.decks[0]);
         } else {
           this.newDeck();
-        }*/
+        }
 
         this.showWarning("Successfully deleted your deck");
       } catch (e) {
@@ -203,7 +211,7 @@ export default {
       this.$modal.show(DeckEditDialog);
     },
     newDeck() {
-      if (!this.decksEqual(this.$store.state.deck, this.deckCopy)) {
+      if (this.decks.length > 0 && !this.decksEqual(this.$store.state.deck, this.deckCopy)) {
         this.showWarning(
           "Please save or discard the changes you've made before creating a new deck"
         );

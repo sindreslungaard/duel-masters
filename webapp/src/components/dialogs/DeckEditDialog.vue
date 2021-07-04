@@ -48,7 +48,7 @@ export default {
   methods: {
     updateDeck() {
       this.$store.commit("updateDeckName", this.deckData.name);
-      this.$store.commit("updateDeckVisibility", this.deckData.visibility);
+      this.$store.commit("updateDeckVisibility", !!this.deckData.visibility);
       this.$emit("close");
     }
   }
