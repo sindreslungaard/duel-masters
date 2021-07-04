@@ -104,25 +104,25 @@ export default {
       type: Boolean,
       required: false,
       default: false
+    },
+    cards: {
+      type: Array,
+      required: true
+    },
+    sets: {
+      type: Array,
+      required: true
     }
   },
   data() {
     return {
-      cards: [],
-      sets: [],
       viewMode: "grid",
       filterName: "",
       filterSet: "all",
       filterCivilization: "all"
     };
   },
-  async created() {
-    let cardsResponse = await call({ path: "/cards", method: "GET" });
-    this.cards = cardsResponse.data;
-
-    this.sets = Array.from(new Set(this.cards.map(card => card.set)));
-    this.sets.sort();
-  },
+  async created() {},
   methods: {
     onLeftClick(card) {
       this.$emit("leftClick", card);
@@ -160,7 +160,7 @@ export default {
      * Whether the component is ready to be displayed.
      */
     hasFinishedLoading() {
-      return !this.isLoading && this.cards.length > 0;
+      return !this.isLoading && Object.keys(this.cards).length > 0;
     }
   }
 };

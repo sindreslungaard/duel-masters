@@ -1,4 +1,5 @@
 import ErrorDialog from "../components/dialogs/ErrorDialog";
+import WarningDialog from "../components/dialogs/WarningDialog";
 
 /**
  * This BaseMixin contains methods that are used in multiple components
@@ -18,7 +19,18 @@ export default {
      * @param {String} message
      */
     showError(message) {
-      this.$modal.show(ErrorDialog, { message });
+      this.$modal.show(ErrorDialog, { message }, {}, {
+        "closed": () => window.location.reload()
+      });
+    },
+    /**
+     * Shows a warning dialog with an message and a close
+     * button.
+     *
+     * @param {String} message
+     */
+    showWarning(message) {
+      this.$modal.show(WarningDialog, { message });
     },
     /**
      * Connects to a WebSocket with the given endpoint and setups error handlers.
