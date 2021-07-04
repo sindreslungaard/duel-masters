@@ -56,3 +56,51 @@ func CrystalPaladin(c *match.Card) {
 	}))
 
 }
+
+// AquaBouncer ...
+func AquaBouncer(c *match.Card) {
+
+	c.Name = "Aqua Bouncer"
+	c.Power = 1000
+	c.Civ = civ.Water
+	c.Family = family.LiquidPeople
+	c.ManaCost = 6
+	c.ManaRequirement = []string{civ.Water}
+
+	c.Use(fx.Creature, fx.Blocker, fx.When(fx.Summoned, func(card *match.Card, ctx *match.Context) {
+
+		cards := make(map[string][]*match.Card)
+
+		cards["Your creatures"] = fx.Find(card.Player, match.BATTLEZONE)
+		cards["Opponent's creatures"] = fx.Find(ctx.Match.Opponent(card.Player), match.BATTLEZONE)
+
+		fx.SelectMultipart(
+			card.Player,
+			ctx.Match,
+			cards,
+			"Choose a card in the battle zone and return it to its owner's hand, or close to cancel",
+			1,
+			1,
+			true,
+		).Map(func(x *match.Card) {
+			x.Player.MoveCard(x.ID, match.BATTLEZONE, match.HAND)
+			ctx.Match.Chat("Server", fmt.Sprintf("%s was returned to %s hand by %s", x.Name, x.Player.Username(), card.Name))
+		})
+
+	}))
+
+}
+
+// AquaShooter ...
+func AquaShooter(c *match.Card) {
+
+	c.Name = "Aqua Shooter"
+	c.Power = 2000
+	c.Civ = civ.Water
+	c.Family = family.LiquidPeople
+	c.ManaCost = 4
+	c.ManaRequirement = []string{civ.Water}
+
+	c.Use(fx.Creature, fx.Blocker)
+
+}

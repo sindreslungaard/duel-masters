@@ -87,6 +87,18 @@ func (c *Card) AddCondition(cnd string, val interface{}, src interface{}) {
 	c.conditions = append(c.conditions, Condition{cnd, val, src})
 }
 
+// AddUniqueSourceCondition adds a condition only if the specified cnd and source is not already added
+func (c *Card) AddUniqueSourceCondition(cnd string, val interface{}, src interface{}) {
+
+	for _, condition := range c.conditions {
+		if condition.ID == cnd && condition.Src == src {
+			return
+		}
+	}
+
+	c.conditions = append(c.conditions, Condition{cnd, val, src})
+}
+
 // HasCondition returns true or false based on if a given string is added to the cards list of conditions
 func (c *Card) HasCondition(cnd string) bool {
 

@@ -29,6 +29,13 @@ func Creature(card *match.Card, ctx *match.Context) {
 			return
 		}
 
+		// make sure we haven't attacked yet
+		if _, ok := ctx.Match.Step.(*match.AttackStep); ok {
+			ctx.Match.WarnPlayer(card.Player, "You can't summon creatures after attacking")
+			ctx.InterruptFlow()
+			return
+		}
+
 		// Do this last in case any other cards want to interrupt the flow
 		ctx.ScheduleAfter(func() {
 
@@ -54,9 +61,14 @@ func Creature(card *match.Card, ctx *match.Context) {
 			manaCost := card.ManaCost
 			for _, condition := range card.Conditions() {
 				if condition.ID == cnd.ReducedCost {
-					if manaCost > 1 {
-						manaCost--
+					manaCost -= condition.Val.(int)
+					if manaCost < 1 {
+						manaCost = 1
 					}
+				}
+
+				if condition.ID == cnd.IncreasedCost {
+					manaCost += condition.Val.(int)
 				}
 			}
 
@@ -138,10 +150,19 @@ func Creature(card *match.Card, ctx *match.Context) {
 			return
 		}
 
+		opponent := ctx.Match.Opponent(card.Player)
+
+		// Add blockers to the attack
+		FindFilter(
+			opponent,
+			match.BATTLEZONE,
+			func(x *match.Card) bool { return x.HasCondition(cnd.Blocker) && !x.Tapped },
+		).Map(func(x *match.Card) {
+			event.Blockers = append(event.Blockers, x)
+		})
+
 		// Do this last in case any other cards want to interrupt the flow
 		ctx.ScheduleAfter(func() {
-
-			opponent := ctx.Match.Opponent(card.Player)
 
 			shieldzone, err := opponent.Container(match.SHIELDZONE)
 
@@ -202,6 +223,9 @@ func Creature(card *match.Card, ctx *match.Context) {
 			}
 
 			card.Tapped = true
+
+			// Broadcast state so that opponent can see that this card is tapped if they get any shield triggers
+			ctx.Match.BroadcastState()
 
 			// Allow the opponent to block if they can
 			if len(event.Blockers) > 0 && !card.HasCondition(cnd.CantBeBlocked) {
@@ -290,33 +314,41 @@ func Creature(card *match.Card, ctx *match.Context) {
 			return
 		}
 
+		opponent := ctx.Match.Opponent(card.Player)
+
+		// Add blockers to the attack
+		FindFilter(
+			opponent,
+			match.BATTLEZONE,
+			func(x *match.Card) bool { return x.HasCondition(cnd.Blocker) && !x.Tapped },
+		).Map(func(x *match.Card) {
+			event.Blockers = append(event.Blockers, x)
+		})
+
+		battlezone, err := opponent.Container(match.BATTLEZONE)
+
+		if err != nil {
+			return
+		}
+
+		// Add attackable creatures
+		for _, c := range battlezone {
+			if c.Tapped || card.HasCondition(cnd.AttackUntapped) {
+				event.AttackableCreatures = append(event.AttackableCreatures, c)
+			}
+		}
+
 		// Do this last in case any other cards want to interrupt the flow
 		ctx.ScheduleAfter(func() {
 
-			opponent := ctx.Match.Opponent(card.Player)
-
-			battlezone, err := opponent.Container(match.BATTLEZONE)
-
-			if err != nil {
-				return
-			}
-
-			attackable := make([]*match.Card, 0)
-
-			for _, c := range battlezone {
-				if c.Tapped || card.HasCondition(cnd.AttackUntapped) {
-					attackable = append(attackable, c)
-				}
-			}
-
-			if len(attackable) < 1 {
+			if len(event.AttackableCreatures) < 1 {
 				ctx.Match.WarnPlayer(card.Player, "None of your opponents creatures can currently be attacked.")
 				return
 			}
 
 			attackedCreatures := make([]*match.Card, 0)
 
-			ctx.Match.NewAction(card.Player, attackable, 1, 1, "Select the creature to attack", true)
+			ctx.Match.NewAction(card.Player, event.AttackableCreatures, 1, 1, "Select the creature to attack", true)
 
 			for {
 
@@ -328,7 +360,7 @@ func Creature(card *match.Card, ctx *match.Context) {
 					return
 				}
 
-				if len(action.Cards) != 1 || !match.AssertCardsIn(attackable, action.Cards[0]) {
+				if len(action.Cards) != 1 || !match.AssertCardsIn(event.AttackableCreatures, action.Cards[0]) {
 					ctx.Match.ActionWarning(card.Player, "Your selection of cards does not fulfill the requirements")
 					continue
 				}
@@ -413,13 +445,13 @@ func Creature(card *match.Card, ctx *match.Context) {
 				card.Player.MoveCard(card.ID, match.BATTLEZONE, match.GRAVEYARD)
 
 				// Slayer
-				if card.HasCondition(cnd.Slayer) {
+				if card.HasCondition(cnd.Slayer) && event.Context == match.DestroyedInBattle {
 
 					creature, err := ctx.Match.Opponent(card.Player).GetCard(event.Source.ID, match.BATTLEZONE)
 
 					if err == nil {
 
-						ctx.Match.Destroy(creature, card)
+						ctx.Match.Destroy(creature, card, match.DestroyedBySlayer)
 
 					}
 

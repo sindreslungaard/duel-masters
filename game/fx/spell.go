@@ -9,11 +9,23 @@ import (
 // Spell has default functionality for spells
 func Spell(card *match.Card, ctx *match.Context) {
 
+	// Add spell condition to this card
+	if _, ok := ctx.Event.(*match.UntapStep); ok {
+		card.AddCondition(cnd.Spell, nil, card.ID)
+	}
+
 	// When the spell is played from hand
 	if event, ok := ctx.Event.(*match.PlayCardEvent); ok {
 
 		// Is this event for me or someone else?
 		if event.CardID != card.ID {
+			return
+		}
+
+		// make sure we haven't attacked yet
+		if _, ok := ctx.Match.Step.(*match.AttackStep); ok {
+			ctx.Match.WarnPlayer(card.Player, "You can't cast spells after attacking")
+			ctx.InterruptFlow()
 			return
 		}
 
@@ -41,9 +53,14 @@ func Spell(card *match.Card, ctx *match.Context) {
 			manaCost := card.ManaCost
 			for _, condition := range card.Conditions() {
 				if condition.ID == cnd.ReducedCost {
-					if manaCost > 1 {
-						manaCost--
+					manaCost -= condition.Val.(int)
+					if manaCost < 1 {
+						manaCost = 1
 					}
+				}
+
+				if condition.ID == cnd.IncreasedCost {
+					manaCost += condition.Val.(int)
 				}
 			}
 

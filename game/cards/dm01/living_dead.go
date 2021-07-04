@@ -62,3 +62,16 @@ func WanderingBraineater(c *match.Card) {
 	c.Use(fx.Creature, fx.Blocker, fx.CantAttackPlayers, fx.CantAttackCreatures)
 
 }
+
+// WrithingBoneGhoul ...
+func WrithingBoneGhoul(c *match.Card) {
+
+	c.Name = "Writhing Bone Ghoul"
+	c.Power = 2000
+	c.Civ = civ.Darkness
+	c.Family = family.LivingDead
+	c.ManaCost = 2
+	c.ManaRequirement = []string{civ.Darkness}
+
+	c.Use(fx.Creature)
+}

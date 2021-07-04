@@ -26,6 +26,7 @@ const (
 
 // PlayerReference ties a player to a websocket connection
 type PlayerReference struct {
+	UID      string
 	Player   *Player
 	Socket   *server.Socket
 	LastPong int64
@@ -41,6 +42,7 @@ type PlayerAction struct {
 func NewPlayerReference(p *Player, s *server.Socket) *PlayerReference {
 
 	pr := &PlayerReference{
+		UID:      s.User.UID,
 		Player:   p,
 		Socket:   s,
 		LastPong: time.Now().Unix(),
@@ -367,6 +369,60 @@ func (p *Player) MoveCard(cardID string, from string, to string) (*Card, error) 
 	*cTo = temp2
 
 	ref.Zone = to
+	ref.Tapped = false
+
+	p.mutex.Unlock()
+
+	p.match.HandleFx(NewContext(p.match, &CardMoved{
+		CardID: ref.ID,
+		From:   from,
+		To:     to,
+	}))
+
+	return ref, nil
+
+}
+
+// MoveCard tries to move a card from container a to the front of container b
+func (p *Player) MoveCardToFront(cardID string, from string, to string) (*Card, error) {
+
+	cFrom, err := p.ContainerRef(from)
+
+	if err != nil {
+		return nil, err
+	}
+
+	if !p.HasCard(from, cardID) {
+		return nil, errors.New("Card is not in the specified container")
+	}
+
+	cTo, err := p.ContainerRef(to)
+
+	if err != nil {
+		return nil, err
+	}
+
+	p.mutex.Lock()
+
+	temp := make([]*Card, 0)
+	var ref *Card
+
+	for _, card := range *cFrom {
+		if card.ID != cardID {
+			temp = append(temp, card)
+		} else {
+			ref = card
+		}
+	}
+
+	*cFrom = temp
+
+	temp2 := append([]*Card{ref}, *cTo...)
+
+	*cTo = temp2
+
+	ref.Zone = to
+	ref.Tapped = false
 
 	p.mutex.Unlock()
 
@@ -393,8 +449,15 @@ func (p *Player) CanPlayCard(card *Card, mana []*Card) bool {
 	manaCost := card.ManaCost
 	for _, condition := range card.Conditions() {
 		if condition.ID == cnd.ReducedCost {
-			if manaCost > 1 {
-				manaCost--
+			if condition.ID == cnd.ReducedCost {
+				manaCost -= condition.Val.(int)
+				if manaCost < 1 {
+					manaCost = 1
+				}
+			}
+
+			if condition.ID == cnd.IncreasedCost {
+				manaCost += condition.Val.(int)
 			}
 		}
 	}
@@ -428,6 +491,7 @@ func (p *Player) Denormalized() *server.PlayerState {
 
 	state := &server.PlayerState{
 		Deck:       len(p.deck),
+		HandCount:  len(p.hand),
 		Hand:       denormalizeCards(p.hand, false),
 		Shieldzone: shields,
 		Manazone:   denormalizeCards(p.manazone, false),

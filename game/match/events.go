@@ -19,6 +19,17 @@ type ChargeManaEvent struct {
 	CardID string
 }
 
+// BrokenShieldEvent is fired right after a shield was broken
+type BrokenShieldEvent struct {
+	CardID string
+}
+
+// ShieldTriggerEvent is fired when a shield with shieldtrigger is broken
+// can be cancelled to prevent the player from playing the card immediately
+type ShieldTriggerEvent struct {
+	Card *Card
+}
+
 // CardMoved is fired from the *Player.MoveCard method after moving a card between containers
 type CardMoved struct {
 	CardID string
@@ -40,8 +51,9 @@ type AttackPlayer struct {
 
 // AttackCreature is fired when the player attempts to use a creature to attack the player
 type AttackCreature struct {
-	CardID   string
-	Blockers []*Card
+	CardID              string
+	Blockers            []*Card
+	AttackableCreatures []*Card // list of cards that can be attacked
 }
 
 // Battle is fired when two creatures are fighting, i.e. from attacking a creature or blocking an attack
@@ -51,11 +63,21 @@ type Battle struct {
 	Blocked  bool
 }
 
+type CreatureDestroyedContext int
+
+const (
+	DestroyedInBattle = iota
+	DestroyedBySpell
+	DestroyedBySlayer
+	DestroyedByMiscAbility
+)
+
 // CreatureDestroyed is fired when a creature dies in battle or is destroyed from another source, such as a spell
 type CreatureDestroyed struct {
 	Card    *Card
 	Source  *Card
 	Blocked bool
+	Context CreatureDestroyedContext
 }
 
 // GetPowerEvent is fired whenever a card's power is to be used

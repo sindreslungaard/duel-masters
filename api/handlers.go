@@ -81,7 +81,7 @@ func SignupHandler(c *gin.Context) {
 
 	var reqBody signupReqBody
 	if err := c.ShouldBindJSON(&reqBody); err != nil {
-		c.Status(400)
+		c.JSON(400, bson.M{"message": "Make sure your username only consist of a-Z and 0-9 (3-20 characters long). Password minimum 6 characters."})
 		return
 	}
 
@@ -218,6 +218,41 @@ func CardsHandler(c *gin.Context) {
 	c.JSON(200, GetCache())
 }
 
+// GetDeckHandler returns a single deck, if public
+func GetDeckHandler(c *gin.Context) {
+
+	deckUID := c.Param("id")
+
+	var deck db.Deck
+
+	err := db.Collection("decks").FindOne(
+		context.Background(),
+		bson.M{"uid": deckUID, "public": true},
+	).Decode(&deck)
+
+	if err != nil {
+		c.Status(404)
+		return
+	}
+
+	var user db.User
+
+	err = db.Collection("users").FindOne(
+		context.Background(),
+		bson.M{"uid": deck.Owner},
+	).Decode(&user)
+
+	if err != nil {
+		c.Status(404)
+		return
+	}
+
+	deck.Owner = user.Username
+
+	c.JSON(200, deck)
+
+}
+
 // GetDecksHandler returns an array of the users decks
 func GetDecksHandler(c *gin.Context) {
 
@@ -307,7 +342,7 @@ func CreateDeckHandler(c *gin.Context) {
 			return
 		}
 
-		if decksCount >= 15 {
+		if decksCount >= 30 {
 			c.Status(403)
 			return
 		}
@@ -350,6 +385,49 @@ func CreateDeckHandler(c *gin.Context) {
 
 }
 
+// DeleteDeckHandler deletes the specified deck
+func DeleteDeckHandler(c *gin.Context) {
+
+	user, err := db.GetUserForToken(c.GetHeader("Authorization"))
+	if err != nil {
+		c.Status(401)
+		return
+	}
+
+	deckUID := c.Param("id")
+
+	result, err := db.Collection("decks").DeleteOne(
+		context.Background(),
+		bson.M{"uid": deckUID, "owner": user.UID},
+	)
+
+	if err != nil {
+		c.Status(401)
+		return
+	}
+
+	if result.DeletedCount < 1 {
+		c.Status(401)
+		return
+	}
+
+	c.Status(200)
+
+}
+
+func GetMatchHandler(c *gin.Context) {
+
+	m, err := match.Find(c.Param("id"))
+
+	if err != nil {
+		c.Status(404)
+		return
+	}
+
+	c.JSON(200, bson.M{"name": m.MatchName, "host": m.HostID, "started": m.Started})
+
+}
+
 // InviteHandler handles duel invitations
 func InviteHandler(c *gin.Context) {
 
@@ -370,7 +448,7 @@ func InviteHandler(c *gin.Context) {
 	</head>
 	<body style="background: #36393F">
 		<p>Please wait while we redirect you.. Make sure javascript is enabled.</p>
-		<script>window.location.replace("/overview");</script>
+		<script>if(!navigator.userAgent.includes("discord")) { window.location.replace("/overview"); }</script>
 	</body>
 </html>
 		`, c.Param("id"))
@@ -388,7 +466,7 @@ func InviteHandler(c *gin.Context) {
 			</head>
 			<body>
 				<p>Please wait while we redirect you.. Make sure javascript is enabled.</p>
-				<script>window.location.replace("/overview");</script>
+				<script>if(!navigator.userAgent.includes("discord")) { window.location.replace("/overview"); }</script>
 			</body>
 		</html>
 		`, match.Player1.Socket.User.Username, match.Player2.Socket.User.Username)
@@ -405,7 +483,7 @@ func InviteHandler(c *gin.Context) {
 			</head>
 			<body>
 				<p>Please wait while we redirect you.. Make sure javascript is enabled.</p>
-				<script>window.location.replace("/duel/%s");</script>
+				<script>if(!navigator.userAgent.includes("discord")) { window.location.replace("/duel/%s"); }</script>
 			</body>
 		</html>
 		`, match.Player1.Socket.User.Username, c.Param("id"))
@@ -423,7 +501,7 @@ func InviteHandler(c *gin.Context) {
 			</head>
 			<body>
 				<p>Please wait while we redirect you.. Make sure javascript is enabled.</p>
-				<script>window.location.replace("/overview");</script>
+				<script>if(!navigator.userAgent.includes("discord")) { window.location.replace("/overview"); }</script>
 			</body>
 		</html>
 		`

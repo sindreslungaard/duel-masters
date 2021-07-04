@@ -29,8 +29,8 @@
     <div class="announcments">
       Join our
       <ExternalLink href="https://discord.gg/R3gJrX2">Discord</ExternalLink>
-      to contribute with feedback and suggestions, or simply drop by to have a
-      chat.
+      to contribute with feedback and suggestions. Consider supporting us on <ExternalLink href="https://patreon.com/shobu">Patreon</ExternalLink> if you like what we're doing. ❤️
+
     </div>
   </header>
 </template>

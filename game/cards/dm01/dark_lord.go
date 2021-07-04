@@ -37,13 +37,13 @@ func VampireSilphy(c *match.Card) {
 
 				for _, creature := range myCreatures {
 					if ctx.Match.GetPower(creature, false) <= 3000 {
-						ctx.Match.Destroy(creature, card)
+						ctx.Match.Destroy(creature, card, match.DestroyedByMiscAbility)
 					}
 				}
 
 				for _, creature := range opponentCreatures {
 					if ctx.Match.GetPower(creature, false) <= 3000 {
-						ctx.Match.Destroy(creature, card)
+						ctx.Match.Destroy(creature, card, match.DestroyedByMiscAbility)
 					}
 				}
 

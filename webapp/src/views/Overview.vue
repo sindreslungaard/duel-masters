@@ -117,6 +117,8 @@ export default {
    * setup the message handler.
    */
   created() {
+    document.title = document.title.replace("🔴", "");
+
     try {
       this.socket = this.connectToSocket("/ws/lobby");
       new LobbyMessageHandler(this.socket, this);

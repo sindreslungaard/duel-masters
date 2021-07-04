@@ -2,10 +2,20 @@
   <div>
     <div
       v-show="
-        wait || previewCard || previewCards || errorMessage || warning || action
+        wait || previewCard || previewCards || errorMessage || warning || action || opponentDisconnected || reconnecting
       "
       class="overlay"
     ></div>
+
+    <div v-if="opponentDisconnected && !errorMessage" class="error">
+      <p>Your opponent disconnected or left the match. Waiting for them to reconnect{{ loadingDots }}</p>
+      <div @click="redirect('overview')" class="btn">Leave duel</div>
+    </div>
+
+    <div v-if="reconnecting && !errorMessage" class="error">
+      <p>Disconnected from server. Attempting to reconnect{{ loadingDots }}</p>
+      <div @click="redirect('overview')" class="btn">Leave duel</div>
+    </div>
 
     <div v-show="errorMessage" class="error">
       <p>{{ errorMessage }}</p>
@@ -53,8 +63,8 @@
     </div>
 
     <!-- action (card selection) -->
-    <div v-if="action" class="action">
-      <span>{{ action.text }}</span>
+    <div v-if="action" id="action" class="action noselect">
+      <span v-draggable data-ref="action">{{ action.text }}</span>
       <template v-if="actionObject">
         <select class="action-select" v-model="actionDrowdownSelection">
           <option
@@ -103,7 +113,7 @@
     </div>
 
     <!-- Lobby -->
-    <div v-if="decks.length < 1" class="lobby">
+    <div v-if="!started && decks.length < 1" class="lobby">
       <h1>
         Waiting for your opponent to join<span class="dots">{{
           loadingDots
@@ -127,11 +137,10 @@
       <div class="chatbox">
         <div class="messages">
           <div id="messages" class="messages-helper">
-            <span
-              v-for="(message, index) in chatMessages"
-              :key="index"
-              v-html="message"
-            ></span>
+            <div class="message" :style="{'background': message.sender.toLowerCase() === 'server' ? 'none' : '#202124'}" v-for="(message, index) in chatMessages" :key="index">
+              <div class="message-sender" :style="{'color': message.color || 'orange'}">{{ message.sender.toLowerCase() == "server" ? "-" : (message.sender + ":")}} </div>
+              <div class="message-text">{{ message.message }}</div>
+            </div>
           </div>
         </div>
         <form @submit.prevent="sendChat(chatMessage)">
@@ -264,6 +273,7 @@
 
       <div class="right-stage">
         <div class="right-stage-content">
+          <p>Hand [{{ state.opponent.handCount }}]</p>
           <p>Graveyard [{{ state.opponent.graveyard.length }}]</p>
           <div class="card">
             <img
@@ -327,7 +337,7 @@
       </div>
 
       <div class="stage me bt">
-        <div class="playzone">
+        <div @drop='drop($event, "playzone")' @dragover.prevent @dragenter.prevent ref="myplayzone" class="playzone">
           <div class="card placeholder">
             <img src="/assets/cards/backside.png" />
           </div>
@@ -360,7 +370,7 @@
           </div>
         </div>
 
-        <div class="manazone">
+        <div @drop='drop($event, "manazone")' @dragover.prevent @dragenter.prevent ref="mymanazone" class="manazone">
           <div class="card mana placeholder">
             <img src="/assets/cards/backside.png" />
           </div>
@@ -387,6 +397,9 @@
           :key="index"
         >
           <img
+            draggable
+            @dragstart='startDrag($event, card)'
+            @dragend="stopDrag($event, card)"
             :class="[handSelection === card ? 'glow-' + card.civilization : '']"
             :src="`/assets/cards/all/${card.uid}.jpg`"
           />
@@ -398,13 +411,39 @@
 
 <script>
 import ClipboardJS from "clipboard";
+import { call, ws_protocol } from "../remote";
 import CardShowDialog from "../components/dialogs/CardShowDialog";
+
+const send = (client, message) => {
+  client.send(JSON.stringify(message));
+};
+
+function sound(src) {
+    this.sound = document.createElement("audio");
+    this.sound.src = src;
+    this.sound.setAttribute("preload", "auto");
+    this.sound.setAttribute("controls", "none");
+    this.sound.style.display = "none";
+    this.sound.volume = 0.3;
+    document.body.appendChild(this.sound);
+    this.play = function() {
+        this.sound.play();
+    };
+    this.stop = function() {
+        this.sound.pause();
+    };
+}
+
+let turnSound = new sound("/assets/turn.mp3");
+let playerJoinedSound = new sound("/assets/player_joined.mp3");
 
 export default {
   name: "game",
   data() {
     return {
       ws: null,
+      reconnecting: false,
+      preventReconnect: false,
 
       errorMessage: "",
       warning: "",
@@ -420,12 +459,13 @@ export default {
       inviteCopied: false,
       inviteCopyTask: null,
 
-      chatMessages: [],
+      chatMessages: [], // { sender, message, color }
       chatMessage: "",
 
       started: false,
 
       opponent: "",
+      opponentDisconnected: false,
       decks: [],
       deck: null,
 
@@ -456,8 +496,8 @@ export default {
       this.chatMessage = "";
       this.ws.send(JSON.stringify({ header: "chat", message }));
     },
-    chat(message) {
-      this.chatMessages.push(message);
+    chat(sender, color, message) {
+      this.chatMessages.push({ sender, color, message });
       this.$nextTick(() => {
         let container = document.getElementById("messages");
         container.scrollTop = container.scrollHeight;
@@ -587,10 +627,82 @@ export default {
           virtualId: this.playzoneSelection.virtualId
         })
       );
+    },
+    startDrag(evt, card) {
+      evt.dataTransfer.dropEffect = "move";
+      evt.dataTransfer.effectAllowed = "move";
+      evt.dataTransfer.setData("vid", card.virtualId);
+
+      if(card.canBePlayed) {
+        this.$refs.myplayzone.style.backgroundColor = "#507053";
+      } else {
+        this.$refs.myplayzone.style.backgroundColor = "#7d5252";
+      }
+
+      if(!this.state.hasAddedManaThisRound) {
+        this.$refs.mymanazone.style.backgroundColor = "#507053";
+      } else {
+        this.$refs.mymanazone.style.backgroundColor = "#7d5252";
+      }
+
+    },
+    stopDrag() {
+      this.$refs.myplayzone.style.backgroundColor = "transparent";
+      this.$refs.mymanazone.style.backgroundColor = "transparent";
+    },
+    drop(event, zone) {
+      const vid = event.dataTransfer.getData("vid");
+      const card = this.state.me.hand.find(x => x.virtualId === vid);
+
+      console.log(vid, card);
+
+      this.handSelection = card;
+
+      if(zone == "manazone") {
+        this.addToManazone();
+      } else if(zone == "playzone") {
+        this.addToPlayzone();
+      }
     }
   },
   created() {
-    // Connect to the server
+    let lastReconnect = 0;
+
+    const connect = async () => {
+
+      if(this.errorMessage.includes("won")) {
+        return;
+      }
+
+      if(this.preventReconnect) {
+        return;
+      }
+
+      if(lastReconnect > 0) {
+        console.log("Attempting to reconnect..");
+      }
+
+      if(lastReconnect > Date.now() - 5000) {
+        setTimeout(connect, 1000);
+        return;
+      }
+
+      // make sure the match actually exists
+      try {
+        await call({
+          path: `/match/${this.$route.params.id}`,
+          method: "GET"
+        });
+      } catch(err) {
+        if(err.response && err.response.status == 404) {
+          this.errorMessage = "This duel has been closed";
+        }
+      }
+
+      lastReconnect = Date.now();
+
+      // Connect to the server
+     // Connect to the server
     const ws = new WebSocket(
       this.$config.WS_ENDPOINT + "shobu.io" + "/ws/" + this.$route.params.id
     );
@@ -600,137 +712,155 @@ export default {
       ws.send(localStorage.getItem("token"));
     };
 
-    ws.onmessage = event => {
-      const data = JSON.parse(event.data);
+      ws.onclose = () => {
+        console.log("connection closed");
+        this.reconnecting = true;
+        connect();
+      };
 
-      switch (data.header) {
-        case "mping": {
-          send(ws, {
-            header: "mpong"
-          });
-          break;
-        }
+      ws.onerror = event => {
+        console.error(event);
+      };
 
-        case "hello": {
-          send(ws, {
-            header: "join_match"
-          });
-          break;
-        }
+      ws.onmessage = event => {
+        const data = JSON.parse(event.data);
 
-        case "error": {
-          this.errorMessage = data.message;
-          break;
-        }
-
-        case "warn": {
-          this.warning = data.message;
-          break;
-        }
-
-        case "player_joined": {
-          this.opponent = data.username;
-          break;
-        }
-
-        case "choose_deck": {
-          this.decks = data.decks;
-          break;
-        }
-
-        case "chat": {
-          this.chat(
-            `<span style="color: ${data.color}">[${data.sender}]</span> <span>${data.message}</span>`
-          );
-          break;
-        }
-
-        case "state_update": {
-          if (!this.started) {
-            this.started = true;
+        switch (data.header) {
+          case "mping": {
+            send(ws, {
+              header: "mpong"
+            });
+            break;
           }
-          this.handSelection = null;
-          this.playzoneSelection = null;
-          this.state = data.state;
-          break;
-        }
 
-        case "action": {
-          (this.actionError = ""), (this.actionSelects = []);
-          if (!(data.cards instanceof Array)) {
-            this.actionObject = data.cards;
-            console.log(Object.keys(data.cards)[0]);
-            this.actionDrowdownSelection = Object.keys(data.cards)[0];
+          case "hello": {
+            send(ws, {
+                header: "join_match"
+            });
+            break;
           }
-          this.action = {
-            cards:
-              data.cards instanceof Array
-                ? data.cards
-                : Object.keys(data.cards)[0],
-            text: data.text,
-            minSelection: data.minSelection,
-            maxSelections: data.maxSelections,
-            cancellable: data.cancellable
-          };
-          break;
-        }
 
-        case "action_error": {
-          if (!this.action) {
-            return;
+          case "error": {
+            this.errorMessage = data.message;
+            break;
           }
-          this.actionError = data.message;
-          break;
-        }
 
-        case "close_action": {
-          this.action = null;
-          this.actionError = "";
-          this.actionSelects = [];
-          this.actionObject = null;
-          this.actionDrowdownSelection = null;
-          break;
-        }
+          case "warn": {
+            this.warning = data.message;
+            break;
+          }
 
-        case "wait": {
-          this.wait =
-            data.message || "Waiting for your opponent to make an action";
-          break;
-        }
+          case "opponent_disconnected": {
+            this.opponentDisconnected = true;
+            break;
+          }
 
-        case "end_wait": {
-          this.wait = "";
-          break;
-        }
+          case "opponent_reconnected": {
+            this.opponentDisconnected = false;
+            break;
+          }
 
-        case "show_cards": {
-          this.$modal.show(
-            CardShowDialog,
-            {
-              message: data.message,
-              cards: data.cards
-            },
-            {
-              width: data.cards.length * 25 + "%"
-            },
-            {}
-          );
+          // don't think this is ever fired, todo: remove or implement
+          case "player_joined": {
+            this.opponent = data.username;
+            break;
+          }
+
+          case "choose_deck": {
+            playerJoinedSound.play();
+            document.title = "🔴 " + document.title;
+            this.decks = data.decks;
+            break;
+          }
+
+          case "chat": {
+            this.chat(data.sender, data.color, data.message);
+            break;
+          }
+
+          case "state_update": {
+            if (!this.started) {
+              this.started = true;
+            }
+            this.handSelection = null;
+            this.playzoneSelection = null;
+
+            if(this.state.myTurn !== data.state.myTurn) {
+              turnSound.play();
+              console.log("turn change");
+            }
+
+            this.state = data.state;
+            break;
+          }
+
+          case "action": {
+            (this.actionError = ""), (this.actionSelects = []);
+            if (!(data.cards instanceof Array)) {
+              this.actionObject = data.cards;
+              console.log(Object.keys(data.cards)[0]);
+              this.actionDrowdownSelection = Object.keys(data.cards)[0];
+            }
+            this.action = {
+              cards:
+                data.cards instanceof Array
+                  ? data.cards
+                  : Object.keys(data.cards)[0],
+              text: data.text,
+              minSelection: data.minSelection,
+              maxSelections: data.maxSelections,
+              cancellable: data.cancellable
+            };
+            break;
+          }
+
+          case "action_error": {
+            if (!this.action) {
+              return;
+            }
+            this.actionError = data.message;
+            break;
+          }
+
+          case "close_action": {
+            this.action = null;
+            this.actionError = "";
+            this.actionSelects = [];
+            this.actionObject = null;
+            this.actionDrowdownSelection = null;
+            break;
+          }
+
+          case "wait": {
+            this.wait =
+              data.message || "Waiting for your opponent to make an action";
+            break;
+          }
+
+          case "end_wait": {
+            this.wait = "";
+            break;
+          }
+
+          case "show_cards": {
+            this.$modal.show(
+              CardShowDialog,
+              {
+                message: data.message,
+                cards: data.cards
+              },
+              {
+                width: data.cards.length * 25 + "%"
+              },
+              {}
+            );
+          }
         }
-      }
+      };
+
     };
 
-    ws.onclose = () => {
-      if (this.errorMessage == "") {
-        this.errorMessage = "Connection to the server has been closed.";
-      }
-      console.log("connection closed");
-    };
-
-    ws.onerror = event => {
-      console.log(event);
-      this.errorMessage =
-        "An error occured when attempting to communicate with the server.";
-    };
+    connect();
 
     // Loading dots
     setInterval(() => {
@@ -750,6 +880,7 @@ export default {
     });
   },
   beforeDestroy() {
+    this.preventReconnect = true;
     this.ws.close();
   }
 };
@@ -811,8 +942,10 @@ export default {
     color: var(--color-text-light);
     font-size: 13px;
     display: block;
-    margin: 0 30px;
-    margin-top: 15px;
+    padding: 15px 30px;
+    &:hover {
+      cursor: move;
+    }
   }
   .btn {
     margin: 0 7px;
@@ -820,7 +953,8 @@ export default {
   .action-cards {
     background: #222428;
     margin: 15px;
-    border-radius: var(--border-radius);
+    margin-top: 0;
+    border-radius: 4px;
     padding: 10px;
     max-height: 300px;
     overflow: auto;
@@ -850,19 +984,19 @@ export default {
 }
 
 .glow-fire {
-  box-shadow: 0px 0px 4px 0px red;
+  box-shadow: 0px 0px 4px 0px skyblue;
 }
 .glow-water {
-  box-shadow: 0px 0px 4px 0px cyan;
+  box-shadow: 0px 0px 4px 0px skyblue;
 }
 .glow-nature {
-  box-shadow: 0px 0px 4px 0px green;
+  box-shadow: 0px 0px 4px 0px skyblue;
 }
 .glow-light {
-  box-shadow: 0px 0px 4px 0px yellow;
+  box-shadow: 0px 0px 4px 0px skyblue;
 }
 .glow-darkness {
-  box-shadow: 0px 0px 4px 0px black;
+  box-shadow: 0px 0px 4px 0px skyblue;
 }
 
 .waiting {
@@ -969,6 +1103,41 @@ export default {
     display: block;
     margin-top: 7px;
   }
+}
+
+.message {
+   display: flex;
+   margin-top: 5px;
+   border-radius: 3px;
+   padding: 3px;
+}
+
+.message-sender {
+  margin-right: 5px;
+}
+
+.message-text {
+  flex-grow: 1;
+}
+
+*::-webkit-scrollbar-track {
+  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+  box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+  border-radius: 10px;
+  background-color: #484c52;
+}
+
+*::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+  background-color: #484c52;
+}
+
+*::-webkit-scrollbar-thumb {
+  border-radius: 10px;
+  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+  box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+  background-color: #222;
 }
 
 .chatbox input {
@@ -1227,5 +1396,15 @@ export default {
   display: inline-block;
   border-radius: 7px;
   margin: 10px;
+}
+
+.noselect {
+  -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none; /* Safari */
+     -khtml-user-select: none; /* Konqueror HTML */
+       -moz-user-select: none; /* Old versions of Firefox */
+        -ms-user-select: none; /* Internet Explorer/Edge */
+            user-select: none; /* Non-prefixed version, currently
+                                  supported by Chrome, Edge, Opera and Firefox */
 }
 </style>

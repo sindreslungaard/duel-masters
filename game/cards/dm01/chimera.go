@@ -66,7 +66,7 @@ func Gigaberos(c *match.Card) {
 							continue
 						}
 
-						ctx.Match.Destroy(card, card)
+						ctx.Match.Destroy(card, card, match.DestroyedByMiscAbility)
 						ctx.InterruptFlow()
 
 						break
@@ -86,7 +86,7 @@ func Gigaberos(c *match.Card) {
 							continue
 						}
 
-						ctx.Match.Destroy(creature, card)
+						ctx.Match.Destroy(creature, card, match.DestroyedByMiscAbility)
 
 					}
 
@@ -123,7 +123,7 @@ func Gigargon(c *match.Card) {
 	c.Power = 3000
 	c.Civ = civ.Darkness
 	c.Family = family.Chimera
-	c.ManaCost = 1
+	c.ManaCost = 8
 	c.ManaRequirement = []string{civ.Darkness}
 
 	c.Use(fx.Creature, func(card *match.Card, ctx *match.Context) {

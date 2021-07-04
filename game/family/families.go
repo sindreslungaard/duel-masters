@@ -34,4 +34,9 @@ const (
 	Fish            = "Fish"
 	DarkLord        = "Dark Lord"
 	BrainJacker     = "Brain Jacker"
+	Giant           = "Giant"
+	MechaThunder    = "Mecha Thunder"
+	CyberCluster	= "Cyber Cluster"
+	Hedrian			= "Hedrian"
+	FireBird		= "Fire Bird"
 )

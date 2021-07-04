@@ -26,7 +26,7 @@ func StingerWorm(c *match.Card) {
 				creatures := match.Search(card.Player, ctx.Match, card.Player, match.BATTLEZONE, "Stinger Worm: Select 1 creature from your battlezone that will be sent to your graveyard", 1, 1, false)
 
 				for _, creature := range creatures {
-					ctx.Match.Destroy(creature, card)
+					ctx.Match.Destroy(creature, card, match.DestroyedByMiscAbility)
 				}
 
 			}
@@ -44,28 +44,20 @@ func SwampWorm(c *match.Card) {
 	c.Power = 2000
 	c.Civ = civ.Darkness
 	c.Family = family.ParasiteWorm
-	c.ManaCost = 1
+	c.ManaCost = 7
 	c.ManaRequirement = []string{civ.Darkness}
 
-	c.Use(fx.Creature, func(card *match.Card, ctx *match.Context) {
+	c.Use(fx.Creature, fx.When(fx.Summoned, func(card *match.Card, ctx *match.Context) {
 
-		if event, ok := ctx.Event.(*match.CardMoved); ok {
+		ctx.Match.Wait(card.Player, "Waiting for your opponent to make an action")
+		defer ctx.Match.EndWait(card.Player)
 
-			if event.CardID == card.ID && event.To == match.BATTLEZONE {
+		creatures := match.Search(ctx.Match.Opponent(card.Player), ctx.Match, ctx.Match.Opponent(card.Player), match.BATTLEZONE, "Swamp Worm: Select 1 creature from your battlezone that will be sent to your graveyard", 1, 1, false)
 
-				ctx.Match.Wait(card.Player, "Waiting for your opponent to make an action")
-				defer ctx.Match.EndWait(card.Player)
-
-				creatures := match.Search(ctx.Match.Opponent(card.Player), ctx.Match, ctx.Match.Opponent(card.Player), match.BATTLEZONE, "Swamp Worm: Select 1 creature from your battlezone that will be sent to your graveyard", 1, 1, false)
-
-				for _, creature := range creatures {
-					ctx.Match.Destroy(creature, card)
-				}
-
-			}
-
+		for _, creature := range creatures {
+			ctx.Match.Destroy(creature, card, match.DestroyedByMiscAbility)
 		}
 
-	})
+	}))
 
 }

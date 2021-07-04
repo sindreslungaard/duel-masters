@@ -14,8 +14,8 @@
   700
 );
 
-* {
-  box-sizing: border-box;
+html, body {
+  height: 100%;
 }
 
 body {
@@ -27,7 +27,8 @@ body {
 
 .vm--modal {
   background-color: #36393f;
-  border-radius: var(--border-radius);
+  border-color: #222428;
+  border-radius: 4px;
   padding: 20px;
   border: 1px solid #666;
 }

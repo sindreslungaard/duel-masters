@@ -111,7 +111,7 @@ func TowerShell(c *match.Card) {
 				blockers := make([]*match.Card, 0)
 
 				for _, blocker := range event.Blockers {
-					if blocker.Power >= 4000 {
+					if ctx.Match.GetPower(blocker, false) >= 4000 {
 						blockers = append(blockers, blocker)
 					}
 				}
@@ -133,7 +133,7 @@ func TowerShell(c *match.Card) {
 				blockers := make([]*match.Card, 0)
 
 				for _, blocker := range event.Blockers {
-					if blocker.Power >= 4000 {
+					if ctx.Match.GetPower(blocker, false) >= 4000 {
 						blockers = append(blockers, blocker)
 					}
 				}

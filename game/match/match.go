@@ -37,17 +37,21 @@ var lobbyMatches = make(chan server.MatchesListMessage)
 
 // Match struct
 type Match struct {
-	ID        string           `json:"id"`
-	MatchName string           `json:"name"`
-	HostID    string           `json:"-"`
-	Player1   *PlayerReference `json:"-"`
-	Player2   *PlayerReference `json:"-"`
-	Turn      byte             `json:"-"`
-	Started   bool             `json:"started"`
-	Visible   bool             `json:"visible"`
+	ID                string           `json:"id"`
+	MatchName         string           `json:"name"`
+	HostID            string           `json:"-"`
+	Player1           *PlayerReference `json:"-"`
+	Player2           *PlayerReference `json:"-"`
+	persistentEffects map[int]PersistentEffect
+	Turn              byte `json:"-"`
+	Started           bool `json:"started"`
+	Visible           bool `json:"visible"`
+	Step              interface{}
 
-	created int64
-	ending  bool
+	created     int64
+	ending      bool
+	closed      bool
+	isFirstTurn bool
 
 	quit chan bool
 }
@@ -73,15 +77,17 @@ func New(matchName string, hostID string, visible bool) *Match {
 	}
 
 	m := &Match{
-		ID:        id,
-		MatchName: matchName,
-		HostID:    hostID,
-		Turn:      1,
-		Started:   false,
-		Visible:   visible,
+		ID:                id,
+		MatchName:         matchName,
+		HostID:            hostID,
+		persistentEffects: make(map[int]PersistentEffect),
+		Turn:              1,
+		Started:           false,
+		Visible:           visible,
 
-		created: time.Now().Unix(),
-		ending:  false,
+		created:     time.Now().Unix(),
+		ending:      false,
+		isFirstTurn: true,
 
 		quit: make(chan bool),
 	}
@@ -177,6 +183,7 @@ func (m *Match) startTicker() {
 		case <-m.quit:
 			{
 				logrus.Debugf("Closing match %s", m.ID)
+				m.ending = true
 				return
 			}
 		case <-ticker.C:
@@ -196,6 +203,12 @@ func (m *Match) startTicker() {
 
 // Dispose closes the match, disconnects the clients and removes all references to it
 func (m *Match) Dispose() {
+
+	if m.closed {
+		return
+	}
+
+	m.closed = true
 
 	logrus.Debugf("Disposing match %s", m.ID)
 
@@ -374,10 +387,36 @@ func (m *Match) Battle(attacker *Card, defender *Card, blocked bool) {
 }
 
 // Destroy sends the given card to its players graveyard
-func (m *Match) Destroy(card *Card, source *Card) {
+func (m *Match) Destroy(card *Card, source *Card, context CreatureDestroyedContext) {
 
-	m.HandleFx(NewContext(m, &CreatureDestroyed{Card: card, Source: source}))
+	m.HandleFx(NewContext(m, &CreatureDestroyed{Card: card, Source: source, Context: context}))
 	m.Chat("Server", fmt.Sprintf("%s (%v) was destroyed by %s", card.Name, m.GetPower(card, false), source.Name))
+
+}
+
+// MoveCard moves a card and sends a chat message about what source moved it
+func (m *Match) MoveCard(card *Card, destination string, source *Card) {
+
+	_, err := card.Player.MoveCard(card.ID, card.Zone, destination)
+
+	if err != nil {
+		return
+	}
+
+	m.Chat("Server", fmt.Sprintf("%s was moved to %s %s by %s", card.Name, card.Player.Username(), destination, source.Name))
+
+}
+
+// MoveCardToFront moves a card and sends a chat message about what source moved it
+func (m *Match) MoveCardToFront(card *Card, destination string, source *Card) {
+
+	_, err := card.Player.MoveCardToFront(card.ID, card.Zone, destination)
+
+	if err != nil {
+		return
+	}
+
+	m.Chat("Server", fmt.Sprintf("%s was moved to %s's %s by %s", card.Name, card.Player.Username(), destination, source.Name))
 
 }
 
@@ -401,7 +440,19 @@ func (m *Match) BreakShields(shields []*Card) {
 		// Handle shield triggers
 		if card.HasCondition(cnd.ShieldTrigger) {
 
-			m.NewAction(card.Player, []*Card{card}, 1, 1, "Shield trigger! Choose the spell to cast it for free or close to keep it in your hand", true)
+			ctx := NewContext(m, &ShieldTriggerEvent{
+				Card: card,
+			})
+
+			m.HandleFx(ctx)
+
+			if ctx.Cancelled() {
+				return
+			}
+
+			m.Wait(m.Opponent(card.Player), "Waiting for your opponent to make an action")
+
+			m.NewAction(card.Player, []*Card{card}, 1, 1, "Shield trigger! Choose the card to use for free or close to keep it in your hand", true)
 
 			for {
 
@@ -417,13 +468,19 @@ func (m *Match) BreakShields(shields []*Card) {
 					continue
 				}
 
-				m.CastSpell(card, true)
+				if card.HasCondition(cnd.Spell) {
+					m.CastSpell(card, true)
+				} else {
+					m.MoveCard(card, BATTLEZONE, card)
+				}
 
 				m.CloseAction(card.Player)
 
 				break
 
 			}
+
+			m.EndWait(m.Opponent(card.Player))
 
 		}
 
@@ -440,8 +497,6 @@ func (m *Match) End(winner *Player, winnerStr string) {
 		logrus.Debugf("Cannot end match, %s is already ending", m.ID)
 		return
 	}
-
-	m.ending = true
 
 	if m.Started {
 		WarnError(m.PlayerRef(winner), winnerStr)
@@ -577,6 +632,14 @@ func (m *Match) HandleFx(ctx *Context) {
 
 	}
 
+	// Handle persistent effects
+	for _, card := range cards {
+		for _, fx := range m.persistentEffects {
+			fx.effect(card, ctx, fx.exit)
+		}
+	}
+
+	// Handle regular card effects c.Use(...
 	for _, card := range cards {
 
 		for _, h := range card.handlers {
@@ -591,6 +654,7 @@ func (m *Match) HandleFx(ctx *Context) {
 
 	}
 
+	// Handle ctx.ScheduleAfter effects
 	for _, h := range ctx.postFxs {
 
 		if ctx.cancel {
@@ -679,6 +743,15 @@ func (m *Match) EndWait(p *Player) {
 	})
 }
 
+// ShowCards shows the specified cards to the player with a message of why it is being shown
+func (m *Match) ShowCards(p *Player, message string, cards []string) {
+	m.PlayerRef(p).Socket.Send(server.ShowCardsMessage{
+		Header:  "show_cards",
+		Message: message,
+		Cards:   cards,
+	})
+}
+
 // Start starts the match
 func (m *Match) Start() {
 
@@ -710,13 +783,15 @@ func (m *Match) Start() {
 // BeginNewTurn starts a new turn
 func (m *Match) BeginNewTurn() {
 
+	m.Step = &BeginTurnStep{}
+
 	if m.Turn == 1 {
 		m.Turn = 2
 	} else {
 		m.Turn = 1
 	}
 
-	ctx := NewContext(m, &BeginTurnStep{})
+	ctx := NewContext(m, m.Step)
 
 	m.HandleFx(ctx)
 
@@ -732,13 +807,15 @@ func (m *Match) BeginNewTurn() {
 // UntapStep ...
 func (m *Match) UntapStep() {
 
+	m.Step = &UntapStep{}
+
 	if mana, err := m.CurrentPlayer().Player.Container(MANAZONE); err == nil {
 		for _, c := range mana {
 			c.Tapped = false
 		}
 	}
 
-	ctx := NewContext(m, &UntapStep{})
+	ctx := NewContext(m, m.Step)
 
 	m.HandleFx(ctx)
 
@@ -749,7 +826,9 @@ func (m *Match) UntapStep() {
 // StartOfTurnStep ...
 func (m *Match) StartOfTurnStep() {
 
-	ctx := NewContext(m, &StartOfTurnStep{})
+	m.Step = &StartOfTurnStep{}
+
+	ctx := NewContext(m, m.Step)
 
 	m.HandleFx(ctx)
 
@@ -762,11 +841,15 @@ func (m *Match) StartOfTurnStep() {
 // DrawStep ...
 func (m *Match) DrawStep() {
 
-	ctx := NewContext(m, &DrawStep{})
+	m.Step = &DrawStep{}
+
+	ctx := NewContext(m, m.Step)
 
 	m.HandleFx(ctx)
 
-	m.CurrentPlayer().Player.DrawCards(1)
+	if m.isFirstTurn == false {
+		m.CurrentPlayer().Player.DrawCards(1)
+	}
 
 	m.BroadcastState()
 
@@ -777,7 +860,9 @@ func (m *Match) DrawStep() {
 // ChargeStep ...
 func (m *Match) ChargeStep() {
 
-	ctx := NewContext(m, &ChargeStep{})
+	m.Step = &ChargeStep{}
+
+	ctx := NewContext(m, m.Step)
 
 	m.HandleFx(ctx)
 
@@ -786,7 +871,9 @@ func (m *Match) ChargeStep() {
 // EndStep ...
 func (m *Match) EndStep() {
 
-	ctx := NewContext(m, &EndStep{})
+	m.Step = &EndStep{}
+
+	ctx := NewContext(m, m.Step)
 
 	m.HandleFx(ctx)
 
@@ -799,13 +886,17 @@ func (m *Match) EndStep() {
 // EndOfTurnTriggers ...
 func (m *Match) EndOfTurnTriggers() {
 
+	m.Step = &EndOfTurnStep{}
+
 	if cards, err := m.CurrentPlayer().Player.Container(BATTLEZONE); err == nil {
 		for _, c := range cards {
 			c.ClearConditions()
 		}
 	}
 
-	ctx := NewContext(m, &EndOfTurnStep{})
+	m.isFirstTurn = false
+
+	ctx := NewContext(m, m.Step)
 
 	m.HandleFx(ctx)
 
@@ -851,11 +942,19 @@ func (m *Match) ChargeMana(p *PlayerReference, cardID string) {
 // PlayCard is called when the player attempts to play a card
 func (m *Match) PlayCard(p *PlayerReference, cardID string) {
 
-	p.Player.CanChargeMana = false
-
-	m.HandleFx(NewContext(m, &PlayCardEvent{
+	ctx := NewContext(m, &PlayCardEvent{
 		CardID: cardID,
-	}))
+	})
+
+	m.HandleFx(ctx)
+
+	if !ctx.Cancelled() {
+		if _, ok := m.Step.(*MainStep); !ok {
+			m.Step = &MainStep{}
+		}
+
+		p.Player.CanChargeMana = false
+	}
 
 	m.BroadcastState()
 
@@ -864,8 +963,6 @@ func (m *Match) PlayCard(p *PlayerReference, cardID string) {
 // AttackPlayer is called when the player attempts to attack the opposing player
 func (m *Match) AttackPlayer(p *PlayerReference, cardID string) {
 
-	p.Player.CanChargeMana = false
-
 	_, err := p.Player.GetCard(cardID, BATTLEZONE)
 
 	if err != nil {
@@ -873,10 +970,20 @@ func (m *Match) AttackPlayer(p *PlayerReference, cardID string) {
 		return
 	}
 
-	m.HandleFx(NewContext(m, &AttackPlayer{
+	ctx := NewContext(m, &AttackPlayer{
 		CardID:   cardID,
 		Blockers: make([]*Card, 0),
-	}))
+	})
+
+	m.HandleFx(ctx)
+
+	if !ctx.Cancelled() {
+		if _, ok := m.Step.(*AttackStep); !ok {
+			m.Step = &AttackStep{}
+		}
+
+		p.Player.CanChargeMana = false
+	}
 
 	m.BroadcastState()
 
@@ -885,8 +992,6 @@ func (m *Match) AttackPlayer(p *PlayerReference, cardID string) {
 // AttackCreature is called when the player attempts to attack the opposing player
 func (m *Match) AttackCreature(p *PlayerReference, cardID string) {
 
-	p.Player.CanChargeMana = false
-
 	_, err := p.Player.GetCard(cardID, BATTLEZONE)
 
 	if err != nil {
@@ -894,10 +999,21 @@ func (m *Match) AttackCreature(p *PlayerReference, cardID string) {
 		return
 	}
 
-	m.HandleFx(NewContext(m, &AttackCreature{
-		CardID:   cardID,
-		Blockers: make([]*Card, 0),
-	}))
+	ctx := NewContext(m, &AttackCreature{
+		CardID:              cardID,
+		Blockers:            make([]*Card, 0),
+		AttackableCreatures: make([]*Card, 0),
+	})
+
+	m.HandleFx(ctx)
+
+	if !ctx.Cancelled() {
+		if _, ok := m.Step.(*AttackStep); !ok {
+			m.Step = &AttackStep{}
+		}
+
+		p.Player.CanChargeMana = false
+	}
 
 	m.BroadcastState()
 
@@ -935,14 +1051,55 @@ func (m *Match) Parse(s *server.Socket, data []byte) {
 	case "join_match":
 		{
 
-			// TODO: spectators?
+			// player reconnect
 			if m.Started {
-				s.Send(server.WarningMessage{
-					Header:  "error",
-					Message: "This match has already started, you cannot join it.",
-				})
-				s.Close()
-				return
+				if m.Player1 != nil && m.Player1.UID == s.User.UID {
+
+					if m.Player1.Socket != nil {
+						m.Player1.Socket.Close()
+					}
+
+					m.Player1.Socket = s
+
+					if m.Player2 != nil && m.Player2.Socket != nil {
+						m.Player2.Socket.Send(server.Message{
+							Header: "opponent_reconnected",
+						})
+					}
+
+					m.BroadcastState()
+					m.Chat("Server", s.User.Username+" reconnected")
+
+					return
+
+				} else if m.Player2 != nil && m.Player2.UID == s.User.UID {
+
+					if m.Player2.Socket != nil {
+						m.Player2.Socket.Close()
+					}
+
+					m.Player2.Socket = s
+
+					if m.Player1 != nil && m.Player1.Socket != nil {
+						m.Player1.Socket.Send(server.Message{
+							Header: "opponent_reconnected",
+						})
+					}
+
+					m.BroadcastState()
+					m.Chat("Server", s.User.Username+" reconnected")
+
+					return
+
+				} else {
+					// TODO: spectators?
+					s.Send(server.WarningMessage{
+						Header:  "error",
+						Message: "This match has already started, you cannot join it.",
+					})
+					s.Close()
+					return
+				}
 			}
 
 			// This is player1
@@ -1079,7 +1236,7 @@ func (m *Match) Parse(s *server.Socket, data []byte) {
 				return
 			}
 
-			m.ColorChat(s.User.Username, msg.Message, "#79dced")
+			m.ColorChat(s.User.Username, msg.Message, s.User.Color)
 		}
 
 	case "choose_deck":
@@ -1280,38 +1437,50 @@ func (m *Match) Parse(s *server.Socket, data []byte) {
 // OnSocketClose is called when a socket disconnects
 func (m *Match) OnSocketClose(s *server.Socket) {
 
-	// End if someone disconnects and there's no players in the match
-	if m.Player1 == nil && m.Player2 == nil {
+	if m.closed {
+		return
+	}
+
+	if !m.Started {
 		m.quit <- true
 		return
 	}
 
-	if m.Player1 != nil {
+	var p *PlayerReference
+	var o *PlayerReference
 
-		// If player1 disconnects
-		if m.Player1.Socket == s {
+	// assign the above variables, player and opponent of the closing socket
+	if m.Player1 != nil && m.Player1.Socket == s {
+		p = m.Player1
 
-			// Let player2 know if they are present and this was not during the end of the game
-			if m.Player2 != nil && !m.ending {
-				WarnError(m.Player2, "Your opponent disconnected, the match will close soon.")
-			}
+		if m.Player2 != nil && m.Player2.Socket != nil {
+			o = m.Player2
+		}
 
-			m.quit <- true
+	} else if m.Player2 != nil && m.Player2.Socket == s {
+		p = m.Player2
+
+		if m.Player1 != nil && m.Player1.Socket != nil {
+			o = m.Player1
 		}
 	}
 
-	if m.Player2 != nil {
+	if p == nil {
+		return
+	}
 
-		// If player2 disconnects
-		if m.Player2.Socket == s {
+	if o != nil {
+		// let the opponent know that this player has disconnected
+		o.Socket.Send(server.Message{
+			Header: "opponent_disconnected",
+		})
+	}
 
-			// Let player1 know if they are present and this was not during the end of the game
-			if m.Player1 != nil && !m.ending {
-				WarnError(m.Player1, "Your opponent disconnected, the match will close soon.")
-			}
+	p.Socket = nil
 
-			m.quit <- true
-		}
+	// if both players have disconnected, close match
+	if (p == nil || p.Socket == nil) && (o == nil || o.Socket == nil) {
+		m.quit <- true
 	}
 
 }

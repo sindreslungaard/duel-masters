@@ -5,6 +5,7 @@ import (
 	"duel-masters/game/family"
 	"duel-masters/game/fx"
 	"duel-masters/game/match"
+	"fmt"
 )
 
 // BarkwhipTheSmasher ...
@@ -62,9 +63,36 @@ func SilverAxe(c *match.Card) {
 	c.Use(fx.Creature, fx.When(fx.Attacking, func(card *match.Card, ctx *match.Context) {
 
 		ctx.ScheduleAfter(func() {
-			card.Player.DrawCards(1)
+
+			cards := card.Player.PeekDeck(1)
+
+			if len(cards) < 1 {
+				return
+			}
+
+			c, err := card.Player.MoveCard(cards[0].ID, match.DECK, match.MANAZONE)
+
+			if err != nil {
+				return
+			}
+
+			ctx.Match.Chat("Server", fmt.Sprintf("%s was added to %s's manazone from the top of their deck", c.Name, ctx.Match.PlayerRef(card.Player).Socket.User.Username))
 		})
 
 	}))
+
+}
+
+// SilverFist ...
+func SilverFist(c *match.Card) {
+
+	c.Name = "Silver Fist"
+	c.Power = 3000
+	c.Civ = civ.Nature
+	c.Family = family.BeastFolk
+	c.ManaCost = 4
+	c.ManaRequirement = []string{civ.Nature}
+
+	c.Use(fx.Creature, fx.PowerAttacker2000)
 
 }

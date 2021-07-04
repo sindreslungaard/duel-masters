@@ -16,7 +16,7 @@ func DarkRavenShadowOfGrief(c *match.Card) {
 	c.Power = 1000
 	c.Civ = civ.Darkness
 	c.Family = family.Ghost
-	c.ManaCost = 5
+	c.ManaCost = 4
 	c.ManaRequirement = []string{civ.Darkness}
 
 	c.Use(fx.Creature, fx.Blocker)
@@ -73,5 +73,40 @@ func NightMasterShadowOfDecay(c *match.Card) {
 	c.ManaRequirement = []string{civ.Darkness}
 
 	c.Use(fx.Creature, fx.Blocker)
+
+}
+
+// BlackFeatherShadowOfRage ...
+func BlackFeatherShadowOfRage(c *match.Card) {
+
+	c.Name = "Black Feather, Shadow of Rage"
+	c.Power = 3000
+	c.Civ = civ.Darkness
+	c.Family = family.Ghost
+	c.ManaCost = 1
+	c.ManaRequirement = []string{civ.Darkness}
+
+	c.Use(fx.Creature, func(card *match.Card, ctx *match.Context) {
+
+		if match.AmISummoned(card, ctx) {
+
+			ctx.ScheduleAfter(func() {
+
+				fx.Select(
+					card.Player,
+					ctx.Match,
+					card.Player,
+					match.BATTLEZONE,
+					"Select one of your creatures that will be destroyed",
+					1,
+					1,
+					false,
+				).Map(func(x *match.Card) {
+					ctx.Match.Destroy(x, card, match.DestroyedByMiscAbility)
+				})
+
+			})
+		}
+	})
 
 }

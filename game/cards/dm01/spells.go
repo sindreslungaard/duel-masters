@@ -147,11 +147,11 @@ func CrimsonHammer(c *match.Card) {
 
 		if match.AmICasted(card, ctx) {
 
-			creatures := match.Filter(card.Player, ctx.Match, ctx.Match.Opponent(card.Player), match.BATTLEZONE, "Select 1 of your opponent's creatures that will be tapped", 1, 1, false, func(x *match.Card) bool { return x.Power <= 2000 })
+			creatures := match.Filter(card.Player, ctx.Match, ctx.Match.Opponent(card.Player), match.BATTLEZONE, "Select 1 of your opponent's creatures that will be tapped", 1, 1, false, func(x *match.Card) bool { return ctx.Match.GetPower(x, false) <= 2000 })
 
 			for _, creature := range creatures {
 
-				ctx.Match.Destroy(creature, card)
+				ctx.Match.Destroy(creature, card, match.DestroyedBySpell)
 
 			}
 
@@ -234,7 +234,7 @@ func DeathSmoke(c *match.Card) {
 
 			for _, creature := range creatures {
 
-				ctx.Match.Destroy(creature, card)
+				ctx.Match.Destroy(creature, card, match.DestroyedBySpell)
 
 			}
 
@@ -476,7 +476,7 @@ func PangeasSong(c *match.Card) {
 // SolarRay ...
 func SolarRay(c *match.Card) {
 
-	c.Name = "SolarRay"
+	c.Name = "Solar Ray"
 	c.Civ = civ.Light
 	c.ManaCost = 2
 	c.ManaRequirement = []string{civ.Light}
@@ -691,7 +691,7 @@ func TerrorPit(c *match.Card) {
 
 			for _, creature := range creatures {
 
-				ctx.Match.Destroy(creature, card)
+				ctx.Match.Destroy(creature, card, match.DestroyedBySpell)
 
 			}
 
@@ -713,11 +713,11 @@ func TornadoFlame(c *match.Card) {
 
 		if match.AmICasted(card, ctx) {
 
-			creatures := match.Filter(card.Player, ctx.Match, ctx.Match.Opponent(card.Player), match.BATTLEZONE, "Destroy one of your opponent's creatures that has power 4000 or less", 1, 1, false, func(x *match.Card) bool { return x.Power <= 4000 })
+			creatures := match.Filter(card.Player, ctx.Match, ctx.Match.Opponent(card.Player), match.BATTLEZONE, "Destroy one of your opponent's creatures that has power 4000 or less", 1, 1, false, func(x *match.Card) bool { return ctx.Match.GetPower(x, false) <= 4000 })
 
 			for _, creature := range creatures {
 
-				ctx.Match.Destroy(creature, card)
+				ctx.Match.Destroy(creature, card, match.DestroyedBySpell)
 
 			}
 

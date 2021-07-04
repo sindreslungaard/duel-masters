@@ -13,10 +13,11 @@ func ReturnToHand(card *match.Card, ctx *match.Context) {
 
 		if event.Card == card {
 
-			card.Player.MoveCard(card.ID, match.BATTLEZONE, match.HAND)
-			ctx.Match.Chat("Server", fmt.Sprintf("%s was destroyed by %s and returned to the hand", event.Card.Name, event.Source.Name))
+			ctx.ScheduleAfter(func() {
 
-			ctx.InterruptFlow()
+				card.Player.MoveCard(card.ID, match.GRAVEYARD, match.HAND)
+				ctx.Match.Chat("Server", fmt.Sprintf("%s was destroyed by %s and returned to the hand", event.Card.Name, event.Source.Name))
+			})
 
 		}
 
@@ -32,13 +33,34 @@ func ReturnToMana(card *match.Card, ctx *match.Context) {
 
 		if event.Card == card {
 
-			card.Player.MoveCard(card.ID, match.BATTLEZONE, match.MANAZONE)
-			card.Tapped = false
+			ctx.ScheduleAfter(func() {
 
-			ctx.Match.Chat("Server", fmt.Sprintf("%s was destroyed by %s but returned to the manazone", event.Card.Name, event.Source.Name))
+				card.Player.MoveCard(card.ID, match.GRAVEYARD, match.MANAZONE)
+				card.Tapped = false
+				ctx.Match.Chat("Server", fmt.Sprintf("%s was moved from %s's graveyard to their manazone", event.Card.Name, card.Player.Username()))
 
-			ctx.InterruptFlow()
+			})
 
+		}
+
+	}
+
+}
+
+// ReturnToShield returns the card to the players shield zone instead of the graveyard
+func ReturnToShield(card *match.Card, ctx *match.Context) {
+
+	// When destroyed
+	if event, ok := ctx.Event.(*match.CreatureDestroyed); ok {
+
+		if event.Card == card {
+
+			ctx.ScheduleAfter(func() {
+
+				card.Player.MoveCard(card.ID, match.GRAVEYARD, match.SHIELDZONE)
+				card.Tapped = false
+				ctx.Match.Chat("Server", fmt.Sprintf("%s was destroyed by %s but returned to the shield zone", event.Card.Name, event.Source.Name))
+			})
 		}
 
 	}

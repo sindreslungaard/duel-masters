@@ -11,7 +11,7 @@ import (
 func RoaringGreatHorn(c *match.Card) {
 
 	c.Name = "Roaring Great-Horn"
-	c.Power = 6000
+	c.Power = 8000
 	c.Civ = civ.Nature
 	c.Family = family.HornedBeast
 	c.ManaCost = 7
@@ -44,7 +44,7 @@ func StampedingLonghorn(c *match.Card) {
 				blockers := make([]*match.Card, 0)
 
 				for _, blocker := range event.Blockers {
-					if blocker.Power >= 3000 {
+					if ctx.Match.GetPower(blocker, false) >= 3000 {
 						blockers = append(blockers, blocker)
 					}
 				}
@@ -66,7 +66,7 @@ func StampedingLonghorn(c *match.Card) {
 				blockers := make([]*match.Card, 0)
 
 				for _, blocker := range event.Blockers {
-					if blocker.Power >= 3000 {
+					if ctx.Match.GetPower(blocker, false) >= 3000 {
 						blockers = append(blockers, blocker)
 					}
 				}

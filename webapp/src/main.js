@@ -6,6 +6,9 @@ import store from "./store";
 import "./scss/style.scss";
 import config from "@/config/Config";
 
+// self-invoking directives
+import "./directives/draggable";
+
 Vue.config.productionTip = false;
 
 Vue.use(VModal, { dynamic: true, dynamicDefaults: { height: "auto", scrollable: true, width: "300px" } });

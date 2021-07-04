@@ -34,6 +34,7 @@ type CardState struct {
 // PlayerState stores information about the state of the current player
 type PlayerState struct {
 	Deck       int         `json:"deck"`
+	HandCount  int         `json:"handCount"`
 	Hand       []CardState `json:"hand"`
 	Shieldzone []string    `json:"shieldzone"`
 	Manazone   []CardState `json:"manazone"`
@@ -134,4 +135,11 @@ type MatchMessage struct {
 type MatchesListMessage struct {
 	Header  string         `json:"header"`
 	Matches []MatchMessage `json:"matches"`
+}
+
+// ShowCardsMessage is used to show the user n cards without an action to perform
+type ShowCardsMessage struct {
+	Header  string   `json:"header"`
+	Message string   `json:"message"`
+	Cards   []string `json:"cards"`
 }

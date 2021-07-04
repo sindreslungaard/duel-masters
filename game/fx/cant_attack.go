@@ -1,6 +1,7 @@
 package fx
 
 import (
+	"duel-masters/game/cnd"
 	"duel-masters/game/match"
 	"fmt"
 )
@@ -8,10 +9,15 @@ import (
 // CantAttackPlayers prevents a card from attacking players
 func CantAttackPlayers(card *match.Card, ctx *match.Context) {
 
+	if _, ok := ctx.Event.(*match.UntapStep); ok {
+
+		card.AddCondition(cnd.CantAttackPlayers, true, card.ID)
+	}
+
 	if event, ok := ctx.Event.(*match.AttackPlayer); ok {
 
 		// Is this event for me or someone else?
-		if event.CardID != card.ID {
+		if event.CardID != card.ID || !card.HasCondition(cnd.CantAttackPlayers) {
 			return
 		}
 
@@ -26,10 +32,15 @@ func CantAttackPlayers(card *match.Card, ctx *match.Context) {
 // CantAttackCreatures prevents a card from attacking players
 func CantAttackCreatures(card *match.Card, ctx *match.Context) {
 
+	if _, ok := ctx.Event.(*match.UntapStep); ok {
+
+		card.AddCondition(cnd.CantAttackCreatures, true, card.ID)
+	}
+
 	if event, ok := ctx.Event.(*match.AttackCreature); ok {
 
 		// Is this event for me or someone else?
-		if event.CardID != card.ID {
+		if event.CardID != card.ID || !card.HasCondition(cnd.CantAttackCreatures) {
 			return
 		}
 

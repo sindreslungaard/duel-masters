@@ -20,3 +20,27 @@ func ScissorEye(c *match.Card) {
 	c.Use(fx.Creature)
 
 }
+
+// PlasmaChaser ...
+func PlasmaChaser(c *match.Card) {
+
+	c.Name = "Plasma Chaser"
+	c.Power = 4000
+	c.Civ = civ.Water
+	c.Family = family.GelFish
+	c.ManaCost = 6
+	c.ManaRequirement = []string{civ.Water}
+
+	c.Use(fx.Creature, fx.When(fx.Attacking, func(card *match.Card, ctx *match.Context) {
+
+		toDraw := len(fx.Find(ctx.Match.Opponent(card.Player), match.BATTLEZONE))
+
+		if toDraw < 1 {
+			return
+		}
+
+		card.Player.DrawCards(toDraw)
+
+	}))
+
+}

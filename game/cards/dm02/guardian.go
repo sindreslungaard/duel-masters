@@ -19,7 +19,7 @@ func LadiaBaleTheInspirational(c *match.Card) {
 	c.ManaCost = 6
 	c.ManaRequirement = []string{civ.Light}
 
-	c.Use(fx.Creature, fx.Evolution, fx.Doublebreaker)
+	c.Use(fx.Creature, fx.Blocker, fx.Evolution, fx.Doublebreaker)
 
 }
 
@@ -51,6 +51,49 @@ func PhalEegaDawnGuardian(c *match.Card) {
 			}
 			card.Player.MoveCard(x.ID, match.GRAVEYARD, match.HAND)
 			ctx.Match.Chat("Server", fmt.Sprintf("%s was returned to %s's hand from their graveyard by Phal Eega, Dawn Guardian", x.Name, x.Player.Username()))
+		})
+
+	}))
+
+}
+
+// ResoPacosClearSkyGuardian ...
+func ResoPacosClearSkyGuardian(c *match.Card) {
+
+	c.Name = "Reso Pacos, Clear Sky Guardian"
+	c.Power = 3000
+	c.Civ = civ.Light
+	c.Family = family.Guardian
+	c.ManaCost = 3
+	c.ManaRequirement = []string{civ.Light}
+
+	c.Use(fx.Creature)
+
+}
+
+// LarbaGeerTheImmaculate ...
+func LarbaGeerTheImmaculate(c *match.Card) {
+
+	c.Name = "Larba Geer, the Immaculate"
+	c.Power = 5000
+	c.Civ = civ.Light
+	c.Family = family.Guardian
+	c.ManaCost = 3
+	c.ManaRequirement = []string{civ.Light}
+
+	c.Use(fx.Creature, fx.Evolution, fx.When(fx.Summoned, func(card *match.Card, ctx *match.Context) {
+
+		ctx.ScheduleAfter(func() {
+
+			fx.FindFilter(
+				ctx.Match.Opponent(card.Player),
+				match.BATTLEZONE,
+				func(x *match.Card) bool { return x.HasCondition(cnd.Blocker) },
+			).Map(func(x *match.Card) {
+				x.Tapped = true
+				ctx.Match.Chat("Server", fmt.Sprintf("%s was tapped by %s", x.Name, card.Name))
+			})
+
 		})
 
 	}))

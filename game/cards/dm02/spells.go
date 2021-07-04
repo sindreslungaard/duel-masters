@@ -34,13 +34,13 @@ func BurstShot(c *match.Card) {
 
 			for _, creature := range myCreatures {
 				if ctx.Match.GetPower(creature, false) <= 2000 {
-					ctx.Match.Destroy(creature, card)
+					ctx.Match.Destroy(creature, card, match.DestroyedBySpell)
 				}
 			}
 
 			for _, creature := range opponentCreatures {
 				if ctx.Match.GetPower(creature, false) <= 2000 {
-					ctx.Match.Destroy(creature, card)
+					ctx.Match.Destroy(creature, card, match.DestroyedBySpell)
 				}
 			}
 
@@ -123,9 +123,173 @@ func CriticalBlade(c *match.Card) {
 			false,
 			func(x *match.Card) bool { return x.HasCondition(cnd.Blocker) },
 		).Map(func(x *match.Card) {
-			ctx.Match.Destroy(x, card)
+			ctx.Match.Destroy(x, card, match.DestroyedBySpell)
 		})
 
+	}))
+
+}
+
+// ReconOperation ...
+func ReconOperation(c *match.Card) {
+
+	c.Name = "Recon Operation"
+	c.Civ = civ.Water
+	c.ManaCost = 2
+	c.ManaRequirement = []string{civ.Water}
+
+	c.Use(fx.Spell, fx.ShieldTrigger, fx.When(fx.SpellCast, func(card *match.Card, ctx *match.Context) {
+
+		shields := fx.SelectBackside(
+			card.Player,
+			ctx.Match,
+			ctx.Match.Opponent(card.Player),
+			match.SHIELDZONE,
+			"Recon Operation: Select 3 of your opponent's shields that will be shown to you",
+			1,
+			3,
+			true,
+		)
+
+		ids := make([]string, 0)
+
+		for _, s := range shields {
+			ids = append(ids, s.ImageID)
+		}
+
+		ctx.Match.ShowCards(
+			card.Player,
+			"Your opponent's shields:",
+			ids,
+		)
+
+	}))
+
+}
+
+// ManaCrisis ...
+func ManaCrisis(c *match.Card) {
+
+	c.Name = "Mana Crisis"
+	c.Civ = civ.Nature
+	c.ManaCost = 4
+	c.ManaRequirement = []string{civ.Nature}
+
+	c.Use(fx.Spell, fx.ShieldTrigger, fx.When(fx.SpellCast, func(card *match.Card, ctx *match.Context) {
+
+		fx.Select(
+			card.Player,
+			ctx.Match,
+			ctx.Match.Opponent(card.Player),
+			match.MANAZONE,
+			"Mana Crisis: Select 1 card from your opponent's manazone and put it in their graveyard",
+			1,
+			1,
+			false,
+		).Map(func(x *match.Card) {
+			x.Player.MoveCard(x.ID, match.MANAZONE, match.GRAVEYARD)
+			ctx.Match.Chat("Server", fmt.Sprintf("%s was put into %s's graveyard from their manazone by %s", x.Name, x.Player.Username(), card.Name))
+		})
+
+	}))
+
+}
+
+// RumbleGate ...
+func RumbleGate(c *match.Card) {
+
+	c.Name = "Rumble Gate"
+	c.Civ = civ.Fire
+	c.ManaCost = 4
+	c.ManaRequirement = []string{civ.Fire}
+
+	c.Use(fx.Spell, fx.When(fx.SpellCast, func(card *match.Card, ctx *match.Context) {
+
+		fx.Find(
+			card.Player,
+			match.BATTLEZONE,
+		).Map(func(x *match.Card) {
+			x.AddCondition(cnd.PowerAmplifier, 1000, card.ID)
+			x.AddCondition(cnd.AttackUntapped, nil, card.ID)
+			ctx.Match.Chat("Server", fmt.Sprintf("%s can attack untapped creatures and was given +1000 power until the end of this turn by %s", x.Name, card.Name))
+		})
+
+	}))
+
+}
+
+// LostSoul ...
+func LostSoul(c *match.Card) {
+
+	c.Name = "Lost Soul"
+	c.Civ = civ.Darkness
+	c.ManaCost = 7
+	c.ManaRequirement = []string{civ.Darkness}
+
+	c.Use(fx.Spell, fx.When(fx.SpellCast, func(card *match.Card, ctx *match.Context) {
+
+		fx.Find(
+			ctx.Match.Opponent(card.Player),
+			match.HAND,
+		).Map(func(x *match.Card) {
+			ctx.Match.Opponent(card.Player).MoveCard(x.ID, match.HAND, match.GRAVEYARD)
+		})
+
+		ctx.Match.Chat("Server", fmt.Sprintf("%s's hand was discarded by %s", ctx.Match.Opponent(card.Player).Username(), card.Name))
+
+	}))
+
+}
+
+// RainbowStone ...
+func RainbowStone(c *match.Card) {
+
+	c.Name = "Rainbow Stone"
+	c.Civ = civ.Nature
+	c.ManaCost = 4
+	c.ManaRequirement = []string{civ.Nature}
+
+	c.Use(fx.Spell, fx.When(fx.SpellCast, func(card *match.Card, ctx *match.Context) {
+
+		fx.Select(
+			card.Player,
+			ctx.Match,
+			card.Player,
+			match.DECK,
+			"Rainbow Stone: Put a card from your deck into your manazone",
+			1,
+			1,
+			true,
+		).Map(func(x *match.Card) {
+			x.Player.MoveCard(x.ID, match.DECK, match.MANAZONE)
+			ctx.Match.Chat("Server", fmt.Sprintf("%s put %s in their manazone from their deck", x.Player.Username(), x.Name))
+		})
+
+		card.Player.ShuffleDeck()
+
+	}))
+
+}
+
+// DiamondCutter ...
+func DiamondCutter(c *match.Card) {
+
+	c.Name = "Diamond Cutter"
+	c.Civ = civ.Light
+	c.ManaCost = 5
+	c.ManaRequirement = []string{civ.Light}
+
+	c.Use(fx.Spell, fx.When(fx.SpellCast, func(card *match.Card, ctx *match.Context) {
+
+		fx.Find(
+			card.Player,
+			match.BATTLEZONE,
+		).Map(func(x *match.Card) {
+
+			x.RemoveCondition(cnd.SummoningSickness)
+			x.RemoveCondition(cnd.CantAttackCreatures)
+			x.RemoveCondition(cnd.CantAttackPlayers)
+		})
 	}))
 
 }
