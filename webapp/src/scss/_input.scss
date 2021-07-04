@@ -12,8 +12,11 @@ select {
   width: 100%;
   color: var(--color-text-light);
   resize: none;
-}
 
+  &[disabled] {
+    opacity: 0.75;
+  }
+}
 
 input:active,
 textarea:active,
@@ -27,7 +30,7 @@ input[type="check"] {
 }
 
 *:focus {
-  outline: 1px solid #FFF;
+  outline: 1px solid #fff;
 }
 
 label {

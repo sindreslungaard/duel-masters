@@ -20,7 +20,8 @@
         </select>
       </div>
       <div class="field" v-if="$store.state.deck.public">
-        Share URl: {{getShareUrl($store.state.deck.uid)}}
+        <label for="share-url">Share URL</label>
+        <input disabled id="share-url" :value="getShareUrl($store.state.deck.uid)" />
       </div>
       <div class="actions">
         <div class="actions--left"
@@ -173,9 +174,6 @@ export default {
         this.showWarning("Couldn't delete the deck you selected");
       }
     },
-    getShareUrl(uid) {
-      return window.location.host + "/deck/" + uid;
-    },
     getCardsForDeck(cardUids) {
       let cards = [];
       for (let uid of cardUids) {
@@ -243,7 +241,10 @@ export default {
         }
       }
       return true;
-    }
+    },
+    getShareUrl(deckUid) {
+      return window.location.origin + "/deck/" + deckUid;
+    },
   },
   watch: {
       selectedDeckUid: function(value) {
@@ -261,7 +262,7 @@ export default {
       console.log(this.$store.getters.deck);
       this.deckCopy = JSON.parse(JSON.stringify(this.$store.getters.deck));
 
-    }
+    },
   },
   computed: {
     /**
