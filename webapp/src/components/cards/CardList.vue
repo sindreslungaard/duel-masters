@@ -53,9 +53,7 @@
         </thead>
         <tbody>
           <tr
-            @click.left="onLeftClick(card)"
-            @click.middle="onMiddleClick(card)"
-            @click.right="onRightClick(card)"
+            @click.left="addCardToDeck(card)"
             v-for="card in filteredCards"
             :key="card.uid"
           >
@@ -68,9 +66,7 @@
 
       <div class="grid-view" v-if="viewMode === 'grid'">
         <div
-          @click.left="onLeftClick(card)"
-          @click.middle="onMiddleClick(card)"
-          @click.right="onRightClick(card)"
+          @click.left="addCardToDeck(card)"
           v-for="card in filteredCards"
           :key="card.uid"
         >
@@ -120,15 +116,9 @@ export default {
   },
   async created() {},
   methods: {
-    onLeftClick(card) {
-      this.$emit("leftClick", card);
+    addCardToDeck(card) {
+      this.$store.commit("addCardToDeck", card);
     },
-    onMiddleClick(card) {
-      this.$emit("middleClick", card);
-    },
-    onRightClick(card) {
-      this.$emit("rightClick", card);
-    }
   },
   computed: {
     filteredCards() {

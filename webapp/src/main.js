@@ -11,8 +11,10 @@ import "./directives/draggable";
 
 Vue.config.productionTip = false;
 
-Vue.use(VModal, { dynamic: true, dynamicDefaults: { height: "auto", scrollable: true, width: "300px" } });
-
+Vue.use(VModal, {
+  dynamic: true,
+  dynamicDefaults: { height: "auto", scrollable: true, width: "300px" }
+});
 Vue.prototype.$config = Object.freeze(config);
 
 new Vue({
