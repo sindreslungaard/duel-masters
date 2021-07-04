@@ -2,10 +2,13 @@
 @import "_scrollbar";
 @import "_input";
 
+* {
+  box-sizing: border-box;
+}
+
 body {
   font-size: 16px;
 }
-
 
 // TODO: Cleanup the following
 h2 {
@@ -28,9 +31,7 @@ h4 {
   padding-bottom: 5px;
   font-weight: 400;
   text-transform: capitalize;
-
 }
-
 
 .set {
   text-transform: uppercase;
