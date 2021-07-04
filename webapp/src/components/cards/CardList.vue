@@ -108,10 +108,6 @@ export default {
     cards: {
       type: Array,
       required: true
-    },
-    sets: {
-      type: Array,
-      required: true
     }
   },
   data() {
@@ -119,7 +115,7 @@ export default {
       viewMode: "grid",
       filterName: "",
       filterSet: "all",
-      filterCivilization: "all"
+      filterCivilization: "all",
     };
   },
   async created() {},
@@ -155,6 +151,11 @@ export default {
       filteredCards = _.sortBy(filteredCards, "name");
 
       return filteredCards;
+    },
+    sets() {
+      const sets = Array.from(new Set(this.cards.map(card => card.set)));
+      sets.sort();
+      return sets;
     },
     /**
      * Whether the component is ready to be displayed.

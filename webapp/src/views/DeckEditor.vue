@@ -32,7 +32,7 @@
     </div>-->
 
     <Header />
-    <CardList @leftClick="addCardToDeck" :cards="cards" :sets="sets" />
+    <CardList @leftClick="addCardToDeck" :cards="cards" />
     <Panel title="Deck" class="deck-view">
       <LoadingIndicator v-if="!hasFinishedLoading" />
 
@@ -124,7 +124,6 @@ export default {
       hasFinishedLoading: false,
       showWizard: false,
       decks: [],
-      sets: [],
       cards: [],
 
       deckCopy: null,
@@ -254,9 +253,6 @@ export default {
       let decksResponse = await call({ path: "/decks", method: "GET" });
       this.decks = decksResponse.data;
       this.cards = cardsResponse.data;
-
-      this.sets = Array.from(new Set(this.cards.map(card => card.set)));
-      this.sets.sort();
 
       if (this.decks.length < 1) {
         this.decks.push({
