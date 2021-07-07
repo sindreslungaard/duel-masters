@@ -52,8 +52,10 @@ func MongrelMan(c *match.Card) {
 			return
 		}
 
-		if _, ok := ctx.Event.(*match.CreatureDestroyed); ok {
-			card.Player.DrawCards(1)
+		if event, ok := ctx.Event.(*match.CreatureDestroyed); ok {
+			if event.Card.ID != card.ID {
+				card.Player.DrawCards(1)
+			}
 		}
 
 	})
