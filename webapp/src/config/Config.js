@@ -2,11 +2,11 @@ export default {
   /**
    * The URL where the REST API is served.
    */
-  API_ENDPOINT: "https://shobu.io/api",
+  API_ENDPOINT: `${window.location.origin}/api`,
   /**
    * The URL for WebSockets.
    */
-  SOCKET_ENDPOINT: "wss://shobu.io",
+  SOCKET_ENDPOINT: `wss://${window.location.host}`,
   /**
    * The time duration in which multiple messages from one user
    * will count as one message in seconds.
