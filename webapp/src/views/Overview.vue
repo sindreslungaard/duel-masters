@@ -85,7 +85,7 @@ export default {
       this.showError("Lost connection to the server");
     }
   },
-  beforeDestroy() {
+  beforeUnmount() {
     this.socket.close();
   },
   methods: {

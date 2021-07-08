@@ -1,24 +1,32 @@
-import Vue from "vue";
-import VModal from "vue-js-modal";
+import VueFinalModal from "vue-final-modal";
 import App from "./App.vue";
 import router from "./router";
 import store from "./store";
 import "./scss/style.scss";
-import config from "@/config/Config";
+import config from "@/config";
+import Draggable from "@/directives/Draggable";
+
+import { createApp } from "vue";
 
 // self-invoking directives
-import "./directives/draggable";
+//import "./directives/draggable";
 
-Vue.config.productionTip = false;
+const app = createApp({
+  router,
+  ...App,
+});
+app.config.productionTip = false;
 
-Vue.use(VModal, {
+app.use(store);
+app.use(router);
+app.use(config);
+app.use(VueFinalModal());
+
+app.directive("draggable", Draggable);
+
+app.mount("#app");
+
+/*app.use(VModal, {
   dynamic: true,
   dynamicDefaults: { height: "auto", scrollable: true, width: "300px" },
-});
-Vue.prototype.$config = Object.freeze(config);
-
-new Vue({
-  router,
-  store,
-  render: h => h(App),
-}).$mount("#app");
+});*/

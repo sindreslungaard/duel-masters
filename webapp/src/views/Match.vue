@@ -657,9 +657,8 @@ export default {
       lastReconnect = Date.now();
 
       // Connect to the server
-     // Connect to the server
     const ws = new WebSocket(
-      this.$config.WS_ENDPOINT + "shobu.io" + "/ws/" + this.$route.params.id,
+      this.$config.SOCKET_ENDPOINT + "/ws/" + this.$route.params.id,
     );
     this.ws = ws;
 
@@ -834,7 +833,7 @@ export default {
       e.clearSelection();
     });
   },
-  beforeDestroy() {
+  beforeUnmount() {
     this.preventReconnect = true;
     this.ws.close();
   },

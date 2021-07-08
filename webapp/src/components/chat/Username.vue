@@ -21,7 +21,8 @@ export default {
   props: {
     hub: {
       type: String,
-      required: true,
+      required: false,
+      default: "",
     },
     color: {
       type: String,

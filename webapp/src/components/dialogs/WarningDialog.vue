@@ -1,20 +1,24 @@
 <template>
-  <div class="warning-dialog">
-    <p>{{ message }}</p>
-    <Button
-      text="Close"
-      @click="$emit('close')"
-    />
-  </div>
+  <BaseDialog class="warning-dialog">
+    <template #default>
+      <p>{{ message }}</p>
+      <Button
+        text="Close"
+        @click="$emit('update:modelValue')"
+      />
+    </template>
+  </BaseDialog>
 </template>
 
 <script>
 import Button from "../buttons/Button";
+import BaseDialog from "@/components/dialogs/BaseDialog";
 
 export default {
   name: "WarningDialog",
   components: {
     Button,
+    BaseDialog,
   },
   props: {
     message: {

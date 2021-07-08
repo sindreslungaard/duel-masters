@@ -58,10 +58,10 @@ let onMouseMove = function(event) {
 document.addEventListener("mousemove", onMouseMove.bind(this));
 document.addEventListener("mouseup", onMouseUp);
 
-Vue.directive("draggable", {
-  bind: function(el) {
+export default {
+  beforeMount(el) {
     el.addEventListener("mousedown", event => {
       onMouseDown(event, el);
     });
   },
-});
+};

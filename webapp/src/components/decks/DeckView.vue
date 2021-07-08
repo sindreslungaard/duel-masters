@@ -83,8 +83,8 @@
         </div>
       </div>
 
-      <template v-if="$store.getters.deck">
-        {{ $store.getters.deck.cards.length }} cards
+      <template v-if="$store.state.deck">
+        {{ $store.state.deck.cards.length }} cards
 
         <table
           v-if="viewMode === 'list'"
@@ -140,13 +140,6 @@ export default {
     Button,
   },
   mixins: [BaseMixin],
-  props: {
-    isLoading: {
-      type: Boolean,
-      required: false,
-      default: false,
-    },
-  },
   data() {
     return {
       cards: [],
@@ -177,7 +170,6 @@ export default {
         return;
       }
       this.$store.commit("setDeck", this.decks.find(x => x.uid === value));
-      console.log(this.$store.getters.deck);
       this.deckCopy = JSON.parse(JSON.stringify(this.$store.getters.deck));
 
     },

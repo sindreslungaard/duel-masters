@@ -104,7 +104,8 @@ export default {
      * @returns {void}
      */
     openNewDuelDialog() {
-      this.$modal.show(NewDuelDialog);
+      console.log("button click");
+      this.$vfm.show({component: NewDuelDialog});
     },
   },
 };

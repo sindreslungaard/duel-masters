@@ -12,21 +12,25 @@
           v-model="username"
           type="text"
           placeholder="Username"
+          autocomplete="username"
         >
         <input
           v-model="email"
           type="text"
           placeholder="Email"
+          autocomplete="email"
         >
         <input
           v-model="password"
           type="password"
           placeholder="Password"
+          autocomplete="new-password"
         >
         <input
           v-model="passwordAgain"
           type="password"
           placeholder="Password again"
+          autocomplete="new-password"
         >
         <button>Create account</button>
         <p

@@ -8,7 +8,7 @@ import WarningDialog from "../components/dialogs/WarningDialog";
 export default {
   data() {
     return {
-      isLoading: true,
+      isLoading: false,
     };
   },
   methods: {
@@ -19,8 +19,15 @@ export default {
      * @param {String} message
      */
     showError(message) {
-      this.$modal.show(ErrorDialog, { message }, {}, {
-        "closed": () => window.location.reload(),
+      console.log(message);
+      this.$vfm.show({
+        component: ErrorDialog,
+        bind: {
+          message,
+        },
+        on: {
+          "closed": () => window.location.reload(),
+        },
       });
     },
     /**
@@ -30,7 +37,12 @@ export default {
      * @param {String} message
      */
     showWarning(message) {
-      this.$modal.show(WarningDialog, { message });
+      this.$vfm.show({
+        component: WarningDialog,
+        bind: {
+          message,
+        },
+      });
     },
     /**
      * Connects to a WebSocket with the given endpoint and setups error handlers.
@@ -38,6 +50,7 @@ export default {
      * @param {String} endpoint
      */
     connectToSocket(endpoint) {
+      this.isLoading = true;
       const socket = new WebSocket(this.$config.SOCKET_ENDPOINT + endpoint);
 
       socket.onopen = () => {

@@ -12,7 +12,9 @@
         class="message"
       >
         <div class="message__meta">
-          <Username :color="msg.color">
+          <Username
+            :color="msg.color"
+          >
             {{ msg.username }}
           </Username>
           <span>{{ formatTimestamp(msg.timestamp) }}</span>
@@ -61,7 +63,7 @@ export default {
       type: Boolean,
       required: true,
     },
-    value: {
+    modelValue: {
       type: String,
       required: true,
     },

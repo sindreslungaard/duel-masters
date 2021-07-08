@@ -12,11 +12,13 @@
           v-model="username"
           type="text"
           placeholder="Username"
+          autocomplete="username"
         >
         <input
           v-model="password"
           type="password"
           placeholder="Password"
+          autocomplete="current-password"
         >
         <button>Sign in</button>
         <p
@@ -55,7 +57,6 @@ export default {
     };
   },
   created() {
-    console.log(this.$route);
     this.redirectTo = this.$route.query.redirect_to;
   },
   methods: {
