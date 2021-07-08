@@ -48,6 +48,7 @@ class LobbyMessageHandler {
   handleUsers(data) {
     const users = {
       admin: [],
+      developer: [],
       player: []
     };
 
