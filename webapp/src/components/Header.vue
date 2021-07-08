@@ -6,10 +6,10 @@
         <li>
           <router-link
             v-slot="{ href }"
-            to="overview"
+            to="lobby"
           >
             <BaseLink :href="href">
-              Overview
+              Lobby
             </BaseLink>
           </router-link>
         </li>

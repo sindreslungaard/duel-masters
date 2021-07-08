@@ -31,11 +31,14 @@ const router = createRouter({
       component: () => import("./views/Logout.vue"),
       meta: { auth: true },
     },
-
     {
       path: "/overview",
-      name: "overview",
-      component: () => import("./views/Overview.vue"),
+      redirect: { name: "lobby" },
+    },
+    {
+      path: "/lobby",
+      name: "lobby",
+      component: () => import("./views/Lobby.vue"),
       meta: { auth: true },
     },
 
@@ -80,7 +83,7 @@ router.beforeEach((to, from, next) => {
   }
 
   if (to.matched.some(record => record.meta.noauth) && hasToken) {
-    return next("/overview");
+    return next("/lobby");
   }
 
   return next();

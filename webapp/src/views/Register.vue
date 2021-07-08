@@ -98,7 +98,7 @@ export default {
         if (this.redirectTo) {
           this.$router.push(this.redirectTo);
         } else {
-          this.$router.push("overview");
+          this.$router.push("lobby");
         }
       } catch (e) {
         try {

@@ -14,7 +14,7 @@
       <p>Your opponent disconnected or left the match. Waiting for them to reconnect{{ loadingDots }}</p>
       <div
         class="btn"
-        @click="redirect('overview')"
+        @click="redirect('lobby')"
       >
         Leave duel
       </div>
@@ -27,7 +27,7 @@
       <p>Disconnected from server. Attempting to reconnect{{ loadingDots }}</p>
       <div
         class="btn"
-        @click="redirect('overview')"
+        @click="redirect('lobby')"
       >
         Leave duel
       </div>
@@ -40,9 +40,9 @@
       <p>{{ errorMessage }}</p>
       <div
         class="btn"
-        @click="redirect('overview')"
+        @click="redirect('lobby')"
       >
-        Back to overview
+        Back to lobby
       </div>
     </div>
 

@@ -1,5 +1,5 @@
 <template>
-  <main class="overview">
+  <main class="lobby">
     <Header />
     <UserList
       :users="users"
@@ -27,7 +27,7 @@ import BaseMixin from "@/mixins/BaseMixin";
 import LobbyMessageHandler from "@/message_handler/LobbyMessageHandler";
 
 export default {
-  name: "Overview",
+  name: "Lobby",
   components: {
     Header,
     UserList,
