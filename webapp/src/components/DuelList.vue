@@ -1,28 +1,49 @@
 <template>
-  <Panel title="Duels" class="duels">
+  <Panel
+    title="Duels"
+    class="duels"
+  >
     <LoadingIndicator v-if="!hasFinishedLoading" />
 
     <template v-if="hasFinishedLoading">
-      <Button type="success" @click="openNewDuelDialog" text="New Duel" />
-      <div v-if="!hasMatches" class="empty-message">
+      <Button
+        type="success"
+        text="New Duel"
+        @click="openNewDuelDialog"
+      />
+      <div
+        v-if="!hasMatches"
+        class="empty-message"
+      >
         <p>No matches to show, click the button above to create one.</p>
       </div>
-      <div class="matches" v-if="hasMatches">
-        <div class="match" v-for="match in matches" :key="match.id">
+      <div
+        v-if="hasMatches"
+        class="matches"
+      >
+        <div
+          v-for="match in matches"
+          :key="match.id"
+          class="match"
+        >
           <div class="match__owner">
-            <Username :color="match.color">{{ match.owner }}</Username>
+            <Username :color="match.color">
+              {{ match.owner }}
+            </Username>
           </div>
-          <div class="match__name">{{ match.name }}</div>
+          <div class="match__name">
+            {{ match.name }}
+          </div>
           <div class="match__actions">
             <router-link
-              :to="{ name: 'duel', params: { id: match.id } }"
               v-slot="{ href }"
+              :to="{ name: 'duel', params: { id: match.id } }"
             >
               <ButtonLink
                 :href="href"
                 :type="match.spectate ? 'success' : 'info'"
                 :text="match.spectate ? 'Spectate' : 'Join match'"
-              ></ButtonLink>
+              />
             </router-link>
           </div>
         </div>
@@ -46,27 +67,17 @@ export default {
     Button,
     LoadingIndicator,
     Username,
-    ButtonLink
+    ButtonLink,
   },
   props: {
     matches: {
       type: Array,
-      required: true
+      required: true,
     },
     isLoading: {
       type: Boolean,
-      required: true
-    }
-  },
-  methods: {
-    /**
-     * Opens the dialog for creating a new duel.
-     *
-     * @returns {void}
-     */
-    openNewDuelDialog() {
-      this.$modal.show(NewDuelDialog);
-    }
+      required: true,
+    },
   },
   computed: {
     /**
@@ -84,8 +95,18 @@ export default {
      */
     hasMatches() {
       return this.matches.length > 0;
-    }
-  }
+    },
+  },
+  methods: {
+    /**
+     * Opens the dialog for creating a new duel.
+     *
+     * @returns {void}
+     */
+    openNewDuelDialog() {
+      this.$modal.show(NewDuelDialog);
+    },
+  },
 };
 </script>
 

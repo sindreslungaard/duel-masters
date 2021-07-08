@@ -5,115 +5,194 @@
         wait || previewCard || previewCards || errorMessage || warning || action || opponentDisconnected || reconnecting
       "
       class="overlay"
-    ></div>
+    />
 
-    <div v-if="opponentDisconnected && !errorMessage" class="error">
+    <div
+      v-if="opponentDisconnected && !errorMessage"
+      class="error"
+    >
       <p>Your opponent disconnected or left the match. Waiting for them to reconnect{{ loadingDots }}</p>
-      <div @click="redirect('overview')" class="btn">Leave duel</div>
+      <div
+        class="btn"
+        @click="redirect('overview')"
+      >
+        Leave duel
+      </div>
     </div>
 
-    <div v-if="reconnecting && !errorMessage" class="error">
+    <div
+      v-if="reconnecting && !errorMessage"
+      class="error"
+    >
       <p>Disconnected from server. Attempting to reconnect{{ loadingDots }}</p>
-      <div @click="redirect('overview')" class="btn">Leave duel</div>
+      <div
+        class="btn"
+        @click="redirect('overview')"
+      >
+        Leave duel
+      </div>
     </div>
 
-    <div v-show="errorMessage" class="error">
+    <div
+      v-show="errorMessage"
+      class="error"
+    >
       <p>{{ errorMessage }}</p>
-      <div @click="redirect('overview')" class="btn">Back to overview</div>
+      <div
+        class="btn"
+        @click="redirect('overview')"
+      >
+        Back to overview
+      </div>
     </div>
 
-    <div v-show="warning" class="error warn">
+    <div
+      v-show="warning"
+      class="error warn"
+    >
       <p>{{ warning }}</p>
-      <div @click="warning = ''" class="btn">Close</div>
+      <div
+        class="btn"
+        @click="warning = ''"
+      >
+        Close
+      </div>
     </div>
 
-    <div v-show="wait" class="error">
+    <div
+      v-show="wait"
+      class="error"
+    >
       <p>
         {{ wait }}<span class="dots">{{ loadingDots }}</span>
       </p>
     </div>
 
-    <div v-if="previewCard" class="card-preview">
-      <img :src="`/assets/cards/all/${previewCard.uid}.jpg`" />
-      <div @click="dismissLarge()" class="btn">Close</div>
+    <div
+      v-if="previewCard"
+      class="card-preview"
+    >
+      <img :src="`/assets/cards/all/${previewCard.uid}.jpg`">
+      <div
+        class="btn"
+        @click="dismissLarge()"
+      >
+        Close
+      </div>
     </div>
 
-    <div v-if="previewCards" class="cards-preview">
+    <div
+      v-if="previewCards"
+      class="cards-preview"
+    >
       <h1>{{ previewCardsText }}</h1>
       <img
+        v-for="(card, index) in previewCards"
+        :key="index"
+        :src="`/assets/cards/all/${card.uid}.jpg`"
         @contextmenu.prevent="
           previewCards = null;
           previewCardsText = null;
           previewCard = card;
         "
-        v-for="(card, index) in previewCards"
-        :key="index"
-        :src="`/assets/cards/all/${card.uid}.jpg`"
-      />
-      <br /><br />
+      >
+      <br><br>
       <div
+        class="btn"
         @click="
           previewCards = null;
           previewCardsText = null;
         "
-        class="btn"
       >
         Close
       </div>
     </div>
 
     <!-- action (card selection) -->
-    <div v-if="action" id="action" class="action noselect">
-      <span v-draggable data-ref="action">{{ action.text }}</span>
+    <div
+      v-if="action"
+      id="action"
+      class="action noselect"
+    >
+      <span
+        v-draggable
+        data-ref="action"
+      >{{ action.text }}</span>
       <template v-if="actionObject">
-        <select class="action-select" v-model="actionDrowdownSelection">
+        <select
+          v-model="actionDrowdownSelection"
+          class="action-select"
+        >
           <option
             v-for="(option, index) in actionObject"
             :key="index"
             :value="index"
-            >{{ index }}</option
           >
+            {{ index }}
+          </option>
         </select>
       </template>
-      <div v-if="!actionObject" class="action-cards">
-        <div v-for="(card, index) in action.cards" :key="index" class="card">
+      <div
+        v-if="!actionObject"
+        class="action-cards"
+      >
+        <div
+          v-for="(card, index) in action.cards"
+          :key="index"
+          class="card"
+        >
           <img
-            @click="actionSelect(card)"
             :class="[
               actionSelects.includes(card) ? 'glow-' + card.civilization : ''
             ]"
             :src="`/assets/cards/all/${card.uid}.jpg`"
-          />
+            @click="actionSelect(card)"
+          >
         </div>
       </div>
-      <div v-if="actionObject" class="action-cards">
+      <div
+        v-if="actionObject"
+        class="action-cards"
+      >
         <div
           v-for="(card, index) in actionObject[actionDrowdownSelection]"
           :key="index"
           class="card"
         >
           <img
-            @click="actionSelect(card)"
             :class="[
               actionSelects.includes(card) ? 'glow-' + card.civilization : ''
             ]"
             :src="`/assets/cards/all/${card.uid}.jpg`"
-          />
+            @click="actionSelect(card)"
+          >
         </div>
         <p v-if="actionObject[actionDrowdownSelection].length < 1">
           There's no cards in this category. Use the dropdown above to switch
           category.
         </p>
       </div>
-      <div @click="chooseAction()" class="btn">Choose</div>
-      <div @click="cancelAction()" v-if="action.cancellable" class="btn">
+      <div
+        class="btn"
+        @click="chooseAction()"
+      >
+        Choose
+      </div>
+      <div
+        v-if="action.cancellable"
+        class="btn"
+        @click="cancelAction()"
+      >
         Close
       </div>
       <span style="color: red">{{ actionError }}</span>
     </div>
 
     <!-- Lobby -->
-    <div v-if="!started && decks.length < 1" class="lobby">
+    <div
+      v-if="!started && decks.length < 1"
+      class="lobby"
+    >
       <h1>
         Waiting for your opponent to join<span class="dots">{{
           loadingDots
@@ -122,9 +201,9 @@
       <div :class="['invite-link', { copied: inviteCopied }]">
         <span id="invitelink">{{ invite }}</span>
         <div
+          id="invitebtn"
           data-clipboard-action="copy"
           data-clipboard-target="#invitelink"
-          id="invitebtn"
           :class="['copy', { copied: inviteCopied }]"
         >
           {{ inviteCopied ? "Copied" : "Copy" }}
@@ -136,15 +215,34 @@
     <div class="chat">
       <div class="chatbox">
         <div class="messages">
-          <div id="messages" class="messages-helper">
-            <div class="message" :style="{'background': message.sender.toLowerCase() === 'server' ? 'none' : '#202124'}" v-for="(message, index) in chatMessages" :key="index">
-              <div class="message-sender" :style="{'color': message.color || 'orange'}">{{ message.sender.toLowerCase() == "server" ? "-" : (message.sender + ":")}} </div>
-              <div class="message-text">{{ message.message }}</div>
+          <div
+            id="messages"
+            class="messages-helper"
+          >
+            <div
+              v-for="(message, index) in chatMessages"
+              :key="index"
+              class="message"
+              :style="{'background': message.sender.toLowerCase() === 'server' ? 'none' : '#202124'}"
+            >
+              <div
+                class="message-sender"
+                :style="{'color': message.color || 'orange'}"
+              >
+                {{ message.sender.toLowerCase() == "server" ? "-" : (message.sender + ":") }}
+              </div>
+              <div class="message-text">
+                {{ message.message }}
+              </div>
             </div>
           </div>
         </div>
         <form @submit.prevent="sendChat(chatMessage)">
-          <input type="text" v-model="chatMessage" placeholder="Type to chat" />
+          <input
+            v-model="chatMessage"
+            type="text"
+            placeholder="Type to chat"
+          >
         </form>
       </div>
 
@@ -152,31 +250,41 @@
         <template v-if="handSelection">
           <span>{{ handSelection.name }}</span>
           <div
-            @click="addToPlayzone()"
             :class="['btn', { disabled: !handSelection.canBePlayed }]"
+            @click="addToPlayzone()"
           >
             Add to playzone
           </div>
-          <div class="spacer"></div>
+          <div class="spacer" />
           <div
-            @click="addToManazone()"
             :class="['btn', { disabled: state.hasAddedManaThisRound }]"
+            @click="addToManazone()"
           >
             Add to manazone
           </div>
         </template>
         <template v-if="playzoneSelection">
           <span>{{ playzoneSelection.name }}</span>
-          <div @click="attackPlayer()" class="btn">Attack player</div>
-          <div class="spacer"></div>
-          <div @click="attackCreature()" class="btn">Attack creature</div>
+          <div
+            class="btn"
+            @click="attackPlayer()"
+          >
+            Attack player
+          </div>
+          <div class="spacer" />
+          <div
+            class="btn"
+            @click="attackCreature()"
+          >
+            Attack creature
+          </div>
         </template>
       </div>
 
       <div class="actionbox">
         <div
-          @click="endTurn()"
           :class="['btn', 'block', { disabled: !state.myTurn }]"
+          @click="endTurn()"
         >
           End turn
         </div>
@@ -184,7 +292,10 @@
     </div>
 
     <template v-if="!started">
-      <div v-if="deck" class="deck-chooser waiting">
+      <div
+        v-if="deck"
+        class="deck-chooser waiting"
+      >
         <h1>
           Waiting for your opponent to choose a deck<span class="dots">{{
             loadingDots
@@ -192,81 +303,90 @@
         </h1>
       </div>
 
-      <div class="deck-chooser" v-if="decks.length > 0 && !deck">
+      <div
+        v-if="decks.length > 0 && !deck"
+        class="deck-chooser"
+      >
         <h1>Choose your deck</h1>
         <div class="backdrop">
           <h3>My custom decks</h3>
-          <span v-if="decks.filter(x => !x.standard).length < 1"
-            >No decks available in this category</span
-          >
+          <span
+            v-if="decks.filter(x => !x.standard).length < 1"
+          >No decks available in this category</span>
           <div
-            @click="chooseDeck(deck.uid)"
-            v-for="(deck, index) in decks.filter(x => !x.standard)"
+            v-for="(d, index) in decks.filter(x => !x.standard)"
             :key="index"
             class="btn"
+            @click="chooseDeck(d.uid)"
           >
-            {{ deck.name }}
+            {{ d.name }}
           </div>
         </div>
 
-        <br /><br />
+        <br><br>
         <div class="backdrop">
           <h3>Standard decks</h3>
-          <span v-if="decks.filter(x => x.standard).length < 1"
-            >No decks available in this category</span
-          >
+          <span
+            v-if="decks.filter(x => x.standard).length < 1"
+          >No decks available in this category</span>
           <div
-            @click="chooseDeck(deck.uid)"
-            v-for="(deck, index) in decks.filter(x => x.standard)"
+            v-for="(d, index) in decks.filter(x => x.standard)"
             :key="index"
             class="btn"
+            @click="chooseDeck(d.uid)"
           >
-            {{ deck.name }}
+            {{ d.name }}
           </div>
         </div>
       </div>
     </template>
 
-    <div v-if="started" class="stadium">
+    <div
+      v-if="started"
+      class="stadium"
+    >
       <div class="stage opponent">
         <div class="manazone">
           <div class="card mana placeholder">
-            <img src="/assets/cards/backside.png" />
+            <img src="/assets/cards/backside.png">
           </div>
           <div
-            @contextmenu.prevent="showLarge(card)"
             v-for="(card, index) in state.opponent.manazone"
             :key="index"
             :class="['card', 'mana', { tapped: card.tapped }]"
+            @contextmenu.prevent="showLarge(card)"
           >
-            <img :src="`/assets/cards/all/${card.uid}.jpg`" />
+            <img :src="`/assets/cards/all/${card.uid}.jpg`">
           </div>
         </div>
 
         <div class="shieldzone">
           <div class="card shield placeholder">
-            <img src="/assets/cards/backside.png" />
+            <img src="/assets/cards/backside.png">
           </div>
           <div
             v-for="(card, index) in state.opponent.shieldzone"
             :key="index"
             class="card shield flipped"
           >
-            <img src="/assets/cards/backside.png" />
+            <img src="/assets/cards/backside.png">
           </div>
         </div>
 
         <div class="playzone">
           <div class="card placeholder">
-            <img src="/assets/cards/backside.png" />
+            <img src="/assets/cards/backside.png">
           </div>
           <div
-            @contextmenu.prevent="showLarge(card)"
             v-for="(card, index) in state.opponent.playzone"
             :key="index"
             :class="['card', { tapped: card.tapped }]"
+            @contextmenu.prevent="showLarge(card)"
           >
-            <img class="flipped" :src="`/assets/cards/all/${card.uid}.jpg`" />
+            <img
+              class="flipped"
+              :src="`/assets/cards/all/${card.uid}.jpg`"
+            >
           </div>
         </div>
       </div>
@@ -277,29 +397,29 @@
           <p>Graveyard [{{ state.opponent.graveyard.length }}]</p>
           <div class="card">
             <img
-              @contextmenu.prevent=""
               v-if="state.opponent.graveyard.length < 1"
               style="height: 10vh; opacity: 0.3"
               src="/assets/cards/backside.png"
-            />
+              @contextmenu.prevent=""
+            >
             <img
+              v-if="state.opponent.graveyard.length > 0"
+              style="height: 10vh"
+              :src="`/assets/cards/all/${state.opponent.graveyard[0].uid}.jpg`"
               @contextmenu.prevent="
                 previewCards = state.opponent.graveyard;
                 previewCardsText = 'Opponent\'s Graveyard';
               "
-              v-if="state.opponent.graveyard.length > 0"
-              style="height: 10vh"
-              :src="`/assets/cards/all/${state.opponent.graveyard[0].uid}.jpg`"
-            />
+            >
           </div>
 
           <p>Deck [{{ state.opponent.deck }}]</p>
           <div class="card">
             <img
-              @contextmenu.prevent=""
               style="height: 10vh"
               src="/assets/cards/backside.png"
-            />
+              @contextmenu.prevent=""
+            >
           </div>
         </div>
       </div>
@@ -309,100 +429,115 @@
           <p>Graveyard [{{ state.me.graveyard.length }}]</p>
           <div class="card">
             <img
-              @contextmenu.prevent=""
               v-if="state.me.graveyard.length < 1"
               style="height: 10vh; opacity: 0.3"
               src="/assets/cards/backside.png"
-            />
+              @contextmenu.prevent=""
+            >
             <img
+              v-if="state.me.graveyard.length > 0"
+              style="height: 10vh"
+              :src="`/assets/cards/all/${state.me.graveyard[0].uid}.jpg`"
               @contextmenu.prevent="
                 previewCards = state.me.graveyard;
                 previewCardsText = 'My Graveyard';
               "
-              v-if="state.me.graveyard.length > 0"
-              style="height: 10vh"
-              :src="`/assets/cards/all/${state.me.graveyard[0].uid}.jpg`"
-            />
+            >
           </div>
 
           <p>Deck [{{ state.me.deck }}]</p>
           <div class="card">
             <img
-              @contextmenu.prevent=""
               style="height: 10vh"
               src="/assets/cards/backside.png"
-            />
+              @contextmenu.prevent=""
+            >
           </div>
         </div>
       </div>
 
       <div class="stage me bt">
-        <div @drop='drop($event, "playzone")' @dragover.prevent @dragenter.prevent ref="myplayzone" class="playzone">
+        <div
+          ref="myplayzone"
+          class="playzone"
+          @drop="drop($event, &quot;playzone&quot;)"
+          @dragover.prevent
+          @dragenter.prevent
+        >
           <div class="card placeholder">
-            <img src="/assets/cards/backside.png" />
+            <img src="/assets/cards/backside.png">
           </div>
           <div
-            @click="onPlayzoneClicked(card)"
-            @contextmenu.prevent="showLarge(card)"
             v-for="(card, index) in state.me.playzone"
             :key="index"
             :class="['card', { tapped: card.tapped }]"
+            @click="onPlayzoneClicked(card)"
+            @contextmenu.prevent="showLarge(card)"
           >
             <img
               :class="
                 playzoneSelection === card ? 'glow-' + card.civilization : ''
               "
               :src="`/assets/cards/all/${card.uid}.jpg`"
-            />
+            >
           </div>
         </div>
 
         <div class="shieldzone">
           <div class="card shield placeholder">
-            <img src="/assets/cards/backside.png" />
+            <img src="/assets/cards/backside.png">
           </div>
           <div
             v-for="(card, index) in state.me.shieldzone"
             :key="index"
             class="card shield"
           >
-            <img src="/assets/cards/backside.png" />
+            <img src="/assets/cards/backside.png">
           </div>
         </div>
 
-        <div @drop='drop($event, "manazone")' @dragover.prevent @dragenter.prevent ref="mymanazone" class="manazone">
+        <div
+          ref="mymanazone"
+          class="manazone"
+          @drop="drop($event, &quot;manazone&quot;)"
+          @dragover.prevent
+          @dragenter.prevent
+        >
           <div class="card mana placeholder">
-            <img src="/assets/cards/backside.png" />
+            <img src="/assets/cards/backside.png">
           </div>
           <div
-            @contextmenu.prevent="showLarge(card)"
             v-for="(card, index) in state.me.manazone"
             :key="index"
             :class="['card', 'mana', { tapped: card.tapped }]"
+            @contextmenu.prevent="showLarge(card)"
           >
-            <img class="flipped" :src="`/assets/cards/all/${card.uid}.jpg`" />
+            <img
+              class="flipped"
+              :src="`/assets/cards/all/${card.uid}.jpg`"
+            >
           </div>
         </div>
       </div>
 
       <div class="hand bt">
         <div class="card placeholder">
-          <img src="/assets/cards/backside.png" />
+          <img src="/assets/cards/backside.png">
         </div>
         <div
-          @contextmenu.prevent="showLarge(card)"
-          @click="makeHandSelection(card)"
-          class="card"
           v-for="(card, index) in state.me.hand"
           :key="index"
+          class="card"
+          @contextmenu.prevent="showLarge(card)"
+          @click="makeHandSelection(card)"
         >
           <img
             draggable
-            @dragstart='startDrag($event, card)'
-            @dragend="stopDrag($event, card)"
             :class="[handSelection === card ? 'glow-' + card.civilization : '']"
             :src="`/assets/cards/all/${card.uid}.jpg`"
-          />
+            @dragstart="startDrag($event, card)"
+            @dragend="stopDrag($event, card)"
+          >
         </div>
       </div>
     </div>
@@ -438,7 +573,7 @@ let turnSound = new sound("/assets/turn.mp3");
 let playerJoinedSound = new sound("/assets/player_joined.mp3");
 
 export default {
-  name: "game",
+  name: "Game",
   data() {
     return {
       ws: null,
@@ -482,8 +617,226 @@ export default {
 
       previewCard: null,
       previewCards: null,
-      previewCardsText: null
+      previewCardsText: null,
     };
+  },
+  created() {
+    let lastReconnect = 0;
+
+    const connect = async () => {
+
+      if(this.errorMessage.includes("won")) {
+        return;
+      }
+
+      if(this.preventReconnect) {
+        return;
+      }
+
+      if(lastReconnect > 0) {
+        console.log("Attempting to reconnect..");
+      }
+
+      if(lastReconnect > Date.now() - 5000) {
+        setTimeout(connect, 1000);
+        return;
+      }
+
+      // make sure the match actually exists
+      try {
+        await call({
+          path: `/match/${this.$route.params.id}`,
+          method: "GET",
+        });
+      } catch(err) {
+        if(err.response && err.response.status == 404) {
+          this.errorMessage = "This duel has been closed";
+        }
+      }
+
+      lastReconnect = Date.now();
+
+      // Connect to the server
+     // Connect to the server
+    const ws = new WebSocket(
+      this.$config.WS_ENDPOINT + "shobu.io" + "/ws/" + this.$route.params.id,
+    );
+    this.ws = ws;
+
+    ws.onopen = () => {
+      ws.send(localStorage.getItem("token"));
+    };
+
+      ws.onclose = () => {
+        console.log("connection closed");
+        this.reconnecting = true;
+        connect();
+      };
+
+      ws.onerror = event => {
+        console.error(event);
+      };
+
+      ws.onmessage = event => {
+        const data = JSON.parse(event.data);
+
+        switch (data.header) {
+          case "mping": {
+            send(ws, {
+              header: "mpong",
+            });
+            break;
+          }
+
+          case "hello": {
+            send(ws, {
+                header: "join_match",
+            });
+            break;
+          }
+
+          case "error": {
+            this.errorMessage = data.message;
+            break;
+          }
+
+          case "warn": {
+            this.warning = data.message;
+            break;
+          }
+
+          case "opponent_disconnected": {
+            this.opponentDisconnected = true;
+            break;
+          }
+
+          case "opponent_reconnected": {
+            this.opponentDisconnected = false;
+            break;
+          }
+
+          // don't think this is ever fired, todo: remove or implement
+          case "player_joined": {
+            this.opponent = data.username;
+            break;
+          }
+
+          case "choose_deck": {
+            playerJoinedSound.play();
+            document.title = "🔴 " + document.title;
+            this.decks = data.decks;
+            break;
+          }
+
+          case "chat": {
+            this.chat(data.sender, data.color, data.message);
+            break;
+          }
+
+          case "state_update": {
+            if (!this.started) {
+              this.started = true;
+            }
+            this.handSelection = null;
+            this.playzoneSelection = null;
+
+            if(this.state.myTurn !== data.state.myTurn) {
+              turnSound.play();
+              console.log("turn change");
+            }
+
+            this.state = data.state;
+            break;
+          }
+
+          case "action": {
+            (this.actionError = ""), (this.actionSelects = []);
+            if (!(data.cards instanceof Array)) {
+              this.actionObject = data.cards;
+              console.log(Object.keys(data.cards)[0]);
+              this.actionDrowdownSelection = Object.keys(data.cards)[0];
+            }
+            this.action = {
+              cards:
+                data.cards instanceof Array
+                  ? data.cards
+                  : Object.keys(data.cards)[0],
+              text: data.text,
+              minSelection: data.minSelection,
+              maxSelections: data.maxSelections,
+              cancellable: data.cancellable,
+            };
+            break;
+          }
+
+          case "action_error": {
+            if (!this.action) {
+              return;
+            }
+            this.actionError = data.message;
+            break;
+          }
+
+          case "close_action": {
+            this.action = null;
+            this.actionError = "";
+            this.actionSelects = [];
+            this.actionObject = null;
+            this.actionDrowdownSelection = null;
+            break;
+          }
+
+          case "wait": {
+            this.wait =
+              data.message || "Waiting for your opponent to make an action";
+            break;
+          }
+
+          case "end_wait": {
+            this.wait = "";
+            break;
+          }
+
+          case "show_cards": {
+            this.$modal.show(
+              CardShowDialog,
+              {
+                message: data.message,
+                cards: data.cards,
+              },
+              {
+                width: data.cards.length * 25 + "%",
+              },
+              {},
+            );
+          }
+        }
+      };
+
+    };
+
+    connect();
+
+    // Loading dots
+    setInterval(() => {
+      if (this.loadingDots.length >= 4) this.loadingDots = "";
+      else this.loadingDots += ".";
+    }, 500);
+
+    // clipboard
+    let clipboard = new ClipboardJS("#invitebtn");
+    clipboard.on("success", e => {
+      if (this.inviteCopyTask) clearTimeout(this.inviteCopyTask);
+      this.inviteCopied = true;
+      this.inviteCopyTask = setTimeout(() => {
+        this.inviteCopied = false;
+      }, 2000);
+      e.clearSelection();
+    });
+  },
+  beforeDestroy() {
+    this.preventReconnect = true;
+    this.ws.close();
   },
   methods: {
     redirect(to) {
@@ -559,8 +912,8 @@ export default {
       this.ws.send(
         JSON.stringify({
           header: "add_to_manazone",
-          virtualId: this.handSelection.virtualId
-        })
+          virtualId: this.handSelection.virtualId,
+        }),
       );
     },
 
@@ -571,8 +924,8 @@ export default {
       this.ws.send(
         JSON.stringify({
           header: "add_to_playzone",
-          virtualId: this.handSelection.virtualId
-        })
+          virtualId: this.handSelection.virtualId,
+        }),
       );
     },
 
@@ -613,8 +966,8 @@ export default {
       this.ws.send(
         JSON.stringify({
           header: "attack_player",
-          virtualId: this.playzoneSelection.virtualId
-        })
+          virtualId: this.playzoneSelection.virtualId,
+        }),
       );
     },
     attackCreature() {
@@ -624,8 +977,8 @@ export default {
       this.ws.send(
         JSON.stringify({
           header: "attack_creature",
-          virtualId: this.playzoneSelection.virtualId
-        })
+          virtualId: this.playzoneSelection.virtualId,
+        }),
       );
     },
     startDrag(evt, card) {
@@ -663,226 +1016,8 @@ export default {
       } else if(zone == "playzone") {
         this.addToPlayzone();
       }
-    }
+    },
   },
-  created() {
-    let lastReconnect = 0;
-
-    const connect = async () => {
-
-      if(this.errorMessage.includes("won")) {
-        return;
-      }
-
-      if(this.preventReconnect) {
-        return;
-      }
-
-      if(lastReconnect > 0) {
-        console.log("Attempting to reconnect..");
-      }
-
-      if(lastReconnect > Date.now() - 5000) {
-        setTimeout(connect, 1000);
-        return;
-      }
-
-      // make sure the match actually exists
-      try {
-        await call({
-          path: `/match/${this.$route.params.id}`,
-          method: "GET"
-        });
-      } catch(err) {
-        if(err.response && err.response.status == 404) {
-          this.errorMessage = "This duel has been closed";
-        }
-      }
-
-      lastReconnect = Date.now();
-
-      // Connect to the server
-     // Connect to the server
-    const ws = new WebSocket(
-      this.$config.WS_ENDPOINT + "shobu.io" + "/ws/" + this.$route.params.id
-    );
-    this.ws = ws;
-
-    ws.onopen = () => {
-      ws.send(localStorage.getItem("token"));
-    };
-
-      ws.onclose = () => {
-        console.log("connection closed");
-        this.reconnecting = true;
-        connect();
-      };
-
-      ws.onerror = event => {
-        console.error(event);
-      };
-
-      ws.onmessage = event => {
-        const data = JSON.parse(event.data);
-
-        switch (data.header) {
-          case "mping": {
-            send(ws, {
-              header: "mpong"
-            });
-            break;
-          }
-
-          case "hello": {
-            send(ws, {
-                header: "join_match"
-            });
-            break;
-          }
-
-          case "error": {
-            this.errorMessage = data.message;
-            break;
-          }
-
-          case "warn": {
-            this.warning = data.message;
-            break;
-          }
-
-          case "opponent_disconnected": {
-            this.opponentDisconnected = true;
-            break;
-          }
-
-          case "opponent_reconnected": {
-            this.opponentDisconnected = false;
-            break;
-          }
-
-          // don't think this is ever fired, todo: remove or implement
-          case "player_joined": {
-            this.opponent = data.username;
-            break;
-          }
-
-          case "choose_deck": {
-            playerJoinedSound.play();
-            document.title = "🔴 " + document.title;
-            this.decks = data.decks;
-            break;
-          }
-
-          case "chat": {
-            this.chat(data.sender, data.color, data.message);
-            break;
-          }
-
-          case "state_update": {
-            if (!this.started) {
-              this.started = true;
-            }
-            this.handSelection = null;
-            this.playzoneSelection = null;
-
-            if(this.state.myTurn !== data.state.myTurn) {
-              turnSound.play();
-              console.log("turn change");
-            }
-
-            this.state = data.state;
-            break;
-          }
-
-          case "action": {
-            (this.actionError = ""), (this.actionSelects = []);
-            if (!(data.cards instanceof Array)) {
-              this.actionObject = data.cards;
-              console.log(Object.keys(data.cards)[0]);
-              this.actionDrowdownSelection = Object.keys(data.cards)[0];
-            }
-            this.action = {
-              cards:
-                data.cards instanceof Array
-                  ? data.cards
-                  : Object.keys(data.cards)[0],
-              text: data.text,
-              minSelection: data.minSelection,
-              maxSelections: data.maxSelections,
-              cancellable: data.cancellable
-            };
-            break;
-          }
-
-          case "action_error": {
-            if (!this.action) {
-              return;
-            }
-            this.actionError = data.message;
-            break;
-          }
-
-          case "close_action": {
-            this.action = null;
-            this.actionError = "";
-            this.actionSelects = [];
-            this.actionObject = null;
-            this.actionDrowdownSelection = null;
-            break;
-          }
-
-          case "wait": {
-            this.wait =
-              data.message || "Waiting for your opponent to make an action";
-            break;
-          }
-
-          case "end_wait": {
-            this.wait = "";
-            break;
-          }
-
-          case "show_cards": {
-            this.$modal.show(
-              CardShowDialog,
-              {
-                message: data.message,
-                cards: data.cards
-              },
-              {
-                width: data.cards.length * 25 + "%"
-              },
-              {}
-            );
-          }
-        }
-      };
-
-    };
-
-    connect();
-
-    // Loading dots
-    setInterval(() => {
-      if (this.loadingDots.length >= 4) this.loadingDots = "";
-      else this.loadingDots += ".";
-    }, 500);
-
-    // clipboard
-    let clipboard = new ClipboardJS("#invitebtn");
-    clipboard.on("success", e => {
-      if (this.inviteCopyTask) clearTimeout(this.inviteCopyTask);
-      this.inviteCopied = true;
-      this.inviteCopyTask = setTimeout(() => {
-        this.inviteCopied = false;
-      }, 2000);
-      e.clearSelection();
-    });
-  },
-  beforeDestroy() {
-    this.preventReconnect = true;
-    this.ws.close();
-  }
 };
 </script>
 

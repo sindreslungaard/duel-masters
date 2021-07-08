@@ -1,7 +1,13 @@
 <template>
-  <BaseLink class="button-link" :class="buttonClass" :href="href">{{
-    text
-  }}</BaseLink>
+  <BaseLink
+    class="button-link"
+    :class="buttonClass"
+    :href="href"
+  >
+    {{
+      text
+    }}
+  </BaseLink>
 </template>
 
 <script>
@@ -10,16 +16,16 @@ import BaseLink from "./BaseLink";
 export default {
   name: "ButtonLink",
   components: {
-    BaseLink
+    BaseLink,
   },
   props: {
     text: {
       type: String,
-      required: true
+      required: true,
     },
     href: {
       type: String,
-      required: true
+      required: true,
     },
     type: {
       type: String,
@@ -27,14 +33,14 @@ export default {
       default: "info",
       validator(value) {
         return ["info", "error", "success"].includes(value);
-      }
-    }
+      },
+    },
   },
   computed: {
     buttonClass() {
       return `button-link--${this.type}`;
-    }
-  }
+    },
+  },
 };
 </script>
 

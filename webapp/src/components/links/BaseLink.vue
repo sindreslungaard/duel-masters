@@ -1,5 +1,9 @@
 <template>
-  <a :target="target" :rel="rel" :href="href"><slot></slot></a>
+  <a
+    :target="target"
+    :rel="rel"
+    :href="href"
+  ><slot /></a>
 </template>
 
 <script>
@@ -8,15 +12,19 @@ export default {
   props: {
     href: {
       type: String,
-      required: true
+      required: true,
     },
     target: {
-      type: String
+      type: String,
+      required: false,
+      default: "",
     },
     rel: {
-      type: String
-    }
-  }
+      type: String,
+      required: false,
+      default: "",
+    },
+  },
 };
 </script>
 

@@ -19,5 +19,5 @@ export default {
   /**
    * The key for saving the name of the last created duel.
    */
-  STORAGE_KEY_DUEL_NAME: "duel_name"
+  STORAGE_KEY_DUEL_NAME: "duel_name",
 };

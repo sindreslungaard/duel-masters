@@ -4,23 +4,41 @@
       <span>Welcome, {{ username }}!</span>
       <ul>
         <li>
-          <router-link to="overview" v-slot="{ href }">
-            <BaseLink :href="href">Overview</BaseLink>
+          <router-link
+            v-slot="{ href }"
+            to="overview"
+          >
+            <BaseLink :href="href">
+              Overview
+            </BaseLink>
           </router-link>
         </li>
         <li>
-          <router-link to="decks" v-slot="{ href }">
-            <BaseLink :href="href">Decks</BaseLink>
+          <router-link
+            v-slot="{ href }"
+            to="decks"
+          >
+            <BaseLink :href="href">
+              Decks
+            </BaseLink>
           </router-link>
         </li>
         <li>
-          <router-link to="logout" v-slot="{ href }">
-            <BaseLink :href="href">Logout</BaseLink>
+          <router-link
+            v-slot="{ href }"
+            to="logout"
+          >
+            <BaseLink :href="href">
+              Logout
+            </BaseLink>
           </router-link>
         </li>
         <li>
           <ExternalLink href="https://patreon.com/shobu">
-            <img class="button--patreon" src="/assets/images/patreon.png" />
+            <img
+              class="button--patreon"
+              src="/assets/images/patreon.png"
+            >
           </ExternalLink>
         </li>
       </ul>
@@ -28,9 +46,12 @@
 
     <div class="announcments">
       Join our
-      <ExternalLink href="https://discord.gg/R3gJrX2">Discord</ExternalLink>
-      to contribute with feedback and suggestions. Consider supporting us on <ExternalLink href="https://patreon.com/shobu">Patreon</ExternalLink> if you like what we're doing. ❤️
-
+      <ExternalLink href="https://discord.gg/R3gJrX2">
+        Discord
+      </ExternalLink>
+      to contribute with feedback and suggestions. Consider supporting us on <ExternalLink href="https://patreon.com/shobu">
+        Patreon
+      </ExternalLink> if you like what we're doing. ❤️
     </div>
   </header>
 </template>
@@ -43,11 +64,11 @@ export default {
   name: "Header",
   components: {
     BaseLink,
-    ExternalLink
+    ExternalLink,
   },
   computed: {
-    username: () => localStorage.getItem("username")
-  }
+    username: () => localStorage.getItem("username"),
+  },
 };
 </script>
 

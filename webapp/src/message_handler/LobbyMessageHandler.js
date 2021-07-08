@@ -3,7 +3,7 @@ class LobbyMessageHandler {
     this.socket = socket;
     this.component = component;
 
-    this.socket.onmessage = (event) => {
+    this.socket.onmessage = event => {
       this.handleMessage(event);
     };
   }
@@ -17,7 +17,7 @@ class LobbyMessageHandler {
       hello: () => this.handleHello(),
       chat: () => this.handleChat(data),
       users: () => this.handleUsers(data),
-      matches: () => this.handleMatches(data)
+      matches: () => this.handleMatches(data),
     };
 
     if (!handlerMap[header]) {
@@ -29,13 +29,13 @@ class LobbyMessageHandler {
 
   handlePing() {
     this.component.sendMessage(this.socket, {
-      header: "mpong"
+      header: "mpong",
     });
   }
 
   handleHello() {
     this.component.sendMessage(this.socket, {
-      header: "subscribe"
+      header: "subscribe",
     });
   }
 
@@ -49,15 +49,13 @@ class LobbyMessageHandler {
     const users = {
       admin: [],
       developer: [],
-      player: []
+      player: [],
     };
 
     data.users.forEach(user => {
       let category = "player";
 
-      const chatRoles = user.permissions.filter(x =>
-        x.includes("chat.role.")
-      );
+      const chatRoles = user.permissions.filter(x => x.includes("chat.role."));
 
       if (chatRoles.length > 0) {
         category = chatRoles[0].split("chat.role.")[1];
@@ -76,6 +74,6 @@ class LobbyMessageHandler {
   handleMatches(data) {
     this.component.matches = data.matches;
   }
-};
+}
 
 export default LobbyMessageHandler;

@@ -27,7 +27,7 @@ export default {
   components: {
     Header,
     CardList,
-    DeckView
+    DeckView,
   },
   mixins: [BaseMixin],
   data() {
@@ -39,7 +39,7 @@ export default {
       decks: [],
       cards: [],
       deckCopy: null,
-      previewCard: null
+      previewCard: null,
     };
   },
   async created() {
@@ -53,7 +53,7 @@ export default {
         this.decks.push({
           name: "My first deck",
           cards: [],
-          public: false
+          public: false,
         });
       }
       this.selectedDeck = this.decks[0];

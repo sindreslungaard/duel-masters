@@ -1,14 +1,20 @@
 <template>
   <main class="overview">
     <Header />
-    <UserList :users="users" :isLoading="isLoading" />
+    <UserList
+      :users="users"
+      :is-loading="isLoading"
+    />
     <Chat
-      @submit="sendChatMessage"
       v-model="chatMessage"
       :messages="chatMessages"
-      :isLoading="isLoading"
+      :is-loading="isLoading"
+      @submit="sendChatMessage"
     />
-    <DuelList :matches="matches" :isLoading="isLoading" />
+    <DuelList
+      :matches="matches"
+      :is-loading="isLoading"
+    />
   </main>
 </template>
 
@@ -26,7 +32,7 @@ export default {
     Header,
     UserList,
     Chat,
-    DuelList
+    DuelList,
   },
   mixins: [BaseMixin],
   data() {
@@ -61,8 +67,26 @@ export default {
        *
        * @type {Array.Object}
        */
-      matches: []
+      matches: [],
     };
+  },
+  /**
+   * When the component is created we connect to the WebSocket and
+   * setup the message handler.
+   */
+  created() {
+    document.title = document.title.replace("🔴", "");
+
+    try {
+      this.socket = this.connectToSocket("/ws/lobby");
+      new LobbyMessageHandler(this.socket, this);
+    } catch (error) {
+      console.error(error);
+      this.showError("Lost connection to the server");
+    }
+  },
+  beforeDestroy() {
+    this.socket.close();
   },
   methods: {
     /**
@@ -77,7 +101,7 @@ export default {
 
       this.sendMessage(this.socket, {
         header: "chat",
-        message: this.chatMessage
+        message: this.chatMessage,
       });
       this.chatMessage = "";
     },
@@ -108,28 +132,10 @@ export default {
         username: data.username,
         color: data.color,
         timestamp: data.timestamp,
-        messages: [data.message]
+        messages: [data.message],
       });
-    }
+    },
   },
-  /**
-   * When the component is created we connect to the WebSocket and
-   * setup the message handler.
-   */
-  created() {
-    document.title = document.title.replace("🔴", "");
-
-    try {
-      this.socket = this.connectToSocket("/ws/lobby");
-      new LobbyMessageHandler(this.socket, this);
-    } catch (error) {
-      console.error(error);
-      this.showError("Lost connection to the server");
-    }
-  },
-  beforeDestroy() {
-    this.socket.close();
-  }
 };
 </script>
 

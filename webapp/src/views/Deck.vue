@@ -1,13 +1,19 @@
 <template>
   <div>
     <div class="main">
-      <h1 v-if="errorMsg">{{ errorMsg }}</h1>
+      <h1 v-if="errorMsg">
+        {{ errorMsg }}
+      </h1>
       <h1>{{ name }}</h1>
-      <hr />
+      <hr>
       <div class="deck-container">
-        <div v-for="(card, index) in cards" :key="index" class="deck-card">
+        <div
+          v-for="(card, index) in cards"
+          :key="index"
+          class="deck-card"
+        >
           <p>x{{ card.count }}</p>
-          <img :src="`/assets/cards/all/${card.uid}.jpg`" />
+          <img :src="`/assets/cards/all/${card.uid}.jpg`">
         </div>
       </div>
     </div>
@@ -18,21 +24,20 @@
 import { call } from "../remote";
 
 export default {
-  name: "deck",
+  name: "Deck",
   data() {
     return {
       errorMsg: "",
       name: "",
-      cards: []
+      cards: [],
     };
   },
-  methods: {},
 
   async created() {
     try {
       let res = await call({
         path: `/deck/${this.$route.params.uid}`,
-        method: "GET"
+        method: "GET",
       });
       this.name = res.data.name + " by " + res.data.owner;
 
@@ -44,14 +49,15 @@ export default {
         } else {
           this.cards.push({
             uid: card,
-            count: 1
+            count: 1,
           });
         }
       }
     } catch (e) {
       this.errorMsg = e.response.data.message;
     }
-  }
+  },
+  methods: {},
 };
 </script>
 

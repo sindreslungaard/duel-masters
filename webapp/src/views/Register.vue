@@ -1,18 +1,40 @@
 <template>
   <div class="login-page">
     <div class="form">
-      <form @submit.prevent="submit()" class="register-form">
-        <p class="title">Sign up to Shobu.io</p>
-        <input v-model="username" type="text" placeholder="Username" />
-        <input v-model="email" type="text" placeholder="Email" />
-        <input v-model="password" type="password" placeholder="Password" />
+      <form
+        class="register-form"
+        @submit.prevent="submit()"
+      >
+        <p class="title">
+          Sign up to Shobu.io
+        </p>
+        <input
+          v-model="username"
+          type="text"
+          placeholder="Username"
+        >
+        <input
+          v-model="email"
+          type="text"
+          placeholder="Email"
+        >
+        <input
+          v-model="password"
+          type="password"
+          placeholder="Password"
+        >
         <input
           v-model="passwordAgain"
           type="password"
           placeholder="Password again"
-        />
+        >
         <button>Create account</button>
-        <p v-if="errorMsg" class="error">{{ errorMsg }}</p>
+        <p
+          v-if="errorMsg"
+          class="error"
+        >
+          {{ errorMsg }}
+        </p>
         <p class="message">
           Already registered?
           <router-link
@@ -20,8 +42,9 @@
               path: '/login',
               query: { redirect_to: $route.query.redirect_to }
             }"
-            >Sign In</router-link
           >
+            Sign In
+          </router-link>
         </p>
       </form>
     </div>
@@ -32,7 +55,7 @@
 import { call } from "../remote";
 
 export default {
-  name: "register",
+  name: "Register",
   data() {
     return {
       username: "",
@@ -40,8 +63,11 @@ export default {
       passwordAgain: "",
       email: "",
       errorMsg: "",
-      redirectTo: null
+      redirectTo: null,
     };
+  },
+  created() {
+    this.redirectTo = this.$route.query.redirect_to;
   },
   methods: {
     async submit() {
@@ -55,8 +81,8 @@ export default {
           body: {
             username: this.username,
             password: this.password,
-            email: this.email
-          }
+            email: this.email,
+          },
         });
 
         localStorage.setItem("email", res.data.user.email);
@@ -78,11 +104,8 @@ export default {
             "An unexpected error occured. Please try again later.";
         }
       }
-    }
+    },
   },
-  created() {
-    this.redirectTo = this.$route.query.redirect_to;
-  }
 };
 </script>
 

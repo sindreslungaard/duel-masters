@@ -63,5 +63,5 @@ Vue.directive("draggable", {
     el.addEventListener("mousedown", event => {
       onMouseDown(event, el);
     });
-  }
+  },
 });

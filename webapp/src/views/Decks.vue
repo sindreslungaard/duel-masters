@@ -1,34 +1,67 @@
 <template>
   <div>
-    <div v-show="warning || previewCard" class="overlay"></div>
+    <div
+      v-show="warning || previewCard"
+      class="overlay"
+    />
 
-    <div v-if="previewCard" class="card-preview">
-      <img :src="`/assets/cards/all/${previewCard.uid}.jpg`" />
-      <div @click="previewCard = null" class="btn">Close</div>
+    <div
+      v-if="previewCard"
+      class="card-preview"
+    >
+      <img :src="`/assets/cards/all/${previewCard.uid}.jpg`">
+      <div
+        class="btn"
+        @click="previewCard = null"
+      >
+        Close
+      </div>
     </div>
 
-    <div v-show="warning" class="error">
+    <div
+      v-show="warning"
+      class="error"
+    >
       <p>{{ warning }}</p>
-      <div @click="warning = ''" class="btn">Close</div>
+      <div
+        class="btn"
+        @click="warning = ''"
+      >
+        Close
+      </div>
     </div>
 
-    <div v-if="showWizard" class="new-duel">
-      <div class="backdrop"></div>
+    <div
+      v-if="showWizard"
+      class="new-duel"
+    >
+      <div class="backdrop" />
       <div class="wizard">
         <div class="spacer">
           <span class="headline">Edit your deck</span>
-          <br /><br />
+          <br><br>
           <form>
             <span class="helper">Name</span>
-            <input v-model="selectedDeck.name" type="text" placeholder="Name" />
-            <br /><br />
+            <input
+              v-model="selectedDeck.name"
+              type="text"
+              placeholder="Name"
+            >
+            <br><br>
             <span class="helper">Visibility</span>
             <select v-model="selectedDeck.public">
-              <option :value="true">Public</option>
-              <option :value="false">Private</option>
+              <option :value="true">
+                Public
+              </option>
+              <option :value="false">
+                Private
+              </option>
             </select>
 
-            <div @click="showWizard = false" class="btn">
+            <div
+              class="btn"
+              @click="showWizard = false"
+            >
               Done
             </div>
           </form>
@@ -36,7 +69,7 @@
       </div>
     </div>
 
-    <Header></Header>
+    <Header />
 
     <div class="main">
       <div class="left bg">
@@ -49,46 +82,63 @@
                   v-model="filterCardName"
                   type="search"
                   placeholder="Type to search"
-                />
+                >
               </th>
               <th>
                 Set
                 <select v-model="filterSet">
                   <option
-                    class="set"
                     v-for="(set, index) in sets"
                     :key="index"
+                    class="set"
                     :value="set"
-                    >{{ set }}</option
                   >
+                    {{ set }}
+                  </option>
                 </select>
               </th>
               <th>
                 Civilization
                 <select v-model="filterCivilization">
-                  <option value="all">All</option>
-                  <option value="fire">Fire</option>
-                  <option value="water">Water</option>
-                  <option value="nature">Nature</option>
-                  <option value="light">Light</option>
-                  <option value="darkness">Darkness</option>
+                  <option value="all">
+                    All
+                  </option>
+                  <option value="fire">
+                    Fire
+                  </option>
+                  <option value="water">
+                    Water
+                  </option>
+                  <option value="nature">
+                    Nature
+                  </option>
+                  <option value="light">
+                    Light
+                  </option>
+                  <option value="darkness">
+                    Darkness
+                  </option>
                 </select>
               </th>
             </tr>
             <tr
+              v-for="(card, index) in filteredCards"
+              :key="index"
+              :class="[{ selected: selected && selected.uid === card.uid }]"
               @dblclick="previewCard = card"
               @contextmenu.prevent="previewCard = card"
               @click="
                 selectedFromDeck = card;
                 selected = card;
               "
-              v-for="(card, index) in filteredCards"
-              :key="index"
-              :class="[{ selected: selected && selected.uid === card.uid }]"
             >
               <td>{{ card.name }}</td>
-              <td class="set">{{ card.set }}</td>
-              <td class="civilization">{{ card.civilization }}</td>
+              <td class="set">
+                {{ card.set }}
+              </td>
+              <td class="civilization">
+                {{ card.civilization }}
+              </td>
             </tr>
           </table>
         </div>
@@ -97,46 +147,82 @@
       <div class="middle">
         <div
           v-show="!showWizard"
-          @click="tryAddCard()"
           class="arrow-green"
-        ></div>
+          @click="tryAddCard()"
+        />
         <div
           v-show="!showWizard"
-          @click="tryRemoveCard()"
           class="arrow-red"
-        ></div>
+          @click="tryRemoveCard()"
+        />
       </div>
 
       <div class="right">
-        <select v-model="selectedDeckUid" class="fl" style="margin: 0;">
+        <select
+          v-model="selectedDeckUid"
+          class="fl"
+          style="margin: 0;"
+        >
           <option
             v-for="(deck, index) in decks"
             :key="index"
             :value="deck.uid"
-            >{{ deck.name }}</option
           >
+            {{ deck.name }}
+          </option>
         </select>
         <img
-          @click="showWizard = true"
           class="fl edit-ico"
           width="25px"
           src="/assets/images/edit_icon.png"
-        />
+          @click="showWizard = true"
+        >
         <div class="right-btns">
-          <a :href="'/deck/' + selectedDeckUid" v-if="selectedDeck && selectedDeck.public" target="_blank">
-            <img class="fl edit-ico share" width="25px" src="/assets/images/share_icon.png"/>
+          <a
+            v-if="selectedDeck && selectedDeck.public"
+            :href="'/deck/' + selectedDeckUid"
+            target="_blank"
+          >
+            <img
+              class="fl edit-ico share"
+              width="25px"
+              src="/assets/images/share_icon.png"
+            >
           </a>
-          <a v-if="selectedDeck && selectedDeck.uid" @click="deleteDeck(selectedDeckUid)" target="_blank">
-            <img class="fl edit-ico share" width="25px" src="/assets/images/delete_icon.png"/>
+          <a
+            v-if="selectedDeck && selectedDeck.uid"
+            target="_blank"
+            @click="deleteDeck(selectedDeckUid)"
+          >
+            <img
+              class="fl edit-ico share"
+              width="25px"
+              src="/assets/images/delete_icon.png"
+            >
           </a>
-          <div @click="newDeck()" class="btn new">New Deck</div>
+          <div
+            class="btn new"
+            @click="newDeck()"
+          >
+            New Deck
+          </div>
           <template
             v-if="
               selectedDeck && deckCopy && !decksEqual(selectedDeck, deckCopy)
             "
           >
-            <div @click="save()" class="btn save">Save</div>
-            <div @click="discard()" class="btn discard">Discard</div>
+            <div
+              class="btn save"
+              @click="save()"
+            >
+              Save
+            </div>
+            <div
+              class="btn discard"
+              @click="discard()"
+            >
+              Discard
+            </div>
           </template>
         </div>
 
@@ -151,12 +237,6 @@
               </tr>
               <template v-if="selectedDeck">
                 <tr
-                  @dblclick="previewCard = card"
-                  @contextmenu.prevent="previewCard = card"
-                  @click="
-                    selected = card;
-                    selectedFromDeck = card;
-                  "
                   v-for="(card, index) in getCardsForDeck(selectedDeck.cards)"
                   :key="index"
                   :class="[
@@ -165,11 +245,21 @@
                         selectedFromDeck && selectedFromDeck.uid === card.uid
                     }
                   ]"
+                  @dblclick="previewCard = card"
+                  @contextmenu.prevent="previewCard = card"
+                  @click="
+                    selected = card;
+                    selectedFromDeck = card;
+                  "
                 >
                   <td>{{ card.count }}</td>
                   <td>{{ card.name }}</td>
-                  <td class="set">{{ card.set }}</td>
-                  <td class="civilization">{{ card.civilization }}</td>
+                  <td class="set">
+                    {{ card.set }}
+                  </td>
+                  <td class="civilization">
+                    {{ card.civilization }}
+                  </td>
                 </tr>
               </template>
             </table>
@@ -194,12 +284,9 @@ const permissions = () => {
 };
 
 export default {
-  name: "decks",
+  name: "Decks",
   components: {
-    Header
-  },
-  computed: {
-    username: () => localStorage.getItem("username")
+    Header,
   },
   data() {
     return {
@@ -220,8 +307,78 @@ export default {
       selectedDeckUid: null,
       deckCopy: null,
 
-      previewCard: null
+      previewCard: null,
     };
+  },
+  computed: {
+    username: () => localStorage.getItem("username"),
+  },
+  computed: {
+    filteredCards() {
+      let filteredCards = this.cards.filter(card =>
+        card.name.toLowerCase().includes(this.filterCardName.toLowerCase()),
+      );
+
+      if (this.filterSet !== "All") {
+        filteredCards = filteredCards.filter(
+          card => card.set === this.filterSet,
+        );
+      }
+
+      if (this.filterCivilization !== "all") {
+        filteredCards = filteredCards.filter(
+          card => card.civilization === this.filterCivilization,
+        );
+      }
+
+      return filteredCards;
+    },
+  },
+  watch: {
+    selectedDeckUid: function(val) {
+      if (!this.decksEqual(this.selectedDeck, this.deckCopy)) {
+        this.warning =
+          "You have unsaved changes in the currently selected deck. Save or discard before editing another deck.";
+        this.selectedDeckUid = this.selectedDeck.uid;
+        return;
+      }
+      this.selectedDeck = this.decks.find(x => x.uid === val);
+      this.deckCopy = JSON.parse(JSON.stringify(this.selectedDeck));
+    },
+  },
+  async created() {
+    try {
+      let [cards, decks] = await Promise.all([
+        call({ path: "/cards", method: "GET" }),
+        call({ path: "/decks", method: "GET" }),
+      ]);
+
+      let sets = {};
+      for (let card of cards.data) {
+        if (!sets[card.set]) {
+          sets[card.set] = true;
+        }
+      }
+      this.sets = Object.keys(sets);
+      this.sets.push("All");
+      this.sets.sort();
+
+      this.cards = cards.data;
+      this.decks = decks.data;
+
+      if (this.decks.length < 1) {
+        this.decks.push({
+          name: "My first deck",
+          cards: [],
+          public: false,
+        });
+      }
+      this.selectedDeck = this.decks[0];
+      this.deckCopy = JSON.parse(JSON.stringify(this.selectedDeck));
+      this.selectedDeckUid = this.selectedDeck.uid;
+    } catch (e) {
+      console.log(e);
+    }
   },
   methods: {
     selectDeck(deck) {
@@ -238,7 +395,7 @@ export default {
       let cards = [];
       for (let uid of cardUids) {
         let card = JSON.parse(
-          JSON.stringify(this.cards.find(x => x.uid === uid))
+          JSON.stringify(this.cards.find(x => x.uid === uid)),
         );
 
         let existingCard = cards.find(x => x.uid === card.uid);
@@ -295,10 +452,10 @@ export default {
       this.decks.push({
         name: "Unnamed Deck",
         cards: [],
-        public: false
+        public: false,
       });
       this.deckCopy = JSON.parse(
-        JSON.stringify(this.decks[this.decks.length - 1])
+        JSON.stringify(this.decks[this.decks.length - 1]),
       );
       this.selectedDeck = this.decks[this.decks.length - 1];
       this.selectedDeckUid = this.selectedDeck.uid;
@@ -312,7 +469,7 @@ export default {
         let res = await call({
           path: "/decks",
           method: "POST",
-          body: this.selectedDeck
+          body: this.selectedDeck,
         });
         this.deckCopy = JSON.parse(JSON.stringify(this.selectedDeck));
         this.warning = "Successfully saved your deck";
@@ -372,75 +529,8 @@ export default {
         }
       }
       return true;
-    }
+    },
   },
-  async created() {
-    try {
-      let [cards, decks] = await Promise.all([
-        call({ path: "/cards", method: "GET" }),
-        call({ path: "/decks", method: "GET" })
-      ]);
-
-      let sets = {};
-      for (let card of cards.data) {
-        if (!sets[card.set]) {
-          sets[card.set] = true;
-        }
-      }
-      this.sets = Object.keys(sets);
-      this.sets.push("All");
-      this.sets.sort();
-
-      this.cards = cards.data;
-      this.decks = decks.data;
-
-      if (this.decks.length < 1) {
-        this.decks.push({
-          name: "My first deck",
-          cards: [],
-          public: false
-        });
-      }
-      this.selectedDeck = this.decks[0];
-      this.deckCopy = JSON.parse(JSON.stringify(this.selectedDeck));
-      this.selectedDeckUid = this.selectedDeck.uid;
-    } catch (e) {
-      console.log(e);
-    }
-  },
-  watch: {
-    selectedDeckUid: function(val) {
-      if (!this.decksEqual(this.selectedDeck, this.deckCopy)) {
-        this.warning =
-          "You have unsaved changes in the currently selected deck. Save or discard before editing another deck.";
-        this.selectedDeckUid = this.selectedDeck.uid;
-        return;
-      }
-      this.selectedDeck = this.decks.find(x => x.uid === val);
-      this.deckCopy = JSON.parse(JSON.stringify(this.selectedDeck));
-    }
-  },
-  computed: {
-    filteredCards() {
-      let filteredCards = this.cards.filter(card =>
-        card.name.toLowerCase().includes(this.filterCardName.toLowerCase())
-      );
-
-      if (this.filterSet !== "All") {
-        filteredCards = filteredCards.filter(
-          card => card.set === this.filterSet
-        );
-      }
-
-      if (this.filterCivilization !== "all") {
-        filteredCards = filteredCards.filter(
-          card => card.civilization === this.filterCivilization
-        );
-      }
-
-      return filteredCards;
-    }
-  }
 };
 </script>
 

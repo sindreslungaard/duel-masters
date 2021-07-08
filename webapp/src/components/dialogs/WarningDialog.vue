@@ -1,7 +1,10 @@
 <template>
   <div class="warning-dialog">
     <p>{{ message }}</p>
-    <Button text="Close" @click="$emit('close')" />
+    <Button
+      text="Close"
+      @click="$emit('close')"
+    />
   </div>
 </template>
 
@@ -10,15 +13,15 @@ import Button from "../buttons/Button";
 
 export default {
   name: "WarningDialog",
+  components: {
+    Button,
+  },
   props: {
     message: {
       type: String,
-      required: true
-    }
+      required: true,
+    },
   },
-  components: {
-    Button
-  }
 };
 </script>
 

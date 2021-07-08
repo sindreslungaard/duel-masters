@@ -6,9 +6,12 @@
         v-for="card in cards"
         :key="card"
         :src="`/assets/cards/all/${card}.jpg`"
-      />
+      >
     </div>
-    <Button text="Close" @click="$emit('close')" />
+    <Button
+      text="Close"
+      @click="$emit('close')"
+    />
   </div>
 </template>
 
@@ -17,19 +20,19 @@ import Button from "../buttons/Button";
 
 export default {
   name: "CardShowDialog",
+  components: {
+    Button,
+  },
   props: {
     message: {
       type: String,
-      required: true
+      required: true,
     },
     cards: {
       type: Array,
-      required: true
-    }
+      required: true,
+    },
   },
-  components: {
-    Button
-  }
 };
 </script>
 

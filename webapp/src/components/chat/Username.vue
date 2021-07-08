@@ -11,14 +11,24 @@
         {{ hub == "match" ? "In a duel" : "Online" }}
       </div>
     </div>
-    <span :style="'color: ' + (color ? color : 'orange')"><slot></slot></span>
+    <span :style="'color: ' + (color ? color : 'orange')"><slot /></span>
   </div>
 </template>
 
 <script>
 export default {
   name: "Username",
-  props: ["hub", "color"]
+  props: {
+    hub: {
+      type: String,
+      required: true,
+    },
+    color: {
+      type: String,
+      required: false,
+      default: "",
+    },
+  },
 };
 </script>
 

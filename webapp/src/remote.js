@@ -19,7 +19,7 @@ export const call = (opts) => {
       method: opts.method.toUpperCase(),
       headers: headers,
       data: opts.body,
-      params: opts.params || {}
+      params: opts.params || {},
     })
       .then(res => {
         resolve(res);

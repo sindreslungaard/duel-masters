@@ -13,12 +13,12 @@ Vue.config.productionTip = false;
 
 Vue.use(VModal, {
   dynamic: true,
-  dynamicDefaults: { height: "auto", scrollable: true, width: "300px" }
+  dynamicDefaults: { height: "auto", scrollable: true, width: "300px" },
 });
 Vue.prototype.$config = Object.freeze(config);
 
 new Vue({
   router,
   store,
-  render: h => h(App)
+  render: h => h(App),
 }).$mount("#app");

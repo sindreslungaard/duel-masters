@@ -5,7 +5,7 @@ Vue.use(Vuex);
 
 export default new Vuex.Store({
   state: {
-    deck: []
+    deck: [],
   },
   mutations: {
     setDeck(state, deck) {
@@ -39,7 +39,7 @@ export default new Vuex.Store({
       }
 
       state.deck.cards.splice(toSlice, 1);
-    }
+    },
   },
   getters: {
     deck(state) {
@@ -47,7 +47,7 @@ export default new Vuex.Store({
     },
     deckUid(state) {
       return state.deck.uid;
-    }
+    },
   },
-  actions: {}
+  actions: {},
 });

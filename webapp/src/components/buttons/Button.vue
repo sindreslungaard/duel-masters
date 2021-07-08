@@ -15,12 +15,12 @@ export default {
   props: {
     text: {
       type: String,
-      required: true
+      required: true,
     },
     submit: {
       type: Boolean,
       required: false,
-      default: false
+      default: false,
     },
     type: {
       type: String,
@@ -28,8 +28,8 @@ export default {
       default: "info",
       validator(value) {
         return ["info", "error", "success"].includes(value);
-      }
-    }
+      },
+    },
   },
   computed: {
     buttonClass() {
@@ -37,8 +37,8 @@ export default {
     },
     buttonType() {
       return this.submit ? "submit" : "button";
-    }
-  }
+    },
+  },
 };
 </script>
 

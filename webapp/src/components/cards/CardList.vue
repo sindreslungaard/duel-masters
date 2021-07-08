@@ -1,12 +1,23 @@
 <template>
-  <Panel title="Cards" class="card-list">
+  <Panel
+    title="Cards"
+    class="card-list"
+  >
     <LoadingIndicator v-if="!hasFinishedLoading" />
 
     <template v-if="hasFinishedLoading">
       <div class="view-mode-switcher">
         <div class="field">
-          Grid <input v-model="viewMode" value="grid" type="radio" /> List
-          <input v-model="viewMode" value="list" type="radio" />
+          Grid <input
+            v-model="viewMode"
+            value="grid"
+            type="radio"
+          > List
+          <input
+            v-model="viewMode"
+            value="list"
+            type="radio"
+          >
         </div>
       </div>
       <div class="filter">
@@ -17,33 +28,64 @@
             v-model="filterName"
             type="search"
             placeholder="Type to search"
-          />
+          >
         </div>
         <div class="field">
           <label for="filter-set">Set</label>
-          <select id="filter-set" v-model="filterSet">
-            <option value="all">All</option>
-            <option v-for="(set, index) in sets" :key="index" :value="set">{{
-              set.toUpperCase()
-            }}</option>
+          <select
+            id="filter-set"
+            v-model="filterSet"
+          >
+            <option value="all">
+              All
+            </option>
+            <option
+              v-for="(set, index) in sets"
+              :key="index"
+              :value="set"
+            >
+              {{
+                set.toUpperCase()
+              }}
+            </option>
           </select>
         </div>
         <div class="field">
           <label for="filter-civilization">Civilization</label>
-          <select id="filter-civilization" v-model="filterCivilization">
-            <option value="all">All</option>
-            <option value="fire">Fire</option>
-            <option value="water">Water</option>
-            <option value="nature">Nature</option>
-            <option value="light">Light</option>
-            <option value="darkness">Darkness</option>
+          <select
+            id="filter-civilization"
+            v-model="filterCivilization"
+          >
+            <option value="all">
+              All
+            </option>
+            <option value="fire">
+              Fire
+            </option>
+            <option value="water">
+              Water
+            </option>
+            <option value="nature">
+              Nature
+            </option>
+            <option value="light">
+              Light
+            </option>
+            <option value="darkness">
+              Darkness
+            </option>
           </select>
         </div>
       </div>
 
-      <div class="filter__count">{{ filteredCards.length }} cards</div>
+      <div class="filter__count">
+        {{ filteredCards.length }} cards
+      </div>
 
-      <table class="list-view" v-if="viewMode === 'list'">
+      <table
+        v-if="viewMode === 'list'"
+        class="list-view"
+      >
         <thead>
           <tr>
             <th>Name</th>
@@ -53,22 +95,31 @@
         </thead>
         <tbody>
           <tr
-            @click.left="addCardToDeck(card)"
             v-for="card in filteredCards"
             :key="card.uid"
+            @click.left="addCardToDeck(card)"
           >
-            <td class="fill">{{ card.name }}</td>
-            <td class="set no-break">{{ card.set }}</td>
-            <td class="civilization no-break">{{ card.civilization }}</td>
+            <td class="fill">
+              {{ card.name }}
+            </td>
+            <td class="set no-break">
+              {{ card.set }}
+            </td>
+            <td class="civilization no-break">
+              {{ card.civilization }}
+            </td>
           </tr>
         </tbody>
       </table>
 
-      <div class="grid-view" v-if="viewMode === 'grid'">
+      <div
+        v-if="viewMode === 'grid'"
+        class="grid-view"
+      >
         <div
-          @click.left="addCardToDeck(card)"
           v-for="card in filteredCards"
           :key="card.uid"
+          @click.left="addCardToDeck(card)"
         >
           <img
             loading="lazy"
@@ -76,7 +127,7 @@
             :title="card.name"
             class="image--card"
             :src="`https://shobu.io/assets/cards/all/${card.uid}.jpg`"
-          />
+          >
         </div>
       </div>
     </template>
@@ -93,18 +144,18 @@ export default {
   name: "CardList",
   components: {
     Panel,
-    LoadingIndicator
+    LoadingIndicator,
   },
   props: {
     isLoading: {
       type: Boolean,
       required: false,
-      default: false
+      default: false,
     },
     cards: {
       type: Array,
-      required: true
-    }
+      required: true,
+    },
   },
   data() {
     return {
@@ -114,27 +165,21 @@ export default {
       filterCivilization: "all",
     };
   },
-  async created() {},
-  methods: {
-    addCardToDeck(card) {
-      this.$store.commit("addCardToDeck", card);
-    },
-  },
   computed: {
     filteredCards() {
       let filteredCards = this.cards.filter(card =>
-        card.name.toLowerCase().includes(this.filterName.toLowerCase())
+        card.name.toLowerCase().includes(this.filterName.toLowerCase()),
       );
 
       if (this.filterSet !== "all") {
         filteredCards = filteredCards.filter(
-          card => card.set === this.filterSet
+          card => card.set === this.filterSet,
         );
       }
 
       if (this.filterCivilization !== "all") {
         filteredCards = filteredCards.filter(
-          card => card.civilization === this.filterCivilization
+          card => card.civilization === this.filterCivilization,
         );
       }
 
@@ -152,8 +197,14 @@ export default {
      */
     hasFinishedLoading() {
       return !this.isLoading && Object.keys(this.cards).length > 0;
-    }
-  }
+    },
+  },
+  async created() {},
+  methods: {
+    addCardToDeck(card) {
+      this.$store.commit("addCardToDeck", card);
+    },
+  },
 };
 </script>
 

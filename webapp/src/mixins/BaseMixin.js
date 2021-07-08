@@ -20,7 +20,7 @@ export default {
      */
     showError(message) {
       this.$modal.show(ErrorDialog, { message }, {}, {
-        "closed": () => window.location.reload()
+        "closed": () => window.location.reload(),
       });
     },
     /**
@@ -63,6 +63,6 @@ export default {
      */
     sendMessage(socket, data) {
       socket.send(JSON.stringify(data));
-    }
-  }
+    },
+  },
 };

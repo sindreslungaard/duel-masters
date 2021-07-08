@@ -5,7 +5,7 @@
     </header>
 
     <div class="panel__content">
-      <slot></slot>
+      <slot />
     </div>
   </div>
 </template>
@@ -16,9 +16,9 @@ export default {
   props: {
     title: {
       type: String,
-      require: true
-    }
-  }
+      required: true,
+    },
+  },
 };
 </script>
 

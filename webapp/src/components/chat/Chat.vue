@@ -1,16 +1,28 @@
 <template>
-  <Panel title="Chat" class="chat">
+  <Panel
+    title="Chat"
+    class="chat"
+  >
     <LoadingIndicator v-if="!hasFinishedLoading" />
 
     <template v-if="hasFinishedLoading">
-      <div class="message" v-for="(msg, i) in messages" :key="i">
+      <div
+        v-for="(msg, i) in messages"
+        :key="i"
+        class="message"
+      >
         <div class="message__meta">
-          <Username :color="msg.color">{{ msg.username }}</Username>
+          <Username :color="msg.color">
+            {{ msg.username }}
+          </Username>
           <span>{{ formatTimestamp(msg.timestamp) }}</span>
         </div>
 
         <div class="message__content">
-          <p v-for="(message, j) in msg.messages" :key="j">
+          <p
+            v-for="(message, j) in msg.messages"
+            :key="j"
+          >
             {{ message }}
           </p>
         </div>
@@ -18,11 +30,11 @@
 
       <form @submit.prevent="$emit('submit')">
         <input
-          @input="$emit('input', chatMessage)"
-          type="text"
           v-model="chatMessage"
+          type="text"
           placeholder="Type to chat"
-        />
+          @input="$emit('input', chatMessage)"
+        >
       </form>
     </template>
   </Panel>
@@ -38,18 +50,21 @@ export default {
   components: {
     Username,
     Panel,
-    LoadingIndicator
+    LoadingIndicator,
   },
   props: {
     messages: {
       type: Array,
-      required: true
+      required: true,
     },
     isLoading: {
       type: Boolean,
-      required: true
+      required: true,
     },
-    value: {}
+    value: {
+      type: String,
+      required: true,
+    },
   },
   data() {
     return {
@@ -58,19 +73,8 @@ export default {
        *
        * @type {String}
        */
-      chatMessage: this.value
+      chatMessage: this.value,
     };
-  },
-  methods: {
-    /**
-     * Formats a timestamp to a string according to the locale.
-     *
-     * @param {Number} dateTime
-     * @return {String}
-     */
-    formatTimestamp(dateTime) {
-      return new Date(dateTime * 1000).toLocaleString();
-    }
   },
   computed: {
     /**
@@ -78,7 +82,7 @@ export default {
      */
     hasFinishedLoading() {
       return !this.isLoading && Object.keys(this.messages).length > 0;
-    }
+    },
   },
   watch: {
     /**
@@ -101,8 +105,19 @@ export default {
         const chatContainer = document.querySelector(".chat .panel__content");
         chatContainer.scrollTop = chatContainer.scrollHeight;
       });
-    }
-  }
+    },
+  },
+  methods: {
+    /**
+     * Formats a timestamp to a string according to the locale.
+     *
+     * @param {Number} dateTime
+     * @return {String}
+     */
+    formatTimestamp(dateTime) {
+      return new Date(dateTime * 1000).toLocaleString();
+    },
+  },
 };
 </script>
 

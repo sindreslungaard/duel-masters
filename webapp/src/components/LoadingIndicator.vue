@@ -6,7 +6,7 @@
 
 <script>
 export default {
-  name: "LoadingIndicator"
+  name: "LoadingIndicator",
 };
 </script>
 
