@@ -138,11 +138,11 @@ export default {
     Panel,
     LoadingIndicator,
     Button,
+    CardGrid,
   },
   mixins: [BaseMixin],
   data() {
     return {
-      cards: [],
       decks: [],
       selectedDeckUid: null,
       deckCopy: null,
@@ -176,8 +176,6 @@ export default {
   },
   async created() {
     await this.fetchDecks();
-    let cardsResponse = await call({ path: "/cards", method: "GET" });
-    this.cards = cardsResponse.data;
 
     if(this.decks.length === 0) {
       this.newDeck();
@@ -249,7 +247,7 @@ export default {
       let cards = [];
       for (let uid of cardUids) {
         let card = JSON.parse(
-          JSON.stringify(this.cards.find(x => x.uid === uid)),
+          JSON.stringify(this.$store.state.cards.find(x => x.uid === uid)),
         );
 
         let existingCard = cards.find(x => x.uid === card.uid);

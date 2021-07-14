@@ -58,10 +58,6 @@ export default {
         this.isLoading = false;
       };
 
-      socket.onclose = () => {
-        this.showError("Lost connection to the server");
-      };
-
       socket.onerror = () => {
         this.showError("Lost connection to the server");
       };

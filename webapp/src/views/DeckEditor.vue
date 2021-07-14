@@ -1,7 +1,7 @@
 <template>
   <main class="deck-editor">
     <Header />
-    <CardList :cards="cards" />
+    <CardList />
     <DeckView />
   </main>
 </template>
@@ -30,40 +30,6 @@ export default {
     DeckView,
   },
   mixins: [BaseMixin],
-  data() {
-    return {
-      selectedDeck: null,
-      selectedDeckUid: null,
-      hasFinishedLoading: false,
-      showWizard: false,
-      decks: [],
-      cards: [],
-      deckCopy: null,
-      previewCard: null,
-    };
-  },
-  async created() {
-    try {
-      let cardsResponse = await call({ path: "/cards", method: "GET" });
-      let decksResponse = await call({ path: "/decks", method: "GET" });
-      this.decks = decksResponse.data;
-      this.cards = cardsResponse.data;
-
-      if (this.decks.length < 1) {
-        this.decks.push({
-          name: "My first deck",
-          cards: [],
-          public: false,
-        });
-      }
-      this.selectedDeck = this.decks[0];
-      this.deckCopy = JSON.parse(JSON.stringify(this.selectedDeck));
-      this.selectedDeckUid = this.selectedDeck.uid;
-      this.hasFinishedLoading = true;
-    } catch (e) {
-      console.log(e);
-    }
-  },
 };
 </script>
 

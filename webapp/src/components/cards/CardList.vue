@@ -40,7 +40,7 @@
               All
             </option>
             <option
-              v-for="(set, index) in sets"
+              v-for="(set, index) in $store.state.sets"
               :key="index"
               :value="set"
             >
@@ -76,7 +76,68 @@
             </option>
           </select>
         </div>
+        <div class="field">
+          <label for="filter-cost">Mana Cost</label>
+          <select
+            id="filter-cost"
+            v-model="filterCost"
+          >
+            <option value="all">
+              All
+            </option>
+            <option
+              v-for="(cost, index) in $store.state.costs"
+              :key="index"
+              :value="cost"
+            >
+              {{
+                cost
+              }}
+            </option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="filter-race">Race</label>
+          <select
+            id="filter-race"
+            v-model="filterRace"
+          >
+            <option value="all">
+              All
+            </option>
+            <option
+              v-for="(race, index) in $store.state.races"
+              :key="index"
+              :value="race"
+            >
+              {{
+                race
+              }}
+            </option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="filter-type">Card Type</label>
+          <select
+            id="filter-type"
+            v-model="filterType"
+          >
+            <option value="all">
+              All
+            </option>
+            <option
+              v-for="(type, index) in $store.state.types"
+              :key="index"
+              :value="type"
+            >
+              {{
+                type
+              }}
+            </option>
+          </select>
+        </div>
       </div>
+
 
       <div class="filter__count">
         {{ filteredCards.length }} cards
@@ -152,10 +213,6 @@ export default {
       required: false,
       default: false,
     },
-    cards: {
-      type: Array,
-      required: true,
-    },
   },
   data() {
     return {
@@ -163,11 +220,14 @@ export default {
       filterName: "",
       filterSet: "all",
       filterCivilization: "all",
+      filterRace: "all",
+      filterType: "all",
+      filterCost: "all",
     };
   },
   computed: {
     filteredCards() {
-      let filteredCards = this.cards.filter(card =>
+      let filteredCards = this.$store.state.cards.filter(card =>
         card.name.toLowerCase().includes(this.filterName.toLowerCase()),
       );
 
@@ -183,23 +243,41 @@ export default {
         );
       }
 
+      if (this.filterRace !== "all") {
+        filteredCards = filteredCards.filter(
+          card => card.family === this.filterRace,
+        );
+      }
+
+      if (this.filterType !== "all") {
+        filteredCards = filteredCards.filter(
+          card => card.type === this.filterType,
+        );
+      }
+
+      if (this.filterCost !== "all") {
+        filteredCards = filteredCards.filter(
+          card => card.manaCost === this.filterCost,
+        );
+      }
+
       filteredCards = _.sortBy(filteredCards, "name");
 
       return filteredCards;
-    },
-    sets() {
-      const sets = Array.from(new Set(this.cards.map(card => card.set)));
-      sets.sort();
-      return sets;
     },
     /**
      * Whether the component is ready to be displayed.
      */
     hasFinishedLoading() {
-      return !this.isLoading && Object.keys(this.cards).length > 0;
+      return Object.keys(this.$store.state.cards).length > 0;
     },
   },
-  async created() {},
+  async created() {
+    if(this.$store.state.cards.length === 0) {
+      let cardsResponse = await call({ path: "/cards", method: "GET" });
+      this.$store.commit("setCards", cardsResponse.data);
+    }
+  },
   methods: {
     addCardToDeck(card) {
       this.$store.commit("addCardToDeck", card);
@@ -224,9 +302,10 @@ td {
 .filter {
   display: flex;
   margin: 0 calc(-0.5 * var(--spacing));
+  flex-wrap: wrap;
 
   .field {
-    width: 50%;
+    width: 33.333%;
     padding: 0 calc(0.5 * var(--spacing));
   }
 

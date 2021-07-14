@@ -2,11 +2,36 @@ import { createStore } from "vuex";
 
 export default createStore({
   state: {
+    cards: [],
+    sets: [],
+    races: [],
+    costs: [],
+    types: [],
     deck: {
       cards: [],
     },
   },
   mutations: {
+    setCards(state, cards) {
+      state.cards = cards;
+
+      const sets = Array.from(new Set(cards.map(card => card.set)));
+      sets.sort();
+      state.sets = sets;
+
+      const races = Array.from(new Set(cards.map(card => card.family)));
+      races.sort();
+      races.shift();
+      state.races = races;
+
+      const costs = Array.from(new Set(cards.map(card => card.manaCost)));
+      costs.sort();
+      state.costs = costs;
+
+      const types = Array.from(new Set(cards.map(card => card.type)));
+      types.sort();
+      state.types = types;
+    },
     setDeck(state, deck) {
       state.deck = deck;
     },
