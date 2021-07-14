@@ -1,0 +1,65 @@
+.field:not(:last-child) {
+  margin-bottom: var(--spacing);
+}
+
+input,
+textarea,
+select {
+  border: none;
+  background: var(--color-background-input);
+  padding: 10px;
+  border-radius: var(--border-radius);
+  width: 100%;
+  color: var(--color-text-light);
+  resize: none;
+
+  &[disabled] {
+    opacity: 0.75;
+  }
+}
+
+input:active,
+textarea:active,
+select:active {
+  outline: none;
+}
+
+input[type="radio"],
+input[type="check"] {
+  width: auto;
+}
+
+*:focus {
+  outline: 1px solid #fff;
+}
+
+label {
+  display: block;
+  margin-bottom: calc(0.5 * var(--spacing));
+}
+
+.field.buttons {
+  display: flex;
+  margin-top: var(--spacing);
+
+  .button {
+    width: 100%;
+  }
+
+  .button:first-child {
+    margin-right: calc(0.5 * var(--spacing));
+  }
+
+  .button:last-child {
+    margin-left: calc(0.5 * var(--spacing));
+  }
+}
+
+.field.error {
+  color: var(--error);
+  font-size: 0.9rem;
+
+  p {
+    margin: 0;
+  }
+}

@@ -1,12 +1,32 @@
 <template>
   <div class="login-page">
     <div class="form">
-      <form @submit.prevent="submit()" class="login-form">
-        <p class="title">Sign in to Shobu.io</p>
-        <input v-model="username" type="text" placeholder="Username" />
-        <input v-model="password" type="password" placeholder="Password" />
+      <form
+        class="login-form"
+        @submit.prevent="submit()"
+      >
+        <p class="title">
+          Sign in to Shobu.io
+        </p>
+        <input
+          v-model="username"
+          type="text"
+          placeholder="Username"
+          autocomplete="username"
+        >
+        <input
+          v-model="password"
+          type="password"
+          placeholder="Password"
+          autocomplete="current-password"
+        >
         <button>Sign in</button>
-        <p v-if="errorMsg" class="error">{{ errorMsg }}</p>
+        <p
+          v-if="errorMsg"
+          class="error"
+        >
+          {{ errorMsg }}
+        </p>
         <p class="message">
           Not registered?
           <router-link
@@ -14,8 +34,9 @@
               path: '/register',
               query: { redirect_to: $route.query.redirect_to }
             }"
-            >Create an account</router-link
           >
+            Create an account
+          </router-link>
         </p>
       </form>
     </div>
@@ -26,14 +47,17 @@
 import { call } from "../remote";
 
 export default {
-  name: "login",
+  name: "Login",
   data() {
     return {
       username: "",
       password: "",
       errorMsg: "",
-      redirectTo: null
+      redirectTo: null,
     };
+  },
+  created() {
+    this.redirectTo = this.$route.query.redirect_to;
   },
   methods: {
     async submit() {
@@ -43,8 +67,8 @@ export default {
           method: "POST",
           body: {
             username: this.username,
-            password: this.password
-          }
+            password: this.password,
+          },
         });
 
         localStorage.setItem("email", res.data.user.email);
@@ -56,7 +80,7 @@ export default {
         if (this.redirectTo) {
           this.$router.push(this.redirectTo);
         } else {
-          this.$router.push("overview");
+          this.$router.push("lobby");
         }
       } catch (e) {
         try {
@@ -67,12 +91,8 @@ export default {
             "An unexpected error occured. Please try again later.";
         }
       }
-    }
+    },
   },
-  created() {
-    console.log(this.$route);
-    this.redirectTo = this.$route.query.redirect_to;
-  }
 };
 </script>
 
@@ -118,7 +138,7 @@ export default {
   width: 100%;
   border: 0;
   margin: 0 0 15px;
-  padding: 15px;
+  padding: var(--spacing);
   box-sizing: border-box;
   font-size: 14px;
 }
@@ -129,7 +149,7 @@ export default {
   background: #e22a38;
   width: 100%;
   border: 0;
-  padding: 15px;
+  padding: var(--spacing);
   color: #ffffff;
   font-size: 14px;
   -webkit-transition: all 0.3 ease;

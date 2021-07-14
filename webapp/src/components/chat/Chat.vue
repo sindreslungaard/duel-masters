@@ -1,0 +1,141 @@
+<template>
+  <Panel
+    title="Chat"
+    class="chat"
+  >
+    <LoadingIndicator v-if="!hasFinishedLoading" />
+
+    <template v-if="hasFinishedLoading">
+      <div
+        v-for="(msg, i) in messages"
+        :key="i"
+        class="message"
+      >
+        <div class="message__meta">
+          <Username
+            :color="msg.color"
+          >
+            {{ msg.username }}
+          </Username>
+          <span>{{ formatTimestamp(msg.timestamp) }}</span>
+        </div>
+
+        <div class="message__content">
+          <p
+            v-for="(message, j) in msg.messages"
+            :key="j"
+          >
+            {{ message }}
+          </p>
+        </div>
+      </div>
+
+      <form @submit.prevent="$emit('submit')">
+        <input
+          v-model="chatMessage"
+          type="text"
+          placeholder="Type to chat"
+          @input="$emit('input', chatMessage)"
+        >
+      </form>
+    </template>
+  </Panel>
+</template>
+
+<script>
+import Username from "./Username";
+import Panel from "../Panel";
+import LoadingIndicator from "../LoadingIndicator";
+
+export default {
+  name: "Chat",
+  components: {
+    Username,
+    Panel,
+    LoadingIndicator,
+  },
+  props: {
+    messages: {
+      type: Array,
+      required: true,
+    },
+    isLoading: {
+      type: Boolean,
+      required: true,
+    },
+    modelValue: {
+      type: String,
+      required: true,
+    },
+  },
+  data() {
+    return {
+      /**
+       * The chat message being types.
+       *
+       * @type {String}
+       */
+      chatMessage: this.value,
+    };
+  },
+  computed: {
+    /**
+     * Whether the component is ready to be displayed.
+     */
+    hasFinishedLoading() {
+      return !this.isLoading && Object.keys(this.messages).length > 0;
+    },
+  },
+  watch: {
+    /**
+     * When the v-model is updated from outside, we need to move it
+     * to our "internal" v-model.
+     *
+     * @param {String} value
+     * @returns {void}
+     */
+    value(value) {
+      this.chatMessage = value;
+    },
+    /**
+     * When new message are added we scroll to the bottom of the chat.
+     *
+     * @returns {void}
+     */
+    messages() {
+      this.$nextTick(() => {
+        const chatContainer = document.querySelector(".chat .panel__content");
+        chatContainer.scrollTop = chatContainer.scrollHeight;
+      });
+    },
+  },
+  methods: {
+    /**
+     * Formats a timestamp to a string according to the locale.
+     *
+     * @param {Number} dateTime
+     * @return {String}
+     */
+    formatTimestamp(dateTime) {
+      return new Date(dateTime * 1000).toLocaleString();
+    },
+  },
+};
+</script>
+
+<style lang="scss" scoped>
+.message {
+  &__meta {
+    display: flex;
+    justify-content: space-between;
+  }
+
+  &__content {
+    margin: 0 var(--spacing) var(--spacing);
+  }
+}
+
+p {
+  margin: 0;
+}
+</style>

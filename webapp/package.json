@@ -5,38 +5,35 @@
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
-    "lint": "vue-cli-service lint --no-fix",
+    "lint": "vue-cli-service lint --no-fix --max-warnings 0",
     "lint-fix": "vue-cli-service lint",
-    "watch": "vue-cli-service build --watch"
-  },
-  "husky": {
-    "hooks": {
-      "pre-commit": "npm run lint"
-    }
+    "watch": "vue-cli-service build --watch",
+    "prepare": "cd .. && husky install webapp/.husky"
   },
   "dependencies": {
     "axios": "^0.21.1",
     "clipboard": "^2.0.6",
-    "vue": "^2.6.11",
-    "vue-js-modal": "^2.0.0-rc.3",
-    "vue-router": "^3.3.2",
-    "vuex": "^3.4.0"
+    "lodash": "^4.17.21",
+    "vue": "^3.1.4",
+    "vue-final-modal": "^3.3.1",
+    "vue-router": "^4.0.10",
+    "vuex": "^4.0.2"
   },
   "devDependencies": {
-    "@vue/cli-plugin-babel": "^4.4.1",
-    "@vue/cli-plugin-eslint": "^4.4.1",
-    "@vue/cli-service": "^4.4.1",
+    "@vue/cli-plugin-babel": "^5.0.0-beta.2",
+    "@vue/cli-plugin-eslint": "^5.0.0-beta.2",
+    "@vue/cli-service": "^5.0.0-beta.2",
+    "@vue/compiler-sfc": "^3.1.4",
     "babel-eslint": "^10.1.0",
-    "eslint": "^7.2.0",
-    "eslint-plugin-import": "^2.21.1",
+    "eslint": "^7.30.0",
+    "eslint-plugin-import": "^2.23.4",
     "eslint-plugin-node": "^11.1.0",
-    "eslint-plugin-promise": "^4.2.1",
-    "eslint-plugin-standard": "^4.0.1",
-    "eslint-plugin-vue": "^6.2.2",
-    "husky": "^4.2.5",
-    "sass": "^1.26.8",
-    "sass-loader": "^8.0.2",
-    "vue-template-compiler": "^2.6.11"
+    "eslint-plugin-promise": "^5.1.0",
+    "eslint-plugin-standard": "^4.1.0",
+    "eslint-plugin-vue": "^7.13.0",
+    "husky": "^7.0.1",
+    "sass": "^1.35.2",
+    "sass-loader": "^8.0.2"
   },
   "babel": {
     "presets": [
@@ -49,7 +46,7 @@
       "node": true
     },
     "extends": [
-      "plugin:vue/essential"
+      "plugin:vue/vue3-recommended"
     ],
     "parserOptions": {
       "parser": "babel-eslint",
@@ -63,6 +60,16 @@
       "semi": [
         "error",
         "always"
+      ],
+      "comma-dangle": [
+        "error",
+        {
+          "arrays": "always-multiline",
+          "objects": "always-multiline",
+          "imports": "always-multiline",
+          "exports": "always-multiline",
+          "functions": "always-multiline"
+        }
       ]
     }
   },

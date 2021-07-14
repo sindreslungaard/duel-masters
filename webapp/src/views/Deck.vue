@@ -1,13 +1,19 @@
 <template>
   <div>
     <div class="main">
-      <h1 v-if="errorMsg">{{ errorMsg }}</h1>
+      <h1 v-if="errorMsg">
+        {{ errorMsg }}
+      </h1>
       <h1>{{ name }}</h1>
-      <hr />
+      <hr>
       <div class="deck-container">
-        <div v-for="(card, index) in cards" :key="index" class="deck-card">
+        <div
+          v-for="(card, index) in cards"
+          :key="index"
+          class="deck-card"
+        >
           <p>x{{ card.count }}</p>
-          <img :src="`/assets/cards/all/${card.uid}.jpg`" />
+          <img :src="`/assets/cards/all/${card.uid}.jpg`">
         </div>
       </div>
     </div>
@@ -18,21 +24,20 @@
 import { call } from "../remote";
 
 export default {
-  name: "deck",
+  name: "Deck",
   data() {
     return {
       errorMsg: "",
       name: "",
-      cards: []
+      cards: [],
     };
   },
-  methods: {},
 
   async created() {
     try {
       let res = await call({
         path: `/deck/${this.$route.params.uid}`,
-        method: "GET"
+        method: "GET",
       });
       this.name = res.data.name + " by " + res.data.owner;
 
@@ -44,14 +49,15 @@ export default {
         } else {
           this.cards.push({
             uid: card,
-            count: 1
+            count: 1,
           });
         }
       }
     } catch (e) {
       this.errorMsg = e.response.data.message;
     }
-  }
+  },
+  methods: {},
 };
 </script>
 
@@ -60,7 +66,7 @@ export default {
   text-align: center;
   margin: 0;
   margin-bottom: 5px;
-  color: #ccc;
+  color: var(--color-text-light);
 }
 
 .count {
@@ -140,13 +146,13 @@ hr {
   left: calc(50% - 250px / 2);
   background: #36393f;
   width: 250px;
-  border-radius: 4px;
+  border-radius: var(--border-radius);
   color: #fff;
   border: 1px solid #666;
 }
 
 .wizard .headline {
-  color: #ccc;
+  color: var(--color-text-light);
 }
 
 .wizard .spacer {
@@ -154,7 +160,7 @@ hr {
 }
 
 .wizard .helper {
-  color: #ccc;
+  color: var(--color-text-light);
   font-size: 13px;
 }
 
@@ -179,11 +185,11 @@ input,
 textarea,
 select {
   border: none;
-  background: #484c52;
+  background: var(--color-background-input);
   padding: 10px;
-  border-radius: 4px;
+  border-radius: var(--border-radius);
   width: 200px;
-  color: #ccc;
+  color: var(--color-text-light);
   resize: none;
 }
 input:focus,
@@ -243,9 +249,9 @@ nav > ul > li.no-cursor:hover {
   background: #2b2c31;
   padding: 5px;
   min-height: 20px;
-  border-radius: 4px;
+  border-radius: var(--border-radius);
   font-size: 14px;
-  color: #ccc;
+  color: var(--color-text-light);
 }
 
 .psa > span {
@@ -265,7 +271,7 @@ a {
   font-size: 14px;
   line-height: 20px;
   padding: 5px 10px;
-  border-radius: 4px;
+  border-radius: var(--border-radius);
   transition: 0.1s;
   text-align: center !important;
   user-select: none;

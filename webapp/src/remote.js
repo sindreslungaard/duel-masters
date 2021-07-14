@@ -1,7 +1,5 @@
 import axios from "axios";
-import config from "./config";
-
-export const ws_protocol = location.protocol == "https:" ? "wss://" : "ws://";
+import config from "@/config/Config";
 
 export const call = (opts) => {
 
@@ -17,11 +15,11 @@ export const call = (opts) => {
     headers["content-type"] = "application/json";
 
     axios({
-      url: "/api" + opts.path,
+      url: config.API_ENDPOINT + opts.path,
       method: opts.method.toUpperCase(),
       headers: headers,
       data: opts.body,
-      params: opts.params || {}
+      params: opts.params || {},
     })
       .then(res => {
         resolve(res);

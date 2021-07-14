@@ -1,3 +1,7 @@
+import config from "./config/Config";
+
 export default {
-  WS_ENDPOINT: "ws://localhost"
+  install(app, options) {
+    app.config.globalProperties.$config = Object.freeze(config);
+  },
 };

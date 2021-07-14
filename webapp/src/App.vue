@@ -5,6 +5,7 @@
   </div>
 </template>
 
+
 <style>
 @import url(
   https://fonts.googleapis.com/css?family=Roboto:300,
@@ -28,7 +29,12 @@ body {
 .vm--modal {
   background-color: #36393f;
   border-color: #222428;
-  border-radius: 4px;
+  border-radius: var(--border-radius);
   padding: 20px;
+  border: 1px solid #666;
+}
+
+.vm--overlay {
+  background: rgba(0, 0, 0, 0.4);
 }
 </style>

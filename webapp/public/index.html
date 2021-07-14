@@ -8,7 +8,9 @@
     function gtag() { dataLayer.push(arguments); }
     gtag('js', new Date());
 
-    gtag('config', 'UA-136568338-2');
+    gtag('config', 'UA-136568338-2', {
+      'cookie_flags': 'SameSite=None;Secure'
+    });
   </script>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
