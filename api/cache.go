@@ -13,12 +13,15 @@ type CardInfo struct {
 	UID          string `json:"uid"`
 	Name         string `json:"name"`
 	Civilization string `json:"civilization"`
+	Family       string `json:"family"`
+	ManaCost     int    `json:"manaCost"`
 	Set          string `json:"set"`
+	Type         string `json:"type"`
 }
 
 // Register holds all the card info
-var register []CardInfo = make([]CardInfo, 0)
-var mutex *sync.Mutex = &sync.Mutex{}
+var register = make([]CardInfo, 0)
+var mutex = &sync.Mutex{}
 
 // CreateCardCache loads all cards and creates a cache of the static data
 func CreateCardCache() {
@@ -31,12 +34,21 @@ func CreateCardCache() {
 
 			c(card)
 
-			register = append(register, CardInfo{
+			entry := CardInfo{
 				UID:          uid,
 				Name:         card.Name,
 				Civilization: card.Civ,
 				Set:          setID,
-			})
+				Family:       card.Family,
+				ManaCost:     card.ManaCost,
+				Type:         "Creature",
+			}
+
+			if entry.Family == "" {
+				entry.Type = "Spell"
+			}
+
+			register = append(register, entry)
 
 		}
 
