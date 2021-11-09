@@ -282,6 +282,11 @@ func (p *Player) DrawCards(n int) {
 		p.match.Chat("Server", fmt.Sprintf("%s drew %v card", p.match.PlayerRef(p).Socket.User.Username, n))
 	}
 
+	if len(p.deck) <= 0 {
+		// deck out
+		p.match.End(p.match.Opponent(p), fmt.Sprintf("%s won by deck out!", p.match.Opponent(p).Username()))
+	}
+
 }
 
 // HasCard checks if a container has a card
