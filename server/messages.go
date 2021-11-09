@@ -143,3 +143,8 @@ type ShowCardsMessage struct {
 	Message string   `json:"message"`
 	Cards   []string `json:"cards"`
 }
+
+type PinnedMessages struct {
+	Header   string   `json:"header"`
+	Messages []string `json:"messages"`
+}

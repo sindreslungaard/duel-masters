@@ -5,6 +5,7 @@ import (
 	"duel-masters/server"
 	"encoding/json"
 	"fmt"
+	"os"
 	"sync"
 	"time"
 
@@ -15,6 +16,7 @@ const (
 	messageBufferSize int = 100
 )
 
+var pinnedMessages = []string{}
 var messages = append(make([]server.LobbyChatMessage, 0), server.LobbyChatMessage{
 	Username:  "[Server]",
 	Color:     "#777",
@@ -79,6 +81,7 @@ func (l *Lobby) StartTicker() {
 			{
 				UpdateUserCache()
 				Broadcast(userCache)
+				UpdatePinnedMessages()
 			}
 		}
 
@@ -103,6 +106,25 @@ func ListenForMatchListUpdates() {
 
 	}
 
+}
+
+func UpdatePinnedMessages() {
+
+	messagesMutex.Lock()
+	defer messagesMutex.Unlock()
+
+	Broadcast(server.PinnedMessages{
+		Header:   "pinned_messages",
+		Messages: pinnedMessages,
+	})
+
+}
+
+func PinMessage(message string) {
+	messagesMutex.Lock()
+	defer messagesMutex.Unlock()
+
+	pinnedMessages = append(pinnedMessages, message)
 }
 
 // Parse websocket messages
@@ -138,6 +160,10 @@ func (l *Lobby) Parse(s *server.Socket, data []byte) {
 			s.Send(server.LobbyChatMessages{
 				Header:   "chat",
 				Messages: messages,
+			})
+			s.Send(server.PinnedMessages{
+				Header:   "pinned_messages",
+				Messages: pinnedMessages,
 			})
 
 			// Update and send user list
@@ -257,6 +283,16 @@ func handleChatCommand(s *server.Socket, command string) {
 				message += m
 			}
 			chat(s, "Matches: "+message)
+		}
+
+	case "/shutdown":
+		{
+			logrus.Info("Shutdown command invoked")
+			os.Exit(0)
+		}
+	default:
+		{
+			chat(s, fmt.Sprintf("%s is not a valid command", command))
 		}
 	}
 

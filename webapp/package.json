@@ -17,6 +17,8 @@
   "dependencies": {
     "axios": "^0.21.1",
     "clipboard": "^2.0.6",
+    "date-fns": "^2.25.0",
+    "dayjs": "^1.10.7",
     "vue": "^2.6.11",
     "vue-js-modal": "^2.0.0-rc.3",
     "vue-router": "^3.3.2",

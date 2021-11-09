@@ -82,6 +82,11 @@
           </div>
 
           <div class="chatbox">
+            <div v-if="pinnedMessages.length" class="pinned-messages">
+              <div v-for="(msg, i) in pinnedMessages" :key="i">
+                {{ msg.message }} <span v-if="msg.timeString">{{ msg.timeString }}</span>
+              </div>
+            </div>
             <div id="messages" class="messages spaced">
               <div class="messages-helper">
                 <div v-for="(msg, i) in chatMessages" :key="i">
@@ -137,6 +142,7 @@
 import { call, ws_protocol } from "../remote";
 import Header from "../components/Header.vue";
 import Username from "../components/Username.vue";
+import { format, fromUnixTime, formatDistanceToNowStrict, isBefore } from "date-fns";
 
 const send = (client, message) => {
   client.send(JSON.stringify(message));
@@ -163,6 +169,7 @@ export default {
       },
       chatMessage: "",
       chatMessages: [],
+      pinnedMessages: [], // { message, time }
       users: [],
       matches: [],
       errorMessage: "",
@@ -255,6 +262,19 @@ export default {
       else this.loadingDots += ".";
     }, 500);
 
+    let timeUpdates = setInterval(() => {
+      for(let msg of this.pinnedMessages) {
+        if(!msg.time) continue;
+
+        if(isBefore(fromUnixTime(msg.time), Date.now())) {
+          clearInterval(timeUpdates);
+          return;
+        }
+
+        msg.timeString = formatDistanceToNowStrict(fromUnixTime(msg.time));
+      }
+    }, 500);
+
     // Connect to the server
     try {
       const ws = new WebSocket(
@@ -297,6 +317,25 @@ export default {
             for (let message of data.messages) {
               this.chat(message);
             }
+            break;
+          }
+
+          case "pinned_messages": {
+            this.pinnedMessages = [];
+
+            for(let message of data.messages) {
+              if(message.includes("time:")) {
+                let time = message.split("time:")[1];
+                this.pinnedMessages.push({
+                  message: message.split("time:")[0],
+                  time,
+                  timeString: formatDistanceToNowStrict(fromUnixTime(time))
+                });
+              } else {
+                this.pinnedMessages.push({message});
+              }
+            }
+
             break;
           }
 
@@ -613,7 +652,6 @@ main {
 .chatbox {
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
   height: 100%;
   overflow: hidden;
 }
@@ -632,6 +670,10 @@ main {
   &:active {
     outline: none;
   }
+}
+
+.chatbox form {
+  justify-self: end;
 }
 
 .duels .btn {
@@ -661,6 +703,7 @@ main {
   overflow: auto;
   margin-bottom: 0;
   padding-bottom: 0;
+  flex-grow: 1;
 }
 
 *::-webkit-scrollbar-track {
@@ -736,4 +779,12 @@ main {
   cursor: pointer;
   background: #35966a;
 }
+
+.pinned-messages {
+  background: #202124;
+  padding: 10px;
+  font-size: 13px;
+  color: yellow;
+}
+
 </style>
