@@ -17,22 +17,15 @@ func GulanRiasSpeedGuardian(c *match.Card) {
 	c.ManaCost = 3
 	c.ManaRequirement = []string{civ.Light}
 
-	c.Use(fx.Creature, func(card *match.Card, ctx *match.Context) {
-
-		if card.Zone != match.BATTLEZONE {
-			return
-		}
-
-		c.Use(
-			fx.Creature,
-			fx.CantBeBlockedIf(func(blocker *match.Card) bool {
-				return blocker.Civ == civ.Darkness
-			}),
-			fx.CantBeAttackedIf(func(attacker *match.Card) bool {
-				return attacker.Civ == civ.Darkness
-			}),
-		)
-	})
+	c.Use(
+		fx.Creature,
+		fx.CantBeBlockedIf(func(blocker *match.Card) bool {
+			return blocker.Civ == civ.Darkness
+		}),
+		fx.CantBeAttackedIf(func(attacker *match.Card) bool {
+			return attacker.Civ == civ.Darkness
+		}),
+	)
 }
 
 // MistRiasSonicGuardian ...
