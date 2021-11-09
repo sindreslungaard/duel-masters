@@ -47,6 +47,7 @@ func checkForAutoRestart() {
 
 	if os.Getenv("restart_after") == "" {
 		logrus.Debug("No autorestart policy found")
+		return
 	}
 
 	n, err := strconv.Atoi(os.Getenv("restart_after"))
