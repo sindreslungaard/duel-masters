@@ -90,7 +90,7 @@
             <div id="messages" class="messages spaced">
               <div class="messages-helper">
                 <div v-for="(msg, i) in chatMessages" :key="i">
-                  <Username :color="msg.color">{{ msg.username }}</Username>
+                  <Username :color="msg.color">{{ msg.username }} <span class="message-ts">{{ tsformat(msg.timestamp) }} ago</span></Username>
                   <div class="user-messages">
                     <div v-for="(message, j) in msg.messages" :key="j">
                       <span>{{ message }}</span>
@@ -142,7 +142,7 @@
 import { call, ws_protocol } from "../remote";
 import Header from "../components/Header.vue";
 import Username from "../components/Username.vue";
-import { format, fromUnixTime, formatDistanceToNowStrict, isBefore } from "date-fns";
+import { format, fromUnixTime, formatDistanceToNowStrict, isBefore, formatDistance } from "date-fns";
 
 const send = (client, message) => {
   client.send(JSON.stringify(message));
@@ -178,6 +178,9 @@ export default {
     };
   },
   methods: {
+    tsformat(ts) {
+      return formatDistance(Date.now(), fromUnixTime(ts));
+    },
     refreshPage() {
       location.reload();
     },
@@ -785,6 +788,13 @@ main {
   padding: 10px;
   font-size: 13px;
   color: yellow;
+}
+
+.message-ts {
+  font-size: 11px;
+  color: #999;
+  text-shadow: none;
+  opacity: 0.5;
 }
 
 </style>
