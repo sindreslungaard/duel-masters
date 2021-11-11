@@ -285,6 +285,18 @@ func Attacking(card *match.Card, ctx *match.Context) bool {
 
 }
 
+// AttackConfirmed returns true if the card is attacking and it cannot be cancelled
+func AttackConfirmed(card *match.Card, ctx *match.Context) bool {
+
+	if event, ok := ctx.Event.(*match.AttackConfirmed); ok {
+		if event.CardID == card.ID {
+			return true
+		}
+	}
+
+	return false
+}
+
 // AttackingPlayer returns true if the card is attacking a player
 func AttackingPlayer(card *match.Card, ctx *match.Context) bool {
 
