@@ -18,16 +18,29 @@ func ShadowMoonCursedShade(c *match.Card) {
 	c.ManaCost = 4
 	c.ManaRequirement = []string{civ.Darkness}
 
-	c.Use(fx.Creature, func(card *match.Card, ctx *match.Context) {
+	c.Use(fx.Creature, fx.When(fx.Summoned, func(card *match.Card, ctx *match.Context) {
 
-		if card.Zone != match.BATTLEZONE {
-			return
-		}
+		ctx.Match.ApplyPersistentEffect(func(card2 *match.Card, ctx2 *match.Context, exit func()) {
 
-		getDarknessCreatures(card, ctx).Map(func(x *match.Card) {
-			x.AddUniqueSourceCondition(cnd.PowerAmplifier, 2000, card.ID)
+			if card.Zone != match.BATTLEZONE {
+
+				// remove cards with current buffs
+				getDarknessCreatures(card, ctx).Map(func(x *match.Card) {
+					x.RemoveConditionBySource(card.ID)
+				})
+
+				exit()
+				return
+
+			}
+
+			getDarknessCreatures(card, ctx).Map(func(x *match.Card) {
+				x.AddUniqueSourceCondition(cnd.PowerAmplifier, 2000, card.ID)
+			})
+
 		})
-	})
+
+	}))
 
 }
 
