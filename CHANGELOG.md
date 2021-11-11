@@ -10,5 +10,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed an issue where Shadow Moon Cursed Shade didn't remove the buffs it gave other darkness creature after being removed from the battle zone.
 ### Added
 - Added new event hook for when an attack is confirmed to be happening
+- Added timestamps to lobby chat messages
 ### Changed
 - Updated README with steps to set up the project for local development
