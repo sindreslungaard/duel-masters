@@ -367,6 +367,7 @@ func (m *Match) Battle(attacker *Card, defender *Card, blocked bool) {
 	attackerPower := m.GetPower(attacker, true)
 	defenderPower := m.GetPower(defender, false)
 
+	m.HandleFx(NewContext(m, &AttackConfirmed{CardID: attacker.ID, Player: false, Creature: true}))
 	m.HandleFx(NewContext(m, &Battle{Attacker: attacker, Defender: defender, Blocked: blocked}))
 
 	if attackerPower > defenderPower {

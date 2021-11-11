@@ -56,6 +56,14 @@ type AttackCreature struct {
 	AttackableCreatures []*Card // list of cards that can be attacked
 }
 
+// AttackConfirmed is fired when either attacking a player or creature, but **after** the attack is validated
+// to happen (does not fire when the attack is cancelled)
+type AttackConfirmed struct {
+	CardID   string
+	Player   bool
+	Creature bool
+}
+
 // Battle is fired when two creatures are fighting, i.e. from attacking a creature or blocking an attack
 type Battle struct {
 	Attacker *Card

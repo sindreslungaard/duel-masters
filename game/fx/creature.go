@@ -286,6 +286,8 @@ func Creature(card *match.Card, ctx *match.Context) {
 
 				card.Tapped = true
 
+				ctx.Match.HandleFx(match.NewContext(ctx.Match, &match.AttackConfirmed{CardID: card.ID, Player: true, Creature: false}))
+
 				if len(shieldzone) < 1 {
 					// Win
 					ctx.Match.End(card.Player, fmt.Sprintf("%s won the game", ctx.Match.PlayerRef(card.Player).Socket.User.Username))
