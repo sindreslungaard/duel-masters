@@ -42,6 +42,7 @@ type Match struct {
 	HostID            string           `json:"-"`
 	Player1           *PlayerReference `json:"-"`
 	Player2           *PlayerReference `json:"-"`
+	spectators        Spectators       `json:"-"`
 	persistentEffects map[int]PersistentEffect
 	Turn              byte `json:"-"`
 	Started           bool `json:"started"`
@@ -80,6 +81,7 @@ func New(matchName string, hostID string, visible bool) *Match {
 		ID:                id,
 		MatchName:         matchName,
 		HostID:            hostID,
+		spectators:        Spectators{users: map[string]Spectator{}},
 		persistentEffects: make(map[int]PersistentEffect),
 		Turn:              1,
 		Started:           false,
@@ -130,30 +132,28 @@ func UpdateMatchList() {
 			continue
 		}
 
-		if match.Player1 == nil {
-			continue
-		}
-
-		// remove this when spectating is out
-		if match.Player2 != nil {
-			continue
-		}
-
-		if match.Player2 != nil && !match.Started {
-			continue
-		}
-
 		if match.ending {
 			continue
 		}
 
-		matchesMessage = append(matchesMessage, server.MatchMessage{
-			ID:       match.ID,
-			Owner:    match.Player1.Socket.User.Username,
-			Color:    match.Player1.Socket.User.Color,
-			Name:     match.MatchName,
-			Spectate: match.Started,
-		})
+		if match.Player1 != nil && match.Player2 != nil && !match.Started {
+			continue
+		}
+
+		matchMessage := server.MatchMessage{
+			ID:      match.ID,
+			P1:      match.Player1.Username,
+			P1color: match.Player1.Color,
+			Name:    match.MatchName,
+			Started: match.Started,
+		}
+
+		if match.Player2 != nil {
+			matchMessage.P2 = match.Player2.Username
+			matchMessage.P2color = match.Player2.Color
+		}
+
+		matchesMessage = append(matchesMessage, matchMessage)
 	}
 
 	update := server.MatchesListMessage{
@@ -217,6 +217,16 @@ func (m *Match) Dispose() {
 			logrus.Warningf("Recovered from disposing a match. %v", r)
 		}
 	}()
+
+	m.spectators.Lock()
+	defer m.spectators.Unlock()
+	for _, spectator := range m.spectators.users {
+		if spectator.Socket == nil {
+			continue
+		}
+		spectator.Socket.Close()
+		spectator.Socket = nil
+	}
 
 	if m.Player1 != nil {
 		m.Player1.Socket.Close()
@@ -500,8 +510,12 @@ func (m *Match) End(winner *Player, winnerStr string) {
 	}
 
 	if m.Started {
-		WarnError(m.PlayerRef(winner), winnerStr)
-		WarnError(m.PlayerRef(m.Opponent(winner)), winnerStr)
+
+		m.Broadcast(server.WarningMessage{
+			Header:  "error",
+			Message: winnerStr,
+		})
+
 	}
 
 	m.quit <- true
@@ -517,8 +531,7 @@ func (m *Match) ColorChat(sender string, message string, color string) {
 		Color:   color,
 	}
 
-	m.Player1.Socket.Send(msg)
-	m.Player2.Socket.Send(msg)
+	m.Broadcast(msg)
 }
 
 // Chat sends a chat message with the default color
@@ -526,11 +539,39 @@ func (m *Match) Chat(sender string, message string) {
 	m.ColorChat(sender, message, "#ccc")
 }
 
+func (m *Match) Broadcast(msg interface{}) {
+
+	defer func() {
+		if r := recover(); r != nil {
+			logrus.Warnf("Recovered during Broadcast(). %v", r)
+		}
+	}()
+
+	m.Player1.Socket.Send(msg)
+	m.Player2.Socket.Send(msg)
+
+	// could fail due to concurrent updates to spectators map
+	// but don't want to lock it here as broadcast will be used everywhere
+	// so recover will deal with those special occasians where it fails
+	for _, spectator := range m.spectators.users {
+		if spectator.Socket == nil {
+			continue
+		}
+		spectator.Socket.Send(msg)
+	}
+
+}
+
 // BroadcastState sends the current game's state to both players, hiding the opponent's hand
 func (m *Match) BroadcastState() {
 
 	player1 := *m.Player1.Player.Denormalized()
+	player1.Username = m.Player1.Username
+	player1.Color = m.Player1.Color
+
 	player2 := *m.Player2.Player.Denormalized()
+	player2.Username = m.Player2.Username
+	player2.Color = m.Player2.Color
 
 	p1state := &server.MatchStateMessage{
 		Header: "state_update",
@@ -552,11 +593,34 @@ func (m *Match) BroadcastState() {
 		},
 	}
 
+	spectatorState := &server.MatchStateMessage{
+		Header: "state_update",
+		State: server.MatchState{
+			MyTurn:       false,
+			HasAddedMana: false,
+			Me:           player1,
+			Opponent:     player2,
+			Spectator:    true,
+		},
+	}
+
 	p1state.State.Opponent.Hand = make([]server.CardState, 0)
 	p2state.State.Opponent.Hand = make([]server.CardState, 0)
+	spectatorState.State.Me.Hand = make([]server.CardState, 0)
+	spectatorState.State.Opponent.Hand = make([]server.CardState, 0)
 
 	m.Player1.Socket.Send(p1state)
 	m.Player2.Socket.Send(p2state)
+
+	m.spectators.RLock()
+	defer m.spectators.RUnlock()
+
+	for _, spectator := range m.spectators.users {
+		if spectator.Socket == nil {
+			continue
+		}
+		spectator.Socket.Send(spectatorState)
+	}
 
 }
 
@@ -1054,6 +1118,7 @@ func (m *Match) Parse(s *server.Socket, data []byte) {
 
 			// player reconnect
 			if m.Started {
+				// p1 attempting to reconnect
 				if m.Player1 != nil && m.Player1.UID == s.User.UID {
 
 					if m.Player1.Socket != nil {
@@ -1073,6 +1138,7 @@ func (m *Match) Parse(s *server.Socket, data []byte) {
 
 					return
 
+					// p2 attempting to reconnect
 				} else if m.Player2 != nil && m.Player2.UID == s.User.UID {
 
 					if m.Player2.Socket != nil {
@@ -1093,12 +1159,34 @@ func (m *Match) Parse(s *server.Socket, data []byte) {
 					return
 
 				} else {
-					// TODO: spectators?
-					s.Send(server.WarningMessage{
-						Header:  "error",
-						Message: "This match has already started, you cannot join it.",
-					})
-					s.Close()
+					// Spectators
+
+					m.spectators.RLock()
+					spectator, ok := m.spectators.users[s.User.UID]
+					m.spectators.RUnlock()
+
+					// this user is already spectating, swap connection to new one
+					if ok {
+						spectator.Socket.Send(server.WarningMessage{
+							Header:  "error",
+							Message: "You started spectating from a new connection, closing this one...",
+						})
+						// this removes the existing spectator from the match
+						spectator.Socket.Close()
+					}
+
+					m.spectators.Lock()
+					m.spectators.users[s.User.UID] = Spectator{
+						UID:      s.User.UID,
+						Username: s.User.Username,
+						Color:    s.User.Color,
+						Socket:   s,
+						LastPong: time.Now().Unix(),
+					}
+					m.spectators.Unlock()
+
+					m.Chat("Server", fmt.Sprintf("%s started spectating", s.User.Username))
+					m.BroadcastState()
 					return
 				}
 			}
@@ -1107,7 +1195,6 @@ func (m *Match) Parse(s *server.Socket, data []byte) {
 			if s.User.UID == m.HostID {
 
 				if m.Player1 != nil {
-					// TODO: Allow reconnect?
 					logrus.Debug("Attempt to join as Player1 multiple times")
 					s.Send(server.WarningMessage{
 						Header:  "error",
@@ -1127,7 +1214,6 @@ func (m *Match) Parse(s *server.Socket, data []byte) {
 			if s.User.UID != m.HostID {
 
 				if m.Player2 != nil {
-					// TODO: Allow reconnect?
 					logrus.Debug("Attempt to join as Player2 multiple times")
 					s.Send(server.WarningMessage{
 						Header:  "error",
@@ -1444,6 +1530,17 @@ func (m *Match) OnSocketClose(s *server.Socket) {
 
 	if !m.Started {
 		m.quit <- true
+		return
+	}
+
+	// is this a spectator leaving?
+	m.spectators.Lock()
+	defer m.spectators.Unlock()
+	spectator, ok := m.spectators.users[s.User.UID]
+
+	if ok {
+		m.Chat("Server", fmt.Sprintf("%s stopped spectating", spectator.Username))
+		delete(m.spectators.users, spectator.UID)
 		return
 	}
 

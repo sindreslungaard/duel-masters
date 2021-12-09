@@ -134,7 +134,7 @@
 
     <!-- Match -->
     <div class="chat">
-      <div class="chatbox">
+      <div :class="state.spectator ? 'fullsize-chatbox' : 'chatbox'">
         <div class="messages">
           <div id="messages" class="messages-helper">
             <div class="message" :style="{'background': message.sender.toLowerCase() === 'server' ? 'none' : '#202124'}" v-for="(message, index) in chatMessages" :key="index">
@@ -148,7 +148,7 @@
         </form>
       </div>
 
-      <div class="actionbox handaction">
+      <div v-if="!state.spectator" class="actionbox handaction">
         <template v-if="handSelection">
           <span>{{ handSelection.name }}</span>
           <div
@@ -173,7 +173,7 @@
         </template>
       </div>
 
-      <div class="actionbox">
+      <div v-if="!state.spectator" class="actionbox">
         <div
           @click="endTurn()"
           :class="['btn', 'block', { disabled: !state.myTurn }]"
@@ -306,6 +306,7 @@
 
       <div class="right-stage bt">
         <div class="right-stage-content">
+          <p v-if="state.spectator">Hand [{{ state.me.handCount }}]</p>
           <p>Graveyard [{{ state.me.graveyard.length }}]</p>
           <div class="card">
             <img
@@ -386,6 +387,12 @@
       </div>
 
       <div class="hand bt">
+        <div class="spectator-info" v-if="state.spectator">
+          <div>You are spectating</div>
+          <Username :color="state.me.color">{{ state.me.username }}</Username>
+          <div>vs</div>
+          <Username :color="state.opponent.color">{{ state.opponent.username }}</Username>
+        </div>
         <div class="card placeholder">
           <img src="/assets/cards/backside.png" />
         </div>
@@ -414,6 +421,7 @@ import config from "../config";
 import ClipboardJS from "clipboard";
 import { call, ws_protocol } from "../remote";
 import CardShowDialog from "../components/dialogs/CardShowDialog";
+import Username from "../components/Username.vue";
 
 const send = (client, message) => {
   client.send(JSON.stringify(message));
@@ -440,6 +448,9 @@ let playerJoinedSound = new sound("/assets/player_joined.mp3");
 
 export default {
   name: "game",
+  components: {
+    Username
+  },
   data() {
     return {
       ws: null,
@@ -889,6 +900,17 @@ export default {
 </script>
 
 <style scoped lang="scss">
+.spectator-info {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #999;
+  margin: 8vh 0;
+  div {
+    margin: 0 3px;
+  }
+}
+
 .card-preview {
   width: 300px;
   text-align: center;
@@ -1053,6 +1075,13 @@ export default {
   border-radius: 4px;
 }
 
+.fullsize-chatbox {
+  height: calc(100vh - 15px);
+  background: #2f3136;
+  margin: 5px;
+  border-radius: 4px;
+}
+
 .handaction {
   height: 53px !important;
   span {
@@ -1143,6 +1172,22 @@ export default {
 }
 
 .chatbox input {
+  border: none;
+  border-radius: 4px;
+  margin: 10px;
+  width: calc(100% - 40px);
+  background: #484c52;
+  padding: 10px;
+  color: #ccc;
+  &:focus {
+    outline: none;
+  }
+  &:active {
+    outline: none;
+  }
+}
+
+.fullsize-chatbox input {
   border: none;
   border-radius: 4px;
   margin: 10px;

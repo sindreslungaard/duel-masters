@@ -27,7 +27,22 @@ const (
 // PlayerReference ties a player to a websocket connection
 type PlayerReference struct {
 	UID      string
+	Username string
+	Color    string
 	Player   *Player
+	Socket   *server.Socket
+	LastPong int64
+}
+
+type Spectators struct {
+	sync.RWMutex
+	users map[string]Spectator
+}
+
+type Spectator struct {
+	UID      string
+	Username string
+	Color    string
 	Socket   *server.Socket
 	LastPong int64
 }
@@ -43,6 +58,8 @@ func NewPlayerReference(p *Player, s *server.Socket) *PlayerReference {
 
 	pr := &PlayerReference{
 		UID:      s.User.UID,
+		Username: s.User.Username,
+		Color:    s.User.Color,
 		Player:   p,
 		Socket:   s,
 		LastPong: time.Now().Unix(),

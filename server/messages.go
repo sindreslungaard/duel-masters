@@ -33,6 +33,8 @@ type CardState struct {
 
 // PlayerState stores information about the state of the current player
 type PlayerState struct {
+	Username   string      `json:"username"`
+	Color      string      `json:"color"`
 	Deck       int         `json:"deck"`
 	HandCount  int         `json:"handCount"`
 	Hand       []CardState `json:"hand"`
@@ -48,6 +50,7 @@ type MatchState struct {
 	HasAddedMana bool        `json:"hasAddedManaThisRound"`
 	Me           PlayerState `json:"me"`
 	Opponent     PlayerState `json:"opponent"`
+	Spectator    bool        `json:"spectator"`
 }
 
 // MatchStateMessage is the message that should be sent to the client for state updates
@@ -124,11 +127,13 @@ type UserListMessage struct {
 
 // MatchMessage holds information about a match
 type MatchMessage struct {
-	ID       string `json:"id"`
-	Owner    string `json:"owner"`
-	Color    string `json:"color"`
-	Name     string `json:"name"`
-	Spectate bool   `json:"spectate"`
+	ID      string `json:"id"`
+	P1      string `json:"p1"`
+	P1color string `json:"p1color"`
+	P2      string `json:"p2"`
+	P2color string `json:"p2color"`
+	Name    string `json:"name"`
+	Started bool   `json:"spectate"`
 }
 
 // MatchesListMessage is used to list open matches

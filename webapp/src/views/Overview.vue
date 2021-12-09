@@ -119,7 +119,11 @@
             </tr>
             <tr v-for="(match, index) in matches" :key="index">
               <td>
-                <Username :color="match.color">{{ match.owner }}</Username>
+                <div class="match-players">
+                  <Username :color="match.p1color">{{ match.p1 }}</Username>
+                  <div v-show="match.p2">vs</div>
+                  <Username v-show="match.p2" :color="match.p2color">{{ match.p2 }}</Username>
+                </div>
               </td>
               <td>{{ match.name }}</td>
               <td>
@@ -400,6 +404,13 @@ export default {
 </script>
 
 <style scoped lang="scss">
+.match-players {
+  display: flex;
+  div {
+    margin: 0 3px;
+  }
+}
+
 .disabled {
   background: #7289da !important;
   opacity: 0.5;
