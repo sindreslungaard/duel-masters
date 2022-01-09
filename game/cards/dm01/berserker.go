@@ -27,7 +27,7 @@ func LahPurificationEnforcer(c *match.Card) {
 func RaylaTruthEnforcer(c *match.Card) {
 
 	c.Name = "Rayla, Truth Enforcer"
-	c.Power = 5500
+	c.Power = 3000
 	c.Civ = civ.Light
 	c.Family = family.Berserker
 	c.ManaCost = 6
