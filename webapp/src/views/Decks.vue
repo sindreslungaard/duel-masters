@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div v-show="warning || previewCard" class="overlay"></div>
+    <div v-show="warning || previewCard" @click="previewCard = null" class="overlay"></div>
 
     <div v-if="previewCard" class="card-preview">
       <img :src="`/assets/cards/all/${previewCard.uid}.jpg`" />
