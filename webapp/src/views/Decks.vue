@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div v-show="warning || previewCard" @click="previewCard = null" class="overlay"></div>
+    <div v-show="warning || previewCard" @click="closeOverlay()" class="overlay"></div>
 
     <div v-if="previewCard" class="card-preview">
       <img :src="`/assets/cards/all/${previewCard.uid}.jpg`" />
@@ -13,7 +13,7 @@
     </div>
 
     <div v-if="showWizard" class="new-duel">
-      <div class="backdrop"></div>
+      <div class="backdrop" @click="showWizard = false" ></div>
       <div class="wizard">
         <div class="spacer">
           <span class="headline">Edit your deck</span>
@@ -305,6 +305,11 @@ export default {
       this.$nextTick(() => {
         this.deckCopy.name = "to.be.removed";
       });
+    },
+
+    closeOverlay(){
+      this.previewCard = null;
+      this.warning = null;
     },
 
     async save() {
