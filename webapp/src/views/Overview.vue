@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div v-show="errorMessage || wizardVisible" class="overlay"></div>
+    <div v-show="errorMessage || wizardVisible" @click="closeOverlay()" class="overlay"></div>
 
     <div v-show="errorMessage" class="error">
       <p>{{ errorMessage }}</p>
@@ -12,7 +12,7 @@
         <div class="spacer">
           <span class="headline">Create a new duel</span>
           <br /><br />
-          <form>
+          <form @submit="handleSubmit()" v-on:submit.prevent="onSubmit" >
             <input v-model="wizard.name" type="text" placeholder="Name" />
             <br /><br />
             <span class="helper">Visibility</span>
@@ -196,6 +196,13 @@ export default {
         visibility: "public"
       };
       this.wizardVisible = !this.wizardVisible;
+    },
+    closeOverlay(){
+      this.toggleWizard();
+      this.errorMessage = "";
+    },
+    handleSubmit(){
+      this.createDuel();
     },
     async createDuel() {
       if (this.wizard.name.length < 5 || this.wizard.length > 30) {
