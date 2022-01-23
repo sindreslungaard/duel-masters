@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 - Removed doublebreaker from "Supporting Tulip"
+- Card preview and new duel dialog can now be closed by clicking outside the popup (thanks @AstroProjection)
 
 ## [v2.2] - 21/01/2022
 
