@@ -18,7 +18,7 @@ func SupportingTulip(c *match.Card) {
 	c.ManaCost = 5
 	c.ManaRequirement = []string{civ.Nature}
 
-	c.Use(fx.Creature, fx.Doublebreaker, func(card *match.Card, ctx *match.Context) {
+	c.Use(fx.Creature, func(card *match.Card, ctx *match.Context) {
 
 		if card.Zone != match.BATTLEZONE {
 			return
