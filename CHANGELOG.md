@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Removed doublebreaker from "Supporting Tulip"
 - Card preview and new duel dialog can now be closed by clicking outside the popup (thanks @AstroProjection)
+- Corrected Masked Pomegranate's mana cost from 5 to 4
 
 ## [v2.2] - 21/01/2022
 

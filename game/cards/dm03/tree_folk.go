@@ -14,7 +14,7 @@ func MaskedPomegranate(c *match.Card) {
 	c.Power = 1000
 	c.Civ = civ.Nature
 	c.Family = family.TreeFolk
-	c.ManaCost = 5
+	c.ManaCost = 4
 	c.ManaRequirement = []string{civ.Nature}
 
 	// Get +1000 power for each other nature card in your battle zone
