@@ -25,7 +25,7 @@ func ExplosiveDudeJoe(c *match.Card) {
 func MuramasaDukeOfBlades(c *match.Card) {
 
 	c.Name = "Muramasa, Duke of Blades"
-	c.Power = 3000
+	c.Power = 2000
 	c.Civ = civ.Fire
 	c.Family = family.Human
 	c.ManaCost = 6

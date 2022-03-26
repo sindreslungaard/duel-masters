@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Removed doublebreaker from "Supporting Tulip"
 - Card preview and new duel dialog can now be closed by clicking outside the popup (thanks @AstroProjection)
 - Corrected Masked Pomegranate's mana cost from 5 to 4
+- Corrected Muramasa, Duke of Blades' power from 3000 to 2000
 - Fixed an issue where Silver Axe kept adding mana when clicking "attack creature" while opponent had no creatures in the battle zone
 
 ## [v2.2] - 21/01/2022
