@@ -10,7 +10,7 @@ import (
 // DogarnTheMarauder ...
 func DogarnTheMarauder(c *match.Card) {
 
-	c.Name = "Dogarn the, Marauder"
+	c.Name = "Dogarn, the Marauder"
 	c.Power = 2000
 	c.Civ = civ.Fire
 	c.Family = family.Armorloid
