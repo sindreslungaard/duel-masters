@@ -17,6 +17,6 @@ func SeaSlug(c *match.Card) {
 	c.ManaCost = 8
 	c.ManaRequirement = []string{civ.Water}
 
-	c.Use(fx.Creature, fx.Blocker)
+	c.Use(fx.Creature, fx.Blocker, fx.CantBeBlocked)
 
 }
