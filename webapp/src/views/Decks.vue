@@ -1,6 +1,10 @@
 <template>
   <div>
-    <div v-show="warning || previewCard" @click="closeOverlay()" class="overlay"></div>
+    <div
+      v-show="warning || previewCard"
+      @click="closeOverlay()"
+      class="overlay"
+    ></div>
 
     <div v-if="previewCard" class="card-preview">
       <img :src="`/assets/cards/all/${previewCard.uid}.jpg`" />
@@ -13,7 +17,7 @@
     </div>
 
     <div v-if="showWizard" class="new-duel">
-      <div class="backdrop" @click="showWizard = false" ></div>
+      <div class="backdrop" @click="showWizard = false"></div>
       <div class="wizard">
         <div class="spacer">
           <span class="headline">Edit your deck</span>
@@ -74,6 +78,18 @@
                   <option value="darkness">Darkness</option>
                 </select>
               </th>
+              <th>
+                Race
+                <select v-model="filterFamily">
+                  <option
+                    class="family"
+                    v-for="(family, index) in families"
+                    :key="index"
+                    :value="family"
+                    >{{ family }}</option
+                  >
+                </select>
+              </th>
             </tr>
             <tr
               @dblclick="previewCard = card"
@@ -89,6 +105,7 @@
               <td>{{ card.name }}</td>
               <td class="set">{{ card.set }}</td>
               <td class="civilization">{{ card.civilization }}</td>
+              <td class="family">{{ card.family || "Spell" }}</td>
             </tr>
           </table>
         </div>
@@ -123,11 +140,27 @@
           src="/assets/images/edit_icon.png"
         />
         <div class="right-btns">
-          <a :href="'/deck/' + selectedDeckUid" v-if="selectedDeck && selectedDeck.public" target="_blank">
-            <img class="fl edit-ico share" width="25px" src="/assets/images/share_icon.png"/>
+          <a
+            :href="'/deck/' + selectedDeckUid"
+            v-if="selectedDeck && selectedDeck.public"
+            target="_blank"
+          >
+            <img
+              class="fl edit-ico share"
+              width="25px"
+              src="/assets/images/share_icon.png"
+            />
           </a>
-          <a v-if="selectedDeck && selectedDeck.uid" @click="deleteDeck(selectedDeckUid)" target="_blank">
-            <img class="fl edit-ico share" width="25px" src="/assets/images/delete_icon.png"/>
+          <a
+            v-if="selectedDeck && selectedDeck.uid"
+            @click="deleteDeck(selectedDeckUid)"
+            target="_blank"
+          >
+            <img
+              class="fl edit-ico share"
+              width="25px"
+              src="/assets/images/delete_icon.png"
+            />
           </a>
           <div @click="newDeck()" class="btn new">New Deck</div>
           <template
@@ -140,7 +173,7 @@
           </template>
         </div>
 
-        <div class="right-content bg">
+        <div v-if="selectedDeck" class="right-content bg">
           <div class="cards-table">
             <table>
               <tr>
@@ -148,6 +181,7 @@
                 <th>Card Name</th>
                 <th>Set</th>
                 <th>Civilization</th>
+                <th>Race</th>
               </tr>
               <template v-if="selectedDeck">
                 <tr
@@ -170,6 +204,7 @@
                   <td>{{ card.name }}</td>
                   <td class="set">{{ card.set }}</td>
                   <td class="civilization">{{ card.civilization }}</td>
+                  <td class="civilization">{{ card.family }}</td>
                 </tr>
               </template>
             </table>
@@ -208,7 +243,9 @@ export default {
 
       filterCardName: "",
       filterCivilization: "all",
+      filterFamily: "All",
       filterSet: "All",
+      families: ["All", "Spell"],
 
       sets: [],
       cards: [],
@@ -307,7 +344,7 @@ export default {
       });
     },
 
-    closeOverlay(){
+    closeOverlay() {
       this.previewCard = null;
       this.warning = null;
     },
@@ -331,11 +368,11 @@ export default {
       try {
         let res = await call({
           path: "/deck/" + this.selectedDeckUid,
-          method: "DELETE",
+          method: "DELETE"
         });
 
         this.decks = this.decks.filter(x => x.uid !== this.selectedDeckUid);
-        if(this.decks.length > 0) {
+        if (this.decks.length > 0) {
           this.selectedDeckUid = this.decks[0].uid;
           this.selectDeck(this.decks[0]);
         } else {
@@ -344,8 +381,7 @@ export default {
 
         this.warning = "Successfully deleted your deck";
       } catch (e) {
-        this.warning =
-          "Couldn't delete the deck you selected";
+        this.warning = "Couldn't delete the deck you selected";
       }
     },
 
@@ -406,6 +442,16 @@ export default {
           public: false
         });
       }
+
+      let families = [];
+      for (let c of this.cards) {
+        if (c.family && !families.includes(c.family)) {
+          families.push(c.family);
+        }
+      }
+      families.sort();
+      this.families.push(...families);
+
       this.selectedDeck = this.decks[0];
       this.deckCopy = JSON.parse(JSON.stringify(this.selectedDeck));
       this.selectedDeckUid = this.selectedDeck.uid;
@@ -440,6 +486,14 @@ export default {
       if (this.filterCivilization !== "all") {
         filteredCards = filteredCards.filter(
           card => card.civilization === this.filterCivilization
+        );
+      }
+
+      if (this.filterFamily.toLowerCase() !== "all") {
+        filteredCards = filteredCards.filter(
+          card =>
+            (this.filterFamily.toLowerCase() === "spell" && !card.family) ||
+            card.family === this.filterFamily
         );
       }
 
@@ -891,6 +945,9 @@ a {
 
 .set {
   text-transform: uppercase;
+}
+
+.family {
 }
 
 .civilization {
