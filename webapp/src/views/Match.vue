@@ -2,13 +2,23 @@
   <div>
     <div
       v-show="
-        wait || previewCard || previewCards || errorMessage || warning || action || opponentDisconnected || reconnecting
+        wait ||
+          previewCard ||
+          previewCards ||
+          errorMessage ||
+          warning ||
+          action ||
+          opponentDisconnected ||
+          reconnecting
       "
       class="overlay"
     ></div>
 
     <div v-if="opponentDisconnected && !errorMessage" class="error">
-      <p>Your opponent disconnected or left the match. Waiting for them to reconnect{{ loadingDots }}</p>
+      <p>
+        Your opponent disconnected or left the match. Waiting for them to
+        reconnect{{ loadingDots }}
+      </p>
       <div @click="redirect('overview')" class="btn">Leave duel</div>
     </div>
 
@@ -137,8 +147,25 @@
       <div :class="state.spectator ? 'fullsize-chatbox' : 'chatbox'">
         <div class="messages">
           <div id="messages" class="messages-helper">
-            <div class="message" :style="{'background': message.sender.toLowerCase() === 'server' ? 'none' : '#202124'}" v-for="(message, index) in chatMessages" :key="index">
-              <div class="message-sender" :style="{'color': message.color || 'orange'}">{{ message.sender.toLowerCase() == "server" ? "-" : (message.sender + ":")}} </div>
+            <div
+              class="message"
+              :style="{
+                background:
+                  message.sender.toLowerCase() === 'server' ? 'none' : '#202124'
+              }"
+              v-for="(message, index) in chatMessages"
+              :key="index"
+            >
+              <div
+                class="message-sender"
+                :style="{ color: message.color || 'orange' }"
+              >
+                {{
+                  message.sender.toLowerCase() == "server"
+                    ? "-"
+                    : message.sender + ":"
+                }}
+              </div>
               <div class="message-text">{{ message.message }}</div>
             </div>
           </div>
@@ -338,7 +365,13 @@
       </div>
 
       <div class="stage me bt">
-        <div @drop='drop($event, "playzone")' @dragover.prevent @dragenter.prevent ref="myplayzone" class="playzone">
+        <div
+          @drop="drop($event, 'playzone')"
+          @dragover.prevent
+          @dragenter.prevent
+          ref="myplayzone"
+          class="playzone"
+        >
           <div class="card placeholder">
             <img src="/assets/cards/backside.png" />
           </div>
@@ -371,7 +404,13 @@
           </div>
         </div>
 
-        <div @drop='drop($event, "manazone")' @dragover.prevent @dragenter.prevent ref="mymanazone" class="manazone">
+        <div
+          @drop="drop($event, 'manazone')"
+          @dragover.prevent
+          @dragenter.prevent
+          ref="mymanazone"
+          class="manazone"
+        >
           <div class="card mana placeholder">
             <img src="/assets/cards/backside.png" />
           </div>
@@ -391,8 +430,14 @@
           <div>You are spectating</div>
           <Username :color="state.me.color">{{ state.me.username }}</Username>
           <div>vs</div>
-          <Username :color="state.opponent.color">{{ state.opponent.username }}</Username>
+          <Username :color="state.opponent.color">{{
+            state.opponent.username
+          }}</Username>
         </div>
+        <div class="spectator-leave" v-if="state.spectator">
+          <span @click="$router.push('/overview')">Stop spectating</span>
+        </div>
+
         <div class="card placeholder">
           <img src="/assets/cards/backside.png" />
         </div>
@@ -405,7 +450,7 @@
         >
           <img
             draggable
-            @dragstart='startDrag($event, card)'
+            @dragstart="startDrag($event, card)"
             @dragend="stopDrag($event, card)"
             :class="[handSelection === card ? 'glow-' + card.civilization : '']"
             :src="`/assets/cards/all/${card.uid}.jpg`"
@@ -428,19 +473,19 @@ const send = (client, message) => {
 };
 
 function sound(src) {
-    this.sound = document.createElement("audio");
-    this.sound.src = src;
-    this.sound.setAttribute("preload", "auto");
-    this.sound.setAttribute("controls", "none");
-    this.sound.style.display = "none";
-    this.sound.volume = 0.3;
-    document.body.appendChild(this.sound);
-    this.play = function() {
-        this.sound.play();
-    };
-    this.stop = function() {
-        this.sound.pause();
-    };
+  this.sound = document.createElement("audio");
+  this.sound.src = src;
+  this.sound.setAttribute("preload", "auto");
+  this.sound.setAttribute("controls", "none");
+  this.sound.style.display = "none";
+  this.sound.volume = 0.3;
+  document.body.appendChild(this.sound);
+  this.play = function() {
+    this.sound.play();
+  };
+  this.stop = function() {
+    this.sound.pause();
+  };
 }
 
 let turnSound = new sound("/assets/turn.mp3");
@@ -645,18 +690,17 @@ export default {
       evt.dataTransfer.effectAllowed = "move";
       evt.dataTransfer.setData("vid", card.virtualId);
 
-      if(card.canBePlayed) {
+      if (card.canBePlayed) {
         this.$refs.myplayzone.style.backgroundColor = "#507053";
       } else {
         this.$refs.myplayzone.style.backgroundColor = "#7d5252";
       }
-      
-      if(!this.state.hasAddedManaThisRound) {
+
+      if (!this.state.hasAddedManaThisRound) {
         this.$refs.mymanazone.style.backgroundColor = "#507053";
       } else {
         this.$refs.mymanazone.style.backgroundColor = "#7d5252";
       }
-      
     },
     stopDrag() {
       this.$refs.myplayzone.style.backgroundColor = "transparent";
@@ -669,33 +713,31 @@ export default {
       console.log(vid, card);
 
       this.handSelection = card;
-      
-      if(zone == "manazone") {
+
+      if (zone == "manazone") {
         this.addToManazone();
-      } else if(zone == "playzone") {
+      } else if (zone == "playzone") {
         this.addToPlayzone();
       }
     }
   },
-  created() {  
-
+  created() {
     let lastReconnect = 0;
 
     const connect = async () => {
-
-      if(this.errorMessage.includes("won")) {
+      if (this.errorMessage.includes("won")) {
         return;
       }
 
-      if(this.preventReconnect) {
+      if (this.preventReconnect) {
         return;
       }
 
-      if(lastReconnect > 0) {
+      if (lastReconnect > 0) {
         console.log("Attempting to reconnect..");
       }
-      
-      if(lastReconnect > Date.now() - 5000) {
+
+      if (lastReconnect > Date.now() - 5000) {
         setTimeout(connect, 1000);
         return;
       }
@@ -706,8 +748,8 @@ export default {
           path: `/match/${this.$route.params.id}`,
           method: "GET"
         });
-      } catch(err) {
-        if(err.response && err.response.status == 404) {
+      } catch (err) {
+        if (err.response && err.response.status == 404) {
           this.errorMessage = "This duel has been closed";
         }
       }
@@ -748,7 +790,7 @@ export default {
 
           case "hello": {
             send(ws, {
-                header: "join_match"
+              header: "join_match"
             });
             break;
           }
@@ -798,7 +840,7 @@ export default {
             this.handSelection = null;
             this.playzoneSelection = null;
 
-            if(this.state.myTurn !== data.state.myTurn) {
+            if (this.state.myTurn !== data.state.myTurn) {
               turnSound.play();
               console.log("turn change");
             }
@@ -870,7 +912,6 @@ export default {
           }
         }
       };
-
     };
 
     connect();
@@ -905,9 +946,23 @@ export default {
   align-items: center;
   justify-content: center;
   color: #999;
-  margin: 8vh 0;
+  margin-top: 7vh;
   div {
     margin: 0 3px;
+  }
+}
+
+.spectator-leave {
+  color: #999;
+  text-align: center;
+  margin-top: 10px;
+  margin-bottom: 7vh;
+  text-decoration: underline;
+  color: #777;
+  span {
+    &:hover {
+      cursor: pointer;
+    }
   }
 }
 
@@ -1137,10 +1192,10 @@ export default {
 }
 
 .message {
-   display: flex;
-   margin-top: 5px;
-   border-radius: 3px;
-   padding: 3px;
+  display: flex;
+  margin-top: 5px;
+  border-radius: 3px;
+  padding: 3px;
 }
 
 .message-sender {
@@ -1453,11 +1508,11 @@ export default {
 
 .noselect {
   -webkit-touch-callout: none; /* iOS Safari */
-    -webkit-user-select: none; /* Safari */
-     -khtml-user-select: none; /* Konqueror HTML */
-       -moz-user-select: none; /* Old versions of Firefox */
-        -ms-user-select: none; /* Internet Explorer/Edge */
-            user-select: none; /* Non-prefixed version, currently
+  -webkit-user-select: none; /* Safari */
+  -khtml-user-select: none; /* Konqueror HTML */
+  -moz-user-select: none; /* Old versions of Firefox */
+  -ms-user-select: none; /* Internet Explorer/Edge */
+  user-select: none; /* Non-prefixed version, currently
                                   supported by Chrome, Edge, Opera and Firefox */
 }
 </style>
