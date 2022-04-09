@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed an issue where Silver Axe kept adding mana when clicking "attack creature" while opponent had no creatures in the battle zone
 - Added new filter "race" in deck builder
 - Add button to stop spectating
+- Fixed an issue where Horrid Worm's effect did not apply when the opponent has a blocker but chose to not block
 
 ## [v2.2] - 21/01/2022
 
