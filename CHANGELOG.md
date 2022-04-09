@@ -17,6 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed an issue where Horrid Worm's effect did not apply when the opponent has a blocker but chose to not block
 - Fixed a typo in "Dogarn, the Marauder"'s name
 - New card "Twin-Cannon Skyterror"
+- New card "Bolgash Dragon"
 
 ## [v2.2] - 21/01/2022
 

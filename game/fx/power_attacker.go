@@ -36,3 +36,8 @@ func PowerAttacker3000(card *match.Card, ctx *match.Context) {
 func PowerAttacker4000(card *match.Card, ctx *match.Context) {
 	powerAttacker(card, ctx, 4000)
 }
+
+// PowerAttacker8000 adds the power attacker +8000 condition to the card
+func PowerAttacker8000(card *match.Card, ctx *match.Context) {
+	powerAttacker(card, ctx, 8000)
+}
