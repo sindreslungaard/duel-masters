@@ -18,6 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed a typo in "Dogarn, the Marauder"'s name
 - New card "Twin-Cannon Skyterror"
 - New card "Bolgash Dragon"
+- New card "La Guile, Seeker of Skyfire"
 
 ## [v2.2] - 21/01/2022
 
