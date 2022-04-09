@@ -7,15 +7,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+### Added
+
+## [v2.3] - 09/04/2022
+
+### Fixed
+
 - Removed doublebreaker from "Supporting Tulip"
-- Card preview and new duel dialog can now be closed by clicking outside the popup (thanks @AstroProjection)
 - Corrected Masked Pomegranate's mana cost from 5 to 4
 - Corrected Muramasa, Duke of Blades' power from 3000 to 2000
 - Fixed an issue where Silver Axe kept adding mana when clicking "attack creature" while opponent had no creatures in the battle zone
-- Added new filter "race" in deck builder
-- Add button to stop spectating
 - Fixed an issue where Horrid Worm's effect did not apply when the opponent has a blocker but chose to not block
 - Fixed a typo in "Dogarn, the Marauder"'s name
+
+### Added
+
+- Card preview and new duel dialog can now be closed by clicking outside the popup (thanks @AstroProjection)
+- Added new filter "race" in deck builder
+- Add button to stop spectating
 - New card "Twin-Cannon Skyterror"
 - New card "Bolgash Dragon"
 - New card "La Guile, Seeker of Skyfire"
