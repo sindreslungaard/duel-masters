@@ -20,6 +20,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - New card "Bolgash Dragon"
 - New card "La Guile, Seeker of Skyfire"
 - New card "Sea Slug"
+- New card "Rikabu, the Dismantler"
 
 ## [v2.2] - 21/01/2022
 
