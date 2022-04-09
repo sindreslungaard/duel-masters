@@ -22,6 +22,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - New card "Sea Slug"
 - New card "Rikabu, the Dismantler"
 - New card "Cannoneer Bargon"
+- New card "Bombat, General of Speed"
 
 ## [v2.2] - 21/01/2022
 
