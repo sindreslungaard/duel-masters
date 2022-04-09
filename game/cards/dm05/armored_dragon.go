@@ -20,3 +20,17 @@ func BolgashDragon(c *match.Card) {
 	c.Use(fx.Creature, fx.Triplebreaker, fx.PowerAttacker8000)
 
 }
+
+// BillionDegreeDragon ...
+func BillionDegreeDragon(c *match.Card) {
+
+	c.Name = "Billion-Degree Dragon"
+	c.Power = 15000
+	c.Civ = civ.Fire
+	c.Family = family.ArmoredDragon
+	c.ManaCost = 10
+	c.ManaRequirement = []string{civ.Fire}
+
+	c.Use(fx.Creature, fx.Triplebreaker)
+
+}
