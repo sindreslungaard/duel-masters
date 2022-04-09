@@ -17,6 +17,6 @@ func CannoneerBargon(c *match.Card) {
 	c.ManaCost = 4
 	c.ManaRequirement = []string{civ.Fire}
 
-	c.Use(fx.Creature, fx.ShieldTrigger)
+	c.Use(fx.Creature, fx.ShieldTrigger, fx.CantAttackPlayers)
 
 }

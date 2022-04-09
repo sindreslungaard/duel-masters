@@ -9,7 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-- Fixed missing "can't be blocked" for Sea Slug
+- Fixed missing "can't be blocked" effect for Sea Slug
+- Fixed missing "can't attack players" effect for Cannoneer Bargon
 
 ### Added
 
