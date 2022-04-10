@@ -18,6 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - New card "Split-Head Hydroturtle Q"
 - New card "Bladerush Skyterror Q"
 - New card "Ruthless Skyterror"
+- New card "Death Cruzer, the Annihilator"
 
 ## [v2.3] - 09/04/2022
 
