@@ -6,6 +6,7 @@ import (
 	"duel-masters/game/family"
 	"duel-masters/game/fx"
 	"duel-masters/game/match"
+	"fmt"
 )
 
 // BallusDogfightEnforcerQ ...
@@ -20,12 +21,17 @@ func BallusDogfightEnforcerQ(c *match.Card) {
 
 	c.Use(fx.Creature, fx.Survivor, fx.When(fx.EndOfMyTurn, func(card *match.Card, ctx *match.Context) {
 
+		if card.Zone != match.BATTLEZONE {
+			return
+		}
+
 		fx.FindFilter(
 			card.Player,
 			match.BATTLEZONE,
 			func(x *match.Card) bool { return x.HasCondition(cnd.Survivor) },
 		).Map(func(x *match.Card) {
-			card.Tapped = false
+			x.Tapped = false
+			ctx.Match.Chat("Server", fmt.Sprintf("%s was untapped by %s's survivor ability", x.Name, card.Name))
 		})
 
 	}))
