@@ -64,3 +64,42 @@ func BladerushSkyterrorQ(c *match.Card) {
 	}))
 
 }
+
+// RuthlessSkyterror ...
+func RuthlessSkyterror(c *match.Card) {
+
+	c.Name = "Ruthless Skyterror"
+	c.Power = 6000
+	c.Civ = civ.Fire
+	c.Family = family.ArmoredWyvern
+	c.ManaCost = 4
+	c.ManaRequirement = []string{civ.Fire}
+
+	c.Use(fx.Creature, fx.CantAttackPlayers, func(card *match.Card, ctx *match.Context) {
+
+		event, ok := ctx.Event.(*match.AttackCreature)
+
+		if !ok || event.CardID != card.ID {
+			return
+		}
+
+		fx.FindFilter(
+			ctx.Match.Opponent(card.Player),
+			match.BATTLEZONE,
+			func(x *match.Card) bool {
+				return x.Civ == civ.Water && !x.Tapped
+			},
+		).Map(func(x *match.Card) {
+			// don't add if already in the list of attackable creatures
+			for _, creature := range event.AttackableCreatures {
+				if creature.ID == x.ID {
+					return
+				}
+			}
+
+			event.AttackableCreatures = append(event.AttackableCreatures, x)
+		})
+
+	})
+
+}
