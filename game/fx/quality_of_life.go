@@ -335,3 +335,29 @@ func Destroyed(card *match.Card, ctx *match.Context) bool {
 	return false
 
 }
+
+// EndOfTurn returns true if the turn is ending, pre end of turn triggers
+func EndOfTurn(card *match.Card, ctx *match.Context) bool {
+	_, ok := ctx.Event.(*match.EndStep)
+
+	if !ok {
+		return false
+	}
+
+	return ok
+}
+
+// EndOfTurn returns true if the turn is ending, pre end of turn triggers
+func EndOfMyTurn(card *match.Card, ctx *match.Context) bool {
+	_, ok := ctx.Event.(*match.EndStep)
+
+	if !ok {
+		return false
+	}
+
+	if ctx.Match.IsPlayerTurn(card.Player) {
+		return true
+	}
+
+	return false
+}

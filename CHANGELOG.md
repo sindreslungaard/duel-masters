@@ -14,6 +14,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- New card "Ballus, Dogfight Enforcer Q"
+
 ## [v2.3] - 09/04/2022
 
 ### Fixed

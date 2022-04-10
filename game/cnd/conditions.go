@@ -18,6 +18,7 @@ const (
 	CantAttackCreatures = "cant_attack_creatures"
 	CantAttackPlayers   = "cant_attack_players"
 	ReducedCost         = "reduced_cost"
-	IncreasedCost		= "increased_cost"
+	IncreasedCost       = "increased_cost"
 	Evolution           = "evolution"
+	Survivor            = "survivor"
 )
