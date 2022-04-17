@@ -11,6 +11,7 @@
           opponentDisconnected ||
           reconnecting
       "
+      @click="handleOverlayClick()"
       class="overlay"
     ></div>
 
@@ -48,13 +49,12 @@
       <div @click="dismissLarge()" class="btn">Close</div>
     </div>
 
-    <div v-if="previewCards" class="cards-preview">
+    <div v-if="previewCards" class="cards-preview" @click="dismissLarge();">
       <h1>{{ previewCardsText }}</h1>
       <img
         @contextmenu.prevent="
-          previewCards = null;
-          previewCardsText = null;
-          previewCard = card;
+          dismissLarge();
+          showLarge(card);
         "
         v-for="(card, index) in previewCards"
         :key="index"
@@ -63,8 +63,7 @@
       <br /><br />
       <div
         @click="
-          previewCards = null;
-          previewCardsText = null;
+          dismissLarge();
         "
         class="btn"
       >
@@ -565,6 +564,12 @@ export default {
       this.ws.send(JSON.stringify({ header: "choose_deck", uid }));
     },
 
+    handleOverlayClick() {
+      if(this.previewCard || this.previewCards) {
+        this.dismissLarge();
+      }
+    },
+
     makeHandSelection(card) {
       if (!this.state.myTurn) {
         return;
@@ -645,6 +650,8 @@ export default {
 
     dismissLarge() {
       this.previewCard = null;
+      this.previewCards = null;
+      this.previewCardsText = null;
     },
 
     onPlayzoneClicked(card) {
