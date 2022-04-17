@@ -87,8 +87,10 @@
       <div v-if="!actionObject" class="action-cards">
         <div v-for="(card, index) in action.cards" :key="index" class="card">
           <img
-            @click="actionSelect(card)"
+            @mouseenter="actionSelectMouseEnter($event, card)"
+            @mousedown="actionSelect(card)"
             :class="[
+              'no-drag',
               actionSelects.includes(card) ? 'glow-' + card.civilization : ''
             ]"
             :src="`/assets/cards/all/${card.uid}.jpg`"
@@ -102,8 +104,10 @@
           class="card"
         >
           <img
-            @click="actionSelect(card)"
+            @mouseenter="actionSelectMouseEnter($event, card)"
+            @mousedown="actionSelect(card)"
             :class="[
+              'no-drag',
               actionSelects.includes(card) ? 'glow-' + card.civilization : ''
             ]"
             :src="`/assets/cards/all/${card.uid}.jpg`"
@@ -595,6 +599,14 @@ export default {
       this.actionSelects.push(card);
     },
 
+    actionSelectMouseEnter(event, card) {
+      const isLeftClick = event.buttons === 1;
+
+      if(isLeftClick) {
+        this.actionSelect(card);
+      }
+    },
+
     cancelAction() {
       if (!this.action || !this.action.cancellable) {
         return;
@@ -1045,6 +1057,15 @@ export default {
     overflow: auto;
     img {
       height: 125px;
+
+      &.no-drag {
+        user-drag: none;
+        -webkit-user-drag: none;
+        user-select: none;
+        -moz-user-select: none;
+        -webkit-user-select: none;
+        -ms-user-select: none;
+      }
     }
     .card {
       margin: 0 7px;
