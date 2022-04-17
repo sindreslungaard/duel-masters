@@ -462,9 +462,8 @@
 </template>
 
 <script>
-import config from "../config";
 import ClipboardJS from "clipboard";
-import { call, ws_protocol } from "../remote";
+import { call, ws_protocol, host } from "../remote";
 import CardShowDialog from "../components/dialogs/CardShowDialog";
 import Username from "../components/Username.vue";
 
@@ -510,7 +509,7 @@ export default {
       invite:
         location.protocol +
         "//" +
-        location.host +
+        host +
         "/invite/" +
         this.$route.params.id,
       inviteCopied: false,
@@ -758,7 +757,7 @@ export default {
 
       // Connect to the server
       const ws = new WebSocket(
-        ws_protocol + window.location.host + "/ws/" + this.$route.params.id
+        ws_protocol + host + "/ws/" + this.$route.params.id
       );
       this.ws = ws;
 

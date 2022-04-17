@@ -143,7 +143,7 @@
 </template>
 
 <script>
-import { call, ws_protocol } from "../remote";
+import { call, ws_protocol, host } from "../remote";
 import Header from "../components/Header.vue";
 import Username from "../components/Username.vue";
 import { format, fromUnixTime, formatDistanceToNowStrict, isBefore, formatDistance } from "date-fns";
@@ -292,7 +292,7 @@ export default {
     // Connect to the server
     try {
       const ws = new WebSocket(
-        ws_protocol + window.location.host + "/ws/lobby"
+        ws_protocol + host + "/ws/lobby"
       );
       this.ws = ws;
 
