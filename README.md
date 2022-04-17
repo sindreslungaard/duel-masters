@@ -22,7 +22,7 @@ docker run -d \
 ```
 
 
-# Setting up for local development
+# Setting up for local development (Frontend and Backend)
 
 1. Fork the `duel-masters` repo on GitHub.
 2. Clone your fork locally:
@@ -49,6 +49,24 @@ restart_after=
 
 
 7. Go to `http://localhost` and create a user as well as a deck. To set the deck as a standard deck, find it in MongoDB and change the `standard` field to `true`.
+
+# Setting up for local development (Frontend only)
+
+1. git clone https://github.com/sindreslungaard/duel-masters.git
+
+2. Navigate to the `webapp` directory and run `npm install` and `npm run serve`
+
+3. Override your host config
+    ``` 
+    localStorage.setItem(
+        "config", 
+        JSON.stringify({ 
+            host: "shobu.io", 
+            ws_protocol: "wss://", 
+            api: "https://shobu.io/api" 
+        })
+    )
+    ```
 
 # Changelog
 A changelog starting from 11/11/2021 can be found [here](https://github.com/sindreslungaard/duel-masters/blob/master/CHANGELOG.md)

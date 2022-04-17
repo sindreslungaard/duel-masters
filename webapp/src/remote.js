@@ -1,10 +1,10 @@
 import axios from "axios";
 import config from "./config";
 
-export const ws_protocol = location.protocol == "https:" ? "wss://" : "ws://";
+export const ws_protocol = config.ws_protocol;
+export const host = config.host;
 
 export const call = (opts) => {
-
   return new Promise((resolve, reject) => {
 
     let headers = opts.headers || {};
@@ -17,7 +17,7 @@ export const call = (opts) => {
     headers["content-type"] = "application/json";
 
     axios({
-      url: "/api" + opts.path,
+      url: config.api + opts.path,
       method: opts.method.toUpperCase(),
       headers: headers,
       data: opts.body,
@@ -29,9 +29,7 @@ export const call = (opts) => {
       .catch(err => {
         reject(err);
       });
-
   });
-
 };
 
 export const raw = async (opts) => {
