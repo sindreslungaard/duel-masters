@@ -273,7 +273,12 @@
           </div>
         </div>
 
-        <div class="shieldzone">
+        <div class="shieldzone"
+          @drop="drop($event, 'opponentshieldzone')"
+          @dragover.prevent
+          @dragenter.prevent
+          ref="opponentshieldzone"
+        >
           <div class="card shield placeholder">
             <img src="/assets/cards/backside.png" />
           </div>
@@ -286,7 +291,12 @@
           </div>
         </div>
 
-        <div class="playzone">
+        <div class="playzone"
+           @drop="drop($event, 'opponentsplayzone')"
+           @dragover.prevent
+           @dragenter.prevent
+           ref="opponentsplayzone"
+        >
           <div class="card placeholder">
             <img src="/assets/cards/backside.png" />
           </div>
@@ -386,6 +396,9 @@
             :class="['card', { tapped: card.tapped }]"
           >
             <img
+              draggable
+              @dragstart="startDrag($event, card, 'playzone')"
+              @dragend="stopDrag('playzone')"
               :class="
                 playzoneSelection === card ? 'glow-' + card.civilization : ''
               "
@@ -453,8 +466,8 @@
         >
           <img
             draggable
-            @dragstart="startDrag($event, card)"
-            @dragend="stopDrag($event, card)"
+            @dragstart="startDrag($event, card, 'hand')"
+            @dragend="stopDrag('hand')"
             :class="[handSelection === card ? 'glow-' + card.civilization : '']"
             :src="`/assets/cards/all/${card.uid}.jpg`"
           />
@@ -703,39 +716,67 @@ export default {
         })
       );
     },
-    startDrag(evt, card) {
+    startDrag(evt, card, source) {
       evt.dataTransfer.dropEffect = "move";
       evt.dataTransfer.effectAllowed = "move";
       evt.dataTransfer.setData("vid", card.virtualId);
 
-      if (card.canBePlayed) {
-        this.$refs.myplayzone.style.backgroundColor = "#507053";
-      } else {
-        this.$refs.myplayzone.style.backgroundColor = "#7d5252";
+      const greenHighlight = "#507053";
+      const redHighlight = "#7d5252";
+
+      if(source === "hand") {
+        if (card.canBePlayed) {
+          this.$refs.myplayzone.style.backgroundColor = greenHighlight;
+        } else {
+          this.$refs.myplayzone.style.backgroundColor = redHighlight;
+        }
+
+        if (!this.state.hasAddedManaThisRound) {
+          this.$refs.mymanazone.style.backgroundColor = greenHighlight;
+        } else {
+          this.$refs.mymanazone.style.backgroundColor = redHighlight;
+        }
+      } else if (source === "playzone") {
+        if (this.state.opponent.playzone.length) {
+          this.$refs.opponentsplayzone.style.backgroundColor = greenHighlight;
+        } else {
+          this.$refs.opponentsplayzone.style.backgroundColor = redHighlight;
+        }
+
+        this.$refs.opponentshieldzone.style.backgroundColor = greenHighlight;
       }
 
-      if (!this.state.hasAddedManaThisRound) {
-        this.$refs.mymanazone.style.backgroundColor = "#507053";
-      } else {
-        this.$refs.mymanazone.style.backgroundColor = "#7d5252";
-      }
     },
-    stopDrag() {
-      this.$refs.myplayzone.style.backgroundColor = "transparent";
-      this.$refs.mymanazone.style.backgroundColor = "transparent";
+    stopDrag(source) {
+      if(source === "hand") {
+        this.$refs.myplayzone.style.backgroundColor = "transparent";
+        this.$refs.mymanazone.style.backgroundColor = "transparent";
+      } else if (source === "playzone") {
+        this.$refs.opponentsplayzone.style.backgroundColor = "transparent";
+        this.$refs.opponentshieldzone.style.backgroundColor = "transparent";
+      }
     },
     drop(event, zone) {
       const vid = event.dataTransfer.getData("vid");
-      const card = this.state.me.hand.find(x => x.virtualId === vid);
 
-      console.log(vid, card);
+      if(["manazone", "playzone"].includes(zone)) {
+        this.handSelection = this.state.me.hand.find(x => x.virtualId === vid);
 
-      this.handSelection = card;
+        if (zone === "manazone") {
+          this.addToManazone();
+        } else if (zone === "playzone") {
+          this.addToPlayzone();
+        }
+      }
 
-      if (zone == "manazone") {
-        this.addToManazone();
-      } else if (zone == "playzone") {
-        this.addToPlayzone();
+      if(["opponentshieldzone", "opponentsplayzone"].includes(zone)) {
+        this.playzoneSelection = this.state.me.playzone.find(x => x.virtualId === vid);
+
+        if (zone === "opponentshieldzone") {
+          this.attackPlayer();
+        } else if (zone === "opponentsplayzone") {
+          this.attackCreature();
+        }
       }
     }
   },
