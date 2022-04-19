@@ -9,6 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+### Added
+
+## v2.4 - 19/04/2022
+
+### Fixed
+
 - Fixed missing "can't be blocked" effect for Sea Slug
 - Fixed missing "can't attack players" effect for Cannoneer Bargon
 
@@ -19,6 +25,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - New card "Bladerush Skyterror Q"
 - New card "Ruthless Skyterror"
 - New card "Death Cruzer, the Annihilator"
+- Dismiss large card(s) by clicking the overlay (thanks @vasyop)
+- Select cards by dragging over them (thanks @vasyop)
+- Attack shields and creatures by drag and drop (thanks @vasyop)
 
 ## [v2.3] - 09/04/2022
 
