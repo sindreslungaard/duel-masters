@@ -58,6 +58,13 @@ const router = new Router({
     },
 
     {
+      path: "/settings",
+      name: "settings",
+      component: () => import("./views/Settings.vue"),
+      meta: { auth: true }
+    },
+
+    {
       path: "/duel/:id",
       name: "duel",
       component: () => import("./views/Match.vue"),

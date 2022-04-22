@@ -1,5 +1,8 @@
 <template>
-  <div class="user-name" :style="hub ? 'width: 200px' : ''">
+  <div
+    :class="['user-name', muteUser ? 'allow-overflow' : '']"
+    :style="hub ? 'width: 200px' : ''"
+  >
     <div
       v-if="hub"
       class="user-status"
@@ -11,21 +14,52 @@
         {{ hub == "match" ? "In a duel" : "Online" }}
       </div>
     </div>
-    <span :style="'color: ' + (color ? color : 'orange')"><slot></slot></span>
+    <span
+      :style="
+        'color: ' + (color ? color : 'orange') + '; height: 20px; flex-grow: 1;'
+      "
+      ><slot></slot
+    ></span>
+    <div class="mute-icon-container">
+      <MuteIcon
+        v-if="muteUser"
+        :player="muteUser"
+        @toggled="$emit('muteToggled')"
+      />
+    </div>
   </div>
 </template>
 
 <script>
+import MuteIcon from "./MuteIcon.vue";
 export default {
+  components: { MuteIcon },
   name: "username",
-  props: ["hub", "color"]
+  props: ["hub", "color", "muteUser"]
 };
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 .user-name {
+  display: flex;
+  align-items: center;
   text-shadow: 1px 1px #000;
   overflow: hidden;
+
+  &.allow-overflow {
+    overflow: visible;
+  }
+
+  .mute-icon-container {
+    display: flex;
+    align-items: center;
+    margin-left: 5px;
+    opacity: 0;
+  }
+
+  &:hover .mute-icon-container {
+    opacity: 1;
+  }
 }
 
 .user-status {

@@ -7,6 +7,8 @@
         <li class="no-cursor">|</li>
         <li @click="$router.push('decks')">Decks</li>
         <li class="no-cursor">|</li>
+        <li @click="$router.push('settings')">Settings</li>
+        <li class="no-cursor">|</li>
         <li @click="$router.push('logout')">Logout</li>
         <li class="no-cursor">|</li>
         <li>
