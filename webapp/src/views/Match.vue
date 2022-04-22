@@ -49,7 +49,7 @@
       <div @click="dismissLarge()" class="btn">Close</div>
     </div>
 
-    <div v-if="previewCards" class="cards-preview" @click="dismissLarge();">
+    <div v-if="previewCards" class="cards-preview" @click="dismissLarge()">
       <h1>{{ previewCardsText }}</h1>
       <img
         @contextmenu.prevent="
@@ -61,12 +61,7 @@
         :src="`/assets/cards/all/${card.uid}.jpg`"
       />
       <br /><br />
-      <div
-        @click="
-          dismissLarge();
-        "
-        class="btn"
-      >
+      <div @click="dismissLarge()" class="btn">
         Close
       </div>
     </div>
@@ -156,7 +151,9 @@
                 background:
                   message.sender.toLowerCase() === 'server' ? 'none' : '#202124'
               }"
-              v-for="(message, index) in chatMessages"
+              v-for="(message, index) in chatMessages.filter(
+                m => !mutedPlayers.includes(m.sender)
+              )"
               :key="index"
             >
               <div
@@ -170,6 +167,15 @@
                 }}
               </div>
               <div class="message-text">{{ message.message }}</div>
+              <div class="mute-icon-container">
+                <MuteIcon
+                  v-if="
+                    !['server', username].includes(message.sender.toLowerCase())
+                  "
+                  :player="message.sender"
+                  @toggled="refreshMutedPlayers()"
+                />
+              </div>
             </div>
           </div>
         </div>
@@ -273,7 +279,8 @@
           </div>
         </div>
 
-        <div class="shieldzone"
+        <div
+          class="shieldzone"
           @drop="drop($event, 'opponentshieldzone')"
           @dragover.prevent
           @dragenter.prevent
@@ -291,11 +298,12 @@
           </div>
         </div>
 
-        <div class="playzone"
-           @drop="drop($event, 'opponentsplayzone')"
-           @dragover.prevent
-           @dragenter.prevent
-           ref="opponentsplayzone"
+        <div
+          class="playzone"
+          @drop="drop($event, 'opponentsplayzone')"
+          @dragover.prevent
+          @dragenter.prevent
+          ref="opponentsplayzone"
         >
           <div class="card placeholder">
             <img src="/assets/cards/backside.png" />
@@ -482,6 +490,8 @@ import ClipboardJS from "clipboard";
 import { call, ws_protocol, host } from "../remote";
 import CardShowDialog from "../components/dialogs/CardShowDialog";
 import Username from "../components/Username.vue";
+import MuteIcon from "../components/MuteIcon.vue";
+import { isMuted, getMutedPlayers, didSeeMuteWarning } from "../helpers/mute";
 
 const send = (client, message) => {
   client.send(JSON.stringify(message));
@@ -509,7 +519,8 @@ let playerJoinedSound = new sound("/assets/player_joined.mp3");
 export default {
   name: "game",
   components: {
-    Username
+    Username,
+    MuteIcon
   },
   data() {
     return {
@@ -523,11 +534,7 @@ export default {
 
       loadingDots: "",
       invite:
-        location.protocol +
-        "//" +
-        host +
-        "/invite/" +
-        this.$route.params.id,
+        location.protocol + "//" + host + "/invite/" + this.$route.params.id,
       inviteCopied: false,
       inviteCopyTask: null,
 
@@ -554,8 +561,12 @@ export default {
 
       previewCard: null,
       previewCards: null,
-      previewCardsText: null
+      previewCardsText: null,
+      mutedPlayers: getMutedPlayers()
     };
+  },
+  computed: {
+    username: () => localStorage.getItem("username")
   },
   methods: {
     redirect(to) {
@@ -568,6 +579,7 @@ export default {
       this.chatMessage = "";
       this.ws.send(JSON.stringify({ header: "chat", message }));
     },
+
     chat(sender, color, message) {
       this.chatMessages.push({ sender, color, message });
       this.$nextTick(() => {
@@ -576,13 +588,22 @@ export default {
       });
     },
 
+    refreshMutedPlayers(e) {
+      if (!e && !didSeeMuteWarning()) {
+        this.warning =
+          "You can unmute players at any time from the settings page";
+      }
+
+      this.mutedPlayers = getMutedPlayers();
+    },
+
     chooseDeck(uid) {
       this.deck = uid;
       this.ws.send(JSON.stringify({ header: "choose_deck", uid }));
     },
 
     handleOverlayClick() {
-      if(this.previewCard || this.previewCards) {
+      if (this.previewCard || this.previewCards) {
         this.dismissLarge();
       }
     },
@@ -615,7 +636,7 @@ export default {
     actionSelectMouseEnter(event, card) {
       const isLeftClick = event.buttons === 1;
 
-      if(isLeftClick) {
+      if (isLeftClick) {
         this.actionSelect(card);
       }
     },
@@ -724,7 +745,7 @@ export default {
       const greenHighlight = "#507053";
       const redHighlight = "#7d5252";
 
-      if(source === "hand") {
+      if (source === "hand") {
         if (card.canBePlayed) {
           this.$refs.myplayzone.style.backgroundColor = greenHighlight;
         } else {
@@ -745,10 +766,9 @@ export default {
 
         this.$refs.opponentshieldzone.style.backgroundColor = greenHighlight;
       }
-
     },
     stopDrag(source) {
-      if(source === "hand") {
+      if (source === "hand") {
         this.$refs.myplayzone.style.backgroundColor = "transparent";
         this.$refs.mymanazone.style.backgroundColor = "transparent";
       } else if (source === "playzone") {
@@ -759,7 +779,7 @@ export default {
     drop(event, zone) {
       const vid = event.dataTransfer.getData("vid");
 
-      if(["manazone", "playzone"].includes(zone)) {
+      if (["manazone", "playzone"].includes(zone)) {
         this.handSelection = this.state.me.hand.find(x => x.virtualId === vid);
 
         if (zone === "manazone") {
@@ -769,8 +789,10 @@ export default {
         }
       }
 
-      if(["opponentshieldzone", "opponentsplayzone"].includes(zone)) {
-        this.playzoneSelection = this.state.me.playzone.find(x => x.virtualId === vid);
+      if (["opponentshieldzone", "opponentsplayzone"].includes(zone)) {
+        this.playzoneSelection = this.state.me.playzone.find(
+          x => x.virtualId === vid
+        );
 
         if (zone === "opponentshieldzone") {
           this.attackPlayer();
@@ -781,6 +803,8 @@ export default {
     }
   },
   created() {
+    addEventListener("storage", this.refreshMutedPlayers);
+
     let lastReconnect = 0;
 
     const connect = async () => {
@@ -993,6 +1017,8 @@ export default {
     });
   },
   beforeDestroy() {
+    removeEventListener("storage", this.refreshMutedPlayers);
+
     this.preventReconnect = true;
     this.ws.close();
   }
@@ -1263,7 +1289,18 @@ export default {
   display: flex;
   margin-top: 5px;
   border-radius: 3px;
-  padding: 3px;
+  padding: 3px 6px;
+  line-height: 26px;
+
+  .mute-icon-container {
+    display: flex;
+    align-items: center;
+    opacity: 0;
+  }
+
+  &:hover .mute-icon-container {
+    opacity: 1;
+  }
 }
 
 .message-sender {

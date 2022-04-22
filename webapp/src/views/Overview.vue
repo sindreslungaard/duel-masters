@@ -1,10 +1,19 @@
 <template>
   <div>
-    <div v-show="errorMessage || wizardVisible" @click="closeOverlay()" class="overlay"></div>
+    <div
+      v-show="errorMessage || wizardVisible || warning"
+      @click="closeOverlay()"
+      class="overlay"
+    ></div>
 
     <div v-show="errorMessage" class="error">
       <p>{{ errorMessage }}</p>
       <div @click="refreshPage()" class="btn">Reconnect</div>
+    </div>
+
+    <div v-show="warning" class="error">
+      <p>{{ warning }}</p>
+      <div @click="warning = ''" class="btn">Ok</div>
     </div>
 
     <div v-show="wizardVisible" class="new-duel">
@@ -12,7 +21,7 @@
         <div class="spacer">
           <span class="headline">Create a new duel</span>
           <br /><br />
-          <form @submit="handleSubmit()" v-on:submit.prevent="onSubmit" >
+          <form @submit="handleSubmit()" v-on:submit.prevent="onSubmit">
             <input v-model="wizard.name" type="text" placeholder="Name" />
             <br /><br />
             <span class="helper">Visibility</span>
@@ -84,13 +93,31 @@
           <div class="chatbox">
             <div v-if="pinnedMessages.length" class="pinned-messages">
               <div v-for="(msg, i) in pinnedMessages" :key="i">
-                {{ msg.message }} <span v-if="msg.timeString">{{ msg.timeString }}</span>
+                {{ msg.message }}
+                <span v-if="msg.timeString">{{ msg.timeString }}</span>
               </div>
             </div>
             <div id="messages" class="messages spaced">
               <div class="messages-helper">
-                <div v-for="(msg, i) in chatMessages" :key="i">
-                  <Username :color="msg.color">{{ msg.username }} <span class="message-ts">{{ tsformat(msg.timestamp) }} ago</span></Username>
+                <div
+                  v-for="(msg, i) in chatMessages.filter(
+                    m => !mutedPlayers.includes(m.username)
+                  )"
+                  :key="i"
+                >
+                  <Username
+                    :color="msg.color"
+                    :muteUser="
+                      ['[Server]', username].includes(msg.username)
+                        ? null
+                        : msg.username
+                    "
+                    @muteToggled="refreshMutedPlayers()"
+                    >{{ msg.username }}
+                    <span class="message-ts"
+                      >{{ tsformat(msg.timestamp) }} ago
+                    </span>
+                  </Username>
                   <div class="user-messages">
                     <div v-for="(message, j) in msg.messages" :key="j">
                       <span>{{ message }}</span>
@@ -122,7 +149,9 @@
                 <div class="match-players">
                   <Username :color="match.p1color">{{ match.p1 }}</Username>
                   <div v-show="match.p2">vs</div>
-                  <Username v-show="match.p2" :color="match.p2color">{{ match.p2 }}</Username>
+                  <Username v-show="match.p2" :color="match.p2color">{{
+                    match.p2
+                  }}</Username>
                 </div>
               </td>
               <td>{{ match.name }}</td>
@@ -146,7 +175,14 @@
 import { call, ws_protocol, host } from "../remote";
 import Header from "../components/Header.vue";
 import Username from "../components/Username.vue";
-import { format, fromUnixTime, formatDistanceToNowStrict, isBefore, formatDistance } from "date-fns";
+import { getMutedPlayers, didSeeMuteWarning } from "../helpers/mute";
+import {
+  format,
+  fromUnixTime,
+  formatDistanceToNowStrict,
+  isBefore,
+  formatDistance
+} from "date-fns";
 
 const send = (client, message) => {
   client.send(JSON.stringify(message));
@@ -177,11 +213,21 @@ export default {
       users: [],
       matches: [],
       errorMessage: "",
+      warning: "",
       wsLoading: true,
-      loadingDots: "."
+      loadingDots: ".",
+      mutedPlayers: getMutedPlayers()
     };
   },
   methods: {
+    refreshMutedPlayers(e) {
+      if (!e && !didSeeMuteWarning()) {
+        this.warning =
+          "You can unmute players at any time from the settings page";
+      }
+
+      this.mutedPlayers = getMutedPlayers();
+    },
     tsformat(ts) {
       return formatDistance(Date.now(), fromUnixTime(ts));
     },
@@ -197,11 +243,11 @@ export default {
       };
       this.wizardVisible = !this.wizardVisible;
     },
-    closeOverlay(){
+    closeOverlay() {
       this.toggleWizard();
       this.errorMessage = "";
     },
-    handleSubmit(){
+    handleSubmit() {
       this.createDuel();
     },
     async createDuel() {
@@ -267,6 +313,7 @@ export default {
     }
   },
   created() {
+    addEventListener("storage", this.refreshMutedPlayers);
 
     document.title = document.title.replace("🔴", "");
 
@@ -277,10 +324,10 @@ export default {
     }, 500);
 
     let timeUpdates = setInterval(() => {
-      for(let msg of this.pinnedMessages) {
-        if(!msg.time) continue;
+      for (let msg of this.pinnedMessages) {
+        if (!msg.time) continue;
 
-        if(isBefore(fromUnixTime(msg.time), Date.now())) {
+        if (isBefore(fromUnixTime(msg.time), Date.now())) {
           clearInterval(timeUpdates);
           return;
         }
@@ -291,9 +338,7 @@ export default {
 
     // Connect to the server
     try {
-      const ws = new WebSocket(
-        ws_protocol + host + "/ws/lobby"
-      );
+      const ws = new WebSocket(ws_protocol + host + "/ws/lobby");
       this.ws = ws;
 
       ws.onopen = () => {
@@ -337,8 +382,8 @@ export default {
           case "pinned_messages": {
             this.pinnedMessages = [];
 
-            for(let message of data.messages) {
-              if(message.includes("time:")) {
+            for (let message of data.messages) {
+              if (message.includes("time:")) {
                 let time = message.split("time:")[1];
                 this.pinnedMessages.push({
                   message: message.split("time:")[0],
@@ -346,7 +391,7 @@ export default {
                   timeString: formatDistanceToNowStrict(fromUnixTime(time))
                 });
               } else {
-                this.pinnedMessages.push({message});
+                this.pinnedMessages.push({ message });
               }
             }
 
@@ -405,6 +450,7 @@ export default {
     }
   },
   beforeDestroy() {
+    removeEventListener("storage", this.refreshMutedPlayers);
     this.ws.close();
   }
 };
@@ -662,7 +708,7 @@ main {
 }
 
 .user-category {
-  margin-bottom: 10px;
+  margin-bottom: 16px;
   border-bottom: 1px solid #555;
   color: #777;
   padding-bottom: 5px;
@@ -725,6 +771,10 @@ main {
   margin-bottom: 0;
   padding-bottom: 0;
   flex-grow: 1;
+
+  &-helper {
+    margin-right: 10px;
+  }
 }
 
 *::-webkit-scrollbar-track {
@@ -814,5 +864,4 @@ main {
   text-shadow: none;
   opacity: 0.5;
 }
-
 </style>
