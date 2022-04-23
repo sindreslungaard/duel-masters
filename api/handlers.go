@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"net/http"
-	"os"
 	"time"
 
 	"duel-masters/db"
@@ -52,10 +51,6 @@ func SigninHandler(c *gin.Context) {
 	// Check for IP ban
 	bansCollection := db.Collection("bans")
 	ip := c.ClientIP()
-	ipHeader := os.Getenv("real_ip_header")
-	if ipHeader != "" {
-		ip = c.GetHeader(os.Getenv("real_ip_header"))
-	}
 
 	bans, err := bansCollection.CountDocuments(context.Background(), bson.M{
 		"$or": []bson.M{
@@ -115,10 +110,6 @@ func SignupHandler(c *gin.Context) {
 	// Check for IP ban
 	collection := db.Collection("bans")
 	ip := c.ClientIP()
-	ipHeader := os.Getenv("real_ip_header")
-	if ipHeader != "" {
-		ip = c.GetHeader(os.Getenv("real_ip_header"))
-	}
 
 	bans, err := collection.CountDocuments(context.Background(), bson.M{"type": db.IPBan, "value": ip})
 
