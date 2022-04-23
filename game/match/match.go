@@ -458,7 +458,7 @@ func (m *Match) BreakShields(shields []*Card) {
 			m.HandleFx(ctx)
 
 			if ctx.Cancelled() {
-				return
+				continue
 			}
 
 			m.Wait(m.Opponent(card.Player), "Waiting for your opponent to make an action")

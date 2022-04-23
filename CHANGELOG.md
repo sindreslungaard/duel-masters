@@ -9,7 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- Fixed an issue where double breakers sometimes only broke 1 shield while Alcadeias, Lord of Spirits was in play
+
 ### Added
+
+- Added ban system
+- Added mute system (thanks @vasyop)
 
 ## v2.4 - 19/04/2022
 
