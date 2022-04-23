@@ -1,4 +1,4 @@
-FROM golang:1.14-alpine
+FROM golang:1.18-alpine
 
 WORKDIR /go/src/duel-masters
 COPY . .
