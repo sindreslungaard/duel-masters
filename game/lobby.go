@@ -1,15 +1,20 @@
 package game
 
 import (
+	"context"
+	"duel-masters/db"
 	"duel-masters/game/match"
 	"duel-masters/server"
 	"encoding/json"
 	"fmt"
 	"os"
+	"strings"
 	"sync"
 	"time"
 
 	"github.com/sirupsen/logrus"
+	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 const (
@@ -242,6 +247,18 @@ func chat(s *server.Socket, message string) {
 
 func handleChatCommand(s *server.Socket, command string) {
 
+	defer func() {
+		if r := recover(); r != nil {
+			chat(s, "An error occured while parsing your command")
+		}
+	}()
+
+	if !strings.HasPrefix(command, "/") {
+		return
+	}
+
+	parts := strings.Split(command, " ")
+
 	hasRights := false
 
 	for _, permission := range s.User.Permissions {
@@ -255,8 +272,8 @@ func handleChatCommand(s *server.Socket, command string) {
 		return
 	}
 
-	switch command {
-	case "/sockets":
+	switch strings.ToLower(strings.TrimPrefix(parts[0], "/")) {
+	case "sockets":
 		{
 			message := ""
 			sockets := server.Sockets()
@@ -271,7 +288,7 @@ func handleChatCommand(s *server.Socket, command string) {
 			chat(s, "Sockets: "+message)
 		}
 
-	case "/matches":
+	case "matches":
 		{
 			message := ""
 			matches := match.Matches()
@@ -285,11 +302,102 @@ func handleChatCommand(s *server.Socket, command string) {
 			chat(s, "Matches: "+message)
 		}
 
-	case "/shutdown":
+	case "shutdown":
 		{
 			logrus.Info("Shutdown command invoked")
 			os.Exit(0)
 		}
+
+	case "ban":
+		{
+			if len(parts) < 2 {
+				chat(s, "Missing command arguments")
+				return
+			}
+
+			var user db.User
+
+			if err := db.Collection("users").FindOne(context.Background(), bson.M{"username": primitive.Regex{Pattern: "^" + parts[1] + "$", Options: "i"}}).Decode(&user); err != nil {
+				chat(s, fmt.Sprintf("Could not find the user \"%s\"", parts[1]))
+				return
+			}
+
+			banEntry := db.Ban{
+				Type:  db.UserBan,
+				Value: user.UID,
+			}
+
+			db.Collection("bans").InsertOne(context.Background(), banEntry)
+
+			// clear banned user sessions
+			db.Collection("users").UpdateOne(
+				context.Background(),
+				bson.M{"uid": user.UID},
+				bson.M{"$set": bson.M{"sessions": []db.UserSession{}}},
+			)
+
+			// disconnect the banned user if online
+			bannedSocket, ok := server.Find(user.UID)
+
+			if ok {
+				bannedSocket.Close()
+			}
+
+			chat(s, fmt.Sprintf("Successfully banned %s (%s)", user.Username, user.UID))
+		}
+
+	case "ipban":
+		{
+			if len(parts) < 2 {
+				chat(s, "Missing command arguments")
+				return
+			}
+
+			var user db.User
+
+			if err := db.Collection("users").FindOne(context.Background(), bson.M{"username": primitive.Regex{Pattern: "^" + parts[1] + "$", Options: "i"}}).Decode(&user); err != nil {
+				chat(s, fmt.Sprintf("Could not find the user \"%s\"", parts[1]))
+				return
+			}
+
+			banEntries := []interface{}{}
+
+			banEntries = append(banEntries, db.Ban{
+				Type:  db.UserBan,
+				Value: user.UID,
+			})
+
+			if user.Sessions != nil && len(user.Sessions) > 0 {
+				banEntries = append(banEntries, db.Ban{
+					Type:  db.IPBan,
+					Value: user.Sessions[len(user.Sessions)-1].IP,
+				})
+			}
+
+			db.Collection("bans").InsertMany(context.Background(), banEntries)
+
+			// clear banned user sessions
+			db.Collection("users").UpdateOne(
+				context.Background(),
+				bson.M{"uid": user.UID},
+				bson.M{"$set": bson.M{"sessions": []db.UserSession{}}},
+			)
+
+			// disconnect the banned user if online
+			bannedSocket, ok := server.Find(user.UID)
+
+			if ok {
+				bannedSocket.Close()
+			}
+
+			if len(banEntries) > 1 {
+				chat(s, fmt.Sprintf("Successfully banned %s (%s), and their IP", user.Username, user.UID))
+			} else {
+				chat(s, fmt.Sprintf("Successfully banned %s (%s), but did not find an IP to ban", user.Username, user.UID))
+			}
+
+		}
+
 	default:
 		{
 			chat(s, fmt.Sprintf("%s is not a valid command", command))

@@ -16,6 +16,12 @@ type User struct {
 	Email       string        `json:"email"`
 	Color       string        `json:"color"`
 	Sessions    []UserSession `json:"-"`
+	MutedUsers  []string      `json:"muted_users"`
+}
+
+type UserSettings struct {
+	UserID string `json:"user_id"`
+	Color  string `json:"color"`
 }
 
 // Deck struct is a player deck
@@ -26,4 +32,16 @@ type Deck struct {
 	Public   bool     `json:"public"`
 	Standard bool     `json:"standard"`
 	Cards    []string `json:"cards"`
+}
+
+type BanType string
+
+const (
+	UserBan BanType = "user"
+	IPBan   BanType = "ip"
+)
+
+type Ban struct {
+	Type  BanType `json:"type"`
+	Value string  `json:"value"`
 }

@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"net/http"
+	"os"
 	"time"
 
 	"duel-masters/db"
@@ -48,6 +49,32 @@ func SigninHandler(c *gin.Context) {
 		return
 	}
 
+	// Check for IP ban
+	bansCollection := db.Collection("bans")
+	ip := c.ClientIP()
+	ipHeader := os.Getenv("real_ip_header")
+	if ipHeader != "" {
+		ip = c.GetHeader(os.Getenv("real_ip_header"))
+	}
+
+	bans, err := bansCollection.CountDocuments(context.Background(), bson.M{
+		"$or": []bson.M{
+			{"type": db.UserBan, "value": user.UID},
+			{"type": db.IPBan, "value": ip},
+		},
+	})
+
+	if err != nil {
+		logrus.Error(err)
+		c.JSON(500, bson.M{"message": "An internal error occured"})
+		return
+	}
+
+	if bans > 0 {
+		c.JSON(403, bson.M{"message": "You have been banned"})
+		return
+	}
+
 	token, err := uuid.NewRandom()
 	if err != nil {
 		c.Status(500)
@@ -85,7 +112,28 @@ func SignupHandler(c *gin.Context) {
 		return
 	}
 
-	collection := db.Collection("users")
+	// Check for IP ban
+	collection := db.Collection("bans")
+	ip := c.ClientIP()
+	ipHeader := os.Getenv("real_ip_header")
+	if ipHeader != "" {
+		ip = c.GetHeader(os.Getenv("real_ip_header"))
+	}
+
+	bans, err := collection.CountDocuments(context.Background(), bson.M{"type": db.IPBan, "value": ip})
+
+	if err != nil {
+		logrus.Error(err)
+		c.JSON(500, bson.M{"message": "An internal error occured"})
+		return
+	}
+
+	if bans > 0 {
+		c.JSON(403, bson.M{"message": "You have been banned"})
+		return
+	}
+
+	collection = db.Collection("users")
 
 	if err := collection.FindOne(context.TODO(), bson.M{"username": primitive.Regex{Pattern: "^" + reqBody.Username + "$", Options: "i"}}).Decode(&db.User{}); err == nil {
 		c.JSON(400, bson.M{"message": "The username is already taken"})

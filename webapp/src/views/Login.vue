@@ -60,8 +60,11 @@ export default {
         }
       } catch (e) {
         try {
-          if (e.response.status == 401)
+          if (e.response.status == 401) {
             this.errorMsg = "Wrong username or password";
+          } else if (e.response.status == 403) {
+            this.errorMsg = "You have been banned";
+          }
         } catch (err) {
           this.errorMsg =
             "An unexpected error occured. Please try again later.";

@@ -42,6 +42,19 @@ type Socket struct {
 	lost   bool
 }
 
+func Find(uid string) (*Socket, bool) {
+	socketsMutex.Lock()
+	defer socketsMutex.Unlock()
+
+	for s, _ := range sockets {
+		if s.User.UID == uid {
+			return s, true
+		}
+	}
+
+	return nil, false
+}
+
 // NewSocket creates and returns a new Socket instance
 func NewSocket(c *websocket.Conn, hub Hub) *Socket {
 

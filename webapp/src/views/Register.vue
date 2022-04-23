@@ -74,8 +74,12 @@ export default {
         try {
           this.errorMsg = e.response.data.message;
         } catch (err) {
-          this.errorMsg =
-            "An unexpected error occured. Please try again later.";
+          if (e.response.status == 403) {
+            this.errorMsg = "You have been banned";
+          } else {
+            this.errorMsg =
+              "An unexpected error occured. Please try again later.";
+          }
         }
       }
     }
