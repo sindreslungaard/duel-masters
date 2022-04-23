@@ -9,6 +9,7 @@ import (
 	"errors"
 	"fmt"
 	"math/rand"
+	"runtime/debug"
 	"sync"
 	"time"
 
@@ -174,6 +175,7 @@ func (m *Match) startTicker() {
 	defer func() {
 		if r := recover(); r != nil {
 			logrus.Warnf("Recovered from match ticker. %v", r)
+			debug.PrintStack()
 		}
 	}()
 
@@ -215,6 +217,7 @@ func (m *Match) Dispose() {
 	defer func() {
 		if r := recover(); r != nil {
 			logrus.Warningf("Recovered from disposing a match. %v", r)
+			debug.PrintStack()
 		}
 	}()
 
@@ -1088,6 +1091,7 @@ func (m *Match) Parse(s *server.Socket, data []byte) {
 	defer func() {
 		if r := recover(); r != nil {
 			logrus.Warnf("Recovered after parsing message in match. %v", r)
+			debug.PrintStack()
 		}
 	}()
 

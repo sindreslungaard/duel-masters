@@ -8,6 +8,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
+	"runtime/debug"
 	"strings"
 	"sync"
 	"time"
@@ -74,6 +75,7 @@ func (l *Lobby) StartTicker() {
 	defer func() {
 		if r := recover(); r != nil {
 			logrus.Errorf("Recovered from lobby ticker. %v", r)
+			debug.PrintStack()
 		}
 	}()
 
@@ -138,6 +140,7 @@ func (l *Lobby) Parse(s *server.Socket, data []byte) {
 	defer func() {
 		if r := recover(); r != nil {
 			logrus.Warnf("Recovered from parsing a message in lobby. %v", r)
+			debug.PrintStack()
 		}
 	}()
 
