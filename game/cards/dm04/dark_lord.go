@@ -19,7 +19,7 @@ func GregoriaPrincessOfWar(c *match.Card) {
 	c.ManaRequirement = []string{civ.Darkness}
 
 	c.Use(fx.Creature, fx.When(fx.Summoned, func(card *match.Card, ctx *match.Context) {
-		ctx.Match.ApplyPersistentEffect(func(_ *match.Card, ctx2 *match.Context, exit func()) {
+		ctx.Match.ApplyPersistentEffect(func(ctx2 *match.Context, exit func()) {
 
 			demonCommands := fx.FindFilter(
 				card.Player,

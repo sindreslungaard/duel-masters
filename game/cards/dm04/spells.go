@@ -20,7 +20,7 @@ func FullDefensor(c *match.Card) {
 
 		if match.AmICasted(card, ctx) {
 
-			ctx.Match.ApplyPersistentEffect(func(_ *match.Card, ctx2 *match.Context, exit func()) {
+			ctx.Match.ApplyPersistentEffect(func(ctx2 *match.Context, exit func()) {
 
 				// on all events, add blocker to our creatures
 				fx.Find(
@@ -395,7 +395,7 @@ func WhiskingWhirlwind(c *match.Card) {
 
 	c.Use(fx.Spell, fx.When(fx.SpellCast, func(card *match.Card, ctx *match.Context) {
 
-		ctx.Match.ApplyPersistentEffect(func(_ *match.Card, ctx2 *match.Context, exit func()) {
+		ctx.Match.ApplyPersistentEffect(func(ctx2 *match.Context, exit func()) {
 
 			// on all events, add blocker to our creatures
 			if _, ok := ctx.Event.(*match.EndOfTurnStep); ok {

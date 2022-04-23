@@ -2,7 +2,7 @@ package match
 
 var seqID = 1
 
-type PersistentHandlerFunc func(card *Card, ctx *Context, exit func())
+type PersistentHandlerFunc func(ctx2 *Context, exit func())
 
 type PersistentEffect struct {
 	exit   func()

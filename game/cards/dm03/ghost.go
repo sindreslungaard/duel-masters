@@ -20,7 +20,7 @@ func JackViperShadowofDoom(c *match.Card) {
 
 	c.Use(fx.Creature, fx.Evolution, fx.When(fx.Summoned, func(card *match.Card, ctx *match.Context) {
 
-		ctx.Match.ApplyPersistentEffect(func(card2 *match.Card, ctx2 *match.Context, exit func()) {
+		ctx.Match.ApplyPersistentEffect(func(ctx2 *match.Context, exit func()) {
 
 			if card.Zone != match.BATTLEZONE {
 				exit()

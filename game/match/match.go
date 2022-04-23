@@ -698,10 +698,8 @@ func (m *Match) HandleFx(ctx *Context) {
 	}
 
 	// Handle persistent effects
-	for _, card := range cards {
-		for _, fx := range m.persistentEffects {
-			fx.effect(card, ctx, fx.exit)
-		}
+	for _, fx := range m.persistentEffects {
+		fx.effect(ctx, fx.exit)
 	}
 
 	// Handle regular card effects c.Use(...
