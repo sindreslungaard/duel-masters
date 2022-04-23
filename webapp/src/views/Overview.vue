@@ -251,8 +251,8 @@ export default {
       this.createDuel();
     },
     async createDuel() {
-      if (this.wizard.name.length < 5 || this.wizard.length > 30) {
-        this.wizardError = "Duel name must be between 5-30 characters";
+      if (this.wizard.length > 30) {
+        this.wizardError = "Duel name cannot exceed 30 characters";
         return;
       }
 

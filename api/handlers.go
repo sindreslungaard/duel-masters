@@ -3,6 +3,7 @@ package api
 import (
 	"context"
 	"fmt"
+	"math/rand"
 	"net/http"
 	"time"
 
@@ -178,8 +179,17 @@ func SignupHandler(c *gin.Context) {
 }
 
 type matchReqBody struct {
-	Name       string `json:"name" binding:"required,min=3,max=100"`
+	Name       string `json:"name" binding:"max=50"`
 	Visibility string `json:"visibility" binding:"required"`
+}
+
+var defaultMatchNames = []string{
+	"Kettou Da!",
+	"I challenge you!",
+	"Ikuzo!",
+	"I'm ready!",
+	"Koi!",
+	"Bring it on!",
 }
 
 // MatchHandler handles creation of new mathes
@@ -202,7 +212,13 @@ func MatchHandler(c *gin.Context) {
 		visible = false
 	}
 
-	m := match.New(reqBody.Name, user.UID, visible)
+	name := reqBody.Name
+
+	if name == "" {
+		name = defaultMatchNames[rand.Intn(len(defaultMatchNames))]
+	}
+
+	m := match.New(name, user.UID, visible)
 
 	c.JSON(200, m)
 

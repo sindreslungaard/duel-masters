@@ -16,6 +16,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added ban system
 - Added mute system (thanks @vasyop)
 
+### Changed
+
+- Duels can now be created with an empty name, in that case a name will be randomly chosen from a preset of names based on terms from the anime
+
 ## v2.4 - 19/04/2022
 
 ### Fixed
