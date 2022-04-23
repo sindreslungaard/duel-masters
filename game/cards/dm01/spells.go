@@ -117,6 +117,31 @@ func CreepingPlague(c *match.Card) {
 	c.Use(fx.Spell, func(card *match.Card, ctx *match.Context) {
 
 		if match.AmICasted(card, ctx) {
+
+			ctx.Match.ApplyPersistentEffect(func(ctx2 *match.Context, exit func()) {
+
+				if event, ok := ctx2.Event.(*match.Battle); ok {
+
+					if !event.Blocked || event.Attacker.Player != card.Player {
+						return
+					}
+
+					event.Attacker.AddCondition(cnd.Slayer, nil, card.ID)
+					ctx.Match.Chat("Server", fmt.Sprintf("%s was given \"Slayer\" by %s", event.Attacker.Name, card.Name))
+
+				}
+
+				// remove persistent effect when turn ends
+				_, ok := ctx2.Event.(*match.EndStep)
+				if ok {
+					exit()
+				}
+
+			})
+
+		}
+
+		/* if match.AmICasted(card, ctx) {
 			card.AddCondition(cnd.Active, nil, card.ID)
 		}
 
@@ -129,7 +154,7 @@ func CreepingPlague(c *match.Card) {
 			event.Attacker.AddCondition(cnd.Slayer, nil, card.ID)
 			ctx.Match.Chat("Server", fmt.Sprintf("%s was given \"Slayer\" by %s", event.Attacker.Name, card.Name))
 
-		}
+		} */
 
 	})
 

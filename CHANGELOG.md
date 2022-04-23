@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Fixed an issue where double breakers sometimes only broke 1 shield while Alcadeias, Lord of Spirits was in play
 - Fixed an issue where Gregoria, Princess of War did not properly give and remove power bonus and blocker to demon commands
+- Fixed an issue where Creeping Plague did not remove slayer at the end of the turn, as well as giving slayer to the opponent.
 
 ### Added
 
