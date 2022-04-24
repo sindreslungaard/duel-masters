@@ -55,7 +55,7 @@ type Match struct {
 	closed      bool
 	isFirstTurn bool
 
-	quit chan bool
+	stopTicker chan bool
 }
 
 // Matches returns a list of the current matches
@@ -92,7 +92,7 @@ func New(matchName string, hostID string, visible bool) *Match {
 		ending:      false,
 		isFirstTurn: true,
 
-		quit: make(chan bool),
+		stopTicker: make(chan bool),
 	}
 
 	matchesMutex.Lock()
@@ -182,10 +182,8 @@ func (m *Match) startTicker() {
 	for {
 
 		select {
-		case <-m.quit:
+		case <-m.stopTicker:
 			{
-				logrus.Debugf("Closing match %s", m.ID)
-				m.ending = true
 				return
 			}
 		case <-ticker.C:
@@ -241,12 +239,10 @@ func (m *Match) Dispose() {
 		m.Player2.Player.Dispose()
 	}
 
+	system.matches.Remove(m.ID)
+
 	matchesMutex.Lock()
-
-	close(m.quit)
-
 	delete(matches, m.ID)
-
 	matchesMutex.Unlock()
 
 	logrus.Debugf("Closed match with id %s", m.ID)
