@@ -9,6 +9,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
+	"runtime"
 	"runtime/debug"
 	"strings"
 	"sync"
@@ -388,6 +389,16 @@ func (l *Lobby) handleChatCommand(s *server.Socket, command string) {
 				chat(s, fmt.Sprintf("Successfully banned %s (%s), but did not find an IP to ban", user.Username, user.UID))
 			}
 
+		}
+
+	case "malloc":
+		{
+			var m runtime.MemStats
+			runtime.ReadMemStats(&m)
+			chat(s, fmt.Sprintf("Current = %v bytes", (m.Alloc)))
+			chat(s, fmt.Sprintf("\tAll time = %v bytes", (m.TotalAlloc)))
+			chat(s, fmt.Sprintf("\tReserved = %v bytes", (m.Sys)))
+			chat(s, fmt.Sprintf("\tNumGC = %v\n", m.NumGC))
 		}
 
 	default:
