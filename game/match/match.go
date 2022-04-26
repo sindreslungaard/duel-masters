@@ -4,6 +4,7 @@ import (
 	"context"
 	"duel-masters/db"
 	"duel-masters/game/cnd"
+	"duel-masters/internal"
 	"duel-masters/server"
 	"encoding/json"
 	"errors"
@@ -18,12 +19,12 @@ import (
 
 // Match struct
 type Match struct {
-	ID                string           `json:"id"`
-	MatchName         string           `json:"name"`
-	HostID            string           `json:"-"`
-	Player1           *PlayerReference `json:"-"`
-	Player2           *PlayerReference `json:"-"`
-	spectators        Spectators       `json:"-"`
+	ID                string                                   `json:"id"`
+	MatchName         string                                   `json:"name"`
+	HostID            string                                   `json:"-"`
+	Player1           *PlayerReference                         `json:"-"`
+	Player2           *PlayerReference                         `json:"-"`
+	spectators        internal.ConcurrentDictionary[Spectator] `json:"-"`
 	persistentEffects map[int]PersistentEffect
 	Turn              byte `json:"-"`
 	Started           bool `json:"started"`
@@ -63,9 +64,7 @@ func (m *Match) Dispose() {
 		}
 	}()
 
-	m.spectators.Lock()
-	defer m.spectators.Unlock()
-	for _, spectator := range m.spectators.users {
+	for _, spectator := range m.spectators.Iter() {
 		if spectator.Socket == nil {
 			continue
 		}
@@ -74,13 +73,11 @@ func (m *Match) Dispose() {
 	}
 
 	if m.Player1 != nil {
-		m.Player1.Socket.Close()
-		m.Player1.Player.Dispose()
+		m.Player1.Dispose()
 	}
 
 	if m.Player2 != nil {
-		m.Player2.Socket.Close()
-		m.Player2.Player.Dispose()
+		m.Player2.Dispose()
 	}
 
 	m.system.Matches.Remove(m.ID)
@@ -380,7 +377,7 @@ func (m *Match) Broadcast(msg interface{}) {
 	// could fail due to concurrent updates to spectators map
 	// but don't want to lock it here as broadcast will be used everywhere
 	// so recover will deal with those special occasians where it fails
-	for _, spectator := range m.spectators.users {
+	for _, spectator := range m.spectators.Iter() {
 		if spectator.Socket == nil {
 			continue
 		}
@@ -442,7 +439,7 @@ func (m *Match) BroadcastState() {
 	m.spectators.RLock()
 	defer m.spectators.RUnlock()
 
-	for _, spectator := range m.spectators.users {
+	for _, spectator := range m.spectators.Iter() {
 		if spectator.Socket == nil {
 			continue
 		}
@@ -987,9 +984,7 @@ func (m *Match) Parse(s *server.Socket, data []byte) {
 				} else {
 					// Spectators
 
-					m.spectators.RLock()
-					spectator, ok := m.spectators.users[s.User.UID]
-					m.spectators.RUnlock()
+					spectator, ok := m.spectators.Find(s.User.UID)
 
 					// this user is already spectating, swap connection to new one
 					if ok {
@@ -1001,15 +996,13 @@ func (m *Match) Parse(s *server.Socket, data []byte) {
 						spectator.Socket.Close()
 					}
 
-					m.spectators.Lock()
-					m.spectators.users[s.User.UID] = Spectator{
+					m.spectators.Add(s.User.UID, &Spectator{
 						UID:      s.User.UID,
 						Username: s.User.Username,
 						Color:    s.User.Color,
 						Socket:   s,
 						LastPong: time.Now().Unix(),
-					}
-					m.spectators.Unlock()
+					})
 
 					m.Chat("Server", fmt.Sprintf("%s started spectating", s.User.Username))
 					m.BroadcastState()
@@ -1361,13 +1354,11 @@ func (m *Match) OnSocketClose(s *server.Socket) {
 	}
 
 	// is this a spectator leaving?
-	m.spectators.Lock()
-	defer m.spectators.Unlock()
-	spectator, ok := m.spectators.users[s.User.UID]
+	spectator, ok := m.spectators.Find(s.User.UID)
 
 	if ok {
 		m.Chat("Server", fmt.Sprintf("%s stopped spectating", spectator.Username))
-		delete(m.spectators.users, spectator.UID)
+		m.spectators.Remove(spectator.UID)
 		return
 	}
 
@@ -1409,4 +1400,16 @@ func (m *Match) OnSocketClose(s *server.Socket) {
 		m.Dispose()
 	}
 
+}
+
+func (p *PlayerReference) Dispose() {
+	defer internal.Recover()
+
+	if p.Player != nil {
+		p.Player.Dispose()
+	}
+
+	if p.Socket != nil {
+		p.Socket.Close()
+	}
 }

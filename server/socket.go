@@ -179,12 +179,7 @@ func (s *Socket) Send(v interface{}) {
 // Close closes the client connection
 func (s *Socket) Close() {
 
-	defer func() {
-		if r := recover(); r != nil {
-			logrus.Warnf("Recovered from socket close. %v", r)
-			return
-		}
-	}()
+	defer internal.Recover()
 
 	if s.closed {
 		return
