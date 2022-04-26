@@ -34,11 +34,6 @@ type PlayerReference struct {
 	LastPong int64
 }
 
-type Spectators struct {
-	sync.RWMutex
-	users map[string]Spectator
-}
-
 type Spectator struct {
 	UID      string
 	Username string

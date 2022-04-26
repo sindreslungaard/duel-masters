@@ -69,7 +69,7 @@ func (s *MatchSystem) NewMatch(matchName string, hostID string, visible bool) *M
 		ID:                id,
 		MatchName:         matchName,
 		HostID:            hostID,
-		spectators:        Spectators{users: map[string]Spectator{}},
+		spectators:        internal.NewConcurrentDictionary[Spectator](),
 		persistentEffects: make(map[int]PersistentEffect),
 		Turn:              1,
 		Started:           false,
