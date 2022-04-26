@@ -6,8 +6,10 @@ import (
 
 	"duel-masters/db"
 
+	"github.com/google/uuid"
 	"github.com/gorilla/websocket"
 	"github.com/sirupsen/logrus"
+	"github.com/ventu-io/go-shortid"
 )
 
 const (
@@ -33,6 +35,7 @@ func Sockets() []*Socket {
 
 // Socket links a ws connection to a user id and handles safe reading and writing of data
 type Socket struct {
+	UID    string
 	conn   *websocket.Conn
 	User   db.User
 	hub    Hub
@@ -58,7 +61,14 @@ func Find(uid string) (*Socket, bool) {
 // NewSocket creates and returns a new Socket instance
 func NewSocket(c *websocket.Conn, hub Hub) *Socket {
 
+	id, err := shortid.Generate()
+
+	if err != nil {
+		id = uuid.New().String()
+	}
+
 	s := &Socket{
+		UID:    id,
 		conn:   c,
 		hub:    hub,
 		ready:  false,
