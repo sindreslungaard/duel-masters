@@ -10,31 +10,11 @@ import (
 	"fmt"
 	"math/rand"
 	"runtime/debug"
-	"sync"
 	"time"
 
-	"github.com/google/uuid"
 	"github.com/sirupsen/logrus"
-	"github.com/ventu-io/go-shortid"
 	"go.mongodb.org/mongo-driver/bson"
 )
-
-var matches = make(map[string]*Match)
-var matchesMutex = sync.Mutex{}
-
-// Get returns a *Match from the specified id
-func Get(id string) (*Match, error) {
-	matchesMutex.Lock()
-	defer matchesMutex.Unlock()
-
-	if m, ok := matches[id]; ok {
-		return m, nil
-	}
-
-	return nil, errors.New("Not found")
-}
-
-var lobbyMatches = make(chan server.MatchesListMessage)
 
 // Match struct
 type Match struct {
@@ -56,149 +36,13 @@ type Match struct {
 	isFirstTurn bool
 
 	stopTicker chan bool
-}
 
-// Matches returns a list of the current matches
-func Matches() []string {
-	result := make([]string, 0)
-	matchesMutex.Lock()
-	defer matchesMutex.Unlock()
-	for id := range matches {
-		result = append(result, id)
-	}
-	return result
-}
-
-// New returns a new match object
-func New(matchName string, hostID string, visible bool) *Match {
-
-	id, err := shortid.Generate()
-
-	if err != nil {
-		id = uuid.New().String()
-	}
-
-	m := &Match{
-		ID:                id,
-		MatchName:         matchName,
-		HostID:            hostID,
-		spectators:        Spectators{users: map[string]Spectator{}},
-		persistentEffects: make(map[int]PersistentEffect),
-		Turn:              1,
-		Started:           false,
-		Visible:           visible,
-
-		created:     time.Now().Unix(),
-		ending:      false,
-		isFirstTurn: true,
-
-		stopTicker: make(chan bool),
-	}
-
-	matchesMutex.Lock()
-
-	matches[id] = m
-
-	matchesMutex.Unlock()
-
-	go m.startTicker()
-
-	logrus.Debugf("Created match %s", id)
-
-	return m
-
+	system *MatchSystem
 }
 
 // Name just returns "match", obligatory for a hub
 func (m *Match) Name() string {
 	return "match"
-}
-
-// LobbyMatchList returns the channel to receive match list updates
-func LobbyMatchList() chan server.MatchesListMessage {
-	return lobbyMatches
-}
-
-// UpdateMatchList sends a server.MatchesListMessage through the lobby channel
-func UpdateMatchList() {
-
-	matchesMutex.Lock()
-	defer matchesMutex.Unlock()
-
-	matchesMessage := make([]server.MatchMessage, 0)
-
-	for _, match := range matches {
-
-		if !match.Visible {
-			continue
-		}
-
-		if match.ending {
-			continue
-		}
-
-		if match.Player1 != nil && match.Player2 != nil && !match.Started {
-			continue
-		}
-
-		matchMessage := server.MatchMessage{
-			ID:      match.ID,
-			P1:      match.Player1.Username,
-			P1color: match.Player1.Color,
-			Name:    match.MatchName,
-			Started: match.Started,
-		}
-
-		if match.Player2 != nil {
-			matchMessage.P2 = match.Player2.Username
-			matchMessage.P2color = match.Player2.Color
-		}
-
-		matchesMessage = append(matchesMessage, matchMessage)
-	}
-
-	update := server.MatchesListMessage{
-		Header:  "matches",
-		Matches: matchesMessage,
-	}
-
-	lobbyMatches <- update
-
-}
-
-func (m *Match) startTicker() {
-
-	ticker := time.NewTicker(10 * time.Second) // tick every 10 seconds
-
-	defer ticker.Stop()
-	defer m.Dispose()
-	defer func() {
-		if r := recover(); r != nil {
-			logrus.Warnf("Recovered from match ticker. %v", r)
-			debug.PrintStack()
-		}
-	}()
-
-	for {
-
-		select {
-		case <-m.stopTicker:
-			{
-				return
-			}
-		case <-ticker.C:
-			{
-
-				// Close the match if it was not started within 10 minutes of creation
-				if !m.Started && m.created < time.Now().Unix()-60*10 {
-					logrus.Debugf("Closing match %s", m.ID)
-					return
-				}
-
-			}
-		}
-
-	}
 }
 
 // Dispose closes the match, disconnects the clients and removes all references to it
@@ -239,28 +83,12 @@ func (m *Match) Dispose() {
 		m.Player2.Player.Dispose()
 	}
 
-	system.matches.Remove(m.ID)
-
-	matchesMutex.Lock()
-	delete(matches, m.ID)
-	matchesMutex.Unlock()
+	m.system.Matches.Remove(m.ID)
 
 	logrus.Debugf("Closed match with id %s", m.ID)
 
-	UpdateMatchList()
+	m.system.UpdateMatchList()
 
-}
-
-// Find returns a match with the specified id, or an error
-func Find(id string) (*Match, error) {
-
-	m := matches[id]
-
-	if m != nil {
-		return m, nil
-	}
-
-	return nil, errors.New("Match does not exist")
 }
 
 // IsPlayerTurn returns a boolean based on if it is the specified player's turn
@@ -517,7 +345,7 @@ func (m *Match) End(winner *Player, winnerStr string) {
 
 	}
 
-	m.quit <- true
+	m.Dispose()
 
 }
 
@@ -819,7 +647,7 @@ func (m *Match) Start() {
 
 	m.Started = true
 
-	UpdateMatchList()
+	m.system.UpdateMatchList()
 
 	m.Player1.Player.ShuffleDeck()
 	m.Player2.Player.ShuffleDeck()
@@ -1282,7 +1110,7 @@ func (m *Match) Parse(s *server.Socket, data []byte) {
 
 			}
 
-			UpdateMatchList()
+			m.system.UpdateMatchList()
 
 		}
 
@@ -1527,7 +1355,8 @@ func (m *Match) OnSocketClose(s *server.Socket) {
 	}
 
 	if !m.Started {
-		m.quit <- true
+		logrus.Debug("Socket left before match started, closing match.")
+		m.Dispose()
 		return
 	}
 
@@ -1576,7 +1405,8 @@ func (m *Match) OnSocketClose(s *server.Socket) {
 
 	// if both players have disconnected, close match
 	if (p == nil || p.Socket == nil) && (o == nil || o.Socket == nil) {
-		m.quit <- true
+		logrus.Debug("Both players left the match. Closing the match.")
+		m.Dispose()
 	}
 
 }

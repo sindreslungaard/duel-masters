@@ -25,25 +25,36 @@ func main() {
 
 	logrus.Info("Starting..")
 
-	go checkForAutoRestart()
-
 	for _, set := range cards.Sets {
 		for uid, ctor := range *set {
 			match.AddCard(uid, ctor)
 		}
 	}
 
-	go game.GetLobby().StartTicker()
+	// Setup lobby
+	lobby := game.NewLobby()
+	go lobby.StartTicker()
+
+	// Setup match system
+	matchSystem := match.NewSystem(lobby.Broadcast)
+	go matchSystem.StartTicker()
+
+	lobby.SetMatchesFunc(func() []*match.Match { return matchSystem.Matches.Iter() })
+
+	// Setup API
+	API := api.New(lobby, matchSystem)
 
 	api.CreateCardCache()
 
 	db.Connect(os.Getenv("mongo_uri"), os.Getenv("mongo_name"))
 
-	api.Start(os.Getenv("port"))
+	go checkForAutoRestart(lobby)
+
+	API.Start(os.Getenv("port"))
 
 }
 
-func checkForAutoRestart() {
+func checkForAutoRestart(lobby *game.Lobby) {
 
 	if os.Getenv("restart_after") == "" {
 		logrus.Debug("No autorestart policy found")
@@ -76,7 +87,7 @@ func checkForAutoRestart() {
 		if time.Now().Add(2*time.Hour).After(d) && !notified {
 			notified = true
 
-			game.PinMessage(fmt.Sprintf("Scheduled restart in time:%v", d.Unix()))
+			lobby.PinMessage(fmt.Sprintf("Scheduled restart in time:%v", d.Unix()))
 		}
 
 	}

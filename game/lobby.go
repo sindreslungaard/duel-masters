@@ -4,6 +4,7 @@ import (
 	"context"
 	"duel-masters/db"
 	"duel-masters/game/match"
+	"duel-masters/internal"
 	"duel-masters/server"
 	"encoding/json"
 	"fmt"
@@ -22,45 +23,50 @@ const (
 	messageBufferSize int = 100
 )
 
-var pinnedMessages = []string{}
-var messages = append(make([]server.LobbyChatMessage, 0), server.LobbyChatMessage{
-	Username:  "[Server]",
-	Color:     "#777",
-	Message:   fmt.Sprintf("Last server restart: %v. Have fun!", time.Now().Local().UTC().Format("Mon Jan 2 15:04:05 -0700 MST")),
-	Timestamp: int(time.Now().Unix()),
-})
-var messagesMutex = &sync.Mutex{}
+// Lobby struct is used to create a Hub that can parse messages from the websocket server
+type Lobby struct {
+	pinnedMessages []string
+	messages       []server.LobbyChatMessage
+	messagesMutex  *sync.Mutex
 
-var subscribers = make([]*server.Socket, 0)
-var subscribersMutex = &sync.Mutex{}
+	subscribers internal.ConcurrentDictionary[server.Socket]
 
-var userCache server.UserListMessage = server.GetUserList()
-var matchCache server.MatchesListMessage = server.MatchesListMessage{
-	Header:  "matches",
-	Matches: make([]server.MatchMessage, 0),
+	userCache server.UserListMessage
+
+	matches func() []*match.Match
 }
 
-var lobby = &Lobby{}
+func NewLobby() *Lobby {
+	return &Lobby{
+		pinnedMessages: []string{},
+		messages: append(make([]server.LobbyChatMessage, 0), server.LobbyChatMessage{
+			Username:  "[Server]",
+			Color:     "#777",
+			Message:   fmt.Sprintf("Last server restart: %v. Have fun!", time.Now().Local().UTC().Format("Mon Jan 2 15:04:05 -0700 MST")),
+			Timestamp: int(time.Now().Unix()),
+		}),
+		messagesMutex: &sync.Mutex{},
 
-// Lobby struct is used to create a Hub that can parse messages from the websocket server
-type Lobby struct{}
+		subscribers: internal.NewConcurrentDictionary[server.Socket](),
+
+		userCache: server.GetUserList(),
+
+		matches: func() []*match.Match { return []*match.Match{} },
+	}
+}
 
 // Name just returns "lobby", obligatory for a hub
 func (l *Lobby) Name() string {
 	return "lobby"
 }
 
-// GetLobby returns a reference to the lobby
-func GetLobby() *Lobby {
-	return lobby
+func (l *Lobby) SetMatchesFunc(f func() []*match.Match) {
+	l.matches = f
 }
 
 // Broadcast sends a message to all subscribed sockets
-func Broadcast(msg interface{}) {
-	subscribersMutex.Lock()
-	defer subscribersMutex.Unlock()
-
-	for _, subscriber := range subscribers {
+func (l *Lobby) Broadcast(msg interface{}) {
+	for _, subscriber := range l.subscribers.Iter() {
 		go subscriber.Send(msg)
 	}
 }
@@ -79,16 +85,14 @@ func (l *Lobby) StartTicker() {
 		}
 	}()
 
-	go ListenForMatchListUpdates()
-
 	for {
 
 		select {
 		case <-ticker.C:
 			{
-				UpdateUserCache()
-				Broadcast(userCache)
-				UpdatePinnedMessages()
+				l.UpdateUserCache()
+				l.Broadcast(l.userCache)
+				l.UpdatePinnedMessages()
 			}
 		}
 
@@ -96,42 +100,27 @@ func (l *Lobby) StartTicker() {
 }
 
 // UpdateUserCache updates the list of users online
-func UpdateUserCache() {
-	userCache = server.GetUserList()
+func (l *Lobby) UpdateUserCache() {
+	l.userCache = server.GetUserList()
 }
 
-// ListenForMatchListUpdates broadcasts changes to the open matches to all lobby subscribers
-func ListenForMatchListUpdates() {
+func (l *Lobby) UpdatePinnedMessages() {
 
-	for {
+	l.messagesMutex.Lock()
+	defer l.messagesMutex.Unlock()
 
-		update := <-match.LobbyMatchList()
-
-		matchCache = update
-
-		Broadcast(update)
-
-	}
-
-}
-
-func UpdatePinnedMessages() {
-
-	messagesMutex.Lock()
-	defer messagesMutex.Unlock()
-
-	Broadcast(server.PinnedMessages{
+	l.Broadcast(server.PinnedMessages{
 		Header:   "pinned_messages",
-		Messages: pinnedMessages,
+		Messages: l.pinnedMessages,
 	})
 
 }
 
-func PinMessage(message string) {
-	messagesMutex.Lock()
-	defer messagesMutex.Unlock()
+func (l *Lobby) PinMessage(message string) {
+	l.messagesMutex.Lock()
+	defer l.messagesMutex.Unlock()
 
-	pinnedMessages = append(pinnedMessages, message)
+	l.pinnedMessages = append(l.pinnedMessages, message)
 }
 
 // Parse websocket messages
@@ -153,34 +142,36 @@ func (l *Lobby) Parse(s *server.Socket, data []byte) {
 
 	case "subscribe":
 		{
-			subscribersMutex.Lock()
-			defer subscribersMutex.Unlock()
-
-			for _, subscriber := range subscribers {
+			for _, subscriber := range l.subscribers.Iter() {
 				if subscriber == s {
 					return
 				}
 			}
 
-			subscribers = append(subscribers, s)
+			_, ok := l.subscribers.Find(s.UID)
+
+			if ok {
+				return
+			}
+
+			l.subscribers.Add(s.UID, s)
 
 			// Send chat messages
 			s.Send(server.LobbyChatMessages{
 				Header:   "chat",
-				Messages: messages,
+				Messages: l.messages,
 			})
 			s.Send(server.PinnedMessages{
 				Header:   "pinned_messages",
-				Messages: pinnedMessages,
+				Messages: l.pinnedMessages,
 			})
 
 			// Update and send user list
-			UpdateUserCache()
-			s.Send(userCache)
+			l.UpdateUserCache()
+			s.Send(l.userCache)
 
 			// Send match list
-
-			s.Send(matchCache)
+			l.Broadcast(match.MatchList(l.matches()))
 
 		}
 
@@ -205,11 +196,11 @@ func (l *Lobby) Parse(s *server.Socket, data []byte) {
 				return
 			}
 
-			messagesMutex.Lock()
-			defer messagesMutex.Unlock()
+			l.messagesMutex.Lock()
+			defer l.messagesMutex.Unlock()
 
-			if len(messages) >= messageBufferSize {
-				_, messages = messages[0], messages[1:]
+			if len(l.messages) >= messageBufferSize {
+				_, l.messages = l.messages[0], l.messages[1:]
 			}
 
 			chatMsg := server.LobbyChatMessage{
@@ -224,9 +215,9 @@ func (l *Lobby) Parse(s *server.Socket, data []byte) {
 				Messages: []server.LobbyChatMessage{chatMsg},
 			}
 
-			messages = append(messages, chatMsg)
+			l.messages = append(l.messages, chatMsg)
 
-			Broadcast(toBroadcast)
+			l.Broadcast(toBroadcast)
 
 		}
 
@@ -291,19 +282,19 @@ func handleChatCommand(s *server.Socket, command string) {
 			chat(s, "Sockets: "+message)
 		}
 
-	case "matches":
-		{
-			message := ""
-			matches := match.Matches()
-			for _, m := range matches {
-				if message != "" {
-					message += ", "
-				}
-
-				message += m
+	/* case "matches":
+	{
+		message := ""
+		matches := match.Matches()
+		for _, m := range matches {
+			if message != "" {
+				message += ", "
 			}
-			chat(s, "Matches: "+message)
+
+			message += m
 		}
+		chat(s, "Matches: "+message)
+	} */
 
 	case "shutdown":
 		{
@@ -411,20 +402,5 @@ func handleChatCommand(s *server.Socket, command string) {
 
 // OnSocketClose is called when a socket disconnects
 func (l *Lobby) OnSocketClose(s *server.Socket) {
-
-	subscribersMutex.Lock()
-	defer subscribersMutex.Unlock()
-
-	subscribersUpdate := make([]*server.Socket, 0)
-
-	for _, subscriber := range subscribers {
-
-		if subscriber != s {
-			subscribersUpdate = append(subscribersUpdate, subscriber)
-		}
-
-	}
-
-	subscribers = subscribersUpdate
-
+	l.subscribers.Remove(s.UID)
 }

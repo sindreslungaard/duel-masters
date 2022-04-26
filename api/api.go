@@ -1,6 +1,8 @@
 package api
 
 import (
+	"duel-masters/game"
+	"duel-masters/game/match"
 	"os"
 	"path"
 
@@ -8,8 +10,20 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
+type API struct {
+	lobby       *game.Lobby
+	matchSystem *match.MatchSystem
+}
+
+func New(lobby *game.Lobby, matchSystem *match.MatchSystem) *API {
+	return &API{
+		matchSystem: matchSystem,
+		lobby:       lobby,
+	}
+}
+
 // Start starts the API
-func Start(port string) {
+func (api *API) Start(port string) {
 
 	dir, err := os.Getwd()
 	if err != nil {
@@ -38,17 +52,17 @@ func Start(port string) {
 	})
 
 	// Main routes
-	r.GET("/ws/:hub", WS)
-	r.POST("/api/auth/signin", SigninHandler)
-	r.POST("/api/auth/signup", SignupHandler)
-	r.GET("/api/match/:id", GetMatchHandler)
-	r.POST("/api/match", MatchHandler)
-	r.GET("/api/cards", CardsHandler)
-	r.GET("/api/deck/:id", GetDeckHandler)
-	r.GET("/api/decks", GetDecksHandler)
-	r.POST("/api/decks", CreateDeckHandler)
-	r.DELETE("/api/deck/:id", DeleteDeckHandler)
-	r.GET("/invite/:id", InviteHandler)
+	r.GET("/ws/:hub", api.WS)
+	r.POST("/api/auth/signin", api.SigninHandler)
+	r.POST("/api/auth/signup", api.SignupHandler)
+	r.GET("/api/match/:id", api.GetMatchHandler)
+	r.POST("/api/match", api.MatchHandler)
+	r.GET("/api/cards", api.CardsHandler)
+	r.GET("/api/deck/:id", api.GetDeckHandler)
+	r.GET("/api/decks", api.GetDecksHandler)
+	r.POST("/api/decks", api.CreateDeckHandler)
+	r.DELETE("/api/deck/:id", api.DeleteDeckHandler)
+	r.GET("/invite/:id", api.InviteHandler)
 
 	// Because Gin does not provide an easy way to handle requests where the file does not exist
 	// (NoRoute tests on specified routes, not if the file exists) we expose our webapp's folders manually..

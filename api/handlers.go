@@ -8,8 +8,6 @@ import (
 	"time"
 
 	"duel-masters/db"
-	"duel-masters/game"
-	"duel-masters/game/match"
 	"duel-masters/server"
 
 	"github.com/gin-gonic/gin"
@@ -27,7 +25,7 @@ type signinReqBody struct {
 }
 
 // SigninHandler handles signin requests
-func SigninHandler(c *gin.Context) {
+func (api *API) SigninHandler(c *gin.Context) {
 
 	var reqBody signinReqBody
 	if err := c.ShouldBindJSON(&reqBody); err != nil {
@@ -98,7 +96,7 @@ type signupReqBody struct {
 }
 
 // SignupHandler handles signup requests
-func SignupHandler(c *gin.Context) {
+func (api *API) SignupHandler(c *gin.Context) {
 
 	// TODO: recaptcha
 
@@ -193,7 +191,7 @@ var defaultMatchNames = []string{
 }
 
 // MatchHandler handles creation of new mathes
-func MatchHandler(c *gin.Context) {
+func (api *API) MatchHandler(c *gin.Context) {
 
 	user, err := db.GetUserForToken(c.GetHeader("Authorization"))
 	if err != nil {
@@ -218,7 +216,7 @@ func MatchHandler(c *gin.Context) {
 		name = defaultMatchNames[rand.Intn(len(defaultMatchNames))]
 	}
 
-	m := match.New(name, user.UID, visible)
+	m := api.matchSystem.NewMatch(name, user.UID, visible)
 
 	c.JSON(200, m)
 
@@ -231,7 +229,7 @@ var upgrader = websocket.Upgrader{
 }
 
 // WS handles websocket upgrade
-func WS(c *gin.Context) {
+func (api *API) WS(c *gin.Context) {
 
 	hubID := c.Param("hub")
 
@@ -239,13 +237,13 @@ func WS(c *gin.Context) {
 
 	if hubID == "lobby" {
 
-		hub = game.GetLobby()
+		hub = api.lobby
 
 	} else {
 
-		m, err := match.Find(hubID)
+		m, ok := api.matchSystem.Matches.Find(hubID)
 
-		if err != nil {
+		if !ok {
 			c.Status(404)
 			return
 		}
@@ -269,12 +267,12 @@ func WS(c *gin.Context) {
 }
 
 // CardsHandler returns a list of all the cards in the cache
-func CardsHandler(c *gin.Context) {
+func (api *API) CardsHandler(c *gin.Context) {
 	c.JSON(200, GetCache())
 }
 
 // GetDeckHandler returns a single deck, if public
-func GetDeckHandler(c *gin.Context) {
+func (api *API) GetDeckHandler(c *gin.Context) {
 
 	deckUID := c.Param("id")
 
@@ -309,7 +307,7 @@ func GetDeckHandler(c *gin.Context) {
 }
 
 // GetDecksHandler returns an array of the users decks
-func GetDecksHandler(c *gin.Context) {
+func (api *API) GetDecksHandler(c *gin.Context) {
 
 	user, err := db.GetUserForToken(c.GetHeader("Authorization"))
 	if err != nil {
@@ -357,7 +355,7 @@ type createDeckBody struct {
 }
 
 // CreateDeckHandler handles creating/editing decks
-func CreateDeckHandler(c *gin.Context) {
+func (api *API) CreateDeckHandler(c *gin.Context) {
 
 	user, err := db.GetUserForToken(c.GetHeader("Authorization"))
 	if err != nil {
@@ -441,7 +439,7 @@ func CreateDeckHandler(c *gin.Context) {
 }
 
 // DeleteDeckHandler deletes the specified deck
-func DeleteDeckHandler(c *gin.Context) {
+func (api *API) DeleteDeckHandler(c *gin.Context) {
 
 	user, err := db.GetUserForToken(c.GetHeader("Authorization"))
 	if err != nil {
@@ -470,11 +468,11 @@ func DeleteDeckHandler(c *gin.Context) {
 
 }
 
-func GetMatchHandler(c *gin.Context) {
+func (api *API) GetMatchHandler(c *gin.Context) {
 
-	m, err := match.Find(c.Param("id"))
+	m, ok := api.matchSystem.Matches.Find(c.Param("id"))
 
-	if err != nil {
+	if !ok {
 		c.Status(404)
 		return
 	}
@@ -484,13 +482,13 @@ func GetMatchHandler(c *gin.Context) {
 }
 
 // InviteHandler handles duel invitations
-func InviteHandler(c *gin.Context) {
+func (api *API) InviteHandler(c *gin.Context) {
 
 	var res string
 
-	match, err := match.Get(c.Param("id"))
+	match, ok := api.matchSystem.Matches.Find(c.Param("id"))
 
-	if err != nil {
+	if !ok {
 		res = fmt.Sprintf(`<!DOCTYPE html>
 <html>
 	<head>
