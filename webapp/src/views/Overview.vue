@@ -101,7 +101,7 @@
               <div class="messages-helper">
                 <div
                   v-for="(msg, i) in chatMessages.filter(
-                    m => !mutedPlayers.includes(m.username)
+                    m => !settings.muted.includes(m.username)
                   )"
                   :key="i"
                 >
@@ -112,7 +112,7 @@
                         ? null
                         : msg.username
                     "
-                    @muteToggled="refreshMutedPlayers()"
+                    @muteToggled="onSettingsChanged()"
                     >{{ msg.username }}
                     <span class="message-ts"
                       >{{ tsformat(msg.timestamp) }} ago
@@ -175,7 +175,7 @@
 import { call, ws_protocol, host } from "../remote";
 import Header from "../components/Header.vue";
 import Username from "../components/Username.vue";
-import { getMutedPlayers, didSeeMuteWarning } from "../helpers/mute";
+import { getSettings, didSeeMuteWarning } from "../helpers/settings";
 import {
   format,
   fromUnixTime,
@@ -216,17 +216,17 @@ export default {
       warning: "",
       wsLoading: true,
       loadingDots: ".",
-      mutedPlayers: getMutedPlayers()
+      settings: getSettings()
     };
   },
   methods: {
-    refreshMutedPlayers(e) {
+    onSettingsChanged(e) {
       if (!e && !didSeeMuteWarning()) {
         this.warning =
           "You can unmute players at any time from the settings page";
       }
 
-      this.mutedPlayers = getMutedPlayers();
+      this.settings = getSettings();
     },
     tsformat(ts) {
       return formatDistance(Date.now(), fromUnixTime(ts));
@@ -313,7 +313,7 @@ export default {
     }
   },
   created() {
-    addEventListener("storage", this.refreshMutedPlayers);
+    addEventListener("storage", this.onSettingsChanged);
 
     document.title = document.title.replace("🔴", "");
 
@@ -450,7 +450,7 @@ export default {
     }
   },
   beforeDestroy() {
-    removeEventListener("storage", this.refreshMutedPlayers);
+    removeEventListener("storage", this.onSettingsChanged);
     this.ws.close();
   }
 };

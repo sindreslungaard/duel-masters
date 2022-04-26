@@ -152,7 +152,7 @@
                   message.sender.toLowerCase() === 'server' ? 'none' : '#202124'
               }"
               v-for="(message, index) in chatMessages.filter(
-                m => !mutedPlayers.includes(m.sender)
+                m => !settings.muted.includes(m.sender)
               )"
               :key="index"
             >
@@ -173,7 +173,7 @@
                     !['server', username].includes(message.sender.toLowerCase())
                   "
                   :player="message.sender"
-                  @toggled="refreshMutedPlayers()"
+                  @toggled="onSettingsChanged()"
                 />
               </div>
             </div>
@@ -292,7 +292,9 @@
           <div
             v-for="(card, index) in state.opponent.shieldzone"
             :key="index"
-            class="card shield flipped"
+            :class="
+              'card shield' + (!settings.noUpsideDownCards ? ' flipped' : '')
+            "
           >
             <img src="/assets/cards/backside.png" />
           </div>
@@ -314,7 +316,10 @@
             :key="index"
             :class="['card', { tapped: card.tapped }]"
           >
-            <img class="flipped" :src="`/assets/cards/all/${card.uid}.jpg`" />
+            <img
+              :class="!settings.noUpsideDownCards ? 'flipped' : ''"
+              :src="`/assets/cards/all/${card.uid}.jpg`"
+            />
           </div>
         </div>
       </div>
@@ -444,7 +449,10 @@
             :key="index"
             :class="['card', 'mana', { tapped: card.tapped }]"
           >
-            <img class="flipped" :src="`/assets/cards/all/${card.uid}.jpg`" />
+            <img
+              :class="!settings.noUpsideDownCards ? 'flipped' : ''"
+              :src="`/assets/cards/all/${card.uid}.jpg`"
+            />
           </div>
         </div>
       </div>
@@ -491,7 +499,7 @@ import { call, ws_protocol, host } from "../remote";
 import CardShowDialog from "../components/dialogs/CardShowDialog";
 import Username from "../components/Username.vue";
 import MuteIcon from "../components/MuteIcon.vue";
-import { isMuted, getMutedPlayers, didSeeMuteWarning } from "../helpers/mute";
+import { getSettings, didSeeMuteWarning } from "../helpers/settings";
 
 const send = (client, message) => {
   client.send(JSON.stringify(message));
@@ -562,7 +570,7 @@ export default {
       previewCard: null,
       previewCards: null,
       previewCardsText: null,
-      mutedPlayers: getMutedPlayers()
+      settings: getSettings()
     };
   },
   computed: {
@@ -588,13 +596,13 @@ export default {
       });
     },
 
-    refreshMutedPlayers(e) {
+    onSettingsChanged(e) {
       if (!e && !didSeeMuteWarning()) {
         this.warning =
           "You can unmute players at any time from the settings page";
       }
 
-      this.mutedPlayers = getMutedPlayers();
+      this.settings = getSettings();
     },
 
     chooseDeck(uid) {
@@ -803,7 +811,7 @@ export default {
     }
   },
   created() {
-    addEventListener("storage", this.refreshMutedPlayers);
+    addEventListener("storage", this.onSettingsChanged);
 
     let lastReconnect = 0;
 
@@ -1017,7 +1025,7 @@ export default {
     });
   },
   beforeDestroy() {
-    removeEventListener("storage", this.refreshMutedPlayers);
+    removeEventListener("storage", this.onSettingsChanged);
 
     this.preventReconnect = true;
     this.ws.close();
