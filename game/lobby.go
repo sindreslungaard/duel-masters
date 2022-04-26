@@ -192,7 +192,7 @@ func (l *Lobby) Parse(s *server.Socket, data []byte) {
 
 			runes := []rune(msg.Message)
 			if string(runes[0:1]) == "/" {
-				handleChatCommand(s, msg.Message)
+				l.handleChatCommand(s, msg.Message)
 				return
 			}
 
@@ -239,7 +239,7 @@ func chat(s *server.Socket, message string) {
 	})
 }
 
-func handleChatCommand(s *server.Socket, command string) {
+func (l *Lobby) handleChatCommand(s *server.Socket, command string) {
 
 	defer func() {
 		if r := recover(); r != nil {
@@ -270,8 +270,7 @@ func handleChatCommand(s *server.Socket, command string) {
 	case "sockets":
 		{
 			message := ""
-			sockets := server.Sockets()
-			for _, s := range sockets {
+			for _, s := range server.Sockets.Iter() {
 				if s.Ready() {
 					if message != "" {
 						message += ", "
@@ -282,19 +281,18 @@ func handleChatCommand(s *server.Socket, command string) {
 			chat(s, "Sockets: "+message)
 		}
 
-	/* case "matches":
-	{
-		message := ""
-		matches := match.Matches()
-		for _, m := range matches {
-			if message != "" {
-				message += ", "
-			}
+	case "matches":
+		{
+			message := ""
+			for _, m := range l.matches() {
+				if message != "" {
+					message += ", "
+				}
 
-			message += m
+				message += m.ID
+			}
+			chat(s, "Matches: "+message)
 		}
-		chat(s, "Matches: "+message)
-	} */
 
 	case "shutdown":
 		{
@@ -331,7 +329,7 @@ func handleChatCommand(s *server.Socket, command string) {
 			)
 
 			// disconnect the banned user if online
-			bannedSocket, ok := server.Find(user.UID)
+			bannedSocket, ok := server.FindByUserUID(user.UID)
 
 			if ok {
 				bannedSocket.Close()
@@ -378,7 +376,7 @@ func handleChatCommand(s *server.Socket, command string) {
 			)
 
 			// disconnect the banned user if online
-			bannedSocket, ok := server.Find(user.UID)
+			bannedSocket, ok := server.FindByUserUID(user.UID)
 
 			if ok {
 				bannedSocket.Close()
