@@ -83,6 +83,7 @@
       <div v-if="!actionObject" class="action-cards">
         <div v-for="(card, index) in action.cards" :key="index" class="card">
           <img
+            @dragstart.prevent=""
             @mouseenter="actionSelectMouseEnter($event, card)"
             @mousedown="actionSelect(card)"
             :class="[
@@ -100,6 +101,7 @@
           class="card"
         >
           <img
+            @dragstart.prevent=""
             @mouseenter="actionSelectMouseEnter($event, card)"
             @mousedown="actionSelect(card)"
             :class="[
@@ -282,7 +284,7 @@
 
         <div
           class="shieldzone"
-          @drop="drop($event, 'opponentshieldzone')"
+          @drop.prevent="drop($event, 'opponentshieldzone')"
           @dragover.prevent
           @dragenter.prevent
           ref="opponentshieldzone"
@@ -301,7 +303,7 @@
 
         <div
           class="playzone"
-          @drop="drop($event, 'opponentsplayzone')"
+          @drop.prevent="drop($event, 'opponentsplayzone')"
           @dragover.prevent
           @dragenter.prevent
           ref="opponentsplayzone"
@@ -370,7 +372,7 @@
               @contextmenu.prevent="
                 previewCards = state.me.graveyard;
                 previewCardsText =
-                  (state.spectator ? (state.me.username + '\'s') : 'My') +
+                  (state.spectator ? state.me.username + '\'s' : 'My') +
                   ' Graveyard';
               "
               v-if="state.me.graveyard.length > 0"
@@ -392,7 +394,7 @@
 
       <div class="stage me bt">
         <div
-          @drop="drop($event, 'playzone')"
+          @drop.prevent="drop($event, 'playzone')"
           @dragover.prevent
           @dragenter.prevent
           ref="myplayzone"
@@ -434,7 +436,7 @@
         </div>
 
         <div
-          @drop="drop($event, 'manazone')"
+          @drop.prevent="drop($event, 'manazone')"
           @dragover.prevent
           @dragenter.prevent
           ref="mymanazone"
