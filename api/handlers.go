@@ -123,6 +123,12 @@ func (api *API) SignupHandler(c *gin.Context) {
 		return
 	}
 
+	// Check if IP is in list of blocked networks
+	if api.blockedNetworks.Contains(ip) {
+		c.JSON(403, bson.M{"message": "Your network has been blocked from creating new accounts. If you believe this is wrong, please contact us on discord: https://discord.gg/FkPTE4p"})
+		return
+	}
+
 	collection = db.Collection("users")
 
 	if err := collection.FindOne(context.TODO(), bson.M{"username": primitive.Regex{Pattern: "^" + reqBody.Username + "$", Options: "i"}}).Decode(&db.User{}); err == nil {

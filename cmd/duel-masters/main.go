@@ -46,6 +46,21 @@ func main() {
 
 	api.CreateCardCache()
 
+	blockedIps := os.Getenv("blocked_networks")
+
+	if blockedIps != "" {
+		iprange, err := api.IPRangeFromExternalSrc(blockedIps)
+
+		if err != nil {
+			logrus.Error(err)
+		}
+
+		API.SetBlockedIPs(iprange)
+
+		logrus.Infof("Blocked %v networks from using certain API features", iprange.Size())
+
+	}
+
 	db.Connect(os.Getenv("mongo_uri"), os.Getenv("mongo_name"))
 
 	go checkForAutoRestart(lobby)

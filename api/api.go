@@ -3,6 +3,7 @@ package api
 import (
 	"duel-masters/game"
 	"duel-masters/game/match"
+	"net"
 	"os"
 	"path"
 
@@ -13,13 +14,23 @@ import (
 type API struct {
 	lobby       *game.Lobby
 	matchSystem *match.MatchSystem
+
+	blockedNetworks IPRange
 }
 
 func New(lobby *game.Lobby, matchSystem *match.MatchSystem) *API {
 	return &API{
 		matchSystem: matchSystem,
 		lobby:       lobby,
+
+		blockedNetworks: IPRange{
+			cidrs: []*net.IPNet{},
+		},
 	}
+}
+
+func (api *API) SetBlockedIPs(iprange IPRange) {
+	api.blockedNetworks = iprange
 }
 
 // Start starts the API
