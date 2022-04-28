@@ -35,16 +35,22 @@ func VampireSilphy(c *match.Card) {
 					return
 				}
 
+				toDestroy := make([]*match.Card, 0)
+
 				for _, creature := range myCreatures {
 					if ctx.Match.GetPower(creature, false) <= 3000 {
-						ctx.Match.Destroy(creature, card, match.DestroyedByMiscAbility)
+						toDestroy = append(toDestroy, creature)
 					}
 				}
 
 				for _, creature := range opponentCreatures {
 					if ctx.Match.GetPower(creature, false) <= 3000 {
-						ctx.Match.Destroy(creature, card, match.DestroyedByMiscAbility)
+						toDestroy = append(toDestroy, creature)
 					}
+				}
+
+				for _, creature := range toDestroy {
+					ctx.Match.Destroy(creature, card, match.DestroyedByMiscAbility)
 				}
 
 			}
