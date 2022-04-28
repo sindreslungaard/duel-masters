@@ -16,7 +16,7 @@
 </template>
 
 <script>
-import { toggleMute, isMuted } from "../helpers/mute";
+import { toggleMute, isMuted } from "../helpers/settings";
 
 export default {
   props: ["player"],
