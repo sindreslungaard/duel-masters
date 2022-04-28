@@ -11,12 +11,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Fixed an issue where double breakers sometimes only broke 1 shield while Alcadeias, Lord of Spirits was in play
 - Fixed an issue where Gregoria, Princess of War did not properly give and remove power bonus and blocker to demon commands
-- Fixed an issue where Creeping Plague did not remove slayer at the end of the turn, as well as giving slayer to the opponent.
+- Fixed an issue where Creeping Plague did not remove slayer at the end of the turn, as well as giving slayer to the opponent
+- Fixed an issue where Vampire Silphy, Burst Shot and Searing Wave would destroy cards sequentially, checking the next cards power after every destroy (thanks @vasyop)
+- Fixed an issue with drag and drop and selecting cards for firefox (thanks @vasyop)
+- Correctly display the graveyard's owner when spectating (thanks @vasyop)
+- Fixed an issue causing matches to not be shown in the match list for a certain period of time
 
 ### Added
 
 - Added ban system
 - Added mute system (thanks @vasyop)
+- Added option for no upside down cards to settings (thanks @vasyop)
+- Added help text that suggests select cards by dragging (thanks @vasyop)
 
 ### Changed
 
