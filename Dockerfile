@@ -3,7 +3,7 @@ FROM golang:1.18-alpine
 WORKDIR /go/src/duel-masters
 COPY . .
 
-RUN apk add --update nodejs npm
+RUN apk add --update git nodejs npm
 RUN cd ./webapp && npm install && npm run build
 RUN cd ..
 
