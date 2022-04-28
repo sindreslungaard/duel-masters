@@ -334,7 +334,9 @@
             <img
               @contextmenu.prevent="
                 previewCards = state.opponent.graveyard;
-                previewCardsText = 'Opponent\'s Graveyard';
+                previewCardsText =
+                  (state.spectator ? state.opponent.username : 'Opponent') +
+                  '\'s Graveyard';
               "
               v-if="state.opponent.graveyard.length > 0"
               style="height: 10vh"
@@ -367,7 +369,9 @@
             <img
               @contextmenu.prevent="
                 previewCards = state.me.graveyard;
-                previewCardsText = 'My Graveyard';
+                previewCardsText =
+                  (state.spectator ? (state.me.username + '\'s') : 'My') +
+                  ' Graveyard';
               "
               v-if="state.me.graveyard.length > 0"
               style="height: 10vh"
