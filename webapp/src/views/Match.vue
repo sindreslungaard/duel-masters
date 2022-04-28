@@ -69,6 +69,7 @@
     <!-- action (card selection) -->
     <div v-if="action" id="action" class="action noselect">
       <span v-draggable data-ref="action">{{ action.text }}</span>
+      <span><i> Tip: click and drag to (de)select faster</i></span>
       <template v-if="actionObject">
         <select class="action-select" v-model="actionDrowdownSelection">
           <option
@@ -82,6 +83,7 @@
       <div v-if="!actionObject" class="action-cards">
         <div v-for="(card, index) in action.cards" :key="index" class="card">
           <img
+            @dragstart.prevent=""
             @mouseenter="actionSelectMouseEnter($event, card)"
             @mousedown="actionSelect(card)"
             :class="[
@@ -99,6 +101,7 @@
           class="card"
         >
           <img
+            @dragstart.prevent=""
             @mouseenter="actionSelectMouseEnter($event, card)"
             @mousedown="actionSelect(card)"
             :class="[
@@ -281,7 +284,7 @@
 
         <div
           class="shieldzone"
-          @drop="drop($event, 'opponentshieldzone')"
+          @drop.prevent="drop($event, 'opponentshieldzone')"
           @dragover.prevent
           @dragenter.prevent
           ref="opponentshieldzone"
@@ -302,7 +305,7 @@
 
         <div
           class="playzone"
-          @drop="drop($event, 'opponentsplayzone')"
+          @drop.prevent="drop($event, 'opponentsplayzone')"
           @dragover.prevent
           @dragenter.prevent
           ref="opponentsplayzone"
@@ -338,7 +341,9 @@
             <img
               @contextmenu.prevent="
                 previewCards = state.opponent.graveyard;
-                previewCardsText = 'Opponent\'s Graveyard';
+                previewCardsText =
+                  (state.spectator ? state.opponent.username : 'Opponent') +
+                  '\'s Graveyard';
               "
               v-if="state.opponent.graveyard.length > 0"
               style="height: 10vh"
@@ -371,7 +376,9 @@
             <img
               @contextmenu.prevent="
                 previewCards = state.me.graveyard;
-                previewCardsText = 'My Graveyard';
+                previewCardsText =
+                  (state.spectator ? state.me.username + '\'s' : 'My') +
+                  ' Graveyard';
               "
               v-if="state.me.graveyard.length > 0"
               style="height: 10vh"
@@ -392,7 +399,7 @@
 
       <div class="stage me bt">
         <div
-          @drop="drop($event, 'playzone')"
+          @drop.prevent="drop($event, 'playzone')"
           @dragover.prevent
           @dragenter.prevent
           ref="myplayzone"
@@ -434,7 +441,7 @@
         </div>
 
         <div
-          @drop="drop($event, 'manazone')"
+          @drop.prevent="drop($event, 'manazone')"
           @dragover.prevent
           @dragenter.prevent
           ref="mymanazone"
