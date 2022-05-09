@@ -48,6 +48,13 @@ type PlayerAction struct {
 	Cancel bool     `json:"cancel"`
 }
 
+// PlayerActionState is used to store the last sent action message to the client.
+// When a player reconnects, if the last action is still active, we send it to the player
+type PlayerActionState struct {
+	resolved bool
+	data     interface{}
+}
+
 // NewPlayerReference returns a new player reference
 func NewPlayerReference(p *Player, s *server.Socket) *PlayerReference {
 
@@ -77,7 +84,8 @@ type Player struct {
 
 	mutex *sync.Mutex
 
-	Action chan PlayerAction
+	ActionState PlayerActionState
+	Action      chan PlayerAction
 
 	HasChargedMana bool
 	CanChargeMana  bool
@@ -100,6 +108,7 @@ func NewPlayer(match *Match, turn byte) *Player {
 		spellzone:      make([]*Card, 0),
 		hiddenzone:     make([]*Card, 0),
 		mutex:          &sync.Mutex{},
+		ActionState:    PlayerActionState{resolved: true},
 		Action:         make(chan PlayerAction),
 		HasChargedMana: false,
 		CanChargeMana:  true,

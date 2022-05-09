@@ -568,6 +568,11 @@ func (m *Match) NewAction(player *Player, cards []*Card, minSelections int, maxS
 		Cancellable:   cancellable,
 	}
 
+	player.ActionState = PlayerActionState{
+		resolved: false,
+		data:     msg,
+	}
+
 	m.PlayerRef(player).Socket.Send(msg)
 
 }
@@ -582,6 +587,11 @@ func (m *Match) NewBacksideAction(player *Player, cards []*Card, minSelections i
 		MinSelections: minSelections,
 		MaxSelections: maxSelections,
 		Cancellable:   cancellable,
+	}
+
+	player.ActionState = PlayerActionState{
+		resolved: false,
+		data:     msg,
 	}
 
 	m.PlayerRef(player).Socket.Send(msg)
@@ -606,12 +616,18 @@ func (m *Match) NewMultipartAction(player *Player, cards map[string][]*Card, min
 		Cancellable:   cancellable,
 	}
 
+	player.ActionState = PlayerActionState{
+		resolved: false,
+		data:     msg,
+	}
+
 	m.PlayerRef(player).Socket.Send(msg)
 
 }
 
 // CloseAction closes the card selection popup for the given player
 func (m *Match) CloseAction(p *Player) {
+	p.ActionState.resolved = true
 	m.PlayerRef(p).Socket.Send(server.Message{
 		Header: "close_action",
 	})
@@ -951,6 +967,12 @@ func (m *Match) Parse(s *server.Socket, data []byte) {
 					}
 
 					m.BroadcastState()
+
+					// if currently pending an action from this player
+					if !m.Player1.Player.ActionState.resolved {
+						s.Send(m.Player1.Player.ActionState.data)
+					}
+
 					m.Chat("Server", s.User.Username+" reconnected")
 
 					return
@@ -971,6 +993,12 @@ func (m *Match) Parse(s *server.Socket, data []byte) {
 					}
 
 					m.BroadcastState()
+
+					// if currently pending an action from this player
+					if !m.Player2.Player.ActionState.resolved {
+						s.Send(m.Player2.Player.ActionState.data)
+					}
+
 					m.Chat("Server", s.User.Username+" reconnected")
 
 					return
