@@ -1384,10 +1384,8 @@ func (m *Match) OnSocketClose(s *server.Socket) {
 		})
 	}
 
-	p.Socket = nil
-
 	// if both players have disconnected, close match
-	if (p == nil || p.Socket == nil) && (o == nil || o.Socket == nil) {
+	if (p == nil || p.Socket.IsClosed()) && (o == nil || o.Socket.IsClosed()) {
 		logrus.Debug("Both players left the match. Closing the match.")
 		m.Dispose()
 	}

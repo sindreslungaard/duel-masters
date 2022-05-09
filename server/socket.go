@@ -199,6 +199,10 @@ func (s *Socket) Close() {
 
 }
 
+func (s *Socket) IsClosed() bool {
+	return s.closed
+}
+
 // GetUserList returns a list of users currently online
 func GetUserList() UserListMessage {
 
