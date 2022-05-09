@@ -45,7 +45,7 @@ func SkeletonSoldierTheDefiled(c *match.Card) {
 	c.ManaCost = 4
 	c.ManaRequirement = []string{civ.Darkness}
 
-	c.Use(fx.Creature, fx.Suicide)
+	c.Use(fx.Creature)
 
 }
 

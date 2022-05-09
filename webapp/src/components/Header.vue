@@ -23,7 +23,8 @@
       <span
         >Join our
         <a target="_blank" href="https://discord.gg/R3gJrX2">discord</a> to
-        contribute with feedback and suggestions. Consider supporting us on
+        contribute with feedback and suggestions. Consider contributing on
+        <a target="_blank" style="color: #3ca374" href="https://github.com/sindreslungaard/duel-masters">github</a> or supporting us on
         <a target="_blank" style="color: #E66351" href="https://patreon.com/shobu">
         patreon</a> if you like what we're doing ❤️
         </span
