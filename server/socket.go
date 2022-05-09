@@ -114,7 +114,7 @@ func (s *Socket) Listen() {
 
 		}
 
-		go s.hub.Parse(s, message)
+		s.hub.Parse(s, message)
 
 	}
 

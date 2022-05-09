@@ -36,7 +36,7 @@ type Match struct {
 	closed      bool
 	isFirstTurn bool
 
-	stopTicker chan bool
+	eventloop *EventLoop
 
 	system *MatchSystem
 }
@@ -63,6 +63,8 @@ func (m *Match) Dispose() {
 			debug.PrintStack()
 		}
 	}()
+
+	m.eventloop.stop()
 
 	for _, spectator := range m.spectators.Iter() {
 		if spectator.Socket == nil {
@@ -909,12 +911,7 @@ func (m *Match) AttackCreature(p *PlayerReference, cardID string) {
 // Parse handles websocket messages in this Hub
 func (m *Match) Parse(s *server.Socket, data []byte) {
 
-	defer func() {
-		if r := recover(); r != nil {
-			logrus.Warnf("Recovered after parsing message in match. %v", r)
-			debug.PrintStack()
-		}
-	}()
+	defer internal.Recover()
 
 	var message server.Message
 	if err := json.Unmarshal(data, &message); err != nil {
@@ -924,8 +921,7 @@ func (m *Match) Parse(s *server.Socket, data []byte) {
 	switch message.Header {
 
 	case "mpong":
-		{
-
+		m.eventloop.schedule(func() {
 			p, err := m.PlayerForSocket(s)
 
 			if err != nil {
@@ -933,12 +929,10 @@ func (m *Match) Parse(s *server.Socket, data []byte) {
 			}
 
 			p.LastPong = time.Now().Unix()
-
-		}
+		}, ParallelEvent)
 
 	case "join_match":
-		{
-
+		m.eventloop.schedule(func() {
 			// player reconnect
 			if m.Started {
 				// p1 attempting to reconnect
@@ -1105,10 +1099,10 @@ func (m *Match) Parse(s *server.Socket, data []byte) {
 
 			m.system.UpdateMatchList()
 
-		}
+		}, ParallelEvent)
 
 	case "chat":
-		{
+		m.eventloop.schedule(func() {
 
 			// Allow other sockets than player1 and player2 to chat?
 
@@ -1143,10 +1137,10 @@ func (m *Match) Parse(s *server.Socket, data []byte) {
 			}
 
 			m.ColorChat(s.User.Username, msg.Message, s.User.Color)
-		}
+		}, ParallelEvent)
 
 	case "choose_deck":
-		{
+		m.eventloop.schedule(func() {
 
 			p, err := m.PlayerForSocket(s)
 
@@ -1178,10 +1172,10 @@ func (m *Match) Parse(s *server.Socket, data []byte) {
 				m.Start()
 			}
 
-		}
+		}, SequentialEvent)
 
 	case "add_to_manazone":
-		{
+		m.eventloop.schedule(func() {
 
 			p, err := m.PlayerForSocket(s)
 
@@ -1203,10 +1197,10 @@ func (m *Match) Parse(s *server.Socket, data []byte) {
 
 			m.ChargeMana(p, msg.ID)
 
-		}
+		}, SequentialEvent)
 
 	case "end_turn":
-		{
+		m.eventloop.schedule(func() {
 
 			p, err := m.PlayerForSocket(s)
 
@@ -1220,10 +1214,10 @@ func (m *Match) Parse(s *server.Socket, data []byte) {
 
 			m.EndTurn()
 
-		}
+		}, SequentialEvent)
 
 	case "add_to_playzone":
-		{
+		m.eventloop.schedule(func() {
 
 			p, err := m.PlayerForSocket(s)
 
@@ -1245,10 +1239,10 @@ func (m *Match) Parse(s *server.Socket, data []byte) {
 
 			m.PlayCard(p, msg.ID)
 
-		}
+		}, SequentialEvent)
 
 	case "action":
-		{
+		m.eventloop.schedule(func() {
 
 			p, err := m.PlayerForSocket(s)
 
@@ -1279,10 +1273,10 @@ func (m *Match) Parse(s *server.Socket, data []byte) {
 
 			p.Player.Action <- msg
 
-		}
+		}, ParallelEvent)
 
 	case "attack_player":
-		{
+		m.eventloop.schedule(func() {
 
 			p, err := m.PlayerForSocket(s)
 
@@ -1304,10 +1298,10 @@ func (m *Match) Parse(s *server.Socket, data []byte) {
 
 			m.AttackPlayer(p, msg.ID)
 
-		}
+		}, SequentialEvent)
 
 	case "attack_creature":
-		{
+		m.eventloop.schedule(func() {
 
 			p, err := m.PlayerForSocket(s)
 
@@ -1329,12 +1323,10 @@ func (m *Match) Parse(s *server.Socket, data []byte) {
 
 			m.AttackCreature(p, msg.ID)
 
-		}
+		}, SequentialEvent)
 
 	default:
-		{
-			logrus.Debugf("Received message in incorrect format: %v", string(data))
-		}
+		logrus.Debugf("Received message in incorrect format: %v", string(data))
 
 	}
 

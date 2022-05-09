@@ -79,10 +79,12 @@ func (s *MatchSystem) NewMatch(matchName string, hostID string, visible bool) *M
 		ending:      false,
 		isFirstTurn: true,
 
-		stopTicker: make(chan bool),
+		eventloop: NewEventLoop(),
 
 		system: s,
 	}
+
+	go m.eventloop.start()
 
 	s.Matches.Add(id, m)
 
