@@ -37,6 +37,11 @@ func (el *EventLoop) start() {
 			return
 		case event := <-el.events:
 			el.process(event)
+
+			// drain the channel
+			for len(el.events) > 0 {
+				<-el.events
+			}
 		}
 	}
 }
