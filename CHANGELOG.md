@@ -12,7 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed an issue where the card selection popup would not re-appear after reconnecting to a duel
 - Fixed an issue that made it possible to cause multiple player actions/events to be handled at the same time, causing weird behaviour in matches
 - Fixed an issue where the choose deck event could be executed after a match had started
-- Removed suicide effect from Skeleton Soldier, the Defiled
+- Removed suicide effect from Skeleton Soldier, the Defiled (thanks @vasyop)
 
 ### Added
 
