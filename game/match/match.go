@@ -1170,6 +1170,10 @@ func (m *Match) Parse(s *server.Socket, data []byte) {
 	case "choose_deck":
 		m.eventloop.schedule(func() {
 
+			if m.Started {
+				return
+			}
+
 			p, err := m.PlayerForSocket(s)
 
 			if err != nil {
