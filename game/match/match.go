@@ -1303,6 +1303,17 @@ func (m *Match) Parse(s *server.Socket, data []byte) {
 				}
 			}
 
+			// Drain the player action channel to prevent malicious exhaustion of goroutines
+			// as the msg is sent to the channel in a new grouroutine for every event
+		Drain:
+			for {
+				select {
+				case <-p.Player.Action:
+				default:
+					break Drain
+				}
+			}
+
 			p.Player.Action <- msg
 
 		}, ParallelEvent)
