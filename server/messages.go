@@ -103,6 +103,7 @@ type LobbyChatMessage struct {
 	Color     string `json:"color"`
 	Message   string `json:"message"`
 	Timestamp int    `json:"timestamp"`
+	Removed   bool
 }
 
 // LobbyChatMessages is used to store chat messages

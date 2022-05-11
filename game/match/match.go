@@ -1164,7 +1164,16 @@ func (m *Match) Parse(s *server.Socket, data []byte) {
 				return
 			}
 
-			m.ColorChat(s.User.Username, msg.Message, s.User.Color)
+			if s.User.Chatblocked {
+				s.Send(&server.ChatMessage{
+					Header:  "chat",
+					Message: msg.Message,
+					Sender:  s.User.Username,
+					Color:   s.User.Color,
+				})
+			} else {
+				m.ColorChat(s.User.Username, msg.Message, s.User.Color)
+			}
 		}, ParallelEvent)
 
 	case "choose_deck":

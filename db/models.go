@@ -17,6 +17,7 @@ type User struct {
 	Color       string        `json:"color"`
 	Sessions    []UserSession `json:"-"`
 	MutedUsers  []string      `json:"muted_users"`
+	Chatblocked bool          `json:"-" bson:"chat_blocked"`
 }
 
 type UserSettings struct {

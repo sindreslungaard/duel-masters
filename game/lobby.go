@@ -157,11 +157,21 @@ func (l *Lobby) Parse(s *server.Socket, data []byte) {
 
 			l.subscribers.Add(s.UID, s)
 
-			// Send chat messages
-			s.Send(server.LobbyChatMessages{
+			messages := server.LobbyChatMessages{
 				Header:   "chat",
-				Messages: l.messages,
-			})
+				Messages: []server.LobbyChatMessage{},
+			}
+
+			for _, msg := range l.messages {
+				if msg.Removed && msg.Username != s.User.Username {
+					continue
+				}
+
+				messages.Messages = append(messages.Messages, msg)
+			}
+
+			s.Send(messages)
+
 			s.Send(server.PinnedMessages{
 				Header:   "pinned_messages",
 				Messages: l.pinnedMessages,
@@ -209,6 +219,7 @@ func (l *Lobby) Parse(s *server.Socket, data []byte) {
 				Color:     s.User.Color,
 				Message:   msg.Message,
 				Timestamp: int(time.Now().Unix()),
+				Removed:   s.User.Chatblocked,
 			}
 
 			toBroadcast := server.LobbyChatMessages{
@@ -218,7 +229,11 @@ func (l *Lobby) Parse(s *server.Socket, data []byte) {
 
 			l.messages = append(l.messages, chatMsg)
 
-			l.Broadcast(toBroadcast)
+			if chatMsg.Removed {
+				s.Send(toBroadcast)
+			} else {
+				l.Broadcast(toBroadcast)
+			}
 
 		}
 
@@ -299,6 +314,48 @@ func (l *Lobby) handleChatCommand(s *server.Socket, command string) {
 		{
 			logrus.Info("Shutdown command invoked")
 			os.Exit(0)
+		}
+
+	case "chatblock":
+		{
+			if len(parts) < 2 {
+				chat(s, "Missing command arguments")
+				return
+			}
+
+			var user db.User
+
+			if err := db.Collection("users").FindOne(context.Background(), bson.M{"username": primitive.Regex{Pattern: "^" + parts[1] + "$", Options: "i"}}).Decode(&user); err != nil {
+				chat(s, fmt.Sprintf("Could not find the user \"%s\"", parts[1]))
+				return
+			}
+
+			_, err := db.Collection("users").UpdateOne(
+				context.Background(),
+				bson.M{"uid": user.UID},
+				bson.M{"$set": bson.M{"chat_blocked": true}},
+			)
+
+			if err != nil {
+				chat(s, fmt.Sprintf("Failed to chatblock %s", user.Username))
+			}
+
+			l.messagesMutex.Lock()
+			defer l.messagesMutex.Unlock()
+
+			for i, msg := range l.messages {
+				if msg.Username == user.Username {
+					l.messages[i].Removed = true
+				}
+			}
+
+			blockedSocket, ok := server.FindByUserUID(user.UID)
+
+			if ok {
+				blockedSocket.User.Chatblocked = true
+			}
+
+			chat(s, fmt.Sprintf("Successfully chatblocked %s", user.Username))
 		}
 
 	case "ban":
