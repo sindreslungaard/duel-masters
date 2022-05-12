@@ -48,7 +48,14 @@
           <table>
             <tr>
               <th>
-                Card Name
+                <div class="sort-btn" @click="toggleSort('name')">
+                  Card Name
+                  <img
+                    class="sort-ico"
+                    width="25px"
+                    :src="`/assets/images/${sortIcons.name}.png`"
+                  />
+                </div>
                 <input
                   v-model="filterCardName"
                   type="search"
@@ -56,7 +63,14 @@
                 />
               </th>
               <th>
-                Set
+                <div class="sort-btn" @click="toggleSort('set')">
+                  Set
+                  <img
+                    class="sort-ico"
+                    width="25px"
+                    :src="`/assets/images/${sortIcons.set}.png`"
+                  />
+                </div>
                 <select v-model="filterSet">
                   <option
                     class="set"
@@ -68,7 +82,14 @@
                 </select>
               </th>
               <th>
-                Civilization
+                <div class="sort-btn" @click="toggleSort('civilization')">
+                  Civilization
+                  <img
+                    class="sort-ico"
+                    width="25px"
+                    :src="`/assets/images/${sortIcons.civilization}.png`"
+                  />
+                </div>
                 <select v-model="filterCivilization">
                   <option value="all">All</option>
                   <option value="fire">Fire</option>
@@ -79,7 +100,14 @@
                 </select>
               </th>
               <th>
-                Race
+                <div class="sort-btn" @click="toggleSort('family')">
+                  Race
+                  <img
+                    class="sort-ico"
+                    width="25px"
+                    :src="`/assets/images/${sortIcons.family}.png`"
+                  />
+                </div>
                 <select v-model="filterFamily">
                   <option
                     class="family"
@@ -98,7 +126,7 @@
                 selectedFromDeck = card;
                 selected = card;
               "
-              v-for="(card, index) in filteredCards"
+              v-for="(card, index) in filteredAndSortedCards"
               :key="index"
               :class="[{ selected: selected && selected.uid === card.uid }]"
             >
@@ -246,6 +274,10 @@ export default {
       filterFamily: "All",
       filterSet: "All",
       families: ["All", "Spell"],
+      sort: {
+        by: "name",
+        directionNum: 1
+      },
 
       sets: [],
       cards: [],
@@ -269,6 +301,13 @@ export default {
     cardInfo(uid) {
       let card = this.cards.find(x => x.uid === uid);
       return card;
+    },
+
+    toggleSort(by) {
+      this.sort = {
+        directionNum: this.sort.by === by ? -this.sort.directionNum : 1,
+        by
+      };
     },
 
     getCardsForDeck(cardUids) {
@@ -472,38 +511,56 @@ export default {
     }
   },
   computed: {
-    filteredCards() {
-      let filteredCards = this.cards.filter(card =>
+    filteredAndSortedCards() {
+      let cards = this.cards.filter(card =>
         card.name.toLowerCase().includes(this.filterCardName.toLowerCase())
       );
 
       if (this.filterSet !== "All") {
-        filteredCards = filteredCards.filter(
-          card => card.set === this.filterSet
-        );
+        cards = cards.filter(card => card.set === this.filterSet);
       }
 
       if (this.filterCivilization !== "all") {
-        filteredCards = filteredCards.filter(
+        cards = cards.filter(
           card => card.civilization === this.filterCivilization
         );
       }
 
       if (this.filterFamily.toLowerCase() !== "all") {
-        filteredCards = filteredCards.filter(
+        cards = cards.filter(
           card =>
             (this.filterFamily.toLowerCase() === "spell" && !card.family) ||
             card.family === this.filterFamily
         );
       }
 
-      return filteredCards;
+      cards.sort(
+        (c1, c2) =>
+          this.sort.directionNum *
+          c1[this.sort.by].localeCompare(c2[this.sort.by])
+      );
+
+      return cards;
+    },
+
+    sortIcons() {
+      const result = {
+        name: "arrow_up_down",
+        set: "arrow_up_down",
+        civilization: "arrow_up_down",
+        family: "arrow_up_down"
+      };
+
+      result[this.sort.by] =
+        this.sort.directionNum === 1 ? "arrow_down" : "arrow_up";
+
+      return result;
     }
   }
 };
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 .helper {
   display: block !important;
   margin-bottom: 5px;
@@ -657,6 +714,15 @@ select {
   color: #ccc;
   resize: none;
 }
+
+th {
+  input,
+  select {
+    margin: 0;
+    width: 100% !important;
+  }
+}
+
 input:focus,
 textarea:focus,
 select:focus {
@@ -919,6 +985,23 @@ nav > ul > li.no-cursor:hover {
 
 a {
   color: #7289da;
+}
+
+.sort-btn {
+  white-space: nowrap;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+
+  .sort-ico {
+    margin-left: 5px;
+    filter: invert(70%);
+
+    &:hover {
+      filter: invert(80%);
+      cursor: pointer;
+    }
+  }
 }
 
 .btn {
