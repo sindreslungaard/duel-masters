@@ -67,6 +67,8 @@ func (el *EventLoop) stop() {
 func (el *EventLoop) schedule(event func(), strategy EventExecutionStrategy) {
 
 	go func() {
+		defer internal.Recover()
+
 		switch strategy {
 		case ParallelEvent:
 			event()
