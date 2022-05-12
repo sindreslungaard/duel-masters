@@ -112,6 +112,10 @@ func MatchList(matches []*Match) server.MatchesListMessage {
 			continue
 		}
 
+		if match.Player1 == nil {
+			continue
+		}
+
 		if match.Player1 != nil && match.Player2 != nil && !match.Started {
 			continue
 		}
