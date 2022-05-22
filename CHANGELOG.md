@@ -11,6 +11,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+## v2.7 - 22/05/2022
+
+### Fixed
+
+- Fixed an issue where "Trox, General of Destruction"'s ability crashes the match
+
+### Added
+
+- Added alphabetical sorting to deck builder categories (thanks @vasyop)
+
 ## v2.6 - 12/05/2022
 
 ### Fixed
