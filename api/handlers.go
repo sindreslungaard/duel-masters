@@ -401,7 +401,7 @@ func (api *API) CreateDeckHandler(c *gin.Context) {
 			return
 		}
 
-		if decksCount >= 30 {
+		if decksCount >= 50 {
 			c.Status(403)
 			return
 		}
