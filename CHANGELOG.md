@@ -8,8 +8,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Fixed
+Fixed an issue with Sniper Mosquito allowing it to return any amount of cards from manazone to hand
 
 ### Added
+
+### Changed
+Changed max deck limit from 30 to 50
 
 ## v2.7 - 22/05/2022
 
