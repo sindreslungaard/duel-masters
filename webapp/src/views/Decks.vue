@@ -546,7 +546,6 @@ export default {
         );
       }
 
-      console.log(this.sort.directionNum);
       cards.sort(
         (c1, c2) =>
           (c1[this.sort.by] === parseInt(c1[this.sort.by], 10) && c2[this.sort.by] === parseInt(c2[this.sort.by], 10)) ? 
