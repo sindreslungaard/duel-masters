@@ -220,6 +220,7 @@
                 <th>Card Name</th>
                 <th>Set</th>
                 <th>Civilization</th>
+                <th>Mana</th>
                 <th>Race</th>
               </tr>
               <template v-if="selectedDeck">
