@@ -30,3 +30,18 @@ func DeathCruzerTheAnnihilator(c *match.Card) {
 	}))
 
 }
+
+
+// VashunaSwordDancer ...
+func VashunaSwordDancer(c *match.Card) {
+
+	c.Name = "Vashuna, Sword Dancer"
+	c.Power = 7000
+	c.Civ = civ.Darkness
+	c.Family = family.DemonCommand
+	c.ManaCost = 5
+	c.ManaRequirement = []string{civ.Darkness}
+
+	c.Use(fx.Creature, fx.Doublebreaker, fx.CantAttackPlayersIfNoShields, fx.CantAttackCreaturesIfNoShields)
+
+}

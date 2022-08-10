@@ -295,6 +295,8 @@ func DiamondCutter(c *match.Card) {
 			x.RemoveCondition(cnd.SummoningSickness)
 			x.RemoveCondition(cnd.CantAttackCreatures)
 			x.RemoveCondition(cnd.CantAttackPlayers)
+			x.RemoveCondition(cnd.CantAttackPlayersIfNoShields)
+			x.RemoveCondition(cnd.CantAttackCreaturesIfNoShields)
 		})
 	}))
 
