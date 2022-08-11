@@ -51,12 +51,18 @@ func MongrelMan(c *match.Card) {
 		if card.Zone != match.BATTLEZONE {
 			return
 		}
-
 		if event, ok := ctx.Event.(*match.CreatureDestroyed); ok {
 			if event.Card.ID != card.ID {
-				card.Player.DrawCards(1)
+				ctx.Match.OptionalAction(card, card.Player, true)
+
+				defer ctx.Match.CloseAction(card.Player)
+
+				action := <-card.Player.Action
+
+				if !action.Cancel {
+					card.Player.DrawCards(1)
+				}
 			}
 		}
-
 	})
 }

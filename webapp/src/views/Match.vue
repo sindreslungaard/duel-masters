@@ -69,7 +69,7 @@
     <!-- action (card selection) -->
     <div v-if="action" id="action" class="action noselect">
       <span v-draggable data-ref="action">{{ action.text }}</span>
-      <span><i> Tip: click and drag to (de)select faster</i></span>
+      <span v-if="action.cards"><i> Tip: click and drag to (de)select faster</i></span>
       <template v-if="actionObject">
         <select class="action-select" v-model="actionDrowdownSelection">
           <option
@@ -80,7 +80,7 @@
           >
         </select>
       </template>
-      <div v-if="!actionObject" class="action-cards">
+      <div v-if="!actionObject && action.cards" class="action-cards">
         <div v-for="(card, index) in action.cards" :key="index" class="card">
           <img
             @dragstart.prevent=""
@@ -94,7 +94,7 @@
           />
         </div>
       </div>
-      <div v-if="actionObject" class="action-cards">
+      <div v-if="actionObject && action.cards" class="action-cards">
         <div
           v-for="(card, index) in actionObject[actionDrowdownSelection]"
           :key="index"
@@ -962,6 +962,16 @@ export default {
               text: data.text,
               minSelection: data.minSelection,
               maxSelections: data.maxSelections,
+              cancellable: data.cancellable
+            };
+            break;
+          }
+
+          case "optional_action": {
+            (this.actionError = "");
+            this.action = {
+              cards: null,
+              text: data.text,
               cancellable: data.cancellable
             };
             break;
