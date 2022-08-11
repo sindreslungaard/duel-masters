@@ -1,15 +1,16 @@
 <template>
   <div>
     <div
-      v-show="warning || previewCard"
+      v-show="warning"
       @click="closeOverlay()"
       class="overlay"
     ></div>
 
-    <div v-if="previewCard" class="card-preview">
-      <img :src="`/assets/cards/all/${previewCard.uid}.jpg`" />
-      <div @click="previewCard = null" class="btn">Close</div>
-    </div>
+    <span v-if="previewCard">
+      <div class="card-preview">
+        <img :src="`/assets/cards/all/${previewCard.uid}.jpg`" alt="Full card">
+      </div>
+    </span>
 
     <div v-show="warning" class="error">
       <p>{{ warning }}</p>
@@ -100,6 +101,16 @@
                 </select>
               </th>
               <th>
+                <div class="sort-btn" @click="toggleSort('manaCost')">
+                  Mana
+                  <img
+                    class="sort-ico"
+                    width="25px"
+                    :src="`/assets/images/${sortIcons.manaCost}.png`"
+                  />
+                </div>
+              </th>
+              <th>
                 <div class="sort-btn" @click="toggleSort('family')">
                   Race
                   <img
@@ -120,7 +131,6 @@
               </th>
             </tr>
             <tr
-              @dblclick="previewCard = card"
               @contextmenu.prevent="previewCard = card"
               @click="
                 selectedFromDeck = card;
@@ -130,9 +140,13 @@
               :key="index"
               :class="[{ selected: selected && selected.uid === card.uid }]"
             >
-              <td>{{ card.name }}</td>
+              <td
+                @mouseover="previewCard = card"
+                @mouseleave="previewCard = null"
+              >{{ card.name }}</td>
               <td class="set">{{ card.set }}</td>
               <td class="civilization">{{ card.civilization }}</td>
+              <td class="manaCost">{{ card.manaCost }}</td>
               <td class="family">{{ card.family || "Spell" }}</td>
             </tr>
           </table>
@@ -209,11 +223,11 @@
                 <th>Card Name</th>
                 <th>Set</th>
                 <th>Civilization</th>
+                <th>Mana</th>
                 <th>Race</th>
               </tr>
               <template v-if="selectedDeck">
                 <tr
-                  @dblclick="previewCard = card"
                   @contextmenu.prevent="previewCard = card"
                   @click="
                     selected = card;
@@ -229,9 +243,13 @@
                   ]"
                 >
                   <td>{{ card.count }}</td>
-                  <td>{{ card.name }}</td>
+                  <td
+                    @mouseover="previewCard = card"
+                    @mouseleave="previewCard = null"
+                  >{{ card.name }}</td>
                   <td class="set">{{ card.set }}</td>
                   <td class="civilization">{{ card.civilization }}</td>
+                  <td class="manaCost">{{ card.manaCost }}</td>
                   <td class="civilization">{{ card.family }}</td>
                 </tr>
               </template>
@@ -384,7 +402,6 @@ export default {
     },
 
     closeOverlay() {
-      this.previewCard = null;
       this.warning = null;
     },
 
@@ -536,8 +553,9 @@ export default {
 
       cards.sort(
         (c1, c2) =>
-          this.sort.directionNum *
-          c1[this.sort.by].localeCompare(c2[this.sort.by])
+          (c1[this.sort.by] === parseInt(c1[this.sort.by], 10) && c2[this.sort.by] === parseInt(c2[this.sort.by], 10)) ? 
+            this.sort.directionNum * (c1[this.sort.by] < c2[this.sort.by] ? -1 : c1[this.sort.by] > c2[this.sort.by] ? 1 : 0) : 
+            this.sort.directionNum * c1[this.sort.by].localeCompare(c2[this.sort.by])
       );
 
       return cards;
@@ -548,6 +566,7 @@ export default {
         name: "arrow_up_down",
         set: "arrow_up_down",
         civilization: "arrow_up_down",
+        manaCost: "arrow_up_down",
         family: "arrow_up_down"
       };
 
@@ -668,8 +687,8 @@ export default {
   height: 480px;
   z-index: 2005;
   position: absolute;
-  left: calc(50% - 300px / 2);
-  top: calc(50vh - 480px / 2);
+  left: calc(50% - 150px);
+  top: calc(50vh - 240px);
 }
 
 .card-preview > img {
