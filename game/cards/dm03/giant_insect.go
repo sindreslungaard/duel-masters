@@ -42,7 +42,7 @@ func SniperMosquito(c *match.Card) {
 	c.ManaCost = 1
 	c.ManaRequirement = []string{civ.Nature}
 
-	c.Use(fx.Creature, fx.When(fx.Attacking, func(card *match.Card, ctx *match.Context) {
+	c.Use(fx.Creature, fx.When(fx.AttackConfirmed, func(card *match.Card, ctx *match.Context) {
 
 		fx.Select(
 			card.Player,

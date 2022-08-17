@@ -14,9 +14,15 @@ import (
 	"duel-masters/game/match"
 
 	"github.com/sirupsen/logrus"
+	"github.com/joho/godotenv"
 )
 
 func main() {
+	
+	err := godotenv.Load()
+	if err != nil {
+		logrus.Warn("Failed to load .env file")
+	}
 
 	logrus.SetFormatter(&logrus.JSONFormatter{})
 	logrus.SetLevel(logrus.DebugLevel)
