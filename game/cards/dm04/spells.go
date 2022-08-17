@@ -398,7 +398,7 @@ func WhiskingWhirlwind(c *match.Card) {
 		ctx.Match.ApplyPersistentEffect(func(ctx2 *match.Context, exit func()) {
 
 			// on all events, add blocker to our creatures
-			if _, ok := ctx.Event.(*match.EndOfTurnStep); ok {
+			if _, ok := ctx2.Event.(*match.EndOfTurnStep); ok {
 				fx.Find(
 					card.Player,
 					match.BATTLEZONE,
