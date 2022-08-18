@@ -12,13 +12,14 @@ import (
 	"duel-masters/game"
 	"duel-masters/game/cards"
 	"duel-masters/game/match"
+	"duel-masters/scripting"
 
-	"github.com/sirupsen/logrus"
 	"github.com/joho/godotenv"
+	"github.com/sirupsen/logrus"
 )
 
 func main() {
-	
+
 	err := godotenv.Load()
 	if err != nil {
 		logrus.Warn("Failed to load .env file")
@@ -46,6 +47,9 @@ func main() {
 	go matchSystem.StartTicker()
 
 	lobby.SetMatchesFunc(func() []*match.Match { return matchSystem.Matches.Iter() })
+
+	// Scripting
+	scripting.Setup()
 
 	// Setup API
 	API := api.New(lobby, matchSystem)
