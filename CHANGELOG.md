@@ -8,12 +8,30 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Fixed
-Fixed an issue with Sniper Mosquito allowing it to return any amount of cards from manazone to hand
 
 ### Added
 
 ### Changed
-Changed max deck limit from 30 to 50
+
+## v2.7 - 18/08/2022
+
+### Fixed
+
+- Fixed an issue with Sniper Mosquito allowing it to return any amount of cards from manazone to hand
+- Fixed an issue with Whisking Whirlwind where it wouldn't untap your creatures at the end of the turn (thanks @Fightlapa)
+
+### Added
+
+- Added sorting of mana cost in deck builder (thanks @Fightlapa)
+- New card "Skullsweeper Q" (thanks @Fightlapa)
+- New card "Enchanted Soil" (thanks @Fightlapa)
+- New card "Avalanche Giant" (thanks @Fightlapa)
+
+### Changed
+
+- Changed max deck limit from 30 to 50
+- Cards are now previewed while hovering the card name in the deck builder (thanks @Fightlapa)
+- Updated Monrel Man's ability to be optional (thanks @Fightlapa)
 
 ## v2.7 - 22/05/2022
 
