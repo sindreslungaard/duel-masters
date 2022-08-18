@@ -37,11 +37,6 @@ declare interface Match {
   on<T extends EvType>(type: T, callback: (data: Ev<T>) => void);
 }
 
-declare global {
-  const $self: CardConstruct;
-  const $match: Match;
-}
-
 // Container
 declare enum Container {
   Deck = "deck",
@@ -132,6 +127,11 @@ interface CardMovedEvent {
   cardId: string;
   to: Container;
   from: Container;
+}
+
+declare global {
+  const $self: CardConstruct;
+  const $match: Match;
 }
 
 export {};
