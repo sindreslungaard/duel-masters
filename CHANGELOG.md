@@ -31,7 +31,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Changed max deck limit from 30 to 50
 - Cards are now previewed while hovering the card name in the deck builder (thanks @Fightlapa)
-- Updated Monrel Man's ability to be optional (thanks @Fightlapa)
+- Updated Mongrel Man's ability to be optional (thanks @Fightlapa)
 
 ## v2.7 - 22/05/2022
 
