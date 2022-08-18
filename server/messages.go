@@ -75,13 +75,6 @@ type ActionMessage struct {
 	Cancellable   bool        `json:"cancellable"`
 }
 
-// ActionMessage is used to prompt the user to make a selection of the specified cards
-type OptionalActionMessage struct {
-	Header        string      `json:"header"`
-	Text          string      `json:"text"`
-	Cancellable   bool        `json:"cancellable"`
-}
-
 // MultipartActionMessage is used to prompt the user to make a selection of the specified cards
 type MultipartActionMessage struct {
 	Header        string                 `json:"header"`

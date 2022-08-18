@@ -577,24 +577,6 @@ func (m *Match) NewAction(player *Player, cards []*Card, minSelections int, maxS
 
 }
 
-// NewAction prompts the user to make a selection of the specified []Cards
-func (m *Match) OptionalAction(card *Card, player *Player, cancellable bool) {
-
-	msg := &server.ActionMessage{
-		Header:        "optional_action",
-		Text:          fmt.Sprintf("Should optional action of %s be executed?", card.Name),
-		Cancellable:   cancellable,
-	}
-
-	player.ActionState = PlayerActionState{
-		resolved: false,
-		data:     msg,
-	}
-
-	m.PlayerRef(player).Socket.Send(msg)
-
-}
-
 // NewBacksideAction prompts the user to make a selection of the specified cards without their names or images
 func (m *Match) NewBacksideAction(player *Player, cards []*Card, minSelections int, maxSelections int, text string, cancellable bool) {
 

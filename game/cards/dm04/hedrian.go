@@ -53,16 +53,17 @@ func MongrelMan(c *match.Card) {
 		}
 		if event, ok := ctx.Event.(*match.CreatureDestroyed); ok {
 			if event.Card.ID != card.ID {
-				ctx.Match.OptionalAction(card, card.Player, true)
 
-				defer ctx.Match.CloseAction(card.Player)
+				result := fx.SelectBacksideFilter(card.Player, ctx.Match, card.Player, match.BATTLEZONE, "Mongrel Man: You may optionally draw a card because a creature was destroyed. Click close to not draw a card.", 1, 1, true, func(x *match.Card) bool {
+					return x.ID == event.Card.ID
+				})
 
-				action := <-card.Player.Action
-
-				if !action.Cancel {
+				if len(result) > 0 {
 					card.Player.DrawCards(1)
+					ctx.Match.Chat("Server", fmt.Sprintf("%s chose to draw a card from Mongrel Man's ability", c.Player.Username()))
 				}
 			}
+
 		}
 	})
 }
