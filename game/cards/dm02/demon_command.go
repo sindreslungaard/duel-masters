@@ -19,17 +19,18 @@ func DarkTitanMaginn(c *match.Card) {
 	c.ManaCost = 6
 	c.ManaRequirement = []string{civ.Darkness}
 
-	c.Use(fx.Creature, func(card *match.Card, ctx *match.Context) {
+	c.Use(fx.Creature, fx.When(fx.AttackConfirmed, func(card *match.Card, ctx *match.Context) {
+		hand := fx.Find(ctx.Match.Opponent(card.Player), match.HAND)
 
-		if event, ok := ctx.Event.(*match.AttackCreature); ok {
-			dtmSpecial(card, ctx, event.CardID)
+		if len(hand) < 1 {
+			return
 		}
 
-		if event, ok := ctx.Event.(*match.AttackPlayer); ok {
-			dtmSpecial(card, ctx, event.CardID)
+		discardedCard, err := ctx.Match.Opponent(card.Player).MoveCard(hand[rand.Intn(len(hand))].ID, match.HAND, match.GRAVEYARD)
+		if err == nil {
+			ctx.Match.Chat("Server", fmt.Sprintf("%s was discarded from %s's hand by Dark Titan Maginn", discardedCard.Name, discardedCard.Player.Username()))
 		}
-
-	})
+	}))
 
 }
 
