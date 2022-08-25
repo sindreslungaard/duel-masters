@@ -27,7 +27,7 @@ func AvalancheGiant(c *match.Card) {
 
 			opponent := ctx.Match.Opponent(card.Player)
 
-			ctx.Match.BreakShields(fx.Select(
+			ctx.Match.BreakShields(fx.SelectBackside(
 				card.Player,
 				ctx.Match,
 				opponent,
