@@ -60,7 +60,7 @@ func MongrelMan(c *match.Card) {
 				}
 
 				result := fx.SelectBacksideFilter(card.Player, ctx.Match, card.Player, match.BATTLEZONE, "Mongrel Man: You may optionally draw a card because a creature was destroyed. Click close to not draw a card.", 1, 1, true, func(x *match.Card) bool {
-					return x.ID == event.Card.ID
+					return x.ID == c.ID
 				})
 
 				if len(result) > 0 {

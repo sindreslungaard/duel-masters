@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- Fix for Mongrel Man's ability not working when opponent's creature is destroyed
+- Fix for Avalanche Giant's ability exposing opponent's shield instead of showing the backside of the cards
+
 ### Added
 
 ### Changed
