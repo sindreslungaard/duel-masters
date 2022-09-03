@@ -14,8 +14,9 @@ func Creature(card *match.Card, ctx *match.Context) {
 	// Untap the card, add creature condition
 	if _, ok := ctx.Event.(*match.UntapStep); ok {
 
+		card.AddCondition(cnd.Creature, nil, nil)
+
 		if ctx.Match.IsPlayerTurn(card.Player) {
-			card.AddCondition(cnd.Creature, nil, nil)
 			card.Tapped = false
 		}
 
