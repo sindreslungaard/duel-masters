@@ -31,6 +31,8 @@ type Card struct {
 	attachedCards []*Card
 	conditions    []Condition
 	handlers      []HandlerFunc
+
+	localData map[string]string
 }
 
 // NewCard returns a new, initialized card
@@ -56,6 +58,7 @@ func NewCard(p *Player, image string) (*Card, error) {
 		ManaCost:        1,
 		ManaRequirement: make([]string, 0),
 		PowerModifier:   func(m *Match, attacking bool) int { return 0 },
+		localData:       map[string]string{},
 	}
 
 	cardctor, err := CardCtor(image)
