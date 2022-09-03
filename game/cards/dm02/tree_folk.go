@@ -35,7 +35,7 @@ func ElfX(c *match.Card) {
 				}
 
 				if toReduce.HasCondition(cnd.Creature) {
-					toReduce.AddCondition(cnd.ReducedCost, 1, card.ID)
+					toReduce.AddUniqueSourceCondition(cnd.ReducedCost, 1, card.ID)
 				}
 
 			}

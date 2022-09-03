@@ -8,6 +8,7 @@ All notable changes to this project as of 11/11/2021 will be documented in this 
 - Fix for Avalanche Giant's ability exposing opponent's shield instead of showing the backside of the cards
 - Fix for match sometimes not ending when a player runs out of cards in their deck if the last card was moved by a card ability
 - Updated Enchanted Soil to only let you retrieve creatures from your graveyard
+- Fixed an issue where Elf-X could keep decreasing a cards mana cost by cancelling playing a card before selecting mana
 
 ## 18/08/2022
 
