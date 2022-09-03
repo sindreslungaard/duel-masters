@@ -554,6 +554,13 @@ func (m *Match) HandleFx(ctx *Context) {
 
 	}
 
+	// End the game  if any of the players are out of cards in their deck
+	for _, p := range players {
+		if len(p.Player.deck) < 1 {
+			m.End(m.Opponent(p.Player), fmt.Sprintf("%s won by deck out!", m.Opponent(p.Player).Username()))
+		}
+	}
+
 }
 
 // NewAction prompts the user to make a selection of the specified []Cards
