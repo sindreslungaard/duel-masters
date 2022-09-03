@@ -17,6 +17,7 @@ All notable changes to this project as of 11/11/2021 will be documented in this 
 - Fixed an issue where Dark Reversal and similar shield triggers did not work properly during opponent's turn
 - Fixed an issue where Three-Eyed Dragonfly could cancel the attack and still get the benefits from its effect
 - Fixed an issue where Re Bil, Seeker of Archery's effect did not go away when it was removed from the battlezone
+- Fixed an issue where Diamond Cutter would not apply to creatures summoned after the spell was cast
 
 ## 18/08/2022
 

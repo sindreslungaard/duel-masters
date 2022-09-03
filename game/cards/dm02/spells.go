@@ -287,15 +287,25 @@ func DiamondCutter(c *match.Card) {
 
 	c.Use(fx.Spell, fx.When(fx.SpellCast, func(card *match.Card, ctx *match.Context) {
 
-		fx.Find(
-			card.Player,
-			match.BATTLEZONE,
-		).Map(func(x *match.Card) {
+		ctx.Match.ApplyPersistentEffect(func(ctx2 *match.Context, exit func()) {
 
-			x.RemoveCondition(cnd.SummoningSickness)
-			x.RemoveCondition(cnd.CantAttackCreatures)
-			x.RemoveCondition(cnd.CantAttackPlayers)
+			fx.Find(
+				card.Player,
+				match.BATTLEZONE,
+			).Map(func(x *match.Card) {
+				x.RemoveCondition(cnd.SummoningSickness)
+				x.RemoveCondition(cnd.CantAttackCreatures)
+				x.RemoveCondition(cnd.CantAttackPlayers)
+			})
+
+			// remove persistent effect when turn ends
+			_, ok := ctx2.Event.(*match.EndStep)
+			if ok {
+				exit()
+			}
+
 		})
+
 	}))
 
 }
