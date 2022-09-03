@@ -2,7 +2,6 @@ package dm03
 
 import (
 	"duel-masters/game/civ"
-	"duel-masters/game/cnd"
 	"duel-masters/game/family"
 	"duel-masters/game/fx"
 	"duel-masters/game/match"
@@ -20,13 +19,26 @@ func Gigamantis(c *match.Card) {
 	c.ManaRequirement = []string{civ.Nature}
 
 	c.Use(fx.Creature, fx.Evolution, func(card *match.Card, ctx *match.Context) {
+
+		if card.Zone != match.BATTLEZONE {
+			return
+		}
+
 		if event, ok := ctx.Event.(*match.CardMoved); ok {
 
-			if event.CardID == card.ID && event.From == match.BATTLEZONE && event.To == match.GRAVEYARD && card.HasCondition(cnd.Creature) {
-
-				card.Player.MoveCard(card.ID, match.BATTLEZONE, match.MANAZONE)
-				ctx.Match.Chat("Server", fmt.Sprintf("Gigamantis: %s was moved to mana zone instead of graveyard", card.Name))
+			if event.From != match.BATTLEZONE || event.To != match.GRAVEYARD || event.CardID == card.ID {
+				return
 			}
+
+			movedCard, err := card.Player.GetCard(event.CardID, match.GRAVEYARD)
+
+			if err != nil || movedCard.Civ != civ.Nature {
+				return
+			}
+
+			card.Player.MoveCard(movedCard.ID, match.GRAVEYARD, match.MANAZONE)
+			ctx.Match.Chat("Server", fmt.Sprintf("%s was moved to %s's mana zone instead of the graveyard by Gigamantis", card.Name, card.Player.Username()))
+
 		}
 	})
 
@@ -69,5 +81,5 @@ func SwordButterfly(c *match.Card) {
 	c.ManaCost = 3
 	c.ManaRequirement = []string{civ.Nature}
 
-	c.Use(fx.Creature, fx.PowerAttacker3000);
+	c.Use(fx.Creature, fx.PowerAttacker3000)
 }
