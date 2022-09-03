@@ -45,16 +45,23 @@ func ReBilSeekerOfArchery(c *match.Card) {
 	c.ManaCost = 7
 	c.ManaRequirement = []string{civ.Light}
 
-	c.Use(fx.Creature, fx.Doublebreaker, func(card *match.Card, ctx *match.Context) {
+	c.Use(fx.Creature, fx.Doublebreaker, fx.When(fx.Summoned, func(card *match.Card, ctx *match.Context) {
 
-		if card.Zone != match.BATTLEZONE {
-			return
-		}
+		ctx.Match.ApplyPersistentEffect(func(ctx2 *match.Context, exit func()) {
 
-		getLightCreatures(card, ctx).Map(func(x *match.Card) {
-			x.AddUniqueSourceCondition(cnd.PowerAmplifier, 2000, card.ID)
+			getLightCreatures(card, ctx2).Map(func(x *match.Card) {
+				x.AddUniqueSourceCondition(cnd.PowerAmplifier, 2000, card.ID)
+			})
+
+			if card.Zone != match.BATTLEZONE {
+				getLightCreatures(card, ctx2).Map(func(x *match.Card) {
+					x.RemoveConditionBySource(card.ID)
+				})
+				exit()
+			}
+
 		})
-	})
+	}))
 }
 
 func getLightCreatures(card *match.Card, ctx *match.Context) fx.CardCollection {
