@@ -13,6 +13,7 @@ All notable changes to this project as of 11/11/2021 will be documented in this 
 - Fixed an issue where Pouch Shell did not keep the tapped state of the target card when its evolution was removed
 - Fixed an issue where Whisking Whirlwind did not untap all creatures at the end of the turn
 - Fixed an issue causing Jack Viper, Shadow of Doom's effect to apply to non-darkness creatures too
+- Fixed an issue where Bolzard Dragon could use its effect infinite times by attacking creatures while opponent had no creatures
 
 ## 18/08/2022
 

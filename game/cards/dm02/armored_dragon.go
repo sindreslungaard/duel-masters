@@ -20,40 +20,25 @@ func BolzardDragon(c *match.Card) {
 
 	c.Use(fx.Creature, func(card *match.Card, ctx *match.Context) {
 
-		if event, ok := ctx.Event.(*match.AttackCreature); ok {
-			if event.CardID == card.ID {
-				bolzardDragonSpecial(card, ctx)
+		if event, ok := ctx.Event.(*match.AttackConfirmed); ok {
+			if event.CardID != card.ID {
+				return
 			}
-		}
+			manaCards := match.Search(
+				card.Player,
+				ctx.Match,
+				ctx.Match.Opponent(card.Player),
+				match.MANAZONE,
+				"Select 1 card from your opponent's mana zone that will be sent to their graveyard",
+				1,
+				1,
+				false,
+			)
 
-		if event, ok := ctx.Event.(*match.AttackPlayer); ok {
-			if event.CardID == card.ID {
-				bolzardDragonSpecial(card, ctx)
+			for _, mana := range manaCards {
+				mana.Player.MoveCard(mana.ID, match.MANAZONE, match.GRAVEYARD)
+				ctx.Match.Chat("Server", fmt.Sprintf("%s was sent from %s's manazone to their graveyard by %s", mana.Name, mana.Player.Username(), card.Name))
 			}
-		}
-
-	})
-
-}
-
-func bolzardDragonSpecial(card *match.Card, ctx *match.Context) {
-
-	ctx.ScheduleAfter(func() {
-
-		manaCards := match.Search(
-			card.Player,
-			ctx.Match,
-			ctx.Match.Opponent(card.Player),
-			match.MANAZONE,
-			"Select 1 card from your opponent's mana zone that will be sent to their graveyard",
-			1,
-			1,
-			false,
-		)
-
-		for _, mana := range manaCards {
-			mana.Player.MoveCard(mana.ID, match.MANAZONE, match.GRAVEYARD)
-			ctx.Match.Chat("Server", fmt.Sprintf("%s was sent from %s's manazone to their graveyard by %s", mana.Name, mana.Player.Username(), card.Name))
 		}
 
 	})
