@@ -53,7 +53,7 @@ func SiegBaliculaTheIntense(c *match.Card) {
 			card.Player,
 			match.BATTLEZONE,
 			func(x *match.Card) bool {
-				return (x.Civ == civ.Light && x.ID != card.ID && !x.Tapped)
+				return (x.Civ == civ.Light && x.ID != card.ID)
 			},
 		)
 
