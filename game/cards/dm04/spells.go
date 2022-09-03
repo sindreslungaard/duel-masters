@@ -397,19 +397,16 @@ func WhiskingWhirlwind(c *match.Card) {
 
 		ctx.Match.ApplyPersistentEffect(func(ctx2 *match.Context, exit func()) {
 
-			// on all events, add blocker to our creatures
 			if _, ok := ctx2.Event.(*match.EndOfTurnStep); ok {
 				fx.Find(
 					card.Player,
 					match.BATTLEZONE,
 				).Map(func(x *match.Card) {
-					x.Tapped = false
+					if x.Tapped {
+						x.Tapped = false
+						ctx.Match.Chat("Server", fmt.Sprintf("%s was untapped by %s's effect", x.Name, card.Name))
+					}
 				})
-			}
-
-			// remove persistent effect on start of next turn
-			_, ok := ctx2.Event.(*match.StartOfTurnStep)
-			if ok && ctx2.Match.IsPlayerTurn(card.Player) {
 				exit()
 			}
 
