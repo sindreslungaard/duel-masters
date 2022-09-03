@@ -33,10 +33,14 @@ func PouchShell(c *match.Card) {
 				true,
 				func(x *match.Card) bool { return x.HasCondition(cnd.Evolution) },
 			).Map(func(x *match.Card) {
+				tapped := x.Tapped
 				baseCard := x.Attachments()[0]
 				x.ClearAttachments()
 				ctx.Match.Destroy(x, card, match.DestroyedByMiscAbility)
 				baseCard.Player.MoveCard(baseCard.ID, match.HIDDENZONE, match.BATTLEZONE)
+				if tapped && !baseCard.Tapped {
+					baseCard.Tapped = true
+				}
 			})
 		}
 
