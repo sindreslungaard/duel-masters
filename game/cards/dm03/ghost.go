@@ -36,7 +36,7 @@ func JackViperShadowofDoom(c *match.Card) {
 			fx.FindFilter(
 				card.Player,
 				match.GRAVEYARD,
-				func(x *match.Card) bool { return x.ID == event.CardID && x.ID != card.ID && card.Civ == civ.Darkness },
+				func(x *match.Card) bool { return x.ID == event.CardID && x.ID != card.ID && x.Civ == civ.Darkness },
 			).Map(func(x *match.Card) {
 				card.Player.MoveCard(x.ID, match.GRAVEYARD, match.HAND)
 				ctx.Match.Chat("Server", fmt.Sprintf("%s was moved to %s's hand from the graveyard by Jack Viper, Shadow of Doom", x.Name, x.Player.Username()))
