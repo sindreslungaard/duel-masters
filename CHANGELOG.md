@@ -4,6 +4,8 @@ All notable changes to this project as of 11/11/2021 will be documented in this 
 
 ## [Unreleased]
 
+- Fixed an issue where creatures could attack while tapped
+
 ## 03/09/2022
 
 - Fix for match sometimes not ending when a player runs out of cards in their deck if the last card was moved by a card ability
