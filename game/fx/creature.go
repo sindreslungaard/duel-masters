@@ -145,6 +145,12 @@ func Creature(card *match.Card, ctx *match.Context) {
 			return
 		}
 
+		if card.Tapped {
+			ctx.Match.WarnPlayer(card.Player, fmt.Sprintf("%s cannot attack while tapped", card.Name))
+			ctx.InterruptFlow()
+			return
+		}
+
 		if card.HasCondition(cnd.SummoningSickness) {
 			ctx.Match.WarnPlayer(card.Player, fmt.Sprintf("%s cannot attack this turn as it has summoning sickness", card.Name))
 			ctx.InterruptFlow()
@@ -310,6 +316,12 @@ func Creature(card *match.Card, ctx *match.Context) {
 
 		// Is this event for me or someone else?
 		if event.CardID != card.ID {
+			return
+		}
+
+		if card.Tapped {
+			ctx.Match.WarnPlayer(card.Player, fmt.Sprintf("%s cannot attack while tapped", card.Name))
+			ctx.InterruptFlow()
 			return
 		}
 
