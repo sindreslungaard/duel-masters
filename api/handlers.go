@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"duel-masters/db"
+	"duel-masters/flags"
 	"duel-masters/server"
 
 	"github.com/gin-gonic/gin"
@@ -198,6 +199,11 @@ var defaultMatchNames = []string{
 
 // MatchHandler handles creation of new mathes
 func (api *API) MatchHandler(c *gin.Context) {
+
+	if !flags.NewMatchesEnabled {
+		c.Status(403)
+		return
+	}
 
 	user, err := db.GetUserForToken(c.GetHeader("Authorization"))
 	if err != nil {

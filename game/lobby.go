@@ -3,6 +3,7 @@ package game
 import (
 	"context"
 	"duel-masters/db"
+	"duel-masters/flags"
 	"duel-masters/game/match"
 	"duel-masters/internal"
 	"duel-masters/server"
@@ -290,6 +291,11 @@ func (l *Lobby) handleChatCommand(s *server.Socket, command string) {
 	}
 
 	switch strings.ToLower(strings.TrimPrefix(parts[0], "/")) {
+	case "togglematches":
+		{
+			flags.NewMatchesEnabled = !flags.NewMatchesEnabled
+			chat(s, fmt.Sprintf("NewMatchesEnabled: %v", flags.NewMatchesEnabled))
+		}
 	case "pin":
 		{
 			msg := strings.TrimPrefix(command, "/pin ")
