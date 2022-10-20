@@ -12,6 +12,7 @@ All notable changes to this project as of 11/11/2021 will be documented in this 
 - New card "Lurking Eel"
 - New card "Crow Winger"
 - New card "Snork La, Shrine Guardian"
+- New card "Cyclone panic"
 
 ## 03/09/2022
 
