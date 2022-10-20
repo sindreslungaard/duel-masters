@@ -11,6 +11,7 @@ All notable changes to this project as of 11/11/2021 will be documented in this 
 - New card "Scheming Hands"
 - New card "Lurking Eel"
 - New card "Crow Winger"
+- New card "Snork La, Shrine Guardian"
 
 ## 03/09/2022
 
