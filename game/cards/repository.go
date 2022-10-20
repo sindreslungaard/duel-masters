@@ -351,4 +351,5 @@ var DM05 = map[string]match.CardConstructor{
 	"cf0c049f-f047-4c57-9043-7911eb28395d": dm05.EnchantedSoil,
 	"f0587622-589f-46c5-9857-d73ee9db4db4": dm05.SkullsweeperQ,
 	"4353b917-261d-4365-9f49-dc2d52f6a8bb": dm05.AvalancheGiant,
+	"5ff3c63c-30df-4f5c-acce-796f5b6c2dac": dm05.SmashHornQ,
 }
