@@ -44,3 +44,17 @@ func AvalancheGiant(c *match.Card) {
 	})
 
 }
+
+// NocturnalGiant ...
+func NocturnalGiant(c *match.Card) {
+
+	c.Name = "Nocturnal Giant"
+	c.Power = 7000
+	c.Civ = civ.Nature
+	c.Family = family.Giant
+	c.ManaCost = 7
+	c.ManaRequirement = []string{civ.Nature}
+
+	c.Use(fx.Creature, fx.Triplebreaker, fx.CantAttackCreatures)
+
+}

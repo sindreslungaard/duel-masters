@@ -5,6 +5,8 @@ All notable changes to this project as of 11/11/2021 will be documented in this 
 ## [Unreleased]
 
 - Fixed an issue where creatures could attack while tapped
+- New card "Smash Horn Q"
+- New card "Nocturnal Giant"
 
 ## 03/09/2022
 
