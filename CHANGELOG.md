@@ -8,6 +8,8 @@ All notable changes to this project as of 11/11/2021 will be documented in this 
 - New card "Smash Horn Q"
 - New card "Nocturnal Giant"
 - New card "Moon Horn"
+- New card "Scheming Hands"
+- New card "Lurking Eel"
 
 ## 03/09/2022
 
