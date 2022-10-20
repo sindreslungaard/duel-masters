@@ -124,6 +124,13 @@ func (l *Lobby) PinMessage(message string) {
 	l.pinnedMessages = append(l.pinnedMessages, message)
 }
 
+func (l *Lobby) ClearPinnedMessages() {
+	l.messagesMutex.Lock()
+	defer l.messagesMutex.Unlock()
+
+	l.pinnedMessages = []string{}
+}
+
 // Parse websocket messages
 func (l *Lobby) Parse(s *server.Socket, data []byte) {
 
@@ -283,6 +290,18 @@ func (l *Lobby) handleChatCommand(s *server.Socket, command string) {
 	}
 
 	switch strings.ToLower(strings.TrimPrefix(parts[0], "/")) {
+	case "pin":
+		{
+			msg := strings.TrimPrefix(command, "/pin ")
+
+			l.PinMessage(msg)
+			l.UpdatePinnedMessages()
+		}
+	case "clearpins":
+		{
+			l.ClearPinnedMessages()
+			l.UpdatePinnedMessages()
+		}
 	case "sockets":
 		{
 			message := ""
