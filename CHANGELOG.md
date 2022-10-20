@@ -10,6 +10,7 @@ All notable changes to this project as of 11/11/2021 will be documented in this 
 - New card "Moon Horn"
 - New card "Scheming Hands"
 - New card "Lurking Eel"
+- New card "Crow Winger"
 
 ## 03/09/2022
 

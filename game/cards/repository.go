@@ -356,4 +356,5 @@ var DM05 = map[string]match.CardConstructor{
 	"7a59d73d-f340-482c-beb3-55ee83aa6222": dm05.MoonHorn,
 	"8e3510d7-fe27-4e62-91b7-b6c869a615e3": dm05.SchemingHands,
 	"8fac6848-e179-4611-a56a-f76f7716f0a8": dm05.LurkingEel,
+	"9b9446d1-cda6-4d57-91d9-9cf4264e3fd8": dm05.CrowWinger,
 }
