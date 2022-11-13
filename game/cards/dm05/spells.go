@@ -91,3 +91,35 @@ func CyclonePanic(c *match.Card) {
 		}
 	})
 }
+
+// GlorySnow ...
+func GlorySnow(c *match.Card) {
+
+	c.Name = "Glory Snow"
+	c.Civ = civ.Light
+	c.ManaCost = 4
+	c.ManaRequirement = []string{civ.Light}
+
+	c.Use(fx.Spell, fx.ShieldTrigger, func(card *match.Card, ctx *match.Context) {
+
+		if match.AmICasted(card, ctx) {
+
+			mana, _ := card.Player.Container(match.MANAZONE)
+			opnnt_mana, _ := ctx.Match.Opponent(card.Player).Container(match.MANAZONE)
+
+			if len(mana) < len(opnnt_mana) {
+				cards := card.Player.PeekDeck(2)
+
+				for _, toMove := range cards {
+
+					card.Player.MoveCard(toMove.ID, match.DECK, match.MANAZONE)
+					ctx.Match.Chat("Server", fmt.Sprintf("%s put %s into the manazone from the top of their deck", card.Player.Username(), toMove.Name))
+
+				}
+			}
+
+		}
+
+	})
+
+}

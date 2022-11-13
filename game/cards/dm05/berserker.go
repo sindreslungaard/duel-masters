@@ -37,3 +37,32 @@ func BallusDogfightEnforcerQ(c *match.Card) {
 	}))
 
 }
+
+// KulusSoulshineEnforcer ...
+func KulusSoulshineEnforcer(c *match.Card) {
+
+	c.Name = "Kulus, Soulshine Enforcer"
+	c.Power = 3500
+	c.Civ = civ.Light
+	c.Family = family.Berserker
+	c.ManaCost = 4
+	c.ManaRequirement = []string{civ.Light}
+
+	c.Use(fx.Creature, fx.When(fx.Summoned, func(card *match.Card, ctx *match.Context) {
+
+		mana, _ := card.Player.Container(match.MANAZONE)
+		opnnt_mana, _ := ctx.Match.Opponent(card.Player).Container(match.MANAZONE)
+
+		if len(mana) < len(opnnt_mana) {
+			cards := card.Player.PeekDeck(1)
+
+			for _, toMove := range cards {
+
+				card.Player.MoveCard(toMove.ID, match.DECK, match.MANAZONE)
+				ctx.Match.Chat("Server", fmt.Sprintf("%s put %s into the manazone from the top of their deck", card.Player.Username(), toMove.Name))
+
+			}
+		}
+	}))
+
+}

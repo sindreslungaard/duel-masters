@@ -359,4 +359,10 @@ var DM05 = map[string]match.CardConstructor{
 	"9b9446d1-cda6-4d57-91d9-9cf4264e3fd8": dm05.CrowWinger,
 	"22fc691b-58bd-49b4-b807-8b0592b8c8db": dm05.SnorkLaShrineGuardian,
 	"27eca314-2540-45e0-8201-71e33bb14da7": dm05.CyclonePanic,
+	"50d6a40e-dfaf-46e1-81e9-376f9aa8ffbc": dm05.GlorySnow,
+	"81e05a20-875a-4047-af47-9850dac9a863": dm05.SyforceAuroraElemental,
+	"372ecf37-071a-4ddd-bf50-b27e7fcb5913": dm05.SyriusFirmamentElemental,
+	"680f0ae7-9962-4dbf-88da-b1faf3e1e066": dm05.CalgoVizierOfRainclouds,
+	"c7fec5e8-4e56-451b-a7b6-ad08680703a4": dm05.LaByleSeekerOfTheWinds,
+	"d3a108f2-57f3-4fba-9b1b-b85a5ca788ed": dm05.KulusSoulshineEnforcer,
 }

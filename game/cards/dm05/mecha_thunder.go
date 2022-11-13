@@ -20,3 +20,27 @@ func LaGuileSeekerOfSkyfire(c *match.Card) {
 	c.Use(fx.Creature, fx.Doublebreaker)
 
 }
+
+// LaByleSeekerOfTheWinds ...
+func LaByleSeekerOfTheWinds(c *match.Card) {
+
+	c.Name = "La Byle, Seeker of the Winds"
+	c.Power = 5000
+	c.Civ = civ.Light
+	c.Family = family.MechaThunder
+	c.ManaCost = 7
+	c.ManaRequirement = []string{civ.Light}
+
+	c.Use(fx.Creature, fx.Blocker, func(card *match.Card, ctx *match.Context) {
+
+		if event, ok := ctx.Event.(*match.CreatureDestroyed); ok {
+
+			if event.Source == card && event.Blocked {
+				card.Tapped = false
+			}
+
+		}
+
+	})
+
+}
