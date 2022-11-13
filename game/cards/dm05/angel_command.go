@@ -26,7 +26,7 @@ func SyriusFirmamentElemental(c *match.Card) {
 // SyforceAuroraElemental ...
 func SyforceAuroraElemental(c *match.Card) {
 
-	c.Name = "Syforce, Aurora Elemental "
+	c.Name = "Syforce, Aurora Elemental"
 	c.Power = 7000
 	c.Civ = civ.Light
 	c.Family = family.AngelCommand

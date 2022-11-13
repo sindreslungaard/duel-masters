@@ -10,7 +10,7 @@ import (
 // CalgoVizierOfRainclouds ...
 func CalgoVizierOfRainclouds(c *match.Card) {
 
-	c.Name = "Calgo, Vizier of Rainclouds "
+	c.Name = "Calgo, Vizier of Rainclouds"
 	c.Power = 2000
 	c.Civ = civ.Light
 	c.Family = family.Initiate
