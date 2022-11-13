@@ -4,6 +4,8 @@ All notable changes to this project as of 11/11/2021 will be documented in this 
 
 ## [Unreleased]
 
+## 13/11/2022
+
 - Fixed an issue where creatures could attack while tapped
 - New card "Smash Horn Q"
 - New card "Nocturnal Giant"
@@ -13,6 +15,14 @@ All notable changes to this project as of 11/11/2021 will be documented in this 
 - New card "Crow Winger"
 - New card "Snork La, Shrine Guardian"
 - New card "Cyclone panic"
+- New card "Syrius, Firmament Elemental" (thanks @jyotiskaghosh)
+- New card "Syforce, Aurora Elemental" (thanks @jyotiskaghosh)
+- New card "Kulus, Soulshine Enforcer" (thanks @jyotiskaghosh)
+- New card "Calgo, Vizier of Rainclouds" (thanks @jyotiskaghosh)
+- New card "La Byle, Seeker of the Winds" (thanks @jyotiskaghosh)
+- New card "Glory Snow" (thanks @jyotiskaghosh)
+- Add functionality for pinning lobby chat messages
+- Add functionality for disabling match creation
 
 ## 03/09/2022
 
