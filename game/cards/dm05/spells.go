@@ -43,9 +43,9 @@ func SchemingHands(c *match.Card) {
 
 		if match.AmICasted(card, ctx) {
 
-			fx.Select(card.Player, ctx.Match, ctx.Match.Opponent(card.Player), match.HAND, "Scheming Hands: Discard a card from your opponent's hand", 0, 1, false).Map(func(x *match.Card) {
-				ctx.Match.Opponent(card.Player).MoveCard(card.ID, match.HAND, match.GRAVEYARD)
-				ctx.Match.Chat("Server", fmt.Sprintf("%s was moved to %s's graveyard by Scheming Hands", x.Name, card.Player.Username()))
+			fx.Select(card.Player, ctx.Match, ctx.Match.Opponent(card.Player), match.HAND, "Scheming Hands: Discard a card from your opponent's hand", 0, 1, false).Map(func(card *match.Card) {
+				card.Player.MoveCard(card.ID, match.HAND, match.GRAVEYARD)
+				ctx.Match.Chat("Server", fmt.Sprintf("%s was moved to %s's graveyard by Scheming Hands", card.Name, card.Player.Username()))
 			})
 
 		}
