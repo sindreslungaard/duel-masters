@@ -43,31 +43,32 @@ func SiegBaliculaTheIntense(c *match.Card) {
 	c.ManaCost = 3
 	c.ManaRequirement = []string{civ.Light}
 
-	c.Use(fx.Creature, fx.Evolution, func(card *match.Card, ctx *match.Context) {
+	c.Use(fx.Creature, fx.Evolution, fx.When(fx.Summoned, func(card *match.Card, ctx *match.Context) {
 
-		if !card.Player.HasCard(match.BATTLEZONE, card.ID) {
-			return
-		}
+		ctx.Match.ApplyPersistentEffect(func(ctx2 *match.Context, exit func()) {
 
-		newBlockers := fx.FindFilter(
-			card.Player,
-			match.BATTLEZONE,
-			func(x *match.Card) bool {
-				return (x.Civ == civ.Light && x.ID != card.ID)
-			},
-		)
+			if card.Zone != match.BATTLEZONE {
+				fx.Find(
+					card.Player,
+					match.BATTLEZONE,
+				).Map(func(x *match.Card) {
+					x.RemoveConditionBySource(card.ID)
+				})
 
-		for _, blocker := range newBlockers {
-
-			if !blocker.HasCondition(cnd.Blocker) {
-
-				if _, ok := ctx.Event.(*match.UntapStep); ok {
-
-					blocker.AddCondition(cnd.Blocker, true, card.ID)
-				}
+				exit()
+				return
 			}
-		}
 
-	})
+			fx.FindFilter(
+				card.Player,
+				match.BATTLEZONE,
+				func(x *match.Card) bool { return x.ID != card.ID && x.Civ == civ.Light },
+			).Map(func(x *match.Card) {
+				x.AddUniqueSourceCondition(cnd.Blocker, true, card.ID)
+			})
+
+		})
+
+	}))
 
 }
