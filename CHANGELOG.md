@@ -4,6 +4,8 @@ All notable changes to this project as of 11/11/2021 will be documented in this 
 
 ## [Unreleased]
 
+- Fixed an issue where "Sieg Balicula, the Intense" would not properly remove the blocker effect it had given out. Also fix for cards like Scarlet Skyterror's effect not removing the blockers given by Sieg
+
 ## 13/11/2022
 
 - Fixed an issue where creatures could attack while tapped
