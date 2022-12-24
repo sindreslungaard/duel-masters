@@ -77,7 +77,7 @@ func CyclonePanic(c *match.Card) {
 
 			// p2
 			cards2 := fx.Find(ctx.Match.Opponent(card.Player), match.HAND)
-			n2 := len(cards1)
+			n2 := len(cards2)
 
 			for _, c2 := range cards2 {
 				ctx.Match.Opponent(card.Player).MoveCard(c2.ID, match.HAND, match.DECK)
