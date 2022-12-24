@@ -294,7 +294,6 @@ func DiamondCutter(c *match.Card) {
 				match.BATTLEZONE,
 			).Map(func(x *match.Card) {
 				x.RemoveCondition(cnd.SummoningSickness)
-				x.RemoveCondition(cnd.CantAttackCreatures)
 				x.RemoveCondition(cnd.CantAttackPlayers)
 			})
 

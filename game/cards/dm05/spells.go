@@ -22,9 +22,9 @@ func EnchantedSoil(c *match.Card) {
 
 			fx.SelectFilter(card.Player, ctx.Match, card.Player, match.GRAVEYARD, "Enchanted Soil: Select 2 creatures from your graveyard and put it in your manazone", 0, 2, true, func(x *match.Card) bool {
 				return x.HasCondition(cnd.Creature)
-			}).Map(func(x *match.Card) {
-				card.Player.MoveCard(card.ID, match.GRAVEYARD, match.MANAZONE)
-				ctx.Match.Chat("Server", fmt.Sprintf("%s was moved to %s's manazone", card.Name, card.Player.Username()))
+			}).Map(func(c *match.Card) {
+				card.Player.MoveCard(c.ID, match.GRAVEYARD, match.MANAZONE)
+				ctx.Match.Chat("Server", fmt.Sprintf("%s was moved to %s's manazone by %s", c.Name, c.Player.Username(), card.Name))
 			})
 
 		}
@@ -43,9 +43,9 @@ func SchemingHands(c *match.Card) {
 
 		if match.AmICasted(card, ctx) {
 
-			fx.Select(card.Player, ctx.Match, ctx.Match.Opponent(card.Player), match.HAND, "Scheming Hands: Discard a card from your opponent's hand", 0, 1, false).Map(func(card *match.Card) {
-				card.Player.MoveCard(card.ID, match.HAND, match.GRAVEYARD)
-				ctx.Match.Chat("Server", fmt.Sprintf("%s was moved to %s's graveyard by Scheming Hands", card.Name, card.Player.Username()))
+			fx.Select(card.Player, ctx.Match, ctx.Match.Opponent(card.Player), match.HAND, "Scheming Hands: Discard a card from your opponent's hand", 0, 1, false).Map(func(c *match.Card) {
+				c.Player.MoveCard(c.ID, match.HAND, match.GRAVEYARD)
+				ctx.Match.Chat("Server", fmt.Sprintf("%s was moved to %s's graveyard by %s", c.Name, c.Player.Username(), card.Name))
 			})
 
 		}
@@ -122,4 +122,47 @@ func GlorySnow(c *match.Card) {
 
 	})
 
+}
+
+// SlimeVeil ...
+func SlimeVeil(c *match.Card) {
+
+	c.Name = "Slime Veil"
+	c.Civ = civ.Darkness
+	c.ManaCost = 1
+	c.ManaRequirement = []string{civ.Darkness}
+
+	c.Use(fx.Spell, func(card *match.Card, ctx *match.Context) {
+
+		if match.AmICasted(card, ctx) {
+
+			ctx.Match.ApplyPersistentEffect(func(ctx2 *match.Context, exit func()) {
+
+				// on all events, add force attack to opponent's creatures
+				fx.Find(
+					ctx2.Match.Opponent(card.Player),
+					match.BATTLEZONE,
+				).Map(func(c *match.Card) {
+
+					if _, ok := ctx2.Event.(*match.EndTurnEvent); ok && c.Zone == match.BATTLEZONE {
+
+						if ctx2.Match.IsPlayerTurn(c.Player) && !c.HasCondition(cnd.SummoningSickness) && !c.Tapped {
+							ctx2.Match.WarnPlayer(c.Player, fmt.Sprintf("%s must attack before you can end your turn", c.Name))
+							ctx2.InterruptFlow()
+						}
+
+					}
+
+				})
+
+				// remove persistent effect on start of next turn
+				_, ok := ctx2.Event.(*match.StartOfTurnStep)
+				if ok && ctx2.Match.IsPlayerTurn(card.Player) {
+					exit()
+				}
+
+			})
+
+		}
+	})
 }

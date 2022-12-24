@@ -368,4 +368,6 @@ var DM05 = map[string]match.CardConstructor{
 	"117765de-dbde-45ae-941d-2b864421ba4c": dm05.KingTsunami,
 	"a9e9a9c5-9125-4116-8fe9-f4087615b8a1": dm05.KingMazelan,
 	"f5b9c2d5-970d-4578-a521-acccd856cfdf": dm05.AquaSurfer,
+	"870e7b00-eb00-4546-9f15-a5cb6cb976d9": dm05.VashunaSwordDancer,
+	"42949cc1-d2e4-459e-9ccf-ac93ebe636de": dm05.SlimeVeil,
 }
