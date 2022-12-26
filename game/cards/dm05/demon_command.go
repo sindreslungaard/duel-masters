@@ -47,8 +47,8 @@ func VashunaSwordDancer(c *match.Card) {
 
 		if _, ok := ctx.Event.(*match.UntapStep); ok {
 
-			opponent_shields := fx.Find(ctx.Match.Opponent(card.Player), match.SHIELDZONE)
-			n := len(opponent_shields)
+			opponentShields := fx.Find(ctx.Match.Opponent(card.Player), match.SHIELDZONE)
+			n := len(opponentShields)
 
 			if n == 0 {
 				card.AddCondition(cnd.CantAttackPlayers, true, card.ID)
@@ -64,8 +64,8 @@ func VashunaSwordDancer(c *match.Card) {
 
 			if event.From == match.SHIELDZONE || event.To == match.SHIELDZONE {
 
-				opponent_shields := fx.Find(ctx.Match.Opponent(card.Player), match.SHIELDZONE)
-				n := len(opponent_shields)
+				opponentShields := fx.Find(ctx.Match.Opponent(card.Player), match.SHIELDZONE)
+				n := len(opponentShields)
 
 				if n == 0 {
 					card.AddCondition(cnd.CantAttackPlayers, true, card.ID)

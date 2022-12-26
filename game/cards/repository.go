@@ -370,4 +370,9 @@ var DM05 = map[string]match.CardConstructor{
 	"f5b9c2d5-970d-4578-a521-acccd856cfdf": dm05.AquaSurfer,
 	"870e7b00-eb00-4546-9f15-a5cb6cb976d9": dm05.VashunaSwordDancer,
 	"42949cc1-d2e4-459e-9ccf-ac93ebe636de": dm05.SlimeVeil,
+	"f288e855-44bb-4649-8c9d-de4a61fd228a": dm05.BrutalCharge,
+	"aa5799bd-aaee-4ff4-89ae-374db57cfa83": dm05.MiracleQuest,
+	"69164e5d-2c0e-4369-b0c2-0494840128fd": dm05.DivineRiptide,
+	"826eecb2-0beb-47f0-afb8-2d01bd51491d": dm05.CataclysmicEruption,
+	"39fee52e-e539-4bd9-99b7-03e61b4afea3": dm05.ThunderNet,
 }

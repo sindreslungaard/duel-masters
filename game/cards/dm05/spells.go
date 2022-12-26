@@ -104,10 +104,8 @@ func GlorySnow(c *match.Card) {
 
 		if match.AmICasted(card, ctx) {
 
-			mana, _ := card.Player.Container(match.MANAZONE)
-			opnnt_mana, _ := ctx.Match.Opponent(card.Player).Container(match.MANAZONE)
+			if len(fx.Find(card.Player, match.MANAZONE)) < len(fx.Find(ctx.Match.Opponent(card.Player), match.MANAZONE)) {
 
-			if len(mana) < len(opnnt_mana) {
 				cards := card.Player.PeekDeck(2)
 
 				for _, toMove := range cards {
@@ -165,4 +163,171 @@ func SlimeVeil(c *match.Card) {
 
 		}
 	})
+}
+
+// BrutalCharge ...
+func BrutalCharge(c *match.Card) {
+
+	c.Name = "Brutal Charge"
+	c.Civ = civ.Nature
+	c.ManaCost = 2
+	c.ManaRequirement = []string{civ.Nature}
+
+	cardPlayed := false
+	shieldsBroken := 0
+
+	c.Use(
+		fx.Spell,
+		fx.When(fx.SpellCast, func(card *match.Card, ctx *match.Context) {
+			cardPlayed = true
+		}),
+		fx.When(fx.ShieldBroken, func(card *match.Card, ctx *match.Context) {
+
+			if cardPlayed {
+				shieldsBroken++
+			}
+
+		}),
+		fx.When(fx.EndOfMyTurn, func(card *match.Card, ctx *match.Context) {
+
+			if cardPlayed {
+
+				fx.SelectFilter(
+					card.Player,
+					ctx.Match,
+					card.Player,
+					match.DECK,
+					fmt.Sprintf("Select %d creature from your deck that will be shown to your opponent and sent to your hand", shieldsBroken),
+					shieldsBroken,
+					shieldsBroken,
+					true,
+					func(c *match.Card) bool { return c.HasCondition(cnd.Creature) },
+				).Map(func(c *match.Card) {
+					c.Player.MoveCard(c.ID, match.DECK, match.HAND)
+					ctx.Match.Chat("Server", fmt.Sprintf("%s was moved from %s's deck to their hand by %s", c.Name, c.Player.Username(), card.Name))
+				})
+
+				cardPlayed = false
+				shieldsBroken = 0
+
+			}
+		}))
+
+}
+
+// MiracleQuest ...
+func MiracleQuest(c *match.Card) {
+
+	c.Name = "Miracle Quest"
+	c.Civ = civ.Water
+	c.ManaCost = 3
+	c.ManaRequirement = []string{civ.Water}
+
+	cardPlayed := false
+	shieldsBroken := 0
+
+	c.Use(
+		fx.Spell,
+		fx.When(fx.SpellCast, func(card *match.Card, ctx *match.Context) {
+			cardPlayed = true
+		}),
+		fx.When(fx.ShieldBroken, func(card *match.Card, ctx *match.Context) {
+
+			if cardPlayed {
+				shieldsBroken++
+			}
+
+		}),
+		fx.When(fx.EndOfMyTurn, func(card *match.Card, ctx *match.Context) {
+
+			if cardPlayed {
+
+				card.Player.DrawCards(shieldsBroken * 2)
+
+				cardPlayed = false
+				shieldsBroken = 0
+
+			}
+		}))
+
+}
+
+// DivineRiptide ...
+func DivineRiptide(c *match.Card) {
+
+	c.Name = "Divine Riptide"
+	c.Civ = civ.Water
+	c.ManaCost = 9
+	c.ManaRequirement = []string{civ.Water}
+
+	c.Use(fx.Spell, fx.When(fx.SpellCast, func(card *match.Card, ctx *match.Context) {
+
+		for _, c := range append(fx.Find(card.Player, match.MANAZONE), fx.Find(ctx.Match.Opponent(card.Player), match.MANAZONE)...) {
+			c.Player.MoveCard(c.ID, match.MANAZONE, match.HAND)
+			ctx.Match.Chat("Server", fmt.Sprintf("%s was moved to %s's hand from their mana zone by %s", c.Name, c.Player.Username(), card.Name))
+		}
+
+	}))
+}
+
+// CataclysmicEruption ...
+func CataclysmicEruption(c *match.Card) {
+
+	c.Name = "Cataclysmic Eruption"
+	c.Civ = civ.Fire
+	c.ManaCost = 8
+	c.ManaRequirement = []string{civ.Fire}
+
+	c.Use(fx.Spell, fx.When(fx.SpellCast, func(card *match.Card, ctx *match.Context) {
+
+		// No. of nature creatures
+		n := len(fx.FindFilter(card.Player, match.BATTLEZONE, func(card *match.Card) bool { return card.Civ == civ.Nature }))
+
+		fx.Select(
+			card.Player,
+			ctx.Match,
+			ctx.Match.Opponent(card.Player),
+			match.MANAZONE,
+			fmt.Sprintf("%s: Select upto %d cards from your opponent's manazone and put it in their graveyard", card.Name, n),
+			0,
+			n,
+			false,
+		).Map(func(c *match.Card) {
+			c.Player.MoveCard(c.ID, match.MANAZONE, match.GRAVEYARD)
+			ctx.Match.Chat("Server", fmt.Sprintf("%s was put into %s's graveyard from their manazone by %s", c.Name, c.Player.Username(), card.Name))
+		})
+
+	}))
+
+}
+
+// ThunderNet ...
+func ThunderNet(c *match.Card) {
+
+	c.Name = "Thunder Net"
+	c.Civ = civ.Light
+	c.ManaCost = 2
+	c.ManaRequirement = []string{civ.Light}
+
+	c.Use(fx.Spell, fx.When(fx.SpellCast, func(card *match.Card, ctx *match.Context) {
+
+		// No. of water creatures
+		n := len(fx.FindFilter(card.Player, match.BATTLEZONE, func(card *match.Card) bool { return card.Civ == civ.Water }))
+
+		fx.Select(
+			card.Player,
+			ctx.Match,
+			ctx.Match.Opponent(card.Player),
+			match.BATTLEZONE,
+			fmt.Sprintf("%s: select %d of opponent's creatures and tap them", card.Name, n),
+			0,
+			n,
+			false,
+		).Map(func(c *match.Card) {
+			c.Tapped = true
+			ctx.Match.Chat("Server", fmt.Sprintf("%s's %s was tapped by %s", c.Player.Username(), c.Name, card.Name))
+		})
+
+	}))
+
 }

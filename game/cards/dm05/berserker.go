@@ -50,10 +50,8 @@ func KulusSoulshineEnforcer(c *match.Card) {
 
 	c.Use(fx.Creature, fx.When(fx.Summoned, func(card *match.Card, ctx *match.Context) {
 
-		mana, _ := card.Player.Container(match.MANAZONE)
-		opnnt_mana, _ := ctx.Match.Opponent(card.Player).Container(match.MANAZONE)
+		if len(fx.Find(card.Player, match.MANAZONE)) < len(fx.Find(ctx.Match.Opponent(card.Player), match.MANAZONE)) {
 
-		if len(mana) < len(opnnt_mana) {
 			cards := card.Player.PeekDeck(1)
 
 			for _, toMove := range cards {

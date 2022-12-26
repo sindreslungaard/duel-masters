@@ -274,6 +274,8 @@ func (m *Match) BreakShields(shields []*Card) {
 			continue
 		}
 
+		m.HandleFx(NewContext(m, &BrokenShieldEvent{CardID: card.ID}))
+
 		// Handle shield triggers
 		if card.HasCondition(cnd.ShieldTrigger) {
 

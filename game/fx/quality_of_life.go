@@ -361,3 +361,11 @@ func EndOfMyTurn(card *match.Card, ctx *match.Context) bool {
 
 	return false
 }
+
+// ShieldBroken returns true if a shield has been broken
+func ShieldBroken(card *match.Card, ctx *match.Context) bool {
+
+	_, ok := ctx.Event.(*match.BrokenShieldEvent)
+	return ok
+
+}

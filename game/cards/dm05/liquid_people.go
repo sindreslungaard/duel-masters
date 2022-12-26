@@ -22,22 +22,8 @@ func AquaSurfer(c *match.Card) {
 
 		cards := make(map[string][]*match.Card)
 
-		myCards, err := card.Player.Container(match.BATTLEZONE)
-		if err != nil {
-			return
-		}
-
-		opponentCards, err := ctx.Match.Opponent(card.Player).Container(match.BATTLEZONE)
-		if err != nil {
-			return
-		}
-
-		if len(myCards) < 1 && len(opponentCards) < 1 {
-			return
-		}
-
-		cards["Your creatures"] = myCards
-		cards["Opponent's creatures"] = opponentCards
+		cards["Your creatures"] = fx.Find(card.Player, match.BATTLEZONE)
+		cards["Opponent's creatures"] = fx.Find(ctx.Match.Opponent(card.Player), match.BATTLEZONE)
 
 		fx.SelectMultipart(
 			card.Player,
@@ -50,6 +36,7 @@ func AquaSurfer(c *match.Card) {
 			creature.Player.MoveCard(creature.ID, match.BATTLEZONE, match.HAND)
 			ctx.Match.Chat("Server", fmt.Sprintf("%s was returned to %s's hand by %s", creature.Name, creature.Player.Username(), card.Name))
 		})
+
 	}))
 
 }
