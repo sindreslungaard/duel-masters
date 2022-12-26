@@ -225,10 +225,13 @@ func BrutalCharge(c *match.Card) {
 					ctx.Match.Chat("Server", fmt.Sprintf("%s was moved from %s's deck to their hand by %s", c.Name, c.Player.Username(), card.Name))
 				})
 
+				card.Player.ShuffleDeck()
+
 				cardPlayed = false
 				shieldsBroken = 0
 
 			}
+
 		}))
 
 }
