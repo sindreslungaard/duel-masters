@@ -4,7 +4,21 @@ All notable changes to this project as of 11/11/2021 will be documented in this 
 
 ## [Unreleased]
 
-- Fixed an issue where "Sieg Balicula, the Intense" would not properly remove the blocker effect it had given out. Also fix for cards like Scarlet Skyterror's effect not removing the blockers given by Sieg
+- Fixed an issue where "Sieg Balicula, the Intense" would not properly remove the blocker effect it had given out. Also fixes cards like Scarlet Skyterror's effect not removing the blockers given by Sieg
+- New card "King Tsunami" (thanks @jyotiskaghosh)
+- New card "King Mazelan" (thanks @jyotiskaghosh)
+- New card "Aqua Surfer" (thanks @jyotiskaghosh)
+- New card "Vashuna, Sword Dancer" (thanks @jyotiskaghosh)
+- New card "Slime Veil" (thanks @jyotiskaghosh)
+- New card "Brutal Charge" (thanks @jyotiskaghosh)
+- New card "Miracle Quest" (thanks @jyotiskaghosh)
+- New card "Divine Riptide" (thanks @jyotiskaghosh)
+- New card "Cataclysmic Eruption" (thanks @jyotiskaghosh)
+- New card "Thunder Net" (thanks @jyotiskaghosh)
+- New card "Bloodwing Mantis" (thanks @jyotiskaghosh)
+- New card "Scissor Scarab" (thanks @jyotiskaghosh)
+- New card "Ambush Scorpion" (thanks @jyotiskaghosh)
+- New card "Obsidian Scarab" (thanks @jyotiskaghosh)
 
 ## 13/11/2022
 
