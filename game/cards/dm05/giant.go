@@ -55,6 +55,7 @@ func NocturnalGiant(c *match.Card) {
 	c.ManaCost = 7
 	c.ManaRequirement = []string{civ.Nature}
 
-	c.Use(fx.Creature, fx.Triplebreaker, fx.CantAttackCreatures)
-
+	c.Use(fx.Creature, fx.Triplebreaker, fx.CantAttackCreatures, func(card *match.Card, ctx *match.Context) {
+		fx.PowerAttacker(card, ctx, 7000)
+	})
 }

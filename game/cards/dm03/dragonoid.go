@@ -2,6 +2,7 @@ package dm03
 
 import (
 	"duel-masters/game/civ"
+	"duel-masters/game/cnd"
 	"duel-masters/game/family"
 	"duel-masters/game/fx"
 	"duel-masters/game/match"
@@ -18,26 +19,69 @@ func SnipStrikerBullraizer(c *match.Card) {
 	c.ManaCost = 2
 	c.ManaRequirement = []string{civ.Fire}
 
-	c.Use(fx.Creature, fx.When(fx.AttackingPlayer, func(card *match.Card, ctx *match.Context) {
+	c.Use(fx.Creature, func(card *match.Card, ctx *match.Context) {
 
-		creatures, err := card.Player.Container(match.BATTLEZONE)
+		if _, ok := ctx.Event.(*match.UntapStep); ok {
 
-		if err != nil {
-			return
+			creatures := fx.Find(card.Player, match.BATTLEZONE)
+
+			oppCreatures := fx.Find(ctx.Match.Opponent(card.Player), match.BATTLEZONE)
+
+			if len(creatures) < len(oppCreatures) {
+				card.AddCondition(cnd.CantAttackPlayers, true, card.ID)
+				card.AddCondition(cnd.CantAttackCreatures, true, card.ID)
+			} else {
+				card.RemoveCondition(cnd.CantAttackPlayers)
+				card.RemoveCondition(cnd.CantAttackCreatures)
+			}
+
 		}
 
-		oppCreatures, err := ctx.Match.Opponent(card.Player).Container(match.BATTLEZONE)
+		if event, ok := ctx.Event.(*match.CardMoved); ok {
 
-		if err != nil {
-			return
+			if event.From == match.BATTLEZONE || event.To == match.BATTLEZONE {
+
+				creatures := fx.Find(card.Player, match.BATTLEZONE)
+
+				oppCreatures := fx.Find(ctx.Match.Opponent(card.Player), match.BATTLEZONE)
+
+				if len(creatures) < len(oppCreatures) {
+					card.AddCondition(cnd.CantAttackPlayers, true, card.ID)
+					card.AddCondition(cnd.CantAttackCreatures, true, card.ID)
+				} else {
+					card.RemoveCondition(cnd.CantAttackPlayers)
+					card.RemoveCondition(cnd.CantAttackCreatures)
+				}
+
+			}
+
 		}
 
-		if len(creatures) < len(oppCreatures) {
+		if event, ok := ctx.Event.(*match.AttackPlayer); ok {
 
-			ctx.Match.WarnPlayer(card.Player, fmt.Sprintf("%s can't attack when the opponent has more creatures in the battle zone than you.", card.Name))
+			// Is this event for me or someone else?
+			if event.CardID != card.ID || !card.HasCondition(cnd.CantAttackPlayers) {
+				return
+			}
+
+			ctx.Match.WarnPlayer(card.Player, fmt.Sprintf("%s can't attack players", card.Name))
 
 			ctx.InterruptFlow()
+
 		}
-	}))
+
+		if event, ok := ctx.Event.(*match.AttackCreature); ok {
+
+			// Is this event for me or someone else?
+			if event.CardID != card.ID || !card.HasCondition(cnd.CantAttackCreatures) {
+				return
+			}
+
+			ctx.Match.WarnPlayer(card.Player, fmt.Sprintf("%s can't attack creatures", card.Name))
+
+			ctx.InterruptFlow()
+
+		}
+	})
 
 }
