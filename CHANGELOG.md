@@ -4,6 +4,8 @@ All notable changes to this project as of 11/11/2021 will be documented in this 
 
 ## [Unreleased]
 
+## 31/12/2022
+
 - Fixed an issue where "Sieg Balicula, the Intense" would not properly remove the blocker effect it had given out. Also fixes cards like Scarlet Skyterror's effect not removing the blockers given by Sieg
 - New card "King Tsunami" (thanks @jyotiskaghosh)
 - New card "King Mazelan" (thanks @jyotiskaghosh)
