@@ -3,7 +3,9 @@ FROM golang:1.18-alpine
 WORKDIR /go/src/duel-masters
 COPY . .
 
-RUN apk add --update git nodejs=16.17.1-r0 npm
+ENV NODE_OPTIONS=--openssl-legacy-provider
+
+RUN apk add --update git nodejs npm
 RUN cd ./webapp && npm install && npm run build
 RUN cd ..
 
