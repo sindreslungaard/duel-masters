@@ -9,11 +9,6 @@
     "lint-fix": "vue-cli-service lint",
     "watch": "vue-cli-service build --watch"
   },
-  "husky": {
-    "hooks": {
-      "pre-commit": "npm run lint"
-    }
-  },
   "dependencies": {
     "axios": "^0.21.1",
     "clipboard": "^2.0.6",
@@ -44,29 +39,6 @@
     "presets": [
       "@vue/app"
     ]
-  },
-  "eslintConfig": {
-    "root": true,
-    "env": {
-      "node": true
-    },
-    "extends": [
-      "plugin:vue/essential"
-    ],
-    "parserOptions": {
-      "parser": "babel-eslint",
-      "ecmaVersion": 2017
-    },
-    "rules": {
-      "quotes": [
-        "error",
-        "double"
-      ],
-      "semi": [
-        "error",
-        "always"
-      ]
-    }
   },
   "browserslist": [
     "> 1%",
