@@ -56,3 +56,33 @@ func SkullsweeperQ(c *match.Card) {
 	})
 
 }
+
+// JewelSpider ...
+func JewelSpider(c *match.Card) {
+
+	c.Name = "Jewel Spider"
+	c.Power = 1000
+	c.Civ = civ.Darkness
+	c.Family = family.BrainJacker
+	c.ManaCost = 2
+	c.ManaRequirement = []string{civ.Darkness}
+
+	c.Use(fx.Creature, fx.When(fx.Destroyed, func(card *match.Card, ctx *match.Context) {
+
+		fx.SelectBackside(
+			card.Player,
+			ctx.Match,
+			card.Player,
+			match.SHIELDZONE,
+			fmt.Sprintf("%s: You may put a shield to your hand.", card.Name),
+			1,
+			1,
+			true,
+		).Map(func(c *match.Card) {
+			c.Player.MoveCard(c.ID, match.SHIELDZONE, match.HAND)
+			ctx.Match.Chat("Server", fmt.Sprintf("A shield was moved to %s's hand by %s", card.Player.Username(), card.Name))
+		})
+
+	}))
+
+}

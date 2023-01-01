@@ -35,14 +35,23 @@ func SyforceAuroraElemental(c *match.Card) {
 
 	c.Use(fx.Creature, fx.Blocker, fx.Doublebreaker, fx.When(fx.Summoned, func(card *match.Card, ctx *match.Context) {
 
-		spells := match.Filter(card.Player, ctx.Match, card.Player, match.MANAZONE, "You may select 1 spell from your mana zone that will be sent to your hand", 0, 1, false, func(x *match.Card) bool { return x.HasCondition(cnd.Spell) })
+		fx.SelectFilter(
+			card.Player,
+			ctx.Match,
+			card.Player,
+			match.MANAZONE,
+			"You may select 1 spell from your mana zone that will be sent to your hand",
+			1,
+			1,
+			true,
+			func(c *match.Card) bool { return c.HasCondition(cnd.Spell) },
+		).Map(func(c *match.Card) {
 
-		for _, spell := range spells {
+			c.Player.MoveCard(c.ID, match.MANAZONE, match.HAND)
+			ctx.Match.Chat("Server", fmt.Sprintf("%s retrieved %s from the mana zone to their hand", c.Player.Username(), c.Name))
 
-			card.Player.MoveCard(spell.ID, match.MANAZONE, match.HAND)
-			ctx.Match.Chat("Server", fmt.Sprintf("%s retrieved %s from the mana zone to their hand", spell.Player.Username(), spell.Name))
+		})
 
-		}
 	}))
 
 }
