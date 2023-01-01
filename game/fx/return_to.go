@@ -36,7 +36,7 @@ func ReturnToMana(card *match.Card, ctx *match.Context) {
 
 			card.Player.MoveCard(card.ID, match.BATTLEZONE, match.MANAZONE)
 			card.Tapped = false
-			ctx.Match.Chat("Server", fmt.Sprintf("%s was moved from %s's graveyard to their manazone", event.Card.Name, card.Player.Username()))
+			ctx.Match.Chat("Server", fmt.Sprintf("%s was destroyed by %s and moved to the mana zone", event.Card.Name, event.Source.Name))
 
 		}
 
@@ -56,7 +56,7 @@ func ReturnToShield(card *match.Card, ctx *match.Context) {
 
 			card.Player.MoveCard(card.ID, match.BATTLEZONE, match.SHIELDZONE)
 			card.Tapped = false
-			ctx.Match.Chat("Server", fmt.Sprintf("%s was destroyed by %s but returned to the shield zone", event.Card.Name, event.Source.Name))
+			ctx.Match.Chat("Server", fmt.Sprintf("%s was destroyed by %s and moved to the shield zone", event.Card.Name, event.Source.Name))
 
 		}
 
