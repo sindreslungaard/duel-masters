@@ -379,4 +379,12 @@ var DM05 = map[string]match.CardConstructor{
 	"4246218b-c66b-4f8f-b05a-1e7bff9f39a5": dm05.ScissorScarab,
 	"5145a445-45ce-430c-ba58-c15c5e8af984": dm05.AmbushScorpion,
 	"75b315ab-c169-46b0-a693-1eb52eef24f8": dm05.ObsidianScarab,
+	"89bdc9a2-72c8-4ce7-afd4-626538ed4c82": dm05.SolidskinFish,
+	"ece74930-3f8b-4d35-95ed-94639dd251cd": dm05.SpikestrikeIchthysQ,
+	"a422a702-fc94-45e8-b6d9-aa6b92e8797f": dm05.BlazosaurQ,
+	"c0c9c3c6-6b8c-49a3-b6ff-ad9d7c2bf5a7": dm05.GalliaZohlIronGuardianQ,
+	"d5a09c99-985e-412e-b77f-558c059db7ee": dm05.JewelSpider,
+	"fd297f8a-c5ae-46c3-9d59-a13de5736b0e": dm05.HornedMutant,
+	"1053c39a-68c3-4811-9c7c-049914f420e3": dm05.KipChippotto,
+	"a8f4d303-72c0-4b67-b6af-d99d267de0c5": dm05.BalloonshroomQ,
 }

@@ -24,22 +24,31 @@ func Gigamantis(c *match.Card) {
 			return
 		}
 
-		if event, ok := ctx.Event.(*match.CardMoved); ok {
+		if event, ok := ctx.Event.(*match.CreatureDestroyed); ok &&
+			event.Card.ID != card.ID &&
+			event.Card.Player == card.Player &&
+			event.Card.Civ == civ.Nature {
 
-			if event.From != match.BATTLEZONE || event.To != match.GRAVEYARD || event.CardID == card.ID {
-				return
-			}
+			fx.SelectFilter(
+				card.Player,
+				ctx.Match,
+				card.Player,
+				match.BATTLEZONE,
+				fmt.Sprintf("%s: You may put card to manazone.", card.Name),
+				1,
+				1,
+				true,
+				func(c *match.Card) bool { return event.Card.ID == c.ID },
+			).Map(func(c *match.Card) {
 
-			movedCard, err := card.Player.GetCard(event.CardID, match.GRAVEYARD)
+				ctx.InterruptFlow()
 
-			if err != nil || movedCard.Civ != civ.Nature {
-				return
-			}
-
-			card.Player.MoveCard(movedCard.ID, match.GRAVEYARD, match.MANAZONE)
-			ctx.Match.Chat("Server", fmt.Sprintf("%s was moved to %s's mana zone instead of the graveyard by Gigamantis", card.Name, card.Player.Username()))
+				c.Player.MoveCard(c.ID, match.BATTLEZONE, match.MANAZONE)
+				ctx.Match.Chat("Server", fmt.Sprintf("%s was moved to %s's mana by %s", c.Name, c.Player.Username(), card.Name))
+			})
 
 		}
+
 	})
 
 }
