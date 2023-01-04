@@ -4,6 +4,18 @@ All notable changes to this project as of 11/11/2021 will be documented in this 
 
 ## [Unreleased]
 
+## 04/01/2022
+
+- New card "Solidskin Fish" (thanks @jyotiskaghosh)
+- New card "Spikestrike Ichthys Q" (thanks @jyotiskaghosh)
+- New card "Blazosaur Q" (thanks @jyotiskaghosh)
+- New card "Gallia Zohl IronGuardian Q" (thanks @jyotiskaghosh)
+- New card "Jewel Spider" (thanks @jyotiskaghosh)
+- New card "Horned Mutant" (thanks @jyotiskaghosh)
+- New card "Kip Chippotto" (thanks @jyotiskaghosh)
+- New card "Balloonshroom Q" (thanks @jyotiskaghosh)
+- Various bugfixes (thanks @jyotiskaghosh)
+
 ## 31/12/2022
 
 - Fixed an issue where "Sieg Balicula, the Intense" would not properly remove the blocker effect it had given out. Also fixes cards like Scarlet Skyterror's effect not removing the blockers given by Sieg
