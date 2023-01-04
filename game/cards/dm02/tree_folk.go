@@ -73,7 +73,7 @@ func EssenceElf(c *match.Card) {
 				}
 
 				if toReduce.HasCondition(cnd.Spell) {
-					toReduce.AddCondition(cnd.ReducedCost, 1, card.ID)
+					toReduce.AddUniqueSourceCondition(cnd.ReducedCost, 1, card.ID)
 				}
 
 			}
