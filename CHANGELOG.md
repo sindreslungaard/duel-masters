@@ -6,6 +6,7 @@ All notable changes to this project as of 11/11/2021 will be documented in this 
 
 - New card "Pokolul" (thanks @jyotiskaghosh)
 - Bugfixes for Ambush Scorpion, Obsidian Scarab, Mist Rias, Mongrel Man, Bone Spider, Mega Detonator (thanks @jyotiskaghosh)
+- Improved image quality of all cards
 
 ## 04/01/2022
 
