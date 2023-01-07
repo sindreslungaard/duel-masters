@@ -80,15 +80,11 @@ func MegaDetonator(c *match.Card) {
 
 	c.Use(fx.Spell, fx.When(fx.SpellCast, func(card *match.Card, ctx *match.Context) {
 
-		hand, err := card.Player.Container(match.HAND)
+		handLen := len(fx.Find(card.Player, match.HAND)) - 1
 
-		if err != nil {
-			return
-		}
+		n := 0
 
-		handLen := len(hand)
-
-		selectedCards := fx.Select(
+		fx.SelectFilter(
 			card.Player,
 			ctx.Match,
 			card.Player,
@@ -97,25 +93,20 @@ func MegaDetonator(c *match.Card) {
 			0,
 			handLen,
 			false,
-		)
+			func(c *match.Card) bool { return c.ID != card.ID },
+		).Map(func(c *match.Card) {
 
-		nrSelected := len(selectedCards)
+			card.Player.MoveCard(c.ID, match.HAND, match.GRAVEYARD)
+			ctx.Match.Chat("Server", fmt.Sprintf("%s was moved to %s's graveyard from their hand by Mega Detonator", c.Name, card.Player.Username()))
 
-		selectedCards.Map(func(x *match.Card) {
-			card.Player.MoveCard(x.ID, match.HAND, match.GRAVEYARD)
-			ctx.Match.Chat("Server", fmt.Sprintf("%s was moved to %s's graveyard from their hand by Mega Detonator", x.Name, card.Player.Username()))
+			n++
+
 		})
 
-		creatures, err := card.Player.Container(match.BATTLEZONE)
+		creatures := len(fx.Find(card.Player, match.BATTLEZONE))
 
-		if err != nil {
-			return
-		}
-
-		nrCreatures := len(creatures)
-
-		if nrCreatures < nrSelected {
-			nrSelected = nrCreatures
+		if n > creatures {
+			n = creatures
 		}
 
 		fx.Select(
@@ -123,9 +114,9 @@ func MegaDetonator(c *match.Card) {
 			ctx.Match,
 			card.Player,
 			match.BATTLEZONE,
-			fmt.Sprintf("Mega Detonator: Choose %d creatures that will get double breaker.", nrSelected),
-			nrSelected,
-			nrSelected,
+			fmt.Sprintf("Mega Detonator: Choose %d creatures that will get double breaker.", n),
+			n,
+			n,
 			false,
 		).Map(func(x *match.Card) {
 			x.AddCondition(cnd.DoubleBreaker, true, card.ID)
