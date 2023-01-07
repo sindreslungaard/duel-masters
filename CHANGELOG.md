@@ -4,11 +4,13 @@ All notable changes to this project as of 11/11/2021 will be documented in this 
 
 ## [Unreleased]
 
+## 07/01/2023
+
 - New card "Pokolul" (thanks @jyotiskaghosh)
 - Bugfixes for Ambush Scorpion, Obsidian Scarab, Mist Rias, Mongrel Man, Bone Spider, Mega Detonator (thanks @jyotiskaghosh)
 - Improved image quality of all cards
 
-## 04/01/2022
+## 04/01/2023
 
 - New card "Solidskin Fish" (thanks @jyotiskaghosh)
 - New card "Spikestrike Ichthys Q" (thanks @jyotiskaghosh)
