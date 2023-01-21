@@ -21,4 +21,6 @@ const (
 	IncreasedCost       = "increased_cost"
 	Evolution           = "evolution"
 	Survivor            = "survivor"
+
+	ActionNotCancellable = "action_not_cancellable"
 )

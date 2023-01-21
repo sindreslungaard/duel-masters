@@ -195,7 +195,20 @@ func Creature(card *match.Card, ctx *match.Context) {
 					minmax = len(shieldzone)
 				}
 
-				ctx.Match.NewBacksideAction(card.Player, shieldzone, minmax, minmax, fmt.Sprintf("Select %v shield(s) to break", minmax), true)
+				cancellable := true
+
+				if card.HasCondition(cnd.ActionNotCancellable) {
+					cancellable = false
+				}
+
+				ctx.Match.NewBacksideAction(
+					card.Player, 
+					shieldzone, 
+					minmax,
+					minmax, 
+					fmt.Sprintf("Select %v shield(s) to break", minmax), 
+					cancellable,
+				)
 
 				for {
 
@@ -219,6 +232,10 @@ func Creature(card *match.Card, ctx *match.Context) {
 							continue
 						}
 						shieldsAttacked = append(shieldsAttacked, shield)
+					}
+
+					if(cancellable == false) {
+						card.RemoveCondition(cnd.ActionNotCancellable)
 					}
 
 					ctx.Match.CloseAction(card.Player)
@@ -365,7 +382,20 @@ func Creature(card *match.Card, ctx *match.Context) {
 
 			attackedCreatures := make([]*match.Card, 0)
 
-			ctx.Match.NewAction(card.Player, event.AttackableCreatures, 1, 1, "Select the creature to attack", true)
+			cancellable := true
+
+			if card.HasCondition(cnd.ActionNotCancellable) {
+				cancellable = false
+			}
+
+			ctx.Match.NewAction(
+				card.Player, 
+				event.AttackableCreatures, 
+				1, 
+				1, 
+				"Select the creature to attack", 
+				cancellable,
+			)
 
 			for {
 
@@ -389,6 +419,10 @@ func Creature(card *match.Card, ctx *match.Context) {
 				}
 
 				attackedCreatures = append(attackedCreatures, c)
+
+				if(cancellable == false) {
+					card.RemoveCondition(cnd.ActionNotCancellable)
+				}
 
 				ctx.Match.CloseAction(card.Player)
 

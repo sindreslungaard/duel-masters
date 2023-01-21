@@ -19,7 +19,7 @@ func ThreeEyedDragonfly(c *match.Card) {
 	c.ManaCost = 5
 	c.ManaRequirement = []string{civ.Nature}
 
-	c.Use(fx.Creature, fx.When(fx.AttackConfirmed, func(card *match.Card, ctx *match.Context) {
+	c.Use(fx.Creature, fx.When(fx.Attacking, func(card *match.Card, ctx *match.Context) {
 
 		selected := fx.SelectFilter(
 			card.Player,
@@ -29,7 +29,7 @@ func ThreeEyedDragonfly(c *match.Card) {
 			"Select one creature to destroy.",
 			0,
 			1,
-			false,
+			true,
 			func(c *match.Card) bool { return c.ID != card.ID },
 		)
 
@@ -41,6 +41,7 @@ func ThreeEyedDragonfly(c *match.Card) {
 
 			card.AddCondition(cnd.PowerAttacker, 2000, card.ID)
 			card.AddCondition(cnd.DoubleBreaker, nil, card.ID)
+			card.AddCondition(cnd.ActionNotCancellable, nil, card.ID)
 			ctx.Match.Chat("Server", fmt.Sprintf("%s was given power attacker +2000 and double breaker until the end of the turn", card.Name))
 
 		}
