@@ -4,6 +4,8 @@ All notable changes to this project as of 11/11/2021 will be documented in this 
 
 ## [Unreleased]
 
+- Added shield numbers to all shields (thanks @fabianTMC)
+
 ## 07/01/2023
 
 - New card "Pokolul" (thanks @jyotiskaghosh)
