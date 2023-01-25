@@ -5,6 +5,7 @@ All notable changes to this project as of 11/11/2021 will be documented in this 
 ## [Unreleased]
 
 - Added shield numbers to all shields (thanks @fabianTMC)
+- Fix for "Gregoria Princess Of War" not giving power and blocker to opponent's creatures as well
 
 ## 07/01/2023
 
