@@ -27,6 +27,14 @@ func GregoriaPrincessOfWar(c *match.Card) {
 				func(x *match.Card) bool { return x.Family == family.DemonCommand },
 			)
 
+			demonCommands = append(demonCommands,
+				fx.FindFilter(
+					ctx.Match.Opponent(card.Player),
+					match.BATTLEZONE,
+					func(x *match.Card) bool { return x.Family == family.DemonCommand },
+				)...,
+			)
+
 			if card.Zone != match.BATTLEZONE {
 				demonCommands.Map(func(x *match.Card) {
 					x.RemoveConditionBySource(card.ID)
