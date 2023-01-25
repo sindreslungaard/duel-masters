@@ -84,16 +84,19 @@
       </template>
       <div v-if="!actionObject && action.cards" class="action-cards">
         <div v-for="(card, index) in action.cards" :key="index" class="card">
-          <img
-            @dragstart.prevent=""
-            @mouseenter="actionSelectMouseEnter($event, card)"
-            @mousedown="actionSelect(card)"
-            :class="[
-              'no-drag',
-              actionSelects.includes(card) ? 'glow-' + card.civilization : ''
-            ]"
-            :src="`/assets/cards/all/${card.uid}.jpg`"
-          />
+          <div class="action-shield-number">
+              <span>{{state.me.shieldMap[card.virtualId] || state.opponent.shieldMap[card.virtualId] }}</span>
+              <img
+                @dragstart.prevent=""
+                @mouseenter="actionSelectMouseEnter($event, card)"
+                @mousedown="actionSelect(card)"
+                :class="[
+                  'no-drag',
+                  actionSelects.includes(card) ? 'glow-' + card.civilization : ''
+                ]"
+                :src="`/assets/cards/all/${card.uid}.jpg`"
+              />
+            </div>
         </div>
       </div>
       <div v-if="actionObject && action.cards" class="action-cards">
@@ -301,7 +304,12 @@
               'card shield' + (!settings.noUpsideDownCards ? ' flipped' : '')
             "
           >
-            <img src="/assets/cards/backside.png" />
+            <div class="shield-number">
+              <span :class="
+              (!settings.noUpsideDownCards ? ' flipped' : '')
+            ">{{state.opponent.shieldMap[card]}}</span>
+              <img src="/assets/cards/backside.png" />
+            </div>
           </div>
         </div>
 
@@ -438,7 +446,10 @@
             :key="index"
             class="card shield"
           >
+          <div class="shield-number">
+            <span>{{state.me.shieldMap[card]}}</span>
             <img src="/assets/cards/backside.png" />
+          </div>
           </div>
         </div>
 
@@ -1580,6 +1591,23 @@ export default {
   img {
     height: 8.5vh;
   }
+}
+
+.shield-number, .action-shield-number {
+  position: relative;
+}
+
+.shield-number span, .action-shield-number span {
+  color: white;
+  position: absolute;
+  text-align: right;
+  width: 100%;
+  right: 10%;
+  top: 2%;
+}
+
+.action-shield-number span {
+  padding: 0;
 }
 
 .shieldzone {

@@ -82,6 +82,9 @@ type Player struct {
 	hiddenzone []*Card
 	spellzone  []*Card
 
+	ShieldCounter int
+	ShieldMap map[string]int
+
 	mutex *sync.Mutex
 
 	ActionState PlayerActionState
@@ -115,6 +118,9 @@ func NewPlayer(match *Match, turn byte) *Player {
 		Turn:           turn,
 		Ready:          false,
 		match:          match,
+
+		ShieldCounter: 0,
+		ShieldMap: make(map[string]int),
 	}
 
 	return p
@@ -397,6 +403,11 @@ func (p *Player) MoveCard(cardID string, from string, to string) (*Card, error) 
 	ref.Zone = to
 	ref.Tapped = false
 
+	if(to == SHIELDZONE) {
+		p.ShieldCounter = p.ShieldCounter + 1
+		p.ShieldMap[ref.ID] = p.ShieldCounter
+	}
+
 	p.mutex.Unlock()
 
 	p.match.HandleFx(NewContext(p.match, &CardMoved{
@@ -520,6 +531,7 @@ func (p *Player) Denormalized() *server.PlayerState {
 		HandCount:  len(p.hand),
 		Hand:       denormalizeCards(p.hand, false),
 		Shieldzone: shields,
+		ShieldMap:  p.ShieldMap,
 		Manazone:   denormalizeCards(p.manazone, false),
 		Graveyard:  denormalizeCards(p.graveyard, false),
 		Battlezone: denormalizeCards(p.battlezone, false),

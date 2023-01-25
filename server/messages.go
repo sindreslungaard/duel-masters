@@ -39,6 +39,7 @@ type PlayerState struct {
 	HandCount  int         `json:"handCount"`
 	Hand       []CardState `json:"hand"`
 	Shieldzone []string    `json:"shieldzone"`
+	ShieldMap  map[string]int `json:"shieldMap"`
 	Manazone   []CardState `json:"manazone"`
 	Graveyard  []CardState `json:"graveyard"`
 	Battlezone []CardState `json:"playzone"`
