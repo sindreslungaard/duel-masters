@@ -28,6 +28,8 @@ type Card struct {
 	ManaRequirement []string
 	PowerModifier   func(m *Match, attacking bool) int
 
+	Text []string
+
 	attachedCards []*Card
 	conditions    []Condition
 	handlers      []HandlerFunc
