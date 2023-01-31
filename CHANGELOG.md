@@ -4,8 +4,11 @@ All notable changes to this project as of 11/11/2021 will be documented in this 
 
 ## [Unreleased]
 
+## 31/01/2023
+
 - Added shield numbers to all shields (thanks @fabianTMC)
-- Fix for "Gregoria Princess Of War" not giving power and blocker to opponent's creatures as well
+- Fix for "Gregoria Princess Of War" not giving power and blocker to opponent's creatures as well (thanks @fabianTMC)
+- Fix for "Three Eyed Dragonfly" not letting you decide to use its effect before selecting target to attack (thanks @fabianTMC)
 
 ## 07/01/2023
 
