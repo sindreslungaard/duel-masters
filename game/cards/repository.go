@@ -390,3 +390,5 @@ var DM05 = map[string]match.CardConstructor{
 	"4c5323af-2c14-4bc7-9cb8-7b967c7b8586": dm05.Pokolul,
 	"f66ca3b3-7300-41ef-8319-9de6dfc4e39a": dm05.SinisterGeneralDamudo,
 }
+
+var DM06 = map[string]match.CardConstructor{}
