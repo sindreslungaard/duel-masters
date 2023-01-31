@@ -4,6 +4,8 @@ All notable changes to this project as of 11/11/2021 will be documented in this 
 
 ## [Unreleased]
 
+- New Card "Sinister General Damudo" (thanks @fabianTMC)
+
 ## 31/01/2023
 
 - Added shield numbers to all shields (thanks @fabianTMC)
