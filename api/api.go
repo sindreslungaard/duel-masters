@@ -66,6 +66,7 @@ func (api *API) Start(port string) {
 	r.GET("/ws/:hub", api.WS)
 	r.POST("/api/auth/signin", api.SigninHandler)
 	r.POST("/api/auth/signup", api.SignupHandler)
+	r.POST("/api/auth/reset-password", api.ChangePasswordHandler)
 	r.GET("/api/match/:id", api.GetMatchHandler)
 	r.POST("/api/match", api.MatchHandler)
 	r.GET("/api/cards", api.CardsHandler)
