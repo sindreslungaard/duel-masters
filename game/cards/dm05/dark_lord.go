@@ -16,10 +16,6 @@ func SinisterGeneralDamudo(c *match.Card) {
 	c.ManaCost = 6
 	c.ManaRequirement = []string{civ.Darkness}
 
-	c.Text = []string{
-		"When this creature is destroyed, destroy all creatures that have power 3000 or less.",
-	}
-
 	c.Use(fx.Creature, fx.When(fx.Destroyed, func(card *match.Card, ctx *match.Context) {
 
 		opponent := ctx.Match.Opponent(card.Player)
