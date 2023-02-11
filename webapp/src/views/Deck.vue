@@ -10,23 +10,82 @@
           <img :src="`/assets/cards/all/${card.uid}.jpg`" />
         </div>
       </div>
+      <div class="button-container" v-if="isUserAuthenticated()">
+        <Button class="btn" :disabled='apiCallInProgess' @click='saveCardsToDeck'>Copy to decklist</Button>
+      </div>
     </div>
   </div>
 </template>
 
 <script>
 import { call } from "../remote";
+import { showMessageDialog } from "../helpers/showDialog"
 
 export default {
+
   name: "deck",
+
   data() {
     return {
-      errorMsg: "",
-      name: "",
-      cards: []
+      errorMsg: null,
+      name: null,
+      cards: [],
+      apiCallInProgess: false,
     };
   },
-  methods: {},
+
+  methods: {
+
+    getUsername() {
+      return localStorage.getItem("username");
+    },
+
+    getUserUid() {
+      return localStorage.getItem("uid");
+    },
+
+    isUserAuthenticated() {
+      return this.getUserUid() !== null
+    },
+
+    saveCardsToDeck() {
+      let cardsUids = this.getUidListFromCards(this.cards);
+      this.saveNewDeck(this.name, cardsUids);
+    },
+
+    getUidListFromCards(cards){
+      let uids = [];
+      cards.forEach(card => {
+        for(let i=0;i<card.count;i++){
+          uids.push(card.uid)
+        }
+      });
+      return uids;
+    },
+
+    saveNewDeck(deckName, cardUids) {
+      this.apiCallInProgess = true;
+      call({
+        path: "/decks",
+        method: "POST",
+        body: {
+          name: deckName,
+          cards: cardUids,
+          public: false,
+        }
+      }).then(res => {
+        showMessageDialog(this.$modal, "Successfully saved deck");
+      }).catch(error => {
+        showMessageDialog(this.$modal, "Invalid request. If you think this is an error please contact us via discord.");
+      }).finally(() => {
+        this.apiCallInProgess = false
+      });
+    },
+
+    closeOverlay() {
+      this.overlayMessage = null;
+    },
+  },
 
   async created() {
     try {
@@ -49,13 +108,18 @@ export default {
         }
       }
     } catch (e) {
-      this.errorMsg = e.response.data.message;
+      this.errorMsg = e.response ? e.response.data.message : e;
     }
   }
 };
 </script>
 
 <style scoped>
+
+.button-container {
+  text-align: center;
+}
+
 .deck-card > p {
   text-align: center;
   margin: 0;
@@ -63,18 +127,9 @@ export default {
   color: #ccc;
 }
 
-.count {
-  position: absolute;
-  width: 50px;
-  height: 50px;
-  background: red;
-  border-radius: 50px;
-  margin-left: 13.2%;
-  margin-top: 0.2%;
-}
-
 .deck-container {
   margin-top: 20px;
+  margin-bottom: 20px;
 }
 
 .deck-card {
@@ -106,73 +161,8 @@ hr {
   border-color: #888;
 }
 
-.disabled {
-  background: #7289da !important;
-  opacity: 0.5;
-}
-
-.disabled:hover {
-  cursor: not-allowed !important;
-  background: #7289da !important;
-}
-
-.disabled:active {
-  background: #7289da !important;
-}
-
 .main {
   margin: 0 15px;
-}
-
-.new-duel .backdrop {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100vh;
-  background: #000;
-  opacity: 0.5;
-}
-
-.new-duel .wizard {
-  position: absolute;
-  top: calc(50vh - 323px / 2);
-  left: calc(50% - 250px / 2);
-  background: #36393f;
-  width: 250px;
-  border-radius: 4px;
-  color: #fff;
-  border: 1px solid #666;
-}
-
-.wizard .headline {
-  color: #ccc;
-}
-
-.wizard .spacer {
-  margin: 15px;
-}
-
-.wizard .helper {
-  color: #ccc;
-  font-size: 13px;
-}
-
-.wizard .btn {
-  margin: 0;
-  width: 85px;
-  text-align: center;
-  margin-top: 15px;
-}
-
-.wizard .cancel {
-  margin-left: 10px;
-  background: #ff4c4c;
-  color: #fff;
-}
-
-.wizard .cancel:hover {
-  background: #ed3e3e;
 }
 
 input,
@@ -197,18 +187,6 @@ select:active {
   outline: none;
 }
 
-.wizard select {
-  width: 220px;
-  margin-top: 4px;
-}
-
-.wizard .errorMsg {
-  color: red;
-  font-size: 14px;
-  display: block;
-  margin-top: 15px;
-}
-
 nav {
   text-align: right;
 }
@@ -226,32 +204,6 @@ li {
 nav > ul > li:hover {
   cursor: pointer;
   color: #fff;
-}
-
-nav > ul > li.no-cursor:hover {
-  cursor: default;
-}
-
-.title {
-  position: absolute;
-  top: 16px;
-  left: 16px;
-}
-
-.psa {
-  margin: 16px;
-  background: #2b2c31;
-  padding: 5px;
-  min-height: 20px;
-  border-radius: 4px;
-  font-size: 14px;
-  color: #ccc;
-}
-
-.psa > span {
-  display: inline-block;
-  vertical-align: middle;
-  margin-left: 4px;
 }
 
 a {
