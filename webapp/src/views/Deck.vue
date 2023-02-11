@@ -11,7 +11,7 @@
         </div>
       </div>
       <div class="button-container" v-if="isUserAuthenticated()">
-        <Button class="btn" :disabled='apiCallInProgess' @click='saveCardsToDeck'>Copy to a new deck of your own</Button>  
+        <Button class="btn" :disabled='apiCallInProgess' @click='saveCardsToDeck'>Copy to decklist</Button>
       </div>
     </div>
   </div>
