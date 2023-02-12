@@ -6,6 +6,7 @@ All notable changes to this project as of 11/11/2021 will be documented in this 
 
 - New Card "Sinister General Damudo" (thanks @fabianTMC)
 - Added change password functionality to settings page
+- Add button when checking a public deck to copy it to your decks (thanks @pablopenna)
 
 ## 31/01/2023
 
