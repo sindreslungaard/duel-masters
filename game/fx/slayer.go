@@ -17,19 +17,16 @@ func Slayer(card *match.Card, ctx *match.Context) {
 // Suicide destroys the card when it wins a battle
 func Suicide(card *match.Card, ctx *match.Context) {
 
-	// When destroyed
-	if event, ok := ctx.Event.(*match.CreatureDestroyed); ok {
-
-		if event.Source == card && event.Context == match.DestroyedInBattle {
-
-			creature, err := card.Player.GetCard(event.Source.ID, match.BATTLEZONE)
-
-			if err == nil {
-
-				ctx.Match.Destroy(creature, event.Card, match.DestroyedBySlayer)
-
-			}
-
+	if event, ok := ctx.Event.(*match.Battle); ok {
+		if event.Attacker == card || event.Defender == card {
+			ctx.ScheduleAfter(func() {
+				// Still in the battlezone so it won the battle
+				creature, err := card.Player.GetCard(card.ID, match.BATTLEZONE)
+				if err != nil {
+					return
+				}
+				ctx.Match.Destroy(creature, creature, match.DestroyedBySlayer)
+			})
 		}
 
 	}
