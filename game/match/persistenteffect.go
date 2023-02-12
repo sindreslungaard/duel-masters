@@ -10,24 +10,21 @@ type PersistentEffect struct {
 }
 
 func (match *Match) ApplyPersistentEffect(f PersistentHandlerFunc) {
-
-	seqID++
+	key := seqID
 
 	fx := PersistentEffect{
-		exit:   func() { match.RemovePersistentEffect(seqID) },
+		exit:   func() { match.RemovePersistentEffect(key) },
 		effect: f,
 	}
 
-	match.persistentEffects[seqID] = fx
+	match.persistentEffects[key] = fx
 
+	seqID++
 }
 
 func (match *Match) RemovePersistentEffect(id int) {
-
 	_, ok := match.persistentEffects[id]
-
 	if ok {
 		delete(match.persistentEffects, id)
 	}
-
 }
