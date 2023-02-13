@@ -68,5 +68,18 @@ restart_after=
     )
     ```
 
+### Development tips
+
+For testing cards locally there is a neat chat command that spawns in any card to the hand of the persons turn it is even if it's not in your deck `/add {cardUid}` (e.g `/add 4459f97b-8927-4231-a11d-f4f88175b71c`). The card uid can be found in `repository.go`. **It has to be your turn for this to work**.
+
+To get access to the command you need to add the role admin to the permissions array on your user in the database. You can do that with the following commands by connecting to the mongo instance your local server is using.
+
+```
+$ mongosh
+$ use duel-masters
+$ db.users.updateMany({username: 'test'}, {$set: {permissions: ['admin']}})
+```
+
+
 # Changelog
 A changelog starting from 11/11/2021 can be found [here](https://github.com/sindreslungaard/duel-masters/blob/master/CHANGELOG.md)
