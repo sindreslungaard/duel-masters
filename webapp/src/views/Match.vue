@@ -85,18 +85,21 @@
       <div v-if="!actionObject && action.cards" class="action-cards">
         <div v-for="(card, index) in action.cards" :key="index" class="card">
           <div class="action-shield-number">
-              <span>{{state.me.shieldMap[card.virtualId] || state.opponent.shieldMap[card.virtualId] }}</span>
-              <img
-                @dragstart.prevent=""
-                @mouseenter="actionSelectMouseEnter($event, card)"
-                @mousedown="actionSelect(card)"
-                :class="[
-                  'no-drag',
-                  actionSelects.includes(card) ? 'glow-' + card.civilization : ''
-                ]"
-                :src="`/assets/cards/all/${card.uid}.jpg`"
-              />
-            </div>
+            <span>{{
+              state.me.shieldMap[card.virtualId] ||
+                state.opponent.shieldMap[card.virtualId]
+            }}</span>
+            <img
+              @dragstart.prevent=""
+              @mouseenter="actionSelectMouseEnter($event, card)"
+              @mousedown="actionSelect(card)"
+              :class="[
+                'no-drag',
+                actionSelects.includes(card) ? 'glow-' + card.civilization : ''
+              ]"
+              :src="`/assets/cards/all/${card.uid}.jpg`"
+            />
+          </div>
         </div>
       </div>
       <div v-if="actionObject && action.cards" class="action-cards">
@@ -197,7 +200,10 @@
           <span>{{ handSelection.name }}</span>
           <div
             @click="addToPlayzone()"
-            :class="['btn', { disabled: !handSelection.canBePlayed }]"
+            :class="[
+              'btn',
+              { disabled: !hasFlag(handSelection, PLAYABLE_FLAG) }
+            ]"
           >
             Add to playzone
           </div>
@@ -211,9 +217,34 @@
         </template>
         <template v-if="playzoneSelection">
           <span>{{ playzoneSelection.name }}</span>
-          <div @click="attackPlayer()" class="btn">Attack player</div>
-          <div class="spacer"></div>
-          <div @click="attackCreature()" class="btn">Attack creature</div>
+          <div class="card-action-group">
+            <div @click="attackPlayer()" class="btn">
+              {{
+                hasFlag(playzoneSelection, TAP_ABILITY_FLAG)
+                  ? "Attack P"
+                  : "Attack player"
+              }}
+            </div>
+            <div class="spacer"></div>
+            <div @click="attackCreature()" class="btn">
+              {{
+                hasFlag(playzoneSelection, TAP_ABILITY_FLAG)
+                  ? "Attack C"
+                  : "Attack creature"
+              }}
+            </div>
+            <div
+              v-show="hasFlag(playzoneSelection, TAP_ABILITY_FLAG)"
+              class="spacer"
+            ></div>
+            <div
+              v-show="hasFlag(playzoneSelection, TAP_ABILITY_FLAG)"
+              @click="tapAbility()"
+              class="btn"
+            >
+              Tap Ability
+            </div>
+          </div>
         </template>
       </div>
 
@@ -281,7 +312,7 @@
             @contextmenu.prevent="showLarge(card)"
             v-for="(card, index) in state.opponent.manazone"
             :key="index"
-            :class="['card', 'mana', { tapped: card.tapped }]"
+            :class="['card', 'mana', { tapped: hasFlag(card, TAPPED_FLAG) }]"
           >
             <img :src="`/assets/cards/all/${card.uid}.jpg`" />
           </div>
@@ -305,9 +336,9 @@
             "
           >
             <div class="shield-number">
-              <span :class="
-              (!settings.noUpsideDownCards ? ' flipped' : '')
-            ">{{state.opponent.shieldMap[card]}}</span>
+              <span :class="!settings.noUpsideDownCards ? ' flipped' : ''">{{
+                state.opponent.shieldMap[card]
+              }}</span>
               <img src="/assets/cards/backside.png" />
             </div>
           </div>
@@ -327,7 +358,7 @@
             @contextmenu.prevent="showLarge(card)"
             v-for="(card, index) in state.opponent.playzone"
             :key="index"
-            :class="['card', { tapped: card.tapped }]"
+            :class="['card', { tapped: hasFlag(card, TAPPED_FLAG) }]"
           >
             <img
               :class="!settings.noUpsideDownCards ? 'flipped' : ''"
@@ -423,7 +454,7 @@
             @contextmenu.prevent="showLarge(card)"
             v-for="(card, index) in state.me.playzone"
             :key="index"
-            :class="['card', { tapped: card.tapped }]"
+            :class="['card', { tapped: hasFlag(card, TAPPED_FLAG) }]"
           >
             <img
               draggable
@@ -446,10 +477,10 @@
             :key="index"
             class="card shield"
           >
-          <div class="shield-number">
-            <span>{{state.me.shieldMap[card]}}</span>
-            <img src="/assets/cards/backside.png" />
-          </div>
+            <div class="shield-number">
+              <span>{{ state.me.shieldMap[card] }}</span>
+              <img src="/assets/cards/backside.png" />
+            </div>
           </div>
         </div>
 
@@ -467,7 +498,7 @@
             @contextmenu.prevent="showLarge(card)"
             v-for="(card, index) in state.me.manazone"
             :key="index"
-            :class="['card', 'mana', { tapped: card.tapped }]"
+            :class="['card', 'mana', { tapped: hasFlag(card, TAPPED_FLAG) }]"
           >
             <img
               :class="!settings.noUpsideDownCards ? 'flipped' : ''"
@@ -590,7 +621,11 @@ export default {
       previewCard: null,
       previewCards: null,
       previewCardsText: null,
-      settings: getSettings()
+      settings: getSettings(),
+
+      TAPPED_FLAG: 1,
+      PLAYABLE_FLAG: 2,
+      TAP_ABILITY_FLAG: 4
     };
   },
   computed: {
@@ -737,7 +772,7 @@ export default {
         this.playzoneSelection = null;
         return;
       }
-      if (card.tapped) {
+      if (this.hasFlag(card, this.TAPPED_FLAG)) {
         return;
       }
       this.playzoneSelection = card;
@@ -774,7 +809,7 @@ export default {
       const redHighlight = "#7d5252";
 
       if (source === "hand") {
-        if (card.canBePlayed) {
+        if (this.hasFlag(card, this.PLAYABLE_FLAG)) {
           this.$refs.myplayzone.style.backgroundColor = greenHighlight;
         } else {
           this.$refs.myplayzone.style.backgroundColor = redHighlight;
@@ -828,6 +863,9 @@ export default {
           this.attackCreature();
         }
       }
+    },
+    hasFlag(card, flag) {
+      return card.flags & flag;
     }
   },
   created() {
@@ -1593,11 +1631,13 @@ export default {
   }
 }
 
-.shield-number, .action-shield-number {
+.shield-number,
+.action-shield-number {
   position: relative;
 }
 
-.shield-number span, .action-shield-number span {
+.shield-number span,
+.action-shield-number span {
   color: white;
   position: absolute;
   text-align: right;
@@ -1664,5 +1704,9 @@ export default {
   -ms-user-select: none; /* Internet Explorer/Edge */
   user-select: none; /* Non-prefixed version, currently
                                   supported by Chrome, Edge, Opera and Firefox */
+}
+
+.card-action-group {
+  display: flex;
 }
 </style>
