@@ -32,7 +32,7 @@
             <br />
 
             <div class="form-control">
-              <label for="newPasswordAgain">Old password</label>
+              <label for="newPasswordAgain">New password again</label>
               <input
                 id="newPasswordAgain"
                 v-model="newPasswordAgain"
