@@ -937,7 +937,7 @@ func (m *Match) TapAbility(p *PlayerReference, cardID string) {
 	_, err := p.Player.GetCard(cardID, BATTLEZONE)
 
 	if err != nil {
-		Warn(p, "The creature you tried use a tap ability for is not in the battlezone")
+		Warn(p, "The creature you tried to use a tap ability for is not in the battlezone")
 		return
 	}
 
