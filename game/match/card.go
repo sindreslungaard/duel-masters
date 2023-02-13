@@ -12,6 +12,15 @@ type Condition struct {
 	Src interface{}
 }
 
+// Bitmask
+type CardFlags uint8
+
+const (
+	TappedFlag     CardFlags = 1 << iota // 1
+	PlayableFlag                         // 2
+	TapAbilityFlag                       // 4
+)
+
 // Card holds information about a specific card
 type Card struct {
 	ID      string
@@ -27,6 +36,7 @@ type Card struct {
 	ManaCost        int
 	ManaRequirement []string
 	PowerModifier   func(m *Match, attacking bool) int
+	TapAbility      bool
 
 	attachedCards []*Card
 	conditions    []Condition

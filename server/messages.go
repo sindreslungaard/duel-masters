@@ -23,26 +23,25 @@ type ChatMessage struct {
 
 // CardState stores information about the state of a card
 type CardState struct {
-	CardID      string `json:"virtualId"`
-	ImageID     string `json:"uid"`
-	Name        string `json:"name"`
-	Civ         string `json:"civilization"`
-	Tapped      bool   `json:"tapped"`
-	CanBePlayed bool   `json:"canBePlayed"`
+	CardID  string `json:"virtualId"`
+	ImageID string `json:"uid"`
+	Name    string `json:"name"`
+	Civ     string `json:"civilization"`
+	Flags   uint8  `json:"flags"`
 }
 
 // PlayerState stores information about the state of the current player
 type PlayerState struct {
-	Username   string      `json:"username"`
-	Color      string      `json:"color"`
-	Deck       int         `json:"deck"`
-	HandCount  int         `json:"handCount"`
-	Hand       []CardState `json:"hand"`
-	Shieldzone []string    `json:"shieldzone"`
+	Username   string         `json:"username"`
+	Color      string         `json:"color"`
+	Deck       int            `json:"deck"`
+	HandCount  int            `json:"handCount"`
+	Hand       []CardState    `json:"hand"`
+	Shieldzone []string       `json:"shieldzone"`
 	ShieldMap  map[string]int `json:"shieldMap"`
-	Manazone   []CardState `json:"manazone"`
-	Graveyard  []CardState `json:"graveyard"`
-	Battlezone []CardState `json:"playzone"`
+	Manazone   []CardState    `json:"manazone"`
+	Graveyard  []CardState    `json:"graveyard"`
+	Battlezone []CardState    `json:"playzone"`
 }
 
 // MatchState stores information about the current state of the match in the eyes of a given player

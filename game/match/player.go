@@ -83,7 +83,7 @@ type Player struct {
 	spellzone  []*Card
 
 	ShieldCounter int
-	ShieldMap map[string]int
+	ShieldMap     map[string]int
 
 	mutex *sync.Mutex
 
@@ -120,7 +120,7 @@ func NewPlayer(match *Match, turn byte) *Player {
 		match:          match,
 
 		ShieldCounter: 0,
-		ShieldMap: make(map[string]int),
+		ShieldMap:     make(map[string]int),
 	}
 
 	return p
@@ -403,7 +403,7 @@ func (p *Player) MoveCard(cardID string, from string, to string) (*Card, error) 
 	ref.Zone = to
 	ref.Tapped = false
 
-	if(to == SHIELDZONE) {
+	if to == SHIELDZONE {
 		p.ShieldCounter = p.ShieldCounter + 1
 		p.ShieldMap[ref.ID] = p.ShieldCounter
 	}
@@ -551,29 +551,37 @@ func denormalizeCards(cards []*Card, partial bool) []server.CardState {
 
 	for _, card := range cards {
 
-		canBePlayed := true
+		var flags CardFlags
 
 		mana, err := card.Player.Container(MANAZONE)
 
-		if err == nil {
-			canBePlayed = card.Player.CanPlayCard(card, mana)
+		if err == nil && card.Player.CanPlayCard(card, mana) {
+			flags |= PlayableFlag
+		}
+
+		if card.Tapped {
+			flags |= TappedFlag
+		}
+
+		if card.TapAbility {
+			flags |= TapAbilityFlag
 		}
 
 		cs := server.CardState{
-			CardID:      card.ID,
-			ImageID:     card.ImageID,
-			Name:        card.Name,
-			Civ:         card.Civ,
-			Tapped:      card.Tapped,
-			CanBePlayed: canBePlayed,
+			CardID:  card.ID,
+			ImageID: card.ImageID,
+			Name:    card.Name,
+			Civ:     card.Civ,
+			Flags:   uint8(flags),
 		}
 
 		if partial {
 			cs.ImageID = "backside"
 			cs.Name = ""
 			cs.Civ = "water" // blue highlight color when selected in actions
-			cs.Tapped = false
-			cs.CanBePlayed = false
+
+			var f CardFlags
+			cs.Flags = uint8(f)
 		}
 
 		arr = append(arr, cs)
