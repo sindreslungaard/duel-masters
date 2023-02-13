@@ -2,8 +2,8 @@
   <div>
     <Header></Header>
 
-    <div class="settings">
-      <div style="width: 205px">
+    <div class="settings-row">
+      <div class="flex-1">
         <h1>Change Password</h1>
         <div class="area">
           <form @submit.prevent="changePassword">
@@ -87,12 +87,50 @@
               @change="setUpsideDownCards($event)"
             />
             <label for="noUpsideDownCards">
-              Flip your manazone cards and the opponent's battlezone and
-              shieldzone cards so they are readable by you
+              Flip all cards that would otherwise be upside down
             </label>
           </div>
         </div>
       </div>
+    </div>
+
+    <div class="settings-row">
+      <div class="flex-1">
+        <h1>Preferences</h1>
+        <div class="area">
+          <form @submit.prevent="savePreferences">
+            <div class="form-control">
+              <label for="playmat">Playmat</label>
+              <input
+                id="playmat"
+                v-model="preferences.playmat"
+                type="text"
+                placeholder="https://i.imgur.com/HDpcrUt.png"
+                style="width: calc(100% - 15px)"
+              />
+            </div>
+
+            <br />
+
+            <button type="submit">Update preferences</button>
+
+            <div v-if="preferencesError" style="color: red; margin-top: 10px;">
+              {{ preferencesError }}
+            </div>
+
+            <div
+              v-if="preferencesSuccess"
+              style="color: green; margin-top: 10px;"
+            >
+              {{ preferencesSuccess }}
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <div class="flex-1"></div>
+
+      <div class="flex-1"></div>
     </div>
   </div>
 </template>
@@ -113,6 +151,12 @@ export default {
       newPasswordAgain: "",
       passwordError: "",
       passwordSuccess: "",
+
+      preferences: {
+        playmat: ""
+      },
+      preferencesError: "",
+      preferencesSuccess: "",
 
       settings: getSettings()
     };
@@ -154,6 +198,36 @@ export default {
       } catch (e) {
         this.passwordError = e.response.data.error;
       }
+    },
+    async savePreferences() {
+      this.preferencesError = "";
+      this.preferencesSuccess = "";
+
+      try {
+        let res = await call({
+          path: `/preferences`,
+          method: "PUT",
+          body: this.preferences
+        });
+
+        this.preferencesSuccess = res.data.message;
+      } catch (e) {
+        console.log(e.response.data.error);
+        this.preferencesError = e.response.data.error;
+      }
+    }
+  },
+
+  async mounted() {
+    try {
+      let res = await call({
+        path: `/preferences`,
+        method: "GET"
+      });
+
+      this.preferences = res.data;
+    } catch (e) {
+      alert("failed to fetch preferences, try to log out and back in again");
     }
   },
 
@@ -168,9 +242,10 @@ export default {
 </script>
 
 <style scoped lang="scss">
-.settings {
+.settings-row {
   margin: 0 10px;
   display: flex;
+  margin-bottom: 50px;
 
   .area {
     background: #2b2c31;
@@ -178,6 +253,7 @@ export default {
     border-radius: 4px;
     margin-top: 10px;
     font-size: 14px;
+    height: calc(100% - 45px);
   }
 
   h1 {
@@ -191,21 +267,20 @@ export default {
     border-radius: 3px;
     border: none;
     outline: none;
-    background: #ccc;
+    background: #fff;
   }
 
   button {
-    width: 100%;
-    padding: 5px;
+    padding: 5px 36px;
   }
 }
 
-.settings > div {
+.settings-row > div {
   margin: 5px;
 }
 
 .flex-1 {
-  flex-grow: 1;
+  flex: 1 1 0px;
 }
 
 .form-control {

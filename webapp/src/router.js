@@ -1,6 +1,8 @@
 import Vue from "vue";
 import Router from "vue-router";
 import axios from "axios";
+import { call } from "./remote";
+import { store } from "./store";
 
 Vue.use(Router);
 
@@ -8,7 +10,6 @@ const router = new Router({
   mode: "history",
   base: process.env.BASE_URL,
   routes: [
-
     {
       path: "/",
       name: "index",
@@ -77,28 +78,40 @@ const router = new Router({
       component: () => import("./views/Match.vue"),
       meta: { auth: true }
     }
-
   ]
 });
 
 router.beforeEach((to, from, next) => {
+  call({
+    path: `/preferences`,
+    method: "GET"
+  })
+    .then(res => {
+      store.preferences = res.data;
+    })
+    .catch(err => {
+      if (err && err.response && err.response.data) {
+        console.error(err.response.data.error);
+      } else {
+        console.error(e);
+      }
+    });
 
-  if(to.matched.length < 1) {
+  if (to.matched.length < 1) {
     return next("/");
   }
 
   const hasToken = localStorage.getItem("token") ? true : false;
 
-  if(to.matched.some(record => record.meta.auth) && !hasToken)  {
+  if (to.matched.some(record => record.meta.auth) && !hasToken) {
     return next("/login?redirect_to=" + encodeURIComponent(to.fullPath));
   }
 
-  if(to.matched.some(record => record.meta.noauth) && hasToken)  {
+  if (to.matched.some(record => record.meta.noauth) && hasToken) {
     return next("/overview");
   }
 
   return next();
-
 });
 
 export default router;

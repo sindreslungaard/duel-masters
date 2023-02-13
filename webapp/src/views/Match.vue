@@ -1,5 +1,12 @@
 <template>
-  <div>
+  <div
+    class="match-container"
+    :style="
+      playmat
+        ? `background: url(${playmat}) no-repeat; background-size: cover;`
+        : ''
+    "
+  >
     <div
       v-show="
         wait ||
@@ -152,15 +159,29 @@
     </div>
 
     <!-- Match -->
-    <div class="chat">
-      <div :class="state.spectator ? 'fullsize-chatbox' : 'chatbox'">
+    <div
+      class="chat"
+      :style="
+        playmat
+          ? 'border-right: 1px solid transparent;'
+          : 'border-right: 1px solid #555;'
+      "
+    >
+      <div
+        :class="state.spectator ? 'fullsize-chatbox' : 'chatbox'"
+        :style="playmat ? 'background: url(/assets/images/overlay_30.png)' : ''"
+      >
         <div class="messages">
           <div id="messages" class="messages-helper">
             <div
               class="message"
               :style="{
                 background:
-                  message.sender.toLowerCase() === 'server' ? 'none' : '#202124'
+                  message.sender.toLowerCase() === 'server'
+                    ? 'none'
+                    : playmat
+                    ? 'url(/assets/images/overlay_30.png)'
+                    : '#202124'
               }"
               v-for="(message, index) in chatMessages.filter(
                 m => !settings.muted.includes(m.sender)
@@ -191,11 +212,22 @@
           </div>
         </div>
         <form @submit.prevent="sendChat(chatMessage)">
-          <input type="text" v-model="chatMessage" placeholder="Type to chat" />
+          <input
+            type="text"
+            v-model="chatMessage"
+            placeholder="Type to chat"
+            :style="
+              playmat ? 'background: url(/assets/images/overlay_50.png)' : ''
+            "
+          />
         </form>
       </div>
 
-      <div v-if="!state.spectator" class="actionbox handaction">
+      <div
+        v-if="!state.spectator"
+        class="actionbox handaction"
+        :style="playmat ? 'background: url(/assets/images/overlay_30.png)' : ''"
+      >
         <template v-if="handSelection">
           <span>{{ handSelection.name }}</span>
           <div
@@ -248,7 +280,11 @@
         </template>
       </div>
 
-      <div v-if="!state.spectator" class="actionbox">
+      <div
+        v-if="!state.spectator"
+        class="actionbox"
+        :style="playmat ? 'background: url(/assets/images/overlay_30.png)' : ''"
+      >
         <div
           @click="endTurn()"
           :class="['btn', 'block', { disabled: !state.myTurn }]"
@@ -403,7 +439,14 @@
         </div>
       </div>
 
-      <div class="right-stage bt">
+      <div
+        class="right-stage bt"
+        :style="
+          playmat
+            ? 'border-top: 1px solid transparent;'
+            : 'border-top: 1px solid #555;'
+        "
+      >
         <div class="right-stage-content">
           <p v-if="state.spectator">Hand [{{ state.me.handCount }}]</p>
           <p>Graveyard [{{ state.me.graveyard.length }}]</p>
@@ -438,7 +481,14 @@
         </div>
       </div>
 
-      <div class="stage me bt">
+      <div
+        class="stage me bt"
+        :style="
+          playmat
+            ? 'border-top: 1px solid transparent;'
+            : 'border-top: 1px solid #555;'
+        "
+      >
         <div
           @drop.prevent="drop($event, 'playzone')"
           @dragover.prevent
@@ -508,7 +558,14 @@
         </div>
       </div>
 
-      <div class="hand bt">
+      <div
+        class="hand bt"
+        :style="
+          playmat
+            ? 'border-top: 1px solid transparent;'
+            : 'border-top: 1px solid #555;'
+        "
+      >
         <div class="spectator-info" v-if="state.spectator">
           <div>You are spectating</div>
           <Username :color="state.me.color">{{ state.me.username }}</Username>
@@ -551,6 +608,7 @@ import CardShowDialog from "../components/dialogs/CardShowDialog";
 import Username from "../components/Username.vue";
 import MuteIcon from "../components/MuteIcon.vue";
 import { getSettings, didSeeMuteWarning } from "../helpers/settings";
+import { store } from "../store";
 
 const send = (client, message) => {
   client.send(JSON.stringify(message));
@@ -583,6 +641,8 @@ export default {
   },
   data() {
     return {
+      store,
+
       ws: null,
       reconnecting: false,
       preventReconnect: false,
@@ -629,6 +689,7 @@ export default {
     };
   },
   computed: {
+    playmat: () => store.preferences.playmat,
     username: () => localStorage.getItem("username")
   },
   methods: {
@@ -805,38 +866,42 @@ export default {
       evt.dataTransfer.effectAllowed = "move";
       evt.dataTransfer.setData("vid", card.virtualId);
 
-      const greenHighlight = "#507053";
-      const redHighlight = "#7d5252";
+      const greenHighlight = this.playmat
+        ? "url(/assets/images/overlay_g_25.png)"
+        : "#507053";
+      const redHighlight = this.playmat
+        ? "url(/assets/images/overlay_r_25.png)"
+        : "#7d5252";
 
       if (source === "hand") {
         if (this.hasFlag(card, this.PLAYABLE_FLAG)) {
-          this.$refs.myplayzone.style.backgroundColor = greenHighlight;
+          this.$refs.myplayzone.style.background = greenHighlight;
         } else {
-          this.$refs.myplayzone.style.backgroundColor = redHighlight;
+          this.$refs.myplayzone.style.background = redHighlight;
         }
 
         if (!this.state.hasAddedManaThisRound) {
-          this.$refs.mymanazone.style.backgroundColor = greenHighlight;
+          this.$refs.mymanazone.style.background = greenHighlight;
         } else {
-          this.$refs.mymanazone.style.backgroundColor = redHighlight;
+          this.$refs.mymanazone.style.background = redHighlight;
         }
       } else if (source === "playzone") {
         if (this.state.opponent.playzone.length) {
-          this.$refs.opponentsplayzone.style.backgroundColor = greenHighlight;
+          this.$refs.opponentsplayzone.style.background = greenHighlight;
         } else {
-          this.$refs.opponentsplayzone.style.backgroundColor = redHighlight;
+          this.$refs.opponentsplayzone.style.background = redHighlight;
         }
 
-        this.$refs.opponentshieldzone.style.backgroundColor = greenHighlight;
+        this.$refs.opponentshieldzone.style.background = greenHighlight;
       }
     },
     stopDrag(source) {
       if (source === "hand") {
-        this.$refs.myplayzone.style.backgroundColor = "transparent";
-        this.$refs.mymanazone.style.backgroundColor = "transparent";
+        this.$refs.myplayzone.style.background = "transparent";
+        this.$refs.mymanazone.style.background = "transparent";
       } else if (source === "playzone") {
-        this.$refs.opponentsplayzone.style.backgroundColor = "transparent";
-        this.$refs.opponentshieldzone.style.backgroundColor = "transparent";
+        this.$refs.opponentsplayzone.style.background = "transparent";
+        this.$refs.opponentshieldzone.style.background = "transparent";
       }
     },
     drop(event, zone) {
@@ -1092,6 +1157,14 @@ export default {
 </script>
 
 <style scoped lang="scss">
+.match-container {
+  width: 100%;
+  height: 100vh;
+  background-color: #36393f;
+  background-size: cover;
+  background-repeat: no-repeat;
+}
+
 .spectator-info {
   display: flex;
   align-items: center;
@@ -1314,21 +1387,21 @@ export default {
 }
 
 .btn:active {
-  background: #5b6eae;
+  background: #345eb4;
 }
 
 .disabled {
-  background: #7289da !important;
+  background: #345eb4 !important;
   opacity: 0.5;
 }
 
 .disabled:hover {
   cursor: not-allowed !important;
-  background: #7289da !important;
+  background: #345eb4 !important;
 }
 
 .disabled:active {
-  background: #7289da !important;
+  background: #345eb4 !important;
 }
 
 .messages {
@@ -1502,7 +1575,7 @@ export default {
 
 .btn {
   display: inline-block;
-  background: #7289da;
+  background: #3e66b8;
   color: #e3e3e5;
   font-size: 14px;
   line-height: 20px;
@@ -1524,7 +1597,7 @@ export default {
 
 .btn:hover {
   cursor: pointer;
-  background: #677bc4;
+  background: #345eb4;
 }
 
 .error {
@@ -1557,7 +1630,7 @@ export default {
 .chat {
   width: 300px;
   height: 100vh;
-  border-right: 1px solid #555;
+  /* border-right: 1px solid #555; */
   float: left;
 }
 
@@ -1579,13 +1652,13 @@ export default {
 }
 
 .right-stage p {
-  color: #ccc;
+  color: #fff;
   font-size: 14px;
   margin-bottom: 3px;
 }
 
 .bt {
-  border-top: 1px solid #555;
+  /* border-top: 1px solid #555; */
 }
 
 .hand {

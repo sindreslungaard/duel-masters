@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"math/rand"
 	"net/http"
+	"strings"
 	"time"
 
 	"duel-masters/db"
@@ -527,6 +528,50 @@ func (api *API) ChangePasswordHandler(c *gin.Context) {
 	db.Collection("users").UpdateOne(context.TODO(), bson.M{"uid": user.UID}, bson.M{"$set": bson.M{"password": hash}})
 
 	c.JSON(200, bson.M{"message": "Successfully changed your password"})
+}
+
+func (api *API) GetPreferencesHandler(c *gin.Context) {
+	user, err := db.GetUserForToken(c.GetHeader("Authorization"))
+	if err != nil {
+		c.Status(401)
+		return
+	}
+
+	c.JSON(200, bson.M{
+		"playmat": user.Playmat,
+	})
+}
+
+type preferencesReqBody struct {
+	Playmat string `json:"playmat"`
+}
+
+func (api *API) UpdatePreferencesHandler(c *gin.Context) {
+
+	user, err := db.GetUserForToken(c.GetHeader("Authorization"))
+	if err != nil {
+		c.Status(401)
+		return
+	}
+
+	var reqBody preferencesReqBody
+	if err := c.ShouldBindJSON(&reqBody); err != nil {
+		c.JSON(400, bson.M{"error": "New password must be at least 6 characters long"})
+		return
+	}
+
+	if reqBody.Playmat != "" && !strings.HasPrefix(reqBody.Playmat, "https://i.imgur.com/") {
+		c.JSON(400, bson.M{"error": "Playmat images must be uploaded to imgur and the url must start with https://i.imgur.com/. Make sure the link includes the file extension (.png, .jpg)"})
+		return
+	}
+
+	db.Collection("users").UpdateOne(context.Background(), bson.M{
+		"uid": user.UID,
+	}, bson.M{"$set": bson.M{
+		"playmat": reqBody.Playmat,
+	}})
+
+	c.JSON(200, bson.M{"message": "Successfully saved your preferences"})
 
 }
 

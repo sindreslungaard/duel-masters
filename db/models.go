@@ -15,6 +15,7 @@ type User struct {
 	Password    string        `json:"-"`
 	Email       string        `json:"email"`
 	Color       string        `json:"color"`
+	Playmat     string        `json:"playmat"`
 	Sessions    []UserSession `json:"-"`
 	MutedUsers  []string      `json:"muted_users"`
 	Chatblocked bool          `json:"-" bson:"chat_blocked"`
