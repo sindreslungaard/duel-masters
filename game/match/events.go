@@ -94,3 +94,8 @@ type GetPowerEvent struct {
 	Attacking bool
 	Power     int
 }
+
+// TapAbility is fired when the user activates a cards tap ability instead of attacking
+type TapAbility struct {
+	CardID string
+}

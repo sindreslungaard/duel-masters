@@ -933,6 +933,33 @@ func (m *Match) AttackCreature(p *PlayerReference, cardID string) {
 
 }
 
+func (m *Match) TapAbility(p *PlayerReference, cardID string) {
+	_, err := p.Player.GetCard(cardID, BATTLEZONE)
+
+	if err != nil {
+		Warn(p, "The creature you tried to attack with is not in the battlezone")
+		return
+	}
+
+	ctx := NewContext(m, &TapAbility{
+		CardID: cardID,
+	})
+
+	m.HandleFx(ctx)
+
+	if !ctx.Cancelled() {
+		// Tap abilities can only be used during attack step
+		// https://duelmasters.fandom.com/wiki/Step#Step_7_(Attack_step)
+		if _, ok := m.Step.(*AttackStep); !ok {
+			m.Step = &AttackStep{}
+		}
+
+		p.Player.CanChargeMana = false
+	}
+
+	m.BroadcastState()
+}
+
 // Parse handles websocket messages in this Hub
 func (m *Match) Parse(s *server.Socket, data []byte) {
 
@@ -1383,6 +1410,31 @@ func (m *Match) Parse(s *server.Socket, data []byte) {
 			}
 
 			m.AttackCreature(p, msg.ID)
+
+		}, SequentialEvent)
+
+	case "tap_ability":
+		m.eventloop.schedule(func() {
+
+			p, err := m.PlayerForSocket(s)
+
+			if err != nil {
+				return
+			}
+
+			if m.Turn != p.Player.Turn {
+				return
+			}
+
+			var msg struct {
+				ID string `json:"virtualId"`
+			}
+
+			if err := json.Unmarshal(data, &msg); err != nil {
+				return
+			}
+
+			m.TapAbility(p, msg.ID)
 
 		}, SequentialEvent)
 
