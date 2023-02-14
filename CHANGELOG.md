@@ -4,12 +4,15 @@ All notable changes to this project as of 11/11/2021 will be documented in this 
 
 ## [Unreleased]
 
+## 14/02/2023
+
 - New Card "Sinister General Damudo" (thanks @fabianTMC)
 - Added change password functionality to settings page
 - Add button when checking a public deck to copy it to your decks (thanks @pablopenna)
 - Fix for Suicide effect (e.g. Bloody Squito) not triggering when battling creatures with "return to... when would be destroyed"
 - Fix for cards like "Mist Rias" and "Mongrel Man" losing their effect when another copy of those types of cards were destroyed
 - Players can now set a custom playmat from the settings page
+- New card "Neon Cluster"
 
 ## 31/01/2023
 
