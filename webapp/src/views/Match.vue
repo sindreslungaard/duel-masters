@@ -871,6 +871,17 @@ export default {
         })
       );
     },
+    tapAbility() {
+      if (!this.playzoneSelection) {
+        return;
+      }
+      this.ws.send(
+        JSON.stringify({
+          header: "tap_ability",
+          virtualId: this.playzoneSelection.virtualId
+        })
+      );
+    },
     startDrag(evt, card, source) {
       evt.dataTransfer.dropEffect = "move";
       evt.dataTransfer.effectAllowed = "move";
