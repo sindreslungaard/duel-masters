@@ -1,6 +1,10 @@
 package fx
 
-import "duel-masters/game/match"
+import (
+	"duel-masters/game/cnd"
+	"duel-masters/game/match"
+	"fmt"
+)
 
 // CardCollection is a slice of cards with a mapping function
 type CardCollection []*match.Card
@@ -321,6 +325,30 @@ func AttackingCreature(card *match.Card, ctx *match.Context) bool {
 
 	return false
 
+}
+
+func TapAbility(card *match.Card, ctx *match.Context) bool {
+	if event, ok := ctx.Event.(*match.TapAbility); ok {
+
+		if event.CardID != card.ID {
+			return false
+		}
+
+		if card.HasCondition(cnd.SummoningSickness) {
+			ctx.Match.WarnPlayer(card.Player, fmt.Sprintf("%s can't use tap ability because it has summoning sickness", card.Name))
+			return false
+		}
+
+		if card.Tapped {
+			ctx.Match.WarnPlayer(card.Player, fmt.Sprintf("%s can't use tap ability because it is already tapped", card.Name))
+			return false
+		}
+
+		return true
+
+	}
+
+	return false
 }
 
 // Destroyed returns true if the card was destroyed
