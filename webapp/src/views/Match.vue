@@ -305,7 +305,12 @@
 
       <div class="deck-chooser" v-if="decks.length > 0 && !deck">
         <h1>Choose your deck</h1>
-        <div class="backdrop">
+        <div
+          class="backdrop"
+          :style="
+            playmat ? 'background: url(/assets/images/overlay_30.png)' : ''
+          "
+        >
           <h3>My custom decks</h3>
           <span v-if="decks.filter(x => !x.standard).length < 1"
             >No decks available in this category</span
@@ -321,7 +326,12 @@
         </div>
 
         <br /><br />
-        <div class="backdrop">
+        <div
+          class="backdrop"
+          :style="
+            playmat ? 'background: url(/assets/images/overlay_30.png)' : ''
+          "
+        >
           <h3>Standard decks</h3>
           <span v-if="decks.filter(x => x.standard).length < 1"
             >No decks available in this category</span
