@@ -1693,7 +1693,7 @@ export default {
   margin-bottom: 0;
   img {
     height: 18vh;
-    border-radius: 8px;
+    border-radius: 6%;
   }
 }
 
