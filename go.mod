@@ -10,7 +10,7 @@ require (
 	github.com/sirupsen/logrus v1.5.0
 	github.com/ventu-io/go-shortid v0.0.0-20171029131806-771a37caa5cf
 	go.mongodb.org/mongo-driver v1.3.2
-	golang.org/x/crypto v0.0.0-20191205180655-e7c4368fe9dd
+	golang.org/x/crypto v0.1.0
 )
 
 require (
@@ -34,7 +34,7 @@ require (
 	github.com/xdg/scram v0.0.0-20180814205039-7eeb5667e42c // indirect
 	github.com/xdg/stringprep v0.0.0-20180714160509-73f8eece6fdc // indirect
 	golang.org/x/sync v0.0.0-20190423024810-112230192c58 // indirect
-	golang.org/x/sys v0.0.0-20200116001909-b77594299b42 // indirect
-	golang.org/x/text v0.3.2 // indirect
+	golang.org/x/sys v0.1.0 // indirect
+	golang.org/x/text v0.4.0 // indirect
 	gopkg.in/yaml.v2 v2.2.8 // indirect
 )
