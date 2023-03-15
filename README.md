@@ -50,6 +50,24 @@ restart_after=
 
 7. Go to `http://localhost` and create a user as well as a deck. To set the deck as a standard deck, find it in MongoDB and change the `standard` field to `true`.
 
+# # Setting up for local development (Frontend and Backend) - Compose
+1. Fork the `duel-masters` repo on GitHub.
+2. Clone your fork locally:
+    
+```
+git clone https://github.com/sindreslungaard/duel-masters.git
+```
+
+3. go into your cloned directory
+4. Start the containers via:
+
+```bash
+docker compose up --build
+```
+
+5. Go to [http://localhost:9080](http://localhost:9080) and create a user and a deck
+
+
 # Setting up for local development (Frontend only)
 
 1. git clone https://github.com/sindreslungaard/duel-masters.git
