@@ -1,0 +1,29 @@
+version: '3'
+
+services:
+    mongo-db:
+        container_name: mongo-duel-db
+        build: docker/mongo-db
+        environment:
+            MONGO_INITDB_ROOT_USERNAME: root
+            MONGO_INITDB_ROOT_PASSWORD: root
+        networks:
+            - duelnet
+        volumes:
+            - ./docker/data/mongo-db:/data/db
+    duel-masters:
+        container_name: duel-masters
+        restart: unless-stopped
+        build: .
+        ports:
+          - 9080:80
+        networks:
+            - duelnet
+        environment:
+            port: 80
+            mongo_name: duel-masters
+            mongo_uri: mongodb://duel:master@mongo-duel-db:27017
+
+networks:
+    duelnet:
+        driver: "bridge"
