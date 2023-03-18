@@ -54,7 +54,7 @@ restart_after=
 
 <br><br>
 
-Run only the frontend locally
+Run only the webapp locally
 
 <details>
 
@@ -79,7 +79,7 @@ localStorage.setItem(
 
 <br><br>
 
-Run the server, frontend and db locally with docker compose
+Run the server, webapp and db locally with docker compose
 
 <details>
 
