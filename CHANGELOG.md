@@ -6,6 +6,8 @@ All notable changes to this project as of 11/11/2021 will be documented in this 
 
 - Updated the quality of the backside card image
 - Fixed an incorrect spelling of "Toel, Vizier of Hope"'s name
+- Fixed an issue causing Bone Piercer's chat message to display its name incorrectly
+- Updated Bone Piercer to show the opponent a waiting modal while deciding which card to move
 
 ## 14/02/2023
 

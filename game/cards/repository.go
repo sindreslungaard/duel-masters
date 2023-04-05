@@ -78,7 +78,7 @@ var DM01 = map[string]match.CardConstructor{
 	"578ed21b-8ba5-42b2-b662-87a321ee0c7d": dm01.IereVizierOfBullets,
 	"cf5eb3d3-e128-42db-bf1a-161d5dd4b972": dm01.LokVizierOfHunting,
 	"15efe8b0-02c1-439b-8e7c-4548e74f5c33": dm01.MieleVizierOfLightning,
-	"340ec79b-3a4e-4483-ac0e-5dd6b40eb4e1": dm01.ToelVizierOfLight,
+	"340ec79b-3a4e-4483-ac0e-5dd6b40eb4e1": dm01.ToelVizierOfHope,
 	"d067285f-10ea-4666-99c8-bc23e27e3262": dm01.Meteosaur,
 	"41c0664d-1969-487d-bde5-866127c1c49e": dm01.Stonesaur,
 	"c1ebdda0-be88-4665-937e-2ef3ada8d378": dm01.DeathbladeBeetle,

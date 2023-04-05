@@ -21,6 +21,8 @@ func BonePiercer(c *match.Card) {
 
 	c.Use(fx.Creature, fx.When(fx.Destroyed, func(card *match.Card, ctx *match.Context) {
 
+		ctx.Match.Wait(ctx.Match.Opponent(c.Player), "Waiting for your opponent to make an action")
+
 		fx.SelectFilter(
 			card.Player,
 			ctx.Match,
@@ -31,10 +33,12 @@ func BonePiercer(c *match.Card) {
 			1,
 			true,
 			func(c *match.Card) bool { return c.HasCondition(cnd.Creature) },
-		).Map(func(c *match.Card) {
-			c.Player.MoveCard(c.ID, match.MANAZONE, match.HAND)
-			ctx.Match.Chat("Server", fmt.Sprintf("%s was moved to %s's hand from their mana zone", c.Name, c.Player.Username))
+		).Map(func(x *match.Card) {
+			c.Player.MoveCard(x.ID, match.MANAZONE, match.HAND)
+			ctx.Match.Chat("Server", fmt.Sprintf("%s was moved to %s's hand from their mana zone by %s", x.Name, x.Player.Username(), c.Name))
 		})
+
+		ctx.Match.EndWait(ctx.Match.Opponent(c.Player))
 
 	}))
 
