@@ -97,7 +97,10 @@ func AmbushScorpion(c *match.Card) {
 		).Map(func(c *match.Card) {
 
 			c.Player.MoveCard(c.ID, match.MANAZONE, match.BATTLEZONE)
-			c.AddCondition(cnd.SummoningSickness, nil, nil)
+
+			if ctx.Match.IsPlayerTurn(card.Player) {
+				c.AddCondition(cnd.SummoningSickness, nil, nil)
+			}
 
 			ctx.Match.Chat("Server", fmt.Sprintf("%s was moved to %s's battlezone from their manazone", c.Name, c.Player.Username()))
 
@@ -132,7 +135,10 @@ func ObsidianScarab(c *match.Card) {
 		).Map(func(c *match.Card) {
 
 			c.Player.MoveCard(c.ID, match.MANAZONE, match.BATTLEZONE)
-			c.AddCondition(cnd.SummoningSickness, nil, nil)
+
+			if ctx.Match.IsPlayerTurn(card.Player) {
+				c.AddCondition(cnd.SummoningSickness, nil, nil)
+			}
 
 			ctx.Match.Chat("Server", fmt.Sprintf("%s was moved to %s's battlezone from their manazone", c.Name, c.Player.Username()))
 
