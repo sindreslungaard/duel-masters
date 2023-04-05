@@ -4,6 +4,9 @@ All notable changes to this project as of 11/11/2021 will be documented in this 
 
 ## [Unreleased]
 
+- Updated the quality of the backside card image
+- Fixed an incorrect spelling of "Toel, Vizier of Hope"'s name
+
 ## 14/02/2023
 
 - New Card "Sinister General Damudo" (thanks @fabianTMC)

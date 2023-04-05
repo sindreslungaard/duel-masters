@@ -80,10 +80,10 @@ func MieleVizierOfLightning(c *match.Card) {
 
 }
 
-// ToelVizierOfLight ...
-func ToelVizierOfLight(c *match.Card) {
+// ToelVizierOfHope ...
+func ToelVizierOfHope(c *match.Card) {
 
-	c.Name = "Toel, Vizier of Light"
+	c.Name = "Toel, Vizier of Hope"
 	c.Power = 2000
 	c.Civ = civ.Light
 	c.Family = family.Initiate
