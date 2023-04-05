@@ -9,6 +9,7 @@ All notable changes to this project as of 11/11/2021 will be documented in this 
 - Fixed an issue causing Bone Piercer's chat message to display its name incorrectly
 - Updated Bone Piercer to show the opponent a waiting modal while deciding which card to move
 - Fixed an issue where "Abush Scorpion" and "Obsidian Scarab" could not attack on your next turn if moved from your manazone during your turn
+- New card "Raptor Fish"
 
 ## 14/02/2023
 
