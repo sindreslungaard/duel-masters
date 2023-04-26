@@ -1126,6 +1126,9 @@ func (m *Match) Parse(s *server.Socket, data []byte) {
 
 				defer cur.Close(context.TODO())
 
+				m.Chat("Server", fmt.Sprintf("%s started the game", m.Player1.Username))
+				m.Chat("Server", fmt.Sprintf("%s joined the game", m.Player2.Username))
+
 				player1decks := make([]db.Deck, 0)
 				player2decks := make([]db.Deck, 0)
 
