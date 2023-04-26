@@ -219,12 +219,74 @@
           <div class="cards-table">
             <table>
               <tr>
-                <th>Quantity ({{ selectedDeck.cards.length }})</th>
-                <th>Card Name</th>
-                <th>Set</th>
-                <th>Civilization</th>
-                <th>Mana</th>
-                <th>Race</th>
+                <th>
+                  <div class="sort-btn" @click="toggleSortForDeck('count')">
+                    Quantity ({{ selectedDeck.cards.length }})
+                    <img
+                      class="sort-ico"
+                      width="25px"
+                      :src="`/assets/images/${sortDeckIcons.count}.png`"
+                    />
+                  </div>
+                </th>
+
+                <th>
+                  <div class="sort-btn" @click="toggleSortForDeck('name')">
+                    Card Name
+                    <img
+                      class="sort-ico"
+                      width="25px"
+                      :src="`/assets/images/${sortDeckIcons.name}.png`"
+                    />
+                  </div>
+                </th>
+
+                <th>
+                  <div class="sort-btn" @click="toggleSortForDeck('set')">
+                    Set
+                    <img
+                      class="sort-ico"
+                      width="25px"
+                      :src="`/assets/images/${sortDeckIcons.set}.png`"
+                    />
+                  </div>
+                </th>
+
+                <th>
+                  <div
+                    class="sort-btn"
+                    @click="toggleSortForDeck('civilization')"
+                  >
+                    Civilization
+                    <img
+                      class="sort-ico"
+                      width="25px"
+                      :src="`/assets/images/${sortDeckIcons.civilization}.png`"
+                    />
+                  </div>
+                </th>
+
+                <th>
+                  <div class="sort-btn" @click="toggleSortForDeck('manaCost')">
+                    Mana
+                    <img
+                      class="sort-ico"
+                      width="25px"
+                      :src="`/assets/images/${sortDeckIcons.manaCost}.png`"
+                    />
+                  </div>
+                </th>
+                
+                <th>
+                  <div class="sort-btn" @click="toggleSortForDeck('family')">
+                    Race
+                    <img
+                      class="sort-ico"
+                      width="25px"
+                      :src="`/assets/images/${sortDeckIcons.family}.png`"
+                    />
+                  </div>
+                </th>
               </tr>
               <template v-if="selectedDeck">
                 <tr
@@ -250,7 +312,7 @@
                   <td class="set">{{ card.set }}</td>
                   <td class="civilization">{{ card.civilization }}</td>
                   <td class="manaCost">{{ card.manaCost }}</td>
-                  <td class="civilization">{{ card.family }}</td>
+                  <td class="civilization">{{ card.family || "Spell" }}</td>
                 </tr>
               </template>
             </table>
@@ -296,6 +358,10 @@ export default {
         by: "name",
         directionNum: 1
       },
+      sortForDeck: {
+        by: "name",
+        directionNum: 1,
+      },
 
       sets: [],
       cards: [],
@@ -328,6 +394,14 @@ export default {
       };
     },
 
+    toggleSortForDeck(by) {
+      this.sortForDeck = {
+        directionNum:
+          this.sortForDeck.by === by ? -this.sortForDeck.directionNum : 1,
+        by,
+      };
+    },
+
     getCardsForDeck(cardUids) {
       let cards = [];
       for (let uid of cardUids) {
@@ -343,6 +417,14 @@ export default {
           cards.push(card);
         }
       }
+
+      cards.sort(
+        (c1, c2) =>
+          (c1[this.sortForDeck.by] === parseInt(c1[this.sortForDeck.by], 10) && c2[this.sortForDeck.by] === parseInt(c2[this.sortForDeck.by], 10)) ? 
+            this.sortForDeck.directionNum * (c1[this.sortForDeck.by] < c2[this.sortForDeck.by] ? -1 : c1[this.sortForDeck.by] > c2[this.sortForDeck.by] ? 1 : 0) : 
+            this.sortForDeck.directionNum * c1[this.sortForDeck.by].localeCompare(c2[this.sortForDeck.by])
+      );
+
       return cards;
     },
 
@@ -574,8 +656,24 @@ export default {
         this.sort.directionNum === 1 ? "arrow_down" : "arrow_up";
 
       return result;
-    }
-  }
+    },
+
+    sortDeckIcons() {
+      const result = {
+        count: "arrow_up_down",
+        name: "arrow_up_down",
+        set: "arrow_up_down",
+        civilization: "arrow_up_down",
+        manaCost: "arrow_up_down",
+        family: "arrow_up_down",
+      };
+
+      result[this.sortForDeck.by] =
+        this.sortForDeck.directionNum === 1 ? "arrow_down" : "arrow_up";
+
+      return result;
+    },
+  },
 };
 </script>
 
