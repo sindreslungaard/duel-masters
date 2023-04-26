@@ -13,7 +13,7 @@
     </span>
 
     <div v-show="warning" class="error">
-      <p>{{ warning }}</p>
+      <p class="text-block">{{ warning }}</p>
       <div @click="warning = ''" class="btn">Close</div>
     </div>
 
@@ -204,6 +204,7 @@
               src="/assets/images/delete_icon.png"
             />
           </a>
+          <div @click="copyDeckList()" class="btn copy-deck-list">Copy Deck List</div>
           <div @click="newDeck()" class="btn new">New Deck</div>
           <template
             v-if="
@@ -378,6 +379,13 @@ export default {
       }
 
       this.selectedDeck.cards.splice(toSlice, 1);
+    },
+
+    copyDeckList() {
+      const cards = this.getCardsForDeck(this.selectedDeck.cards);
+
+      const deckList = cards.map(card => `${card.count}x ${card.name}`);
+      this.warning = `${deckList.join("\n")}\n\nTotal Cards: ${this.selectedDeck.cards.length}`;
     },
 
     newDeck() {
@@ -658,6 +666,16 @@ export default {
 
 .save:hover {
   background: #3ca374 !important;
+}
+
+.copy-deck-list {
+  background: #DC758F !important;
+  display: inline-block;
+  margin-right: 15px;
+}
+
+.copy-deck-list:hover {
+  background: #D65C7A !important;
 }
 
 .discard {
@@ -1004,6 +1022,10 @@ nav > ul > li.no-cursor:hover {
 
 a {
   color: #7289da;
+}
+
+.text-block {
+  white-space: pre-wrap;
 }
 
 .sort-btn {
