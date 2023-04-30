@@ -1200,6 +1200,30 @@ func (m *Match) Parse(s *server.Socket, data []byte) {
 				return
 			}
 
+			if string(runes[0:5]) == "/mana" {
+
+				hasRights := false
+
+				for _, permission := range s.User.Permissions {
+					if permission == "admin" {
+						hasRights = true
+					}
+				}
+
+				if !hasRights {
+					return
+				}
+
+				for _, c := range m.CurrentPlayer().Player.hand {
+					m.CurrentPlayer().Player.MoveCard(c.ID, HAND, MANAZONE)
+					m.Chat("Server", fmt.Sprintf("%s was moved to %s's mana zone by an admin command", c.Name, s.User.Username))
+				}
+				
+				m.BroadcastState()
+
+				return
+			}
+
 			if s.User.Chatblocked {
 				s.Send(&server.ChatMessage{
 					Header:  "chat",
