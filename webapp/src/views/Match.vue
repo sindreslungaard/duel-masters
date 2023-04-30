@@ -323,6 +323,14 @@
           >
             {{ deck.name }}
           </div>
+
+          <div
+            @click="chooseRandomDeck"
+            class="btn"
+            v-if="decks.filter(x => !x.standard).length > 0"
+          >
+            Choose random deck
+          </div>
         </div>
 
         <br /><br />
@@ -734,6 +742,13 @@ export default {
     chooseDeck(uid) {
       this.deck = uid;
       this.ws.send(JSON.stringify({ header: "choose_deck", uid }));
+    },
+
+    chooseRandomDeck() {
+      const availableDecks = this.decks.filter(x => !x.standard);
+      const randomDeck = availableDecks[Math.floor(Math.random() * availableDecks.length)];
+
+      this.ws.send(JSON.stringify({ header: "choose_deck", uid: randomDeck.uid }));
     },
 
     handleOverlayClick() {
