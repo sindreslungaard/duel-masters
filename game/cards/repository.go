@@ -396,6 +396,7 @@ var DM05 = map[string]match.CardConstructor{
 var DM06 = map[string]match.CardConstructor{
 	"3d32a70c-303d-46f8-862a-f7d5a3cfaafc": dm06.NeonCluster,
 	"00f39646-e15a-47a1-a085-c3522bfa5146": dm06.RaptorFish,
+	"187d4a6c-9b92-4c7c-8507-e1de185bce02": dm06.CrystalJouster,
 	"4269337e-5772-4d22-9474-e3068cf21de0": dm06.UltraMantisScourgeOfFate,
 	"a5fa55a7-8ded-4e8b-9b45-f791427cffd8": dm06.CrazeValkyrieTheDrastic,
 }
