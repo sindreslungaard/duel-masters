@@ -5,11 +5,13 @@ import (
 	"fmt"
 	"math/rand"
 	"net/http"
+	"strconv"
 	"strings"
 	"time"
 
 	"duel-masters/db"
 	"duel-masters/flags"
+	"duel-masters/internal"
 	"duel-masters/server"
 
 	"github.com/gin-gonic/gin"
@@ -572,6 +574,122 @@ func (api *API) UpdatePreferencesHandler(c *gin.Context) {
 	}})
 
 	c.JSON(200, bson.M{"message": "Successfully saved your preferences"})
+
+}
+
+type recoverPasswordReqBody struct {
+	Email string `json:"email"`
+}
+
+func (api *API) RecoverPasswordHandler(c *gin.Context) {
+
+	if internal.RateLimited(fmt.Sprintf("%s/recoverpw", c.ClientIP()), 3, 1000*60*15) {
+		c.JSON(400, bson.M{"message": "Please wait a while before requesting to recover password again"})
+		return
+	}
+
+	var reqBody recoverPasswordReqBody
+	if err := c.ShouldBindJSON(&reqBody); err != nil {
+		c.JSON(400, bson.M{"message": "Please provide a valid email"})
+		return
+	}
+
+	genericResponse := "If the email you specified matches any registered users you will soon receive a mail with a link to reset your password."
+
+	var user db.User
+
+	if err := db.Collection("users").FindOne(context.TODO(), bson.M{"email": primitive.Regex{Pattern: "^" + reqBody.Email + "$", Options: "i"}}).Decode(&user); err != nil {
+		logrus.Debug("Attempt at recovering password with email that does not belong to any users ", reqBody.Email)
+		c.JSON(200, bson.M{"message": genericResponse})
+		return
+	}
+
+	code, err := internal.RandomString(50)
+	code = fmt.Sprintf("%v-%s", time.Now().Unix(), code)
+
+	if err != nil {
+		logrus.Error("Error generating password recovery code", err)
+		c.JSON(500, bson.M{"message": "Something went wrong"})
+		return
+	}
+
+	db.Collection("users").UpdateOne(context.Background(), bson.M{
+		"uid": user.UID,
+	}, bson.M{"$set": bson.M{
+		"recoverycode": code,
+	}})
+
+	err = internal.SendMail(user.Email, "Recover your password", fmt.Sprintf(`
+	Use the link below to recover your password
+	<br><br>
+	https://shobu.io/recover-password/%s
+	<br><br>
+	If you did not request to reset your password, please disregard this email
+	`, code))
+
+	if err != nil {
+		logrus.Error("Failed to send email", err)
+		c.JSON(500, bson.M{"message": "Something went wrong"})
+		return
+	}
+
+	c.JSON(200, bson.M{"message": genericResponse})
+
+}
+
+type resetPasswordReqBody struct {
+	Code     string `json:"code"`
+	Password string `json:"password"`
+}
+
+func (api *API) ResetPasswordHandler(c *gin.Context) {
+
+	var reqBody resetPasswordReqBody
+	if err := c.ShouldBindJSON(&reqBody); err != nil {
+		c.JSON(400, bson.M{"message": "Invalid payload"})
+		return
+	}
+
+	if len(reqBody.Password) < 6 {
+		c.JSON(400, bson.M{"message": "Password must be at least 6 characters long"})
+		return
+	}
+
+	var user db.User
+
+	if err := db.Collection("users").FindOne(context.TODO(), bson.M{"recoverycode": reqBody.Code}).Decode(&user); err != nil {
+		c.JSON(400, bson.M{"message": "Invalid or expired code"})
+		return
+	}
+
+	ts, err := strconv.Atoi(strings.Split(reqBody.Code, "-")[0])
+
+	if err != nil {
+		logrus.Error("Failed to parse recovery code", reqBody.Code)
+		c.JSON(400, bson.M{"message": "Could not parse recovery code"})
+		return
+	}
+
+	if int64(ts)+86400 < time.Now().Unix() {
+		c.JSON(400, bson.M{"message": "Recovery code has expired"})
+		return
+	}
+
+	hash, err := bcrypt.GenerateFromPassword([]byte(reqBody.Password), 10)
+
+	if err != nil {
+		logrus.Error("Failed to generate password hash during password reset")
+		c.JSON(500, bson.M{"message": "Something unexpected happened"})
+		return
+	}
+
+	db.Collection("users").UpdateOne(context.Background(), bson.M{
+		"uid": user.UID,
+	}, bson.M{"$set": bson.M{
+		"password": hash,
+	}})
+
+	c.JSON(200, bson.M{"message": "Your password was successfully updated"})
 
 }
 
