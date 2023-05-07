@@ -4,6 +4,16 @@ All notable changes to this project as of 11/11/2021 will be documented in this 
 
 ## [Unreleased]
 
+- Added a coin toss system to choose which player starts (thanks @fabianTMC)
+- Matches are no longer closed when the non-host leaves before the match has started (thanks @fabianTMC)
+- New card "Gigazoul" (thanks @fabianTMC)
+- Added sorting to selected deck (thanks @fabianTMC)
+- Added button to choose a random deck in the deck selection screen (thanks @fabianTMC)
+- Added chat message to show who started the game and who joined (thanks @fabianTMC)
+- New card "Crystal Jouster" (thanks @fabianTMC)
+- New card "Ultra Mantis, Scourge of Fate" (thanks @fabianTMC)
+- New card "Craze Valkyrie, the Drastic" (thanks @fabianTMC)
+- Added copy deck list button to make tourney signups easier (thanks @fabianTMC)
 - Updated the quality of the backside card image
 - Fixed an incorrect spelling of "Toel, Vizier of Hope"'s name
 - Fixed an issue causing Bone Piercer's chat message to display its name incorrectly
