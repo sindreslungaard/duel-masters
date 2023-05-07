@@ -1056,6 +1056,14 @@ export default {
           }
 
           case "opponent_disconnected": {
+            // reset the selection screen in case the opponent disconnected before the game started
+            if(!this.started) {
+              this.decks = [];
+              this.deck = null;
+
+              break;
+            }
+
             this.opponentDisconnected = true;
             break;
           }
@@ -1073,7 +1081,12 @@ export default {
 
           case "choose_deck": {
             playerJoinedSound.play();
-            document.title = "🔴 " + document.title;
+            
+            // in case of a connection and then disconnection when the game had not yet started 
+            if(!document.title.includes("🔴")) {
+              document.title = "🔴 " + document.title;
+            }
+
             this.decks = data.decks;
             break;
           }

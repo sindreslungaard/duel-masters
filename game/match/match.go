@@ -1479,12 +1479,6 @@ func (m *Match) OnSocketClose(s *server.Socket) {
 		return
 	}
 
-	if !m.Started {
-		logrus.Debug("Socket left before match started, closing match.")
-		m.Dispose()
-		return
-	}
-
 	// is this a spectator leaving?
 	spectator, ok := m.spectators.Find(s.User.UID)
 
@@ -1494,7 +1488,7 @@ func (m *Match) OnSocketClose(s *server.Socket) {
 		return
 	}
 
-	var p *PlayerReference
+	var p *PlayerReference // this is the disconnecting user
 	var o *PlayerReference
 
 	// assign the above variables, player and opponent of the closing socket
@@ -1511,6 +1505,35 @@ func (m *Match) OnSocketClose(s *server.Socket) {
 		if m.Player1 != nil && m.Player1.Socket != nil {
 			o = m.Player1
 		}
+	}
+
+	if !m.Started {
+		logrus.Debug(fmt.Sprintf("Disconnected %s Host %s", s.User.UID, m.HostID))
+
+		// If the host left before the game started, close the game
+		if p.UID == m.HostID {
+			logrus.Debug("Host socket left before match started, closing match.")
+
+			if o != nil {
+				m.Chat("Server", fmt.Sprintf("%s disconnected from the game", p.Username))
+			}
+
+			m.Dispose()
+			return
+		}
+
+		// This was the joinee who disconnected so let's reset things
+		if m.Player1.Socket == s {
+			logrus.Debug("Player1 socket left before match started, resetting Player1.")
+			m.Player1 = nil
+		}
+
+		if m.Player2.Socket == s {
+			logrus.Debug("Player2 socket left before match started, resetting Player2.")
+			m.Player2 = nil
+		}
+		
+		m.system.UpdateMatchList()
 	}
 
 	if p == nil {
