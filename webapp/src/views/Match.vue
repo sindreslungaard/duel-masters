@@ -295,13 +295,54 @@
     </div>
 
     <template v-if="!started">
-      <div v-if="deck" class="deck-chooser waiting">
+      <div v-if="deck && !tossBeingChosen && !turnBeingChosen" class="deck-chooser waiting">
         <h1>
           Waiting for your opponent to choose a deck<span class="dots">{{
             loadingDots
           }}</span>
         </h1>
       </div>
+
+      <!-- Waiting for first turn selection -->
+    <div v-if="turnBeingChosen && !chooseTurn" class="deck-chooser waiting">
+      <h1>
+        Waiting for your opponent to choose who goes first<span class="dots">{{
+          loadingDots
+        }}</span>
+      </h1>
+    </div>
+
+    <!-- Choose first turn -->
+    <div v-if="turnBeingChosen && chooseTurn" class="deck-chooser">
+      <h1>
+        Choose who plays first
+
+      </h1>
+      <div>
+        <div class="btn" @click="chooseFirstPlayer(1)">Me</div>
+        <div class="btn" @click="chooseFirstPlayer(-1)">Opponent</div>
+        </div>
+    </div>
+
+    <!-- Waiting for toss -->
+    <div v-if="tossBeingChosen && !chooseToss" class="deck-chooser waiting">
+      <h1>
+        Waiting for your opponent to predict the coin toss<span class="dots">{{
+          loadingDots
+        }}</span>
+      </h1>
+    </div>
+
+    <!-- Choose toss -->
+    <div v-if="tossBeingChosen && chooseToss" class="deck-chooser">
+      <h1>
+        Predict the coin toss
+
+      </h1>
+      
+        <div class="btn" @click="chooseCoinToss(1)">Heads</div>
+        <div class="btn" @click="chooseCoinToss(-1)">Tails</div>
+    </div>
 
       <div class="deck-chooser" v-if="decks.length > 0 && !deck">
         <h1>Choose your deck</h1>
@@ -685,6 +726,12 @@ export default {
       decks: [],
       deck: null,
 
+      chooseToss: false,
+      tossBeingChosen: false,
+
+      choseTurn: false,
+      turnBeingChosen: false,
+
       state: {},
       handSelection: null,
 
@@ -748,7 +795,20 @@ export default {
       const availableDecks = this.decks.filter(x => !x.standard);
       const randomDeck = availableDecks[Math.floor(Math.random() * availableDecks.length)];
 
+      this.deck = randomDeck.uid;
       this.ws.send(JSON.stringify({ header: "choose_deck", uid: randomDeck.uid }));
+    },
+
+    chooseCoinToss(prediction) {
+      if(this.tossBeingChosen && this.chooseToss) {
+        this.ws.send(JSON.stringify({ header: "toss_chosen", prediction }));
+      }
+    },
+
+    chooseFirstPlayer(player) {
+      if(this.turnBeingChosen && this.chooseTurn) {
+        this.ws.send(JSON.stringify({ header: "turn_chosen", player }));
+      }
     },
 
     handleOverlayClick() {
@@ -1061,6 +1121,12 @@ export default {
               this.decks = [];
               this.deck = null;
 
+              this.chooseToss = false;
+              this.tossBeingChosen = false;
+
+              this.choseTurn =false;
+              this.turnBeingChosen = false;
+
               break;
             }
 
@@ -1076,6 +1142,34 @@ export default {
           // don't think this is ever fired, todo: remove or implement
           case "player_joined": {
             this.opponent = data.username;
+            break;
+          }
+
+          case "choose_toss": {
+            this.chooseToss = true;
+            this.tossBeingChosen = true;
+
+            break;
+          }
+
+          case "toss_being_chosen": {
+            this.tossBeingChosen = true;
+
+            break;
+          }
+
+          case "choose_turn": {
+            this.tossBeingChosen = false;
+            this.turnBeingChosen = true;
+            this.chooseTurn = true;
+
+            break;
+          }
+
+          case "turn_being_chosen": {
+            this.tossBeingChosen = false;
+            this.turnBeingChosen = true;
+            
             break;
           }
 

@@ -31,6 +31,10 @@ type Match struct {
 	Visible           bool `json:"visible"`
 	Step              interface{}
 
+	PlayerSelectingToss string
+	TossPrediction int
+	TossOutcome int
+
 	created     int64
 	ending      bool
 	closed      bool
@@ -666,6 +670,36 @@ func (m *Match) ShowCards(p *Player, message string, cards []string) {
 	})
 }
 
+// Coin toss to decide who starts the game
+func (m *Match) CoinToss() {
+	var PlayerToChooseToss *PlayerReference
+	var PlayerToAwaitToss *PlayerReference
+	
+	if m.PlayerSelectingToss == "" {
+		if rand.Intn(100) >= 50 {
+			m.PlayerSelectingToss = m.Player2.UID
+			
+			PlayerToChooseToss = m.Player2
+			PlayerToAwaitToss = m.Player1
+		} else {
+			m.PlayerSelectingToss = m.Player1.UID
+			
+			PlayerToChooseToss = m.Player1
+			PlayerToAwaitToss = m.Player2
+		}
+	}
+	
+	m.Chat("Server", fmt.Sprintf("Coin toss to be selected by %s", PlayerToChooseToss.Username))
+	
+	PlayerToAwaitToss.Socket.Send(server.Message{
+		Header: "toss_being_chosen",
+	})
+
+	PlayerToChooseToss.Socket.Send(server.Message{
+		Header: "choose_toss",
+	})
+}
+
 // Start starts the match
 func (m *Match) Start() {
 
@@ -681,12 +715,6 @@ func (m *Match) Start() {
 
 	m.Player1.Player.DrawCards(5)
 	m.Player2.Player.DrawCards(5)
-
-	// match.turn is initialized as 1, so we only need to change it to 2
-	// The opposite of what's defined here will start because BeginNewTurn() changes it
-	if rand.Intn(100) >= 50 {
-		m.Turn = 2
-	}
 
 	m.Chat("Server", "The duel has begun!")
 
@@ -1239,6 +1267,155 @@ func (m *Match) Parse(s *server.Socket, data []byte) {
 			}
 		}, ParallelEvent)
 
+	case "toss_chosen": {
+		m.eventloop.schedule(func() {
+			if m.Player1.Player.Ready && m.Player2.Player.Ready {
+				if !m.Started && m.PlayerSelectingToss != "" && m.PlayerSelectingToss == s.User.UID {
+					
+					var msg struct {
+						Prediction int `json:"prediction"`
+					}
+
+					if err := json.Unmarshal(data, &msg); err != nil {
+						return
+					}
+					
+					if msg.Prediction == 1 || msg.Prediction == -1 {
+						if msg.Prediction == 1 {
+							m.Chat("Server", fmt.Sprintf("%s has called heads", s.User.Username))
+						} else if msg.Prediction == -1 {
+							m.Chat("Server", fmt.Sprintf("%s has called tails", s.User.Username))
+						}
+	
+						var outcome = rand.Intn(100)
+						var heads = (outcome >= 50)
+						var wasTossDecisionCorrect bool
+
+						m.TossPrediction = msg.Prediction
+
+						if(heads) {
+							m.TossOutcome = 1
+						} else {
+							m.TossOutcome = -1
+						}
+
+						if (heads && msg.Prediction == 1) || (!heads && msg.Prediction == -1) {
+							wasTossDecisionCorrect = true
+
+							m.Chat("Server", fmt.Sprintf("%s won the coin toss", s.User.Username))
+						} else {
+							wasTossDecisionCorrect = false
+
+							m.Chat("Server", fmt.Sprintf("%s lost the coin toss", s.User.Username))
+						}
+
+						var PlayerToChooseToss *PlayerReference
+						var PlayerToAwaitToss *PlayerReference
+
+						var PlayerToChooseTurnSelection *PlayerReference
+						var PlayerToAwaitTurnSelection *PlayerReference
+
+						if m.Player2.UID == m.PlayerSelectingToss {
+							PlayerToChooseToss = m.Player2
+							PlayerToAwaitToss = m.Player1
+						} else {
+							PlayerToChooseToss = m.Player1
+							PlayerToAwaitToss = m.Player2
+						}
+
+						if wasTossDecisionCorrect {
+							PlayerToChooseTurnSelection = PlayerToChooseToss
+							PlayerToAwaitTurnSelection = PlayerToAwaitToss
+						} else {
+							PlayerToChooseTurnSelection = PlayerToAwaitToss
+							PlayerToAwaitTurnSelection = PlayerToChooseToss
+						}
+
+						m.Chat("Server", fmt.Sprintf("%s to pick who goes first", PlayerToChooseTurnSelection.Username))
+
+						PlayerToAwaitTurnSelection.Socket.Send(server.Message{
+							Header: "turn_being_chosen",
+						})
+					
+						PlayerToChooseTurnSelection.Socket.Send(server.Message{
+							Header: "choose_turn",
+						})
+					}
+				}
+			}
+
+			return
+		}, SequentialEvent)
+	}
+
+	case "turn_chosen": {
+		m.eventloop.schedule(func() {
+			if m.Player1.Player.Ready && m.Player2.Player.Ready {
+				if !m.Started && m.PlayerSelectingToss != "" && m.TossOutcome != 0 && m.TossPrediction != 0 {
+					
+					var PlayerToChooseToss *PlayerReference
+					var PlayerToAwaitToss *PlayerReference
+					
+					var PlayerWhoWonToss *PlayerReference
+
+					if m.Player2.UID == m.PlayerSelectingToss {
+						PlayerToChooseToss = m.Player2
+						PlayerToAwaitToss = m.Player1
+					} else {
+						PlayerToChooseToss = m.Player1
+						PlayerToAwaitToss = m.Player2
+					}
+
+					if m.TossPrediction == m.TossOutcome {
+						PlayerWhoWonToss = PlayerToChooseToss
+					} else {
+						PlayerWhoWonToss = PlayerToAwaitToss
+					}
+
+					if PlayerWhoWonToss.UID == s.User.UID {
+						var msg struct {
+							Player int `json:"player"`
+						}
+			
+						if err := json.Unmarshal(data, &msg); err != nil {
+							return
+						}
+
+						var isSelectingUserPlayer1 bool
+
+						if m.Player1.UID == s.User.UID {
+							isSelectingUserPlayer1 = true
+						}
+
+						// Socket user goes first
+						if msg.Player == 1 {
+							m.Chat("Server", fmt.Sprintf("%s decided to play first", PlayerWhoWonToss.Username))
+						
+							// match.turn is initialized as 1, so we only need to change it to 2
+							// The opposite of what's defined here will start because BeginNewTurn() changes it
+							if isSelectingUserPlayer1 {
+								m.Turn = 2
+							}
+						} else if msg.Player == -1 {
+							m.Chat("Server", fmt.Sprintf("%s decided to play second", PlayerWhoWonToss.Username))
+
+							// match.turn is initialized as 1, so we only need to change it to 2
+							// The opposite of what's defined here will start because BeginNewTurn() changes it
+							if !isSelectingUserPlayer1 {
+								m.Turn = 2
+							}
+						}
+
+						m.Start()
+					}
+				}
+			}
+
+			return
+
+		}, SequentialEvent)
+	}
+
 	case "choose_deck":
 		m.eventloop.schedule(func() {
 
@@ -1273,7 +1450,7 @@ func (m *Match) Parse(s *server.Socket, data []byte) {
 			p.Player.Ready = true
 
 			if m.Player1.Player.Ready && m.Player2.Player.Ready {
-				m.Start()
+				m.CoinToss()
 			}
 
 		}, SequentialEvent)
@@ -1532,6 +1709,12 @@ func (m *Match) OnSocketClose(s *server.Socket) {
 			logrus.Debug("Player2 socket left before match started, resetting Player2.")
 			m.Player2 = nil
 		}
+		
+		o.Player.Ready = false
+
+		m.PlayerSelectingToss = ""
+		m.TossOutcome = 0
+		m.TossPrediction = 0
 		
 		m.system.UpdateMatchList()
 	}
