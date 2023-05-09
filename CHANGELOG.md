@@ -4,6 +4,7 @@ All notable changes to this project as of 11/11/2021 will be documented in this 
 
 ## [Unreleased]
 
+- Added password recovery functionality
 - Added a coin toss system to choose which player starts (thanks @fabianTMC)
 - Matches are no longer closed when the non-host leaves before the match has started (thanks @fabianTMC)
 - New card "Gigazoul" (thanks @fabianTMC)
