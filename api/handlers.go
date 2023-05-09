@@ -584,17 +584,17 @@ type recoverPasswordReqBody struct {
 func (api *API) RecoverPasswordHandler(c *gin.Context) {
 
 	if internal.RateLimited(fmt.Sprintf("%s/recoverpw", c.ClientIP()), 3, 1000*60*15) {
-		c.JSON(400, bson.M{"message": "Please wait a while before requesting to recover password again"})
+		c.JSON(400, bson.M{"error": "Please wait a while before requesting to recover password again"})
 		return
 	}
 
 	var reqBody recoverPasswordReqBody
 	if err := c.ShouldBindJSON(&reqBody); err != nil {
-		c.JSON(400, bson.M{"message": "Please provide a valid email"})
+		c.JSON(400, bson.M{"error": "Please provide a valid email"})
 		return
 	}
 
-	genericResponse := "If the email you specified matches any registered users you will soon receive a mail with a link to reset your password."
+	genericResponse := "If the email you specified matches any registered users you will soon receive a mail with a link to reset your password"
 
 	var user db.User
 
@@ -609,7 +609,7 @@ func (api *API) RecoverPasswordHandler(c *gin.Context) {
 
 	if err != nil {
 		logrus.Error("Error generating password recovery code", err)
-		c.JSON(500, bson.M{"message": "Something went wrong"})
+		c.JSON(500, bson.M{"error": "Something went wrong"})
 		return
 	}
 
@@ -620,16 +620,16 @@ func (api *API) RecoverPasswordHandler(c *gin.Context) {
 	}})
 
 	err = internal.SendMail(user.Email, "Recover your password", fmt.Sprintf(`
-	Use the link below to recover your password
+	Use the link below to recover the password for your account <b>%s</b>
 	<br><br>
 	https://shobu.io/recover-password/%s
 	<br><br>
 	If you did not request to reset your password, please disregard this email
-	`, code))
+	`, user.Username, code))
 
 	if err != nil {
 		logrus.Error("Failed to send email", err)
-		c.JSON(500, bson.M{"message": "Something went wrong"})
+		c.JSON(500, bson.M{"error": "Something went wrong"})
 		return
 	}
 
@@ -646,19 +646,24 @@ func (api *API) ResetPasswordHandler(c *gin.Context) {
 
 	var reqBody resetPasswordReqBody
 	if err := c.ShouldBindJSON(&reqBody); err != nil {
-		c.JSON(400, bson.M{"message": "Invalid payload"})
+		c.JSON(400, bson.M{"error": "Invalid payload"})
 		return
 	}
 
 	if len(reqBody.Password) < 6 {
-		c.JSON(400, bson.M{"message": "Password must be at least 6 characters long"})
+		c.JSON(400, bson.M{"error": "Password must be at least 6 characters long"})
+		return
+	}
+
+	if len(reqBody.Code) < 30 {
+		c.JSON(400, bson.M{"error": "Invalid code"})
 		return
 	}
 
 	var user db.User
 
 	if err := db.Collection("users").FindOne(context.TODO(), bson.M{"recoverycode": reqBody.Code}).Decode(&user); err != nil {
-		c.JSON(400, bson.M{"message": "Invalid or expired code"})
+		c.JSON(400, bson.M{"error": "Invalid or expired code"})
 		return
 	}
 
@@ -666,12 +671,12 @@ func (api *API) ResetPasswordHandler(c *gin.Context) {
 
 	if err != nil {
 		logrus.Error("Failed to parse recovery code", reqBody.Code)
-		c.JSON(400, bson.M{"message": "Could not parse recovery code"})
+		c.JSON(400, bson.M{"error": "Could not parse recovery code"})
 		return
 	}
 
 	if int64(ts)+86400 < time.Now().Unix() {
-		c.JSON(400, bson.M{"message": "Recovery code has expired"})
+		c.JSON(400, bson.M{"error": "Recovery code has expired"})
 		return
 	}
 
@@ -679,17 +684,22 @@ func (api *API) ResetPasswordHandler(c *gin.Context) {
 
 	if err != nil {
 		logrus.Error("Failed to generate password hash during password reset")
-		c.JSON(500, bson.M{"message": "Something unexpected happened"})
+		c.JSON(500, bson.M{"error": "Something unexpected happened"})
 		return
 	}
 
 	db.Collection("users").UpdateOne(context.Background(), bson.M{
 		"uid": user.UID,
-	}, bson.M{"$set": bson.M{
-		"password": hash,
-	}})
+	}, bson.M{
+		"$set": bson.M{
+			"password": string(hash),
+		},
+		"$unset": bson.M{
+			"recoverycode": "",
+		},
+	})
 
-	c.JSON(200, bson.M{"message": "Your password was successfully updated"})
+	c.JSON(200, bson.M{"message": fmt.Sprintf("Password for the account \"%s\" was successfully changed", user.Username)})
 
 }
 
