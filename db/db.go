@@ -1,52 +1,62 @@
 package db
 
 import (
-	"context"
+	"fmt"
 
 	"github.com/sirupsen/logrus"
-	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/mongo"
-	"go.mongodb.org/mongo-driver/mongo/options"
-	"go.mongodb.org/mongo-driver/mongo/readpref"
+	"gorm.io/driver/mysql"
+	"gorm.io/gorm"
 )
 
-var conn *mongo.Database
+var conn *gorm.DB
 
 // Connect connects to the database
-func Connect(connectionString string, dbName string) {
+func Connect(user string, password string, host string, port string, database string) {
 
-	client, err := mongo.Connect(context.TODO(), options.Client().ApplyURI(connectionString))
-
-	if err != nil {
-		logrus.Fatal(err)
-	}
-
-	err = client.Ping(context.TODO(), readpref.Primary())
+	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8mb4&parseTime=True&loc=Local", user, password, host, port, database)
+	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
 
 	if err != nil {
-		logrus.Fatal(err)
+		panic(err)
 	}
 
-	conn = client.Database(dbName)
+	conn = db
 
 	logrus.Info("Connected to database")
 
 }
 
-// Collection returns a mongodb collection handle
-func Collection(collectionName string) *mongo.Collection {
-	return conn.Collection(collectionName)
+func Migrate() {
+
+	if conn == nil {
+		panic("Can't migrate database before connecting")
+	}
+
+	conn.AutoMigrate(
+		&User{},
+		&UserSession{},
+		&UserPermission{},
+		&Deck{},
+		&DeckCards{},
+		&Card{},
+	)
 }
 
 // GetUserForToken returns a user from the authorization header or returns an error
 func GetUserForToken(token string) (User, error) {
 
-	collection := Collection("users")
+	var session UserSession
+	tx := conn.First(&session, "token = ?", token)
+
+	if tx.Error != nil {
+		return User{}, tx.Error
+	}
 
 	var user User
+	tx = conn.First(&user, session.UserID)
 
-	if err := collection.FindOne(context.TODO(), bson.M{"sessions": bson.M{"$elemMatch": bson.M{"token": token}}}).Decode(&user); err != nil {
-		return User{}, err
+	if tx.Error != nil {
+		return user, tx.Error
 	}
 
 	return user, nil
