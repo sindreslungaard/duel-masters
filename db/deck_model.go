@@ -4,12 +4,11 @@ import "gorm.io/gorm"
 
 type Deck struct {
 	gorm.Model
-	ID       uint     `json:"uid"`
-	UserID   uint     `json:"owner"`
-	Name     string   `json:"name"`
-	Public   bool     `json:"public"`
-	Standard bool     `json:"standard"`
-	Cards    []string `json:"cards"`
+	ID       uint   `json:"uid"`
+	UserID   uint   `json:"owner"`
+	Name     string `json:"name"`
+	Public   bool   `json:"public"`
+	Standard bool   `json:"standard"`
 }
 
 type DeckCards struct {

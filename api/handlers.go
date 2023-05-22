@@ -276,35 +276,52 @@ func (api *API) CardsHandler(c *gin.Context) {
 // GetDeckHandler returns a single deck, if public
 func (api *API) GetDeckHandler(c *gin.Context) {
 
-	deckUID := c.Param("id")
+	id := c.Param("id")
 
 	var deck db.Deck
-
-	err := db.Collection("decks").FindOne(
-		context.Background(),
-		bson.M{"uid": deckUID, "public": true},
-	).Decode(&deck)
-
-	if err != nil {
+	if tx := db.Conn().First(&deck, id); tx.Error != nil {
 		c.Status(404)
 		return
 	}
 
 	var user db.User
-
-	err = db.Collection("users").FindOne(
-		context.Background(),
-		bson.M{"uid": deck.Owner},
-	).Decode(&user)
-
-	if err != nil {
-		c.Status(404)
+	if tx := db.Conn().First(&user, deck.UserID); tx.Error != nil {
+		logrus.Error("Failed to get user/owner for deck with id ", deck.ID)
+		c.Status(500)
 		return
 	}
 
-	deck.Owner = user.Username
+	var cards []db.DeckCards
+	if tx := db.Conn().Find(&cards, "deck_id = ?", deck.ID); tx.Error != nil || len(cards) < 1 {
+		logrus.Error("Failed to get cards for deck with id ", deck.ID)
+		c.Status(500)
+		return
+	}
 
-	c.JSON(200, deck)
+	response := struct {
+		ID       uint     `json:"uid"`
+		UserID   uint     `json:"owner"`
+		Name     string   `json:"name"`
+		Public   bool     `json:"public"`
+		Standard bool     `json:"standard"`
+		Cards    []string `json:"cards"`
+		Owner    string   `json:"owner"`
+	}{
+		ID:       deck.ID,
+		UserID:   deck.UserID,
+		Name:     deck.Name,
+		Public:   deck.Public,
+		Standard: deck.Standard,
+		Cards:    []string{},
+		Owner:    user.Username,
+	}
+
+	for _, card := range cards {
+		// todo: translate these id's to legacy uid's
+		response.Cards = append(response.Cards, string(card.CardID))
+	}
+
+	c.JSON(200, response)
 
 }
 
