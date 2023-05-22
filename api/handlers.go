@@ -37,12 +37,9 @@ func (api *API) SigninHandler(c *gin.Context) {
 		return
 	}
 
-	collection := db.Collection("users")
-
 	var user db.User
-
-	if err := collection.FindOne(context.TODO(), bson.M{"username": primitive.Regex{Pattern: "^" + reqBody.Username + "$", Options: "i"}}).Decode(&user); err != nil {
-		c.Status(401)
+	if tx := db.Conn().First(&user, "username = ?", reqBody.Username); tx.Error == nil {
+		c.Status(404)
 		return
 	}
 
@@ -51,25 +48,12 @@ func (api *API) SigninHandler(c *gin.Context) {
 		return
 	}
 
-	// Check for IP ban
-	bansCollection := db.Collection("bans")
+	// Check IP ban
 	ip := c.ClientIP()
 
-	bans, err := bansCollection.CountDocuments(context.Background(), bson.M{
-		"$or": []bson.M{
-			{"type": db.UserBan, "value": user.UID},
-			{"type": db.IPBan, "value": ip},
-		},
-	})
-
-	if err != nil {
-		logrus.Error(err)
-		c.JSON(500, bson.M{"message": "An internal error occured"})
-		return
-	}
-
-	if bans > 0 {
-		c.JSON(403, bson.M{"message": "You have been banned"})
+	var ban db.Ban
+	if tx := db.Conn().First(&ban, "value = ? OR value = ? AND expired < ?", user.ID, ip, time.Now().Unix()); tx.Error == nil {
+		c.JSON(403, bson.M{"message": fmt.Sprintf("You have been banned with reason: %s", ban.Reason)})
 		return
 	}
 
@@ -80,12 +64,18 @@ func (api *API) SigninHandler(c *gin.Context) {
 	}
 
 	session := db.UserSession{
+		ID:      user.ID,
 		Token:   token.String(),
 		IP:      c.ClientIP(),
-		Expires: int(time.Now().Add(time.Second * 2592000).Unix()),
+		Created: uint(time.Now().Unix()),
+		Expires: uint(time.Now().Add(time.Second * 2592000).Unix()),
 	}
 
-	collection.UpdateOne(context.TODO(), bson.M{"uid": user.UID}, bson.M{"$push": bson.M{"sessions": session}})
+	if tx := db.Conn().Create(&session); tx.Error != nil {
+		logrus.Error("Error creating user session: ", tx.Error.Error())
+		c.Status(500)
+		return
+	}
 
 	c.JSON(200, bson.M{"user": user, "token": session.Token})
 
@@ -111,19 +101,11 @@ func (api *API) SignupHandler(c *gin.Context) {
 	}
 
 	// Check for IP ban
-	collection := db.Collection("bans")
 	ip := c.ClientIP()
 
-	bans, err := collection.CountDocuments(context.Background(), bson.M{"type": db.IPBan, "value": ip})
-
-	if err != nil {
-		logrus.Error(err)
-		c.JSON(500, bson.M{"message": "An internal error occured"})
-		return
-	}
-
-	if bans > 0 {
-		c.JSON(403, bson.M{"message": "You have been banned"})
+	var ban db.Ban
+	if tx := db.Conn().First(&ban, "value = ? AND expired < ?", ip, time.Now().Unix()); tx.Error == nil {
+		c.JSON(403, bson.M{"message": fmt.Sprintf("You have been banned with reason: %s", ban.Reason)})
 		return
 	}
 
@@ -133,14 +115,14 @@ func (api *API) SignupHandler(c *gin.Context) {
 		return
 	}
 
-	collection = db.Collection("users")
-
-	if err := collection.FindOne(context.TODO(), bson.M{"username": primitive.Regex{Pattern: "^" + reqBody.Username + "$", Options: "i"}}).Decode(&db.User{}); err == nil {
+	var userByName db.User
+	if tx := db.Conn().First(&userByName, "username = ?", reqBody.Username); tx.Error != nil {
 		c.JSON(400, bson.M{"message": "The username is already taken"})
 		return
 	}
 
-	if err := collection.FindOne(context.TODO(), bson.M{"email": primitive.Regex{Pattern: "^" + reqBody.Email + "$", Options: "i"}}).Decode(&db.User{}); err == nil {
+	var userByEmail db.User
+	if tx := db.Conn().First(&userByEmail, "email = ?", reqBody.Username); tx.Error != nil {
 		c.JSON(400, bson.M{"message": "The email is already taken"})
 		return
 	}
@@ -152,6 +134,21 @@ func (api *API) SignupHandler(c *gin.Context) {
 		return
 	}
 
+	user := db.User{
+		Username:    reqBody.Username,
+		Password:    string(hash),
+		Email:       reqBody.Email,
+		Color:       "",
+		Playmat:     "",
+		Chatblocked: false,
+	}
+
+	if tx := db.Conn().Create(&user); tx.Error != nil {
+		logrus.Error("Error creating user: ", tx.Error.Error())
+		c.Status(500)
+		return
+	}
+
 	token, err := uuid.NewRandom()
 	if err != nil {
 		c.Status(500)
@@ -159,25 +156,15 @@ func (api *API) SignupHandler(c *gin.Context) {
 	}
 
 	session := db.UserSession{
+		UserID:  user.ID,
 		Token:   token.String(),
 		IP:      c.ClientIP(),
-		Expires: int(time.Now().Add(time.Second * 2592000).Unix()),
+		Created: uint(time.Now().Unix()),
+		Expires: uint(time.Now().Add(time.Second * 2592000).Unix()),
 	}
 
-	user := db.User{
-		UID:         uuid.New().String(),
-		Username:    reqBody.Username,
-		Email:       reqBody.Email,
-		Password:    string(hash),
-		Permissions: []string{},
-		Sessions: []db.UserSession{
-			session,
-		},
-	}
-
-	_, err = collection.InsertOne(context.TODO(), user)
-
-	if err != nil {
+	if tx := db.Conn().Create(&session); tx.Error != nil {
+		logrus.Error("Error creating user session: ", tx.Error.Error())
 		c.Status(500)
 		return
 	}
@@ -231,7 +218,7 @@ func (api *API) MatchHandler(c *gin.Context) {
 		name = defaultMatchNames[rand.Intn(len(defaultMatchNames))]
 	}
 
-	m := api.matchSystem.NewMatch(name, user.UID, visible)
+	m := api.matchSystem.NewMatch(name, string(user.ID), visible)
 
 	c.JSON(200, m)
 

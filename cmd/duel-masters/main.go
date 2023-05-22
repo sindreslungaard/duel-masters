@@ -13,12 +13,12 @@ import (
 	"duel-masters/game/cards"
 	"duel-masters/game/match"
 
-	"github.com/sirupsen/logrus"
 	"github.com/joho/godotenv"
+	"github.com/sirupsen/logrus"
 )
 
 func main() {
-	
+
 	err := godotenv.Load()
 	if err != nil {
 		logrus.Warn("Failed to load .env file")
@@ -67,7 +67,13 @@ func main() {
 
 	}
 
-	db.Connect(os.Getenv("mongo_uri"), os.Getenv("mongo_name"))
+	db.Connect(
+		os.Getenv("db_user"),
+		os.Getenv("db_pass"),
+		os.Getenv("db_host"),
+		os.Getenv("db_port"),
+		os.Getenv("db_name"),
+	)
 
 	go checkForAutoRestart(lobby)
 

@@ -26,6 +26,14 @@ func Connect(user string, password string, host string, port string, database st
 
 }
 
+func Conn() *gorm.DB {
+	if conn == nil {
+		panic("Can't use database connection before connecting")
+	}
+
+	return conn
+}
+
 func Migrate() {
 
 	if conn == nil {
