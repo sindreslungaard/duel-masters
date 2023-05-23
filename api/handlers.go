@@ -298,22 +298,13 @@ func (api *API) GetDeckHandler(c *gin.Context) {
 		return
 	}
 
-	response := struct {
-		ID       uint     `json:"uid"`
-		UserID   uint     `json:"owner"`
-		Name     string   `json:"name"`
-		Public   bool     `json:"public"`
-		Standard bool     `json:"standard"`
-		Cards    []string `json:"cards"`
-		Owner    string   `json:"owner"`
-	}{
+	response := db.DeckAggregate{
 		ID:       deck.ID,
 		UserID:   deck.UserID,
 		Name:     deck.Name,
 		Public:   deck.Public,
 		Standard: deck.Standard,
 		Cards:    []string{},
-		Owner:    user.Username,
 	}
 
 	for _, card := range cards {
@@ -334,33 +325,7 @@ func (api *API) GetDecksHandler(c *gin.Context) {
 		return
 	}
 
-	collection := db.Collection("decks")
-
-	cur, err := collection.Find(context.TODO(), bson.M{
-		"owner": user.UID,
-	})
-
-	if err != nil {
-		logrus.Error(err)
-		c.Status(500)
-		return
-	}
-
-	defer cur.Close(context.TODO())
-
-	decks := make([]db.Deck, 0)
-
-	for cur.Next(context.TODO()) {
-
-		var deck db.Deck
-
-		if err := cur.Decode(&deck); err != nil {
-			continue
-		}
-
-		decks = append(decks, deck)
-
-	}
+	decks := db.DecksForUserAggregated(db.Conn(), user.ID)
 
 	c.JSON(200, decks)
 
