@@ -1,7 +1,6 @@
 package api
 
 import (
-	"context"
 	"fmt"
 	"math/rand"
 	"net/http"
@@ -679,8 +678,7 @@ func (api *API) ResetPasswordHandler(c *gin.Context) {
 	}
 
 	var user db.User
-
-	if err := db.Collection("users").FindOne(context.TODO(), bson.M{"recoverycode": reqBody.Code}).Decode(&user); err != nil {
+	if tx := db.Conn().First(&user, "recovery_code = ?", reqBody.Code); tx.Error != nil {
 		c.JSON(400, bson.M{"error": "Invalid or expired code"})
 		return
 	}
@@ -706,16 +704,13 @@ func (api *API) ResetPasswordHandler(c *gin.Context) {
 		return
 	}
 
-	db.Collection("users").UpdateOne(context.Background(), bson.M{
-		"uid": user.UID,
-	}, bson.M{
-		"$set": bson.M{
-			"password": string(hash),
-		},
-		"$unset": bson.M{
-			"recoverycode": "",
-		},
-	})
+	user.Password = string(hash)
+	user.RecoveryCode = ""
+
+	if tx := db.Conn().Save(&user); tx.Error != nil {
+		c.JSON(500, bson.M{"error": "Something went wrong"})
+		return
+	}
 
 	c.JSON(200, bson.M{"message": fmt.Sprintf("Password for the account \"%s\" was successfully changed", user.Username)})
 
