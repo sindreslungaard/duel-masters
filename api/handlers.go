@@ -334,7 +334,7 @@ func (api *API) GetDecksHandler(c *gin.Context) {
 type createDeckBody struct {
 	Name   string   `json:"name" binding:"required,min=1,max=30"`
 	Cards  []string `json:"cards" binding:"required"`
-	UID    string   `json:"uid"`
+	ID     uint     `json:"id"`
 	Public bool     `json:"public"`
 }
 
@@ -365,16 +365,41 @@ func (api *API) CreateDeckHandler(c *gin.Context) {
 		}
 	}
 
-	collection := db.Collection("decks")
+	deckCards := func(deckID uint, cards []string) ([]*db.DeckCards, error) {
+		m := map[string]uint{}
 
-	if len(reqBody.UID) < 1 {
+		for _, c := range cards {
+			n, ok := m[c]
+
+			if !ok {
+				m[c] = 1
+			} else {
+				if n >= 4 {
+					return nil, fmt.Errorf("More than 4 entries of a single card")
+				}
+				m[c] = n + 1
+			}
+		}
+
+		res := []*db.DeckCards{}
+
+		for _, v := range m {
+			res = append(res, &db.DeckCards{
+				DeckID: deckID,
+				CardID: 0,
+				Amount: v,
+			})
+		}
+
+		return res, nil
+	}
+
+	if reqBody.ID < 1 {
 
 		// New deck
 
-		decksCount, err := collection.CountDocuments(context.TODO(), bson.M{"owner": user.UID})
-
-		if err != nil {
-			logrus.Error(err)
+		var decksCount int64
+		if tx := db.Conn().Model(&db.Deck{}).Where("user_id = ?", user.ID).Count(&decksCount); tx.Error != nil {
 			c.Status(500)
 			return
 		}
@@ -385,17 +410,27 @@ func (api *API) CreateDeckHandler(c *gin.Context) {
 		}
 
 		deck := db.Deck{
-			UID:      uuid.New().String(),
-			Owner:    user.UID,
+			UserID:   user.ID,
 			Name:     reqBody.Name,
 			Public:   reqBody.Public,
 			Standard: false,
-			Cards:    reqBody.Cards,
 		}
 
-		_, err = collection.InsertOne(context.TODO(), deck)
+		if tx := db.Conn().Create(&deck); tx.Error != nil {
+			c.Status(500)
+			return
+		}
+
+		cards, err := deckCards(deck.ID, reqBody.Cards)
 
 		if err != nil {
+			logrus.Error("Error preparing cards to be added to deck ", err)
+			c.Status(500)
+			return
+		}
+
+		if tx := db.Conn().Create(cards); tx.Error != nil {
+			logrus.Error("Error adding cards to deck ", err)
 			c.Status(500)
 			return
 		}
@@ -404,14 +439,32 @@ func (api *API) CreateDeckHandler(c *gin.Context) {
 
 		// Edit deck
 
-		_, err := collection.UpdateOne(
-			context.TODO(),
-			bson.M{"uid": reqBody.UID, "owner": user.UID},
-			bson.M{"$set": bson.M{"name": reqBody.Name, "public": reqBody.Public, "cards": reqBody.Cards}},
-		)
+		var deck db.Deck
+		if tx := db.Conn().First(&deck, "id = ? and user_id = ?", reqBody.ID, user.ID); tx.Error != nil {
+			c.Status(404)
+			return
+		}
+
+		deck.Name = reqBody.Name
+		deck.Public = reqBody.Public
+		db.Conn().Save(&deck)
+
+		if tx := db.Conn().Delete(&db.DeckCards{}, "deck_id = ?", deck.ID); tx.Error != nil {
+			logrus.Error("Failed to delete cards when updating deck")
+			c.Status(500)
+			return
+		}
+
+		cards, err := deckCards(deck.ID, reqBody.Cards)
 
 		if err != nil {
-			logrus.Error(err)
+			logrus.Error("Error preparing cards to be added to deck ", err)
+			c.Status(500)
+			return
+		}
+
+		if tx := db.Conn().Create(cards); tx.Error != nil {
+			logrus.Error("Error adding cards to deck ", err)
 			c.Status(500)
 			return
 		}
