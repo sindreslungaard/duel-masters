@@ -543,7 +543,11 @@ func (api *API) ChangePasswordHandler(c *gin.Context) {
 		return
 	}
 
-	db.Collection("users").UpdateOne(context.TODO(), bson.M{"uid": user.UID}, bson.M{"$set": bson.M{"password": hash}})
+	user.Password = string(hash)
+	if tx := db.Conn().Save(&user); tx.Error != nil {
+		c.Status(500)
+		return
+	}
 
 	c.JSON(200, bson.M{"message": "Successfully changed your password"})
 }
