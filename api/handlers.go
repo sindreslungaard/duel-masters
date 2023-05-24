@@ -484,22 +484,16 @@ func (api *API) DeleteDeckHandler(c *gin.Context) {
 		return
 	}
 
-	deckUID := c.Param("id")
+	deckID := c.Param("id")
 
-	result, err := db.Collection("decks").DeleteOne(
-		context.Background(),
-		bson.M{"uid": deckUID, "owner": user.UID},
-	)
+	tx := db.Conn().Delete(&db.Deck{}, "deck_id = ? and user_id = ?", deckID, user.ID)
 
-	if err != nil {
-		c.Status(401)
+	if tx.Error != nil || tx.RowsAffected < 1 {
+		c.Status(500)
 		return
 	}
 
-	if result.DeletedCount < 1 {
-		c.Status(401)
-		return
-	}
+	db.Conn().Delete(&db.DeckCards{}, "deck_id = ?", deckID)
 
 	c.Status(200)
 
