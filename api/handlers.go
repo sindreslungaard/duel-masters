@@ -587,11 +587,11 @@ func (api *API) UpdatePreferencesHandler(c *gin.Context) {
 		return
 	}
 
-	db.Collection("users").UpdateOne(context.Background(), bson.M{
-		"uid": user.UID,
-	}, bson.M{"$set": bson.M{
-		"playmat": reqBody.Playmat,
-	}})
+	user.Playmat = reqBody.Playmat
+	if tx := db.Conn().Save(&user); tx.Error != nil {
+		c.Status(500)
+		return
+	}
 
 	c.JSON(200, bson.M{"message": "Successfully saved your preferences"})
 
