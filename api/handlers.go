@@ -19,7 +19,6 @@ import (
 	"github.com/gorilla/websocket"
 	"github.com/sirupsen/logrus"
 	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/bson/primitive"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -617,8 +616,7 @@ func (api *API) RecoverPasswordHandler(c *gin.Context) {
 	genericResponse := "If the email you specified matches any registered users you will soon receive a mail with a link to reset your password"
 
 	var user db.User
-
-	if err := db.Collection("users").FindOne(context.TODO(), bson.M{"email": primitive.Regex{Pattern: "^" + reqBody.Email + "$", Options: "i"}}).Decode(&user); err != nil {
+	if tx := db.Conn().First(&user, "email = ?", reqBody.Email); tx.Error != nil {
 		logrus.Debug("Attempt at recovering password with email that does not belong to any users ", reqBody.Email)
 		c.JSON(200, bson.M{"message": genericResponse})
 		return
@@ -633,11 +631,11 @@ func (api *API) RecoverPasswordHandler(c *gin.Context) {
 		return
 	}
 
-	db.Collection("users").UpdateOne(context.Background(), bson.M{
-		"uid": user.UID,
-	}, bson.M{"$set": bson.M{
-		"recoverycode": code,
-	}})
+	user.RecoveryCode = code
+	if tx := db.Conn().Save(&user); tx.Error != nil {
+		c.JSON(500, bson.M{"error": "Something went wrong"})
+		return
+	}
 
 	err = internal.SendMail(user.Email, "Recover your password", fmt.Sprintf(`
 	Use the link below to recover the password for your account <b>%s</b>

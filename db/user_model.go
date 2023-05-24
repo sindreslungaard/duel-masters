@@ -4,13 +4,14 @@ import "gorm.io/gorm"
 
 type User struct {
 	gorm.Model
-	ID          uint   `json:"uid"`
-	Username    string `json:"username"`
-	Password    string `json:"-"`
-	Email       string `json:"email"`
-	Color       string `json:"color"`
-	Playmat     string `json:"playmat"`
-	Chatblocked bool   `json:"-"`
+	ID           uint   `json:"uid"`
+	Username     string `json:"username"`
+	Password     string `json:"-"`
+	Email        string `json:"email"`
+	Color        string `json:"color"`
+	Playmat      string `json:"playmat"`
+	Chatblocked  bool   `json:"-"`
+	RecoveryCode string
 }
 
 type UserSession struct {
