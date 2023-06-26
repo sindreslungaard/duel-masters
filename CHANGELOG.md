@@ -4,6 +4,8 @@ All notable changes to this project as of 11/11/2021 will be documented in this 
 
 ## [Unreleased]
 
+- Correct "Masked Pomegranate"'s mana cost from 4 to 5
+
 ## 10/05/2023
 
 - Added password recovery functionality
