@@ -6,6 +6,7 @@ All notable changes to this project as of 11/11/2021 will be documented in this 
 
 - Correct "Masked Pomegranate"'s mana cost from 4 to 5
 - Fixed an issue where "Plasma Chaser"'s ability would trigger even if the attack was cancelled
+- Removed shield trigger effect from "Recon Operation"
 
 ## 10/05/2023
 

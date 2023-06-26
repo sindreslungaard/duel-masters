@@ -144,7 +144,7 @@ func ReconOperation(c *match.Card) {
 	c.ManaCost = 2
 	c.ManaRequirement = []string{civ.Water}
 
-	c.Use(fx.Spell, fx.ShieldTrigger, fx.When(fx.SpellCast, func(card *match.Card, ctx *match.Context) {
+	c.Use(fx.Spell, fx.When(fx.SpellCast, func(card *match.Card, ctx *match.Context) {
 
 		shields := fx.SelectBackside(
 			card.Player,
