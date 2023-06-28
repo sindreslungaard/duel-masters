@@ -1,8 +1,6 @@
 # Changelog
 
-All notable changes to this project as of 11/11/2021 will be documented in this file.
-
-## [Unreleased]
+## 28/06/2023
 
 - Fixed an issue where players sometimes could get more cards during a match than their deck contained
 - Added functionality to view this changelog in the header menu
@@ -208,3 +206,7 @@ All notable changes to this project as of 11/11/2021 will be documented in this 
 - Added new event hook for when an attack is confirmed to be happening
 - Added timestamps to lobby chat messages
 - Updated README with steps to set up the project for local development
+
+---
+
+Changes prior to 11/11/2021 was not documented using this format
