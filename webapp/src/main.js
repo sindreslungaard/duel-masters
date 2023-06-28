@@ -6,10 +6,14 @@ import store from "./store";
 
 // self-invoking directives
 import "./directives/draggable";
+import "./directives/closable";
 
 Vue.config.productionTip = false;
 
-Vue.use(VModal, { dynamic: true, dynamicDefaults: { height: "auto", scrollable: true } });
+Vue.use(VModal, {
+  dynamic: true,
+  dynamicDefaults: { height: "auto", scrollable: true }
+});
 
 new Vue({
   router,

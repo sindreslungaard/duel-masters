@@ -295,7 +295,10 @@
     </div>
 
     <template v-if="!started">
-      <div v-if="deck && !tossBeingChosen && !turnBeingChosen" class="deck-chooser waiting">
+      <div
+        v-if="deck && !tossBeingChosen && !turnBeingChosen"
+        class="deck-chooser waiting"
+      >
         <h1>
           Waiting for your opponent to choose a deck<span class="dots">{{
             loadingDots
@@ -304,45 +307,45 @@
       </div>
 
       <!-- Waiting for first turn selection -->
-    <div v-if="turnBeingChosen && !chooseTurn" class="deck-chooser waiting">
-      <h1>
-        Waiting for your opponent to choose who goes first<span class="dots">{{
-          loadingDots
-        }}</span>
-      </h1>
-    </div>
+      <div v-if="turnBeingChosen && !chooseTurn" class="deck-chooser waiting">
+        <h1>
+          Waiting for your opponent to choose who goes first<span
+            class="dots"
+            >{{ loadingDots }}</span
+          >
+        </h1>
+      </div>
 
-    <!-- Choose first turn -->
-    <div v-if="turnBeingChosen && chooseTurn" class="deck-chooser">
-      <h1>
-        Choose who plays first
-
-      </h1>
-      <div>
-        <div class="btn" @click="chooseFirstPlayer(1)">Me</div>
-        <div class="btn" @click="chooseFirstPlayer(-1)">Opponent</div>
+      <!-- Choose first turn -->
+      <div v-if="turnBeingChosen && chooseTurn" class="deck-chooser">
+        <h1>
+          Choose who plays first
+        </h1>
+        <div>
+          <div class="btn" @click="chooseFirstPlayer(1)">Me</div>
+          <div class="btn" @click="chooseFirstPlayer(-1)">Opponent</div>
         </div>
-    </div>
+      </div>
 
-    <!-- Waiting for toss -->
-    <div v-if="tossBeingChosen && !chooseToss" class="deck-chooser waiting">
-      <h1>
-        Waiting for your opponent to predict the coin toss<span class="dots">{{
-          loadingDots
-        }}</span>
-      </h1>
-    </div>
+      <!-- Waiting for toss -->
+      <div v-if="tossBeingChosen && !chooseToss" class="deck-chooser waiting">
+        <h1>
+          Waiting for your opponent to predict the coin toss<span
+            class="dots"
+            >{{ loadingDots }}</span
+          >
+        </h1>
+      </div>
 
-    <!-- Choose toss -->
-    <div v-if="tossBeingChosen && chooseToss" class="deck-chooser">
-      <h1>
-        Predict the coin toss
+      <!-- Choose toss -->
+      <div v-if="tossBeingChosen && chooseToss" class="deck-chooser">
+        <h1>
+          Predict the coin toss
+        </h1>
 
-      </h1>
-      
         <div class="btn" @click="chooseCoinToss(1)">Heads</div>
         <div class="btn" @click="chooseCoinToss(-1)">Tails</div>
-    </div>
+      </div>
 
       <div class="deck-chooser" v-if="decks.length > 0 && !deck">
         <h1>Choose your deck</h1>
@@ -793,20 +796,23 @@ export default {
 
     chooseRandomDeck() {
       const availableDecks = this.decks.filter(x => !x.standard);
-      const randomDeck = availableDecks[Math.floor(Math.random() * availableDecks.length)];
+      const randomDeck =
+        availableDecks[Math.floor(Math.random() * availableDecks.length)];
 
       this.deck = randomDeck.uid;
-      this.ws.send(JSON.stringify({ header: "choose_deck", uid: randomDeck.uid }));
+      this.ws.send(
+        JSON.stringify({ header: "choose_deck", uid: randomDeck.uid })
+      );
     },
 
     chooseCoinToss(prediction) {
-      if(this.tossBeingChosen && this.chooseToss) {
+      if (this.tossBeingChosen && this.chooseToss) {
         this.ws.send(JSON.stringify({ header: "toss_chosen", prediction }));
       }
     },
 
     chooseFirstPlayer(player) {
-      if(this.turnBeingChosen && this.chooseTurn) {
+      if (this.turnBeingChosen && this.chooseTurn) {
         this.ws.send(JSON.stringify({ header: "turn_chosen", player }));
       }
     },
@@ -1117,14 +1123,14 @@ export default {
 
           case "opponent_disconnected": {
             // reset the selection screen in case the opponent disconnected before the game started
-            if(!this.started) {
+            if (!this.started) {
               this.decks = [];
               this.deck = null;
 
               this.chooseToss = false;
               this.tossBeingChosen = false;
 
-              this.choseTurn =false;
+              this.choseTurn = false;
               this.turnBeingChosen = false;
 
               break;
@@ -1169,15 +1175,15 @@ export default {
           case "turn_being_chosen": {
             this.tossBeingChosen = false;
             this.turnBeingChosen = true;
-            
+
             break;
           }
 
           case "choose_deck": {
             playerJoinedSound.play();
-            
-            // in case of a connection and then disconnection when the game had not yet started 
-            if(!document.title.includes("🔴")) {
+
+            // in case of a connection and then disconnection when the game had not yet started
+            if (!document.title.includes("🔴")) {
               document.title = "🔴 " + document.title;
             }
 
@@ -1591,26 +1597,6 @@ export default {
 
 .message-text {
   flex-grow: 1;
-}
-
-*::-webkit-scrollbar-track {
-  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
-  box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
-  border-radius: 10px;
-  background-color: #484c52;
-}
-
-*::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
-  background-color: #484c52;
-}
-
-*::-webkit-scrollbar-thumb {
-  border-radius: 10px;
-  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
-  box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
-  background-color: #222;
 }
 
 .chatbox input {
