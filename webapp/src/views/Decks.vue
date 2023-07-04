@@ -1,19 +1,18 @@
 <template>
   <div>
-    <div
-      v-show="warning"
-      @click="closeOverlay()"
-      class="overlay"
-    ></div>
+    <div v-show="warning" @click="closeOverlay()" class="overlay"></div>
 
     <span v-if="previewCard">
       <div class="card-preview">
-        <img :src="`/assets/cards/all/${previewCard.uid}.jpg`" alt="Full card">
+        <img
+          :src="`/assets/cards/all/${previewCard.uid}.jpg`"
+          alt="Full card"
+        />
       </div>
     </span>
 
     <div v-show="warning" class="error">
-      <p>{{ warning }}</p>
+      <p class="text-block">{{ warning }}</p>
       <div @click="warning = ''" class="btn">Close</div>
     </div>
 
@@ -143,7 +142,9 @@
               <td
                 @mouseover="previewCard = card"
                 @mouseleave="previewCard = null"
-              >{{ card.name }}</td>
+              >
+                {{ card.name }}
+              </td>
               <td class="set">{{ card.set }}</td>
               <td class="civilization">{{ card.civilization }}</td>
               <td class="manaCost">{{ card.manaCost }}</td>
@@ -204,6 +205,9 @@
               src="/assets/images/delete_icon.png"
             />
           </a>
+          <div @click="copyDeckList()" class="btn copy-deck-list">
+            Copy Deck List
+          </div>
           <div @click="newDeck()" class="btn new">New Deck</div>
           <template
             v-if="
@@ -219,12 +223,74 @@
           <div class="cards-table">
             <table>
               <tr>
-                <th>Quantity ({{ selectedDeck.cards.length }})</th>
-                <th>Card Name</th>
-                <th>Set</th>
-                <th>Civilization</th>
-                <th>Mana</th>
-                <th>Race</th>
+                <th>
+                  <div class="sort-btn" @click="toggleSortForDeck('count')">
+                    Quantity ({{ selectedDeck.cards.length }})
+                    <img
+                      class="sort-ico"
+                      width="25px"
+                      :src="`/assets/images/${sortDeckIcons.count}.png`"
+                    />
+                  </div>
+                </th>
+
+                <th>
+                  <div class="sort-btn" @click="toggleSortForDeck('name')">
+                    Card Name
+                    <img
+                      class="sort-ico"
+                      width="25px"
+                      :src="`/assets/images/${sortDeckIcons.name}.png`"
+                    />
+                  </div>
+                </th>
+
+                <th>
+                  <div class="sort-btn" @click="toggleSortForDeck('set')">
+                    Set
+                    <img
+                      class="sort-ico"
+                      width="25px"
+                      :src="`/assets/images/${sortDeckIcons.set}.png`"
+                    />
+                  </div>
+                </th>
+
+                <th>
+                  <div
+                    class="sort-btn"
+                    @click="toggleSortForDeck('civilization')"
+                  >
+                    Civilization
+                    <img
+                      class="sort-ico"
+                      width="25px"
+                      :src="`/assets/images/${sortDeckIcons.civilization}.png`"
+                    />
+                  </div>
+                </th>
+
+                <th>
+                  <div class="sort-btn" @click="toggleSortForDeck('manaCost')">
+                    Mana
+                    <img
+                      class="sort-ico"
+                      width="25px"
+                      :src="`/assets/images/${sortDeckIcons.manaCost}.png`"
+                    />
+                  </div>
+                </th>
+
+                <th>
+                  <div class="sort-btn" @click="toggleSortForDeck('family')">
+                    Race
+                    <img
+                      class="sort-ico"
+                      width="25px"
+                      :src="`/assets/images/${sortDeckIcons.family}.png`"
+                    />
+                  </div>
+                </th>
               </tr>
               <template v-if="selectedDeck">
                 <tr
@@ -246,11 +312,13 @@
                   <td
                     @mouseover="previewCard = card"
                     @mouseleave="previewCard = null"
-                  >{{ card.name }}</td>
+                  >
+                    {{ card.name }}
+                  </td>
                   <td class="set">{{ card.set }}</td>
                   <td class="civilization">{{ card.civilization }}</td>
                   <td class="manaCost">{{ card.manaCost }}</td>
-                  <td class="civilization">{{ card.family }}</td>
+                  <td class="civilization">{{ card.family || "Spell" }}</td>
                 </tr>
               </template>
             </table>
@@ -296,6 +364,10 @@ export default {
         by: "name",
         directionNum: 1
       },
+      sortForDeck: {
+        by: "name",
+        directionNum: 1
+      },
 
       sets: [],
       cards: [],
@@ -328,6 +400,14 @@ export default {
       };
     },
 
+    toggleSortForDeck(by) {
+      this.sortForDeck = {
+        directionNum:
+          this.sortForDeck.by === by ? -this.sortForDeck.directionNum : 1,
+        by
+      };
+    },
+
     getCardsForDeck(cardUids) {
       let cards = [];
       for (let uid of cardUids) {
@@ -343,6 +423,20 @@ export default {
           cards.push(card);
         }
       }
+
+      cards.sort((c1, c2) =>
+        c1[this.sortForDeck.by] === parseInt(c1[this.sortForDeck.by], 10) &&
+        c2[this.sortForDeck.by] === parseInt(c2[this.sortForDeck.by], 10)
+          ? this.sortForDeck.directionNum *
+            (c1[this.sortForDeck.by] < c2[this.sortForDeck.by]
+              ? -1
+              : c1[this.sortForDeck.by] > c2[this.sortForDeck.by]
+              ? 1
+              : 0)
+          : this.sortForDeck.directionNum *
+            c1[this.sortForDeck.by].localeCompare(c2[this.sortForDeck.by])
+      );
+
       return cards;
     },
 
@@ -378,6 +472,15 @@ export default {
       }
 
       this.selectedDeck.cards.splice(toSlice, 1);
+    },
+
+    copyDeckList() {
+      const cards = this.getCardsForDeck(this.selectedDeck.cards);
+
+      const deckList = cards.map(card => `${card.count}x ${card.name}`);
+      this.warning = `${deckList.join("\n")}\n\nTotal Cards: ${
+        this.selectedDeck.cards.length
+      }`;
     },
 
     newDeck() {
@@ -551,11 +654,17 @@ export default {
         );
       }
 
-      cards.sort(
-        (c1, c2) =>
-          (c1[this.sort.by] === parseInt(c1[this.sort.by], 10) && c2[this.sort.by] === parseInt(c2[this.sort.by], 10)) ? 
-            this.sort.directionNum * (c1[this.sort.by] < c2[this.sort.by] ? -1 : c1[this.sort.by] > c2[this.sort.by] ? 1 : 0) : 
-            this.sort.directionNum * c1[this.sort.by].localeCompare(c2[this.sort.by])
+      cards.sort((c1, c2) =>
+        c1[this.sort.by] === parseInt(c1[this.sort.by], 10) &&
+        c2[this.sort.by] === parseInt(c2[this.sort.by], 10)
+          ? this.sort.directionNum *
+            (c1[this.sort.by] < c2[this.sort.by]
+              ? -1
+              : c1[this.sort.by] > c2[this.sort.by]
+              ? 1
+              : 0)
+          : this.sort.directionNum *
+            c1[this.sort.by].localeCompare(c2[this.sort.by])
       );
 
       return cards;
@@ -572,6 +681,22 @@ export default {
 
       result[this.sort.by] =
         this.sort.directionNum === 1 ? "arrow_down" : "arrow_up";
+
+      return result;
+    },
+
+    sortDeckIcons() {
+      const result = {
+        count: "arrow_up_down",
+        name: "arrow_up_down",
+        set: "arrow_up_down",
+        civilization: "arrow_up_down",
+        manaCost: "arrow_up_down",
+        family: "arrow_up_down"
+      };
+
+      result[this.sortForDeck.by] =
+        this.sortForDeck.directionNum === 1 ? "arrow_down" : "arrow_up";
 
       return result;
     }
@@ -658,6 +783,16 @@ export default {
 
 .save:hover {
   background: #3ca374 !important;
+}
+
+.copy-deck-list {
+  background: #dc758f !important;
+  display: inline-block;
+  margin-right: 15px;
+}
+
+.copy-deck-list:hover {
+  background: #d65c7a !important;
 }
 
 .discard {
@@ -751,44 +886,6 @@ input:active,
 textarea:active,
 select:active {
   outline: none;
-}
-
-.left::-webkit-scrollbar-track {
-  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
-  box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
-  border-radius: 10px;
-  background-color: #484c52;
-}
-
-.left::-webkit-scrollbar {
-  width: 6px;
-  background-color: #484c52;
-}
-
-.left::-webkit-scrollbar-thumb {
-  border-radius: 10px;
-  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
-  box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
-  background-color: #222;
-}
-
-.right::-webkit-scrollbar-track {
-  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
-  box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
-  border-radius: 10px;
-  background-color: #484c52;
-}
-
-.right::-webkit-scrollbar {
-  width: 6px;
-  background-color: #484c52;
-}
-
-.right::-webkit-scrollbar-thumb {
-  border-radius: 10px;
-  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
-  box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
-  background-color: #222;
 }
 
 table {
@@ -1004,6 +1101,10 @@ nav > ul > li.no-cursor:hover {
 
 a {
   color: #7289da;
+}
+
+.text-block {
+  white-space: pre-wrap;
 }
 
 .sort-btn {

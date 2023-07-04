@@ -216,6 +216,11 @@ func (p *Player) CreateDeck(deck []string) {
 
 }
 
+// Empties the players deck
+func (p *Player) DestroyDeck() {
+	p.deck = nil
+}
+
 // SpawnCard creates a new card from an id and adds it to the players hand
 // used for debugging and development
 func (p *Player) SpawnCard(id string) {

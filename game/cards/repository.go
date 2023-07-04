@@ -391,6 +391,7 @@ var DM05 = map[string]match.CardConstructor{
 	"a8f4d303-72c0-4b67-b6af-d99d267de0c5": dm05.BalloonshroomQ,
 	"4c5323af-2c14-4bc7-9cb8-7b967c7b8586": dm05.Pokolul,
 	"f66ca3b3-7300-41ef-8319-9de6dfc4e39a": dm05.SinisterGeneralDamudo,
+	"38db41d2-2a6d-4f6e-83e8-265208be45ea": dm05.Gigazoul,
 }
 
 var DM06 = map[string]match.CardConstructor{
@@ -511,5 +512,4 @@ var DM06 = map[string]match.CardConstructor{
     //"f5499baf-ded1-41c5-8386-3ac7f7c1c841": dm06.ForbiddingTotem,
     //"f552c0a3-9863-4ea6-9769-3c1134da0995": dm06.ForbosSanctumGuardianQ,
     //"fee203a9-b5a8-4d01-abb9-12d07c62475d": dm06.CosmogoldSpectralKnight,
-
 }

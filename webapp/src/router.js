@@ -32,6 +32,20 @@ const router = new Router({
     },
 
     {
+      path: "/recover-password",
+      name: "recover_password",
+      component: () => import("./views/RecoverPassword.vue"),
+      meta: { noauth: true }
+    },
+
+    {
+      path: "/recover-password/:code",
+      name: "reset_password",
+      component: () => import("./views/ResetPassword.vue"),
+      meta: { noauth: true }
+    },
+
+    {
       path: "/logout",
       name: "logout",
       component: () => import("./views/Logout.vue"),

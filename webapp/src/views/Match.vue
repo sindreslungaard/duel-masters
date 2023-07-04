@@ -295,12 +295,56 @@
     </div>
 
     <template v-if="!started">
-      <div v-if="deck" class="deck-chooser waiting">
+      <div
+        v-if="deck && !tossBeingChosen && !turnBeingChosen"
+        class="deck-chooser waiting"
+      >
         <h1>
           Waiting for your opponent to choose a deck<span class="dots">{{
             loadingDots
           }}</span>
         </h1>
+      </div>
+
+      <!-- Waiting for first turn selection -->
+      <div v-if="turnBeingChosen && !chooseTurn" class="deck-chooser waiting">
+        <h1>
+          Waiting for your opponent to choose who goes first<span
+            class="dots"
+            >{{ loadingDots }}</span
+          >
+        </h1>
+      </div>
+
+      <!-- Choose first turn -->
+      <div v-if="turnBeingChosen && chooseTurn" class="deck-chooser">
+        <h1>
+          Choose who plays first
+        </h1>
+        <div>
+          <div class="btn" @click="chooseFirstPlayer(1)">Me</div>
+          <div class="btn" @click="chooseFirstPlayer(-1)">Opponent</div>
+        </div>
+      </div>
+
+      <!-- Waiting for toss -->
+      <div v-if="tossBeingChosen && !chooseToss" class="deck-chooser waiting">
+        <h1>
+          Waiting for your opponent to predict the coin toss<span
+            class="dots"
+            >{{ loadingDots }}</span
+          >
+        </h1>
+      </div>
+
+      <!-- Choose toss -->
+      <div v-if="tossBeingChosen && chooseToss" class="deck-chooser">
+        <h1>
+          Predict the coin toss
+        </h1>
+
+        <div class="btn" @click="chooseCoinToss(1)">Heads</div>
+        <div class="btn" @click="chooseCoinToss(-1)">Tails</div>
       </div>
 
       <div class="deck-chooser" v-if="decks.length > 0 && !deck">
@@ -322,6 +366,14 @@
             class="btn"
           >
             {{ deck.name }}
+          </div>
+
+          <div
+            @click="chooseRandomDeck"
+            class="btn"
+            v-if="decks.filter(x => !x.standard).length > 0"
+          >
+            Choose random deck
           </div>
         </div>
 
@@ -677,6 +729,12 @@ export default {
       decks: [],
       deck: null,
 
+      chooseToss: false,
+      tossBeingChosen: false,
+
+      choseTurn: false,
+      turnBeingChosen: false,
+
       state: {},
       handSelection: null,
 
@@ -734,6 +792,29 @@ export default {
     chooseDeck(uid) {
       this.deck = uid;
       this.ws.send(JSON.stringify({ header: "choose_deck", uid }));
+    },
+
+    chooseRandomDeck() {
+      const availableDecks = this.decks.filter(x => !x.standard);
+      const randomDeck =
+        availableDecks[Math.floor(Math.random() * availableDecks.length)];
+
+      this.deck = randomDeck.uid;
+      this.ws.send(
+        JSON.stringify({ header: "choose_deck", uid: randomDeck.uid })
+      );
+    },
+
+    chooseCoinToss(prediction) {
+      if (this.tossBeingChosen && this.chooseToss) {
+        this.ws.send(JSON.stringify({ header: "toss_chosen", prediction }));
+      }
+    },
+
+    chooseFirstPlayer(player) {
+      if (this.turnBeingChosen && this.chooseTurn) {
+        this.ws.send(JSON.stringify({ header: "turn_chosen", player }));
+      }
     },
 
     handleOverlayClick() {
@@ -1041,6 +1122,20 @@ export default {
           }
 
           case "opponent_disconnected": {
+            // reset the selection screen in case the opponent disconnected before the game started
+            if (!this.started) {
+              this.decks = [];
+              this.deck = null;
+
+              this.chooseToss = false;
+              this.tossBeingChosen = false;
+
+              this.choseTurn = false;
+              this.turnBeingChosen = false;
+
+              break;
+            }
+
             this.opponentDisconnected = true;
             break;
           }
@@ -1056,9 +1151,42 @@ export default {
             break;
           }
 
+          case "choose_toss": {
+            this.chooseToss = true;
+            this.tossBeingChosen = true;
+
+            break;
+          }
+
+          case "toss_being_chosen": {
+            this.tossBeingChosen = true;
+
+            break;
+          }
+
+          case "choose_turn": {
+            this.tossBeingChosen = false;
+            this.turnBeingChosen = true;
+            this.chooseTurn = true;
+
+            break;
+          }
+
+          case "turn_being_chosen": {
+            this.tossBeingChosen = false;
+            this.turnBeingChosen = true;
+
+            break;
+          }
+
           case "choose_deck": {
             playerJoinedSound.play();
-            document.title = "🔴 " + document.title;
+
+            // in case of a connection and then disconnection when the game had not yet started
+            if (!document.title.includes("🔴")) {
+              document.title = "🔴 " + document.title;
+            }
+
             this.decks = data.decks;
             break;
           }
@@ -1469,26 +1597,6 @@ export default {
 
 .message-text {
   flex-grow: 1;
-}
-
-*::-webkit-scrollbar-track {
-  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
-  box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
-  border-radius: 10px;
-  background-color: #484c52;
-}
-
-*::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
-  background-color: #484c52;
-}
-
-*::-webkit-scrollbar-thumb {
-  border-radius: 10px;
-  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
-  box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
-  background-color: #222;
 }
 
 .chatbox input {

@@ -107,6 +107,8 @@ docker compose up --build
 
 For testing cards locally there is a neat chat command that spawns in any card to the hand of the persons turn it is even if it's not in your deck `/add {cardUid}` (e.g `/add 4459f97b-8927-4231-a11d-f4f88175b71c`). The card uid can be found in `repository.go`.
 
+To add all cards from your hand to the mana zone, use `/mana`
+
 To get access to the command you need to add the role `admin` to the permissions array on your user in the database.
 
 # Changelog

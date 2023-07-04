@@ -1,9 +1,26 @@
 # Changelog
 
-All notable changes to this project as of 11/11/2021 will be documented in this file.
+## 28/06/2023
 
-## [Unreleased]
+- Fixed an issue where players sometimes could get more cards during a match than their deck contained
+- Added functionality to view this changelog in the header menu
+- Correct "Masked Pomegranate"'s mana cost from 4 to 5
+- Fixed an issue where "Plasma Chaser"'s ability would trigger even if the attack was cancelled
+- Removed shield trigger effect from "Recon Operation"
 
+## 10/05/2023
+
+- Added password recovery functionality
+- Added a coin toss system to choose which player starts (thanks @fabianTMC)
+- Matches are no longer closed when the non-host leaves before the match has started (thanks @fabianTMC)
+- New card "Gigazoul" (thanks @fabianTMC)
+- Added sorting to selected deck (thanks @fabianTMC)
+- Added button to choose a random deck in the deck selection screen (thanks @fabianTMC)
+- Added chat message to show who started the game and who joined (thanks @fabianTMC)
+- New card "Crystal Jouster" (thanks @fabianTMC)
+- New card "Ultra Mantis, Scourge of Fate" (thanks @fabianTMC)
+- New card "Craze Valkyrie, the Drastic" (thanks @fabianTMC)
+- Added copy deck list button to make tourney signups easier (thanks @fabianTMC)
 - Updated the quality of the backside card image
 - Fixed an incorrect spelling of "Toel, Vizier of Hope"'s name
 - Fixed an issue causing Bone Piercer's chat message to display its name incorrectly
@@ -189,3 +206,7 @@ All notable changes to this project as of 11/11/2021 will be documented in this 
 - Added new event hook for when an attack is confirmed to be happening
 - Added timestamps to lobby chat messages
 - Updated README with steps to set up the project for local development
+
+---
+
+Changes prior to 11/11/2021 was not documented using this format

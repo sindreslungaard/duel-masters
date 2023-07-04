@@ -2,28 +2,23 @@
   <div class="login-page">
     <div class="form">
       <form @submit.prevent="submit()" class="login-form">
-        <p class="title">Sign in to Shobu.io</p>
-        <input v-model="username" type="text" placeholder="Username" />
-        <input v-model="password" type="password" placeholder="Password" />
-        <button>Sign in</button>
+        <p class="title">Recover password</p>
+        <input
+          v-model="email"
+          type="email"
+          placeholder="Email used to sign up"
+        />
+        <button>Recover password</button>
+        <p v-if="successMsg" class="success">{{ successMsg }}</p>
         <p v-if="errorMsg" class="error">{{ errorMsg }}</p>
         <p class="message">
-          Not registered?
+          Go back to
           <router-link
             :to="{
-              path: '/register',
+              path: '/login',
               query: { redirect_to: $route.query.redirect_to }
             }"
-            >Create an account</router-link
-          >
-        </p>
-        <p class="message">
-          <router-link
-            :to="{
-              path: '/recover-password',
-              query: { redirect_to: $route.query.redirect_to }
-            }"
-            >Reset password</router-link
+            >Sign In</router-link
           >
         </p>
       </form>
@@ -38,42 +33,30 @@ export default {
   name: "login",
   data() {
     return {
-      username: "",
+      email: "",
       password: "",
       errorMsg: "",
+      successMsg: "",
       redirectTo: null
     };
   },
   methods: {
     async submit() {
+      this.errorMsg = "";
+      this.successMsg = "";
       try {
         let res = await call({
-          path: "/auth/signin",
+          path: "/auth/recover",
           method: "POST",
           body: {
-            username: this.username,
-            password: this.password
+            email: this.email
           }
         });
 
-        localStorage.setItem("email", res.data.user.email);
-        localStorage.setItem("username", res.data.user.username);
-        localStorage.setItem("uid", res.data.user.uid);
-        localStorage.setItem("permissions", res.data.user.permissions);
-        localStorage.setItem("token", res.data.token);
-
-        if (this.redirectTo) {
-          this.$router.push(this.redirectTo);
-        } else {
-          this.$router.push("overview");
-        }
+        this.successMsg = res.data.message;
       } catch (e) {
         try {
-          if (e.response.status == 401) {
-            this.errorMsg = "Wrong username or password";
-          } else if (e.response.status == 403) {
-            this.errorMsg = "You have been banned";
-          }
+          this.errorMsg = e.response.data.error;
         } catch (err) {
           this.errorMsg =
             "An unexpected error occured. Please try again later.";
@@ -103,6 +86,12 @@ export default {
 .error {
   font-size: 14px;
   color: red;
+  margin: 0;
+  margin-top: 20px;
+}
+
+.success {
+  font-size: 14px;
   margin: 0;
   margin-top: 20px;
 }

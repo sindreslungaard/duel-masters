@@ -31,7 +31,7 @@ func PlasmaChaser(c *match.Card) {
 	c.ManaCost = 6
 	c.ManaRequirement = []string{civ.Water}
 
-	c.Use(fx.Creature, fx.When(fx.Attacking, func(card *match.Card, ctx *match.Context) {
+	c.Use(fx.Creature, fx.When(fx.AttackConfirmed, func(card *match.Card, ctx *match.Context) {
 
 		toDraw := len(fx.Find(ctx.Match.Opponent(card.Player), match.BATTLEZONE))
 

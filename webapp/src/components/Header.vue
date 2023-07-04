@@ -11,6 +11,48 @@
         <li class="no-cursor">|</li>
         <li @click="$router.push('logout')">Logout</li>
         <li class="no-cursor">|</li>
+        <li class="changelog">
+          <svg
+            @click="toggleChangelog"
+            ref="changelogbtn"
+            version="1.1"
+            class="github-icon"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="#fff"
+          >
+            <polygon points="20,2.6 20,8 25.4,8 " />
+            <path
+              d="M23.5,10H19c-0.6,0-1-0.4-1-1V2H7C6.4,2,6,2.4,6,3v26c0,0.6,0.4,1,1,1h18c0.6,0,1-0.4,1-1V12.5C26,11.1,24.9,10,23.5,10z
+	 M11.9,21.4c0,0.1-0.1,0.2-0.2,0.3c-0.1,0.1-0.2,0.2-0.3,0.2C11.3,22,11.1,22,11,22c-0.1,0-0.1,0-0.2,0c-0.1,0-0.1,0-0.2-0.1
+	c-0.1,0-0.1-0.1-0.2-0.1c0,0-0.1-0.1-0.1-0.1c-0.1-0.1-0.2-0.2-0.2-0.3c0-0.1-0.1-0.3-0.1-0.4c0-0.1,0-0.1,0-0.2
+	c0-0.1,0-0.1,0.1-0.2c0-0.1,0-0.1,0.1-0.2c0-0.1,0.1-0.1,0.1-0.1c0,0,0.1-0.1,0.1-0.1c0.1,0,0.1-0.1,0.2-0.1c0.1,0,0.1,0,0.2-0.1
+	c0.3-0.1,0.7,0,0.9,0.3c0,0,0.1,0.1,0.1,0.1c0,0.1,0.1,0.1,0.1,0.2c0,0.1,0,0.1,0.1,0.2c0,0.1,0,0.1,0,0.2
+	C12,21.1,12,21.3,11.9,21.4z M11.9,17.4c0,0.1-0.1,0.2-0.2,0.3c-0.1,0.1-0.2,0.2-0.3,0.2C11.3,18,11.1,18,11,18c-0.1,0-0.1,0-0.2,0
+	c-0.1,0-0.1,0-0.2-0.1c-0.1,0-0.1-0.1-0.2-0.1c0,0-0.1-0.1-0.1-0.1c-0.1-0.1-0.2-0.2-0.2-0.3S10,17.1,10,17c0-0.1,0-0.3,0.1-0.4
+	c0-0.1,0.1-0.2,0.2-0.3c0.3-0.3,0.7-0.4,1.1-0.2c0.1,0.1,0.2,0.1,0.3,0.2c0.1,0.1,0.2,0.2,0.2,0.3c0,0.1,0.1,0.3,0.1,0.4
+	C12,17.1,12,17.3,11.9,17.4z M11.7,13.7c-0.1,0.1-0.2,0.2-0.3,0.2C11.3,14,11.1,14,11,14c-0.3,0-0.5-0.1-0.7-0.3
+	C10.1,13.5,10,13.3,10,13c0-0.3,0.1-0.5,0.3-0.7c0,0,0.1-0.1,0.1-0.1c0.1,0,0.1-0.1,0.2-0.1c0.1,0,0.1,0,0.2-0.1
+	c0.2,0,0.4,0,0.6,0.1c0.1,0.1,0.2,0.1,0.3,0.2c0.2,0.2,0.3,0.4,0.3,0.7C12,13.3,11.9,13.5,11.7,13.7z M21,22h-7c-0.6,0-1-0.4-1-1
+	s0.4-1,1-1h7c0.6,0,1,0.4,1,1S21.6,22,21,22z M21,18h-7c-0.6,0-1-0.4-1-1s0.4-1,1-1h7c0.6,0,1,0.4,1,1S21.6,18,21,18z M21,14h-7
+	c-0.6,0-1-0.4-1-1s0.4-1,1-1h7c0.6,0,1,0.4,1,1S21.6,14,21,14z"
+            />
+          </svg>
+          <div
+            v-show="changelogOpen"
+            ref="changelogpopup"
+            @focusout="closeChangelog"
+            tabindex="0"
+            class="changelog-popup"
+          >
+            <div class="changelog-md">
+              <div>
+                <p v-html="changelog"></p>
+              </div>
+            </div>
+          </div>
+        </li>
         <li>
           <a
             target="_blank"
@@ -50,17 +92,53 @@
 </template>
 
 <script>
-import { call } from "../remote";
+import axios from "axios";
+import marked from "marked";
 
 export default {
   name: "decks",
   computed: {
-    username: () => localStorage.getItem("username")
+    username: () => localStorage.getItem("username"),
+    changelog() {
+      return marked.parse(this.rawChangelog);
+    }
   },
   data() {
-    return {};
+    return {
+      changelogOpen: false,
+      changelogLastClosed: 0,
+      rawChangelog:
+        "Failed to load changelog.. Please refresh the site and try again"
+    };
   },
-  methods: {}
+  created() {
+    axios
+      .get(
+        "https://raw.githubusercontent.com/sindreslungaard/duel-masters/master/CHANGELOG.md"
+      )
+      .then(res => {
+        this.rawChangelog = res.data;
+      });
+  },
+  methods: {
+    toggleChangelog() {
+      if (!this.changelogOpen) {
+        if (this.changelogLastClosed > Date.now() - 300) {
+          return;
+        }
+        this.changelogOpen = true;
+        this.$nextTick(() => {
+          this.$refs.changelogpopup.focus();
+        });
+      } else {
+        this.closeChangelog();
+      }
+    },
+    closeChangelog() {
+      this.changelogOpen = false;
+      this.changelogLastClosed = Date.now();
+    }
+  }
 };
 </script>
 
@@ -244,5 +322,60 @@ a {
 
 .github-icon:hover {
   opacity: 0.9;
+}
+
+.changelog {
+  position: relative;
+}
+
+.changelog-popup {
+  position: absolute;
+  top: 33px;
+  right: 0;
+  width: 400px;
+  height: 500px;
+  background: #222;
+  border-radius: 4px;
+  text-align: left;
+  cursor: default;
+  z-index: 200;
+  outline: none;
+}
+
+.changelog-popup:after {
+  content: "";
+  width: 15px;
+  height: 15px;
+  top: -3px;
+  right: 10px;
+  transform: rotate(45deg);
+  background: #222;
+  position: absolute;
+  z-index: 998;
+}
+
+.changelog-md {
+  font-size: 11px;
+  padding: 0 20px;
+  overflow-y: scroll;
+  height: 500px;
+}
+
+*::-webkit-scrollbar-track {
+  -webkit-box-shadow: inset 0 0 6px #222;
+  box-shadow: inset 0 0 6px #222;
+  background-color: #484c52;
+}
+
+*::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+  background-color: #484c52;
+}
+
+*::-webkit-scrollbar-thumb {
+  -webkit-box-shadow: inset 0 0 6px #222;
+  box-shadow: inset 0 0 6px #222;
+  background-color: #222;
 }
 </style>

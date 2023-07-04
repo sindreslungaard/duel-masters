@@ -2,28 +2,24 @@
   <div class="login-page">
     <div class="form">
       <form @submit.prevent="submit()" class="login-form">
-        <p class="title">Sign in to Shobu.io</p>
-        <input v-model="username" type="text" placeholder="Username" />
-        <input v-model="password" type="password" placeholder="Password" />
-        <button>Sign in</button>
+        <p class="title">Reset password</p>
+        <input v-model="password" type="password" placeholder="New password" />
+        <input
+          v-model="passwordAgain"
+          type="password"
+          placeholder="Password again"
+        />
+        <button>Change password</button>
+        <p v-if="successMsg" class="success">{{ successMsg }}</p>
         <p v-if="errorMsg" class="error">{{ errorMsg }}</p>
         <p class="message">
-          Not registered?
+          Go back to
           <router-link
             :to="{
-              path: '/register',
+              path: '/login',
               query: { redirect_to: $route.query.redirect_to }
             }"
-            >Create an account</router-link
-          >
-        </p>
-        <p class="message">
-          <router-link
-            :to="{
-              path: '/recover-password',
-              query: { redirect_to: $route.query.redirect_to }
-            }"
-            >Reset password</router-link
+            >Sign In</router-link
           >
         </p>
       </form>
@@ -38,42 +34,38 @@ export default {
   name: "login",
   data() {
     return {
-      username: "",
+      code: "",
       password: "",
+      passwordAgain: "",
       errorMsg: "",
+      successMsg: "",
       redirectTo: null
     };
   },
   methods: {
     async submit() {
+      this.errorMsg = "";
+      this.successMsg = "";
+
+      if (this.password !== this.passwordAgain) {
+        this.errorMsg = "The passwords are not matching";
+        return;
+      }
+
       try {
         let res = await call({
-          path: "/auth/signin",
+          path: "/auth/reset",
           method: "POST",
           body: {
-            username: this.username,
+            code: this.code,
             password: this.password
           }
         });
 
-        localStorage.setItem("email", res.data.user.email);
-        localStorage.setItem("username", res.data.user.username);
-        localStorage.setItem("uid", res.data.user.uid);
-        localStorage.setItem("permissions", res.data.user.permissions);
-        localStorage.setItem("token", res.data.token);
-
-        if (this.redirectTo) {
-          this.$router.push(this.redirectTo);
-        } else {
-          this.$router.push("overview");
-        }
+        this.successMsg = res.data.message;
       } catch (e) {
         try {
-          if (e.response.status == 401) {
-            this.errorMsg = "Wrong username or password";
-          } else if (e.response.status == 403) {
-            this.errorMsg = "You have been banned";
-          }
+          this.errorMsg = e.response.data.error;
         } catch (err) {
           this.errorMsg =
             "An unexpected error occured. Please try again later.";
@@ -83,7 +75,7 @@ export default {
   },
   created() {
     console.log(this.$route);
-    this.redirectTo = this.$route.query.redirect_to;
+    this.code = this.$route.params.code;
   }
 };
 </script>
@@ -103,6 +95,12 @@ export default {
 .error {
   font-size: 14px;
   color: red;
+  margin: 0;
+  margin-top: 20px;
+}
+
+.success {
+  font-size: 14px;
   margin: 0;
   margin-top: 20px;
 }
