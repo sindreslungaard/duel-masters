@@ -21,4 +21,7 @@ const (
 	IncreasedCost       = "increased_cost"
 	Evolution           = "evolution"
 	Survivor            = "survivor"
+    SurvivorSummon      = "survivor_summon"
+    SpeedAttacker       = "speed_attacker"
+    ReducedCostLupia    = "reduced_cost_lupia"
 )
