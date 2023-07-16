@@ -805,6 +805,8 @@ export default {
       this.ws.send(
         JSON.stringify({ header: "choose_deck", uid: randomDeck.uid })
       );
+
+      this.warning = `${randomDeck.name} was selected`;
     },
 
     chooseCoinToss(prediction) {
