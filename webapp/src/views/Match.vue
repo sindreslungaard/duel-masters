@@ -469,6 +469,7 @@
       <div class="right-stage">
         <div class="right-stage-content">
           <p>Hand [{{ state.opponent.handCount }}]</p>
+          <p>Mana [{{ state.opponent.manazone.length }}]</p>
           <p>Graveyard [{{ state.opponent.graveyard.length }}]</p>
           <div class="card">
             <img
@@ -511,6 +512,7 @@
       >
         <div class="right-stage-content">
           <p v-if="state.spectator">Hand [{{ state.me.handCount }}]</p>
+          <p>Mana [{{ state.me.manazone.length }}]</p>
           <p>Graveyard [{{ state.me.graveyard.length }}]</p>
           <div class="card">
             <img
