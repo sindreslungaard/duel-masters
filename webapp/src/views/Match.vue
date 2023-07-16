@@ -487,7 +487,7 @@
               "
               v-if="state.opponent.graveyard.length > 0"
               style="height: 10vh"
-              :src="`/assets/cards/all/${state.opponent.graveyard[0].uid}.jpg`"
+              :src="`/assets/cards/all/${state.opponent.graveyard[state.opponent.graveyard.length -1].uid}.jpg`"
             />
           </div>
 
@@ -530,7 +530,7 @@
               "
               v-if="state.me.graveyard.length > 0"
               style="height: 10vh"
-              :src="`/assets/cards/all/${state.me.graveyard[0].uid}.jpg`"
+              :src="`/assets/cards/all/${state.me.graveyard[state.me.graveyard.length - 1].uid}.jpg`"
             />
           </div>
 
