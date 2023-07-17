@@ -107,7 +107,7 @@ func Shtra(c *match.Card) {
 			false,
 		).Map(func(c *match.Card) {
 			c.Player.MoveCard(c.ID, match.MANAZONE, match.HAND)
-			ctx.Match.Chat("Server", fmt.Sprintf("%s was moved to %s's manazone from their hand by Shtra", c.Name, c.Player.Username()))
+			ctx.Match.Chat("Server", fmt.Sprintf("%s was moved to %s's hand from their manazone by Shtra", c.Name, c.Player.Username()))
 		})
 
 	}))

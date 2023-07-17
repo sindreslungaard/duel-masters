@@ -469,6 +469,7 @@
       <div class="right-stage">
         <div class="right-stage-content">
           <p>Hand [{{ state.opponent.handCount }}]</p>
+          <p>Mana [{{ state.opponent.manazone.length }}]</p>
           <p>Graveyard [{{ state.opponent.graveyard.length }}]</p>
           <div class="card">
             <img
@@ -486,7 +487,7 @@
               "
               v-if="state.opponent.graveyard.length > 0"
               style="height: 10vh"
-              :src="`/assets/cards/all/${state.opponent.graveyard[0].uid}.jpg`"
+              :src="`/assets/cards/all/${state.opponent.graveyard[state.opponent.graveyard.length -1].uid}.jpg`"
             />
           </div>
 
@@ -511,6 +512,7 @@
       >
         <div class="right-stage-content">
           <p v-if="state.spectator">Hand [{{ state.me.handCount }}]</p>
+          <p>Mana [{{ state.me.manazone.length }}]</p>
           <p>Graveyard [{{ state.me.graveyard.length }}]</p>
           <div class="card">
             <img
@@ -528,7 +530,7 @@
               "
               v-if="state.me.graveyard.length > 0"
               style="height: 10vh"
-              :src="`/assets/cards/all/${state.me.graveyard[0].uid}.jpg`"
+              :src="`/assets/cards/all/${state.me.graveyard[state.me.graveyard.length - 1].uid}.jpg`"
             />
           </div>
 
@@ -803,6 +805,8 @@ export default {
       this.ws.send(
         JSON.stringify({ header: "choose_deck", uid: randomDeck.uid })
       );
+
+      this.warning = `${randomDeck.name} was selected`;
     },
 
     chooseCoinToss(prediction) {
