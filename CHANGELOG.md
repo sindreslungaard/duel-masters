@@ -1,5 +1,19 @@
 # Changelog
 
+## [Unreleased]
+- New card "Cutthroat Skyterror" (thanks @Zayberex)
+- New card "Cursed Pincher" (thanks @Zayberex)
+- New card "Junkatz, Rabid Doll" (thanks @Zayberex)
+- New card "Lupa, Poison-Tipped Doll" (thanks @Zayberex)
+- New card "Pyrofighter Magnus" (thanks @Zayberex)
+- New card "Bazagazeal Dragon" (thanks @Zayberex)
+- New card "Valiant Warrior Exorious" (thanks @Zayberex)
+- New card "Automated Weaponmaster Machai" (thanks @Zayberex)
+- New card "Mighty Bandit, Ace of Thieves" (thanks @Zayberex)
+- New card "Gigagriff" (thanks @Zayberex)
+- New card "Carrier Shell" (thanks @Zayberex)
+- New card "Slumber Shell" (thanks @Zayberex)
+
 ## 28/06/2023
 
 - Fixed an issue where players sometimes could get more cards during a match than their deck contained
