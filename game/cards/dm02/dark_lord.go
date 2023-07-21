@@ -21,7 +21,7 @@ func GeneralDarkFiend(c *match.Card) {
 
 		shields := fx.Find(
 			card.Player,
-            match.SHIELDZONE,
+			match.SHIELDZONE,
 		)
 
 		if len(shields) < 1 {
