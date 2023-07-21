@@ -67,13 +67,6 @@ func Creature(card *match.Card, ctx *match.Context) {
 						manaCost = 1
 					}
 				}
-                
-                if condition.ID == cnd.ReducedCostLupia {
-					manaCost -= condition.Val.(int)
-					if manaCost < 2 {
-						manaCost = 2
-					}
-				}
 
 				if condition.ID == cnd.IncreasedCost {
 					manaCost += condition.Val.(int)

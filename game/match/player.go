@@ -497,21 +497,12 @@ func (p *Player) CanPlayCard(card *Card, mana []*Card) bool {
 					manaCost = 1
 				}
 			}
-            
+
 			if condition.ID == cnd.IncreasedCost {
 				manaCost += condition.Val.(int)
 			}
-            
+
 		}
-        if condition.ID == cnd.ReducedCostLupia {
-            if condition.ID == cnd.ReducedCostLupia {
-				manaCost -= condition.Val.(int)
-				if manaCost < 2 {
-					manaCost = 2
-				}
-			}
-				
-			}
 	}
 
 	if manaCost > len(untappedMana) {
