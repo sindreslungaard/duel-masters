@@ -395,9 +395,21 @@ var DM05 = map[string]match.CardConstructor{
 }
 
 var DM06 = map[string]match.CardConstructor{
-	"3d32a70c-303d-46f8-862a-f7d5a3cfaafc": dm06.NeonCluster,
 	"00f39646-e15a-47a1-a085-c3522bfa5146": dm06.RaptorFish,
 	"187d4a6c-9b92-4c7c-8507-e1de185bce02": dm06.CrystalJouster,
+	"3d32a70c-303d-46f8-862a-f7d5a3cfaafc": dm06.NeonCluster,
 	"4269337e-5772-4d22-9474-e3068cf21de0": dm06.UltraMantisScourgeOfFate,
 	"a5fa55a7-8ded-4e8b-9b45-f791427cffd8": dm06.CrazeValkyrieTheDrastic,
+	"0277a21a-7456-48f0-84b1-fbe7f5010196": dm06.CutthroatSkyterror,
+	"d92b07a3-5dba-448b-94c6-310a588956cc": dm06.CursedPincher,
+	"9d7de648-c25f-4439-835b-359147cca717": dm06.JunkatzRabidDoll,
+	"42ee6087-94cf-45cc-9e0b-baf73a008d81": dm06.LupaPoisonTippedDoll,
+	"708d2e3a-76dd-40d6-9278-345383b3047a": dm06.PyrofighterMagnus,
+	"f2344e6e-0ee3-4f17-8984-b01025db7e11": dm06.BazagazealDragon,
+	"b42f1258-714b-4051-bd4c-2013e40a4c6b": dm06.ValiantWarriorExorious,
+	"03e90b61-de6b-4512-a656-2832968b694a": dm06.AutomatedWeaponmasterMachai,
+	"1768f54e-5855-45d9-9c6e-306fc2926451": dm06.MightyBanditAceOfThieves,
+	"78d73122-a35c-448e-871f-8bf713d81fb7": dm06.Gigagriff,
+	"a441c54e-8edc-4c70-b9e0-64fe73a468ff": dm06.CarrierShell,
+	"8eca8a5e-f039-4103-b113-5d8c5566a0c0": dm06.SlumberShell,
 }
