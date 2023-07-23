@@ -2,8 +2,10 @@ package db
 
 import (
 	"context"
+	"duel-masters/db/migrations"
 	"fmt"
 	"os"
+	"time"
 
 	"github.com/sirupsen/logrus"
 	"go.mongodb.org/mongo-driver/bson"
@@ -16,6 +18,11 @@ const ConnectionStringEnv = "mongo_uri"
 const DatabaseNameEnv = "mongo_name"
 
 var connection *mongo.Database
+
+func init() {
+	logrus.Info("Migrating DB")
+	migrate()
+}
 
 func connect() {
 	connectionString := os.Getenv(ConnectionStringEnv)
@@ -60,4 +67,38 @@ func GetUserForToken(token string) (User, error) {
 
 	return user, nil
 
+}
+
+func migrate() {
+	type migration struct {
+		key string
+		fn  func(*mongo.Database)
+	}
+
+	migs := []migration{
+		{key: "23_07_2023_update_decks", fn: migrations.Update_Decks_23_07_2023},
+	}
+
+	for _, m := range migs {
+		count, err := Migrations.CountDocuments(context.Background(), bson.M{"key": m.key})
+
+		if err != nil {
+			logrus.Error(err)
+		}
+
+		if count > 0 {
+			continue
+		}
+
+		m.fn(conn())
+
+		_, err = Migrations.InsertOne(context.Background(), &Migration{
+			Key:        m.key,
+			ExecutedAt: int(time.Now().Unix()),
+		})
+
+		if err != nil {
+			logrus.Error(err)
+		}
+	}
 }
