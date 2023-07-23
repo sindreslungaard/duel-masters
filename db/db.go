@@ -2,6 +2,8 @@ package db
 
 import (
 	"context"
+	"fmt"
+	"os"
 
 	"github.com/sirupsen/logrus"
 	"go.mongodb.org/mongo-driver/bson"
@@ -10,10 +12,18 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/readpref"
 )
 
-var conn *mongo.Database
+const ConnectionStringEnv = "mongo_uri"
+const DatabaseNameEnv = "mongo_name"
 
-// Connect connects to the database
-func Connect(connectionString string, dbName string) {
+var connection *mongo.Database
+
+func init() {
+	connectionString := os.Getenv(ConnectionStringEnv)
+	dbName := os.Getenv(DatabaseNameEnv)
+
+	if connectionString == "" || dbName == "" {
+		logrus.Fatal(fmt.Sprintf("Missing %s or %s environment variables", ConnectionStringEnv, DatabaseNameEnv))
+	}
 
 	client, err := mongo.Connect(context.TODO(), options.Client().ApplyURI(connectionString))
 
@@ -27,25 +37,17 @@ func Connect(connectionString string, dbName string) {
 		logrus.Fatal(err)
 	}
 
-	conn = client.Database(dbName)
+	connection = client.Database(dbName)
 
 	logrus.Info("Connected to database")
-
-}
-
-// Collection returns a mongodb collection handle
-func Collection(collectionName string) *mongo.Collection {
-	return conn.Collection(collectionName)
 }
 
 // GetUserForToken returns a user from the authorization header or returns an error
 func GetUserForToken(token string) (User, error) {
 
-	collection := Collection("users")
-
 	var user User
 
-	if err := collection.FindOne(context.TODO(), bson.M{"sessions": bson.M{"$elemMatch": bson.M{"token": token}}}).Decode(&user); err != nil {
+	if err := Users.FindOne(context.TODO(), bson.M{"sessions": bson.M{"$elemMatch": bson.M{"token": token}}}).Decode(&user); err != nil {
 		return User{}, err
 	}
 
