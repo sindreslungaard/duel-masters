@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"duel-masters/api"
+	"duel-masters/db"
 	"duel-masters/game"
 	"duel-masters/game/cards"
 	"duel-masters/game/match"
@@ -64,6 +65,8 @@ func main() {
 		logrus.Infof("Blocked %v networks from using certain API features", iprange.Size())
 
 	}
+
+	db.Migrate()
 
 	go checkForAutoRestart(lobby)
 

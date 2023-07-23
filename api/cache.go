@@ -50,6 +50,8 @@ func CreateCardCache() {
 
 			register = append(register, entry)
 
+			cards.CreateIfNotExists(entry.UID)
+
 		}
 
 	}

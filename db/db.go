@@ -19,11 +19,6 @@ const DatabaseNameEnv = "mongo_name"
 
 var connection *mongo.Database
 
-func init() {
-	logrus.Info("Migrating DB")
-	migrate()
-}
-
 func connect() {
 	connectionString := os.Getenv(ConnectionStringEnv)
 	dbName := os.Getenv(DatabaseNameEnv)
@@ -69,7 +64,9 @@ func GetUserForToken(token string) (User, error) {
 
 }
 
-func migrate() {
+func Migrate() {
+	logrus.Info("Migrating database")
+
 	type migration struct {
 		key string
 		fn  func(*mongo.Database)
