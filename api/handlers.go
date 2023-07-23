@@ -37,11 +37,9 @@ func (api *API) SigninHandler(c *gin.Context) {
 		return
 	}
 
-	collection := db.Collection("users")
-
 	var user db.User
 
-	if err := collection.FindOne(context.TODO(), bson.M{"username": primitive.Regex{Pattern: "^" + reqBody.Username + "$", Options: "i"}}).Decode(&user); err != nil {
+	if err := db.Users.FindOne(context.TODO(), bson.M{"username": primitive.Regex{Pattern: "^" + reqBody.Username + "$", Options: "i"}}).Decode(&user); err != nil {
 		c.Status(401)
 		return
 	}
@@ -52,10 +50,9 @@ func (api *API) SigninHandler(c *gin.Context) {
 	}
 
 	// Check for IP ban
-	bansCollection := db.Collection("bans")
 	ip := c.ClientIP()
 
-	bans, err := bansCollection.CountDocuments(context.Background(), bson.M{
+	bans, err := db.Users.CountDocuments(context.Background(), bson.M{
 		"$or": []bson.M{
 			{"type": db.UserBan, "value": user.UID},
 			{"type": db.IPBan, "value": ip},
@@ -85,7 +82,7 @@ func (api *API) SigninHandler(c *gin.Context) {
 		Expires: int(time.Now().Add(time.Second * 2592000).Unix()),
 	}
 
-	collection.UpdateOne(context.TODO(), bson.M{"uid": user.UID}, bson.M{"$push": bson.M{"sessions": session}})
+	db.Users.UpdateOne(context.TODO(), bson.M{"uid": user.UID}, bson.M{"$push": bson.M{"sessions": session}})
 
 	c.JSON(200, bson.M{"user": user, "token": session.Token})
 
@@ -111,10 +108,9 @@ func (api *API) SignupHandler(c *gin.Context) {
 	}
 
 	// Check for IP ban
-	collection := db.Collection("bans")
 	ip := c.ClientIP()
 
-	bans, err := collection.CountDocuments(context.Background(), bson.M{"type": db.IPBan, "value": ip})
+	bans, err := db.Bans.CountDocuments(context.Background(), bson.M{"type": db.IPBan, "value": ip})
 
 	if err != nil {
 		logrus.Error(err)
@@ -133,14 +129,12 @@ func (api *API) SignupHandler(c *gin.Context) {
 		return
 	}
 
-	collection = db.Collection("users")
-
-	if err := collection.FindOne(context.TODO(), bson.M{"username": primitive.Regex{Pattern: "^" + reqBody.Username + "$", Options: "i"}}).Decode(&db.User{}); err == nil {
+	if err := db.Users.FindOne(context.TODO(), bson.M{"username": primitive.Regex{Pattern: "^" + reqBody.Username + "$", Options: "i"}}).Decode(&db.User{}); err == nil {
 		c.JSON(400, bson.M{"message": "The username is already taken"})
 		return
 	}
 
-	if err := collection.FindOne(context.TODO(), bson.M{"email": primitive.Regex{Pattern: "^" + reqBody.Email + "$", Options: "i"}}).Decode(&db.User{}); err == nil {
+	if err := db.Users.FindOne(context.TODO(), bson.M{"email": primitive.Regex{Pattern: "^" + reqBody.Email + "$", Options: "i"}}).Decode(&db.User{}); err == nil {
 		c.JSON(400, bson.M{"message": "The email is already taken"})
 		return
 	}
@@ -175,7 +169,7 @@ func (api *API) SignupHandler(c *gin.Context) {
 		},
 	}
 
-	_, err = collection.InsertOne(context.TODO(), user)
+	_, err = db.Users.InsertOne(context.TODO(), user)
 
 	if err != nil {
 		c.Status(500)
@@ -293,7 +287,7 @@ func (api *API) GetDeckHandler(c *gin.Context) {
 
 	var deck db.Deck
 
-	err := db.Collection("decks").FindOne(
+	err := db.Decks.FindOne(
 		context.Background(),
 		bson.M{"uid": deckUID, "public": true},
 	).Decode(&deck)
@@ -305,7 +299,7 @@ func (api *API) GetDeckHandler(c *gin.Context) {
 
 	var user db.User
 
-	err = db.Collection("users").FindOne(
+	err = db.Users.FindOne(
 		context.Background(),
 		bson.M{"uid": deck.Owner},
 	).Decode(&user)
@@ -330,9 +324,7 @@ func (api *API) GetDecksHandler(c *gin.Context) {
 		return
 	}
 
-	collection := db.Collection("decks")
-
-	cur, err := collection.Find(context.TODO(), bson.M{
+	cur, err := db.Decks.Find(context.TODO(), bson.M{
 		"owner": user.UID,
 	})
 
@@ -396,13 +388,11 @@ func (api *API) CreateDeckHandler(c *gin.Context) {
 		}
 	}
 
-	collection := db.Collection("decks")
-
 	if len(reqBody.UID) < 1 {
 
 		// New deck
 
-		decksCount, err := collection.CountDocuments(context.TODO(), bson.M{"owner": user.UID})
+		decksCount, err := db.Decks.CountDocuments(context.TODO(), bson.M{"owner": user.UID})
 
 		if err != nil {
 			logrus.Error(err)
@@ -424,7 +414,7 @@ func (api *API) CreateDeckHandler(c *gin.Context) {
 			Cards:    reqBody.Cards,
 		}
 
-		_, err = collection.InsertOne(context.TODO(), deck)
+		_, err = db.Decks.InsertOne(context.TODO(), deck)
 
 		if err != nil {
 			c.Status(500)
@@ -435,7 +425,7 @@ func (api *API) CreateDeckHandler(c *gin.Context) {
 
 		// Edit deck
 
-		_, err := collection.UpdateOne(
+		_, err := db.Decks.UpdateOne(
 			context.TODO(),
 			bson.M{"uid": reqBody.UID, "owner": user.UID},
 			bson.M{"$set": bson.M{"name": reqBody.Name, "public": reqBody.Public, "cards": reqBody.Cards}},
@@ -464,7 +454,7 @@ func (api *API) DeleteDeckHandler(c *gin.Context) {
 
 	deckUID := c.Param("id")
 
-	result, err := db.Collection("decks").DeleteOne(
+	result, err := db.Decks.DeleteOne(
 		context.Background(),
 		bson.M{"uid": deckUID, "owner": user.UID},
 	)
@@ -527,7 +517,7 @@ func (api *API) ChangePasswordHandler(c *gin.Context) {
 		return
 	}
 
-	db.Collection("users").UpdateOne(context.TODO(), bson.M{"uid": user.UID}, bson.M{"$set": bson.M{"password": hash}})
+	db.Users.UpdateOne(context.TODO(), bson.M{"uid": user.UID}, bson.M{"$set": bson.M{"password": hash}})
 
 	c.JSON(200, bson.M{"message": "Successfully changed your password"})
 }
@@ -567,7 +557,7 @@ func (api *API) UpdatePreferencesHandler(c *gin.Context) {
 		return
 	}
 
-	db.Collection("users").UpdateOne(context.Background(), bson.M{
+	db.Users.UpdateOne(context.Background(), bson.M{
 		"uid": user.UID,
 	}, bson.M{"$set": bson.M{
 		"playmat": reqBody.Playmat,
@@ -598,7 +588,7 @@ func (api *API) RecoverPasswordHandler(c *gin.Context) {
 
 	var user db.User
 
-	if err := db.Collection("users").FindOne(context.TODO(), bson.M{"email": primitive.Regex{Pattern: "^" + reqBody.Email + "$", Options: "i"}}).Decode(&user); err != nil {
+	if err := db.Users.FindOne(context.TODO(), bson.M{"email": primitive.Regex{Pattern: "^" + reqBody.Email + "$", Options: "i"}}).Decode(&user); err != nil {
 		logrus.Debug("Attempt at recovering password with email that does not belong to any users ", reqBody.Email)
 		c.JSON(200, bson.M{"message": genericResponse})
 		return
@@ -613,7 +603,7 @@ func (api *API) RecoverPasswordHandler(c *gin.Context) {
 		return
 	}
 
-	db.Collection("users").UpdateOne(context.Background(), bson.M{
+	db.Users.UpdateOne(context.Background(), bson.M{
 		"uid": user.UID,
 	}, bson.M{"$set": bson.M{
 		"recoverycode": code,
@@ -662,7 +652,7 @@ func (api *API) ResetPasswordHandler(c *gin.Context) {
 
 	var user db.User
 
-	if err := db.Collection("users").FindOne(context.TODO(), bson.M{"recoverycode": reqBody.Code}).Decode(&user); err != nil {
+	if err := db.Users.FindOne(context.TODO(), bson.M{"recoverycode": reqBody.Code}).Decode(&user); err != nil {
 		c.JSON(400, bson.M{"error": "Invalid or expired code"})
 		return
 	}
@@ -688,7 +678,7 @@ func (api *API) ResetPasswordHandler(c *gin.Context) {
 		return
 	}
 
-	db.Collection("users").UpdateOne(context.Background(), bson.M{
+	db.Users.UpdateOne(context.Background(), bson.M{
 		"uid": user.UID,
 	}, bson.M{
 		"$set": bson.M{

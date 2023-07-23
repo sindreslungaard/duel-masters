@@ -350,12 +350,12 @@ func (l *Lobby) handleChatCommand(s *server.Socket, command string) {
 
 			var user db.User
 
-			if err := db.Collection("users").FindOne(context.Background(), bson.M{"username": primitive.Regex{Pattern: "^" + parts[1] + "$", Options: "i"}}).Decode(&user); err != nil {
+			if err := db.Users.FindOne(context.Background(), bson.M{"username": primitive.Regex{Pattern: "^" + parts[1] + "$", Options: "i"}}).Decode(&user); err != nil {
 				chat(s, fmt.Sprintf("Could not find the user \"%s\"", parts[1]))
 				return
 			}
 
-			_, err := db.Collection("users").UpdateOne(
+			_, err := db.Users.UpdateOne(
 				context.Background(),
 				bson.M{"uid": user.UID},
 				bson.M{"$set": bson.M{"chat_blocked": true}},
@@ -392,7 +392,7 @@ func (l *Lobby) handleChatCommand(s *server.Socket, command string) {
 
 			var user db.User
 
-			if err := db.Collection("users").FindOne(context.Background(), bson.M{"username": primitive.Regex{Pattern: "^" + parts[1] + "$", Options: "i"}}).Decode(&user); err != nil {
+			if err := db.Users.FindOne(context.Background(), bson.M{"username": primitive.Regex{Pattern: "^" + parts[1] + "$", Options: "i"}}).Decode(&user); err != nil {
 				chat(s, fmt.Sprintf("Could not find the user \"%s\"", parts[1]))
 				return
 			}
@@ -402,10 +402,10 @@ func (l *Lobby) handleChatCommand(s *server.Socket, command string) {
 				Value: user.UID,
 			}
 
-			db.Collection("bans").InsertOne(context.Background(), banEntry)
+			db.Bans.InsertOne(context.Background(), banEntry)
 
 			// clear banned user sessions
-			db.Collection("users").UpdateOne(
+			db.Users.UpdateOne(
 				context.Background(),
 				bson.M{"uid": user.UID},
 				bson.M{"$set": bson.M{"sessions": []db.UserSession{}}},
@@ -430,7 +430,7 @@ func (l *Lobby) handleChatCommand(s *server.Socket, command string) {
 
 			var user db.User
 
-			if err := db.Collection("users").FindOne(context.Background(), bson.M{"username": primitive.Regex{Pattern: "^" + parts[1] + "$", Options: "i"}}).Decode(&user); err != nil {
+			if err := db.Users.FindOne(context.Background(), bson.M{"username": primitive.Regex{Pattern: "^" + parts[1] + "$", Options: "i"}}).Decode(&user); err != nil {
 				chat(s, fmt.Sprintf("Could not find the user \"%s\"", parts[1]))
 				return
 			}
@@ -449,10 +449,10 @@ func (l *Lobby) handleChatCommand(s *server.Socket, command string) {
 				})
 			}
 
-			db.Collection("bans").InsertMany(context.Background(), banEntries)
+			db.Bans.InsertMany(context.Background(), banEntries)
 
 			// clear banned user sessions
-			db.Collection("users").UpdateOne(
+			db.Users.UpdateOne(
 				context.Background(),
 				bson.M{"uid": user.UID},
 				bson.M{"$set": bson.M{"sessions": []db.UserSession{}}},
