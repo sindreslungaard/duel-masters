@@ -12,4 +12,4 @@ type Ban struct {
 	Value string  `json:"value"`
 }
 
-var Bans = connection.Collection("bans")
+var Bans = conn().Collection("bans")

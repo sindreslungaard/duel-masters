@@ -17,7 +17,7 @@ const DatabaseNameEnv = "mongo_name"
 
 var connection *mongo.Database
 
-func init() {
+func connect() {
 	connectionString := os.Getenv(ConnectionStringEnv)
 	dbName := os.Getenv(DatabaseNameEnv)
 
@@ -40,6 +40,13 @@ func init() {
 	connection = client.Database(dbName)
 
 	logrus.Info("Connected to database")
+}
+
+func conn() *mongo.Database {
+	if connection == nil {
+		connect()
+	}
+	return connection
 }
 
 // GetUserForToken returns a user from the authorization header or returns an error

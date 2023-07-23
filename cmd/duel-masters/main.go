@@ -16,8 +16,7 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-func main() {
-
+func init() {
 	err := godotenv.Load()
 	if err != nil {
 		logrus.Warn("Failed to load .env file")
@@ -27,9 +26,9 @@ func main() {
 	logrus.SetLevel(logrus.DebugLevel)
 
 	rand.Seed(time.Now().UnixNano())
+}
 
-	logrus.Info("Starting..")
-
+func main() {
 	for _, set := range cards.Sets {
 		for uid, ctor := range *set {
 			match.AddCard(uid, ctor)

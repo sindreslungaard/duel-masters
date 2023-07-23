@@ -19,4 +19,4 @@ type User struct {
 	Chatblocked bool          `json:"-" bson:"chat_blocked"`
 }
 
-var Users = connection.Collection("users")
+var Users = conn().Collection("users")

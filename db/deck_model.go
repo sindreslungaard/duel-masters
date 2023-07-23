@@ -9,4 +9,4 @@ type Deck struct {
 	Cards    []string `json:"cards"`
 }
 
-var Decks = connection.Collection("decks")
+var Decks = conn().Collection("decks")
