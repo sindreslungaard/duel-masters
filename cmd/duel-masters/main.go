@@ -9,6 +9,7 @@ import (
 
 	"duel-masters/api"
 	"duel-masters/db"
+	"duel-masters/db/migrations"
 	"duel-masters/game"
 	"duel-masters/game/cards"
 	"duel-masters/game/match"
@@ -66,7 +67,7 @@ func main() {
 
 	}
 
-	db.Migrate()
+	migrations.Migrate(db.Connection())
 
 	go checkForAutoRestart(lobby)
 

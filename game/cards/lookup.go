@@ -15,6 +15,9 @@ var lookupMutex sync.RWMutex
 var nextId = 1
 
 func init() {
+	numericLookup = map[int]string{}
+	imageLookup = map[string]int{}
+
 	lookupMutex.Lock()
 	defer lookupMutex.Unlock()
 
