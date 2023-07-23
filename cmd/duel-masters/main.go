@@ -8,17 +8,16 @@ import (
 	"time"
 
 	"duel-masters/api"
-	"duel-masters/db"
 	"duel-masters/game"
 	"duel-masters/game/cards"
 	"duel-masters/game/match"
 
-	"github.com/sirupsen/logrus"
 	"github.com/joho/godotenv"
+	"github.com/sirupsen/logrus"
 )
 
 func main() {
-	
+
 	err := godotenv.Load()
 	if err != nil {
 		logrus.Warn("Failed to load .env file")
@@ -66,8 +65,6 @@ func main() {
 		logrus.Infof("Blocked %v networks from using certain API features", iprange.Size())
 
 	}
-
-	db.Connect(os.Getenv("mongo_uri"), os.Getenv("mongo_name"))
 
 	go checkForAutoRestart(lobby)
 
