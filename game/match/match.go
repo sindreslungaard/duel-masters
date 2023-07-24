@@ -1137,9 +1137,7 @@ func (m *Match) Parse(s *server.Socket, data []byte) {
 			// If both players have joined, prompt them to choose their decks
 			if m.Player1 != nil && m.Player2 != nil {
 
-				collection := db.Collection("decks")
-
-				cur, err := collection.Find(context.TODO(), bson.M{
+				cur, err := db.Decks.Find(context.TODO(), bson.M{
 					"$or": []bson.M{
 						{"owner": m.Player1.Socket.User.UID},
 						{"owner": m.Player2.Socket.User.UID},
@@ -1157,8 +1155,8 @@ func (m *Match) Parse(s *server.Socket, data []byte) {
 				m.Chat("Server", fmt.Sprintf("%s started the game", m.Player1.Username))
 				m.Chat("Server", fmt.Sprintf("%s joined the game", m.Player2.Username))
 
-				player1decks := make([]db.Deck, 0)
-				player2decks := make([]db.Deck, 0)
+				player1decks := make([]db.LegacyDeck, 0)
+				player2decks := make([]db.LegacyDeck, 0)
 
 				for cur.Next(context.TODO()) {
 
@@ -1168,12 +1166,17 @@ func (m *Match) Parse(s *server.Socket, data []byte) {
 						continue
 					}
 
+					legacyDeck, err := ConvertToLegacyDeck(deck)
+					if err != nil {
+						continue
+					}
+
 					if deck.Owner == m.Player1.Socket.User.UID || deck.Standard {
-						player1decks = append(player1decks, deck)
+						player1decks = append(player1decks, legacyDeck)
 					}
 
 					if deck.Owner == m.Player2.Socket.User.UID || deck.Standard {
-						player2decks = append(player2decks, deck)
+						player2decks = append(player2decks, legacyDeck)
 					}
 
 				}
@@ -1441,11 +1444,17 @@ func (m *Match) Parse(s *server.Socket, data []byte) {
 
 			var deck db.Deck
 
-			if err := db.Collection("decks").FindOne(context.TODO(), bson.M{"uid": msg.UID}).Decode(&deck); err != nil {
+			if err := db.Decks.FindOne(context.TODO(), bson.M{"uid": msg.UID}).Decode(&deck); err != nil {
 				return
 			}
 
-			p.Player.CreateDeck(deck.Cards)
+			legacyDeck, err := ConvertToLegacyDeck(deck)
+
+			if err != nil {
+				return
+			}
+
+			p.Player.CreateDeck(legacyDeck.Cards)
 
 			m.Chat("Server", fmt.Sprintf("%s has chosen their deck", s.User.Username))
 

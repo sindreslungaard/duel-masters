@@ -9,16 +9,16 @@ import (
 
 	"duel-masters/api"
 	"duel-masters/db"
+	"duel-masters/db/migrations"
 	"duel-masters/game"
 	"duel-masters/game/cards"
 	"duel-masters/game/match"
 
-	"github.com/sirupsen/logrus"
 	"github.com/joho/godotenv"
+	"github.com/sirupsen/logrus"
 )
 
-func main() {
-	
+func init() {
 	err := godotenv.Load()
 	if err != nil {
 		logrus.Warn("Failed to load .env file")
@@ -28,9 +28,9 @@ func main() {
 	logrus.SetLevel(logrus.DebugLevel)
 
 	rand.Seed(time.Now().UnixNano())
+}
 
-	logrus.Info("Starting..")
-
+func main() {
 	for _, set := range cards.Sets {
 		for uid, ctor := range *set {
 			match.AddCard(uid, ctor)
@@ -67,7 +67,7 @@ func main() {
 
 	}
 
-	db.Connect(os.Getenv("mongo_uri"), os.Getenv("mongo_name"))
+	migrations.Migrate(db.Connection())
 
 	go checkForAutoRestart(lobby)
 
