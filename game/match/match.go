@@ -1155,8 +1155,8 @@ func (m *Match) Parse(s *server.Socket, data []byte) {
 				m.Chat("Server", fmt.Sprintf("%s started the game", m.Player1.Username))
 				m.Chat("Server", fmt.Sprintf("%s joined the game", m.Player2.Username))
 
-				player1decks := make([]db.Deck, 0)
-				player2decks := make([]db.Deck, 0)
+				player1decks := make([]db.LegacyDeck, 0)
+				player2decks := make([]db.LegacyDeck, 0)
 
 				for cur.Next(context.TODO()) {
 
@@ -1166,12 +1166,17 @@ func (m *Match) Parse(s *server.Socket, data []byte) {
 						continue
 					}
 
+					legacyDeck, err := ConvertToLegacyDeck(deck)
+					if err != nil {
+						continue
+					}
+
 					if deck.Owner == m.Player1.Socket.User.UID || deck.Standard {
-						player1decks = append(player1decks, deck)
+						player1decks = append(player1decks, legacyDeck)
 					}
 
 					if deck.Owner == m.Player2.Socket.User.UID || deck.Standard {
-						player2decks = append(player2decks, deck)
+						player2decks = append(player2decks, legacyDeck)
 					}
 
 				}
@@ -1443,7 +1448,13 @@ func (m *Match) Parse(s *server.Socket, data []byte) {
 				return
 			}
 
-			p.Player.CreateDeck(deck.Cards)
+			legacyDeck, err := ConvertToLegacyDeck(deck)
+
+			if err != nil {
+				return
+			}
+
+			p.Player.CreateDeck(legacyDeck.Cards)
 
 			m.Chat("Server", fmt.Sprintf("%s has chosen their deck", s.User.Username))
 

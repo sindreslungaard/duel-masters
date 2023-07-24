@@ -50,7 +50,7 @@ func CreateCardCache() {
 
 			register = append(register, entry)
 
-			cards.CreateIfNotExists(entry.UID)
+			match.CreateIfNotExists(entry.UID)
 
 		}
 

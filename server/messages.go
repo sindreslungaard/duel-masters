@@ -9,8 +9,8 @@ type Message struct {
 
 // DecksMessage lists the users decks
 type DecksMessage struct {
-	Header string    `json:"header"`
-	Decks  []db.Deck `json:"decks"`
+	Header string          `json:"header"`
+	Decks  []db.LegacyDeck `json:"decks"`
 }
 
 // ChatMessage stores information about a chat message

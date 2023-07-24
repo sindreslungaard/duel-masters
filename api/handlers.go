@@ -11,6 +11,7 @@ import (
 
 	"duel-masters/db"
 	"duel-masters/flags"
+	"duel-masters/game/match"
 	"duel-masters/internal"
 	"duel-masters/server"
 
@@ -311,7 +312,13 @@ func (api *API) GetDeckHandler(c *gin.Context) {
 
 	deck.Owner = user.Username
 
-	c.JSON(200, deck)
+	d, err := match.ConvertToLegacyDeck(deck)
+
+	if err != nil {
+		c.Status(404)
+	}
+
+	c.JSON(200, d)
 
 }
 
@@ -350,7 +357,17 @@ func (api *API) GetDecksHandler(c *gin.Context) {
 
 	}
 
-	c.JSON(200, decks)
+	legacyDecks := []db.LegacyDeck{}
+
+	for _, deck := range decks {
+		legacyDeck, err := match.ConvertToLegacyDeck(deck)
+		if err != nil {
+			continue
+		}
+		legacyDecks = append(legacyDecks, legacyDeck)
+	}
+
+	c.JSON(200, legacyDecks)
 
 }
 
@@ -405,7 +422,7 @@ func (api *API) CreateDeckHandler(c *gin.Context) {
 			return
 		}
 
-		deck := db.Deck{
+		deck := db.LegacyDeck{
 			UID:      uuid.New().String(),
 			Owner:    user.UID,
 			Name:     reqBody.Name,
@@ -414,7 +431,7 @@ func (api *API) CreateDeckHandler(c *gin.Context) {
 			Cards:    reqBody.Cards,
 		}
 
-		_, err = db.Decks.InsertOne(context.TODO(), deck)
+		_, err = db.Decks.InsertOne(context.TODO(), match.ConvertFromLegacyDeck(deck))
 
 		if err != nil {
 			c.Status(500)
@@ -425,10 +442,19 @@ func (api *API) CreateDeckHandler(c *gin.Context) {
 
 		// Edit deck
 
+		deck := match.ConvertFromLegacyDeck(db.LegacyDeck{
+			UID:      reqBody.UID,
+			Owner:    user.UID,
+			Name:     reqBody.Name,
+			Public:   reqBody.Public,
+			Standard: false,
+			Cards:    reqBody.Cards,
+		})
+
 		_, err := db.Decks.UpdateOne(
 			context.TODO(),
 			bson.M{"uid": reqBody.UID, "owner": user.UID},
-			bson.M{"$set": bson.M{"name": reqBody.Name, "public": reqBody.Public, "cards": reqBody.Cards}},
+			bson.M{"$set": bson.M{"name": reqBody.Name, "public": reqBody.Public, "cards": deck.Cards}},
 		)
 
 		if err != nil {
