@@ -43,7 +43,7 @@
 
             <br />
 
-            <button type="submit">Change password</button>
+            <button class="btn" type="submit">Change password</button>
 
             <div v-if="passwordError" style="color: red; margin-top: 10px;">
               {{ passwordError }}
@@ -112,7 +112,7 @@
 
             <br />
 
-            <button type="submit">Update preferences</button>
+            <button class="btn" type="submit">Update preferences</button>
 
             <div v-if="preferencesError" style="color: red; margin-top: 10px;">
               {{ preferencesError }}
@@ -248,7 +248,7 @@ export default {
   margin-bottom: 50px;
 
   .area {
-    background: #2b2c31;
+    background: url(/assets/images/overlay_30.png);
     padding: 10px;
     border-radius: 4px;
     margin-top: 10px;
@@ -263,11 +263,12 @@ export default {
   }
 
   input {
+    color: #fff;
     padding: 7px;
     border-radius: 3px;
     border: none;
     outline: none;
-    background: #fff;
+    background: url(/assets/images/overlay_50.png);
   }
 
   button {
@@ -302,5 +303,28 @@ export default {
     font-size: 14px;
     margin-right: 10px;
   }
+}
+
+.btn {
+  outline: none;
+  border: none;
+  display: inline-block;
+  background: #5865F2;
+  color: #e3e3e5;
+  line-height: 20px;
+  padding: 5px 10px;
+  border-radius: 4px;
+  transition: 0.1s;
+  text-align: center !important;
+  user-select: none;
+}
+
+.btn:hover {
+  cursor: pointer;
+  background: #515de2;
+}
+
+.btn:active {
+  background: #4c58d3 !important;
 }
 </style>

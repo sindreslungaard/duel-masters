@@ -97,6 +97,7 @@
                 state.opponent.shieldMap[card.virtualId]
             }}</span>
             <img
+              @contextmenu.prevent="showLarge(card)"
               @dragstart.prevent=""
               @mouseenter="actionSelectMouseEnter($event, card)"
               @mousedown="actionSelect(card)"
@@ -116,6 +117,7 @@
           class="card"
         >
           <img
+            @contextmenu.prevent="showLarge(card)"
             @dragstart.prevent=""
             @mouseenter="actionSelectMouseEnter($event, card)"
             @mousedown="actionSelect(card)"
@@ -1309,7 +1311,7 @@ export default {
 .match-container {
   width: 100%;
   height: 100vh;
-  background-color: #36393f;
+  
   background-size: cover;
   background-repeat: no-repeat;
 }
@@ -1344,7 +1346,7 @@ export default {
   text-align: center;
   border-radius: 4px;
   height: 480px;
-  z-index: 2005;
+  z-index: 3001; // action is 3000
   position: absolute;
   left: calc(50% - 300px / 2);
   top: calc(50vh - 480px / 2);
@@ -1377,9 +1379,11 @@ export default {
 }
 
 .action {
+  border: 1px solid #333;
   max-height: 425px;
   width: 790px;
-  background: #2f3136;
+  border-radius: 4px;
+  background: #111214;
   position: absolute;
   z-index: 3000;
   margin: 0 auto;
@@ -1387,7 +1391,6 @@ export default {
   top: calc(50vh - 300px / 2);
   text-align: center;
   border-radius: 4px;
-  border: 1px solid #666;
   overflow-x: auto;
   padding-bottom: 15px;
   span {
@@ -1403,7 +1406,7 @@ export default {
     margin: 0 7px;
   }
   .action-cards {
-    background: #222428;
+    background: url(/assets/images/overlay_30.png);
     margin: 15px;
     margin-top: 0;
     border-radius: 4px;
@@ -1507,14 +1510,14 @@ export default {
 
 .chatbox {
   height: calc(100vh - 128px - 15px);
-  background: #2f3136;
+  background: url(/assets/images/overlay_30.png);
   margin: 5px;
   border-radius: 4px;
 }
 
 .fullsize-chatbox {
   height: calc(100vh - 15px);
-  background: #2f3136;
+  background: url(/assets/images/overlay_30.png);
   margin: 5px;
   border-radius: 4px;
 }
@@ -1604,7 +1607,7 @@ export default {
   border-radius: 4px;
   margin: 10px;
   width: calc(100% - 40px);
-  background: #484c52;
+  background: url(/assets/images/overlay_30.png);
   padding: 10px;
   color: #ccc;
   &:focus {
@@ -1620,7 +1623,7 @@ export default {
   border-radius: 4px;
   margin: 10px;
   width: calc(100% - 40px);
-  background: #484c52;
+  background: url(/assets/images/overlay_30.png);
   padding: 10px;
   color: #ccc;
   &:focus {
@@ -1632,7 +1635,7 @@ export default {
 }
 
 .actionbox {
-  background: #2f3136;
+  background: url(/assets/images/overlay_30.png);
   height: 30px;
   margin: 5px;
   padding: 10px;
@@ -1645,7 +1648,8 @@ export default {
   left: 0;
   width: 100%;
   height: 100vh;
-  background: #36393f;
+  background: rgb(29,33,42);
+  background: linear-gradient(45deg, rgba(29,33,42,1) 0%, rgba(20,16,21,1) 100%);
   z-index: 10;
   text-align: center;
   padding-top: 10vh;
@@ -1654,8 +1658,7 @@ export default {
 .invite-link {
   padding: 5px;
   padding-left: 10px;
-  background: #2b2e33;
-  border: 1px solid #222428;
+  background: url(/assets/images/overlay_30.png);
   border-radius: 4px;
   display: inline-block;
   color: #e3e3e5;
@@ -1704,7 +1707,7 @@ export default {
 
 .btn {
   display: inline-block;
-  background: #3e66b8;
+  background: #5865F2;
   color: #e3e3e5;
   font-size: 14px;
   line-height: 20px;
@@ -1716,27 +1719,26 @@ export default {
 }
 
 .error p {
-  padding: 5px;
+  padding: 10px 12px;
   border-radius: 4px;
   margin: 0;
   margin-bottom: 10px;
-  background: #2b2e33 !important;
-  border: 1px solid #222428;
+  background: url(/assets/images/overlay_15.png) !important;
 }
 
 .btn:hover {
   cursor: pointer;
-  background: #345eb4;
+  background: #515de2;
 }
 
 .error {
-  border: 1px solid #666;
+  border: 1px solid #333;
   position: absolute;
   top: 0;
   left: 0;
   width: 300px;
   border-radius: 4px;
-  background: #36393f;
+  background: #111214;
   z-index: 3005;
   left: calc(50% - 300px / 2);
   top: 40vh;

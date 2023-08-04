@@ -492,11 +492,11 @@ export default {
   position: absolute;
   top: calc(50vh - 323px / 2);
   left: calc(50% - 250px / 2);
-  background: #36393f;
+  background: #0C0C0F;
+  border: 1px solid #333;
   width: 250px;
   border-radius: 4px;
   color: #fff;
-  border: 1px solid #666;
   z-index: 100;
 }
 
@@ -534,7 +534,7 @@ input,
 textarea,
 select {
   border: none;
-  background: #484c52;
+  background: url(/assets/images/overlay_30.png);
   padding: 10px;
   border-radius: 4px;
   width: 200px;
@@ -550,6 +550,10 @@ input:active,
 textarea:active,
 select:active {
   outline: none;
+}
+
+select option {
+  background: #111;
 }
 
 .wizard select {
@@ -595,7 +599,7 @@ nav > ul > li.no-cursor:hover {
 
 .psa {
   margin: 16px;
-  background: #2b2c31;
+  background: url(/assets/images/overlay_30.png);
   padding: 5px;
   min-height: 20px;
   border-radius: 4px;
@@ -615,7 +619,7 @@ a {
 
 .btn {
   display: inline-block;
-  background: #7289da;
+  background: #5865F2;
   color: #e3e3e5;
   font-size: 14px;
   line-height: 20px;
@@ -628,12 +632,13 @@ a {
 
 .btn:hover {
   cursor: pointer;
-  background: #677bc4;
+  background: #515de2;
 }
 
 .btn:active {
-  background: #5b6eae;
+  background: #4c58d3 !important;
 }
+
 
 main {
   width: 100%;
@@ -644,7 +649,7 @@ main {
 
 .box {
   overflow: auto;
-  background: #2b2c31;
+  background: url(/assets/images/overlay_30.png);
   min-height: 20px;
   border-radius: 4px;
   font-size: 14px;
@@ -692,7 +697,7 @@ main {
 }
 
 .duels tr:nth-child(odd) {
-  background-color: #222429;
+  background: url(/assets/images/overlay_30.png);
 }
 
 .duels .btn {
@@ -709,8 +714,8 @@ main {
 
 .user-category {
   margin-bottom: 16px;
-  border-bottom: 1px solid #555;
-  color: #777;
+  border-bottom: 1px solid #333;
+  color: #555;
   padding-bottom: 5px;
   font-weight: 400;
   text-transform: capitalize;
@@ -728,7 +733,7 @@ main {
   border-radius: 4px;
   margin: 10px;
   width: calc(100% - 40px);
-  background: #484c52;
+  background: url(/assets/images/overlay_30.png);
   padding: 10px;
   color: #ccc;
   &:focus {
@@ -841,8 +846,9 @@ main {
   padding: 3px 5px;
   border-radius: 4px;
   font-size: 12px;
+  text-shadow: 1px 1px #0f2c1f;
+  font-weight: 600;
   text-transform: uppercase;
-  font-weight: 400;
   position: absolute;
   top: -1px;
 }

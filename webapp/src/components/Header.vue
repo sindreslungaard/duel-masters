@@ -263,7 +263,7 @@ nav > ul > li.no-cursor:hover {
 
 .psa {
   margin: 16px;
-  background: #2b2c31;
+  background: url(/assets/images/overlay_30.png);
   padding: 5px;
   min-height: 20px;
   border-radius: 4px;
@@ -334,7 +334,7 @@ a {
   right: 0;
   width: 400px;
   height: 500px;
-  background: #222;
+  background: #0A0A0D;
   border-radius: 4px;
   text-align: left;
   cursor: default;
@@ -349,7 +349,7 @@ a {
   top: -3px;
   right: 10px;
   transform: rotate(45deg);
-  background: #222;
+  background: #0A0A0D;
   position: absolute;
   z-index: 998;
 }

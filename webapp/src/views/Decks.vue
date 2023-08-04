@@ -194,6 +194,7 @@
               src="/assets/images/share_icon.png"
             />
           </a>
+
           <a
             v-if="selectedDeck && selectedDeck.uid"
             @click="deleteDeck(selectedDeckUid)"
@@ -205,10 +206,20 @@
               src="/assets/images/delete_icon.png"
             />
           </a>
-          <div @click="copyDeckList()" class="btn copy-deck-list">
-            Copy Deck List
-          </div>
-          <div @click="newDeck()" class="btn new">New Deck</div>
+
+          <a
+            v-if="selectedDeck && selectedDeck.uid"
+            @click="copyDeckList()"
+            target="_blank"
+          >
+            <img
+              class="fl edit-ico share"
+              width="25px"
+              src="/assets/images/list_icon.png"
+            />
+          </a>
+
+          <div @click="newDeck()" class="btn new font-bold text-xs">NEW DECK</div>
           <template
             v-if="
               selectedDeck && deckCopy && !decksEqual(selectedDeck, deckCopy)
@@ -772,7 +783,6 @@ export default {
 
 .new {
   display: inline-block;
-  margin-right: 15px;
 }
 
 .save {
@@ -786,13 +796,13 @@ export default {
 }
 
 .copy-deck-list {
-  background: #dc758f !important;
+  background: #dcb875 !important;
   display: inline-block;
   margin-right: 15px;
 }
 
 .copy-deck-list:hover {
-  background: #d65c7a !important;
+  background: #d3b06e !important;
 }
 
 .discard {
@@ -869,6 +879,10 @@ select {
   resize: none;
 }
 
+select option {
+  background: #111;
+}
+
 th {
   input,
   select {
@@ -900,14 +914,14 @@ table {
 
 td,
 th {
-  border: 1px solid #4c4c4c;
+  border: 1px solid #1D202A;
   text-align: left;
   padding: 8px;
   cursor: pointer;
 }
 
 .bg {
-  background: #2b2c31;
+  background: url(/assets/images/overlay_30.png);
   border-radius: 4px;
 }
 
@@ -957,11 +971,11 @@ th {
   position: absolute;
   top: calc(50vh - 323px / 2);
   left: calc(50% - 250px / 2);
-  background: #36393f;
   width: 250px;
   border-radius: 4px;
   color: #fff;
-  border: 1px solid #666;
+  background: #0C0C0F;
+  border: 1px solid #333;
   z-index: 5;
 }
 
@@ -999,7 +1013,7 @@ input,
 textarea,
 select {
   border: none;
-  background: #484c52;
+  background: url(/assets/images/overlay_30.png);
   padding: 10px;
   border-radius: 4px;
   width: 200px;
@@ -1023,25 +1037,25 @@ select:active {
 }
 
 .error p {
-  padding: 5px;
+  padding: 10px 12px;
   border-radius: 4px;
   margin: 0;
   margin-bottom: 10px;
-  background: #2b2e33 !important;
-  border: 1px solid #222428;
+  background: url(/assets/images/overlay_30.png) !important;
 }
 
 .error {
-  border: 1px solid #666;
   position: absolute;
   top: 0;
   left: 0;
   width: 300px;
   border-radius: 4px;
-  background: #36393f;
+  background: #0C0C0F;
+  border: 1px solid #333;
   z-index: 1000;
   left: calc(50% - 300px / 2);
-  top: 40vh;
+  top: 50vh;
+  transform:translateY(-50%);
   padding: 10px;
   font-size: 14px;
   color: #ccc;
@@ -1126,9 +1140,8 @@ a {
 
 .btn {
   display: inline-block;
-  background: #7289da;
+  background: #5865F2;
   color: #e3e3e5;
-  font-size: 14px;
   line-height: 20px;
   padding: 5px 10px;
   border-radius: 4px;
@@ -1139,11 +1152,11 @@ a {
 
 .btn:hover {
   cursor: pointer;
-  background: #677bc4;
+  background: #515de2;
 }
 
 .btn:active {
-  background: #5b6eae !important;
+  background: #4c58d3 !important;
 }
 
 .set {

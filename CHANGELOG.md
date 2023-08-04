@@ -1,6 +1,11 @@
 # Changelog
 
 ## [Unreleased]
+- Right clicking cards in "select card" popups during matches will now preview the card
+- Updated the backside card image used in match action/popups to the high quality version
+- Updated the color scheme of the site
+- Moved "Copy deck list" button to the other deck-action icons
+- Updated "Copy deck list" popup to always be centered on the screen
 - Fixed an issue where long lobby chat messages would overflow and create a horizontal scrollbar
 - Increased max decks per user from 50 to 200
 - Refactored database models and decreased the file size of decks on disk
