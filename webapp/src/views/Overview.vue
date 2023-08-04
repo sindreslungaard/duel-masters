@@ -759,6 +759,7 @@ main {
   margin-left: 20px;
   margin-top: 0px;
   margin-bottom: 15px;
+  word-break: break-all;
 }
 
 .user-messages > div {

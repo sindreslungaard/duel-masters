@@ -1,6 +1,7 @@
 # Changelog
 
 ## [Unreleased]
+- Fixed an issue where long lobby chat messages would overflow and create a horizontal scrollbar
 - Increased max decks per user from 50 to 200
 - Refactored database models and decreased the file size of decks on disk
 - New card "Cutthroat Skyterror" (thanks @Zayberex)
