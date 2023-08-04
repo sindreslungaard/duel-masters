@@ -48,6 +48,8 @@ func Update_Decks_23_07_2023(db *mongo.Database) {
 		cardsMap := map[int]int{}
 
 		for _, c := range deck.Cards {
+
+			match.CreateIfNotExists(c)
 			id, ok := match.GetCardID(c)
 
 			if !ok {
