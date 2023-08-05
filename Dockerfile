@@ -1,17 +1,25 @@
+FROM golang:1.18-alpine as build
+
+WORKDIR /tmp/duel-masters
+ENV NODE_OPTIONS=--openssl-legacy-provider
+RUN apk add --update git nodejs npm
+COPY . .
+RUN cd ./webapp \
+    && npm install \
+    && npm run build \
+    && cd ..
+RUN go get -d -v ./... \
+    && go build -o app ./cmd/duel-masters/main.go \
+    && mkdir ./build \
+    && mv ./app ./build/app \
+    && mkdir ./build/webapp \
+    && mv ./webapp/dist ./build/webapp
+
+
 FROM golang:1.18-alpine
 
 WORKDIR /go/src/duel-masters
-COPY . .
-
-ENV NODE_OPTIONS=--openssl-legacy-provider
-
-RUN apk add --update git nodejs npm
-RUN cd ./webapp && npm install && npm run build
-RUN cd ..
-
-RUN go get -d -v ./...
-RUN go install -v ./...
-
+COPY --from=build /tmp/duel-masters/build .
 EXPOSE 80
 
-CMD ["duel-masters"]
+CMD ["./app"]
