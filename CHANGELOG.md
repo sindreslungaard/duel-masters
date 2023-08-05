@@ -1,6 +1,10 @@
 # Changelog
 
 ## [Unreleased]
+
+No unreleased changes
+
+## 05/08/2023
 - Right clicking cards in "select card" popups during matches will now preview the card
 - Updated the backside card image used in match action/popups to the high quality version
 - Updated the color scheme of the site
