@@ -10,12 +10,20 @@ import (
 type CardCollection []*match.Card
 
 // Map iterates through cards in the collection and executes the function on them
-func (c CardCollection) Map(h func(*match.Card)) {
-
+func (c CardCollection) Map(h func(x *match.Card)) CardCollection {
 	for _, card := range c {
 		h(card)
 	}
 
+	return c
+}
+
+func (c CardCollection) Or(h func()) {
+	if len(c) > 0 {
+		return
+	}
+
+	h()
 }
 
 // FindFilter returns a CardCollection matching the filter
