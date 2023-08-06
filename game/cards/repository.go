@@ -393,6 +393,7 @@ var DM05 = map[string]match.CardConstructor{
 	"f66ca3b3-7300-41ef-8319-9de6dfc4e39a": dm05.SinisterGeneralDamudo,
 	"38db41d2-2a6d-4f6e-83e8-265208be45ea": dm05.Gigazoul,
 	"60b50334-f4c9-46dd-aa87-76f4e67cb5f8": dm05.LeQuistTheOracle,
+	"181126d5-0ad8-4033-a9d2-c8ca939f3fac": dm05.SteelTurretCluster,
 }
 
 var DM06 = map[string]match.CardConstructor{
