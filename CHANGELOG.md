@@ -1,6 +1,7 @@
 # Changelog
 
 ## [Unreleased]
+- New card "Gigakail"
 - New card "Steel-Turret Cluster"
 - New card "Le Quist, the Oracle"
 - Fixed an issue where cards would keep their stat changes between turns

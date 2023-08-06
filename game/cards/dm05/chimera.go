@@ -4,10 +4,10 @@ import (
 	"fmt"
 
 	"duel-masters/game/civ"
+	"duel-masters/game/cnd"
 	"duel-masters/game/family"
 	"duel-masters/game/fx"
 	"duel-masters/game/match"
-	"duel-masters/game/cnd"
 )
 
 func Gigazoul(c *match.Card) {
@@ -83,4 +83,17 @@ func Gigazoul(c *match.Card) {
 
 	})
 
+}
+
+func Gigakail(c *match.Card) {
+	c.Name = "Gigakail"
+	c.Power = 4000
+	c.Civ = civ.Darkness
+	c.Family = family.Chimera
+	c.ManaCost = 5
+	c.ManaRequirement = []string{civ.Darkness}
+
+	c.Use(fx.Creature, fx.ConditionalSlayer(func(target *match.Card) bool {
+		return target.Civ == civ.Nature || target.Civ == civ.Light
+	}))
 }
