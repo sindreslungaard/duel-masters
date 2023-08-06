@@ -459,30 +459,37 @@ func Creature(card *match.Card, ctx *match.Context) {
 
 	// When destroyed
 	if event, ok := ctx.Event.(*match.CreatureDestroyed); ok {
-
-		if event.Card == card {
-
-			ctx.ScheduleAfter(func() {
-
-				card.Player.MoveCard(card.ID, match.BATTLEZONE, match.GRAVEYARD)
-
-				// Slayer
-				if card.HasCondition(cnd.Slayer) && event.Context == match.DestroyedInBattle {
-
-					creature, err := ctx.Match.Opponent(card.Player).GetCard(event.Source.ID, match.BATTLEZONE)
-
-					if err == nil {
-
-						ctx.Match.Destroy(creature, card, match.DestroyedBySlayer)
-
-					}
-
-				}
-
-			})
-
+		if event.Card != card {
+			return
 		}
 
+		ctx.ScheduleAfter(func() {
+			card.Player.MoveCard(card.ID, match.BATTLEZONE, match.GRAVEYARD)
+
+			// Slayer
+			if event.Context == match.DestroyedInBattle {
+				for _, condition := range card.Conditions() {
+					if condition.ID != cnd.Slayer {
+						continue
+					}
+
+					creature, err := ctx.Match.Opponent(card.Player).GetCard(event.Source.ID, match.BATTLEZONE)
+					if err != nil {
+						break
+					}
+
+					if f, ok := condition.Val.(SlayerCondition); ok {
+						// conditional slayer
+						if f(creature) {
+							ctx.Match.Destroy(creature, card, match.DestroyedBySlayer)
+						}
+					} else {
+						// regular slayer
+						ctx.Match.Destroy(creature, card, match.DestroyedBySlayer)
+					}
+				}
+			}
+		})
 	}
 
 }
