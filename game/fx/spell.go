@@ -9,6 +9,11 @@ import (
 // Spell has default functionality for spells
 func Spell(card *match.Card, ctx *match.Context) {
 
+	// Clear conditions
+	if _, ok := ctx.Event.(*match.EndOfTurnStep); ok {
+		card.ClearConditions()
+	}
+
 	// Add spell condition to this card
 	if _, ok := ctx.Event.(*match.UntapStep); ok {
 		card.AddCondition(cnd.Spell, nil, card.ID)

@@ -11,6 +11,11 @@ import (
 // Creature has default behaviours for creatures
 func Creature(card *match.Card, ctx *match.Context) {
 
+	// Clear conditions
+	if _, ok := ctx.Event.(*match.EndOfTurnStep); ok {
+		card.ClearConditions()
+	}
+
 	// Untap the card, add creature condition
 	if _, ok := ctx.Event.(*match.UntapStep); ok {
 

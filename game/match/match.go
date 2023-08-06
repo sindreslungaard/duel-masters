@@ -827,23 +827,11 @@ func (m *Match) EndStep() {
 
 // EndOfTurnTriggers ...
 func (m *Match) EndOfTurnTriggers() {
-
 	m.Step = &EndOfTurnStep{}
-
-	if cards, err := m.CurrentPlayer().Player.Container(BATTLEZONE); err == nil {
-		for _, c := range cards {
-			c.ClearConditions()
-		}
-	}
-
 	m.isFirstTurn = false
-
 	ctx := NewContext(m, m.Step)
-
 	m.HandleFx(ctx)
-
 	m.BeginNewTurn()
-
 }
 
 // EndTurn is called when the player attempts to end their turn

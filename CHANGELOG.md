@@ -1,8 +1,7 @@
 # Changelog
 
 ## [Unreleased]
-
-No unreleased changes
+- Fixed an issue where cards would keep their stat changes between turns
 
 ## 05/08/2023
 - Right clicking cards in "select card" popups during matches will now preview the card
