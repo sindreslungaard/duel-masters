@@ -1,6 +1,7 @@
 # Changelog
 
 ## [Unreleased]
+- New card "Gigaling Q"
 - New card "Wisp Howler, Shadow of Tears"
 - New card "Gigakail"
 - New card "Steel-Turret Cluster"
