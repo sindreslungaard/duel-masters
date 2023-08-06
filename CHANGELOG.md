@@ -1,6 +1,7 @@
 # Changelog
 
 ## [Unreleased]
+- New card "Le Quist, the Oracle"
 - Fixed an issue where cards would keep their stat changes between turns
 
 ## 05/08/2023
