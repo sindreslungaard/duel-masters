@@ -194,6 +194,29 @@ func (p *Player) MapContainer(containerName string, fnc func(*Card)) {
 
 }
 
+func (p *Player) Cards() []*Card {
+	cards := []*Card{}
+
+	concat := func(srcs ...[]*Card) {
+		for _, src := range srcs {
+			cards = append(cards, src...)
+		}
+	}
+
+	concat(
+		p.deck,
+		p.hand,
+		p.shieldzone,
+		p.manazone,
+		p.graveyard,
+		p.battlezone,
+		p.spellzone,
+		p.hiddenzone,
+	)
+
+	return cards
+}
+
 // CreateDeck initializes a new deck from a list of card ids
 func (p *Player) CreateDeck(deck []string) {
 
