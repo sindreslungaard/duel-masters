@@ -1,6 +1,7 @@
 # Changelog
 
 ## [Unreleased]
+- New card "Wisp Howler, Shadow of Tears"
 - New card "Gigakail"
 - New card "Steel-Turret Cluster"
 - New card "Le Quist, the Oracle"
