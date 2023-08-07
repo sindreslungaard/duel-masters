@@ -5,7 +5,7 @@
       <img
         v-for="card in cards"
         :key="card"
-        :src="`/assets/cards/all/${card}.jpg`"
+        :src="`https://scans.shobu.io/${card}`"
       />
     </div>
     <Button text="Close" @click="$emit('close')" />
