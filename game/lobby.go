@@ -494,4 +494,5 @@ func (l *Lobby) handleChatCommand(s *server.Socket, command string) {
 // OnSocketClose is called when a socket disconnects
 func (l *Lobby) OnSocketClose(s *server.Socket) {
 	l.subscribers.Remove(s.UID)
+	Matchmaking.SocketClosed(s.UID)
 }

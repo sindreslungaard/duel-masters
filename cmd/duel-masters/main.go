@@ -37,11 +37,10 @@ func main() {
 		}
 	}
 
-	// Setup lobby
 	lobby := game.NewLobby()
 	go lobby.StartTicker()
+	game.Matchmaking.SetBroadcaster(lobby.Broadcast)
 
-	// Setup match system
 	matchSystem := match.NewSystem(lobby.Broadcast)
 	go matchSystem.StartTicker()
 
