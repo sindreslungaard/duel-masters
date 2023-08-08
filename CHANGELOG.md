@@ -3,6 +3,7 @@
 ## [Unreleased]
 
 - Updated the card displayed in the graveyard pile to be the last discarded card instead of the first
+- Fixed an issue where the lobby chat would not scroll all the way down on page load if there were any pinned messages
 
 ## 08/08/2023
 - New card "Gigaling Q"

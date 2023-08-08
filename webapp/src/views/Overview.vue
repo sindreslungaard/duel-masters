@@ -394,6 +394,11 @@ export default {
                 this.pinnedMessages.push({ message });
               }
             }
+            
+            setImmediate(() => {
+              let container = document.getElementById("messages");
+              container.scrollTop = container.scrollHeight;
+            })           
 
             break;
           }
