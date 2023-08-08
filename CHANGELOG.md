@@ -1,6 +1,10 @@
 # Changelog
 
 ## [Unreleased]
+
+No unreleased changes
+
+## 08/08/2023
 - New card "Gigaling Q"
 - New card "Wisp Howler, Shadow of Tears"
 - New card "Gigakail"
