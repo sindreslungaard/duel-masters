@@ -5,7 +5,7 @@
     <span v-if="previewCard">
       <div class="card-preview">
         <img
-          :src="`https://scans.shobu.io/${previewCard.uid}`"
+          :src="`https://scans.shobu.io/${previewCard.uid}.jpg`"
           alt="Full card"
         />
       </div>
