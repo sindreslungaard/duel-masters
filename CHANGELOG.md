@@ -2,6 +2,11 @@
 
 ## [Unreleased]
 
+No unreleased changes
+
+## 09/08/2023
+
+- Fixed an issue where some new cards could not be saved to deck
 - Updated the card displayed in the graveyard pile to be the last discarded card instead of the first
 - Fixed an issue where the lobby chat would not scroll all the way down on page load if there were any pinned messages
 
