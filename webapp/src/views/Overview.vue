@@ -859,7 +859,7 @@ main {
 }
 
 .pinned-messages {
-  background: #202124;
+  background: url(/assets/images/overlay_30.png);
   padding: 10px;
   font-size: 13px;
   color: yellow;
