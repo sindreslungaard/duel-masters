@@ -2,7 +2,7 @@
 
 ## [Unreleased]
 
-No unreleased changes
+- Updated the card displayed in the graveyard pile to be the last discarded card instead of the first
 
 ## 08/08/2023
 - New card "Gigaling Q"
