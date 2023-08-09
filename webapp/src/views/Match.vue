@@ -530,7 +530,7 @@
               "
               v-if="state.me.graveyard.length > 0"
               style="height: 10vh"
-              :src="`https://scans.shobu.io/${state.me.graveyard[state.me.graveyard - 1].uid}.jpg`"
+              :src="`https://scans.shobu.io/${state.me.graveyard[state.me.graveyard.length - 1].uid}.jpg`"
             />
           </div>
 
