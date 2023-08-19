@@ -284,15 +284,6 @@ func (l *Lobby) Parse(s *server.Socket, data []byte) {
 
 	case "leave_match_request":
 		{
-			var msg struct {
-				ID string `json:"id"`
-			}
-
-			if err := json.Unmarshal(data, &msg); err != nil {
-				s.Warn("Error leaving match: invalid input")
-				return
-			}
-
 			Matchmaker.Leave(s)
 		}
 
@@ -308,6 +299,21 @@ func (l *Lobby) Parse(s *server.Socket, data []byte) {
 			}
 
 			Matchmaker.Start(s, msg.ID)
+		}
+
+	case "kick_from_request":
+		{
+			var msg struct {
+				ID       string `json:"id"`
+				PlayerID string `json:"player_id"`
+			}
+
+			if err := json.Unmarshal(data, &msg); err != nil {
+				s.Warn("Error kicking player: invalid input")
+				return
+			}
+
+			Matchmaker.Kick(s, msg.ID, msg.PlayerID)
 		}
 
 	}

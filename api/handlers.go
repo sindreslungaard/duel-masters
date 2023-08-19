@@ -11,6 +11,7 @@ import (
 
 	"duel-masters/db"
 	"duel-masters/flags"
+	"duel-masters/game"
 	"duel-masters/game/match"
 	"duel-masters/internal"
 	"duel-masters/server"
@@ -186,15 +187,6 @@ type matchReqBody struct {
 	Visibility string `json:"visibility" binding:"required"`
 }
 
-var defaultMatchNames = []string{
-	"Kettou Da!",
-	"I challenge you!",
-	"Ikuzo!",
-	"I'm ready!",
-	"Koi!",
-	"Bring it on!",
-}
-
 // MatchHandler handles creation of new mathes
 func (api *API) MatchHandler(c *gin.Context) {
 
@@ -223,7 +215,7 @@ func (api *API) MatchHandler(c *gin.Context) {
 	name := reqBody.Name
 
 	if name == "" {
-		name = defaultMatchNames[rand.Intn(len(defaultMatchNames))]
+		name = game.DefaultMatchNames[rand.Intn(len(game.DefaultMatchNames))]
 	}
 
 	m := api.matchSystem.NewMatch(name, user.UID, visible)

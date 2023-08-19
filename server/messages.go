@@ -145,12 +145,13 @@ type MatchesListMessage struct {
 
 type MatchRequestMessage struct {
 	ID         string `json:"id"`
-	HostID     string `json:"hostid"`
-	HostName   string `json:"hostname"`
-	HostColor  string `json:"hostcolor"`
-	GuestID    string `json:"guestid"`
-	GuestName  string `json:"guestname"`
-	GuestColor string `json:"guestcolor"`
+	Name       string `json:"name"`
+	HostID     string `json:"host_id"`
+	HostName   string `json:"host_name"`
+	HostColor  string `json:"host_color"`
+	GuestID    string `json:"guest_id"`
+	GuestName  string `json:"guest_name"`
+	GuestColor string `json:"guest_color"`
 	Format     string `json:"format"`
 }
 

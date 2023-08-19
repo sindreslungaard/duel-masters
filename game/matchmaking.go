@@ -5,10 +5,20 @@ import (
 	"duel-masters/internal"
 	"duel-masters/server"
 	"fmt"
+	"math/rand"
 	"sync"
 
 	"github.com/sirupsen/logrus"
 )
+
+var DefaultMatchNames = []string{
+	"Kettou Da!",
+	"I challenge you!",
+	"Ikuzo!",
+	"I'm ready!",
+	"Koi!",
+	"Bring it on!",
+}
 
 var Matchmaker = &Matchmaking{
 	requests:    internal.NewConcurrentDictionary[MatchRequest](),
@@ -34,6 +44,7 @@ type MatchRequest struct {
 func (r *MatchRequest) Serialize() server.MatchRequestMessage {
 	msg := server.MatchRequestMessage{
 		ID:        r.ID,
+		Name:      r.Name,
 		HostID:    r.Host.ID,
 		HostName:  r.Host.Username,
 		HostColor: r.Host.Color,
@@ -69,8 +80,22 @@ func (m *Matchmaking) NewRequest(s *server.Socket, name string, format match.For
 	m.Lock()
 	defer m.Unlock()
 
+	if len(name) > 50 {
+		return fmt.Errorf("Please use a shorter name")
+	}
+
+	if name == "" {
+		name = DefaultMatchNames[rand.Intn(len(DefaultMatchNames))]
+	}
+
 	if _, ok := m.requests.Find(s.User.UID); ok {
-		return fmt.Errorf("you already have a duel request open")
+		return fmt.Errorf("You already have a duel request open")
+	}
+
+	for _, r := range m.requests.Iter() {
+		if guest, ok := r.Guest.Unwrap(); ok && guest.ID == s.User.UID {
+			return fmt.Errorf("Please leave the match request you are currently in before creating a new one")
+		}
 	}
 
 	r := &MatchRequest{
@@ -100,18 +125,32 @@ func (m *Matchmaking) Join(s *server.Socket, id string) error {
 	// check if guest is in another request
 	for _, r := range m.requests.Iter() {
 		if guest, ok := r.Guest.Unwrap(); ok && guest.ID == s.User.UID {
-			return fmt.Errorf("you are already requesting to join a duel. Leave the current request and try again")
+			return fmt.Errorf("You are already requesting to join a duel. Leave the current request and try again")
 		}
+	}
+
+	_, ok := m.requests.Find(s.User.UID)
+	if ok {
+		return fmt.Errorf("Please close your open match request before joining someone elses")
 	}
 
 	r, ok := m.requests.Find(id)
 
 	if !ok {
-		return fmt.Errorf("the duel request you attempted to join does not exist")
+		return fmt.Errorf("The duel request you attempted to join does not exist")
+	}
+
+	if r.Host.ID == s.User.UID {
+		return fmt.Errorf("You cannot join your own match")
 	}
 
 	if r.Guest.Some() {
-		return fmt.Errorf("someone has already joined that duel")
+		return fmt.Errorf("Someone has already joined that duel")
+	}
+
+	_, ok = r.BlockedUsers.Find(s.User.UID)
+	if ok {
+		return fmt.Errorf("You have been blocked from joining this match")
 	}
 
 	r.Guest.Set(&MatchUser{
@@ -168,6 +207,11 @@ func (m *Matchmaking) Kick(s *server.Socket, requestId string, toKickId string) 
 		return
 	}
 
+	if r.Host.ID != s.User.UID {
+		s.Warn("Only the host can kick users")
+		return
+	}
+
 	if len(r.BlockedUsers.Iter()) > 25 {
 		s.Warn("You have reached the limit of how many users can be blocked from joining your match")
 		return
@@ -184,11 +228,11 @@ func (m *Matchmaking) Kick(s *server.Socket, requestId string, toKickId string) 
 
 	r.Guest.Clear()
 	guestSocket, ok := server.Sockets.Find(guest.SocketID)
-	if !ok {
+	if ok {
 		guestSocket.Warn("You were kicked from the match")
 	}
 
-	s.Warn(fmt.Sprintf("Successfully kicked %s, they are now blocked from joining again", guest.Username))
+	s.Warn(fmt.Sprintf("Successfully kicked %s. They are now blocked from joining again", guest.Username))
 	m.BroadcastState()
 }
 

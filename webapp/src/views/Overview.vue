@@ -141,9 +141,68 @@
           <div v-if="wsLoading" class="spaced">Loading{{ loadingDots }}</div>
 
           <table>
-            <tr v-if="!wsLoading && matches.length < 1">
+            <!-- Loading -->
+            <tr
+              v-if="
+                !wsLoading && matches.length < 1 && matchRequests.length < 1
+              "
+            >
               <td>No matches to show, click the button above to create one.</td>
             </tr>
+
+            <!-- Match requests -->
+            <tr v-for="(request, index) in matchRequests" :key="index">
+              <td style="width: 30%">
+                <div class="match-players">
+                  <Username :color="request.host_color">{{
+                    request.host_name
+                  }}</Username>
+                  <div v-show="request.guest_id">vs</div>
+                  <Username
+                    v-show="request.guest_id"
+                    :color="request.guest_color"
+                    >{{ request.guest_name }}</Username
+                  >
+                  <span v-show="request.host_id == uid && request.guest_id" @click="kickPlayer(request)" style="color: #f36a6a; text-decoration: underline dotted; cursor: pointer; font-weight: bold">remove</span>
+                </div>
+              </td>
+              <td style="width: 50%">{{ request.name }}</td>
+              <td style="width: 20%">
+                <div
+                  @click="leaveMatch(request)"
+                  v-show="request.host_id == uid && !request.guest_id"
+                  class="btn"
+                >
+                  Close
+                </div>
+
+                <div
+                  @click="startMatch(request)"
+                  v-show="request.host_id == uid && request.guest_id"
+                  class="btn"
+                >
+                  Start
+                </div>
+
+                <div
+                  @click="leaveMatch(request)"
+                  v-show="request.guest_id == uid"
+                  class="btn"
+                >
+                  Leave
+                </div>
+
+                <div
+                  @click="joinMatch(request)"
+                  v-show="request.host_id != uid && !request.guest_id"
+                  class="btn"
+                >
+                  Join match
+                </div>
+              </td>
+            </tr>
+
+            <!-- Matches -->
             <tr v-for="(match, index) in matches" :key="index">
               <td>
                 <div class="match-players">
@@ -195,6 +254,7 @@ export default {
     Username
   },
   computed: {
+    uid: () => localStorage.getItem("uid"),
     username: () => localStorage.getItem("username")
   },
   data() {
@@ -212,11 +272,12 @@ export default {
       pinnedMessages: [], // { message, time }
       users: [],
       matches: [],
+      matchRequests: [],
       errorMessage: "",
       warning: "",
       wsLoading: true,
       loadingDots: ".",
-      settings: getSettings()
+      settings: getSettings(),
     };
   },
   methods: {
@@ -251,29 +312,46 @@ export default {
       this.createDuel();
     },
     async createDuel() {
-      if (this.wizard.length > 30) {
+      if (this.wizard.name != "" && this.wizard.name.length > 30) {
         this.wizardError = "Duel name cannot exceed 30 characters";
         return;
       }
 
-      try {
-        let res = await call({
-          path: "/match",
-          method: "POST",
-          body: this.wizard
-        });
-
-        this.$router.push({ path: "/duel/" + res.data.id });
-      } catch (e) {
+      if (this.wizard.visibility == "private") {
         try {
-          console.log(e);
-          this.wizardError = e.response.data.message;
-        } catch (err) {
-          console.log(err);
-          this.wizardError =
-            "Unable to communicate with the server. Please try again later.";
+          let res = await call({
+            path: "/match",
+            method: "POST",
+            body: this.wizard
+          });
+
+          this.$router.push({ path: "/duel/" + res.data.id });
+        } catch (e) {
+          try {
+            console.log(e);
+            this.wizardError = e.response.data.message;
+          } catch (err) {
+            console.log(err);
+            this.wizardError =
+              "Unable to communicate with the server. Please try again later.";
+          }
         }
+
+        return;
       }
+
+      this.ws.send(
+        JSON.stringify({
+          header: "create_match_request",
+          name: this.wizard.name
+        })
+      );
+      this.wizardVisible = false;
+      this.wizard = {
+        name: "",
+        description: "",
+        visibility: "public"
+      };
     },
     sendChat(message) {
       if (!message) {
@@ -310,6 +388,24 @@ export default {
         let container = document.getElementById("messages");
         container.scrollTop = container.scrollHeight;
       });
+    },
+
+    leaveMatch(request) {
+      this.ws.send(JSON.stringify({ header: "leave_match_request" }));
+    },
+
+    joinMatch(request) {
+      this.ws.send(
+        JSON.stringify({ header: "join_match_request", id: request.id })
+      );
+    },
+
+    startMatch(request) {
+      this.ws.send(JSON.stringify({ header: "start_match", id: request.id }));
+    },
+
+    kickPlayer(request) {
+      this.ws.send(JSON.stringify({ header: "kick_from_request", id: request.id, player_id: request.guest_id }));
     }
   },
   created() {
@@ -394,11 +490,11 @@ export default {
                 this.pinnedMessages.push({ message });
               }
             }
-            
+
             setImmediate(() => {
               let container = document.getElementById("messages");
               container.scrollTop = container.scrollHeight;
-            })           
+            });
 
             break;
           }
@@ -446,6 +542,21 @@ export default {
 
           case "matches": {
             this.matches = data.matches;
+            break;
+          }
+
+          case "match_requests": {
+            this.matchRequests = data.requests;
+            break;
+          }
+
+          case "warn": {
+            this.warning = data.message;
+            break;
+          }
+
+          case "match_forward": {
+            this.$router.push({ path: "/duel/" + data.id });
             break;
           }
         }
@@ -497,7 +608,7 @@ export default {
   position: absolute;
   top: calc(50vh - 323px / 2);
   left: calc(50% - 250px / 2);
-  background: #0C0C0F;
+  background: #0c0c0f;
   border: 1px solid #333;
   width: 250px;
   border-radius: 4px;
@@ -624,7 +735,7 @@ a {
 
 .btn {
   display: inline-block;
-  background: #5865F2;
+  background: #5865f2;
   color: #e3e3e5;
   font-size: 14px;
   line-height: 20px;
@@ -643,7 +754,6 @@ a {
 .btn:active {
   background: #4c58d3 !important;
 }
-
 
 main {
   width: 100%;
@@ -875,5 +985,19 @@ main {
   color: #999;
   text-shadow: none;
   opacity: 0.5;
+}
+
+.kick-btn {
+  text-decoration-style: dotted;
+  color: white;
+  border-radius: 4px;
+  padding: 2px 6px;
+  background: rgb(243, 106, 106);
+  text-shadow: 1px 1px #0f2c1f;
+}
+
+.kick-btn:hover {
+  cursor: pointer;
+  background: #e64343;
 }
 </style>
