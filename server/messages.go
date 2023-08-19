@@ -143,6 +143,27 @@ type MatchesListMessage struct {
 	Matches []MatchMessage `json:"matches"`
 }
 
+type MatchRequestMessage struct {
+	ID         string `json:"id"`
+	HostID     string `json:"hostid"`
+	HostName   string `json:"hostname"`
+	HostColor  string `json:"hostcolor"`
+	GuestID    string `json:"guestid"`
+	GuestName  string `json:"guestname"`
+	GuestColor string `json:"guestcolor"`
+	Format     string `json:"format"`
+}
+
+type MatchReuestsListMessage struct {
+	Header   string                `json:"header"`
+	Requests []MatchRequestMessage `json:"requests"`
+}
+
+type MatchForwardMessage struct {
+	Header string `json:"header"`
+	ID     string `json:"id"`
+}
+
 // ShowCardsMessage is used to show the user n cards without an action to perform
 type ShowCardsMessage struct {
 	Header  string   `json:"header"`

@@ -243,3 +243,10 @@ func GetUserList() UserListMessage {
 	}
 
 }
+
+func (s *Socket) Warn(msg string) {
+	s.Send(WarningMessage{
+		Header:  "warn",
+		Message: msg,
+	})
+}

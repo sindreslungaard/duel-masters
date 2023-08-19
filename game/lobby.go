@@ -190,7 +190,8 @@ func (l *Lobby) Parse(s *server.Socket, data []byte) {
 			s.Send(l.userCache)
 
 			// Send match list
-			l.Broadcast(match.MatchList(l.matches()))
+			s.Send(match.MatchList(l.matches()))
+			s.Send(Matchmaker.Serialize())
 
 		}
 
@@ -243,6 +244,70 @@ func (l *Lobby) Parse(s *server.Socket, data []byte) {
 				l.Broadcast(toBroadcast)
 			}
 
+		}
+
+	case "create_match_request":
+		{
+			var msg struct {
+				Name string `json:"name"`
+			}
+
+			if err := json.Unmarshal(data, &msg); err != nil {
+				s.Warn("Error creating match request: invalid input")
+				return
+			}
+
+			err := Matchmaker.NewRequest(s, msg.Name, match.RegularFormat)
+
+			if err != nil {
+				s.Warn(err.Error())
+			}
+		}
+
+	case "join_match_request":
+		{
+			var msg struct {
+				ID string `json:"id"`
+			}
+
+			if err := json.Unmarshal(data, &msg); err != nil {
+				s.Warn("Error joining match: invalid input")
+				return
+			}
+
+			err := Matchmaker.Join(s, msg.ID)
+
+			if err != nil {
+				s.Warn(err.Error())
+			}
+		}
+
+	case "leave_match_request":
+		{
+			var msg struct {
+				ID string `json:"id"`
+			}
+
+			if err := json.Unmarshal(data, &msg); err != nil {
+				s.Warn("Error leaving match: invalid input")
+				return
+			}
+
+			Matchmaker.Leave(s)
+		}
+
+	case "start_match":
+		{
+			var msg struct {
+				ID string `json:"id"`
+			}
+
+			if err := json.Unmarshal(data, &msg); err != nil {
+				s.Warn("Error starting match: invalid input")
+				return
+			}
+
+			Matchmaker.Start(s, msg.ID)
 		}
 
 	}
@@ -494,5 +559,5 @@ func (l *Lobby) handleChatCommand(s *server.Socket, command string) {
 // OnSocketClose is called when a socket disconnects
 func (l *Lobby) OnSocketClose(s *server.Socket) {
 	l.subscribers.Remove(s.UID)
-	Matchmaking.SocketClosed(s.UID)
+	Matchmaker.Leave(s)
 }

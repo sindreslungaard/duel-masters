@@ -39,10 +39,11 @@ func main() {
 
 	lobby := game.NewLobby()
 	go lobby.StartTicker()
-	game.Matchmaking.SetBroadcaster(lobby.Broadcast)
 
 	matchSystem := match.NewSystem(lobby.Broadcast)
 	go matchSystem.StartTicker()
+
+	game.Matchmaker.Initialize(lobby.Broadcast, matchSystem)
 
 	lobby.SetMatchesFunc(func() []*match.Match { return matchSystem.Matches.Iter() })
 

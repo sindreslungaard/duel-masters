@@ -1,5 +1,4 @@
 .env
 test.go
-__debug_bin
-__debug_bin.exe
+__debug_*
 node_modules
