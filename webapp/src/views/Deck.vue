@@ -7,7 +7,7 @@
       <div class="deck-container">
         <div v-for="(card, index) in cards" :key="index" class="deck-card">
           <p>x{{ card.count }}</p>
-          <img :src="`/assets/cards/all/${card.uid}.jpg`" />
+          <img :src="`https://scans.shobu.io/${card.uid}.jpg`" />
         </div>
       </div>
       <div class="button-container" v-if="isUserAuthenticated()">

@@ -52,7 +52,7 @@
     </div>
 
     <div v-if="previewCard" class="card-preview">
-      <img :src="`/assets/cards/all/${previewCard.uid}.jpg`" />
+      <img :src="`https://scans.shobu.io/${previewCard.uid}.jpg`" />
       <div @click="dismissLarge()" class="btn">Close</div>
     </div>
 
@@ -65,7 +65,7 @@
         "
         v-for="(card, index) in previewCards"
         :key="index"
-        :src="`/assets/cards/all/${card.uid}.jpg`"
+        :src="`https://scans.shobu.io/${card.uid}.jpg`"
       />
       <br /><br />
       <div @click="dismissLarge()" class="btn">
@@ -105,7 +105,7 @@
                 'no-drag',
                 actionSelects.includes(card) ? 'glow-' + card.civilization : ''
               ]"
-              :src="`/assets/cards/all/${card.uid}.jpg`"
+              :src="`https://scans.shobu.io/${card.uid}.jpg`"
             />
           </div>
         </div>
@@ -125,7 +125,7 @@
               'no-drag',
               actionSelects.includes(card) ? 'glow-' + card.civilization : ''
             ]"
-            :src="`/assets/cards/all/${card.uid}.jpg`"
+            :src="`https://scans.shobu.io/${card.uid}.jpg`"
           />
         </div>
         <p v-if="actionObject[actionDrowdownSelection].length < 1">
@@ -406,7 +406,7 @@
       <div class="stage opponent">
         <div class="manazone">
           <div class="card mana placeholder">
-            <img src="/assets/cards/backside.png" />
+            <img src="https://scans.shobu.io/backside.jpg" />
           </div>
           <div
             @contextmenu.prevent="showLarge(card)"
@@ -414,7 +414,7 @@
             :key="index"
             :class="['card', 'mana', { tapped: hasFlag(card, TAPPED_FLAG) }]"
           >
-            <img :src="`/assets/cards/all/${card.uid}.jpg`" />
+            <img :src="`https://scans.shobu.io/${card.uid}.jpg`" />
           </div>
         </div>
 
@@ -426,7 +426,7 @@
           ref="opponentshieldzone"
         >
           <div class="card shield placeholder">
-            <img src="/assets/cards/backside.png" />
+            <img src="https://scans.shobu.io/backside.jpg" />
           </div>
           <div
             v-for="(card, index) in state.opponent.shieldzone"
@@ -439,7 +439,7 @@
               <span :class="!settings.noUpsideDownCards ? ' flipped' : ''">{{
                 state.opponent.shieldMap[card]
               }}</span>
-              <img src="/assets/cards/backside.png" />
+              <img src="https://scans.shobu.io/backside.jpg" />
             </div>
           </div>
         </div>
@@ -452,7 +452,7 @@
           ref="opponentsplayzone"
         >
           <div class="card placeholder">
-            <img src="/assets/cards/backside.png" />
+            <img src="https://scans.shobu.io/backside.jpg" />
           </div>
           <div
             @contextmenu.prevent="showLarge(card)"
@@ -462,7 +462,7 @@
           >
             <img
               :class="!settings.noUpsideDownCards ? 'flipped' : ''"
-              :src="`/assets/cards/all/${card.uid}.jpg`"
+              :src="`https://scans.shobu.io/${card.uid}.jpg`"
             />
           </div>
         </div>
@@ -477,7 +477,7 @@
               @contextmenu.prevent=""
               v-if="state.opponent.graveyard.length < 1"
               style="height: 10vh; opacity: 0.3"
-              src="/assets/cards/backside.png"
+              src="https://scans.shobu.io/backside.jpg"
             />
             <img
               @contextmenu.prevent="
@@ -488,7 +488,7 @@
               "
               v-if="state.opponent.graveyard.length > 0"
               style="height: 10vh"
-              :src="`/assets/cards/all/${state.opponent.graveyard[0].uid}.jpg`"
+              :src="`https://scans.shobu.io/${state.opponent.graveyard[state.opponent.graveyard.length - 1].uid}.jpg`"
             />
           </div>
 
@@ -497,7 +497,7 @@
             <img
               @contextmenu.prevent=""
               style="height: 10vh"
-              src="/assets/cards/backside.png"
+              src="https://scans.shobu.io/backside.jpg"
             />
           </div>
         </div>
@@ -519,7 +519,7 @@
               @contextmenu.prevent=""
               v-if="state.me.graveyard.length < 1"
               style="height: 10vh; opacity: 0.3"
-              src="/assets/cards/backside.png"
+              src="https://scans.shobu.io/backside.jpg"
             />
             <img
               @contextmenu.prevent="
@@ -530,7 +530,7 @@
               "
               v-if="state.me.graveyard.length > 0"
               style="height: 10vh"
-              :src="`/assets/cards/all/${state.me.graveyard[0].uid}.jpg`"
+              :src="`https://scans.shobu.io/${state.me.graveyard[state.me.graveyard.length - 1].uid}.jpg`"
             />
           </div>
 
@@ -539,7 +539,7 @@
             <img
               @contextmenu.prevent=""
               style="height: 10vh"
-              src="/assets/cards/backside.png"
+              src="https://scans.shobu.io/backside.jpg"
             />
           </div>
         </div>
@@ -561,7 +561,7 @@
           class="playzone"
         >
           <div class="card placeholder">
-            <img src="/assets/cards/backside.png" />
+            <img src="https://scans.shobu.io/backside.jpg" />
           </div>
           <div
             @click="onPlayzoneClicked(card)"
@@ -577,14 +577,14 @@
               :class="
                 playzoneSelection === card ? 'glow-' + card.civilization : ''
               "
-              :src="`/assets/cards/all/${card.uid}.jpg`"
+              :src="`https://scans.shobu.io/${card.uid}.jpg`"
             />
           </div>
         </div>
 
         <div class="shieldzone">
           <div class="card shield placeholder">
-            <img src="/assets/cards/backside.png" />
+            <img src="https://scans.shobu.io/backside.jpg" />
           </div>
           <div
             v-for="(card, index) in state.me.shieldzone"
@@ -593,7 +593,7 @@
           >
             <div class="shield-number">
               <span>{{ state.me.shieldMap[card] }}</span>
-              <img src="/assets/cards/backside.png" />
+              <img src="https://scans.shobu.io/backside.jpg" />
             </div>
           </div>
         </div>
@@ -606,7 +606,7 @@
           class="manazone"
         >
           <div class="card mana placeholder">
-            <img src="/assets/cards/backside.png" />
+            <img src="https://scans.shobu.io/backside.jpg" />
           </div>
           <div
             @contextmenu.prevent="showLarge(card)"
@@ -616,7 +616,7 @@
           >
             <img
               :class="!settings.noUpsideDownCards ? 'flipped' : ''"
-              :src="`/assets/cards/all/${card.uid}.jpg`"
+              :src="`https://scans.shobu.io/${card.uid}.jpg`"
             />
           </div>
         </div>
@@ -643,7 +643,7 @@
         </div>
 
         <div class="card placeholder">
-          <img src="/assets/cards/backside.png" />
+          <img src="https://scans.shobu.io/backside.jpg" />
         </div>
         <div
           @contextmenu.prevent="showLarge(card)"
@@ -657,7 +657,7 @@
             @dragstart="startDrag($event, card, 'hand')"
             @dragend="stopDrag('hand')"
             :class="[handSelection === card ? 'glow-' + card.civilization : '']"
-            :src="`/assets/cards/all/${card.uid}.jpg`"
+            :src="`https://scans.shobu.io/${card.uid}.jpg`"
           />
         </div>
       </div>

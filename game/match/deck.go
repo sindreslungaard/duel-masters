@@ -65,8 +65,8 @@ func GetCardID(image string) (int, bool) {
 }
 
 func CreateIfNotExists(image string) {
-	lookupMutex.RLock()
-	defer lookupMutex.RUnlock()
+	lookupMutex.Lock()
+	defer lookupMutex.Unlock()
 
 	_, ok := imageLookup[image]
 
@@ -82,6 +82,9 @@ func CreateIfNotExists(image string) {
 	if err != nil {
 		logrus.Fatal(err)
 	}
+
+	imageLookup[image] = nextId
+	numericLookup[nextId] = image
 
 	nextId = nextId + 1
 }

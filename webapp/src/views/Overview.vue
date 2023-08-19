@@ -394,6 +394,11 @@ export default {
                 this.pinnedMessages.push({ message });
               }
             }
+            
+            setImmediate(() => {
+              let container = document.getElementById("messages");
+              container.scrollTop = container.scrollHeight;
+            })           
 
             break;
           }
@@ -859,7 +864,7 @@ main {
 }
 
 .pinned-messages {
-  background: #202124;
+  background: url(/assets/images/overlay_30.png);
   padding: 10px;
   font-size: 13px;
   color: yellow;
