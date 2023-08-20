@@ -163,15 +163,26 @@
                     :color="request.guest_color"
                     >{{ request.guest_name }}</Username
                   >
-                  <span v-show="request.host_id == uid && request.guest_id" @click="kickPlayer(request)" style="color: #f36a6a; text-decoration: underline dotted; cursor: pointer; font-weight: bold">remove</span>
+                  <span
+                    v-show="request.host_id == uid && request.guest_id"
+                    @click="kickPlayer(request)"
+                    style="color: #f36a6a; text-decoration: underline dotted; cursor: pointer; font-weight: bold"
+                    >remove</span
+                  >
                 </div>
               </td>
-              <td style="width: 50%">{{ request.name }}</td>
+              <td style="width: 50%">
+                {{
+                  request.guest_id == uid
+                    ? "Waiting for the host to start the match" + loadingDots
+                    : request.name
+                }}
+              </td>
               <td style="width: 20%">
                 <div
                   @click="leaveMatch(request)"
                   v-show="request.host_id == uid && !request.guest_id"
-                  class="btn"
+                  class="btn-colorless bg-red-500 hover:bg-red-600 cursor-pointer"
                 >
                   Close
                 </div>
@@ -179,7 +190,7 @@
                 <div
                   @click="startMatch(request)"
                   v-show="request.host_id == uid && request.guest_id"
-                  class="btn"
+                  class="btn save"
                 >
                   Start
                 </div>
@@ -187,7 +198,7 @@
                 <div
                   @click="leaveMatch(request)"
                   v-show="request.guest_id == uid"
-                  class="btn"
+                  class="btn-colorless bg-red-500 hover:bg-red-600 cursor-pointer"
                 >
                   Leave
                 </div>
@@ -195,9 +206,22 @@
                 <div
                   @click="joinMatch(request)"
                   v-show="request.host_id != uid && !request.guest_id"
-                  class="btn"
+                  class="btn save"
                 >
                   Join match
+                </div>
+
+                <div
+                  v-show="
+                    request.guest_id != '' &&
+                      request.host_id != uid &&
+                      request.guest_id != uid
+                  "
+                  class="float-right opacity-50"
+                >
+                  <div style="width: 120px; padding-top: 8px; padding-bottom: 7px;">
+                    Waiting to start{{ loadingDots }}
+                  </div>
                 </div>
               </td>
             </tr>
@@ -247,6 +271,25 @@ const send = (client, message) => {
   client.send(JSON.stringify(message));
 };
 
+function sound(src) {
+  this.sound = document.createElement("audio");
+  this.sound.src = src;
+  this.sound.setAttribute("preload", "auto");
+  this.sound.setAttribute("controls", "none");
+  this.sound.style.display = "none";
+  this.sound.volume = 0.3;
+  document.body.appendChild(this.sound);
+  this.play = function() {
+    this.sound.play();
+  };
+  this.stop = function() {
+    this.sound.pause();
+  };
+}
+
+let requestAcceptedSound = new sound("/assets/request_accepted.wav");
+let playerLeftSound = new sound("/assets/player_left.wav");
+
 export default {
   name: "overview",
   components: {
@@ -277,7 +320,7 @@ export default {
       warning: "",
       wsLoading: true,
       loadingDots: ".",
-      settings: getSettings(),
+      settings: getSettings()
     };
   },
   methods: {
@@ -405,7 +448,13 @@ export default {
     },
 
     kickPlayer(request) {
-      this.ws.send(JSON.stringify({ header: "kick_from_request", id: request.id, player_id: request.guest_id }));
+      this.ws.send(
+        JSON.stringify({
+          header: "kick_from_request",
+          id: request.id,
+          player_id: request.guest_id
+        })
+      );
     }
   },
   created() {
@@ -557,6 +606,18 @@ export default {
 
           case "match_forward": {
             this.$router.push({ path: "/duel/" + data.id });
+            break;
+          }
+
+          case "play_sound": {
+            switch (data.sound) {
+              case "request_accepted":
+                requestAcceptedSound.play();
+                break;
+              case "player_left":
+                playerLeftSound.play();
+                break;
+            }
             break;
           }
         }
@@ -755,6 +816,22 @@ a {
   background: #4c58d3 !important;
 }
 
+.btn-colorless {
+  display: inline-block;
+  color: #e3e3e5;
+  font-size: 14px;
+  line-height: 20px;
+  padding: 5px 10px;
+  border-radius: 4px;
+  transition: 0.1s;
+  text-align: center !important;
+  user-select: none;
+}
+
+.btn-colorless:hover {
+  cursor: pointer;
+}
+
 main {
   width: 100%;
   height: 100vh;
@@ -819,6 +896,10 @@ main {
   float: right;
 }
 
+.duels .btn-colorless {
+  float: right;
+}
+
 .save {
   background: #3ca374 !important;
 }
@@ -864,6 +945,10 @@ main {
 }
 
 .duels .btn {
+  width: 70px;
+}
+
+.duels .btn-colorless {
   width: 70px;
 }
 

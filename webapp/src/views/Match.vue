@@ -147,7 +147,8 @@
           loadingDots
         }}</span>
       </h1>
-      <div :class="['invite-link', { copied: inviteCopied }]">
+      <p v-if="matchmaking" class="text-gray-500">This should not take longer than 10 seconds. If it does, feel free to go back to the lobby as there most likely was a problem with your opponent's connection</p>
+      <div v-if="!matchmaking" :class="['invite-link', { copied: inviteCopied }]">
         <span id="invitelink">{{ invite }}</span>
         <div
           data-clipboard-action="copy"
@@ -724,6 +725,7 @@ export default {
       chatMessages: [], // { sender, message, color }
       chatMessage: "",
 
+      matchmaking: false,
       started: false,
 
       opponent: "",
@@ -1062,10 +1064,12 @@ export default {
 
       // make sure the match actually exists
       try {
-        await call({
+        let res = await call({
           path: `/match/${this.$route.params.id}`,
           method: "GET"
         });
+
+        this.matchmaking = !res.data.matchmaking
       } catch (err) {
         if (err.response && err.response.status == 404) {
           this.errorMessage = "This duel has been closed";

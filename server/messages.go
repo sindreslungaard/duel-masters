@@ -128,13 +128,14 @@ type UserListMessage struct {
 
 // MatchMessage holds information about a match
 type MatchMessage struct {
-	ID      string `json:"id"`
-	P1      string `json:"p1"`
-	P1color string `json:"p1color"`
-	P2      string `json:"p2"`
-	P2color string `json:"p2color"`
-	Name    string `json:"name"`
-	Started bool   `json:"spectate"`
+	ID          string `json:"id"`
+	P1          string `json:"p1"`
+	P1color     string `json:"p1color"`
+	P2          string `json:"p2"`
+	P2color     string `json:"p2color"`
+	Name        string `json:"name"`
+	Started     bool   `json:"spectate"`
+	Matchmaking bool   `json:"matchmaking"`
 }
 
 // MatchesListMessage is used to list open matches
@@ -175,4 +176,9 @@ type ShowCardsMessage struct {
 type PinnedMessages struct {
 	Header   string   `json:"header"`
 	Messages []string `json:"messages"`
+}
+
+type PlaySoundMessage struct {
+	Header string `json:"header"`
+	Sound  string `json:"sound"`
 }

@@ -218,7 +218,7 @@ func (api *API) MatchHandler(c *gin.Context) {
 		name = game.DefaultMatchNames[rand.Intn(len(game.DefaultMatchNames))]
 	}
 
-	m := api.matchSystem.NewMatch(name, user.UID, visible)
+	m := api.matchSystem.NewMatch(name, user.UID, visible, false)
 
 	c.JSON(200, m)
 

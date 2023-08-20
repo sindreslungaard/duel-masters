@@ -57,7 +57,7 @@ func ProcessMatch(m *Match) {
 }
 
 // New returns a new match object
-func (s *MatchSystem) NewMatch(matchName string, hostID string, visible bool) *Match {
+func (s *MatchSystem) NewMatch(matchName string, hostID string, visible bool, matchmaking bool) *Match {
 
 	id, err := shortid.Generate()
 
@@ -72,14 +72,15 @@ func (s *MatchSystem) NewMatch(matchName string, hostID string, visible bool) *M
 		spectators:        internal.NewConcurrentDictionary[Spectator](),
 		persistentEffects: make(map[int]PersistentEffect),
 		Turn:              1,
-		
+
 		PlayerSelectingToss: "",
-		TossOutcome: 	   0,
-		TossPrediction:    0,
+		TossOutcome:         0,
+		TossPrediction:      0,
 
-		Started:           false,
-		Visible:           visible,
+		Started: false,
+		Visible: visible,
 
+		Matchmaking: matchmaking,
 		created:     time.Now().Unix(),
 		ending:      false,
 		isFirstTurn: true,
@@ -117,6 +118,10 @@ func MatchList(matches []*Match) server.MatchesListMessage {
 			continue
 		}
 
+		if match.Matchmaking && !match.Started {
+			continue
+		}
+
 		if match.Player1 == nil {
 			continue
 		}
@@ -126,11 +131,12 @@ func MatchList(matches []*Match) server.MatchesListMessage {
 		}
 
 		matchMessage := server.MatchMessage{
-			ID:      match.ID,
-			P1:      match.Player1.Username,
-			P1color: match.Player1.Color,
-			Name:    match.MatchName,
-			Started: match.Started,
+			ID:          match.ID,
+			P1:          match.Player1.Username,
+			P1color:     match.Player1.Color,
+			Name:        match.MatchName,
+			Started:     match.Started,
+			Matchmaking: match.Matchmaking,
 		}
 
 		if match.Player2 != nil {

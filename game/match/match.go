@@ -35,14 +35,14 @@ type Match struct {
 	TossPrediction      int
 	TossOutcome         int
 
+	Matchmaking bool
 	created     int64
 	ending      bool
 	closed      bool
 	isFirstTurn bool
 
 	eventloop *EventLoop
-
-	system *MatchSystem
+	system    *MatchSystem
 }
 
 // Name just returns "match", obligatory for a hub

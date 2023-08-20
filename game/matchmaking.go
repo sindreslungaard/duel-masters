@@ -162,6 +162,20 @@ func (m *Matchmaking) Join(s *server.Socket, id string) error {
 
 	m.BroadcastState()
 
+	sound := server.PlaySoundMessage{
+		Header: "play_sound",
+		Sound:  "request_accepted",
+	}
+
+	hostSocket, ok := server.Sockets.Find(r.Host.SocketID)
+
+	if ok {
+		hostSocket.Send(sound)
+		chat(hostSocket, fmt.Sprintf("%s joined your duel request", s.User.Username))
+	}
+
+	s.Send(sound)
+
 	return nil
 }
 
@@ -186,6 +200,10 @@ func (m *Matchmaking) Leave(s *server.Socket) {
 
 			broadcast = true
 		} else if ok && guest.ID == s.User.UID {
+			hostSocket, _ := server.Sockets.Find(r.Host.SocketID)
+			if hostSocket != nil {
+				chat(hostSocket, fmt.Sprintf("%s left your duel request", guest.Username))
+			}
 			r.Guest.Clear()
 			broadcast = true
 		}
@@ -266,7 +284,7 @@ func (m *Matchmaking) Start(s *server.Socket, requestId string) {
 		return
 	}
 
-	match := m.matchSystem.NewMatch(r.Name, r.Host.ID, true)
+	match := m.matchSystem.NewMatch(r.Name, r.Host.ID, true, true)
 
 	msg := server.MatchForwardMessage{
 		Header: "match_forward",
