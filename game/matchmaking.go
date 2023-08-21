@@ -9,6 +9,7 @@ import (
 	"sync"
 
 	"github.com/sirupsen/logrus"
+	"github.com/teris-io/shortid"
 )
 
 var DefaultMatchNames = []string{
@@ -39,6 +40,7 @@ type MatchRequest struct {
 	Name         string
 	Format       match.Format
 	BlockedUsers internal.ConcurrentDictionary[bool]
+	LinkCode     string
 }
 
 func (r *MatchRequest) Serialize() server.MatchRequestMessage {
@@ -49,6 +51,7 @@ func (r *MatchRequest) Serialize() server.MatchRequestMessage {
 		HostName:  r.Host.Username,
 		HostColor: r.Host.Color,
 		Format:    string(r.Format),
+		LinkCode:  r.LinkCode,
 	}
 
 	guest, ok := r.Guest.Unwrap()
@@ -98,6 +101,12 @@ func (m *Matchmaking) NewRequest(s *server.Socket, name string, format match.For
 		}
 	}
 
+	code, err := shortid.Generate()
+
+	if err != nil {
+		return fmt.Errorf("Failed to generate link code for match request")
+	}
+
 	r := &MatchRequest{
 		ID: s.User.UID,
 		Host: MatchUser{
@@ -110,6 +119,7 @@ func (m *Matchmaking) NewRequest(s *server.Socket, name string, format match.For
 		Name:         name,
 		Format:       format,
 		BlockedUsers: internal.NewConcurrentDictionary[bool](),
+		LinkCode:     code,
 	}
 
 	m.requests.Add(s.User.UID, r)

@@ -713,82 +713,20 @@ func (api *API) ResetPasswordHandler(c *gin.Context) {
 
 // InviteHandler handles duel invitations
 func (api *API) InviteHandler(c *gin.Context) {
-
-	var res string
-
-	match, ok := api.matchSystem.Matches.Find(c.Param("id"))
-
-	if !ok {
-		res = fmt.Sprintf(`<!DOCTYPE html>
-<html>
-	<head>
-		<title>Redirecting you..</title>
-		<meta property="og:type" content="website" />
-		<meta name="og:title" property="og:title" content="Invitation expired!">
-		<meta name="og:description" property="og:description" content="This duel is no longer available">
-		<meta name="og:image" property="og:image" content="https://i.imgur.com/g4I6jEL.png">
-		<meta name="og:url" property="og:url" content="https://shobu.io/invite/%s" />
-	</head>
-	<body style="background: #36393F">
-		<p>Please wait while we redirect you.. Make sure javascript is enabled.</p>
-		<script>if(!navigator.userAgent.includes("discord")) { window.location.replace("/overview"); }</script>
-	</body>
-</html>
-		`, c.Param("id"))
-	} else if match.Started {
-		res = fmt.Sprintf(`
-		<!DOCTYPE html>
-		<html>
-			<head>
-				<title>Redirecting you..</title>
-				<meta property="og:type" content="website" />
-				<meta name="og:title" property="og:title" content="Invitation expired! The duel has already begun.">
-				<meta name="og:description" property="og:description" content="%s is duelling %s!">
-				<meta name="og:image" property="og:image" content="https://i.imgur.com/qdOnH8k.png">
-				
-			</head>
-			<body>
-				<p>Please wait while we redirect you.. Make sure javascript is enabled.</p>
-				<script>if(!navigator.userAgent.includes("discord")) { window.location.replace("/overview"); }</script>
-			</body>
-		</html>
-		`, match.Player1.Socket.User.Username, match.Player2.Socket.User.Username)
-	} else if match.Player1 != nil {
-		res = fmt.Sprintf(`
-		<!DOCTYPE html>
-		<html>
-			<head>
-				<title>Redirecting you..</title>
-				<meta property="og:type" content="website" />
-				<meta name="og:title" property="og:title" content="%s invited you to a duel!">
-				<meta name="og:image" property="og:image" content="https://i.imgur.com/8PlN43q.png">
-				
-			</head>
-			<body>
-				<p>Please wait while we redirect you.. Make sure javascript is enabled.</p>
-				<script>if(!navigator.userAgent.includes("discord")) { window.location.replace("/duel/%s"); }</script>
-			</body>
-		</html>
-		`, match.Player1.Socket.User.Username, c.Param("id"))
-	} else {
-		res = `
-		<!DOCTYPE html>
-		<html>
-			<head>
-				<title>Redirecting you..</title>
-				<meta property="og:type" content="website" />
-				<meta name="og:title" property="og:title" content="Invitation is loading..">
-				<meta name="og:description" property="og:description" content="This duel is in the progress of being created">
-				<meta name="og:image" property="og:image" content="https://i.imgur.com/FEiBdKe.png">
-				
-			</head>
-			<body>
-				<p>Please wait while we redirect you.. Make sure javascript is enabled.</p>
-				<script>if(!navigator.userAgent.includes("discord")) { window.location.replace("/overview"); }</script>
-			</body>
-		</html>
-		`
-	}
-
-	c.Data(200, "text/html; charset=utf-8", []byte(res))
+	html := fmt.Sprintf(`
+	<html>
+		<head>
+			<title>Redirecting you..</title>
+			<meta property="og:type" content="website" />
+			<meta name="og:title" property="og:title" content="Duel invite">
+			<meta name="og:description" property="og:description" content="You have been invited to a duel">
+			<meta name="og:image" property="og:image" content="https://i.imgur.com/8PlN43q.png">
+		</head>
+		<body style="background: #36393F">
+			<p>Please wait while we redirect you.. Make sure javascript is enabled.</p>
+			<script>if(!navigator.userAgent.includes("discord")) { window.location.replace("/overview?invite=%s"); }</script>
+		</body>
+	</html>	
+	`, c.Param("id"))
+	c.Data(200, "text/html; charset=utf-8", []byte(html))
 }

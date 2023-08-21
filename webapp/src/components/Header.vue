@@ -3,7 +3,7 @@
     <span class="title">Welcome, {{ username }}!</span>
     <nav>
       <ul>
-        <li @click="$router.push('overview')" class="">Overview</li>
+        <li @click="$router.push('overview')" class="">Lobby</li>
         <li class="no-cursor">|</li>
         <li @click="$router.push('decks')">Decks</li>
         <li class="no-cursor">|</li>

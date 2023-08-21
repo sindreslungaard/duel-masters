@@ -51,7 +51,7 @@
           <h3 class="user-list">Online</h3>
           <h3 class="chat">Chat</h3>
           <h3 class="duels" style="position: relative;">
-            Duels<span @click="toggleWizard()" class="new-duel-btn"
+            Duels<span @click="toggleWizard(true)" class="new-duel-btn"
               >New Duel</span
             >
           </h3>
@@ -171,18 +171,19 @@
                   >
                 </div>
               </td>
-              <td style="width: 50%">
+              <td style="width: 45%">
                 {{
                   request.guest_id == uid
                     ? "Waiting for the host to start the match" + loadingDots
                     : request.name
                 }}
               </td>
-              <td style="width: 20%">
+              <td style="width: 25%">
                 <div
                   @click="leaveMatch(request)"
                   v-show="request.host_id == uid && !request.guest_id"
                   class="btn-colorless bg-red-500 hover:bg-red-600 cursor-pointer"
+                  style="margin-left: 10px"
                 >
                   Close
                 </div>
@@ -222,6 +223,14 @@
                   <div style="width: 120px; padding-top: 8px; padding-bottom: 7px;">
                     Waiting to start{{ loadingDots }}
                   </div>
+                </div>
+
+                <div
+                  v-show="request.host_id == uid && !request.guest_id"
+                  @click="copyToClipboard(protocol + '//' + host + '/invite/' + request.link_code)"
+                  :class="['copy', { copied: inviteCopied }]"
+                >
+                  {{ inviteCopied ? "Copied" : "Copy invite link" }}
                 </div>
               </td>
             </tr>
@@ -298,7 +307,8 @@ export default {
   },
   computed: {
     uid: () => localStorage.getItem("uid"),
-    username: () => localStorage.getItem("username")
+    username: () => localStorage.getItem("username"),
+    protocol: () => window.location.protocol
   },
   data() {
     return {
@@ -320,7 +330,11 @@ export default {
       warning: "",
       wsLoading: true,
       loadingDots: ".",
-      settings: getSettings()
+      settings: getSettings(),
+      inviteCopied: false,
+      inviteCopyTask: null,
+      host,
+      linkCode: "",
     };
   },
   methods: {
@@ -338,18 +352,19 @@ export default {
     refreshPage() {
       location.reload();
     },
-    toggleWizard() {
+    toggleWizard(state) {
       this.wizardError = "";
       this.wizard = {
         name: "",
         description: "",
         visibility: "public"
       };
-      this.wizardVisible = !this.wizardVisible;
+      this.wizardVisible = state;
     },
     closeOverlay() {
       this.toggleWizard();
       this.errorMessage = "";
+      this.warning = "";
     },
     handleSubmit() {
       this.createDuel();
@@ -455,9 +470,23 @@ export default {
           player_id: request.guest_id
         })
       );
+    },
+
+    copyToClipboard(text) {
+      navigator.clipboard.writeText(text);
+
+      if (this.inviteCopyTask) clearTimeout(this.inviteCopyTask);
+      this.inviteCopied = true;
+      this.inviteCopyTask = setTimeout(() => {
+        this.inviteCopied = false;
+      }, 2000);
     }
   },
   created() {
+    if(this.$route.query.invite) {
+      this.linkCode = this.$route.query.invite;
+    }
+
     addEventListener("storage", this.onSettingsChanged);
 
     document.title = document.title.replace("🔴", "");
@@ -596,6 +625,26 @@ export default {
 
           case "match_requests": {
             this.matchRequests = data.requests;
+            if(this.linkCode != "") {
+              let found = false;
+              for(let req of data.requests) {
+                console.log("comparing", req.link_code, this.linkCode)
+                if(req.link_code == this.linkCode) {
+                  found = true;
+                  this.joinMatch(req)
+                }
+              }
+              if(!found) {
+                this.chat({
+                  username: "[Server -> you]",
+                  color: "#777",
+                  timestamp: Math.round(Date.now() / 1000),
+                  message: "Could not find the duel you were invited to. It has probably been closed or started already."
+                })
+              }
+              this.linkCode = "";
+            }
+            
             break;
           }
 
@@ -964,7 +1013,7 @@ main {
   margin-left: 20px;
   margin-top: 0px;
   margin-bottom: 15px;
-  word-break: break-all;
+  word-break: break-word;
 }
 
 .user-messages > div {
@@ -1015,26 +1064,25 @@ main {
 }
 
 .error p {
-  padding: 5px;
+  padding: 10px 12px;
   border-radius: 4px;
   margin: 0;
   margin-bottom: 10px;
-  background: #2b2e33 !important;
-  border: 1px solid #222428;
+  background: url(/assets/images/overlay_15.png) !important;
 }
 
 .error {
-  border: 1px solid #666;
+  border: 1px solid #333;
   position: absolute;
   top: 0;
   left: 0;
   width: 300px;
   border-radius: 4px;
-  background: #36393f;
+  background: #111214;
   z-index: 3005;
   left: calc(50% - 300px / 2);
   top: 40vh;
-  padding: 10px;
+  padding: 15px;
   font-size: 14px;
   color: #ccc;
 }
@@ -1084,5 +1132,24 @@ main {
 .kick-btn:hover {
   cursor: pointer;
   background: #e64343;
+}
+
+.copy {
+  text-decoration: underline dotted;
+  color: #666;
+  font-size: 14px;
+  transition: 0.1s;
+  padding-top: 7px;
+  width: 100px;
+  text-align: right;
+  float: right;
+}
+
+.copy:hover {
+  cursor: pointer;
+}
+
+.copied {
+  color: #3ca374;
 }
 </style>

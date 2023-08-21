@@ -154,6 +154,7 @@ type MatchRequestMessage struct {
 	GuestName  string `json:"guest_name"`
 	GuestColor string `json:"guest_color"`
 	Format     string `json:"format"`
+	LinkCode   string `json:"link_code"`
 }
 
 type MatchReuestsListMessage struct {

@@ -37,7 +37,7 @@
 
     <div v-show="errorMessage" class="error">
       <p>{{ errorMessage }}</p>
-      <div @click="redirect('overview')" class="btn">Back to overview</div>
+      <div @click="redirect('overview')" class="btn">Back to the lobby</div>
     </div>
 
     <div v-show="warning" class="error warn">
@@ -147,7 +147,7 @@
           loadingDots
         }}</span>
       </h1>
-      <p v-if="matchmaking" class="text-gray-500">This should not take longer than 10 seconds. If it does, feel free to go back to the lobby as there most likely was a problem with your opponent's connection</p>
+      <p v-if="matchmaking">This should not take longer than 10 seconds. If it does, feel free to go back to the lobby as there most likely was a problem with your opponent's connection</p>
       <div v-if="!matchmaking" :class="['invite-link', { copied: inviteCopied }]">
         <span id="invitelink">{{ invite }}</span>
         <div
@@ -718,7 +718,7 @@ export default {
 
       loadingDots: "",
       invite:
-        location.protocol + "//" + host + "/invite/" + this.$route.params.id,
+        location.protocol + "//" + host + "/duel/" + this.$route.params.id,
       inviteCopied: false,
       inviteCopyTask: null,
 
@@ -1069,7 +1069,7 @@ export default {
           method: "GET"
         });
 
-        this.matchmaking = !res.data.matchmaking
+        this.matchmaking = res.data.matchmaking
       } catch (err) {
         if (err.response && err.response.status == 404) {
           this.errorMessage = "This duel has been closed";
