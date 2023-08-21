@@ -2,7 +2,7 @@
 
 ## [Unreleased]
 
-No unreleased changes
+- When creating a new duel, you will now stay in the lobby until the match starts. When someone joins, the host will have the option to either start the match or kick the guest. Kicking prevents the user from joining the duel again.
 
 ## 09/08/2023
 
