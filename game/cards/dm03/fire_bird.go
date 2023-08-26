@@ -13,7 +13,7 @@ func BabyZoppe(c *match.Card) {
 	c.Name = "Baby Zoppe"
 	c.Power = 2000
 	c.Civ = civ.Fire
-	c.Family = family.FireBird
+	c.Family = []string{family.FireBird}
 	c.ManaCost = 3
 	c.ManaRequirement = []string{civ.Fire}
 

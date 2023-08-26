@@ -15,7 +15,7 @@ func SolidskinFish(c *match.Card) {
 	c.Name = "Solidskin Fish"
 	c.Power = 3000
 	c.Civ = civ.Water
-	c.Family = family.Fish
+	c.Family = []string{family.Fish}
 	c.ManaCost = 3
 	c.ManaRequirement = []string{civ.Water}
 
@@ -47,7 +47,7 @@ func SpikestrikeIchthysQ(c *match.Card) {
 	c.Name = "Spikestrike Ichthys Q"
 	c.Power = 3000
 	c.Civ = civ.Water
-	c.Family = family.Fish
+	c.Family = []string{family.Fish}
 	c.ManaCost = 6
 	c.ManaRequirement = []string{civ.Water}
 

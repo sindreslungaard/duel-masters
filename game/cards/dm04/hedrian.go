@@ -15,7 +15,7 @@ func Locomotiver(c *match.Card) {
 	c.Name = "Locomotiver"
 	c.Power = 1000
 	c.Civ = civ.Darkness
-	c.Family = family.Hedrian
+	c.Family = []string{family.Hedrian}
 	c.ManaCost = 4
 	c.ManaRequirement = []string{civ.Darkness}
 
@@ -42,7 +42,7 @@ func MongrelMan(c *match.Card) {
 	c.Name = "Mongrel Man"
 	c.Power = 2000
 	c.Civ = civ.Darkness
-	c.Family = family.Hedrian
+	c.Family = []string{family.Hedrian}
 	c.ManaCost = 5
 	c.ManaRequirement = []string{civ.Darkness}
 

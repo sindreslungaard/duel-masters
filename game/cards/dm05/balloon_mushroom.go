@@ -15,7 +15,7 @@ func BalloonshroomQ(c *match.Card) {
 	c.Name = "Balloonshroom Q"
 	c.Power = 2000
 	c.Civ = civ.Nature
-	c.Family = family.BalloonMushroom
+	c.Family = []string{family.BalloonMushroom}
 	c.ManaCost = 4
 	c.ManaRequirement = []string{civ.Nature}
 

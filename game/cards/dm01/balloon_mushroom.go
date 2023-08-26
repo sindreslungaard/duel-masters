@@ -13,7 +13,7 @@ func PoisonousMushroom(c *match.Card) {
 	c.Name = "Poisonous Mushroom"
 	c.Power = 1000
 	c.Civ = civ.Nature
-	c.Family = family.BalloonMushroom
+	c.Family = []string{family.BalloonMushroom}
 	c.ManaCost = 2
 	c.ManaRequirement = []string{civ.Nature}
 

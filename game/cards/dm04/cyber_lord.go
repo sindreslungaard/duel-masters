@@ -14,7 +14,7 @@ func Marinomancer(c *match.Card) {
 	c.Name = "Marinomancer"
 	c.Power = 2000
 	c.Civ = civ.Water
-	c.Family = family.CyberLord
+	c.Family = []string{family.CyberLord}
 	c.ManaCost = 5
 	c.ManaRequirement = []string{civ.Water}
 

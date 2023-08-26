@@ -14,7 +14,7 @@ func RagingDashHorn(c *match.Card) {
 	c.Name = "Raging Dash-Horn"
 	c.Power = 4000
 	c.Civ = civ.Nature
-	c.Family = family.HornedBeast
+	c.Family = []string{family.HornedBeast}
 	c.ManaCost = 5
 	c.ManaRequirement = []string{civ.Nature}
 

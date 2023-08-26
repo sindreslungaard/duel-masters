@@ -13,7 +13,7 @@ func RikabuTheDismantler(c *match.Card) {
 	c.Name = "Rikabu, the Dismantler"
 	c.Power = 1000
 	c.Civ = civ.Fire
-	c.Family = family.MachineEater
+	c.Family = []string{family.MachineEater}
 	c.ManaCost = 3
 	c.ManaRequirement = []string{civ.Fire}
 

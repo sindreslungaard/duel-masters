@@ -15,7 +15,7 @@ func SeaSlug(c *match.Card) {
 	c.Name = "Sea Slug"
 	c.Power = 6000
 	c.Civ = civ.Water
-	c.Family = family.GelFish
+	c.Family = []string{family.GelFish}
 	c.ManaCost = 8
 	c.ManaRequirement = []string{civ.Water}
 
@@ -29,7 +29,7 @@ func SplitHeadHydroturtleQ(c *match.Card) {
 	c.Name = "Split-Head Hydroturtle Q"
 	c.Power = 2000
 	c.Civ = civ.Water
-	c.Family = family.GelFish
+	c.Family = []string{family.GelFish}
 	c.ManaCost = 5
 	c.ManaRequirement = []string{civ.Water}
 
@@ -66,7 +66,7 @@ func LurkingEel(c *match.Card) {
 	c.Name = "Lurking Eel"
 	c.Power = 4000
 	c.Civ = civ.Water
-	c.Family = family.GelFish
+	c.Family = []string{family.GelFish}
 	c.ManaCost = 6
 	c.ManaRequirement = []string{civ.Water}
 

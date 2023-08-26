@@ -13,7 +13,7 @@ func NeonCluster(c *match.Card) {
 	c.Name = "Neon Cluster"
 	c.Power = 4000
 	c.Civ = civ.Water
-	c.Family = family.CyberCluster
+	c.Family = []string{family.CyberCluster}
 	c.ManaCost = 7
 	c.ManaRequirement = []string{civ.Water}
 	c.TapAbility = true

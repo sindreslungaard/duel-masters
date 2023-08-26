@@ -14,7 +14,7 @@ func ChaoticSkyterror(c *match.Card) {
 	c.Name = "Chaotic Skyterror"
 	c.Power = 4000
 	c.Civ = civ.Fire
-	c.Family = family.ArmoredWyvern
+	c.Family = []string{family.ArmoredWyvern}
 	c.ManaCost = 5
 	c.ManaRequirement = []string{civ.Fire}
 
@@ -46,7 +46,7 @@ func chaoticSkyterrorSpecial(card *match.Card, ctx *match.Context, cardID string
 		return
 	}
 
-	if creature.Family != family.DemonCommand {
+	if !creature.HasFamily(family.DemonCommand) {
 		return
 	}
 

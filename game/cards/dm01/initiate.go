@@ -14,7 +14,7 @@ func FreiVizierOfAir(c *match.Card) {
 	c.Name = "Frei, Vizier of Air"
 	c.Power = 3000
 	c.Civ = civ.Light
-	c.Family = family.Initiate
+	c.Family = []string{family.Initiate}
 	c.ManaCost = 4
 	c.ManaRequirement = []string{civ.Light}
 
@@ -28,7 +28,7 @@ func IereVizierOfBullets(c *match.Card) {
 	c.Name = "Iere, Vizier of Bullets"
 	c.Power = 3000
 	c.Civ = civ.Light
-	c.Family = family.Initiate
+	c.Family = []string{family.Initiate}
 	c.ManaCost = 3
 	c.ManaRequirement = []string{civ.Light}
 
@@ -42,7 +42,7 @@ func LokVizierOfHunting(c *match.Card) {
 	c.Name = "Lok, Vizier of Hunting"
 	c.Power = 4000
 	c.Civ = civ.Light
-	c.Family = family.Initiate
+	c.Family = []string{family.Initiate}
 	c.ManaCost = 4
 	c.ManaRequirement = []string{civ.Light}
 
@@ -56,7 +56,7 @@ func MieleVizierOfLightning(c *match.Card) {
 	c.Name = "Miele, Vizier of Lightning"
 	c.Power = 1000
 	c.Civ = civ.Light
-	c.Family = family.Initiate
+	c.Family = []string{family.Initiate}
 	c.ManaCost = 3
 	c.ManaRequirement = []string{civ.Light}
 
@@ -86,7 +86,7 @@ func ToelVizierOfHope(c *match.Card) {
 	c.Name = "Toel, Vizier of Hope"
 	c.Power = 2000
 	c.Civ = civ.Light
-	c.Family = family.Initiate
+	c.Family = []string{family.Initiate}
 	c.ManaCost = 5
 	c.ManaRequirement = []string{civ.Light}
 

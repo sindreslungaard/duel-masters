@@ -72,7 +72,7 @@ func Evolution(card *match.Card, ctx *match.Context) {
 			1,
 			1,
 			false,
-			func(x *match.Card) bool { return x.Family == card.Family },
+			func(x *match.Card) bool { return x.SharesAFamily(card.Family) },
 		)
 
 		if len(creatures) < 1 {

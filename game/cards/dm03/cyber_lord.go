@@ -14,7 +14,7 @@ func Emeral(c *match.Card) {
 	c.Name = "Emeral"
 	c.Power = 1000
 	c.Civ = civ.Water
-	c.Family = family.CyberLord
+	c.Family = []string{family.CyberLord}
 	c.ManaCost = 2
 	c.ManaRequirement = []string{civ.Water}
 
@@ -73,7 +73,7 @@ func Shtra(c *match.Card) {
 	c.Name = "Shtra"
 	c.Power = 2000
 	c.Civ = civ.Water
-	c.Family = family.CyberLord
+	c.Family = []string{family.CyberLord}
 	c.ManaCost = 4
 	c.ManaRequirement = []string{civ.Water}
 

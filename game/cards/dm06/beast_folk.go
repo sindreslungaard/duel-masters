@@ -14,7 +14,7 @@ func MightyBanditAceOfThieves(c *match.Card) {
 	c.Name = "Mighty Bandit, Ace of Thieves"
 	c.Power = 2000
 	c.Civ = civ.Nature
-	c.Family = family.BeastFolk
+	c.Family = []string{family.BeastFolk}
 	c.ManaCost = 3
 	c.ManaRequirement = []string{civ.Nature}
 	c.TapAbility = true

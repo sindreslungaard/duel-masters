@@ -32,7 +32,7 @@ type Card struct {
 	Name            string
 	Power           int
 	Civ             string
-	Family          string
+	Family          []string
 	ManaCost        int
 	ManaRequirement []string
 	PowerModifier   func(m *Match, attacking bool) int
@@ -64,7 +64,7 @@ func NewCard(p *Player, image string) (*Card, error) {
 		Name:            "undefined_card",
 		Power:           0,
 		Civ:             "undefind_civ",
-		Family:          "undefined_family",
+		Family:          []string{"undefined_family"},
 		ManaCost:        1,
 		ManaRequirement: make([]string, 0),
 		PowerModifier:   func(m *Match, attacking bool) int { return 0 },
@@ -198,4 +198,43 @@ func (c *Card) Attachments() []*Card {
 // ClearAttachments removes all attached cards
 func (c *Card) ClearAttachments() {
 	c.attachedCards = make([]*Card, 0)
+}
+
+// HasFamily returns true if the card has the input family, false otherwise
+func (c *Card) HasFamily(family string) bool {
+	for _, f := range c.Family {
+		if f == family {
+			return true
+		}
+	}
+
+	return false
+}
+
+// SharesAFamily returns true if the card has at least one of the input families, false otherwise
+func (c *Card) SharesAFamily(families []string) bool {
+	for _, f := range c.Family {
+		for _, toCheck := range families {
+			if f == toCheck {
+				return true
+			}
+		}
+	}
+
+	return false
+}
+
+// SharesAllFamilies returns true if the card has all of the input families
+func (c *Card) SharesAllFamilies(families []string) bool {
+	ok := true
+
+	for _, f := range c.Family {
+		for _, toCheck := range families {
+			if f != toCheck {
+				ok = false
+			}
+		}
+	}
+
+	return ok
 }

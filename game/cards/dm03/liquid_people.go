@@ -14,7 +14,7 @@ func AquaDeformer(c *match.Card) {
 	c.Name = "Aqua Deformer"
 	c.Power = 3000
 	c.Civ = civ.Water
-	c.Family = family.LiquidPeople
+	c.Family = []string{family.LiquidPeople}
 	c.ManaCost = 8
 	c.ManaRequirement = []string{civ.Water}
 

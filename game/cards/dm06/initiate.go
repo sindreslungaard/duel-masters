@@ -14,7 +14,7 @@ func CrazeValkyrieTheDrastic(c *match.Card) {
 	c.Name = "Craze Valkyrie, the Drastic"
 	c.Power = 7500
 	c.Civ = civ.Light
-	c.Family = family.Initiate
+	c.Family = []string{family.Initiate}
 	c.ManaCost = 6
 	c.ManaRequirement = []string{civ.Light}
 

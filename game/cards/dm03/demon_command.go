@@ -15,7 +15,7 @@ func GirielGhastlyWarrior(c *match.Card) {
 	c.Name = "Giriel, Ghastly Warrior"
 	c.Power = 11000
 	c.Civ = civ.Darkness
-	c.Family = family.DemonCommand
+	c.Family = []string{family.DemonCommand}
 	c.ManaCost = 8
 	c.ManaRequirement = []string{civ.Darkness}
 
@@ -29,7 +29,7 @@ func GamilKnightOfHatred(c *match.Card) {
 	c.Name = "Gamil, Knight of Hatred"
 	c.Power = 4000
 	c.Civ = civ.Darkness
-	c.Family = family.DemonCommand
+	c.Family = []string{family.DemonCommand}
 	c.ManaCost = 6
 	c.ManaRequirement = []string{civ.Darkness}
 

@@ -39,9 +39,12 @@ func CreateCardCache() {
 				Name:         card.Name,
 				Civilization: card.Civ,
 				Set:          setID,
-				Family:       card.Family,
 				ManaCost:     card.ManaCost,
 				Type:         "Creature",
+			}
+
+			if len(card.Family) > 0 {
+				entry.Family = card.Family[0]
 			}
 
 			if entry.Family == "" {

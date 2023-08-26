@@ -13,7 +13,7 @@ func BaragaBladeOfGloom(c *match.Card) {
 	c.Name = "Baraga, Blade of Gloom"
 	c.Power = 4000
 	c.Civ = civ.Darkness
-	c.Family = family.DarkLord
+	c.Family = []string{family.DarkLord}
 	c.ManaCost = 4
 	c.ManaRequirement = []string{civ.Darkness}
 

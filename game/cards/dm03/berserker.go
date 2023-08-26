@@ -13,7 +13,7 @@ func AlekSolidityEnforcer(c *match.Card) {
 	c.Name = "Alek, Solidity Enforcer"
 	c.Power = 4000
 	c.Civ = civ.Light
-	c.Family = family.Berserker
+	c.Family = []string{family.Berserker}
 	c.ManaCost = 7
 	c.ManaRequirement = []string{civ.Light}
 

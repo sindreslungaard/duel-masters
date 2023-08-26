@@ -13,7 +13,7 @@ func MagrisVizierOfMagnetism(c *match.Card) {
 	c.Name = "Magris, Vizier of Magnetism"
 	c.Power = 3000
 	c.Civ = civ.Light
-	c.Family = family.Initiate
+	c.Family = []string{family.Initiate}
 	c.ManaCost = 4
 	c.ManaRequirement = []string{civ.Light}
 

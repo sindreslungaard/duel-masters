@@ -13,7 +13,7 @@ func BrawlerZyler(c *match.Card) {
 	c.Name = "Brawler Zyler"
 	c.Power = 1000
 	c.Civ = civ.Fire
-	c.Family = family.Human
+	c.Family = []string{family.Human}
 	c.ManaCost = 2
 	c.ManaRequirement = []string{civ.Fire}
 
@@ -27,7 +27,7 @@ func FatalAttackerHorvath(c *match.Card) {
 	c.Name = "Fatal Attacker Horvath"
 	c.Power = 2000
 	c.Civ = civ.Fire
-	c.Family = family.Human
+	c.Family = []string{family.Human}
 	c.ManaCost = 3
 	c.ManaRequirement = []string{civ.Fire}
 
@@ -35,7 +35,7 @@ func FatalAttackerHorvath(c *match.Card) {
 
 	c.PowerModifier = func(m *match.Match, attacking bool) int {
 
-		if attacking && match.ContainerHas(c.Player, match.BATTLEZONE, func(x *match.Card) bool { return x.Family == family.Armorloid }) {
+		if attacking && match.ContainerHas(c.Player, match.BATTLEZONE, func(x *match.Card) bool { return x.HasFamily(family.Armorloid) }) {
 			return 2000
 		}
 
@@ -51,7 +51,7 @@ func ImmortalBaronVorg(c *match.Card) {
 	c.Name = "Immortal Baron, Vorg"
 	c.Power = 2000
 	c.Civ = civ.Fire
-	c.Family = family.Human
+	c.Family = []string{family.Human}
 	c.ManaCost = 2
 	c.ManaRequirement = []string{civ.Fire}
 

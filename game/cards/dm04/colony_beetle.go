@@ -13,7 +13,7 @@ func CannonShell(c *match.Card) {
 	c.Name = "Cannon Shell"
 	c.Power = 1000
 	c.Civ = civ.Nature
-	c.Family = family.ColonyBeetle
+	c.Family = []string{family.ColonyBeetle}
 	c.ManaCost = 4
 	c.ManaRequirement = []string{civ.Nature}
 

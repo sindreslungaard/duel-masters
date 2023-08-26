@@ -13,7 +13,7 @@ func AmberGrass(c *match.Card) {
 	c.Name = "Amber Grass"
 	c.Power = 3000
 	c.Civ = civ.Light
-	c.Family = family.StarlightTree
+	c.Family = []string{family.StarlightTree}
 	c.ManaCost = 4
 	c.ManaRequirement = []string{civ.Light}
 

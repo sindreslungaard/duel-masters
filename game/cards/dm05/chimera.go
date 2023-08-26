@@ -15,7 +15,7 @@ func Gigazoul(c *match.Card) {
 	c.Name = "Gigazoul"
 	c.Power = 3000
 	c.Civ = civ.Darkness
-	c.Family = family.Chimera
+	c.Family = []string{family.Chimera}
 	c.ManaCost = 3
 	c.ManaRequirement = []string{civ.Darkness}
 
@@ -89,7 +89,7 @@ func Gigakail(c *match.Card) {
 	c.Name = "Gigakail"
 	c.Power = 4000
 	c.Civ = civ.Darkness
-	c.Family = family.Chimera
+	c.Family = []string{family.Chimera}
 	c.ManaCost = 5
 	c.ManaRequirement = []string{civ.Darkness}
 
@@ -103,7 +103,7 @@ func GigalingQ(c *match.Card) {
 	c.Name = "Gigaling Q"
 	c.Power = 2000
 	c.Civ = civ.Darkness
-	c.Family = family.Chimera
+	c.Family = []string{family.Chimera}
 	c.ManaCost = 5
 	c.ManaRequirement = []string{civ.Darkness}
 

@@ -13,7 +13,7 @@ func PyrofighterMagnus(c *match.Card) {
 	c.Name = "Pyrofighter Magnus"
 	c.Power = 3000
 	c.Civ = civ.Fire
-	c.Family = family.Dragonoid
+	c.Family = []string{family.Dragonoid}
 	c.ManaCost = 3
 	c.ManaRequirement = []string{civ.Fire}
 

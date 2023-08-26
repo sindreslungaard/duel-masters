@@ -14,7 +14,7 @@ func DoboulgyserGiantRockBeast(c *match.Card) {
 	c.Name = "Doboulgyser, Giant Rock Beast"
 	c.Power = 8000
 	c.Civ = civ.Fire
-	c.Family = family.RockBeast
+	c.Family = []string{family.RockBeast}
 	c.ManaCost = 6
 	c.ManaRequirement = []string{civ.Fire}
 
@@ -49,7 +49,7 @@ func Magmarex(c *match.Card) {
 	c.Name = "Magmarex"
 	c.Power = 3000
 	c.Civ = civ.Fire
-	c.Family = family.RockBeast
+	c.Family = []string{family.RockBeast}
 	c.ManaCost = 5
 	c.ManaRequirement = []string{civ.Fire}
 

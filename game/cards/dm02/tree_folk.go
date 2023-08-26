@@ -14,7 +14,7 @@ func ElfX(c *match.Card) {
 	c.Name = "Elf-X"
 	c.Power = 2000
 	c.Civ = civ.Nature
-	c.Family = family.TreeFolk
+	c.Family = []string{family.TreeFolk}
 	c.ManaCost = 4
 	c.ManaRequirement = []string{civ.Nature}
 
@@ -52,7 +52,7 @@ func EssenceElf(c *match.Card) {
 	c.Name = "Essence Elf"
 	c.Power = 1000
 	c.Civ = civ.Nature
-	c.Family = family.TreeFolk
+	c.Family = []string{family.TreeFolk}
 	c.ManaCost = 2
 	c.ManaRequirement = []string{civ.Nature}
 

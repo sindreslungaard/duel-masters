@@ -13,7 +13,7 @@ func MaskedPomegranate(c *match.Card) {
 	c.Name = "Masked Pomegranate"
 	c.Power = 1000
 	c.Civ = civ.Nature
-	c.Family = family.TreeFolk
+	c.Family = []string{family.TreeFolk}
 	c.ManaCost = 5
 	c.ManaRequirement = []string{civ.Nature}
 

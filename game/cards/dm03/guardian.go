@@ -13,7 +13,7 @@ func RazaVegaThunderGuardian(c *match.Card) {
 	c.Name = "Raza Vega, Thunder Guardian"
 	c.Power = 3000
 	c.Civ = civ.Light
-	c.Family = family.Guardian
+	c.Family = []string{family.Guardian}
 	c.ManaCost = 10
 	c.ManaRequirement = []string{civ.Light}
 

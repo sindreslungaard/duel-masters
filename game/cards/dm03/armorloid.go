@@ -14,7 +14,7 @@ func ArmoredWarriorQuelos(c *match.Card) {
 	c.Name = "Armored Warrior Quelos"
 	c.Power = 2000
 	c.Civ = civ.Fire
-	c.Family = family.Armorloid
+	c.Family = []string{family.Armorloid}
 	c.ManaCost = 5
 	c.ManaRequirement = []string{civ.Fire}
 

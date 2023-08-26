@@ -14,7 +14,7 @@ func ShadowMoonCursedShade(c *match.Card) {
 	c.Name = "Shadow Moon, Cursed Shade"
 	c.Power = 3000
 	c.Civ = civ.Darkness
-	c.Family = family.Ghost
+	c.Family = []string{family.Ghost}
 	c.ManaCost = 4
 	c.ManaRequirement = []string{civ.Darkness}
 
@@ -70,7 +70,7 @@ func VolcanoSmogDeceptiveShade(c *match.Card) {
 	c.Name = "Volcano Smog, Deceptive Shade"
 	c.Power = 5000
 	c.Civ = civ.Darkness
-	c.Family = family.Ghost
+	c.Family = []string{family.Ghost}
 	c.ManaCost = 6
 	c.ManaRequirement = []string{civ.Darkness}
 

@@ -14,7 +14,7 @@ func GregoriaPrincessOfWar(c *match.Card) {
 	c.Name = "Gregoria, Princess of War"
 	c.Power = 5000
 	c.Civ = civ.Darkness
-	c.Family = family.DarkLord
+	c.Family = []string{family.DarkLord}
 	c.ManaCost = 6
 	c.ManaRequirement = []string{civ.Darkness}
 
@@ -24,14 +24,14 @@ func GregoriaPrincessOfWar(c *match.Card) {
 			demonCommands := fx.FindFilter(
 				card.Player,
 				match.BATTLEZONE,
-				func(x *match.Card) bool { return x.Family == family.DemonCommand },
+				func(x *match.Card) bool { return x.HasFamily(family.DemonCommand) },
 			)
 
 			demonCommands = append(demonCommands,
 				fx.FindFilter(
 					ctx.Match.Opponent(card.Player),
 					match.BATTLEZONE,
-					func(x *match.Card) bool { return x.Family == family.DemonCommand },
+					func(x *match.Card) bool { return x.HasFamily(family.DemonCommand) },
 				)...,
 			)
 

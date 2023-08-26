@@ -15,7 +15,7 @@ func EarthstompGiant(c *match.Card) {
 	c.Name = "Earthstomp Giant"
 	c.Power = 8000
 	c.Civ = civ.Nature
-	c.Family = family.Giant
+	c.Family = []string{family.Giant}
 	c.ManaCost = 5
 	c.ManaRequirement = []string{civ.Nature}
 
@@ -42,7 +42,7 @@ func DawnGiant(c *match.Card) {
 	c.Name = "Dawn Giant"
 	c.Power = 11000
 	c.Civ = civ.Nature
-	c.Family = family.Giant
+	c.Family = []string{family.Giant}
 	c.ManaCost = 7
 	c.ManaRequirement = []string{civ.Nature}
 

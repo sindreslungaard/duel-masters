@@ -14,7 +14,7 @@ func BlazosaurQ(c *match.Card) {
 	c.Name = "Blazosaur Q"
 	c.Power = 1000
 	c.Civ = civ.Fire
-	c.Family = family.RockBeast
+	c.Family = []string{family.RockBeast}
 	c.ManaCost = 2
 	c.ManaRequirement = []string{civ.Fire}
 

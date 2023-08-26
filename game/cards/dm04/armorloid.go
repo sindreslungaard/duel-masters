@@ -13,7 +13,7 @@ func KamikazeChainsawWarrior(c *match.Card) {
 	c.Name = "Kamikaze, Chainsaw Warrior"
 	c.Power = 1000
 	c.Civ = civ.Fire
-	c.Family = family.Armorloid
+	c.Family = []string{family.Armorloid}
 	c.ManaCost = 2
 	c.ManaRequirement = []string{civ.Fire}
 

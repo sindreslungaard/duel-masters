@@ -15,7 +15,7 @@ func DarkRavenShadowOfGrief(c *match.Card) {
 	c.Name = "Dark Raven, Shadow of Grief"
 	c.Power = 1000
 	c.Civ = civ.Darkness
-	c.Family = family.Ghost
+	c.Family = []string{family.Ghost}
 	c.ManaCost = 4
 	c.ManaRequirement = []string{civ.Darkness}
 
@@ -29,7 +29,7 @@ func MaskedHorrorShadowOfScorn(c *match.Card) {
 	c.Name = "Masked Horror, Shadow of Scorn"
 	c.Power = 1000
 	c.Civ = civ.Darkness
-	c.Family = family.Ghost
+	c.Family = []string{family.Ghost}
 	c.ManaCost = 5
 	c.ManaRequirement = []string{civ.Darkness}
 
@@ -68,7 +68,7 @@ func NightMasterShadowOfDecay(c *match.Card) {
 	c.Name = "Night Master, Shadow of Decay"
 	c.Power = 3000
 	c.Civ = civ.Darkness
-	c.Family = family.Ghost
+	c.Family = []string{family.Ghost}
 	c.ManaCost = 6
 	c.ManaRequirement = []string{civ.Darkness}
 
@@ -82,7 +82,7 @@ func BlackFeatherShadowOfRage(c *match.Card) {
 	c.Name = "Black Feather, Shadow of Rage"
 	c.Power = 3000
 	c.Civ = civ.Darkness
-	c.Family = family.Ghost
+	c.Family = []string{family.Ghost}
 	c.ManaCost = 1
 	c.ManaRequirement = []string{civ.Darkness}
 

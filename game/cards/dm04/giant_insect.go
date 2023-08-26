@@ -15,7 +15,7 @@ func ThreeEyedDragonfly(c *match.Card) {
 	c.Name = "Three-Eyed Dragonfly"
 	c.Power = 4000
 	c.Civ = civ.Nature
-	c.Family = family.GiantInsect
+	c.Family = []string{family.GiantInsect}
 	c.ManaCost = 5
 	c.ManaRequirement = []string{civ.Nature}
 

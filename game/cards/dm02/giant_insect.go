@@ -13,7 +13,7 @@ func XenoMantis(c *match.Card) {
 	c.Name = "Xeno Mantis"
 	c.Power = 6000
 	c.Civ = civ.Nature
-	c.Family = family.GiantInsect
+	c.Family = []string{family.GiantInsect}
 	c.ManaCost = 7
 	c.ManaRequirement = []string{civ.Nature}
 

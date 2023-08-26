@@ -13,7 +13,7 @@ func Mudman(c *match.Card) {
 	c.Name = "Mudman"
 	c.Power = 2000
 	c.Civ = civ.Darkness
-	c.Family = family.Hedrian
+	c.Family = []string{family.Hedrian}
 	c.ManaCost = 4
 	c.ManaRequirement = []string{civ.Darkness}
 
@@ -36,7 +36,7 @@ func Scratchclaw(c *match.Card) {
 	c.Name = "Scratchclaw"
 	c.Power = 1000
 	c.Civ = civ.Darkness
-	c.Family = family.Hedrian
+	c.Family = []string{family.Hedrian}
 	c.ManaCost = 4
 	c.ManaRequirement = []string{civ.Darkness}
 

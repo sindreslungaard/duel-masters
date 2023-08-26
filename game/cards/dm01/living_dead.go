@@ -13,7 +13,7 @@ func BoneAssassin(c *match.Card) {
 	c.Name = "Bone Assassin, the Ripper"
 	c.Power = 2000
 	c.Civ = civ.Darkness
-	c.Family = family.LivingDead
+	c.Family = []string{family.LivingDead}
 	c.ManaCost = 4
 	c.ManaRequirement = []string{civ.Darkness}
 
@@ -27,7 +27,7 @@ func BoneSpider(c *match.Card) {
 	c.Name = "Bone Spider"
 	c.Power = 5000
 	c.Civ = civ.Darkness
-	c.Family = family.LivingDead
+	c.Family = []string{family.LivingDead}
 	c.ManaCost = 3
 	c.ManaRequirement = []string{civ.Darkness}
 
@@ -41,7 +41,7 @@ func SkeletonSoldierTheDefiled(c *match.Card) {
 	c.Name = "Skeleton Soldier, the Defiled"
 	c.Power = 3000
 	c.Civ = civ.Darkness
-	c.Family = family.LivingDead
+	c.Family = []string{family.LivingDead}
 	c.ManaCost = 4
 	c.ManaRequirement = []string{civ.Darkness}
 
@@ -55,7 +55,7 @@ func WanderingBraineater(c *match.Card) {
 	c.Name = "Wandering Braineater"
 	c.Power = 2000
 	c.Civ = civ.Darkness
-	c.Family = family.LivingDead
+	c.Family = []string{family.LivingDead}
 	c.ManaCost = 2
 	c.ManaRequirement = []string{civ.Darkness}
 
@@ -69,7 +69,7 @@ func WrithingBoneGhoul(c *match.Card) {
 	c.Name = "Writhing Bone Ghoul"
 	c.Power = 2000
 	c.Civ = civ.Darkness
-	c.Family = family.LivingDead
+	c.Family = []string{family.LivingDead}
 	c.ManaCost = 2
 	c.ManaRequirement = []string{civ.Darkness}
 

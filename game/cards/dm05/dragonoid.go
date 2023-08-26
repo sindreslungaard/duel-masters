@@ -13,7 +13,7 @@ func BombatGeneralOfSpeed(c *match.Card) {
 	c.Name = "Bombat, General of Speed"
 	c.Power = 3000
 	c.Civ = civ.Fire
-	c.Family = family.Dragonoid
+	c.Family = []string{family.Dragonoid}
 	c.ManaCost = 5
 	c.ManaRequirement = []string{civ.Fire}
 

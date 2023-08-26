@@ -14,7 +14,7 @@ func GarkagoDragon(c *match.Card) {
 	c.Name = "Garkago Dragon"
 	c.Power = 6000
 	c.Civ = civ.Fire
-	c.Family = family.ArmoredDragon
+	c.Family = []string{family.ArmoredDragon}
 	c.ManaCost = 7
 	c.ManaRequirement = []string{civ.Fire}
 
@@ -32,7 +32,7 @@ func BoltailDragon(c *match.Card) {
 	c.Name = "Boltail Dragon"
 	c.Power = 9000
 	c.Civ = civ.Fire
-	c.Family = family.ArmoredDragon
+	c.Family = []string{family.ArmoredDragon}
 	c.ManaCost = 7
 	c.ManaRequirement = []string{civ.Fire}
 
@@ -45,7 +45,7 @@ func UberdragonJabaha(c *match.Card) {
 	c.Name = "Uberdragon Jabaha"
 	c.Power = 11000
 	c.Civ = civ.Fire
-	c.Family = family.ArmoredDragon
+	c.Family = []string{family.ArmoredDragon}
 	c.ManaCost = 7
 	c.ManaRequirement = []string{civ.Fire}
 

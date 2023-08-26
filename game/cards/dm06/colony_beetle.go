@@ -12,7 +12,7 @@ func CarrierShell(c *match.Card) {
 	c.Name = "Carrier Shell"
 	c.Power = 2000
 	c.Civ = civ.Nature
-	c.Family = family.ColonyBeetle
+	c.Family = []string{family.ColonyBeetle}
 	c.ManaCost = 3
 	c.ManaRequirement = []string{civ.Nature}
 
@@ -24,7 +24,7 @@ func SlumberShell(c *match.Card) {
 	c.Name = "Slumber Shell"
 	c.Power = 2000
 	c.Civ = civ.Nature
-	c.Family = family.ColonyBeetle
+	c.Family = []string{family.ColonyBeetle}
 	c.ManaCost = 2
 	c.ManaRequirement = []string{civ.Nature}
 

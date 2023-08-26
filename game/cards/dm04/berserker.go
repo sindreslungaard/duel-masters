@@ -14,7 +14,7 @@ func MilieusTheDaystretcher(c *match.Card) {
 	c.Name = "Milieus, the Daystretcher"
 	c.Power = 2500
 	c.Civ = civ.Light
-	c.Family = family.Berserker
+	c.Family = []string{family.Berserker}
 	c.ManaCost = 5
 	c.ManaRequirement = []string{civ.Light}
 

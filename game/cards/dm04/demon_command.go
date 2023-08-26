@@ -15,7 +15,7 @@ func BallomMasterOfDeath(c *match.Card) {
 	c.Name = "Ballom, Master of Death"
 	c.Power = 12000
 	c.Civ = civ.Darkness
-	c.Family = family.DemonCommand
+	c.Family = []string{family.DemonCommand}
 	c.ManaCost = 8
 	c.ManaRequirement = []string{civ.Darkness}
 
@@ -48,7 +48,7 @@ func TroxGeneralOfDestruction(c *match.Card) {
 	c.Name = "Trox, General of Destruction"
 	c.Power = 6000
 	c.Civ = civ.Darkness
-	c.Family = family.DemonCommand
+	c.Family = []string{family.DemonCommand}
 	c.ManaCost = 7
 	c.ManaRequirement = []string{civ.Darkness}
 
@@ -81,7 +81,7 @@ func PhotocideLordOfTheWastes(c *match.Card) {
 	c.Name = "Photocide, Lord of the Wastes"
 	c.Power = 9000
 	c.Civ = civ.Darkness
-	c.Family = family.DemonCommand
+	c.Family = []string{family.DemonCommand}
 	c.ManaCost = 5
 	c.ManaRequirement = []string{civ.Darkness}
 

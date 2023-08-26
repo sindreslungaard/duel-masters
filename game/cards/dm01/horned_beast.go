@@ -13,7 +13,7 @@ func RoaringGreatHorn(c *match.Card) {
 	c.Name = "Roaring Great-Horn"
 	c.Power = 8000
 	c.Civ = civ.Nature
-	c.Family = family.HornedBeast
+	c.Family = []string{family.HornedBeast}
 	c.ManaCost = 7
 	c.ManaRequirement = []string{civ.Nature}
 
@@ -27,7 +27,7 @@ func StampedingLonghorn(c *match.Card) {
 	c.Name = "Stampeding Longhorn"
 	c.Power = 4000
 	c.Civ = civ.Nature
-	c.Family = family.HornedBeast
+	c.Family = []string{family.HornedBeast}
 	c.ManaCost = 5
 	c.ManaRequirement = []string{civ.Nature}
 
@@ -87,7 +87,7 @@ func TriHornShepherd(c *match.Card) {
 	c.Name = "Tri-Horn Shepherd"
 	c.Power = 5000
 	c.Civ = civ.Nature
-	c.Family = family.HornedBeast
+	c.Family = []string{family.HornedBeast}
 	c.ManaCost = 5
 	c.ManaRequirement = []string{civ.Nature}
 

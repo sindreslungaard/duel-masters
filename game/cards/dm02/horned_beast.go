@@ -15,7 +15,7 @@ func RumblingTerahorn(c *match.Card) {
 	c.Name = "Rumbling Terahorn"
 	c.Power = 3000
 	c.Civ = civ.Nature
-	c.Family = family.HornedBeast
+	c.Family = []string{family.HornedBeast}
 	c.ManaCost = 5
 	c.ManaRequirement = []string{civ.Nature}
 
@@ -44,7 +44,7 @@ func LeapingTornadoHorn(c *match.Card) {
 	c.Name = "Leaping Tornado Horn"
 	c.Power = 2000
 	c.Civ = civ.Nature
-	c.Family = family.HornedBeast
+	c.Family = []string{family.HornedBeast}
 	c.ManaCost = 3
 	c.ManaRequirement = []string{civ.Nature}
 

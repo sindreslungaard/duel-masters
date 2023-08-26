@@ -14,7 +14,7 @@ func AvalancheGiant(c *match.Card) {
 	c.Name = "Avalanche Giant"
 	c.Power = 8000
 	c.Civ = civ.Nature
-	c.Family = family.Giant
+	c.Family = []string{family.Giant}
 	c.ManaCost = 6
 	c.ManaRequirement = []string{civ.Nature}
 
@@ -51,7 +51,7 @@ func NocturnalGiant(c *match.Card) {
 	c.Name = "Nocturnal Giant"
 	c.Power = 7000
 	c.Civ = civ.Nature
-	c.Family = family.Giant
+	c.Family = []string{family.Giant}
 	c.ManaCost = 7
 	c.ManaRequirement = []string{civ.Nature}
 

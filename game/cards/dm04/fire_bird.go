@@ -13,7 +13,7 @@ func PippieKuppie(c *match.Card) {
 	c.Name = "Pippie Kuppie"
 	c.Power = 1000
 	c.Civ = civ.Fire
-	c.Family = family.FireBird
+	c.Family = []string{family.FireBird}
 	c.ManaCost = 2
 	c.ManaRequirement = []string{civ.Fire}
 
@@ -25,7 +25,7 @@ func PippieKuppie(c *match.Card) {
 
 		if event, ok := ctx.Event.(*match.GetPowerEvent); ok {
 			
-			if event.Card.Family == family.ArmoredDragon {
+			if event.Card.HasFamily(family.ArmoredDragon) {
 				event.Power += 1000
 			}
 		}

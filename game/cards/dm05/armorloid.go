@@ -13,7 +13,7 @@ func CannoneerBargon(c *match.Card) {
 	c.Name = "Cannoneer Bargon"
 	c.Power = 4000
 	c.Civ = civ.Fire
-	c.Family = family.Armorloid
+	c.Family = []string{family.Armorloid}
 	c.ManaCost = 4
 	c.ManaRequirement = []string{civ.Fire}
 

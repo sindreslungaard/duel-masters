@@ -12,7 +12,7 @@ func CursedPincher(c *match.Card) {
 	c.Name = "Cursed Pincher"
 	c.Power = 2000
 	c.Civ = civ.Darkness
-	c.Family = family.BrainJacker
+	c.Family = []string{family.BrainJacker}
 	c.ManaCost = 4
 	c.ManaRequirement = []string{civ.Darkness}
 

@@ -13,7 +13,7 @@ func Gigabolver(c *match.Card) {
 	c.Name = "Gigabolver"
 	c.Power = 3000
 	c.Civ = civ.Darkness
-	c.Family = family.Chimera
+	c.Family = []string{family.Chimera}
 	c.ManaCost = 4
 	c.ManaRequirement = []string{civ.Darkness}
 

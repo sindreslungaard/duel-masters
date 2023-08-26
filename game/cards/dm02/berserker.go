@@ -15,7 +15,7 @@ func LagunaLightningEnforcer(c *match.Card) {
 	c.Name = "Laguna Lightning Enforcer"
 	c.Power = 2500
 	c.Civ = civ.Light
-	c.Family = family.Berserker
+	c.Family = []string{family.Berserker}
 	c.ManaCost = 5
 	c.ManaRequirement = []string{civ.Light}
 

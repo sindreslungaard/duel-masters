@@ -15,7 +15,7 @@ func SnipStrikerBullraizer(c *match.Card) {
 	c.Name = "Snip Striker Bullraizer"
 	c.Power = 3000
 	c.Civ = civ.Fire
-	c.Family = family.Dragonoid
+	c.Family = []string{family.Dragonoid}
 	c.ManaCost = 2
 	c.ManaRequirement = []string{civ.Fire}
 

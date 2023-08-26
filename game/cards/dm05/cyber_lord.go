@@ -14,7 +14,7 @@ func Pokolul(c *match.Card) {
 	c.Name = "Pokolul"
 	c.Power = 2000
 	c.Civ = civ.Water
-	c.Family = family.CyberLord
+	c.Family = []string{family.CyberLord}
 	c.ManaCost = 4
 	c.ManaRequirement = []string{civ.Water}
 

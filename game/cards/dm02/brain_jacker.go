@@ -15,7 +15,7 @@ func AmberPiercer(c *match.Card) {
 	c.Name = "Amber Piercer"
 	c.Power = 2000
 	c.Civ = civ.Darkness
-	c.Family = family.BrainJacker
+	c.Family = []string{family.BrainJacker}
 	c.ManaCost = 4
 	c.ManaRequirement = []string{civ.Darkness}
 

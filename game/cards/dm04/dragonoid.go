@@ -13,7 +13,7 @@ func BlastoExplosiveSoldier(c *match.Card) {
 	c.Name = "Blasto, Explosive Soldier"
 	c.Power = 2000
 	c.Civ = civ.Fire
-	c.Family = family.Dragonoid
+	c.Family = []string{family.Dragonoid}
 	c.ManaCost = 3
 	c.ManaRequirement = []string{civ.Fire}
 

@@ -15,7 +15,7 @@ func RimuelCloudbreakElemental(c *match.Card) {
 	c.Name = "Rimuel, Cloudbreak Elemental"
 	c.Power = 6000
 	c.Civ = civ.Light
-	c.Family = family.AngelCommand
+	c.Family = []string{family.AngelCommand}
 	c.ManaCost = 8
 	c.ManaRequirement = []string{civ.Light}
 
@@ -61,7 +61,7 @@ func AlcadeiasLordOfSpirits(c *match.Card) {
 	c.Name = "Alcadeias, Lord of Spirits"
 	c.Power = 12500
 	c.Civ = civ.Light
-	c.Family = family.AngelCommand
+	c.Family = []string{family.AngelCommand}
 	c.ManaCost = 6
 	c.ManaRequirement = []string{civ.Light}
 
@@ -103,7 +103,7 @@ func AerisFlightElemental(c *match.Card) {
 	c.Name = "Aeris, Flight Elemental"
 	c.Power = 9000
 	c.Civ = civ.Light
-	c.Family = family.AngelCommand
+	c.Family = []string{family.AngelCommand}
 	c.ManaCost = 5
 	c.ManaRequirement = []string{civ.Light}
 

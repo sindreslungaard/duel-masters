@@ -13,7 +13,7 @@ func GrayBalloonShadowOfGreed(c *match.Card) {
 	c.Name = "Gray Balloon, Shadow of Greed"
 	c.Power = 3000
 	c.Civ = civ.Darkness
-	c.Family = family.Ghost
+	c.Family = []string{family.Ghost}
 	c.ManaCost = 3
 	c.ManaRequirement = []string{civ.Darkness}
 

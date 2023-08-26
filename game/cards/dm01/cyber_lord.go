@@ -13,7 +13,7 @@ func Tropico(c *match.Card) {
 	c.Name = "Tropico"
 	c.Power = 3000
 	c.Civ = civ.Water
-	c.Family = family.CyberLord
+	c.Family = []string{family.CyberLord}
 	c.ManaCost = 5
 	c.ManaRequirement = []string{civ.Water}
 

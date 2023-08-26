@@ -11,7 +11,7 @@ func SteelTurretCluster(c *match.Card) {
 	c.Name = "Steel-Turret Cluster"
 	c.Power = 3000
 	c.Civ = civ.Water
-	c.Family = family.CyberCluster
+	c.Family = []string{family.CyberCluster}
 	c.ManaCost = 5
 	c.ManaRequirement = []string{civ.Water}
 

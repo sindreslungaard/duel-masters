@@ -14,7 +14,7 @@ func JunkatzRabidDoll(c *match.Card) {
 	c.Name = "Junkatz, Rabid Doll"
 	c.Power = 2000
 	c.Civ = civ.Darkness
-	c.Family = family.DeathPuppet
+	c.Family = []string{family.DeathPuppet}
 	c.ManaCost = 2
 	c.ManaRequirement = []string{civ.Darkness}
 
@@ -26,7 +26,7 @@ func LupaPoisonTippedDoll(c *match.Card) {
 	c.Name = "Lupa, Poison-Tipped Doll"
 	c.Power = 1000
 	c.Civ = civ.Darkness
-	c.Family = family.DeathPuppet
+	c.Family = []string{family.DeathPuppet}
 	c.ManaCost = 2
 	c.ManaRequirement = []string{civ.Darkness}
 	c.TapAbility = true

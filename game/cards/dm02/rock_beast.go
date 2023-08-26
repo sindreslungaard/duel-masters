@@ -15,7 +15,7 @@ func Galsaur(c *match.Card) {
 	c.Name = "Galsaur"
 	c.Power = 4000
 	c.Civ = civ.Fire
-	c.Family = family.RockBeast
+	c.Family = []string{family.RockBeast}
 	c.ManaCost = 5
 	c.ManaRequirement = []string{civ.Fire}
 
@@ -45,7 +45,7 @@ func Bombersaur(c *match.Card) {
 	c.Name = "Bombersaur"
 	c.Power = 5000
 	c.Civ = civ.Fire
-	c.Family = family.RockBeast
+	c.Family = []string{family.RockBeast}
 	c.ManaCost = 5
 	c.ManaRequirement = []string{civ.Fire}
 

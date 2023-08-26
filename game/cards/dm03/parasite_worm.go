@@ -13,7 +13,7 @@ func HangWormFetidLarva(c *match.Card) {
 	c.Name = "Hang Worm, Fetid Larva"
 	c.Power = 4000
 	c.Civ = civ.Darkness
-	c.Family = family.ParasiteWorm
+	c.Family = []string{family.ParasiteWorm}
 	c.ManaCost = 5
 	c.ManaRequirement = []string{civ.Darkness}
 

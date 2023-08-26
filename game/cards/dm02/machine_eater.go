@@ -14,7 +14,7 @@ func EngineerKipo(c *match.Card) {
 	c.Name = "Engineer Kipo"
 	c.Power = 2000
 	c.Civ = civ.Fire
-	c.Family = family.MachineEater
+	c.Family = []string{family.MachineEater}
 	c.ManaCost = 2
 	c.ManaRequirement = []string{civ.Fire}
 

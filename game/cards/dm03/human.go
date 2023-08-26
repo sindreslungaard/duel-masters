@@ -13,7 +13,7 @@ func ExplosiveDudeJoe(c *match.Card) {
 	c.Name = "Explosive Dude Joe"
 	c.Power = 3000
 	c.Civ = civ.Fire
-	c.Family = family.Human
+	c.Family = []string{family.Human}
 	c.ManaCost = 3
 	c.ManaRequirement = []string{civ.Fire}
 
@@ -27,7 +27,7 @@ func MuramasaDukeOfBlades(c *match.Card) {
 	c.Name = "Muramasa, Duke of Blades"
 	c.Power = 2000
 	c.Civ = civ.Fire
-	c.Family = family.Human
+	c.Family = []string{family.Human}
 	c.ManaCost = 6
 	c.ManaRequirement = []string{civ.Fire}
 

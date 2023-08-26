@@ -15,7 +15,7 @@ func LadiaBaleTheInspirational(c *match.Card) {
 	c.Name = "Ladia Bale, the Inspirational"
 	c.Power = 9500
 	c.Civ = civ.Light
-	c.Family = family.Guardian
+	c.Family = []string{family.Guardian}
 	c.ManaCost = 6
 	c.ManaRequirement = []string{civ.Light}
 
@@ -29,7 +29,7 @@ func PhalEegaDawnGuardian(c *match.Card) {
 	c.Name = "Phal Eega, Dawn Guardian"
 	c.Power = 4000
 	c.Civ = civ.Light
-	c.Family = family.Guardian
+	c.Family = []string{family.Guardian}
 	c.ManaCost = 5
 	c.ManaRequirement = []string{civ.Light}
 
@@ -63,7 +63,7 @@ func ResoPacosClearSkyGuardian(c *match.Card) {
 	c.Name = "Reso Pacos, Clear Sky Guardian"
 	c.Power = 3000
 	c.Civ = civ.Light
-	c.Family = family.Guardian
+	c.Family = []string{family.Guardian}
 	c.ManaCost = 3
 	c.ManaRequirement = []string{civ.Light}
 
@@ -77,7 +77,7 @@ func LarbaGeerTheImmaculate(c *match.Card) {
 	c.Name = "Larba Geer, the Immaculate"
 	c.Power = 5000
 	c.Civ = civ.Light
-	c.Family = family.Guardian
+	c.Family = []string{family.Guardian}
 	c.ManaCost = 3
 	c.ManaRequirement = []string{civ.Light}
 

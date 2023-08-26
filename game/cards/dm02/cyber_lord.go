@@ -14,7 +14,7 @@ func HypersquidWalter(c *match.Card) {
 	c.Name = "Hypersquid Walter"
 	c.Power = 1000
 	c.Civ = civ.Water
-	c.Family = family.CyberLord
+	c.Family = []string{family.CyberLord}
 	c.ManaCost = 3
 	c.ManaRequirement = []string{civ.Water}
 
@@ -34,7 +34,7 @@ func Corile(c *match.Card) {
 	c.Name = "Corile"
 	c.Power = 2000
 	c.Civ = civ.Water
-	c.Family = family.CyberLord
+	c.Family = []string{family.CyberLord}
 	c.ManaCost = 5
 	c.ManaRequirement = []string{civ.Water}
 

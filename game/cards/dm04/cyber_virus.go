@@ -13,7 +13,7 @@ func AstralWarper(c *match.Card) {
 	c.Name = "Astral Warper"
 	c.Power = 5000
 	c.Civ = civ.Water
-	c.Family = family.CyberVirus
+	c.Family = []string{family.CyberVirus}
 	c.ManaCost = 6
 	c.ManaRequirement = []string{civ.Water}
 
@@ -30,7 +30,7 @@ func KeeperOfTheSunlitAbyss(c *match.Card) {
 	c.Name = "Keeper of the Sunlit Abyss"
 	c.Power = 2000
 	c.Civ = civ.Water
-	c.Family = family.CyberVirus
+	c.Family = []string{family.CyberVirus}
 	c.ManaCost = 4
 	c.ManaRequirement = []string{civ.Water}
 

@@ -15,7 +15,7 @@ func KingNeptas(c *match.Card) {
 	c.Name = "King Neptas"
 	c.Power = 5000
 	c.Civ = civ.Water
-	c.Family = family.Leviathan
+	c.Family = []string{family.Leviathan}
 	c.ManaCost = 6
 	c.ManaRequirement = []string{civ.Water}
 
@@ -90,7 +90,7 @@ func KingPonitas(c *match.Card) {
 	c.Name = "King Ponitas"
 	c.Power = 4000
 	c.Civ = civ.Water
-	c.Family = family.Leviathan
+	c.Family = []string{family.Leviathan}
 	c.ManaCost = 8
 	c.ManaRequirement = []string{civ.Water}
 
@@ -117,7 +117,7 @@ func LegendaryBynor(c *match.Card) {
 	c.Name = "Legendary Bynor"
 	c.Power = 8000
 	c.Civ = civ.Water
-	c.Family = family.Leviathan
+	c.Family = []string{family.Leviathan}
 	c.ManaCost = 6
 	c.ManaRequirement = []string{civ.Water}
 

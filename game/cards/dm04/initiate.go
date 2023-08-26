@@ -13,7 +13,7 @@ func OuksVizierOfRestoration(c *match.Card) {
 	c.Name = "Ouks, Vizier of Restoration"
 	c.Power = 1000
 	c.Civ = civ.Light
-	c.Family = family.Initiate
+	c.Family = []string{family.Initiate}
 	c.ManaCost = 5
 	c.ManaRequirement = []string{civ.Light}
 
@@ -27,7 +27,7 @@ func SariusVizierOfSuppression(c *match.Card) {
 	c.Name = "Sarius, Vizier of Suppression"
 	c.Power = 3000
 	c.Civ = civ.Light
-	c.Family = family.Initiate
+	c.Family = []string{family.Initiate}
 	c.ManaCost = 2
 	c.ManaRequirement = []string{civ.Light}
 

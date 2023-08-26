@@ -12,7 +12,7 @@ func UltraMantisScourgeOfFate(c *match.Card) {
 	c.Name = "Ultra Mantis, Scourge of Fate"
 	c.Power = 9000
 	c.Civ = civ.Nature
-	c.Family = family.GiantInsect
+	c.Family = []string{family.GiantInsect}
 	c.ManaCost = 6
 	c.ManaRequirement = []string{civ.Nature}
 

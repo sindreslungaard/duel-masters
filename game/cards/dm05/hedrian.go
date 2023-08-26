@@ -14,7 +14,7 @@ func HornedMutant(c *match.Card) {
 	c.Name = "Horned Mutant"
 	c.Power = 3000
 	c.Civ = civ.Darkness
-	c.Family = family.Hedrian
+	c.Family = []string{family.Hedrian}
 	c.ManaCost = 5
 	c.ManaRequirement = []string{civ.Darkness}
 

@@ -13,7 +13,7 @@ func Meteosaur(c *match.Card) {
 	c.Name = "Meteosaur"
 	c.Power = 2000
 	c.Civ = civ.Fire
-	c.Family = family.RockBeast
+	c.Family = []string{family.RockBeast}
 	c.ManaCost = 5
 	c.ManaRequirement = []string{civ.Fire}
 
@@ -52,7 +52,7 @@ func Stonesaur(c *match.Card) {
 	c.Name = "Stonesaur"
 	c.Power = 4000
 	c.Civ = civ.Fire
-	c.Family = family.RockBeast
+	c.Family = []string{family.RockBeast}
 	c.ManaCost = 5
 	c.ManaRequirement = []string{civ.Fire}
 

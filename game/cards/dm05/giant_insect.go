@@ -15,7 +15,7 @@ func BloodwingMantis(c *match.Card) {
 	c.Name = "Bloodwing Mantis"
 	c.Power = 6000
 	c.Civ = civ.Nature
-	c.Family = family.GiantInsect
+	c.Family = []string{family.GiantInsect}
 	c.ManaCost = 5
 	c.ManaRequirement = []string{civ.Nature}
 
@@ -46,7 +46,7 @@ func ScissorScarab(c *match.Card) {
 	c.Name = "Scissor Scarab"
 	c.Power = 5000
 	c.Civ = civ.Nature
-	c.Family = family.GiantInsect
+	c.Family = []string{family.GiantInsect}
 	c.ManaCost = 7
 	c.ManaRequirement = []string{civ.Nature}
 
@@ -61,7 +61,7 @@ func ScissorScarab(c *match.Card) {
 			1,
 			1,
 			true,
-			func(c *match.Card) bool { return c.Family == family.GiantInsect }).Map(func(c *match.Card) {
+			func(c *match.Card) bool { return c.HasFamily(family.GiantInsect) }).Map(func(c *match.Card) {
 			card.Player.MoveCard(c.ID, match.DECK, match.HAND)
 			ctx.Match.Chat("Server", fmt.Sprintf("%s was moved from %s's deck to their hand", c.Name, card.Player.Username()))
 		})
@@ -78,7 +78,7 @@ func AmbushScorpion(c *match.Card) {
 	c.Name = "Ambush Scorpion"
 	c.Power = 3000
 	c.Civ = civ.Nature
-	c.Family = family.GiantInsect
+	c.Family = []string{family.GiantInsect}
 	c.ManaCost = 5
 	c.ManaRequirement = []string{civ.Nature}
 
@@ -116,7 +116,7 @@ func ObsidianScarab(c *match.Card) {
 	c.Name = "Obsidian Scarab"
 	c.Power = 5000
 	c.Civ = civ.Nature
-	c.Family = family.GiantInsect
+	c.Family = []string{family.GiantInsect}
 	c.ManaCost = 6
 	c.ManaRequirement = []string{civ.Nature}
 

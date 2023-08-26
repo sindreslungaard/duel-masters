@@ -15,7 +15,7 @@ func NiofaHornedProtector(c *match.Card) {
 	c.Name = "Niofa, Horned Protector"
 	c.Power = 9000
 	c.Civ = civ.Nature
-	c.Family = family.HornedBeast
+	c.Family = []string{family.HornedBeast}
 	c.ManaCost = 6
 	c.ManaRequirement = []string{civ.Nature}
 

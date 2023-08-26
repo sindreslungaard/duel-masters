@@ -13,7 +13,7 @@ func GregorianWorm(c *match.Card) {
 	c.Name = "Gregorian Worm"
 	c.Power = 3000
 	c.Civ = civ.Darkness
-	c.Family = family.ParasiteWorm
+	c.Family = []string{family.ParasiteWorm}
 	c.ManaCost = 4
 	c.ManaRequirement = []string{civ.Darkness}
 

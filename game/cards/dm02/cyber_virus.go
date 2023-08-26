@@ -14,7 +14,7 @@ func StainedGlass(c *match.Card) {
 	c.Name = "Stained Glass"
 	c.Power = 1000
 	c.Civ = civ.Water
-	c.Family = family.CyberVirus
+	c.Family = []string{family.CyberVirus}
 	c.ManaCost = 3
 	c.ManaRequirement = []string{civ.Water}
 

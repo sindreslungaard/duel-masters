@@ -15,7 +15,7 @@ func RaVuSeekerOfLightning(c *match.Card) {
 	c.Name = "Ra Vu, Seeker of Lightning"
 	c.Power = 4000
 	c.Civ = civ.Light
-	c.Family = family.MechaThunder
+	c.Family = []string{family.MechaThunder}
 	c.ManaCost = 6
 	c.ManaRequirement = []string{civ.Light}
 
@@ -41,7 +41,7 @@ func UrPaleSeekerOfSunlight(c *match.Card) {
 	c.Name = "Ur Pale, Seeker of Sunlight"
 	c.Power = 2500
 	c.Civ = civ.Light
-	c.Family = family.MechaThunder
+	c.Family = []string{family.MechaThunder}
 	c.ManaCost = 4
 	c.ManaRequirement = []string{civ.Light}
 

@@ -15,7 +15,7 @@ func DarkTitanMaginn(c *match.Card) {
 	c.Name = "Dark Titan Maginn"
 	c.Power = 4000
 	c.Civ = civ.Darkness
-	c.Family = family.DemonCommand
+	c.Family = []string{family.DemonCommand}
 	c.ManaCost = 6
 	c.ManaRequirement = []string{civ.Darkness}
 

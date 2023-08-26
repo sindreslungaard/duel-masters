@@ -13,7 +13,7 @@ func ChaosFish(c *match.Card) {
 	c.Name = "Chaos Fish"
 	c.Power = 1000
 	c.Civ = civ.Water
-	c.Family = family.GelFish
+	c.Family = []string{family.GelFish}
 	c.ManaCost = 7
 	c.ManaRequirement = []string{civ.Water}
 

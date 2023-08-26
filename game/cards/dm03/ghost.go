@@ -14,7 +14,7 @@ func JackViperShadowofDoom(c *match.Card) {
 	c.Name = "Jack Viper, Shadow of Doom"
 	c.Power = 4000
 	c.Civ = civ.Darkness
-	c.Family = family.Ghost
+	c.Family = []string{family.Ghost}
 	c.ManaCost = 3
 	c.ManaRequirement = []string{civ.Darkness}
 
@@ -59,7 +59,7 @@ func WailingShadowBelbetphlo(c *match.Card) {
 	c.Name = "Wailing Shadow Belbetphlo"
 	c.Power = 1000
 	c.Civ = civ.Darkness
-	c.Family = family.Ghost
+	c.Family = []string{family.Ghost}
 	c.ManaCost = 3
 	c.ManaRequirement = []string{civ.Darkness}
 

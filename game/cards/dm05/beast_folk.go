@@ -13,7 +13,7 @@ func CrowWinger(c *match.Card) {
 	c.Name = "Crow Winger"
 	c.Power = 1000
 	c.Civ = civ.Nature
-	c.Family = family.BeastFolk
+	c.Family = []string{family.BeastFolk}
 	c.ManaCost = 2
 	c.ManaRequirement = []string{civ.Nature}
 

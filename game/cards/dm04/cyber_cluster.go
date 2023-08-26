@@ -13,7 +13,7 @@ func HunterCluster(c *match.Card) {
 	c.Name = "Hunter Cluster"
 	c.Power = 1000
 	c.Civ = civ.Water
-	c.Family = family.CyberCluster
+	c.Family = []string{family.CyberCluster}
 	c.ManaCost = 4
 	c.ManaRequirement = []string{civ.Water}
 

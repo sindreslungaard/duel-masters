@@ -13,7 +13,7 @@ func EthelStarSeaElemental(c *match.Card) {
 	c.Name = "Ethel, Star Sea Elemental"
 	c.Power = 5500
 	c.Civ = civ.Light
-	c.Family = family.AngelCommand
+	c.Family = []string{family.AngelCommand}
 	c.ManaCost = 6
 	c.ManaRequirement = []string{civ.Light}
 

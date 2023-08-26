@@ -14,7 +14,7 @@ func GalklifeDragon(c *match.Card) {
 	c.Name = "Galklife Dragon"
 	c.Power = 6000
 	c.Civ = civ.Fire
-	c.Family = family.ArmoredDragon
+	c.Family = []string{family.ArmoredDragon}
 	c.ManaCost = 7
 	c.ManaRequirement = []string{civ.Fire}
 

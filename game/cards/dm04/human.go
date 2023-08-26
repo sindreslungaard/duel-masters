@@ -14,7 +14,7 @@ func MissileBoy(c *match.Card) {
 	c.Name = "Missile Boy"
 	c.Power = 1000
 	c.Civ = civ.Fire
-	c.Family = family.Human
+	c.Family = []string{family.Human}
 	c.ManaCost = 3
 	c.ManaRequirement = []string{civ.Fire}
 
