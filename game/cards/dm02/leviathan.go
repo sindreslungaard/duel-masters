@@ -46,7 +46,7 @@ func kingNautilusSpecial(card *match.Card, ctx *match.Context, cardID string) {
 		return
 	}
 
-	if creature.Family != family.LiquidPeople {
+	if !creature.HasFamily(family.LiquidPeople) {
 		return
 	}
 

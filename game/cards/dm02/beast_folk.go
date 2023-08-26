@@ -26,7 +26,7 @@ func BarkwhipTheSmasher(c *match.Card) {
 				return
 			}
 
-			if event.Card.HasFamily(card.Family) {
+			if event.Card.HasFamily(family.BeastFolk) {
 				event.Power += 2000
 			}
 

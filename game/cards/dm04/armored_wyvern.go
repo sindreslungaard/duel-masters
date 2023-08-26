@@ -46,7 +46,7 @@ func chaoticSkyterrorSpecial(card *match.Card, ctx *match.Context, cardID string
 		return
 	}
 
-	if creature.Family != family.DemonCommand {
+	if !creature.HasFamily(family.DemonCommand) {
 		return
 	}
 

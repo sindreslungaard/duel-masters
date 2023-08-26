@@ -79,7 +79,7 @@ func ArmoredBlasterValdios(c *match.Card) {
 			return
 		}
 
-		if event.Card.Family != family.Human {
+		if !event.Card.HasFamily(family.Human) {
 			return
 		}
 

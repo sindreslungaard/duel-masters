@@ -42,7 +42,7 @@ func KingAquakamui(c *match.Card) {
 
 		if event, ok := ctx.Event.(*match.GetPowerEvent); ok {
 
-			if event.Card.HasFamily(family.AngelCommand) || event.Card.HasFamily(amily.DemonCommand) {
+			if event.Card.HasFamily(family.AngelCommand) || event.Card.HasFamily(family.DemonCommand) {
 				event.Power += 2000
 			}
 		}
