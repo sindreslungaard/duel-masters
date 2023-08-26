@@ -27,7 +27,7 @@ func KipChippotto(c *match.Card) {
 		if event, ok := ctx.Event.(*match.CreatureDestroyed); ok &&
 			event.Card.ID != card.ID &&
 			event.Card.Player == card.Player &&
-			event.Card.Family == family.ArmoredDragon {
+			event.Card.HasFamily(family.ArmoredDragon) {
 
 			fx.SelectFilter(
 				card.Player,

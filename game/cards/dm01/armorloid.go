@@ -23,7 +23,7 @@ func ArmoredWalkerUrherion(c *match.Card) {
 
 		power := 0
 
-		if attacking && match.ContainerHas(c.Player, match.BATTLEZONE, func(x *match.Card) bool { return x.Family == family.Human }) {
+		if attacking && match.ContainerHas(c.Player, match.BATTLEZONE, func(x *match.Card) bool { return x.HasFamily(family.Human) }) {
 			power += 2000
 		}
 

@@ -27,7 +27,7 @@ func KingAquakamui(c *match.Card) {
 				fx.FindFilter(
 					card.Player,
 					match.GRAVEYARD,
-					func(x *match.Card) bool { return x.Family == family.AngelCommand || x.Family == family.DemonCommand },
+					func(x *match.Card) bool { return x.HasFamily(family.AngelCommand) || x.HasFamily(family.DemonCommand) },
 				).Map(func(x *match.Card) {
 
 					x.Player.MoveCard(x.ID, match.GRAVEYARD, match.HAND)
@@ -42,7 +42,7 @@ func KingAquakamui(c *match.Card) {
 
 		if event, ok := ctx.Event.(*match.GetPowerEvent); ok {
 
-			if event.Card.Family == family.AngelCommand || event.Card.Family == family.DemonCommand {
+			if event.Card.HasFamily(family.AngelCommand) || event.Card.HasFamily(amily.DemonCommand) {
 				event.Power += 2000
 			}
 		}

@@ -35,7 +35,7 @@ func FatalAttackerHorvath(c *match.Card) {
 
 	c.PowerModifier = func(m *match.Match, attacking bool) int {
 
-		if attacking && match.ContainerHas(c.Player, match.BATTLEZONE, func(x *match.Card) bool { return x.Family == family.Armorloid }) {
+		if attacking && match.ContainerHas(c.Player, match.BATTLEZONE, func(x *match.Card) bool { return x.HasFamily(family.Armorloid) }) {
 			return 2000
 		}
 

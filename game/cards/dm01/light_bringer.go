@@ -37,7 +37,7 @@ func IocantTheOracle(c *match.Card) {
 
 		power := 0
 
-		if match.ContainerHas(c.Player, match.BATTLEZONE, func(x *match.Card) bool { return x.Family == family.AngelCommand }) {
+		if match.ContainerHas(c.Player, match.BATTLEZONE, func(x *match.Card) bool { return x.HasFamily(family.AngelCommand) }) {
 			power += 2000
 		}
 

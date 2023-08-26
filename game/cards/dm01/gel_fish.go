@@ -32,7 +32,7 @@ func IllusionaryMerfolk(c *match.Card) {
 
 				for _, creature := range battlezone {
 
-					if creature.Family == family.CyberLord {
+					if creature.HasFamily(family.CyberLord) {
 						card.Player.DrawCards(3)
 						return
 					}

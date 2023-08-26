@@ -40,7 +40,7 @@ func ArmoredCannonBalbaro(c *match.Card) {
 			fx.FindFilter(
 				c.Player,
 				match.BATTLEZONE,
-				func(x *match.Card) bool { return x.Family == family.Human && x != c },
+				func(x *match.Card) bool { return x.HasFamily(family.Human) && x != c },
 			).Map(func(x *match.Card) {
 				power += 2000
 			})

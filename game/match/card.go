@@ -32,7 +32,7 @@ type Card struct {
 	Name            string
 	Power           int
 	Civ             string
-	Family          string
+	Family          []string
 	ManaCost        int
 	ManaRequirement []string
 	PowerModifier   func(m *Match, attacking bool) int
@@ -64,7 +64,7 @@ func NewCard(p *Player, image string) (*Card, error) {
 		Name:            "undefined_card",
 		Power:           0,
 		Civ:             "undefind_civ",
-		Family:          "undefined_family",
+		Family:          ["undefined_family"],
 		ManaCost:        1,
 		ManaRequirement: make([]string, 0),
 		PowerModifier:   func(m *Match, attacking bool) int { return 0 },
@@ -198,4 +198,12 @@ func (c *Card) Attachments() []*Card {
 // ClearAttachments removes all attached cards
 func (c *Card) ClearAttachments() {
 	c.attachedCards = make([]*Card, 0)
+}
+
+// HasFamily returns true if the card has the input family, false otherwise
+func (c *Card) HasFamily(family string) bool {
+
+	// implement this function please
+	
+	return false
 }

@@ -143,7 +143,7 @@ func SearchForFamily(p *Player, m *Match, containerOwner *Player, containerName 
 	cards := make([]*Card, 0)
 
 	for _, c := range container {
-		if c.Family == family {
+		if c.HasFamily(family) {
 			cards = append(cards, c)
 		}
 	}

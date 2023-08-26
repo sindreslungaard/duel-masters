@@ -24,14 +24,14 @@ func GregoriaPrincessOfWar(c *match.Card) {
 			demonCommands := fx.FindFilter(
 				card.Player,
 				match.BATTLEZONE,
-				func(x *match.Card) bool { return x.Family == family.DemonCommand },
+				func(x *match.Card) bool { return x.HasFamily(family.DemonCommand) },
 			)
 
 			demonCommands = append(demonCommands,
 				fx.FindFilter(
 					ctx.Match.Opponent(card.Player),
 					match.BATTLEZONE,
-					func(x *match.Card) bool { return x.Family == family.DemonCommand },
+					func(x *match.Card) bool { return x.HasFamily(family.DemonCommand) },
 				)...,
 			)
 

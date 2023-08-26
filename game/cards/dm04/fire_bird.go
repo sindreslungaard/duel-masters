@@ -25,7 +25,7 @@ func PippieKuppie(c *match.Card) {
 
 		if event, ok := ctx.Event.(*match.GetPowerEvent); ok {
 			
-			if event.Card.Family == family.ArmoredDragon {
+			if event.Card.HasFamily(family.ArmoredDragon) {
 				event.Power += 1000
 			}
 		}
