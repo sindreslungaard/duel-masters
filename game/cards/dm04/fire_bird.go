@@ -13,7 +13,7 @@ func PippieKuppie(c *match.Card) {
 	c.Name = "Pippie Kuppie"
 	c.Power = 1000
 	c.Civ = civ.Fire
-	c.Family = family.FireBird
+	c.Family = [family.FireBird]
 	c.ManaCost = 2
 	c.ManaRequirement = []string{civ.Fire}
 

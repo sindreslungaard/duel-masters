@@ -13,7 +13,7 @@ func ChiliasTheOracle(c *match.Card) {
 	c.Name = "Chilias, the Oracle"
 	c.Power = 2500
 	c.Civ = civ.Light
-	c.Family = family.LightBringer
+	c.Family = [family.LightBringer]
 	c.ManaCost = 4
 	c.ManaRequirement = []string{civ.Light}
 
@@ -27,7 +27,7 @@ func IocantTheOracle(c *match.Card) {
 	c.Name = "Iocant, the Oracle"
 	c.Power = 2000
 	c.Civ = civ.Light
-	c.Family = family.LightBringer
+	c.Family = [family.LightBringer]
 	c.ManaCost = 2
 	c.ManaRequirement = []string{civ.Light}
 
@@ -52,7 +52,7 @@ func ReusolTheOracle(c *match.Card) {
 	c.Name = "Reusol, the Oracle"
 	c.Power = 2000
 	c.Civ = civ.Light
-	c.Family = family.LightBringer
+	c.Family = [family.LightBringer]
 	c.ManaCost = 2
 	c.ManaRequirement = []string{civ.Light}
 

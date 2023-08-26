@@ -13,7 +13,7 @@ func MiniTitanGett(c *match.Card) {
 	c.Name = "Mini Titan Gett"
 	c.Power = 2000
 	c.Civ = civ.Fire
-	c.Family = family.Human
+	c.Family = [family.Human]
 	c.ManaCost = 2
 	c.ManaRequirement = []string{civ.Fire}
 
@@ -27,7 +27,7 @@ func ArmoredCannonBalbaro(c *match.Card) {
 	c.Name = "Armored Cannon Balbaro"
 	c.Power = 3000
 	c.Civ = civ.Fire
-	c.Family = family.Human
+	c.Family = [family.Human]
 	c.ManaCost = 3
 	c.ManaRequirement = []string{civ.Fire}
 
@@ -61,7 +61,7 @@ func ArmoredBlasterValdios(c *match.Card) {
 	c.Name = "Armored Blaster Valdios"
 	c.Power = 6000
 	c.Civ = civ.Fire
-	c.Family = family.Human
+	c.Family = [family.Human]
 	c.ManaCost = 4
 	c.ManaRequirement = []string{civ.Fire}
 

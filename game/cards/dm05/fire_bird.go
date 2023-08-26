@@ -14,7 +14,7 @@ func KipChippotto(c *match.Card) {
 	c.Name = "Kip Chippotto"
 	c.Power = 1000
 	c.Civ = civ.Fire
-	c.Family = family.FireBird
+	c.Family = [family.FireBird]
 	c.ManaCost = 3
 	c.ManaRequirement = []string{civ.Fire}
 
