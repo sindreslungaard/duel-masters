@@ -207,3 +207,11 @@ func (c *Card) HasFamily(family string) bool {
 	
 	return false
 }
+
+// SharesAFamily returns true if the card has at least one of the input families, false otherwise
+func (c *Card) SharesAFamily(families []string) bool {
+
+	// implement this function please
+	
+	return false
+}
