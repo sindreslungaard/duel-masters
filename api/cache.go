@@ -39,7 +39,7 @@ func CreateCardCache() {
 				Name:         card.Name,
 				Civilization: card.Civ,
 				Set:          setID,
-				Family:       card.Family,
+				Family:       card.Family[0],
 				ManaCost:     card.ManaCost,
 				Type:         "Creature",
 			}
