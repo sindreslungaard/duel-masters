@@ -202,16 +202,39 @@ func (c *Card) ClearAttachments() {
 
 // HasFamily returns true if the card has the input family, false otherwise
 func (c *Card) HasFamily(family string) bool {
+	for _, f := range c.Family {
+		if f == family {
+			return true
+		}
+	}
 
-	// implement this function please
-	
 	return false
 }
 
 // SharesAFamily returns true if the card has at least one of the input families, false otherwise
 func (c *Card) SharesAFamily(families []string) bool {
+	for _, f := range c.Family {
+		for _, toCheck := range families {
+			if f == toCheck {
+				return true
+			}
+		}
+	}
 
-	// implement this function please
-	
 	return false
+}
+
+// SharesAllFamilies returns true if the card has all of the input families
+func (c *Card) SharesAllFamilies(families []string) bool {
+	ok := true
+
+	for _, f := range c.Family {
+		for _, toCheck := range families {
+			if f != toCheck {
+				ok = false
+			}
+		}
+	}
+
+	return ok
 }
