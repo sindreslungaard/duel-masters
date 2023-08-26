@@ -46,7 +46,7 @@ func supportingTulipSpecial(card *match.Card, ctx *match.Context, cardID string)
 		return
 	}
 
-	if !creature.HasFamily((family.AngelCommand) {
+	if !creature.HasFamily(family.AngelCommand) {
 		return
 	}
 
