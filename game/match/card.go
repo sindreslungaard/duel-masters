@@ -64,7 +64,7 @@ func NewCard(p *Player, image string) (*Card, error) {
 		Name:            "undefined_card",
 		Power:           0,
 		Civ:             "undefind_civ",
-		Family:          ["undefined_family"],
+		Family:          []string{"undefined_family"},
 		ManaCost:        1,
 		ManaRequirement: make([]string, 0),
 		PowerModifier:   func(m *Match, attacking bool) int { return 0 },
