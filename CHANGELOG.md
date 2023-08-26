@@ -2,7 +2,7 @@
 
 ## [Unreleased]
 
-No unreleased changes
+- Updated codebase to support cards with multiple races (thanks @tydeFriz)
 
 ## 24/08/2023
 
