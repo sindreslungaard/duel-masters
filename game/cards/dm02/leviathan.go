@@ -14,7 +14,7 @@ func KingNautilus(c *match.Card) {
 	c.Name = "King Nautilus"
 	c.Power = 6000
 	c.Civ = civ.Water
-	c.Family = [family.Leviathan]
+	c.Family = []string{family.Leviathan}
 	c.ManaCost = 8
 	c.ManaRequirement = []string{civ.Water}
 

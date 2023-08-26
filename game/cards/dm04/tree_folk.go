@@ -14,7 +14,7 @@ func SupportingTulip(c *match.Card) {
 	c.Name = "Supporting Tulip"
 	c.Power = 4000
 	c.Civ = civ.Nature
-	c.Family = [family.TreeFolk]
+	c.Family = []string{family.TreeFolk}
 	c.ManaCost = 5
 	c.ManaRequirement = []string{civ.Nature}
 
@@ -61,7 +61,7 @@ func ExplodingCactus(c *match.Card) {
 	c.Name = "Exploding Cactus"
 	c.Power = 2000
 	c.Civ = civ.Nature
-	c.Family = [family.TreeFolk]
+	c.Family = []string{family.TreeFolk}
 	c.ManaCost = 3
 	c.ManaRequirement = []string{civ.Nature}
 

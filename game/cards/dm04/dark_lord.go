@@ -14,7 +14,7 @@ func GregoriaPrincessOfWar(c *match.Card) {
 	c.Name = "Gregoria, Princess of War"
 	c.Power = 5000
 	c.Civ = civ.Darkness
-	c.Family = [family.DarkLord]
+	c.Family = []string{family.DarkLord}
 	c.ManaCost = 6
 	c.ManaRequirement = []string{civ.Darkness}
 

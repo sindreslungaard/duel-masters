@@ -13,7 +13,7 @@ func ArmoredWalkerUrherion(c *match.Card) {
 	c.Name = "Armored Walker Urherion"
 	c.Power = 3000
 	c.Civ = civ.Fire
-	c.Family = [family.Armorloid]
+	c.Family = []string{family.Armorloid}
 	c.ManaCost = 4
 	c.ManaRequirement = []string{civ.Fire}
 
@@ -38,7 +38,7 @@ func RothusTheTraveler(c *match.Card) {
 	c.Name = "Rothus, the Traveler"
 	c.Power = 4000
 	c.Civ = civ.Fire
-	c.Family = [family.Armorloid]
+	c.Family = []string{family.Armorloid}
 	c.ManaCost = 4
 	c.ManaRequirement = []string{civ.Fire}
 
