@@ -3,6 +3,10 @@
 ## [Unreleased]
 
 - Updated codebase to support cards with multiple races (thanks @tydeFriz)
+- New card "Charmilia, the Enticer" (thanks @Zayberex)
+- New card "Garabon, the Glider" (thanks @Zayberex)
+- New card "Rikabu's Screwdriver" (thanks @Zayberex)
+- New card "Picora's Wrench" (thanks @Zayberex)
 
 ## 24/08/2023
 
