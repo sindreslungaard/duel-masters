@@ -41,7 +41,7 @@ func DaidalosGeneralOfFury(c *match.Card) {
 	c.ManaCost = 4
 	c.ManaRequirement = []string{civ.Darkness}
 
-	c.Use(fx.Creature, fx.Doublebreaker, fx.When(fx.Attacking, func(card *match.Card, ctx *match.Context) {
+	c.Use(fx.Creature, fx.Doublebreaker, fx.When(fx.AttackConfirmed, func(card *match.Card, ctx *match.Context) {
 
 		creatures := match.Search(card.Player, ctx.Match, card.Player, match.BATTLEZONE, "Daidalos, General Of Fury: Select 1 creature from your battlezone that will be sent to your graveyard", 1, 1, false)
 
