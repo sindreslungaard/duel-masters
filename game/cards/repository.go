@@ -424,4 +424,9 @@ var DM06 = map[string]match.CardConstructor{
 	"305bb0c5-7bfe-47cd-a83f-80d8cb620c8c": dm06.HazardCrawler,
 	"7372e3b8-85d1-4d3d-a704-be821ac2211a": dm06.MidnightCrawler,
 	"c1a29dac-6649-4920-bc4d-b0b8070ed15f": dm06.ThrashCrawler,
+	"6bfebd3d-64ff-4321-bb0b-e994ca8f811e": dm06.TelitolTheExplorer,
+	"da51845c-4a6b-4c36-9c7d-fbb654ba2aa2": dm06.KanesillTheExplorer,
+	"0743092b-fd5e-41ab-8e38-d6664c1741cd": dm06.MadrillonFish,
+	"47b35edf-3982-48af-b98b-5548300de386": dm06.SchukaDukeOfAmnesia,
+	"74ce4102-f6af-467e-8d81-464ac9ebe25e": dm06.Sopian,
 }
