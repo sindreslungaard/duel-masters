@@ -60,7 +60,7 @@ func CyclonePanic(c *match.Card) {
 	c.ManaCost = 3
 	c.ManaRequirement = []string{civ.Fire}
 
-	c.Use(fx.Spell, func(card *match.Card, ctx *match.Context) {
+	c.Use(fx.Spell, fx.ShieldTrigger, func(card *match.Card, ctx *match.Context) {
 
 		if match.AmICasted(card, ctx) {
 
