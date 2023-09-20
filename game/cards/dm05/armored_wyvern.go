@@ -28,7 +28,7 @@ func BladerushSkyterrorQ(c *match.Card) {
 	c.Name = "Bladerush Skyterror Q"
 	c.Power = 5000
 	c.Civ = civ.Fire
-	c.Family = []string{family.ArmoredWyvern}
+	c.Family = []string{family.ArmoredWyvern, family.Survivor}
 	c.ManaCost = 7
 	c.ManaRequirement = []string{civ.Fire}
 
