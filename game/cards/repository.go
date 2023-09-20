@@ -421,6 +421,8 @@ var DM06 = map[string]match.CardConstructor{
 	"41b82092-4d34-4b3c-934a-d7bd4fca654a": dm06.GarabonTheGlider,
 	"1b83ff2c-3095-40d5-bd76-e1566836a8ea": dm06.RikabusScrewdriver,
 	"27c58f10-82ef-47ca-8a69-1cfa2057743d": dm06.PicorasWrench,
+	"b2ad3f06-2901-498b-ab40-4e37f2b3649d": dm06.SplinterclawWasp,
+	"93ef36cc-4426-46e8-8e12-84e8435e6892": dm06.TrenchScarab,
 	"59da70cc-e655-4e70-b467-8024dc7c472e": dm06.QTronicHypermind,
 	"305bb0c5-7bfe-47cd-a83f-80d8cb620c8c": dm06.HazardCrawler,
 	"7372e3b8-85d1-4d3d-a704-be821ac2211a": dm06.MidnightCrawler,
