@@ -103,7 +103,7 @@ func GigalingQ(c *match.Card) {
 	c.Name = "Gigaling Q"
 	c.Power = 2000
 	c.Civ = civ.Darkness
-	c.Family = []string{family.Chimera}
+	c.Family = []string{family.Chimera, family.Survivor}
 	c.ManaCost = 5
 	c.ManaRequirement = []string{civ.Darkness}
 

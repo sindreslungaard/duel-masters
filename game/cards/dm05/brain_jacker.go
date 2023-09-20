@@ -15,7 +15,7 @@ func SkullsweeperQ(c *match.Card) {
 	c.Name = "Skullsweeper Q"
 	c.Power = 1000
 	c.Civ = civ.Darkness
-	c.Family = []string{family.BrainJacker}
+	c.Family = []string{family.BrainJacker, family.Survivor}
 	c.ManaCost = 4
 	c.ManaRequirement = []string{civ.Darkness}
 
