@@ -7,6 +7,17 @@
 - New card "Garabon, the Glider" (thanks @Zayberex)
 - New card "Rikabu's Screwdriver" (thanks @Zayberex)
 - New card "Picora's Wrench" (thanks @Zayberex)
+- New card "Splinterclaw Wasp" (thanks @Zayberex)
+- New card "Trench Scarab" (thanks @Zayberex)
+- New card "Q Tronic Hypermind" (thanks @Zayberex)
+- New card "Hazard Crawler" (thanks @Zayberex)
+- New card "Midnight Crawler" (thanks @Zayberex)
+- New card "Thrash Crawler" (thanks @Zayberex)
+- New card "Telitol The Explorer" (thanks @Zayberex)
+- New card "Kanesill The Explorer" (thanks @Zayberex)
+- New card "Madrillon Fish" (thanks @Zayberex)
+- New card "Schuka Duke Of Amnesia" (thanks @Zayberex)
+- New card "Sopian" (thanks @Zayberex)
 
 ## 24/08/2023
 
