@@ -52,15 +52,6 @@ func getGhostCreatures(card *match.Card, ctx *match.Context) fx.CardCollection {
 		func(x *match.Card) bool { return x.HasFamily(family.Ghost) },
 	)
 
-	ghostCreatures = append(ghostCreatures,
-
-		fx.FindFilter(
-			ctx.Match.Opponent(card.Player),
-			match.BATTLEZONE,
-			func(x *match.Card) bool { return x.HasFamily(family.Ghost) },
-		)...,
-	)
-
 	return ghostCreatures
 }
 
@@ -75,26 +66,22 @@ func GrimSoulShadowOfReversal(c *match.Card) {
 	c.TapAbility = true
 
 	c.Use(fx.Creature, fx.When(fx.TapAbility, func(card *match.Card, ctx *match.Context) {
-		fx.FindFilter(
+
+		fx.SelectFilter(
 			card.Player,
-			match.BATTLEZONE,
+			ctx.Match,
+			card.Player,
+			match.GRAVEYARD,
+			"Grim Soul, Shadow of Reversal: You may return a darkness creature from your graveyard to your hand",
+			1,
+			1,
+			true,
 			func(x *match.Card) bool { return x.Civ == civ.Darkness },
 		).Map(func(x *match.Card) {
-			fx.SelectFilter(
-				card.Player,
-				ctx.Match,
-				card.Player,
-				match.GRAVEYARD,
-				"Grim Soul, Shadow of Reversal: You may return a darkness creature from your graveyard to your hand",
-				1,
-				1,
-				true,
-				func(x *match.Card) bool { return x.Civ == civ.Darkness },
-			).Map(func(x *match.Card) {
-				card.Player.MoveCard(x.ID, match.GRAVEYARD, match.HAND)
-				ctx.Match.Chat("Server", fmt.Sprintf("%s was moved to %s's hand from their graveyard by Grim Soul, Shadow of Reversal", x.Name, card.Player.Username()))
-				card.Tapped = true
-			})
+			card.Player.MoveCard(x.ID, match.GRAVEYARD, match.HAND)
+			ctx.Match.Chat("Server", fmt.Sprintf("%s was moved to %s's hand from their graveyard by Grim Soul, Shadow of Reversal", x.Name, card.Player.Username()))
+			card.Tapped = true
+
 		})
 	}))
 }
@@ -111,8 +98,8 @@ func LoneTearShadowOfSolitude(c *match.Card) {
 	c.Use(fx.Creature, fx.When(fx.EndOfMyTurn, func(card *match.Card, ctx *match.Context) {
 
 		if len(fx.Find(card.Player, match.BATTLEZONE)) == 1 {
-			card.Player.MoveCard(card.ID, match.BATTLEZONE, match.GRAVEYARD)
-			ctx.Match.Chat("Server", fmt.Sprintf("%s exorcised itself", c.Name))
+			ctx.Match.Destroy(card, card, match.DestroyedByMiscAbility)
+
 		}
 
 	}))
