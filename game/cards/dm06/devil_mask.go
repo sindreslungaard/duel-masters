@@ -5,7 +5,6 @@ import (
 	"duel-masters/game/family"
 	"duel-masters/game/fx"
 	"duel-masters/game/match"
-	"fmt"
 )
 
 func GrinningAxeTheMonstrosity(c *match.Card) {
@@ -32,8 +31,8 @@ func SkullcutterSwarmLeader(c *match.Card) {
 	c.Use(fx.Creature, fx.When(fx.EndOfMyTurn, func(card *match.Card, ctx *match.Context) {
 
 		if len(fx.Find(card.Player, match.BATTLEZONE)) == 1 {
-			card.Player.MoveCard(card.ID, match.BATTLEZONE, match.GRAVEYARD)
-			ctx.Match.Chat("Server", fmt.Sprintf("%s starved to death", c.Name))
+			ctx.Match.Destroy(card, card, match.DestroyedByMiscAbility)
+
 		}
 
 	}))
