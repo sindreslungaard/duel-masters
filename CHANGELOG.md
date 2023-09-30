@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+- No unreleased changes
+
+## 01/10/2023
+
 - Updated codebase to support cards with multiple races (thanks @tydeFriz)
 - New card "Charmilia, the Enticer" (thanks @Zayberex)
 - New card "Garabon, the Glider" (thanks @Zayberex)
