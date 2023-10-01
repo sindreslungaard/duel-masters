@@ -332,53 +332,56 @@ func (m *Match) End(winner *Player, winnerStr string) {
 	m.ending = true
 
 	if m.Started {
-
 		m.Broadcast(server.WarningMessage{
 			Header:  "error",
 			Message: winnerStr,
 		})
 
-		p1id := ""
-		p1deck := ""
-		p2id := ""
-		p2deck := ""
-
-		if m.Player1 != nil {
-			p1id = m.Player1.UID
-			p1deck = m.Player1.DeckStr
-		}
-
-		if m.Player2 != nil {
-			p2id = m.Player2.UID
-			p2deck = m.Player2.DeckStr
-		}
-
-		duel := db.Duel{
-			UID:       m.ID,
-			Host:      p1id,
-			HostDeck:  p1deck,
-			Guest:     p2id,
-			GuestDeck: p2deck,
-			Started:   m.startedAt,
-			Ended:     time.Now().Unix(),
-		}
-
-		if winner != nil && m.Player1 != nil && m.Player1.Player == winner {
-			duel.Winner = m.Player1.UID
-		} else if winner != nil && m.Player2 != nil && m.Player2.Player == winner {
-			duel.Winner = m.Player2.UID
-		}
-
-		_, err := db.Duels.InsertOne(context.Background(), duel)
-
-		if err != nil {
-			logrus.Error("Failed to save duel result to db", err)
-		}
-
+		m.SaveMatchHistory(winner, false)
 	}
 
 	m.Dispose()
 
+}
+
+func (m *Match) SaveMatchHistory(winner *Player, wonByDisconnect bool) {
+	p1id := ""
+	p1deck := ""
+	p2id := ""
+	p2deck := ""
+
+	if m.Player1 != nil {
+		p1id = m.Player1.UID
+		p1deck = m.Player1.DeckStr
+	}
+
+	if m.Player2 != nil {
+		p2id = m.Player2.UID
+		p2deck = m.Player2.DeckStr
+	}
+
+	duel := db.Duel{
+		UID:             m.ID,
+		Host:            p1id,
+		HostDeck:        p1deck,
+		Guest:           p2id,
+		GuestDeck:       p2deck,
+		Started:         m.startedAt,
+		Ended:           time.Now().Unix(),
+		WonByDisconnect: wonByDisconnect,
+	}
+
+	if winner != nil && m.Player1 != nil && m.Player1.Player == winner {
+		duel.Winner = m.Player1.UID
+	} else if winner != nil && m.Player2 != nil && m.Player2.Player == winner {
+		duel.Winner = m.Player2.UID
+	}
+
+	_, err := db.Duels.InsertOne(context.Background(), duel)
+
+	if err != nil {
+		logrus.Error("Failed to save duel result to db", err)
+	}
 }
 
 // ColorChat sends a chat message with color
@@ -1763,6 +1766,10 @@ func (m *Match) OnSocketClose(s *server.Socket) {
 	// if both players have disconnected, close match
 	if (p == nil || p.Socket.IsClosed()) && (o == nil || o.Socket.IsClosed()) {
 		logrus.Debug("Both players left the match. Closing the match.")
+
+		if p != nil {
+			m.SaveMatchHistory(p.Player, true)
+		}
 		m.Dispose()
 	}
 
