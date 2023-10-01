@@ -14,7 +14,7 @@ func SmashHornQ(c *match.Card) {
 	c.Name = "Smash Horn Q"
 	c.Power = 2000
 	c.Civ = civ.Nature
-	c.Family = []string{family.HornedBeast}
+	c.Family = []string{family.HornedBeast, family.Survivor}
 	c.ManaCost = 3
 	c.ManaRequirement = []string{civ.Nature}
 
