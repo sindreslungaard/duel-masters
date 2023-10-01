@@ -66,9 +66,11 @@ type AttackConfirmed struct {
 
 // Battle is fired when two creatures are fighting, i.e. from attacking a creature or blocking an attack
 type Battle struct {
-	Attacker *Card
-	Defender *Card
-	Blocked  bool
+	Attacker      *Card
+	AttackerPower int
+	Defender      *Card
+	DefenderPower int
+	Blocked       bool
 }
 
 type CreatureDestroyedContext int
