@@ -88,7 +88,7 @@ func GrimSoulShadowOfReversal(c *match.Card) {
 
 func LoneTearShadowOfSolitude(c *match.Card) {
 
-	c.Name = "LoneTearShadowOfSolitude"
+	c.Name = "Lone Tear, Shadow of Solitude"
 	c.Power = 2000
 	c.Civ = civ.Darkness
 	c.Family = []string{family.Ghost}
