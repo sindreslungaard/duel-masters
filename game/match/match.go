@@ -364,9 +364,9 @@ func (m *Match) End(winner *Player, winnerStr string) {
 		}
 
 		if winner != nil && m.Player1 != nil && m.Player1.Player == winner {
-			duel.Winner = m.Player1.Username
+			duel.Winner = m.Player1.UID
 		} else if winner != nil && m.Player2 != nil && m.Player2.Player == winner {
-			duel.Winner = m.Player2.Username
+			duel.Winner = m.Player2.UID
 		}
 
 		_, err := db.Duels.InsertOne(context.Background(), duel)
