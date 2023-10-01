@@ -40,6 +40,7 @@ type Match struct {
 	ending      bool
 	closed      bool
 	isFirstTurn bool
+	startedAt   int64
 
 	eventloop *EventLoop
 	system    *MatchSystem
@@ -328,12 +329,51 @@ func (m *Match) End(winner *Player, winnerStr string) {
 		return
 	}
 
+	m.ending = true
+
 	if m.Started {
 
 		m.Broadcast(server.WarningMessage{
 			Header:  "error",
 			Message: winnerStr,
 		})
+
+		p1id := ""
+		p1deck := ""
+		p2id := ""
+		p2deck := ""
+
+		if m.Player1 != nil {
+			p1id = m.Player1.UID
+			p1deck = m.Player2.DeckStr
+		}
+
+		if m.Player2 != nil {
+			p2id = m.Player2.UID
+			p2deck = m.Player2.DeckStr
+		}
+
+		duel := db.Duel{
+			UID:       m.ID,
+			Host:      p1id,
+			HostDeck:  p1deck,
+			Guest:     p2id,
+			GuestDeck: p2deck,
+			Started:   m.startedAt,
+			Ended:     time.Now().Unix(),
+		}
+
+		if winner != nil && m.Player1 != nil && m.Player1.Player == winner {
+			duel.Winner = m.Player1.Username
+		} else if winner != nil && m.Player2 != nil && m.Player2.Player == winner {
+			duel.Winner = m.Player2.Username
+		}
+
+		_, err := db.Duels.InsertOne(context.Background(), duel)
+
+		if err != nil {
+			logrus.Error("Failed to save duel result to db", err)
+		}
 
 	}
 
@@ -691,6 +731,7 @@ func (m *Match) CoinToss() {
 func (m *Match) Start() {
 
 	m.Started = true
+	m.startedAt = time.Now().Unix()
 
 	m.system.UpdateMatchList()
 
@@ -1422,6 +1463,8 @@ func (m *Match) Parse(s *server.Socket, data []byte) {
 			if err := db.Decks.FindOne(context.TODO(), bson.M{"uid": msg.UID}).Decode(&deck); err != nil {
 				return
 			}
+
+			p.DeckStr = deck.Cards
 
 			legacyDeck, err := ConvertToLegacyDeck(deck)
 

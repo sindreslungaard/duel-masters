@@ -28,6 +28,7 @@ const (
 type PlayerReference struct {
 	UID      string
 	Username string
+	DeckStr  string
 	Color    string
 	Player   *Player
 	Socket   *server.Socket
