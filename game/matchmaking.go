@@ -1,6 +1,7 @@
 package game
 
 import (
+	"duel-masters/flags"
 	"duel-masters/game/match"
 	"duel-masters/internal"
 	"duel-masters/server"
@@ -80,6 +81,10 @@ func (m *Matchmaking) Initialize(f func(msg interface{}), sys *match.MatchSystem
 }
 
 func (m *Matchmaking) NewRequest(s *server.Socket, name string, format match.Format) error {
+	if !flags.NewMatchesEnabled {
+		return fmt.Errorf("Match creation has been temporarily disabled")
+	}
+
 	m.Lock()
 	defer m.Unlock()
 

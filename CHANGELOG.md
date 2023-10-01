@@ -29,6 +29,7 @@
 - New card "Faerie Life" (thanks @Zayberex)
 - New card "Bonds of Justice" (thanks @Zayberex)
 - New card "Energy Stream" (thanks @Zayberex)
+- Fixed an issue where creating new duels could not be disabled before updates
 
 
 ## 01/10/2023
