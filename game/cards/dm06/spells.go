@@ -356,13 +356,17 @@ func PangaeasWill(c *match.Card) {
 				func(x *match.Card) bool { return x.HasCondition(cnd.Evolution) },
 			).Map(func(x *match.Card) {
 				tapped := x.Tapped
-				baseCard := x.Attachments()[0]
+
+				if len(x.Attachments()) > 0 {
+					baseCard := x.Attachments()[0]
+					baseCard.Player.MoveCard(baseCard.ID, match.HIDDENZONE, match.BATTLEZONE)
+					if tapped && !baseCard.Tapped {
+						baseCard.Tapped = true
+					}
+				}
+
 				x.ClearAttachments()
 				ctx.Match.MoveCard(x, match.MANAZONE, card)
-				baseCard.Player.MoveCard(baseCard.ID, match.HIDDENZONE, match.BATTLEZONE)
-				if tapped && !baseCard.Tapped {
-					baseCard.Tapped = true
-				}
 			})
 		}
 
