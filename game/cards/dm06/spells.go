@@ -217,10 +217,12 @@ func FutureSlash(c *match.Card) {
 
 	c.Use(fx.Spell, fx.When(fx.SpellCast, func(card *match.Card, ctx *match.Context) {
 
+		opponent := ctx.Match.Opponent(card.Player)
+
 		fx.Select(
 			card.Player,
 			ctx.Match,
-			ctx.Match.Opponent(card.Player),
+			opponent,
 			match.DECK,
 			"Future Slash: Send up to 2 cards from your opponent's deck to his graveyard",
 			1,
@@ -231,7 +233,7 @@ func FutureSlash(c *match.Card) {
 			ctx.Match.Chat("Server", fmt.Sprintf("%s put %s in graveyard from their opponent's deck", x.Player.Username(), x.Name))
 		})
 
-		card.Player.ShuffleDeck()
+		opponent.ShuffleDeck()
 
 	}))
 
