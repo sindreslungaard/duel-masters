@@ -29,7 +29,7 @@ func SplitHeadHydroturtleQ(c *match.Card) {
 	c.Name = "Split-Head Hydroturtle Q"
 	c.Power = 2000
 	c.Civ = civ.Water
-	c.Family = []string{family.GelFish}
+	c.Family = []string{family.GelFish, family.Survivor}
 	c.ManaCost = 5
 	c.ManaRequirement = []string{civ.Water}
 

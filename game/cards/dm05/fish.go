@@ -47,7 +47,7 @@ func SpikestrikeIchthysQ(c *match.Card) {
 	c.Name = "Spikestrike Ichthys Q"
 	c.Power = 3000
 	c.Civ = civ.Water
-	c.Family = []string{family.Fish}
+	c.Family = []string{family.Fish, family.Survivor}
 	c.ManaCost = 6
 	c.ManaRequirement = []string{civ.Water}
 

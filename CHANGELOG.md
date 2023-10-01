@@ -2,11 +2,30 @@
 
 ## [Unreleased]
 
+- Fixed an issue where Gamil, Knight of Hatred's ability would trigger even though the attack was cancelled (thanks @Zayberex)
+- Fixed an issue with Aqua Deformer's effect not returning the card's from opponent's manazone (thanks @Zayberex)
+- New card "Grinning Axe, the Monstrosity" (thanks @Zayberex)
+- New card Skullcutter, Swarm Leader (thanks @Zayberex)
+
+
+## 01/10/2023
+
 - Updated codebase to support cards with multiple races (thanks @tydeFriz)
 - New card "Charmilia, the Enticer" (thanks @Zayberex)
 - New card "Garabon, the Glider" (thanks @Zayberex)
 - New card "Rikabu's Screwdriver" (thanks @Zayberex)
 - New card "Picora's Wrench" (thanks @Zayberex)
+- New card "Splinterclaw Wasp" (thanks @Zayberex)
+- New card "Trench Scarab" (thanks @Zayberex)
+- New card "Q Tronic Hypermind" (thanks @Zayberex)
+- New card "Hazard Crawler" (thanks @Zayberex)
+- New card "Midnight Crawler" (thanks @Zayberex)
+- New card "Thrash Crawler" (thanks @Zayberex)
+- New card "Telitol The Explorer" (thanks @Zayberex)
+- New card "Kanesill The Explorer" (thanks @Zayberex)
+- New card "Madrillon Fish" (thanks @Zayberex)
+- New card "Schuka Duke Of Amnesia" (thanks @Zayberex)
+- New card "Sopian" (thanks @Zayberex)
 
 ## 24/08/2023
 
