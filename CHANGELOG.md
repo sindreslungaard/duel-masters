@@ -2,7 +2,11 @@
 
 ## [Unreleased]
 
-- No unreleased changes
+- Fixed an issue where Gamil, Knight of Hatred's ability would trigger even though the attack was cancelled (thanks @Zayberex)
+- Fixed an issue with Aqua Deformer's effect not returning the card's from opponent's manazone (thanks @Zayberex)
+- New card "Grinning Axe, the Monstrosity" (thanks @Zayberex)
+- New card Skullcutter, Swarm Leader (thanks @Zayberex)
+
 
 ## 01/10/2023
 
