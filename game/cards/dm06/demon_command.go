@@ -46,9 +46,6 @@ func DaidalosGeneralOfFury(c *match.Card) {
 
 		for _, creature := range creatures {
 			ctx.Match.Destroy(creature, card, match.DestroyedByMiscAbility)
-			if creature == card {
-				ctx.InterruptFlow()
-			}
 		}
 
 	}))
