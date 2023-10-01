@@ -32,6 +32,7 @@
 - Fixed an issue where creating new duels could not be disabled before updates
 - Updated the Battle event to be cancellable
 - Added shield break multiplier condition to support future cards that can break a dynamic amount of shields
+- Duel history is now being saved internally
 
 ## 01/10/2023
 
