@@ -198,7 +198,7 @@ func Creature(card *match.Card, ctx *match.Context) {
 
 				for _, condition := range card.Conditions() {
 					if condition.ID != cnd.ShieldBreakModifier {
-						return
+						continue
 					}
 
 					if val, ok := condition.Val.(int); ok {
