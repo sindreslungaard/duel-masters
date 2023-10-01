@@ -345,6 +345,11 @@ func (m *Match) End(winner *Player, winnerStr string) {
 }
 
 func (m *Match) SaveMatchHistory(winner *Player, wonByDisconnect bool) {
+	// don't save if the match lasted less than a minute
+	if m.startedAt > time.Now().Unix()-60 {
+		return
+	}
+
 	p1id := ""
 	p1deck := ""
 	p2id := ""
