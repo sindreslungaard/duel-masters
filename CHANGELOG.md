@@ -30,7 +30,8 @@
 - New card "Bonds of Justice" (thanks @Zayberex)
 - New card "Energy Stream" (thanks @Zayberex)
 - Fixed an issue where creating new duels could not be disabled before updates
-
+- Updated the Battle event to be cancellable
+- Added shield break multiplier condition to support future cards that can break a dynamic amount of shields
 
 ## 01/10/2023
 

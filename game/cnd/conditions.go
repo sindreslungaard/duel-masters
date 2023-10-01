@@ -5,6 +5,7 @@ const (
 	SummoningSickness   = "summoning_sickness"
 	DoubleBreaker       = "doublebreaker"
 	TripleBreaker       = "triplebreaker"
+	ShieldBreakModifier = "shieldbreak_modifier"
 	PowerAmplifier      = "power_amplifier"
 	PowerAttacker       = "power_attacker"
 	AttackUntapped      = "attack_untapped"

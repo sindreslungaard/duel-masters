@@ -196,6 +196,16 @@ func Creature(card *match.Card, ctx *match.Context) {
 					minmax = 3
 				}
 
+				for _, condition := range card.Conditions() {
+					if condition.ID != cnd.ShieldBreakModifier {
+						return
+					}
+
+					if val, ok := condition.Val.(int); ok {
+						minmax += val
+					}
+				}
+
 				if minmax > len(shieldzone) {
 					minmax = len(shieldzone)
 				}
