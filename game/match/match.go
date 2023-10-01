@@ -345,7 +345,7 @@ func (m *Match) End(winner *Player, winnerStr string) {
 
 		if m.Player1 != nil {
 			p1id = m.Player1.UID
-			p1deck = m.Player2.DeckStr
+			p1deck = m.Player1.DeckStr
 		}
 
 		if m.Player2 != nil {
