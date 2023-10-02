@@ -502,7 +502,7 @@ func Creature(card *match.Card, ctx *match.Context) {
 		})
 	}
 
-	if event, ok := ctx.Event.(*match.Battle); ok {
+	if event, ok := ctx.Event.(*match.Battle); ok && event.Attacker.ID == card.ID {
 		ctx.ScheduleAfter(func() {
 			m := ctx.Match
 			attacker := event.Attacker
