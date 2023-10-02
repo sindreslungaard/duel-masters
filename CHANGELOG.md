@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+No unreleased changes
+
+## 02/10/2023 Hotfix
+
 - Fixed an issue where creatures battling would spam the chat with messages
 
 ## 02/10/2023
