@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+No unreleased changes
+
 ## 02/10/2023
 
 - Fixed an issue where Gamil, Knight of Hatred's ability would trigger even though the attack was cancelled (thanks @Zayberex)
