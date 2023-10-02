@@ -439,4 +439,5 @@ var DM06 = map[string]match.CardConstructor{
 	"e56c04ae-1edf-4308-87b6-697e0d9a85d4": dm06.InvincibleUnity,
 	"f1bd7b39-7582-4f80-ba4c-423ef16f7a96": dm06.InvincibleAura,
 	"cf8b1a10-a425-4670-bb50-af7c4fb132d6": dm06.BondsOfJustice,
+	"b7f236fd-e7eb-41cc-912a-5239c134f265": dm06.EnergyStream,
 }
