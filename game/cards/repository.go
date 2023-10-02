@@ -18,6 +18,7 @@ var Sets = map[string]*map[string]match.CardConstructor{
 	"dm-04": &DM04,
 	"dm-05": &DM05,
 	"dm-06": &DM06,
+	"dm-07": &DM07,
 }
 
 // DM01 is a map with all the card id's in the game and corresponding CardConstructor for dm01
@@ -410,7 +411,7 @@ var DM06 = map[string]match.CardConstructor{
 	"9d7de648-c25f-4439-835b-359147cca717": dm06.JunkatzRabidDoll,
 	"42ee6087-94cf-45cc-9e0b-baf73a008d81": dm06.LupaPoisonTippedDoll,
 	"708d2e3a-76dd-40d6-9278-345383b3047a": dm06.PyrofighterMagnus,
-	"f2344e6e-0ee3-4f17-8984-b01025db7e11": dm06.BazagazealDragon,
+p	"f2344e6e-0ee3-4f17-8984-b01025db7e11": dm06.BazagazealDragon,
 	"b42f1258-714b-4051-bd4c-2013e40a4c6b": dm06.ValiantWarriorExorious,
 	"03e90b61-de6b-4512-a656-2832968b694a": dm06.AutomatedWeaponmasterMachai,
 	"1768f54e-5855-45d9-9c6e-306fc2926451": dm06.MightyBanditAceOfThieves,
