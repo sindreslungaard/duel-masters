@@ -63,6 +63,9 @@ func GnarvashMerchantOfBlood(c *match.Card) {
 	c.Use(fx.Creature, fx.Doublebreaker, fx.When(fx.EndOfMyTurn, func(card *match.Card, ctx *match.Context) {
 
 		if len(fx.Find(card.Player, match.BATTLEZONE)) == 1 {
+			if card.Zone != match.BATTLEZONE {
+				return
+			}
 			ctx.Match.Destroy(card, card, match.DestroyedByMiscAbility)
 		}
 
