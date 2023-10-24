@@ -76,7 +76,7 @@ func GrimSoulShadowOfReversal(c *match.Card) {
 			1,
 			1,
 			true,
-			func(x *match.Card) bool { return x.Civ == civ.Darkness },
+			func(x *match.Card) bool { return x.Civ == civ.Darkness && x.HasCondition(cnd.Creature) },
 		).Map(func(x *match.Card) {
 			card.Player.MoveCard(x.ID, match.GRAVEYARD, match.HAND)
 			ctx.Match.Chat("Server", fmt.Sprintf("%s was moved to %s's hand from their graveyard by Grim Soul, Shadow of Reversal", x.Name, card.Player.Username()))
