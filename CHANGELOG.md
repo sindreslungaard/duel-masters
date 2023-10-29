@@ -2,7 +2,12 @@
 
 ## [Unreleased]
 
-No unreleased changes
+- New card "Legionnaire Lizard" (thanks @Zayberex)
+- New card "Badlands Lizard" (thanks @Zayberex)
+- New card "Armored Decimator Valkaizer" (thanks @Zayberex)
+- New card "Migasa, Adept of Chaos" (thanks @Zayberex)
+- New card "Choya, The Unheeding" (thanks @Zayberex)
+- Fixed an issue with "Grim Soul, Shadow of Reversal" allowing spells to be retrieved from the graveyard (thanks @Zayberex)
 
 ## 02/10/2023 Hotfix
 
