@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+- No unreleased changes
+
+## 02/11/2023
+
 - New card "Legionnaire Lizard" (thanks @Zayberex)
 - New card "Badlands Lizard" (thanks @Zayberex)
 - New card "Armored Decimator Valkaizer" (thanks @Zayberex)
