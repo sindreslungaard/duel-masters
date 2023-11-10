@@ -4,6 +4,13 @@
 
 - No unreleased changes
 
+## 10/11/2023
+
+- New card "Ballas, Vizier of Electrons" (thanks @Zayberex)
+- New card "Chekicul, Vizier of Endurance" (thanks @Zayberex)
+- New card "Chen Treg, Vizier of Blades" (thanks @Zayberex)
+- Removed double breaker from "Armored Decimator Valkaizer" (thanks @Zayberex)
+
 ## 02/11/2023
 
 - New card "Legionnaire Lizard" (thanks @Zayberex)
