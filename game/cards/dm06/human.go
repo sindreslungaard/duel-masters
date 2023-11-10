@@ -18,7 +18,7 @@ func ArmoredDecimatorValkaizer(c *match.Card) {
 	c.ManaCost = 5
 	c.ManaRequirement = []string{civ.Fire}
 
-	c.Use(fx.Creature, fx.Evolution, fx.Doublebreaker, func(card *match.Card, ctx *match.Context) {
+	c.Use(fx.Creature, fx.Evolution, func(card *match.Card, ctx *match.Context) {
 
 		if match.AmISummoned(card, ctx) {
 
