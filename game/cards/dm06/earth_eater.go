@@ -37,7 +37,7 @@ func MidnightCrawler(c *match.Card) {
 			ctx.Match.Opponent(card.Player),
 			match.MANAZONE,
 			"Midnight Crawler: Choose a card from your opponent's mana zone that will be returned to his hand.",
-			0,
+			1,
 			1,
 			false,
 		).Map(func(x *match.Card) {
@@ -64,7 +64,7 @@ func ThrashCrawler(c *match.Card) {
 			card.Player,
 			match.MANAZONE,
 			"Thrash Crawler: Choose a card from your mana zone that will be returned to your hand.",
-			0,
+			1,
 			1,
 			false,
 		).Map(func(x *match.Card) {
