@@ -2,7 +2,7 @@
 
 ## [Unreleased]
 
-- No unreleased changes
+- Updated "Thrash Crawler" and "Midnight Crawler" to not allow you to make an empty selection of cards (thanks @Zayberex)
 
 ## 10/11/2023
 
