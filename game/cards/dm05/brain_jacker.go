@@ -31,6 +31,9 @@ func SkullsweeperQ(c *match.Card) {
 			return
 		}
 
+		ctx.Match.Wait(card.Player, "Waiting for your opponent to make an action")
+		defer ctx.Match.EndWait(card.Player)
+
 		creature, err := card.Player.GetCard(event.CardID, match.BATTLEZONE)
 
 		if err != nil {

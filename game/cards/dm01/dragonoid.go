@@ -84,7 +84,7 @@ func OnslaughterTriceps(c *match.Card) {
 
 				for _, manaCard := range cards {
 					card.Player.MoveCard(manaCard.ID, match.MANAZONE, match.GRAVEYARD)
-					ctx.Match.Chat("Server", fmt.Sprintf("%s was sent from %s's manazone to their graveyard", manaCard.ID, card.Name))
+					ctx.Match.Chat("Server", fmt.Sprintf("%s was sent from %s's manazone to their graveyard", manaCard.Name, card.Player.Username()))
 				}
 
 			}
