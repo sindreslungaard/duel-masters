@@ -2,6 +2,7 @@ package dm06
 
 import (
 	"duel-masters/game/civ"
+	"duel-masters/game/cnd"
 	"duel-masters/game/family"
 	"duel-masters/game/fx"
 	"duel-masters/game/match"
@@ -27,6 +28,32 @@ func QTronicHypermind(c *match.Card) {
 		}
 
 		card.Player.DrawCards(toDraw)
+
+	}))
+}
+
+func QTronicGargantua(c *match.Card) {
+
+	c.Name = "Q-tronic Gargantua"
+	c.Power = 9000
+	c.Civ = civ.Fire
+	c.Family = []string{family.Survivor}
+	c.ManaCost = 6
+	c.ManaRequirement = []string{civ.Fire}
+
+	c.Use(fx.Creature, fx.Evolution, fx.Survivor, fx.When(fx.AttackingPlayer, func(card *match.Card, ctx *match.Context) {
+
+		mysurvivors := len(fx.FindFilter(card.Player, match.BATTLEZONE, func(card *match.Card) bool { return card.HasFamily(family.Survivor) }))
+
+		if mysurvivors < 1 {
+			return
+		}
+
+		if card.HasCondition(cnd.ShieldBreakModifier) {
+			card.RemoveCondition(cnd.ShieldBreakModifier)
+		}
+
+		card.AddCondition(cnd.ShieldBreakModifier, mysurvivors-1, card.ID)
 
 	}))
 }

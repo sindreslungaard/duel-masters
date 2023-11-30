@@ -465,4 +465,5 @@ var DM06 = map[string]match.CardConstructor{
 	"e415e7ee-ab90-43ec-9443-05dcbb7f6b88": dm06.BallasVizierOfElectrons,
 	"ab0c0696-3abf-4a10-ac41-805a6c538849": dm06.ChekiculVizierOfEndurance,
 	"42af9ccd-021c-48e5-833d-d7b6a08676d2": dm06.ChenTregVizierOfBlades,
+	"adc7eb5d-862d-430c-bd7d-ca51f0c94b02": dm06.QTronicGargantua,
 }
