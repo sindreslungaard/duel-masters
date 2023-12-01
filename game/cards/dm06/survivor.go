@@ -49,11 +49,10 @@ func QTronicGargantua(c *match.Card) {
 			return
 		}
 
-		if card.HasCondition(cnd.ShieldBreakModifier) {
-			card.RemoveCondition(cnd.ShieldBreakModifier)
-		}
-
 		card.AddCondition(cnd.ShieldBreakModifier, mysurvivors-1, card.ID)
+		ctx.ScheduleAfter(func() {
+			card.RemoveCondition(cnd.ShieldBreakModifier)
+		})
 
 	}))
 }
