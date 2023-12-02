@@ -49,7 +49,7 @@ func QTronicGargantua(c *match.Card) {
 			return
 		}
 
-		card.AddCondition(cnd.ShieldBreakModifier, mysurvivors-1, card.ID)
+		card.AddUniqueSourceCondition(cnd.ShieldBreakModifier, mysurvivors-1, card.ID)
 		ctx.ScheduleAfter(func() {
 			card.RemoveCondition(cnd.ShieldBreakModifier)
 		})
