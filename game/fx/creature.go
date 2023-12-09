@@ -277,7 +277,7 @@ func Creature(card *match.Card, ctx *match.Context) {
 							ctx.Match.End(card.Player, fmt.Sprintf("%s won the game", ctx.Match.PlayerRef(card.Player).Socket.User.Username))
 						} else {
 							// Break n shields
-							ctx.Match.BreakShields(shieldsAttacked)
+							ctx.Match.BreakShields(shieldsAttacked, card.ID)
 						}
 
 						break
@@ -317,7 +317,7 @@ func Creature(card *match.Card, ctx *match.Context) {
 					ctx.Match.End(card.Player, fmt.Sprintf("%s won the game", ctx.Match.PlayerRef(card.Player).Socket.User.Username))
 				} else {
 					// Break n shields
-					ctx.Match.BreakShields(shieldsAttacked)
+					ctx.Match.BreakShields(shieldsAttacked, card.ID)
 				}
 
 			}

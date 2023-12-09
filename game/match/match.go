@@ -250,7 +250,7 @@ func (m *Match) MoveCardToFront(card *Card, destination string, source *Card) {
 }
 
 // BreakShields breaks the given shields and handles shieldtriggers
-func (m *Match) BreakShields(shields []*Card) {
+func (m *Match) BreakShields(shields []*Card, source string) {
 
 	if len(shields) < 1 {
 		return
@@ -266,7 +266,7 @@ func (m *Match) BreakShields(shields []*Card) {
 			continue
 		}
 
-		m.HandleFx(NewContext(m, &BrokenShieldEvent{CardID: card.ID}))
+		m.HandleFx(NewContext(m, &BrokenShieldEvent{CardID: card.ID, Source: source}))
 
 		// Handle shield triggers
 		if card.HasCondition(cnd.ShieldTrigger) {

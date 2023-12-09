@@ -22,6 +22,7 @@ type ChargeManaEvent struct {
 // BrokenShieldEvent is fired right after a shield was broken
 type BrokenShieldEvent struct {
 	CardID string
+	Source string // the card id that caused the shield to break
 }
 
 // ShieldTriggerEvent is fired when a shield with shieldtrigger is broken
