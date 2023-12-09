@@ -272,7 +272,8 @@ func (m *Match) BreakShields(shields []*Card, source string) {
 		if card.HasCondition(cnd.ShieldTrigger) {
 
 			ctx := NewContext(m, &ShieldTriggerEvent{
-				Card: card,
+				Card:   card,
+				Source: source,
 			})
 
 			m.HandleFx(ctx)
