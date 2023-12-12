@@ -22,12 +22,14 @@ type ChargeManaEvent struct {
 // BrokenShieldEvent is fired right after a shield was broken
 type BrokenShieldEvent struct {
 	CardID string
+	Source string // the card id that caused the shield to break
 }
 
 // ShieldTriggerEvent is fired when a shield with shieldtrigger is broken
 // can be cancelled to prevent the player from playing the card immediately
 type ShieldTriggerEvent struct {
-	Card *Card
+	Card   *Card
+	Source string // the card id that caused the shield to break
 }
 
 // CardMoved is fired from the *Player.MoveCard method after moving a card between containers
