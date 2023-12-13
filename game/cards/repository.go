@@ -468,4 +468,6 @@ var DM06 = map[string]match.CardConstructor{
 	"b900ea21-4caa-44b0-81ce-b2dbe6a06722": dm06.SteamStar,
 	"7cf434ba-e27e-4674-b927-df22fa053a26": dm06.RippleLotusQ,
 	"4717faef-1065-4153-a509-854c22637e27": dm06.BolmeteusSteelDragon,
+	"e2e64a5c-ec8d-464a-bbe3-bacbb01da399": dm06.LightningGrass,
+	"7c33ae39-5079-471b-982c-98da274c9892": dm06.RazorpineTree,
 }
