@@ -32,6 +32,8 @@ func BlissTotemAvatarOfLuck(c *match.Card) {
 		).Map(func(c *match.Card) {
 			card.Player.MoveCard(c.ID, match.GRAVEYARD, match.MANAZONE)
 			ctx.Match.Chat("Server", fmt.Sprintf("%s was moved to %s's manazone by %s", c.Name, c.Player.Username(), card.Name))
+
+			card.Tapped = true
 		})
 
 	}))
