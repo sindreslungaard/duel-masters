@@ -25,7 +25,7 @@ func RazorpineTree(c *match.Card) {
 	c.Power = 1000
 	c.Civ = civ.Light
 	c.Family = []string{family.StarlightTree}
-	c.ManaCost = 5000
+	c.ManaCost = 5
 	c.ManaRequirement = []string{civ.Light}
 
 	c.PowerModifier = func(m *match.Match, attacking bool) int {
