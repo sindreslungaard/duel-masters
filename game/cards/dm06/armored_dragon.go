@@ -26,3 +26,33 @@ func BazagazealDragon(c *match.Card) {
 	}))
 
 }
+
+func BolmeteusSteelDragon(c *match.Card) {
+	c.Name = "Bolmeteus Steel Dragon"
+	c.Power = 7000
+	c.Civ = civ.Fire
+	c.Family = []string{family.ArmoredDragon}
+	c.ManaCost = 7
+	c.ManaRequirement = []string{civ.Fire}
+
+	c.Use(fx.Creature, fx.Doublebreaker, func(card *match.Card, ctx *match.Context) {
+
+		if card.Zone != match.BATTLEZONE {
+			return
+		}
+
+		if event, ok := ctx.Event.(*match.ShieldTriggerEvent); ok && event.Source == card.ID {
+
+			ctx.InterruptFlow()
+
+		}
+
+		if event, ok := ctx.Event.(*match.BrokenShieldEvent); ok && event.Source == card.ID {
+
+			ctx.InterruptFlow()
+
+			ctx.Match.Opponent(card.Player).MoveCard(event.CardID, match.HAND, match.GRAVEYARD)
+
+		}
+	})
+}
