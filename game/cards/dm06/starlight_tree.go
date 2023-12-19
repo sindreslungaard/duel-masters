@@ -21,7 +21,7 @@ func LightningGrass(c *match.Card) {
 
 func RazorpineTree(c *match.Card) {
 
-	c.Name = "Lightning Grass"
+	c.Name = "Razorpine Tree"
 	c.Power = 1000
 	c.Civ = civ.Light
 	c.Family = []string{family.StarlightTree}
@@ -39,5 +39,5 @@ func RazorpineTree(c *match.Card) {
 		return 2000 * len(shields)
 	}
 
-	c.Use(fx.Creature, fx.ShieldTrigger)
+	c.Use(fx.Creature)
 }
