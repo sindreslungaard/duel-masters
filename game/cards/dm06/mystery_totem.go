@@ -50,13 +50,13 @@ func ClobberTotem(c *match.Card) {
 
 	c.Use(func(card *match.Card, ctx *match.Context) {
 
-		ctx.ScheduleAfter(func() {
-			if event, ok := ctx.Event.(*match.AttackCreature); ok {
+		if event, ok := ctx.Event.(*match.AttackCreature); ok {
 
-				if event.CardID != card.ID {
-					return
-				}
+			if event.CardID != card.ID {
+				return
+			}
 
+			ctx.ScheduleAfter(func() {
 				cards := make([]*match.Card, 0)
 
 				for _, blocker := range event.Blockers {
@@ -67,8 +67,8 @@ func ClobberTotem(c *match.Card) {
 				}
 
 				event.Blockers = cards
-			}
-		})
+			})
+		}
 
 		if event, ok := ctx.Event.(*match.AttackPlayer); ok {
 
@@ -91,17 +91,4 @@ func ClobberTotem(c *match.Card) {
 		}
 
 	}, fx.Creature, fx.PowerAttacker2000, fx.Doublebreaker)
-}
-
-func ForbiddingTotem(c *match.Card) {
-
-	c.Name = "Cannon Shell"
-	c.Power = 1000
-	c.Civ = civ.Nature
-	c.Family = []string{family.MysteryTotem}
-	c.ManaCost = 4
-	c.ManaRequirement = []string{civ.Nature}
-
-	c.Use(fx.Creature, fx.ShieldTrigger)
-
 }
