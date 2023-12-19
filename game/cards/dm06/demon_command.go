@@ -49,7 +49,9 @@ func DaidalosGeneralOfFury(c *match.Card) {
 				ctx.Match.Destroy(creature, card, match.DestroyedByMiscAbility)
 				ctx.InterruptFlow()
 			}
-			ctx.Match.Destroy(creature, card, match.DestroyedByMiscAbility)
+			if creature.ID != card.ID {
+				ctx.Match.Destroy(creature, card, match.DestroyedByMiscAbility)
+			}
 		}
 
 	}))
