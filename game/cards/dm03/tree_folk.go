@@ -24,13 +24,13 @@ func MaskedPomegranate(c *match.Card) {
 
 	c.Use(func(card *match.Card, ctx *match.Context) {
 
-		ctx.ScheduleAfter(func() {
-			if event, ok := ctx.Event.(*match.AttackCreature); ok {
+		if event, ok := ctx.Event.(*match.AttackPlayer); ok {
 
-				if event.CardID != card.ID {
-					return
-				}
+			if event.CardID != card.ID {
+				return
+			}
 
+			ctx.ScheduleAfter(func() {
 				cards := make([]*match.Card, 0)
 
 				for _, blocker := range event.Blockers {
@@ -41,8 +41,8 @@ func MaskedPomegranate(c *match.Card) {
 				}
 
 				event.Blockers = cards
-			}
-		})
+			})
+		}
 
 		if event, ok := ctx.Event.(*match.AttackPlayer); ok {
 
