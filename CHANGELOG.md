@@ -3,6 +3,18 @@
 ## [Unreleased]
 
 - Updated "Thrash Crawler" and "Midnight Crawler" to not allow you to make an empty selection of cards (thanks @Zayberex)
+- Fixed an issue where "Skullsweeper Q"'s effect didn't trigger "Waiting for your opponent to make an action" popup (thanks @Zayberex)
+- Fixed typo in chat message for "Onslaughter Triceps" (thanks @Zayberex)
+- Fixed a formatting issue wiht the chat message sent by "Soul Gulp" (thanks @Zayberex)
+- Updated "Daidalos, General Of Fury"'s effect to not break shields if the creature chosen to be destroyed is itself (thanks @Zayberex)
+- New card "Q-tronic Gargantua" (thanks @Zayberex)
+- New card "Steam Star" (thanks @Zayberex)
+- New card "Ripple Lotus Q" (thanks @Zayberex)
+- New card "Bolmeteus Steel Dragon" (thanks @Zayberex)
+- New card "Bliss Totem, Avatar of Luck" (thanks @Zayberex)
+- New card "Clobber Totem" (thanks @Zayberex)
+- New card "Laveil Seeker Of Catastrophe" (thanks @Zayberex)
+- New card "Dava Torey Seeker Of Cloudss" (thanks @Zayberex)
 
 ## 10/11/2023
 
