@@ -364,7 +364,7 @@ func SoulGulp(c *match.Card) {
 			ctx.Match,
 			ctx.Match.Opponent(card.Player),
 			match.HAND,
-			"SoulGulp: Select %d cards from your hand that will be sent to your graveyard",
+			fmt.Sprintf("SoulGulp: Select %d cards from your hand that will be sent to your graveyard", nrDiscard),
 			nrDiscard,
 			nrDiscard,
 			false,
