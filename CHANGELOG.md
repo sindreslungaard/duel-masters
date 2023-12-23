@@ -1,6 +1,10 @@
 # Changelog
 
-## [Unreleased]
+[Unreleased]
+
+- No unreleased changes
+
+## 23/12/2023
 
 - Updated "Thrash Crawler" and "Midnight Crawler" to not allow you to make an empty selection of cards (thanks @Zayberex)
 - Fixed an issue where "Skullsweeper Q"'s effect didn't trigger "Waiting for your opponent to make an action" popup (thanks @Zayberex)
