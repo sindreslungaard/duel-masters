@@ -3,6 +3,7 @@
 
 <head>
   <script async src="https://www.googletagmanager.com/gtag/js?id=UA-136568338-2"></script>
+  <script src="/assets/snow.js"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
     function gtag() { dataLayer.push(arguments); }
@@ -35,5 +36,16 @@
   </noscript>
   <div id="app"></div>
 </body>
+
+<script>
+  const d = new Date();
+  const day = d.getDate();
+  const month = d.getMonth() + 1;
+
+  if(month == 12 && day > 22 && day < 26) {
+    console.log("Happy holidays :)")
+    initSnowify();
+  }
+</script>
 
 </html>
