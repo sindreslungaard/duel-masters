@@ -2,7 +2,6 @@ package dm06
 
 import (
 	"duel-masters/game/civ"
-	"duel-masters/game/cnd"
 	"duel-masters/game/family"
 	"duel-masters/game/fx"
 	"duel-masters/game/match"
@@ -38,35 +37,28 @@ func CliffcrushGiant(c *match.Card) {
 
 		if event, ok := ctx.Event.(*match.AttackCreature); ok {
 
-			if len(fx.FindFilter(card.Player, match.BATTLEZONE, func(card *match.Card) bool { return !card.Tapped })) > 1 {
-				card.AddCondition(cnd.CantAttackCreatures, true, card.ID)
-			} else {
-				card.RemoveCondition(cnd.CantAttackCreatures)
-			}
-			if event.CardID != card.ID || !card.HasCondition(cnd.CantAttackCreatures) {
+			if event.CardID != card.ID {
 				return
 			}
 
-			ctx.Match.WarnPlayer(card.Player, fmt.Sprintf("%s can't attack creatures", card.Name))
-
-			ctx.InterruptFlow()
+			if len(fx.FindFilter(card.Player, match.BATTLEZONE, func(card *match.Card) bool { return !card.Tapped && event.CardID != card.ID })) > 0 {
+				ctx.InterruptFlow()
+				ctx.Match.WarnPlayer(card.Player, fmt.Sprintf("%s can't attack creatures", card.Name))
+			}
 
 		}
 
 		if event, ok := ctx.Event.(*match.AttackPlayer); ok {
 
-			if len(fx.FindFilter(card.Player, match.BATTLEZONE, func(card *match.Card) bool { return !card.Tapped })) > 1 {
-				card.AddCondition(cnd.CantAttackPlayers, true, card.ID)
-			} else {
-				card.RemoveCondition(cnd.CantAttackPlayers)
-			}
-			if event.CardID != card.ID || !card.HasCondition(cnd.CantAttackPlayers) {
+			if event.CardID != card.ID {
 				return
 			}
 
-			ctx.Match.WarnPlayer(card.Player, fmt.Sprintf("%s can't attack players", card.Name))
+			if len(fx.FindFilter(card.Player, match.BATTLEZONE, func(card *match.Card) bool { return !card.Tapped && event.CardID != card.ID })) > 0 {
+				ctx.InterruptFlow()
+				ctx.Match.WarnPlayer(card.Player, fmt.Sprintf("%s can't attack players", card.Name))
+			}
 
-			ctx.InterruptFlow()
 		}
 	})
 }
