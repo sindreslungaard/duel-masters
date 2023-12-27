@@ -248,6 +248,10 @@ func ProclamationOfDeath(c *match.Card) {
 
 	c.Use(fx.Spell, fx.ShieldTrigger, func(card *match.Card, ctx *match.Context) {
 		if match.AmICasted(card, ctx) {
+
+			ctx.Match.Wait(card.Player, "Waiting for your opponent to make an action")
+			defer ctx.Match.EndWait(card.Player)
+
 			creatures := fx.Select(ctx.Match.Opponent(card.Player), ctx.Match, ctx.Match.Opponent(card.Player), match.BATTLEZONE, "Proclamation of Death: Select 1 creature from your battlezone that will be sent to your graveyard", 1, 1, false)
 
 			for _, creature := range creatures {
