@@ -56,18 +56,25 @@ func FactoryShellQ(c *match.Card) {
 				return
 			}
 
-			if creature.HasFamily(family.Survivor) && event.To == match.BATTLEZONE {
-
-				cards := match.SearchForCnd(card.Player, ctx.Match, card.Player, match.DECK, cnd.Creature, "Select 1 survivor from your deck that will be shown to your opponent and sent to your hand", 1, 1, true)
-
-				for _, c := range cards {
-					card.Player.MoveCard(c.ID, match.DECK, match.HAND)
-					ctx.Match.Chat("Server", fmt.Sprintf("%s was moved from %s's deck to their hand", c.Name, card.Player.Username()))
-				}
-
-				card.Player.ShuffleDeck()
-
+			if !creature.HasFamily(family.Survivor) || event.To != match.BATTLEZONE {
+				return
 			}
+
+			fx.SelectFilter(
+				card.Player,
+				ctx.Match,
+				card.Player,
+				match.DECK,
+				"Select 1 survivor from your deck that will be shown to your opponent and sent to your hand",
+				1,
+				1,
+				true,
+				func(x *match.Card) bool { return x.HasCondition(cnd.Creature) },
+			).Map(func(x *match.Card) {
+				card.Player.MoveCard(c.ID, match.DECK, match.HAND)
+				ctx.Match.Chat("Server", fmt.Sprintf("%s was moved from %s's deck to their hand", c.Name, card.Player.Username()))
+				card.Player.ShuffleDeck()
+			})
 
 		}
 
