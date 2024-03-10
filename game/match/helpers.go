@@ -278,6 +278,8 @@ func ContainerHas(p *Player, containerName string, filter func(*Card) bool) bool
 }
 
 // AmISummoned returns true or falsed based on if the card is played
+//
+// Deprecated: New cards should use `fx.When(fx.Summoned)`
 func AmISummoned(card *Card, ctx *Context) bool {
 
 	if event, ok := ctx.Event.(*CardMoved); ok {
@@ -292,6 +294,8 @@ func AmISummoned(card *Card, ctx *Context) bool {
 }
 
 // AmICasted returns true or false based on if the card is casted as a spell
+//
+// Deprecated: New cards should use `fx.When(fx.SpellCast)`
 func AmICasted(card *Card, ctx *Context) bool {
 
 	if event, ok := ctx.Event.(*SpellCast); ok {
@@ -307,6 +311,8 @@ func AmICasted(card *Card, ctx *Context) bool {
 }
 
 // AmIDestroyed returns true or false based on if the card is destroyed
+//
+// Deprecated: New cards should use `fx.When(fx.Destroyed)`
 func AmIDestroyed(card *Card, ctx *Context) bool {
 
 	if event, ok := ctx.Event.(*CreatureDestroyed); ok {
