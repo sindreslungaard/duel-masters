@@ -96,7 +96,7 @@ func LavaWalkerExecuto(c *match.Card) {
 			func(card *match.Card, ctx *match.Context) {
 
 				ctx.Match.Chat("Server", fmt.Sprintf("%s activated %s's tap ability", card.Player.Username(), card.Name))
-				creatures := match.Search(card.Player, ctx.Match, card.Player, match.BATTLEZONE, "Select 1 creature from your battlezone that will gain +3000 Power", 1, 1, false)
+				creatures := fx.Select(card.Player, ctx.Match, card.Player, match.BATTLEZONE, "Select 1 creature from your battlezone that will gain +3000 Power", 1, 1, false)
 				for _, creature := range creatures {
 
 					creature.AddCondition(cnd.PowerAmplifier, 3000, card.ID)

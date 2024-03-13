@@ -468,37 +468,34 @@ func RainOfArrows(c *match.Card) {
 	c.ManaCost = 2
 	c.ManaRequirement = []string{civ.Light}
 
-	c.Use(fx.Spell, func(card *match.Card, ctx *match.Context) {
+	c.Use(fx.Spell, fx.When(fx.SpellCast, func(card *match.Card, ctx *match.Context) {
 
-		if match.AmICasted(card, ctx) {
+		opponentHand, err := ctx.Match.Opponent(card.Player).Container(match.HAND)
 
-			opponentHand, err := ctx.Match.Opponent(card.Player).Container(match.HAND)
-
-			if err != nil {
-				return
-			}
-
-			ids := make([]string, 0)
-
-			for _, c := range opponentHand {
-				ids = append(ids, c.ImageID)
-			}
-
-			ctx.Match.ShowCards(
-				card.Player,
-				"Your opponent's Hand:",
-				ids,
-			)
-
-			for _, c := range opponentHand {
-				if c.Civ == civ.Darkness && c.HasCondition(cnd.Spell) {
-					c.Player.MoveCard(c.ID, match.HAND, match.GRAVEYARD)
-					ctx.Match.Chat("Server", fmt.Sprintf("%s was moved to %s's graveyard by %s", c.Name, c.Player.Username(), card.Name))
-				}
-			}
-
+		if err != nil {
+			return
 		}
-	})
+
+		ids := make([]string, 0)
+
+		for _, c := range opponentHand {
+			ids = append(ids, c.ImageID)
+		}
+
+		ctx.Match.ShowCards(
+			card.Player,
+			"Your opponent's Hand:",
+			ids,
+		)
+
+		for _, c := range opponentHand {
+			if c.Civ == civ.Darkness && c.HasCondition(cnd.Spell) {
+				c.Player.MoveCard(c.ID, match.HAND, match.GRAVEYARD)
+				ctx.Match.Chat("Server", fmt.Sprintf("%s was moved to %s's graveyard by %s", c.Name, c.Player.Username(), card.Name))
+			}
+		}
+
+	}))
 
 }
 
@@ -510,29 +507,55 @@ func CometMissile(c *match.Card) {
 	c.ManaCost = 1
 	c.ManaRequirement = []string{civ.Fire}
 
-	c.Use(fx.Spell, fx.ShieldTrigger, func(card *match.Card, ctx *match.Context) {
+	c.Use(fx.Spell, fx.ShieldTrigger, fx.When(fx.SpellCast, func(card *match.Card, ctx *match.Context) {
 
-		if match.AmICasted(card, ctx) {
+		creatures := fx.SelectFilter(
+			card.Player,
+			ctx.Match,
+			ctx.Match.Opponent(card.Player),
+			match.BATTLEZONE,
+			"Destroy one of your opponent's creatures that has blocker and has power 6000 or less",
+			1,
+			1,
+			false,
+			func(x *match.Card) bool { return x.HasCondition(cnd.Blocker) && ctx.Match.GetPower(x, false) <= 6000 })
 
-			creatures := match.Filter(
-				card.Player,
-				ctx.Match,
-				ctx.Match.Opponent(card.Player),
-				match.BATTLEZONE,
-				"Destroy one of your opponent's creatures that has blocker and has power 6000 or less",
-				1,
-				1,
-				false,
-				func(x *match.Card) bool { return x.HasCondition(cnd.Blocker) && ctx.Match.GetPower(x, false) <= 6000 })
+		for _, creature := range creatures {
 
-			for _, creature := range creatures {
-
-				ctx.Match.Destroy(creature, card, match.DestroyedBySpell)
-
-			}
+			ctx.Match.Destroy(creature, card, match.DestroyedBySpell)
 
 		}
 
-	})
+	}))
 
+}
+
+// CrisisBoulder ...
+func CrisisBoulder(c *match.Card) {
+
+	c.Name = "Crisis Boulder"
+	c.Civ = civ.Fire
+	c.ManaCost = 4
+	c.ManaRequirement = []string{civ.Fire}
+
+	c.Use(fx.Spell, fx.ShieldTrigger, fx.When(fx.SpellCast, func(card *match.Card, ctx *match.Context) {
+
+		cards := make(map[string][]*match.Card)
+
+		cards["Your creatures"] = fx.Find(ctx.Match.Opponent(card.Player), match.BATTLEZONE)
+		cards["Your mana"] = fx.Find(ctx.Match.Opponent(card.Player), match.MANAZONE)
+
+		fx.SelectMultipart(
+			ctx.Match.Opponent(card.Player),
+			ctx.Match,
+			cards,
+			fmt.Sprintf("%s: Choose 1 of your creatures or a card in your mana zone it will be sent to your graveyard.", card.Name),
+			1,
+			1,
+			true).Map(func(c *match.Card) {
+			c.Player.MoveCard(c.ID, c.Zone, match.GRAVEYARD)
+			ctx.Match.Chat("Server", fmt.Sprintf("%s was moved to %s's graveyard by %s", c.Name, c.Player.Username(), card.Name))
+		})
+
+	}))
 }
