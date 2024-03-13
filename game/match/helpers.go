@@ -24,6 +24,8 @@ func AssertCardsIn(src []*Card, test ...string) bool {
 }
 
 // Search prompts the user to select n cards from the specified container
+//
+// Deprecated: New cards should use `fx.Select`
 func Search(p *Player, m *Match, containerOwner *Player, containerName string, text string, min int, max int, cancellable bool) []*Card {
 
 	result := make([]*Card, 0)
@@ -71,6 +73,8 @@ func Search(p *Player, m *Match, containerOwner *Player, containerName string, t
 }
 
 // SearchForCnd prompts the user to select n cards from the specified container that matches the given condition
+//
+// Deprecated: New cards should use `fx.SelectFilter`
 func SearchForCnd(p *Player, m *Match, containerOwner *Player, containerName string, condition string, text string, min int, max int, cancellable bool) []*Card {
 
 	result := make([]*Card, 0)
@@ -130,6 +134,8 @@ func SearchForCnd(p *Player, m *Match, containerOwner *Player, containerName str
 }
 
 // SearchForFamily prompts the user to select n cards from the specified container that matches the given family
+//
+// Deprecated: New cards should use `fx.SelectFilter`
 func SearchForFamily(p *Player, m *Match, containerOwner *Player, containerName string, family string, text string, min int, max int, cancellable bool) []*Card {
 
 	result := make([]*Card, 0)
@@ -189,6 +195,8 @@ func SearchForFamily(p *Player, m *Match, containerOwner *Player, containerName 
 }
 
 // Filter prompts the user to select n cards from the specified container that matches the given filter
+//
+// Deprecated: New cards should use `fx.SelectFilter`
 func Filter(p *Player, m *Match, containerOwner *Player, containerName string, text string, min int, max int, cancellable bool, filter func(*Card) bool) []*Card {
 
 	result := make([]*Card, 0)
@@ -270,6 +278,8 @@ func ContainerHas(p *Player, containerName string, filter func(*Card) bool) bool
 }
 
 // AmISummoned returns true or falsed based on if the card is played
+//
+// Deprecated: New cards should use `fx.When(fx.Summoned)`
 func AmISummoned(card *Card, ctx *Context) bool {
 
 	if event, ok := ctx.Event.(*CardMoved); ok {
@@ -284,6 +294,8 @@ func AmISummoned(card *Card, ctx *Context) bool {
 }
 
 // AmICasted returns true or false based on if the card is casted as a spell
+//
+// Deprecated: New cards should use `fx.When(fx.SpellCast)`
 func AmICasted(card *Card, ctx *Context) bool {
 
 	if event, ok := ctx.Event.(*SpellCast); ok {
@@ -299,6 +311,8 @@ func AmICasted(card *Card, ctx *Context) bool {
 }
 
 // AmIDestroyed returns true or false based on if the card is destroyed
+//
+// Deprecated: New cards should use `fx.When(fx.Destroyed)`
 func AmIDestroyed(card *Card, ctx *Context) bool {
 
 	if event, ok := ctx.Event.(*CreatureDestroyed); ok {
