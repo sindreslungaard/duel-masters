@@ -13,8 +13,7 @@
             "program": "${workspaceRoot}/cmd/duel-masters/main.go",
             "env": {},
             "args": [],
-            "envFile": "${workspaceFolder}/.env",
-            "dlvFlags": ["--check-go-version=false"]
+            "envFile": "${workspaceFolder}/.env"
         }
     ]
 }
