@@ -13,6 +13,8 @@
 - New card "Aeropica" (thanks @Zayberex)
 - New card "Zepimeteus" (thanks @Zayberex)
 - New card "Promephius Q" (thanks @Zayberex and @xrenari)
+- New card "Feather Horn, the Tracker" (thanks @Zayberex)
+- New card "Paradise Horn" (thanks @Zayberex)
 
 ## 23/12/2023
 
