@@ -2,6 +2,9 @@
 
 [Unreleased]
 
+- New card "Cliffcrush Giant" (thanks @Zayberex)
+- New card "Cantankerous Giant" (thanks @Zayberex)
+- New card "Factory Shell Q" (thanks @Zayberex)
 - New card "Rain of Arrows" (thanks @jyotiskaghosh)
 - New card "Comet Missile" (thanks @jyotiskaghosh)
 - New card "Crisis Boulder" (thanks @jyotiskaghosh)
@@ -13,6 +16,8 @@
 - Fixed typo in chat message for "Onslaughter Triceps" (thanks @Zayberex)
 - Fixed a formatting issue wiht the chat message sent by "Soul Gulp" (thanks @Zayberex)
 - Updated "Daidalos, General Of Fury"'s effect to not break shields if the creature chosen to be destroyed is itself (thanks @Zayberex)
+- New card "Lightning Grass" (thanks @Zayberex)
+- New card "Razorpine Tree" (thanks @Zayberex)
 - New card "Q-tronic Gargantua" (thanks @Zayberex)
 - New card "Steam Star" (thanks @Zayberex)
 - New card "Ripple Lotus Q" (thanks @Zayberex)
