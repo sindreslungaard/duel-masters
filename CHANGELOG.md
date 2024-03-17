@@ -8,6 +8,8 @@
 - New card "Rain of Arrows" (thanks @jyotiskaghosh)
 - New card "Comet Missile" (thanks @jyotiskaghosh)
 - New card "Crisis Boulder" (thanks @jyotiskaghosh)
+- New card "Grave Worm Q" (thanks @Zayberex)
+- New card "Tentacle Worm" (thanks @Zayberex)
 
 ## 23/12/2023
 
