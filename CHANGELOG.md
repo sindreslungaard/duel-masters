@@ -1,6 +1,6 @@
 # Changelog
 
-[Unreleased]
+## [Unreleased]
 
 - New card "Cliffcrush Giant" (thanks @Zayberex)
 - New card "Cantankerous Giant" (thanks @Zayberex)
