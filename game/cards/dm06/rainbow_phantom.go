@@ -20,18 +20,21 @@ func CosmogoldSpectralKnight(c *match.Card) {
 	c.TapAbility = true
 
 	c.Use(fx.Creature, fx.When(fx.TapAbility, func(card *match.Card, ctx *match.Context) {
-
-		spells := match.Filter(card.Player, ctx.Match, card.Player, match.MANAZONE, "Select 1 spell from your mana zone that will be sent to your hand", 1, 1, false, func(x *match.Card) bool { return x.HasCondition(cnd.Spell) })
-
-		for _, spell := range spells {
-
+		fx.SelectFilter(
+			card.Player,
+			ctx.Match,
+			card.Player,
+			match.MANAZONE,
+			"Select 1 spell from your mana zone that will be sent to your hand",
+			1,
+			1,
+			true,
+			func(x *match.Card) bool { return x.HasCondition(cnd.Spell) },
+		).Map(func(spell *match.Card) {
 			card.Player.MoveCard(spell.ID, match.MANAZONE, match.HAND)
 			ctx.Match.Chat("Server", fmt.Sprintf("%s retrieved %s from the mana zone to their hand using %s's tap ability", spell.Player.Username(), spell.Name, card.Name))
-
-		}
-
-		card.Tapped = true
-
+			card.Tapped = true
+		})
 	}))
 
 }
