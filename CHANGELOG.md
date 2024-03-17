@@ -15,6 +15,7 @@
 - New card "Promephius Q" (thanks @Zayberex and @xrenari)
 - New card "Feather Horn, the Tracker" (thanks @Zayberex)
 - New card "Paradise Horn" (thanks @Zayberex)
+- Updated "Proclamation Of Death" to show a "waiting for opponent to make an action" popup during its effect (thanks @Zayberex)
 
 ## 23/12/2023
 
