@@ -20,11 +20,19 @@ func TankMutant(c *match.Card) {
 	c.TapAbility = true
 
 	c.Use(fx.Creature, fx.When(fx.TapAbility, func(card *match.Card, ctx *match.Context) {
-		opponentCreatures := match.Search(ctx.Match.Opponent(card.Player), ctx.Match, ctx.Match.Opponent(card.Player), match.BATTLEZONE, "Tank Mutant: Select 1 creature from your battlezone that will be sent to your graveyard", 1, 1, false)
-
-		for _, creature := range opponentCreatures {
+		fx.Select(
+			ctx.Match.Opponent(card.Player),
+			ctx.Match,
+			ctx.Match.Opponent(card.Player),
+			match.BATTLEZONE,
+			"Tank Mutant: Select 1 creature from your battlezone that will be sent to your graveyard",
+			1,
+			1,
+			false,
+		).Map(func(creature *match.Card) {
 			ctx.Match.Destroy(creature, card, match.DestroyedByMiscAbility)
-		}
+		})
+
 		card.Tapped = true
 	}))
 
