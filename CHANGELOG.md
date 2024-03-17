@@ -2,7 +2,9 @@
 
 [Unreleased]
 
-- No unreleased changes
+- New card "Rain of Arrows" (thanks @jyotiskaghosh)
+- New card "Comet Missile" (thanks @jyotiskaghosh)
+- New card "Crisis Boulder" (thanks @jyotiskaghosh)
 
 ## 23/12/2023
 
