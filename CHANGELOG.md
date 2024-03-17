@@ -10,6 +10,9 @@
 - New card "Crisis Boulder" (thanks @jyotiskaghosh)
 - New card "Grave Worm Q" (thanks @Zayberex)
 - New card "Tentacle Worm" (thanks @Zayberex)
+- New card "Aeropica" (thanks @Zayberex)
+- New card "Zepimeteus" (thanks @Zayberex)
+- New card "Promephius Q" (thanks @Zayberex and @xrenari)
 
 ## 23/12/2023
 
