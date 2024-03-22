@@ -110,6 +110,10 @@ func ForbiddingTotem(c *match.Card) {
 
 			if _, ok := ctx.Event.(*match.AttackPlayer); ok {
 
+				if card.HasCondition(cnd.CantAttackCreatures) {
+					return
+				}
+
 				attackableCreatures := fx.FindFilter(
 					c.Player,
 					match.BATTLEZONE,
