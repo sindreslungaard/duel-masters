@@ -2,7 +2,6 @@ package dm06
 
 import (
 	"duel-masters/game/civ"
-	"duel-masters/game/cnd"
 	"duel-masters/game/family"
 	"duel-masters/game/fx"
 	"duel-masters/game/match"
@@ -92,67 +91,4 @@ func ClobberTotem(c *match.Card) {
 		}
 
 	}, fx.Creature, fx.PowerAttacker2000, fx.Doublebreaker)
-}
-
-// ForbiddingTotem
-func ForbiddingTotem(c *match.Card) {
-
-	c.Name = "Forbidding Totem"
-	c.Power = 4000
-	c.Civ = civ.Nature
-	c.Family = []string{family.MysteryTotem}
-	c.ManaCost = 5
-	c.ManaRequirement = []string{civ.Nature}
-
-	c.Use(fx.Creature, func(card *match.Card, ctx *match.Context) {
-
-		if c.Zone == match.BATTLEZONE && ctx.Match.IsPlayerTurn(ctx.Match.Opponent(c.Player)) {
-
-			if _, ok := ctx.Event.(*match.AttackPlayer); ok {
-
-				if card.HasCondition(cnd.CantAttackCreatures) {
-					return
-				}
-
-				attackableCreatures := fx.FindFilter(
-					c.Player,
-					match.BATTLEZONE,
-					func(c *match.Card) bool {
-						return c.HasFamily(family.MysteryTotem) && (c.Tapped || card.HasCondition(cnd.AttackUntapped))
-					},
-				)
-
-				if len(attackableCreatures) == 0 {
-					return
-				}
-
-				ctx.Match.WarnPlayer(ctx.Match.Opponent(card.Player), "Creatures can only attack Mystery Totems")
-
-				ctx.InterruptFlow()
-
-			}
-
-			if _, ok := ctx.Event.(*match.AttackCreature); ok {
-
-				attackableCreatures := fx.FindFilter(
-					c.Player,
-					match.BATTLEZONE,
-					func(c *match.Card) bool {
-						return c.HasFamily(family.MysteryTotem) && (c.Tapped || card.HasCondition(cnd.AttackUntapped))
-					},
-				)
-
-				if len(attackableCreatures) == 0 {
-					return
-				}
-
-				ctx.Match.WarnPlayer(ctx.Match.Opponent(card.Player), "Creatures can only attack Mystery Totems")
-
-				ctx.InterruptFlow()
-
-			}
-
-		}
-
-	})
 }
