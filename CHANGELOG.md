@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+No unreleased changes
+
+## 31/03/2024
+
 - New card "Cliffcrush Giant" (thanks @Zayberex)
 - New card "Cantankerous Giant" (thanks @Zayberex)
 - New card "Factory Shell Q" (thanks @Zayberex)
