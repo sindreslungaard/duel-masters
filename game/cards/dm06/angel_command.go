@@ -20,20 +20,15 @@ func GarielElementalOfSunbeams(c *match.Card) {
 
 	c.Use(fx.Creature, fx.Doublebreaker, func(card *match.Card, ctx *match.Context) {
 
-		ctx.Match.ApplyPersistentEffect(func(ctx2 *match.Context, exit func()) {
+		if _, ok := ctx.Event.(*match.SpellCast); ok {
+			spellcast = true
+		}
 
-			if _, ok := ctx2.Event.(*match.SpellCast); ok {
-				spellcast = true
-			}
-
-			// remove persistent effect when turn ends
-			_, ok := ctx2.Event.(*match.EndStep)
-			if ok {
-				exit()
-				spellcast = false
-			}
-
-		})
+		// remove persistent effect when turn ends
+		_, ok := ctx.Event.(*match.EndStep)
+		if ok {
+			spellcast = false
+		}
 
 		if event, ok := ctx.Event.(*match.PlayCardEvent); ok {
 			if event.CardID == card.ID {
