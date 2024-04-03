@@ -19,33 +19,32 @@ func RumblesaurQ(c *match.Card) {
 
 	c.Use(fx.Creature, fx.SpeedAttacker, fx.Survivor, fx.When(fx.Summoned, func(card *match.Card, ctx *match.Context) {
 
-		ctx.Match.ApplyPersistentEffect(func(ctx2 *match.Context, exit func()) {
+		fx.FindFilter(
+			card.Player,
+			match.BATTLEZONE,
+			func(x *match.Card) bool { return x.HasCondition(cnd.Survivor) },
+		).Map(func(x *match.Card) {
+			x.RemoveCondition(cnd.SummoningSickness)
+		})
+	}),
+		func(card *match.Card, ctx *match.Context) {
 
-			if card.Zone != match.BATTLEZONE {
+			if card.Zone == match.BATTLEZONE {
 
-				fx.FindFilter(
-					card.Player,
-					match.BATTLEZONE,
-					func(x *match.Card) bool { return x.HasCondition(cnd.Survivor) },
-				).Map(func(x *match.Card) {
-					x.RemoveConditionBySource(card.ID)
-				})
+				if event, ok := ctx.Event.(*match.CardMoved); ok && event.To == match.BATTLEZONE {
 
-				exit()
-				return
+					fx.FindFilter(
+						card.Player,
+						match.BATTLEZONE,
+						func(x *match.Card) bool { return x.HasCondition(cnd.Survivor) },
+					).Map(func(x *match.Card) {
+						ctx.ScheduleAfter(func() {
+							x.RemoveCondition(cnd.SummoningSickness)
+						})
+					})
+
+				}
 
 			}
-
-			fx.FindFilter(
-				card.Player,
-				match.BATTLEZONE,
-				func(x *match.Card) bool { return x.HasCondition(cnd.Survivor) },
-			).Map(func(x *match.Card) {
-				x.RemoveCondition(cnd.SummoningSickness)
-			})
-
 		})
-
-	}))
-
 }
