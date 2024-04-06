@@ -557,8 +557,13 @@ func CrisisBoulder(c *match.Card) {
 			1,
 			1,
 			false).Map(func(c *match.Card) {
-			c.Player.MoveCard(c.ID, c.Zone, match.GRAVEYARD)
-			ctx.Match.Chat("Server", fmt.Sprintf("%s was moved to %s's graveyard by %s", c.Name, c.Player.Username(), card.Name))
+			if c.Zone == match.MANAZONE {
+				c.Player.MoveCard(c.ID, c.Zone, match.GRAVEYARD)
+				ctx.Match.Chat("Server", fmt.Sprintf("%s was moved to %s's graveyard by %s", c.Name, c.Player.Username(), card.Name))
+			}
+			if c.Zone == match.BATTLEZONE {
+				ctx.Match.Destroy(c, card, match.DestroyedBySpell)
+			}
 		})
 
 	}))
