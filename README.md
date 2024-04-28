@@ -16,8 +16,10 @@ A multiplayer browser based simulator for the [Duel Masters Trading Card Game](<
 #### What it is not
 - A full fledged Duel Masters game with fancy animations and career modes similar to Heartstone, MTG Arena etc.
 
+---
 
-## Run with docker
+
+# Run with docker
 
 ```bash
 # Login to the github package registry
