@@ -62,7 +62,7 @@ or<br>
 7. Navigate to `http://localhost` and create a user as well as a deck. To set the deck as a standard deck, find it in the database and change the `standard` field to `true`.
 
 # Contributing
-Please read through the [contribution guidelines](https://github.com/sindreslungaard/duel-masters/blob/master/CONTRIBUTIONS.md) before submitting a pull request
+Please read through the [contribution guidelines](https://github.com/sindreslungaard/duel-masters/blob/master/CONTRIBUTING.md) before submitting a pull request
 
 # Changelog
 
