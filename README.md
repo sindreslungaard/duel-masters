@@ -2,8 +2,8 @@
 
 A multiplayer browser based simulator for the [Duel Masters Trading Card Game](<https://duelmasters.fandom.com/wiki/Duel_Masters_(Card_Game)>)
 
-> [!NOTE]
-> We are not affiliated with the Duel Masters trademark or its rightful owner [Wizards of the Coast](wizards.com) and only strive to make it possible to play the original English version of the card game from 2004-2006 the same way you would be playing it with friends in real life.
+> [!WARNING]
+> We are not affiliated with the Duel Masters trademark or its rightful owner [Wizards of the Coast](https://wizards.com) and only strive to make it possible to play the original English version of the card game from 2004-2006 the same way you would be playing it with friends in real life.
 
 #### What it is
 - Aims to simulate how you would be playing the card game in real life
