@@ -70,7 +70,7 @@ func StormShell(c *match.Card) {
 					continue
 				}
 
-				movedCard, err := opponent.MoveCard(action.Cards[0], match.BATTLEZONE, match.MANAZONE)
+				movedCard, err := opponent.MoveCard(action.Cards[0], match.BATTLEZONE, match.MANAZONE, card.ID)
 
 				if err != nil {
 					break

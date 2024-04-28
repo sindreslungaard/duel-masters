@@ -42,7 +42,7 @@ func RaylaTruthEnforcer(c *match.Card) {
 				cards := match.SearchForCnd(card.Player, ctx.Match, card.Player, match.DECK, cnd.Spell, "Select 1 spell from your deck that will be shown to your opponent and sent to your hand", 1, 1, true)
 
 				for _, c := range cards {
-					card.Player.MoveCard(c.ID, match.DECK, match.HAND)
+					card.Player.MoveCard(c.ID, match.DECK, match.HAND, card.ID)
 					ctx.Match.Chat("Server", fmt.Sprintf("%s was moved from %s's deck to their hand", c.Name, card.Player.Username()))
 				}
 

@@ -30,7 +30,7 @@ func SmileAngler(c *match.Card) {
 			1,
 			false,
 		).Map(func(x *match.Card) {
-			x.Player.MoveCard(x.ID, match.MANAZONE, match.HAND)
+			x.Player.MoveCard(x.ID, match.MANAZONE, match.HAND, card.ID)
 			ctx.Match.Chat("Server", fmt.Sprintf("%s got moved to %s hand from his mana zone by Smile Angler", x.Name, x.Player.Username()))
 		})
 	}))

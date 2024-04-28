@@ -21,7 +21,7 @@ func BazagazealDragon(c *match.Card) {
 			return
 		}
 
-		card.Player.MoveCard(card.ID, match.BATTLEZONE, match.HAND)
+		card.Player.MoveCard(card.ID, match.BATTLEZONE, match.HAND, card.ID)
 		ctx.Match.Chat("Server", fmt.Sprintf("%s was returned to the %s's hand", c.Name, c.Player.Username()))
 	}))
 
@@ -51,7 +51,7 @@ func BolmeteusSteelDragon(c *match.Card) {
 
 			ctx.InterruptFlow()
 
-			ctx.Match.Opponent(card.Player).MoveCard(event.CardID, match.HAND, match.GRAVEYARD)
+			ctx.Match.Opponent(card.Player).MoveCard(event.CardID, match.HAND, match.GRAVEYARD, card.ID)
 
 		}
 	})

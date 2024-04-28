@@ -26,7 +26,7 @@ func RaVuSeekerOfLightning(c *match.Card) {
 
 			for _, spell := range spells {
 
-				card.Player.MoveCard(spell.ID, match.GRAVEYARD, match.HAND)
+				card.Player.MoveCard(spell.ID, match.GRAVEYARD, match.HAND, card.ID)
 				ctx.Match.Chat("Server", fmt.Sprintf("%s retrieved %s from the graveyard to their hand", spell.Player.Username(), spell.Name))
 
 			}

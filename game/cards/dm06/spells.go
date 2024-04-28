@@ -50,7 +50,7 @@ func InvincibleAura(c *match.Card) {
 		topCard := card.Player.PeekDeck(3)
 
 		for _, c := range topCard {
-			card.Player.MoveCard(c.ID, match.DECK, match.SHIELDZONE)
+			card.Player.MoveCard(c.ID, match.DECK, match.SHIELDZONE, card.ID)
 		}
 	}))
 }
@@ -68,7 +68,7 @@ func InvincibleTechnology(c *match.Card) {
 
 		for _, selectedCard := range selectedCards {
 
-			card.Player.MoveCard(selectedCard.ID, match.DECK, match.HAND)
+			card.Player.MoveCard(selectedCard.ID, match.DECK, match.HAND, card.ID)
 			ctx.Match.Chat("Server", fmt.Sprintf("%s retrieved %s from the deck to their hand", card.Player.Username(), selectedCard.Name))
 		}
 
@@ -165,7 +165,7 @@ func SphereOfWonder(c *match.Card) {
 
 				for _, toMove := range cards {
 
-					card.Player.MoveCard(toMove.ID, match.DECK, match.SHIELDZONE)
+					card.Player.MoveCard(toMove.ID, match.DECK, match.SHIELDZONE, card.ID)
 					ctx.Match.Chat("Server", fmt.Sprintf("%s put a shield into the shieldzone from the top of their deck by Sphere of Wonder's ability", card.Player.Username()))
 
 				}
@@ -199,7 +199,7 @@ func MysticDreamscape(c *match.Card) {
 				true,
 			).Map(func(x *match.Card) {
 				x.Tapped = false
-				card.Player.MoveCard(x.ID, match.MANAZONE, match.HAND)
+				card.Player.MoveCard(x.ID, match.MANAZONE, match.HAND, card.ID)
 				ctx.Match.Chat("Server", fmt.Sprintf("%s was moved to %s's hand from their manazone by Mystic Dreamscape", x.Name, card.Player.Username()))
 			})
 
@@ -229,7 +229,7 @@ func FutureSlash(c *match.Card) {
 			2,
 			true,
 		).Map(func(x *match.Card) {
-			x.Player.MoveCard(x.ID, match.DECK, match.GRAVEYARD)
+			x.Player.MoveCard(x.ID, match.DECK, match.GRAVEYARD, card.ID)
 			ctx.Match.Chat("Server", fmt.Sprintf("%s put %s in graveyard from their opponent's deck", x.Player.Username(), x.Name))
 		})
 
@@ -328,7 +328,7 @@ func MysticTreasureChest(c *match.Card) {
 			1,
 			true,
 			func(c *match.Card) bool { return c.Civ != civ.Nature }).Map(func(x *match.Card) {
-			x.Player.MoveCard(x.ID, match.DECK, match.MANAZONE)
+			x.Player.MoveCard(x.ID, match.DECK, match.MANAZONE, card.ID)
 			ctx.Match.Chat("Server", fmt.Sprintf("%s put %s in their manazone from their deck", x.Player.Username(), x.Name))
 		})
 
@@ -363,7 +363,7 @@ func PangaeasWill(c *match.Card) {
 
 				if len(x.Attachments()) > 0 {
 					baseCard := x.Attachments()[0]
-					baseCard.Player.MoveCard(baseCard.ID, match.HIDDENZONE, match.BATTLEZONE)
+					baseCard.Player.MoveCard(baseCard.ID, match.HIDDENZONE, match.BATTLEZONE, card.ID)
 					if tapped && !baseCard.Tapped {
 						baseCard.Tapped = true
 					}
@@ -392,7 +392,7 @@ func FaerieLife(c *match.Card) {
 
 			for _, toMove := range cards {
 
-				card.Player.MoveCard(toMove.ID, match.DECK, match.MANAZONE)
+				card.Player.MoveCard(toMove.ID, match.DECK, match.MANAZONE, card.ID)
 				ctx.Match.Chat("Server", fmt.Sprintf("%s put %s into the manazone from the top of their deck", card.Player.Username(), toMove.Name))
 
 			}
@@ -494,7 +494,7 @@ func RainOfArrows(c *match.Card) {
 
 		for _, c := range opponentHand {
 			if c.Civ == civ.Darkness && c.HasCondition(cnd.Spell) {
-				c.Player.MoveCard(c.ID, match.HAND, match.GRAVEYARD)
+				c.Player.MoveCard(c.ID, match.HAND, match.GRAVEYARD, card.ID)
 				ctx.Match.Chat("Server", fmt.Sprintf("%s was moved to %s's graveyard by %s", c.Name, c.Player.Username(), card.Name))
 			}
 		}
@@ -557,7 +557,7 @@ func CrisisBoulder(c *match.Card) {
 			1,
 			1,
 			false).Map(func(c *match.Card) {
-			c.Player.MoveCard(c.ID, c.Zone, match.GRAVEYARD)
+			c.Player.MoveCard(c.ID, c.Zone, match.GRAVEYARD, card.ID)
 			ctx.Match.Chat("Server", fmt.Sprintf("%s was moved to %s's graveyard by %s", c.Name, c.Player.Username(), card.Name))
 		})
 

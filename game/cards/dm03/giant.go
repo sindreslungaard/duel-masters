@@ -29,7 +29,7 @@ func EarthstompGiant(c *match.Card) {
 
 		for _, manaZoneCard := range manaZone {
 			if manaZoneCard.HasCondition(cnd.Creature) {
-				manaZoneCard.Player.MoveCard(manaZoneCard.ID, match.MANAZONE, match.HAND)
+				manaZoneCard.Player.MoveCard(manaZoneCard.ID, match.MANAZONE, match.HAND, card.ID)
 				ctx.Match.Chat("Server", fmt.Sprintf("%s was sent from %s's manazone to their hand by %s", manaZoneCard.Name, manaZoneCard.Player.Username(), card.Name))
 			}
 		}

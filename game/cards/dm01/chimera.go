@@ -135,7 +135,7 @@ func Gigargon(c *match.Card) {
 				creatures := match.SearchForCnd(card.Player, ctx.Match, card.Player, match.GRAVEYARD, cnd.Creature, "Gigargon: Select up to 2 cards from your graveyard that will be added to your hand", 1, 2, true)
 
 				for _, creature := range creatures {
-					card.Player.MoveCard(creature.ID, match.GRAVEYARD, match.HAND)
+					card.Player.MoveCard(creature.ID, match.GRAVEYARD, match.HAND, card.ID)
 					ctx.Match.Chat("Server", fmt.Sprintf("%s was returned to %s's hand from their graveyard", creature.Name, card.Player.Username()))
 				}
 

@@ -40,7 +40,7 @@ func CrystalPaladin(c *match.Card) {
 			match.BATTLEZONE,
 			func(x *match.Card) bool { return x.HasCondition(cnd.Blocker) },
 		).Map(func(x *match.Card) {
-			x.Player.MoveCard(x.ID, match.BATTLEZONE, match.HAND)
+			x.Player.MoveCard(x.ID, match.BATTLEZONE, match.HAND, card.ID)
 			ctx.Match.Chat("Server", fmt.Sprintf("%s was moved from %s battle zone to their hand by Crystal Paladin", x.Name, x.Player.Username()))
 		})
 
@@ -49,7 +49,7 @@ func CrystalPaladin(c *match.Card) {
 			match.BATTLEZONE,
 			func(x *match.Card) bool { return x.HasCondition(cnd.Blocker) },
 		).Map(func(x *match.Card) {
-			x.Player.MoveCard(x.ID, match.BATTLEZONE, match.HAND)
+			x.Player.MoveCard(x.ID, match.BATTLEZONE, match.HAND, card.ID)
 			ctx.Match.Chat("Server", fmt.Sprintf("%s was moved from %s battle zone to their hand by Crystal Paladin", x.Name, x.Player.Username()))
 		})
 
@@ -83,7 +83,7 @@ func AquaBouncer(c *match.Card) {
 			1,
 			true,
 		).Map(func(x *match.Card) {
-			x.Player.MoveCard(x.ID, match.BATTLEZONE, match.HAND)
+			x.Player.MoveCard(x.ID, match.BATTLEZONE, match.HAND, card.ID)
 			ctx.Match.Chat("Server", fmt.Sprintf("%s was returned to %s hand by %s", x.Name, x.Player.Username(), card.Name))
 		})
 

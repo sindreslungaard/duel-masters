@@ -71,7 +71,7 @@ func FactoryShellQ(c *match.Card) {
 				true,
 				func(x *match.Card) bool { return x.HasCondition(cnd.Creature) },
 			).Map(func(x *match.Card) {
-				card.Player.MoveCard(c.ID, match.DECK, match.HAND)
+				card.Player.MoveCard(c.ID, match.DECK, match.HAND, card.ID)
 				ctx.Match.Chat("Server", fmt.Sprintf("%s was moved from %s's deck to their hand", c.Name, card.Player.Username()))
 				card.Player.ShuffleDeck()
 			})

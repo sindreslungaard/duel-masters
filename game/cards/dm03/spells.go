@@ -24,12 +24,12 @@ func BoomerangComet(c *match.Card) {
 
 			for _, card := range cards {
 
-				card.Player.MoveCard(card.ID, match.MANAZONE, match.HAND)
+				card.Player.MoveCard(card.ID, match.MANAZONE, match.HAND, c.ID)
 				ctx.Match.Chat("Server", fmt.Sprintf("%s retrieved %s from the mana zone to their hand", card.Player.Username(), card.Name))
 
 			}
 
-			card.Player.MoveCard(card.ID, match.HAND, match.MANAZONE)
+			card.Player.MoveCard(card.ID, match.HAND, match.MANAZONE, card.ID)
 		}
 	})
 }
@@ -50,7 +50,7 @@ func LogicSphere(c *match.Card) {
 
 			for _, spell := range spells {
 
-				card.Player.MoveCard(spell.ID, match.MANAZONE, match.HAND)
+				card.Player.MoveCard(spell.ID, match.MANAZONE, match.HAND, card.ID)
 				ctx.Match.Chat("Server", fmt.Sprintf("%s retrieved %s from the mana zone to their hand", spell.Player.Username(), spell.Name))
 
 			}
@@ -81,7 +81,7 @@ func SundropArmor(c *match.Card) {
 				false,
 				func(c *match.Card) bool { return c.ID != card.ID },
 			).Map(func(x *match.Card) {
-				x.Player.MoveCard(x.ID, match.HAND, match.SHIELDZONE)
+				x.Player.MoveCard(x.ID, match.HAND, match.SHIELDZONE, card.ID)
 			})
 
 		}
@@ -185,10 +185,10 @@ func PsychicShaper(c *match.Card) {
 			for _, toMove := range cards {
 
 				if toMove.Civ == civ.Water {
-					card.Player.MoveCard(toMove.ID, match.DECK, match.HAND)
+					card.Player.MoveCard(toMove.ID, match.DECK, match.HAND, card.ID)
 					ctx.Match.Chat("Server", fmt.Sprintf("%s put %s into the hand from the top of their deck", card.Player.Username(), toMove.Name))
 				} else {
-					card.Player.MoveCard(toMove.ID, match.DECK, match.GRAVEYARD)
+					card.Player.MoveCard(toMove.ID, match.DECK, match.GRAVEYARD, card.ID)
 					ctx.Match.Chat("Server", fmt.Sprintf("%s put %s into the graveyard from the top of their deck", card.Player.Username(), toMove.Name))
 				}
 			}
@@ -219,7 +219,7 @@ func EldritchPoison(c *match.Card) {
 				creatures = match.Filter(card.Player, ctx.Match, card.Player, match.MANAZONE, "Select 1 of your creatures from your mana zone that will be returned to your hand", 1, 1, false, func(x *match.Card) bool { return x.HasCondition(cnd.Creature) })
 
 				for _, creature := range creatures {
-					card.Player.MoveCard(creature.ID, match.MANAZONE, match.HAND)
+					card.Player.MoveCard(creature.ID, match.MANAZONE, match.HAND, card.ID)
 					ctx.Match.Chat("Server", fmt.Sprintf("%s was moved to %s's hand from their mana zone", creature.Name, ctx.Match.PlayerRef(card.Player).Socket.User.Username))
 				}
 			}

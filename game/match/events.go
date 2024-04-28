@@ -43,6 +43,7 @@ type CardMoved struct {
 	CardID string
 	From   string
 	To     string
+	Source string // What caused the card to move, usually the ID of a card
 }
 
 // SpellCast is fired when a spell is cast, either from being played or from shield triggers
