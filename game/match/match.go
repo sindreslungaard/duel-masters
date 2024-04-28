@@ -306,6 +306,11 @@ func (m *Match) BreakShields(shields []*Card, source string) {
 					m.MoveCard(card, BATTLEZONE, card)
 				}
 
+				m.HandleFx(NewContext(m, &ShieldTriggerPlayedEvent{
+					Card:   card,
+					Source: source,
+				}))
+
 				m.CloseAction(card.Player)
 
 				break

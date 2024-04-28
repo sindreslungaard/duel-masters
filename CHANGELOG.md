@@ -2,7 +2,7 @@
 
 ## [Unreleased]
 
-No unreleased changes
+- Fixed an issue where "Pokolul" would untap even if the opponent chose to not play the shield trigger
 
 ## 31/03/2024
 

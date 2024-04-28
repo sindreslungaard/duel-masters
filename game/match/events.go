@@ -32,6 +32,12 @@ type ShieldTriggerEvent struct {
 	Source string // the card id that caused the shield to break
 }
 
+// ShieldTriggerPlayedEvent is fired when a shield trigger is played
+type ShieldTriggerPlayedEvent struct {
+	Card   *Card
+	Source string // the card id that caused the shield to break
+}
+
 // CardMoved is fired from the *Player.MoveCard method after moving a card between containers
 type CardMoved struct {
 	CardID string
