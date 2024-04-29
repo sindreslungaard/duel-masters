@@ -1,5 +1,4 @@
 import Vue from "vue";
-import VModal from "vue-js-modal";
 import App from "./App.vue";
 import router from "./router";
 import store from "./store";
@@ -9,11 +8,6 @@ import "./directives/draggable";
 import "./directives/closable";
 
 Vue.config.productionTip = false;
-
-Vue.use(VModal, {
-  dynamic: true,
-  dynamicDefaults: { height: "auto", scrollable: true }
-});
 
 new Vue({
   router,

@@ -669,7 +669,6 @@
 <script>
 import ClipboardJS from "clipboard";
 import { call, ws_protocol, host } from "../remote";
-import CardShowDialog from "../components/dialogs/CardShowDialog";
 import Username from "../components/Username.vue";
 import MuteIcon from "../components/MuteIcon.vue";
 import { getSettings, didSeeMuteWarning } from "../helpers/settings";
@@ -1267,17 +1266,8 @@ export default {
           }
 
           case "show_cards": {
-            this.$modal.show(
-              CardShowDialog,
-              {
-                message: data.message,
-                cards: data.cards
-              },
-              {
-                width: data.cards.length * 25 + "%"
-              },
-              {}
-            );
+            this.previewCardsText = data.message;
+            this.previewCards = data.cards.map((card) => ({ uid: card }));
           }
         }
       };

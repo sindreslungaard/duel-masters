@@ -1,7 +1,6 @@
 <template>
   <div id="app">
     <router-view />
-    <modals-container />
   </div>
 </template>
 
@@ -19,13 +18,6 @@ body {
   margin: 0;
   font-family: "Roboto", sans-serif;
   color: #eee;
-}
-
-.vm--modal {
-  background-color: #36393f;
-  border-color: #222428;
-  border-radius: 4px;
-  padding: 20px;
 }
 
 *::-webkit-scrollbar-track {
