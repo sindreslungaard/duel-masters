@@ -393,6 +393,24 @@ func (p *Player) GetCard(id string, container string) (*Card, error) {
 
 // MoveCard tries to move a card from container a to container b
 func (p *Player) MoveCard(cardID string, from string, to string, source string) (*Card, error) {
+	c, err := p.GetCard(cardID, from)
+
+	if err != nil {
+		return nil, err
+	}
+
+	ctx := NewContext(p.match, &MoveCard{
+		CardID: cardID,
+		From:   from,
+		To:     to,
+		Source: source,
+	})
+
+	p.match.HandleFx(ctx)
+
+	if ctx.Cancelled() {
+		return c, nil
+	}
 
 	cFrom, err := p.ContainerRef(from)
 
@@ -447,7 +465,6 @@ func (p *Player) MoveCard(cardID string, from string, to string, source string) 
 	}))
 
 	return ref, nil
-
 }
 
 // MoveCard tries to move a card from container a to the front of container b
