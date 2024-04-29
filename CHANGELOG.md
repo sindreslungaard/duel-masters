@@ -5,6 +5,7 @@
 - Fixed an issue where "Pokolul" would untap even if the opponent chose to not play the shield trigger
 - Fixed an issue where "Bolmeteus Steel Dragon" would move broken shields to the opponent's hand before discarding it, triggering side effects from other cards
 - Fixed an issue with the popup modal used by cards like "Rain of Arrows" to show cards to the user not fitting all cards on screen
+- Fixed an issue with "Factory Shell Q" allowing the player to select all creatures and not just survivors. Also fixed an issue where the selected card was not moved to the player's hand
 
 ## 31/03/2024
 
