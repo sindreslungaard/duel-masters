@@ -3,6 +3,7 @@
 ## [Unreleased]
 
 - Fixed an issue where "Pokolul" would untap even if the opponent chose to not play the shield trigger
+- Fixed an issue where "Bolmeteus Steel Dragon" would move broken shields to the opponent's hand before discarding it, triggering side effects from other cards
 
 ## 31/03/2024
 
@@ -37,7 +38,7 @@
 - New card "Bliss Totem, Avatar of Luck" (thanks @Zayberex)
 - New card "Clobber Totem" (thanks @Zayberex)
 - New card "Laveil Seeker Of Catastrophe" (thanks @Zayberex)
-- New card "Dava Torey Seeker Of Cloudss" (thanks @Zayberex)
+- New card "Dava Torey Seeker Of Clouds" (thanks @Zayberex)
 
 ## 10/11/2023
 

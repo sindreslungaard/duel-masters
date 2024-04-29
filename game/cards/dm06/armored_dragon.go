@@ -42,17 +42,16 @@ func BolmeteusSteelDragon(c *match.Card) {
 		}
 
 		if event, ok := ctx.Event.(*match.ShieldTriggerEvent); ok && event.Source == card.ID {
-
 			ctx.InterruptFlow()
-
 		}
 
-		if event, ok := ctx.Event.(*match.BrokenShieldEvent); ok && event.Source == card.ID {
+		if event, ok := ctx.Event.(*match.MoveCard); ok && event.From == match.SHIELDZONE && event.To == match.HAND && event.Source == card.ID {
+			moved, err := ctx.Match.Opponent(card.Player).MoveCard(event.CardID, match.SHIELDZONE, match.GRAVEYARD, card.ID)
+			if err == nil {
+				ctx.Match.Chat("Server", fmt.Sprintf("%s was moved to %s's graveyard instead of hand by %s", moved.Name, ctx.Match.Opponent(card.Player).Username(), card.Name))
+			}
 
 			ctx.InterruptFlow()
-
-			ctx.Match.Opponent(card.Player).MoveCard(event.CardID, match.HAND, match.GRAVEYARD, card.ID)
-
 		}
 	})
 }
