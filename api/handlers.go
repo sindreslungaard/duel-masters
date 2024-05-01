@@ -60,55 +60,6 @@ func (api *API) WS(c *gin.Context) {
 
 }
 
-// GetDecksHandler returns an array of the users decks
-func (api *API) GetDecksHandler(c *gin.Context) {
-
-	user, err := db.GetUserForToken(c.GetHeader("Authorization"))
-	if err != nil {
-		c.Status(401)
-		return
-	}
-
-	cur, err := db.Decks.Find(context.TODO(), bson.M{
-		"owner": user.UID,
-	})
-
-	if err != nil {
-		logrus.Error(err)
-		c.Status(500)
-		return
-	}
-
-	defer cur.Close(context.TODO())
-
-	decks := make([]db.Deck, 0)
-
-	for cur.Next(context.TODO()) {
-
-		var deck db.Deck
-
-		if err := cur.Decode(&deck); err != nil {
-			continue
-		}
-
-		decks = append(decks, deck)
-
-	}
-
-	legacyDecks := []db.LegacyDeck{}
-
-	for _, deck := range decks {
-		legacyDeck, err := match.ConvertToLegacyDeck(deck)
-		if err != nil {
-			continue
-		}
-		legacyDecks = append(legacyDecks, legacyDeck)
-	}
-
-	c.JSON(200, legacyDecks)
-
-}
-
 type createDeckBody struct {
 	Name   string   `json:"name" binding:"required,min=1,max=30"`
 	Cards  []string `json:"cards" binding:"required"`
