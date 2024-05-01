@@ -13,7 +13,6 @@ import (
 	"duel-masters/flags"
 	"duel-masters/game"
 	"duel-masters/game/match"
-	"duel-masters/internal"
 	"duel-masters/server"
 
 	"github.com/gin-gonic/gin"
@@ -21,7 +20,6 @@ import (
 	"github.com/gorilla/websocket"
 	"github.com/sirupsen/logrus"
 	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/bson/primitive"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -425,66 +423,6 @@ func (api *API) UpdatePreferencesHandler(c *gin.Context) {
 	}})
 
 	c.JSON(200, bson.M{"message": "Successfully saved your preferences"})
-
-}
-
-type recoverPasswordReqBody struct {
-	Email string `json:"email"`
-}
-
-func (api *API) RecoverPasswordHandler(c *gin.Context) {
-
-	if internal.RateLimited(fmt.Sprintf("%s/recoverpw", c.ClientIP()), 3, 1000*60*15) {
-		c.JSON(400, bson.M{"error": "Please wait a while before requesting to recover password again"})
-		return
-	}
-
-	var reqBody recoverPasswordReqBody
-	if err := c.ShouldBindJSON(&reqBody); err != nil {
-		c.JSON(400, bson.M{"error": "Please provide a valid email"})
-		return
-	}
-
-	genericResponse := "If the email you specified matches any registered users you will soon receive a mail with a link to reset your password"
-
-	var user db.User
-
-	if err := db.Users.FindOne(context.TODO(), bson.M{"email": primitive.Regex{Pattern: "^" + reqBody.Email + "$", Options: "i"}}).Decode(&user); err != nil {
-		logrus.Debug("Attempt at recovering password with email that does not belong to any users ", reqBody.Email)
-		c.JSON(200, bson.M{"message": genericResponse})
-		return
-	}
-
-	code, err := internal.RandomString(50)
-	code = fmt.Sprintf("%v-%s", time.Now().Unix(), code)
-
-	if err != nil {
-		logrus.Error("Error generating password recovery code", err)
-		c.JSON(500, bson.M{"error": "Something went wrong"})
-		return
-	}
-
-	db.Users.UpdateOne(context.Background(), bson.M{
-		"uid": user.UID,
-	}, bson.M{"$set": bson.M{
-		"recoverycode": code,
-	}})
-
-	err = internal.SendMail(user.Email, "Recover your password", fmt.Sprintf(`
-	Use the link below to recover the password for your account <b>%s</b>
-	<br><br>
-	https://shobu.io/recover-password/%s
-	<br><br>
-	If you did not request to reset your password, please disregard this email
-	`, user.Username, code))
-
-	if err != nil {
-		logrus.Error("Failed to send email", err)
-		c.JSON(500, bson.M{"error": "Something went wrong"})
-		return
-	}
-
-	c.JSON(200, bson.M{"message": genericResponse})
 
 }
 
