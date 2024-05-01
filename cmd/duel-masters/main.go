@@ -5,6 +5,7 @@ import (
 	"math/rand"
 	"os"
 	"strconv"
+	"strings"
 	"time"
 
 	"duel-masters/api"
@@ -25,7 +26,24 @@ func init() {
 	}
 
 	logrus.SetFormatter(&logrus.TextFormatter{})
-	logrus.SetLevel(logrus.DebugLevel)
+
+	loglevel := strings.ToLower(os.Getenv("log_level"))
+
+	switch loglevel {
+	case "debug":
+		logrus.SetLevel(logrus.DebugLevel)
+	case "info":
+		logrus.SetLevel(logrus.InfoLevel)
+	case "warn":
+		logrus.SetLevel(logrus.WarnLevel)
+	case "error":
+		logrus.SetLevel(logrus.ErrorLevel)
+	default:
+		loglevel = "info"
+		logrus.SetLevel(logrus.InfoLevel)
+	}
+
+	logrus.Infof("Using log level %s", loglevel)
 
 	rand.Seed(time.Now().UnixNano())
 }
