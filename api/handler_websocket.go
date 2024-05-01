@@ -14,7 +14,7 @@ var upgrader = websocket.Upgrader{
 }
 
 func (api *API) websocketHandler(w http.ResponseWriter, r *http.Request) {
-	hubID := r.Header.Get("hub")
+	hubID := r.PathValue("hub")
 
 	var hub server.Hub
 
