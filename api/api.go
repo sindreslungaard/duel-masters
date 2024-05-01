@@ -14,20 +14,24 @@ import (
 type Json map[string]interface{}
 
 type API struct {
+	mux             *http.ServeMux
+	middleware      []func(http.Handler) http.Handler
+	blockedNetworks IPRange
+
 	lobby       *game.Lobby
 	matchSystem *match.MatchSystem
-
-	blockedNetworks IPRange
 }
 
 func New(lobby *game.Lobby, matchSystem *match.MatchSystem) *API {
 	return &API{
-		matchSystem: matchSystem,
-		lobby:       lobby,
-
+		mux:        http.NewServeMux(),
+		middleware: []func(http.Handler) http.Handler{},
 		blockedNetworks: IPRange{
 			cidrs: []*net.IPNet{},
 		},
+
+		matchSystem: matchSystem,
+		lobby:       lobby,
 	}
 }
 
@@ -35,16 +39,31 @@ func (api *API) SetBlockedIPs(iprange IPRange) {
 	api.blockedNetworks = iprange
 }
 
+func (api *API) Use(middleware func(http.Handler) http.Handler) {
+	api.middleware = append(api.middleware, middleware)
+}
+
+func (api *API) HandleFunc(pattern string, handler http.HandlerFunc) {
+	h := http.Handler(handler)
+	for i := len(api.middleware) - 1; i >= 0; i-- {
+		h = api.middleware[i](h)
+	}
+	api.mux.Handle(pattern, h)
+}
+
 // Start starts the API
 func (api *API) Start(port string) {
 	addr := "127.0.0.1:" + port
-	mux := http.NewServeMux()
 
-	mux.HandleFunc("POST /auth/signin", api.signinHandler)
+	api.Use(recoverMiddleware)
+	api.Use(loggingMiddleware)
+
+	api.HandleFunc("POST /auth/signin", api.signinHandler)
+	api.HandleFunc("POST /auth/signup", api.signupHandler)
 
 	server := &http.Server{
 		Addr:    addr,
-		Handler: mux,
+		Handler: api.mux,
 	}
 
 	logrus.Infof("Listening at %s", addr)
@@ -126,8 +145,8 @@ func getIP(r *http.Request) string {
 }
 
 func write(w http.ResponseWriter, status int, data Json) {
-	w.WriteHeader(status)
 	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(status)
 	err := json.NewEncoder(w).Encode(data)
 
 	if err != nil {
