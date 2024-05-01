@@ -57,6 +57,7 @@ func (api *API) Start(port string) {
 
 	api.Use(recoverMiddleware)
 	api.Use(loggingMiddleware)
+	api.Use(corsMiddleware)
 
 	api.HandleFunc("POST /auth/signin", api.signinHandler)
 	api.HandleFunc("POST /auth/signup", api.signupHandler)
