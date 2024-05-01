@@ -59,6 +59,7 @@ func (api *API) Start(port string) {
 	api.Use(loggingMiddleware)
 	api.Use(corsMiddleware)
 
+	api.HandleFunc("GET /ws/{hub}", api.websocketHandler)
 	api.HandleFunc("POST /api/auth/signin", api.signinHandler)
 	api.HandleFunc("POST /api/auth/signup", api.signupHandler)
 	api.HandleFunc("POST /api/auth/recover", api.recoverPasswordHandler)

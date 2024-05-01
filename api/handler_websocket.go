@@ -1,11 +1,9 @@
 package api
 
 import (
+	"duel-masters/server"
 	"net/http"
 
-	"duel-masters/server"
-
-	"github.com/gin-gonic/gin"
 	"github.com/gorilla/websocket"
 )
 
@@ -15,34 +13,28 @@ var upgrader = websocket.Upgrader{
 	CheckOrigin:     func(r *http.Request) bool { return true },
 }
 
-// WS handles websocket upgrade
-func (api *API) WS(c *gin.Context) {
-
-	hubID := c.Param("hub")
+func (api *API) websocketHandler(w http.ResponseWriter, r *http.Request) {
+	hubID := r.Header.Get("hub")
 
 	var hub server.Hub
 
 	if hubID == "lobby" {
-
 		hub = api.lobby
-
 	} else {
-
 		m, ok := api.matchSystem.Matches.Find(hubID)
 
 		if !ok {
-			c.Status(404)
+			write(w, http.StatusNotFound, Json{"message": "Match not found"})
 			return
 		}
 
 		hub = m
-
 	}
 
-	conn, err := upgrader.Upgrade(c.Writer, c.Request, nil)
+	conn, err := upgrader.Upgrade(w, r, nil)
 
 	if err != nil {
-		c.Status(500)
+		write(w, http.StatusInternalServerError, Json{"message": "Something went wrong"})
 		return
 	}
 
@@ -50,5 +42,4 @@ func (api *API) WS(c *gin.Context) {
 
 	// Handle the connection in a new goroutine to free up this memory
 	go s.Listen()
-
 }
