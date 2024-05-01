@@ -60,52 +60,6 @@ func (api *API) WS(c *gin.Context) {
 
 }
 
-// CardsHandler returns a list of all the cards in the cache
-func (api *API) CardsHandler(c *gin.Context) {
-	c.JSON(200, GetCache())
-}
-
-// GetDeckHandler returns a single deck, if public
-func (api *API) GetDeckHandler(c *gin.Context) {
-
-	deckUID := c.Param("id")
-
-	var deck db.Deck
-
-	err := db.Decks.FindOne(
-		context.Background(),
-		bson.M{"uid": deckUID, "public": true},
-	).Decode(&deck)
-
-	if err != nil {
-		c.Status(404)
-		return
-	}
-
-	var user db.User
-
-	err = db.Users.FindOne(
-		context.Background(),
-		bson.M{"uid": deck.Owner},
-	).Decode(&user)
-
-	if err != nil {
-		c.Status(404)
-		return
-	}
-
-	deck.Owner = user.Username
-
-	d, err := match.ConvertToLegacyDeck(deck)
-
-	if err != nil {
-		c.Status(404)
-	}
-
-	c.JSON(200, d)
-
-}
-
 // GetDecksHandler returns an array of the users decks
 func (api *API) GetDecksHandler(c *gin.Context) {
 
