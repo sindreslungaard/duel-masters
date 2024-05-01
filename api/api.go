@@ -68,6 +68,7 @@ func (api *API) Start(port string) {
 	api.HandleFunc("PUT /api/preferences", api.updatePreferencesHandler)
 	api.HandleFunc("GET /api/match/{id}", api.getMatchHandler)
 	api.HandleFunc("POST /api/match", api.createMatchHandler)
+	api.HandleFunc("GET /api/cards", api.getCardsHandler)
 
 	server := &http.Server{
 		Addr:    addr,
