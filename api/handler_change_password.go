@@ -11,8 +11,8 @@ import (
 )
 
 type changePasswordReqBody struct {
-	OldPassword string `json:"oldPassword" binding:"required"`
-	NewPassword string `json:"newPassword" binding:"required,min=6"`
+	OldPassword string `json:"oldPassword"`
+	NewPassword string `json:"newPassword"`
 }
 
 func (api *API) changePasswordHandler(w http.ResponseWriter, r *http.Request) {
