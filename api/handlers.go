@@ -342,18 +342,6 @@ func (api *API) GetMatchHandler(c *gin.Context) {
 
 }
 
-func (api *API) GetPreferencesHandler(c *gin.Context) {
-	user, err := db.GetUserForToken(c.GetHeader("Authorization"))
-	if err != nil {
-		c.Status(401)
-		return
-	}
-
-	c.JSON(200, bson.M{
-		"playmat": user.Playmat,
-	})
-}
-
 type preferencesReqBody struct {
 	Playmat string `json:"playmat"`
 }
