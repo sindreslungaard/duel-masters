@@ -328,19 +328,6 @@ func (api *API) DeleteDeckHandler(c *gin.Context) {
 
 }
 
-func (api *API) GetMatchHandler(c *gin.Context) {
-
-	m, ok := api.matchSystem.Matches.Find(c.Param("id"))
-
-	if !ok {
-		c.Status(404)
-		return
-	}
-
-	c.JSON(200, bson.M{"name": m.MatchName, "host": m.HostID, "started": m.Started})
-
-}
-
 // InviteHandler handles duel invitations
 func (api *API) InviteHandler(c *gin.Context) {
 	html := fmt.Sprintf(`
