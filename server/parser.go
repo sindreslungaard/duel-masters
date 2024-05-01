@@ -14,7 +14,7 @@ func Parse(s *Socket, data []byte) {
 	header, err := strconv.Atoi(string(runes[0:4]))
 
 	if err != nil {
-		logrus.Debug("Received message in incorrect format %s", string(data))
+		logrus.Debugf("Received message in incorrect format %s", string(data))
 		return
 	}
 
