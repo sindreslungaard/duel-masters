@@ -65,6 +65,7 @@ func (api *API) Start(port string) {
 	api.HandleFunc("POST /api/auth/reset", api.resetPasswordHandler)
 	api.HandleFunc("POST /api/auth/reset-password", api.changePasswordHandler)
 	api.HandleFunc("GET /api/preferences", api.getPreferencesHandler)
+	api.HandleFunc("PUT /api/preferences", api.updatePreferencesHandler)
 
 	server := &http.Server{
 		Addr:    addr,

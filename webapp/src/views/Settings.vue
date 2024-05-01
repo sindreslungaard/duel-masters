@@ -212,8 +212,8 @@ export default {
 
         this.preferencesSuccess = res.data.message;
       } catch (e) {
-        console.log(e.response.data.error);
-        this.preferencesError = e.response.data.error;
+        console.log(e.response.data.message);
+        this.preferencesError = e.response.data.message;
       }
     }
   },
