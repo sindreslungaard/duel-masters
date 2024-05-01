@@ -3,12 +3,9 @@ package api
 import (
 	"context"
 	"fmt"
-	"math/rand"
 	"net/http"
 
 	"duel-masters/db"
-	"duel-masters/flags"
-	"duel-masters/game"
 	"duel-masters/game/match"
 	"duel-masters/server"
 
@@ -18,48 +15,6 @@ import (
 	"github.com/sirupsen/logrus"
 	"go.mongodb.org/mongo-driver/bson"
 )
-
-type matchReqBody struct {
-	Name       string `json:"name" binding:"max=50"`
-	Visibility string `json:"visibility" binding:"required"`
-}
-
-// MatchHandler handles creation of new mathes
-func (api *API) MatchHandler(c *gin.Context) {
-
-	if !flags.NewMatchesEnabled {
-		c.Status(403)
-		return
-	}
-
-	user, err := db.GetUserForToken(c.GetHeader("Authorization"))
-	if err != nil {
-		c.Status(401)
-		return
-	}
-
-	var reqBody matchReqBody
-	if err := c.ShouldBindJSON(&reqBody); err != nil {
-		c.Status(400)
-		return
-	}
-
-	visible := true
-	if reqBody.Visibility == "private" {
-		visible = false
-	}
-
-	name := reqBody.Name
-
-	if name == "" {
-		name = game.DefaultMatchNames[rand.Intn(len(game.DefaultMatchNames))]
-	}
-
-	m := api.matchSystem.NewMatch(name, user.UID, visible, false)
-
-	c.JSON(200, m)
-
-}
 
 var upgrader = websocket.Upgrader{
 	ReadBufferSize:  1024,

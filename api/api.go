@@ -67,6 +67,7 @@ func (api *API) Start(port string) {
 	api.HandleFunc("GET /api/preferences", api.getPreferencesHandler)
 	api.HandleFunc("PUT /api/preferences", api.updatePreferencesHandler)
 	api.HandleFunc("GET /api/match/{id}", api.getMatchHandler)
+	api.HandleFunc("POST /api/match", api.createMatchHandler)
 
 	server := &http.Server{
 		Addr:    addr,
@@ -151,7 +152,7 @@ func getIP(r *http.Request) string {
 	return ""
 }
 
-func write(w http.ResponseWriter, status int, data Json) {
+func write(w http.ResponseWriter, status int, data any) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(status)
 	err := json.NewEncoder(w).Encode(data)
