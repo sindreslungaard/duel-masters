@@ -15,38 +15,35 @@ import (
 )
 
 type signinReqBody struct {
-	Username string `json:"username" binding:"required"`
-	Password string `json:"password" binding:"required"`
+	Username string `json:"username"`
+	Password string `json:"password"`
 }
 
 func (api *API) signinHandler(w http.ResponseWriter, r *http.Request) {
 	var body signinReqBody
 
-	err := json.NewDecoder(r.Body).Decode(&body)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
+	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
+		write(w, http.StatusBadRequest, Json{"message": err.Error()})
 		return
 	}
 
 	username, err1 := assert.Is(body.Username).NotEmpty().String()
 	password, err2 := assert.Is(body.Password).NotEmpty().String()
 
-	err = assert.First(err1, err2)
-
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
+	if err := assert.First(err1, err2); err != nil {
+		write(w, http.StatusBadRequest, Json{"message": err.Error()})
 		return
 	}
 
 	var user db.User
 
 	if err := db.Users.FindOne(r.Context(), bson.M{"username": primitive.Regex{Pattern: "^" + username + "$", Options: "i"}}).Decode(&user); err != nil {
-		http.Error(w, "User not found", http.StatusNotFound)
+		write(w, http.StatusNotFound, Json{"message": "User not found"})
 		return
 	}
 
 	if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password)); err != nil {
-		http.Error(w, "Incorrect password", http.StatusUnauthorized)
+		write(w, http.StatusUnauthorized, Json{"message": "Incorrect password"})
 		return
 	}
 
@@ -62,18 +59,19 @@ func (api *API) signinHandler(w http.ResponseWriter, r *http.Request) {
 
 	if err != nil {
 		logrus.Error(err)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		write(w, http.StatusInternalServerError, Json{"message": err.Error()})
 		return
 	}
 
 	if bans > 0 {
+		write(w, http.StatusInternalServerError, Json{"message": "Banned"})
 		http.Error(w, "Banned", http.StatusForbidden)
 		return
 	}
 
 	token, err := uuid.NewRandom()
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		write(w, http.StatusInternalServerError, Json{"message": err.Error()})
 		return
 	}
 
@@ -85,8 +83,7 @@ func (api *API) signinHandler(w http.ResponseWriter, r *http.Request) {
 
 	db.Users.UpdateOne(r.Context(), bson.M{"uid": user.UID}, bson.M{"$push": bson.M{"sessions": session}})
 
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(Json{
+	write(w, http.StatusOK, Json{
 		"user":  user,
 		"token": session.Token,
 	})

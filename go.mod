@@ -8,7 +8,9 @@ require (
 	github.com/google/uuid v1.1.1
 	github.com/gorilla/websocket v1.4.2
 	github.com/joho/godotenv v1.3.0
+	github.com/sindreslungaard/assert v0.1.1
 	github.com/sirupsen/logrus v1.5.0
+	github.com/teris-io/shortid v0.0.0-20171029131806-771a37caa5cf
 	github.com/ventu-io/go-shortid v0.0.0-20171029131806-771a37caa5cf
 	go.mongodb.org/mongo-driver v1.3.2
 	golang.org/x/crypto v0.0.0-20210921155107-089bfa567519
@@ -31,8 +33,6 @@ require (
 	github.com/modern-go/concurrent v0.0.0-20180228061459-e0a39a4cb421 // indirect
 	github.com/modern-go/reflect2 v0.0.0-20180701023420-4b7aa43c6742 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
-	github.com/sindreslungaard/assert v0.0.0-20210629061614-cfcf6c5bedbf // indirect
-	github.com/teris-io/shortid v0.0.0-20171029131806-771a37caa5cf // indirect
 	github.com/ugorji/go/codec v1.1.7 // indirect
 	github.com/xdg/scram v0.0.0-20180814205039-7eeb5667e42c // indirect
 	github.com/xdg/stringprep v0.0.0-20180714160509-73f8eece6fdc // indirect

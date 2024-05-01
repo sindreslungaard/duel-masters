@@ -3,6 +3,7 @@ package api
 import (
 	"duel-masters/game"
 	"duel-masters/game/match"
+	"encoding/json"
 	"net"
 	"net/http"
 	"strings"
@@ -122,4 +123,14 @@ func getIP(r *http.Request) string {
 	}
 
 	return ""
+}
+
+func write(w http.ResponseWriter, status int, data Json) {
+	w.WriteHeader(status)
+	w.Header().Set("Content-Type", "application/json")
+	err := json.NewEncoder(w).Encode(data)
+
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
 }
