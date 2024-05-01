@@ -71,6 +71,7 @@ func (api *API) Start(port string) {
 	api.HandleFunc("GET /api/cards", api.getCardsHandler)
 	api.HandleFunc("GET /api/deck/{id}", api.getDeckHandler)
 	api.HandleFunc("GET /api/decks", api.getDecksHandler)
+	api.HandleFunc("POST /api/decks", api.createDeckHandler)
 
 	server := &http.Server{
 		Addr:    addr,
