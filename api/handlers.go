@@ -18,7 +18,6 @@ import (
 	"github.com/gorilla/websocket"
 	"github.com/sirupsen/logrus"
 	"go.mongodb.org/mongo-driver/bson"
-	"golang.org/x/crypto/bcrypt"
 )
 
 type matchReqBody struct {
@@ -341,42 +340,6 @@ func (api *API) GetMatchHandler(c *gin.Context) {
 
 	c.JSON(200, bson.M{"name": m.MatchName, "host": m.HostID, "started": m.Started})
 
-}
-
-type changePasswordReqBody struct {
-	OldPassword string `json:"oldPassword" binding:"required"`
-	NewPassword string `json:"newPassword" binding:"required,min=6"`
-}
-
-func (api *API) ChangePasswordHandler(c *gin.Context) {
-
-	user, err := db.GetUserForToken(c.GetHeader("Authorization"))
-	if err != nil {
-		c.Status(401)
-		return
-	}
-
-	var reqBody changePasswordReqBody
-	if err := c.ShouldBindJSON(&reqBody); err != nil {
-		c.JSON(400, bson.M{"error": "New password must be at least 6 characters long"})
-		return
-	}
-
-	if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(reqBody.OldPassword)); err != nil {
-		c.JSON(401, bson.M{"error": "Old password is incorrect"})
-		return
-	}
-
-	hash, err := bcrypt.GenerateFromPassword([]byte(reqBody.NewPassword), 10)
-
-	if err != nil {
-		c.Status(500)
-		return
-	}
-
-	db.Users.UpdateOne(context.TODO(), bson.M{"uid": user.UID}, bson.M{"$set": bson.M{"password": hash}})
-
-	c.JSON(200, bson.M{"message": "Successfully changed your password"})
 }
 
 func (api *API) GetPreferencesHandler(c *gin.Context) {

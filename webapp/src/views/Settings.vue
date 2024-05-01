@@ -196,7 +196,7 @@ export default {
 
         this.passwordSuccess = res.data.message;
       } catch (e) {
-        this.passwordError = e.response.data.error;
+        this.passwordError = e.response.data.message;
       }
     },
     async savePreferences() {
