@@ -24,7 +24,7 @@ func init() {
 		logrus.Warn("Failed to load .env file")
 	}
 
-	logrus.SetFormatter(&logrus.JSONFormatter{})
+	logrus.SetFormatter(&logrus.TextFormatter{})
 	logrus.SetLevel(logrus.DebugLevel)
 
 	rand.Seed(time.Now().UnixNano())

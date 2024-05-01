@@ -4,12 +4,13 @@ import (
 	"duel-masters/game"
 	"duel-masters/game/match"
 	"net"
-	"os"
-	"path"
+	"net/http"
+	"strings"
 
-	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
 )
+
+type Json map[string]interface{}
 
 type API struct {
 	lobby       *game.Lobby
@@ -35,8 +36,20 @@ func (api *API) SetBlockedIPs(iprange IPRange) {
 
 // Start starts the API
 func (api *API) Start(port string) {
+	addr := "127.0.0.1:" + port
+	mux := http.NewServeMux()
 
-	dir, err := os.Getwd()
+	mux.HandleFunc("POST /auth/signin", api.signinHandler)
+
+	server := &http.Server{
+		Addr:    addr,
+		Handler: mux,
+	}
+
+	logrus.Infof("Listening at %s", addr)
+	logrus.Fatal(server.ListenAndServe())
+
+	/* dir, err := os.Getwd()
 	if err != nil {
 		panic(err)
 	}
@@ -94,5 +107,19 @@ func (api *API) Start(port string) {
 
 	logrus.Infof("Listening on port %s", os.Getenv("port"))
 
-	logrus.Fatal(r.Run(":" + os.Getenv("port")))
+	logrus.Fatal(r.Run(":" + os.Getenv("port"))) */
+}
+
+func getIP(r *http.Request) string {
+	ip := r.Header.Get("X-Forwarded-For")
+	ip = strings.TrimSpace(strings.Split(ip, ",")[0])
+	if ip != "" {
+		return ip
+	}
+
+	if ip, _, err := net.SplitHostPort(strings.TrimSpace(r.RemoteAddr)); err == nil {
+		return ip
+	}
+
+	return ""
 }
