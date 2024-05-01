@@ -5,9 +5,7 @@ import (
 	"fmt"
 	"math/rand"
 	"net/http"
-	"strconv"
 	"strings"
-	"time"
 
 	"duel-masters/db"
 	"duel-masters/flags"
@@ -423,72 +421,6 @@ func (api *API) UpdatePreferencesHandler(c *gin.Context) {
 	}})
 
 	c.JSON(200, bson.M{"message": "Successfully saved your preferences"})
-
-}
-
-type resetPasswordReqBody struct {
-	Code     string `json:"code"`
-	Password string `json:"password"`
-}
-
-func (api *API) ResetPasswordHandler(c *gin.Context) {
-
-	var reqBody resetPasswordReqBody
-	if err := c.ShouldBindJSON(&reqBody); err != nil {
-		c.JSON(400, bson.M{"error": "Invalid payload"})
-		return
-	}
-
-	if len(reqBody.Password) < 6 {
-		c.JSON(400, bson.M{"error": "Password must be at least 6 characters long"})
-		return
-	}
-
-	if len(reqBody.Code) < 30 {
-		c.JSON(400, bson.M{"error": "Invalid code"})
-		return
-	}
-
-	var user db.User
-
-	if err := db.Users.FindOne(context.TODO(), bson.M{"recoverycode": reqBody.Code}).Decode(&user); err != nil {
-		c.JSON(400, bson.M{"error": "Invalid or expired code"})
-		return
-	}
-
-	ts, err := strconv.Atoi(strings.Split(reqBody.Code, "-")[0])
-
-	if err != nil {
-		logrus.Error("Failed to parse recovery code", reqBody.Code)
-		c.JSON(400, bson.M{"error": "Could not parse recovery code"})
-		return
-	}
-
-	if int64(ts)+86400 < time.Now().Unix() {
-		c.JSON(400, bson.M{"error": "Recovery code has expired"})
-		return
-	}
-
-	hash, err := bcrypt.GenerateFromPassword([]byte(reqBody.Password), 10)
-
-	if err != nil {
-		logrus.Error("Failed to generate password hash during password reset")
-		c.JSON(500, bson.M{"error": "Something unexpected happened"})
-		return
-	}
-
-	db.Users.UpdateOne(context.Background(), bson.M{
-		"uid": user.UID,
-	}, bson.M{
-		"$set": bson.M{
-			"password": string(hash),
-		},
-		"$unset": bson.M{
-			"recoverycode": "",
-		},
-	})
-
-	c.JSON(200, bson.M{"message": fmt.Sprintf("Password for the account \"%s\" was successfully changed", user.Username)})
 
 }
 
