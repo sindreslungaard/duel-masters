@@ -1,16 +1,13 @@
 package api
 
 import (
-	"context"
 	"fmt"
 	"net/http"
 
-	"duel-masters/db"
 	"duel-masters/server"
 
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/websocket"
-	"go.mongodb.org/mongo-driver/bson"
 )
 
 var upgrader = websocket.Upgrader{
@@ -54,36 +51,6 @@ func (api *API) WS(c *gin.Context) {
 
 	// Handle the connection in a new goroutine to free up this memory
 	go s.Listen()
-
-}
-
-// DeleteDeckHandler deletes the specified deck
-func (api *API) DeleteDeckHandler(c *gin.Context) {
-
-	user, err := db.GetUserForToken(c.GetHeader("Authorization"))
-	if err != nil {
-		c.Status(401)
-		return
-	}
-
-	deckUID := c.Param("id")
-
-	result, err := db.Decks.DeleteOne(
-		context.Background(),
-		bson.M{"uid": deckUID, "owner": user.UID},
-	)
-
-	if err != nil {
-		c.Status(401)
-		return
-	}
-
-	if result.DeletedCount < 1 {
-		c.Status(401)
-		return
-	}
-
-	c.Status(200)
 
 }
 
