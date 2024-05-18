@@ -55,8 +55,6 @@ func (api *API) HandleFunc(pattern string, handler http.HandlerFunc) {
 
 // Start starts the API
 func (api *API) Start(port string) {
-	addr := "127.0.0.1:" + port
-
 	dir, err := os.Getwd()
 	if err != nil {
 		panic(err)
@@ -91,11 +89,11 @@ func (api *API) Start(port string) {
 	api.mux.HandleFunc("GET /{path...}", api.staticFileHandler(path.Join(dir, "webapp", "dist", "index.html")))
 
 	server := &http.Server{
-		Addr:    addr,
+		Addr:    ":" + port,
 		Handler: api.mux,
 	}
 
-	logrus.Infof("Listening at %s", addr)
+	logrus.Infof("Listening on port %s", port)
 	logrus.Fatal(server.ListenAndServe())
 }
 
