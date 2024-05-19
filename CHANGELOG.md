@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+No unreleased changes
+
+## 19/05/2024
+
 - Fixed an issue where "Pokolul" would untap even if the opponent chose to not play the shield trigger
 - Fixed an issue where "Bolmeteus Steel Dragon" would move broken shields to the opponent's hand before discarding it, triggering side effects from other cards
 - Fixed an issue with the popup modal used by cards like "Rain of Arrows" to show cards to the user not fitting all cards on screen
