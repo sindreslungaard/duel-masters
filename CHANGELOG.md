@@ -2,7 +2,7 @@
 
 ## [Unreleased]
 
-No unreleased changes
+- Corrected "Muramasa, Duke of Blades"'s power from 2000 to 3000
 
 ## 19/05/2024
 
