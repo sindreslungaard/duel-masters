@@ -3,6 +3,7 @@
 ## [Unreleased]
 
 - Corrected "Muramasa, Duke of Blades"'s power from 2000 to 3000
+- Updated "Liquid Scope" to show both the opponent's hand and shieldzone, instead of just the shieldzone (thanks @Calinachos)
 
 ## 19/05/2024
 
