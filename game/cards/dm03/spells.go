@@ -142,26 +142,18 @@ func LiquidScope(c *match.Card) {
 			}
 
 			ids := make([]string, 0)
+			cardsCount := len(hand)
+			shieldsCount := len(shields)
 
-			for _, s := range shields {
-				ids = append(ids, s.ImageID)
+			for _, card := range append(hand, shields...) {
+				ids = append(ids, card.ImageID)
 			}
+
+			message := fmt.Sprintf("Your opponent's hand is shown first(%d), followed by their shields(%d):", cardsCount, shieldsCount)
 
 			ctx.Match.ShowCards(
 				card.Player,
-				"Your opponent's shields:",
-				ids,
-			)
-
-			ids = make([]string, 0)
-
-			for _, s := range hand {
-				ids = append(ids, s.ImageID)
-			}
-
-			ctx.Match.ShowCards(
-				card.Player,
-				"Your opponent's hand:",
+				message,
 				ids,
 			)
 		}
