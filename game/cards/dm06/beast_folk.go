@@ -22,7 +22,7 @@ func MightyBanditAceOfThieves(c *match.Card) {
 	c.Use(fx.Creature, fx.When(fx.TapAbility, func(card *match.Card, ctx *match.Context) {
 
 		ctx.Match.Chat("Server", fmt.Sprintf("%s activated %s's tap ability", card.Player.Username(), card.Name))
-		creatures := match.Search(card.Player, ctx.Match, card.Player, match.BATTLEZONE, "Select 1 creature from your battlezone that will gain +5000 Power", 1, 1, false)
+		creatures := fx.Select(card.Player, ctx.Match, card.Player, match.BATTLEZONE, "Select 1 creature from your battlezone that will gain +5000 Power", 1, 1, false)
 		for _, creature := range creatures {
 
 			creature.AddCondition(cnd.PowerAmplifier, 5000, card.ID)
@@ -31,4 +31,17 @@ func MightyBanditAceOfThieves(c *match.Card) {
 			card.Tapped = true
 		}
 	}))
+}
+
+func InnocentHunterBladeOfAll(c *match.Card) {
+
+	c.Name = "Innocent Hunter, Blade Of All"
+	c.Power = 1000
+	c.Civ = civ.Nature
+	c.Family = []string{family.BeastFolk}
+	c.ManaCost = 4
+	c.ManaRequirement = []string{civ.Nature}
+
+	c.Use(fx.Creature)
+
 }
