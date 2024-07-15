@@ -353,6 +353,19 @@ const permissions = () => {
   return p;
 };
 
+function compareCards(c1, c2, sort) {
+  return c1[sort.by] === parseInt(c1[sort.by], 10) &&
+         c2[sort.by] === parseInt(c2[sort.by], 10)
+          ? sort.directionNum *
+            (c1[sort.by] < c2[sort.by]
+              ? -1
+              : c1[sort.by] > c2[sort.by]
+              ? 1
+              : 0)
+          : sort.directionNum *
+            c1[sort.by].localeCompare(c2[sort.by])
+}
+
 export default {
   name: "decks",
   components: {
@@ -435,18 +448,7 @@ export default {
         }
       }
 
-      cards.sort((c1, c2) =>
-        c1[this.sortForDeck.by] === parseInt(c1[this.sortForDeck.by], 10) &&
-        c2[this.sortForDeck.by] === parseInt(c2[this.sortForDeck.by], 10)
-          ? this.sortForDeck.directionNum *
-            (c1[this.sortForDeck.by] < c2[this.sortForDeck.by]
-              ? -1
-              : c1[this.sortForDeck.by] > c2[this.sortForDeck.by]
-              ? 1
-              : 0)
-          : this.sortForDeck.directionNum *
-            c1[this.sortForDeck.by].localeCompare(c2[this.sortForDeck.by])
-      );
+      cards.sort((c1, c2) => compareCards(c1, c2, this.sortForDeck));
 
       return cards;
     },
@@ -665,18 +667,7 @@ export default {
         );
       }
 
-      cards.sort((c1, c2) =>
-        c1[this.sort.by] === parseInt(c1[this.sort.by], 10) &&
-        c2[this.sort.by] === parseInt(c2[this.sort.by], 10)
-          ? this.sort.directionNum *
-            (c1[this.sort.by] < c2[this.sort.by]
-              ? -1
-              : c1[this.sort.by] > c2[this.sort.by]
-              ? 1
-              : 0)
-          : this.sort.directionNum *
-            c1[this.sort.by].localeCompare(c2[this.sort.by])
-      );
+      cards.sort((c1, c2) => compareCards(c1, c2, this.sort));
 
       return cards;
     },
