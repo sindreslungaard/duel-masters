@@ -148,7 +148,7 @@
               <td class="set">{{ card.set }}</td>
               <td class="civilization">{{ card.civilization }}</td>
               <td class="manaCost">{{ card.manaCost }}</td>
-              <td class="family">{{ card.family || "Spell" }}</td>
+              <td class="family">{{ displayFamily(card.family) }}</td>
             </tr>
           </table>
         </div>
@@ -329,7 +329,7 @@
                   <td class="set">{{ card.set }}</td>
                   <td class="civilization">{{ card.civilization }}</td>
                   <td class="manaCost">{{ card.manaCost }}</td>
-                  <td class="civilization">{{ card.family || "Spell" }}</td>
+                  <td class="family">{{ displayFamily(card.family) }}</td>
                 </tr>
               </template>
             </table>
@@ -353,17 +353,24 @@ const permissions = () => {
   return p;
 };
 
-function compareCards(c1, c2, sort) {
-  return c1[sort.by] === parseInt(c1[sort.by], 10) &&
-         c2[sort.by] === parseInt(c2[sort.by], 10)
+function compareCards(card1, card2, sort) {
+  var cat1 = card1[sort.by], 
+      cat2 = card2[sort.by];
+  if (Array.isArray(cat1)) cat1 = cat1[0];
+  if (Array.isArray(cat2)) cat2 = cat2[0];
+  if (cat1 == null) cat1 = "";
+  if (cat2 == null) cat2 = "";
+
+  return cat1 === parseInt(cat1, 10) &&
+         cat2 === parseInt(cat2, 10)
           ? sort.directionNum *
-            (c1[sort.by] < c2[sort.by]
+            (cat1 < cat2
               ? -1
-              : c1[sort.by] > c2[sort.by]
+              : cat1 > cat2
               ? 1
               : 0)
           : sort.directionNum *
-            c1[sort.by].localeCompare(c2[sort.by])
+            cat1.localeCompare(cat2);
 }
 
 export default {
@@ -585,7 +592,11 @@ export default {
         }
       }
       return true;
-    }
+    },
+
+    displayFamily(family) {
+      return family ? family.join(" / ") : "Spell"
+    },
   },
   async created() {
     try {
@@ -617,8 +628,12 @@ export default {
 
       let families = [];
       for (let c of this.cards) {
-        if (c.family && !families.includes(c.family)) {
-          families.push(c.family);
+        if (c.family) {
+          for (let f of c.family) {
+            if (!families.includes(f)) {
+              families.push(f);
+            }
+          }
         }
       }
       families.sort();
@@ -661,9 +676,9 @@ export default {
 
       if (this.filterFamily.toLowerCase() !== "all") {
         cards = cards.filter(
-          card =>
-            (this.filterFamily.toLowerCase() === "spell" && !card.family) ||
-            card.family === this.filterFamily
+          card => 
+            (this.filterFamily.toLowerCase() === "spell" && !card.family) || 
+            (card.family && card.family.includes(this.filterFamily))
         );
       }
 
@@ -774,6 +789,7 @@ export default {
 
 .new {
   display: inline-block;
+  margin-right: 15px;
 }
 
 .save {
