@@ -4,6 +4,9 @@
 
 - Corrected "Muramasa, Duke of Blades"'s power from 2000 to 3000
 - Updated "Liquid Scope" to show both the opponent's hand and shieldzone, instead of just the shieldzone (thanks @Calinachos)
+- New card "Illusory Berry" (thanks @DanieloV)
+- New card "Torchclencher" (thanks @DanieloV)
+- Updated deckbuilder to display and filter correctly on cards wityh multiple races (thanks @DanieloV)
 
 ## 19/05/2024
 
