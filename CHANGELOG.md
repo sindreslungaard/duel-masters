@@ -7,6 +7,7 @@
 - New card "Illusory Berry" (thanks @DanieloV)
 - New card "Torchclencher" (thanks @DanieloV)
 - Updated deckbuilder to display and filter correctly on cards wityh multiple races (thanks @DanieloV)
+- Added missing survivor effect to "Promephius Q" (thanks @jyotiskaghosh)
 
 ## 19/05/2024
 
