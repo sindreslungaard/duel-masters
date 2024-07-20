@@ -63,5 +63,5 @@ func PromephiusQ(c *match.Card) {
 	c.ManaCost = 3
 	c.ManaRequirement = []string{civ.Water}
 
-	c.Use(fx.Creature)
+	c.Use(fx.Creature, fx.Survivor)
 }
