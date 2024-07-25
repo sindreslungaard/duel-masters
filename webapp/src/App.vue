@@ -10,6 +10,10 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+@font-face {
+  font-family: 'Perceval Bold';
+  src: url('/assets/fonts/PercevalBold.ttf');
+}
 
 html {
   min-height: 100%;
