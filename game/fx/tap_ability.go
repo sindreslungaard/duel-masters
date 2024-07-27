@@ -9,7 +9,7 @@ import (
 func TapAbility(card *match.Card, ctx *match.Context) {
 
 	if _, ok := ctx.Event.(*match.UntapStep); ok {
-		card.AddCondition(cnd.TapAbility, card.TapAbility, card.ID)
+		card.AddUniqueSourceCondition(cnd.TapAbility, card.TapAbility, card.ID)
 	}
 
 }
