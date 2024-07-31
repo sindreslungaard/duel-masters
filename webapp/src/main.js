@@ -1,16 +1,18 @@
-import Vue from "vue";
+import { createApp } from 'vue'
 import App from "./App.vue";
 import router from "./router";
-import store from "./store";
+import { store } from "./store";
 
 // self-invoking directives
-import "./directives/draggable";
-import "./directives/closable";
+import draggable from './directives/draggable';
+import closable from './directives/closable';
 
-Vue.config.productionTip = false;
+const myApp = createApp(App)
+myApp
+.use(store)
+.use(router)
 
-new Vue({
-  router,
-  store,
-  render: h => h(App)
-}).$mount("#app");
+myApp.directive("click-outside", closable)
+myApp.directive("draggable", draggable) 
+
+myApp.mount('#app')
