@@ -2,7 +2,11 @@
 
 ## [Unreleased]
 
-- No unreleased changes
+- New card "Protective Force" (thanks @Zayberex)
+- New card "Intense Evil" (thanks @Zayberex)
+- New card "Shock Hurricane" (thanks @Zayberex)
+- New card "Cosmogold, Spectral Knight" (thanks @Zayberex)
+- New card "Moontear, Spectral Knight" (thanks @Zayberex)
 
 ## 02/08/2024
 
