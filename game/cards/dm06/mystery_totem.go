@@ -126,7 +126,7 @@ func ForbiddingTotem(c *match.Card) {
 				return
 			}
 
-			ctx.Match.WarnPlayer(ctx.Match.Opponent(card.Player), "Your creature must attack a Mistery Totem if it attacks.")
+			ctx.Match.WarnPlayer(ctx.Match.Opponent(card.Player), "Your creature must attack a Mystery Totem if it attacks.")
 			ctx.InterruptFlow()
 		}
 
