@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+- No unreleased changes
+
+## 02/08/2024
+
 - Corrected "Muramasa, Duke of Blades"'s power from 2000 to 3000
 - Updated "Liquid Scope" to show both the opponent's hand and shieldzone, instead of just the shieldzone (thanks @Calinachos)
 - New card "Illusory Berry" (thanks @DanieloV)

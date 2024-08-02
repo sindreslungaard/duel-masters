@@ -491,4 +491,9 @@ var DM06 = map[string]match.CardConstructor{
 	"08a6f16d-36bc-48a9-a704-122875759618": dm06.Torchclencher,
 	"bc8b2d5d-f595-42d2-a10c-2ee3cd336c3f": dm06.IllusoryBerry,
 	"f5499baf-ded1-41c5-8386-3ac7f7c1c841": dm06.ForbiddingTotem,
+	"f552c0a3-9863-4ea6-9769-3c1134da0995": dm06.ForbosSanctumGuardianQ,
+	"9916970b-bb9b-4fa6-8a13-61b203e0cad1": dm06.LuGilaSilverRiftGuardian,
+	"1ec9f300-c8cb-41c2-b9a8-b46408c49098": dm06.OverloadCluster,
+	"cf8b1897-0044-4a13-9114-c1c3ba51bedd": dm06.AquaRider,
+	"38ea8acd-e8e3-4bd9-a7c9-7d74761c3712": dm06.KingTriumphant,
 }
