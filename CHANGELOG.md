@@ -2,13 +2,7 @@
 
 ## [Unreleased]
 
-- New card "King Triumphant" (thanks @DanieloV)
-- New card "Aqua Rider" (thanks @DanieloV)
-- New card "Overload Cluster" (thanks @DanieloV)
-- New card "Lu Gila, Silver Rift Guardian" (thanks @DanieloV)
-- New card "Forbos, Sanctum Guardian Q" (thanks @DanieloV)
-- New card "Forbidding Totem" (thanks @DanieloV)
-- New card "Cocco Lupia"
+- No unreleased changes
 
 ## 02/08/2024
 
@@ -18,6 +12,13 @@
 - New card "Torchclencher" (thanks @DanieloV)
 - Updated deckbuilder to display and filter correctly on cards wityh multiple races (thanks @DanieloV)
 - Added missing survivor effect to "Promephius Q" (thanks @jyotiskaghosh)
+- New card "King Triumphant" (thanks @DanieloV)
+- New card "Aqua Rider" (thanks @DanieloV)
+- New card "Overload Cluster" (thanks @DanieloV)
+- New card "Lu Gila, Silver Rift Guardian" (thanks @DanieloV)
+- New card "Forbos, Sanctum Guardian Q" (thanks @DanieloV)
+- New card "Forbidding Totem" (thanks @DanieloV)
+- New card "Cocco Lupia"
 
 ## 19/05/2024
 
