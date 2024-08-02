@@ -34,7 +34,7 @@ func ArmoredWarriorQuelos(c *match.Card) {
 			)
 
 			for _, creature := range creatures {
-				card.Player.MoveCard(creature.ID, match.MANAZONE, match.GRAVEYARD)
+				card.Player.MoveCard(creature.ID, match.MANAZONE, match.GRAVEYARD, card.ID)
 				ctx.Match.Chat("Server", fmt.Sprintf("%s was sent to graveyard from %s's mana zone", creature.Name, card.Player.Username()))
 			}
 
@@ -54,7 +54,7 @@ func ArmoredWarriorQuelos(c *match.Card) {
 			)
 
 			for _, creature := range opponentCreatures {
-				ctx.Match.Opponent(card.Player).MoveCard(creature.ID, match.MANAZONE, match.GRAVEYARD)
+				ctx.Match.Opponent(card.Player).MoveCard(creature.ID, match.MANAZONE, match.GRAVEYARD, card.ID)
 				ctx.Match.Chat("Server", fmt.Sprintf("%s was sent to graveyard from %s's mana zone", creature.Name, ctx.Match.Opponent(card.Player).Username()))
 			}
 		})

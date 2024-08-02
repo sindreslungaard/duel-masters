@@ -51,7 +51,7 @@ func SkullsweeperQ(c *match.Card) {
 				1,
 				false,
 			).Map(func(x *match.Card) {
-				x.Player.MoveCard(x.ID, match.HAND, match.GRAVEYARD)
+				x.Player.MoveCard(x.ID, match.HAND, match.GRAVEYARD, card.ID)
 				ctx.Match.Chat("Server", fmt.Sprintf("%s was moved from %s's hand to his graveyard due to %s's survivor ability", x.Name, x.Player.Username(), creature.Name))
 			})
 		}
@@ -82,7 +82,7 @@ func JewelSpider(c *match.Card) {
 			1,
 			true,
 		).Map(func(c *match.Card) {
-			c.Player.MoveCard(c.ID, match.SHIELDZONE, match.HAND)
+			c.Player.MoveCard(c.ID, match.SHIELDZONE, match.HAND, card.ID)
 			ctx.Match.Chat("Server", fmt.Sprintf("A shield was moved to %s's hand by %s", card.Player.Username(), card.Name))
 		})
 

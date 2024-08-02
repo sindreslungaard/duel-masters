@@ -34,7 +34,7 @@ func BonePiercer(c *match.Card) {
 			true,
 			func(c *match.Card) bool { return c.HasCondition(cnd.Creature) },
 		).Map(func(x *match.Card) {
-			c.Player.MoveCard(x.ID, match.MANAZONE, match.HAND)
+			c.Player.MoveCard(x.ID, match.MANAZONE, match.HAND, card.ID)
 			ctx.Match.Chat("Server", fmt.Sprintf("%s was moved to %s's hand from their mana zone by %s", x.Name, x.Player.Username(), c.Name))
 		})
 

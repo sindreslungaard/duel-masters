@@ -3,40 +3,29 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "serve": "vue-cli-service serve",
-    "build": "vue-cli-service build",
-    "watch": "set NODE_OPTIONS=--openssl-legacy-provider & vue-cli-service build --watch"
+    "serve": "vite preview",
+    "build": "vite build",
+    "watch": "vite build --watch"
   },
   "dependencies": {
     "axios": "^0.21.1",
     "clipboard": "^2.0.6",
     "date-fns": "^2.25.0",
     "dayjs": "^1.10.7",
-    "marked": "^5.1.0",
-    "vue": "^2.6.11",
-    "vue-js-modal": "^2.0.0-rc.3",
-    "vue-router": "^3.3.2",
-    "vuex": "^3.4.0"
+    "marked": "^13.0.0",
+    "setimmediate": "^1.0.5",
+    "vue": "^3.4.34",
+    "vue-router": "^4.4.0",
+    "vuex": "^4.1.0"
   },
   "devDependencies": {
-    "@vue/cli-plugin-babel": "^4.4.1",
-    "@vue/cli-service": "^4.4.1",
+    "@vitejs/plugin-vue": "^5.1.1",
+    "autoprefixer": "^10.4.19",
     "sass": "^1.26.8",
-    "sass-loader": "^8.0.2",
-    "vue-template-compiler": "^2.6.11"
-  },
-  "babel": {
-    "presets": [
-      "@vue/app"
-    ]
+    "vite": "^5.3.5"
   },
   "browserslist": [
     "> 1%",
     "last 2 versions"
-  ],
-  "postcss": {
-    "plugins": {
-      "autoprefixer": {}
-    }
-  }
+  ]
 }

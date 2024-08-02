@@ -69,7 +69,7 @@ export default {
         }
       } catch (e) {
         try {
-          if (e.response.status == 401) {
+          if (e.response.status == 401 || e.response.status == 404) {
             this.errorMsg = "Wrong username or password";
           } else if (e.response.status == 403) {
             this.errorMsg = "You have been banned";

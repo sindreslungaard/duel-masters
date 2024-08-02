@@ -30,7 +30,7 @@ func KingAquakamui(c *match.Card) {
 					func(x *match.Card) bool { return x.HasFamily(family.AngelCommand) || x.HasFamily(family.DemonCommand) },
 				).Map(func(x *match.Card) {
 
-					x.Player.MoveCard(x.ID, match.GRAVEYARD, match.HAND)
+					x.Player.MoveCard(x.ID, match.GRAVEYARD, match.HAND, card.ID)
 					ctx.Match.Chat("Server", fmt.Sprintf("%s was moved to %s's hand from their graveyard by King Aquakamui", x.Name, card.Player.Username()))
 				})
 			}

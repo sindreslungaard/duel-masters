@@ -37,7 +37,7 @@ func AmberPiercer(c *match.Card) {
 				if x.ID == card.ID {
 					return
 				}
-				card.Player.MoveCard(x.ID, match.GRAVEYARD, match.HAND)
+				card.Player.MoveCard(x.ID, match.GRAVEYARD, match.HAND, card.ID)
 				ctx.Match.Chat("Server", fmt.Sprintf("%s was returned to %s's hand from their graveyard by Amber Piercer", x.Name, x.Player.Username()))
 			})
 

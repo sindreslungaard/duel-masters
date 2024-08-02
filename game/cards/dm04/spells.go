@@ -63,7 +63,7 @@ func CloneFactory(c *match.Card) {
 			true,
 		).Map(func(x *match.Card) {
 			x.Tapped = false
-			card.Player.MoveCard(x.ID, match.MANAZONE, match.HAND)
+			card.Player.MoveCard(x.ID, match.MANAZONE, match.HAND, card.ID)
 			ctx.Match.Chat("Server", fmt.Sprintf("%s was moved to %s's hand from their manazone by Clone Factory", x.Name, card.Player.Username()))
 		})
 
@@ -96,7 +96,7 @@ func MegaDetonator(c *match.Card) {
 			func(c *match.Card) bool { return c.ID != card.ID },
 		).Map(func(c *match.Card) {
 
-			card.Player.MoveCard(c.ID, match.HAND, match.GRAVEYARD)
+			card.Player.MoveCard(c.ID, match.HAND, match.GRAVEYARD, card.ID)
 			ctx.Match.Chat("Server", fmt.Sprintf("%s was moved to %s's graveyard from their hand by Mega Detonator", c.Name, card.Player.Username()))
 
 			n++
@@ -178,7 +178,7 @@ func HydroHurricane(c *match.Card) {
 			nrLight,
 			false,
 		).Map(func(x *match.Card) {
-			x.Player.MoveCard(x.ID, match.MANAZONE, match.HAND)
+			x.Player.MoveCard(x.ID, match.MANAZONE, match.HAND, card.ID)
 			ctx.Match.Chat("Server", fmt.Sprintf("%s got moved to %s hand from his mana zone by Hydro Hurricane", x.Name, x.Player.Username()))
 		})
 
@@ -198,7 +198,7 @@ func HydroHurricane(c *match.Card) {
 			nrDark,
 			false,
 		).Map(func(x *match.Card) {
-			x.Player.MoveCard(x.ID, match.BATTLEZONE, match.HAND)
+			x.Player.MoveCard(x.ID, match.BATTLEZONE, match.HAND, card.ID)
 			ctx.Match.Chat("Server", fmt.Sprintf("%s got moved to %s hand from his battle zone by Hydro Hurricane", x.Name, x.Player.Username()))
 		})
 	}))
@@ -217,7 +217,7 @@ func MysticInscription(c *match.Card) {
 		topCard := card.Player.PeekDeck(1)
 
 		for _, c := range topCard {
-			card.Player.MoveCard(c.ID, match.DECK, match.SHIELDZONE)
+			card.Player.MoveCard(c.ID, match.DECK, match.SHIELDZONE, card.ID)
 		}
 	}))
 }
@@ -324,7 +324,7 @@ func Darkpact(c *match.Card) {
 		nrSelected := len(selected)
 
 		selected.Map(func(x *match.Card) {
-			card.Player.MoveCard(x.ID, match.MANAZONE, match.GRAVEYARD)
+			card.Player.MoveCard(x.ID, match.MANAZONE, match.GRAVEYARD, card.ID)
 			ctx.Match.Chat("Server", fmt.Sprintf("%s was moved from %s's mana zone to his graveyard.", x.Name, x.Player.Username()))
 		})
 
@@ -369,7 +369,7 @@ func SoulGulp(c *match.Card) {
 			nrDiscard,
 			false,
 		).Map(func(x *match.Card) {
-			x.Player.MoveCard(x.ID, match.HAND, match.GRAVEYARD)
+			x.Player.MoveCard(x.ID, match.HAND, match.GRAVEYARD, card.ID)
 			ctx.Match.Chat("Server", fmt.Sprintf("%s was moved from %s's hand to his graveyard.", x.Name, x.Player.Username()))
 		})
 

@@ -33,7 +33,7 @@ func DestroyManaOnSummon(card *match.Card, ctx *match.Context) {
 					continue
 				}
 
-				c, err := card.Player.MoveCard(action.Cards[0], match.MANAZONE, match.GRAVEYARD)
+				c, err := card.Player.MoveCard(action.Cards[0], match.MANAZONE, match.GRAVEYARD, card.ID)
 
 				if err != nil {
 					ctx.Match.Chat("Server", fmt.Sprintf("%s was moved from %s's manazone to the graveyard", c.Name, ctx.Match.PlayerRef(card.Player).Socket.User.Username))

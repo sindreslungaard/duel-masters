@@ -72,7 +72,7 @@ func LogicCube(c *match.Card) {
 
 			for _, creature := range creatures {
 
-				card.Player.MoveCard(creature.ID, match.DECK, match.HAND)
+				card.Player.MoveCard(creature.ID, match.DECK, match.HAND, card.ID)
 				ctx.Match.Chat("Server", fmt.Sprintf("%s retrieved %s from the deck to their hand", card.Player.Username(), creature.Name))
 
 			}
@@ -193,7 +193,7 @@ func ManaCrisis(c *match.Card) {
 			1,
 			false,
 		).Map(func(x *match.Card) {
-			x.Player.MoveCard(x.ID, match.MANAZONE, match.GRAVEYARD)
+			x.Player.MoveCard(x.ID, match.MANAZONE, match.GRAVEYARD, card.ID)
 			ctx.Match.Chat("Server", fmt.Sprintf("%s was put into %s's graveyard from their manazone by %s", x.Name, x.Player.Username(), card.Name))
 		})
 
@@ -238,7 +238,7 @@ func LostSoul(c *match.Card) {
 			ctx.Match.Opponent(card.Player),
 			match.HAND,
 		).Map(func(x *match.Card) {
-			ctx.Match.Opponent(card.Player).MoveCard(x.ID, match.HAND, match.GRAVEYARD)
+			ctx.Match.Opponent(card.Player).MoveCard(x.ID, match.HAND, match.GRAVEYARD, card.ID)
 		})
 
 		ctx.Match.Chat("Server", fmt.Sprintf("%s's hand was discarded by %s", ctx.Match.Opponent(card.Player).Username(), card.Name))
@@ -267,7 +267,7 @@ func RainbowStone(c *match.Card) {
 			1,
 			true,
 		).Map(func(x *match.Card) {
-			x.Player.MoveCard(x.ID, match.DECK, match.MANAZONE)
+			x.Player.MoveCard(x.ID, match.DECK, match.MANAZONE, card.ID)
 			ctx.Match.Chat("Server", fmt.Sprintf("%s put %s in their manazone from their deck", x.Player.Username(), x.Name))
 		})
 

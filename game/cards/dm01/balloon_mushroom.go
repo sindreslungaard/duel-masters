@@ -46,7 +46,7 @@ func PoisonousMushroom(c *match.Card) {
 						continue
 					}
 
-					card.Player.MoveCard(action.Cards[0], match.HAND, match.MANAZONE)
+					card.Player.MoveCard(action.Cards[0], match.HAND, match.MANAZONE, card.ID)
 
 					break
 

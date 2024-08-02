@@ -22,7 +22,7 @@ func CutthroatSkyterror(c *match.Card) {
 			return
 		}
 
-		card.Player.MoveCard(card.ID, match.BATTLEZONE, match.HAND)
+		card.Player.MoveCard(card.ID, match.BATTLEZONE, match.HAND, card.ID)
 		ctx.Match.Chat("Server", fmt.Sprintf("%s was returned to the %s's hand", c.Name, c.Player.Username()))
 	}))
 

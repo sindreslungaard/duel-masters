@@ -37,7 +37,7 @@ func PouchShell(c *match.Card) {
 				baseCard := x.Attachments()[0]
 				x.ClearAttachments()
 				ctx.Match.Destroy(x, card, match.DestroyedByMiscAbility)
-				baseCard.Player.MoveCard(baseCard.ID, match.HIDDENZONE, match.BATTLEZONE)
+				baseCard.Player.MoveCard(baseCard.ID, match.HIDDENZONE, match.BATTLEZONE, card.ID)
 				if tapped && !baseCard.Tapped {
 					baseCard.Tapped = true
 				}

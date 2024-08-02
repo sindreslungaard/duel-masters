@@ -68,7 +68,7 @@ func SilverAxe(c *match.Card) {
 			return
 		}
 
-		c, err := card.Player.MoveCard(cards[0].ID, match.DECK, match.MANAZONE)
+		c, err := card.Player.MoveCard(cards[0].ID, match.DECK, match.MANAZONE, card.ID)
 
 		if err != nil {
 			return

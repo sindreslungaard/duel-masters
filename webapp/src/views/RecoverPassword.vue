@@ -56,7 +56,7 @@ export default {
         this.successMsg = res.data.message;
       } catch (e) {
         try {
-          this.errorMsg = e.response.data.error;
+          this.errorMsg = e.response.data.message;
         } catch (err) {
           this.errorMsg =
             "An unexpected error occured. Please try again later.";

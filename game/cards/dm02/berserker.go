@@ -33,7 +33,7 @@ func LagunaLightningEnforcer(c *match.Card) {
 				true,
 				func(x *match.Card) bool { return x.HasCondition(cnd.Spell) },
 			).Map(func(x *match.Card) {
-				x.Player.MoveCard(x.ID, match.DECK, match.HAND)
+				x.Player.MoveCard(x.ID, match.DECK, match.HAND, card.ID)
 				ctx.Match.Chat("Server", fmt.Sprintf("%s retrieved %s from their deck to their hand", x.Player.Username(), x.Name))
 			})
 

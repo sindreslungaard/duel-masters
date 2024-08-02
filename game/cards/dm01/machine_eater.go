@@ -30,7 +30,7 @@ func ArtisanPicora(c *match.Card) {
 			1,
 			false,
 		).Map(func(x *match.Card) {
-			x.Player.MoveCard(x.ID, match.MANAZONE, match.GRAVEYARD)
+			x.Player.MoveCard(x.ID, match.MANAZONE, match.GRAVEYARD, card.ID)
 			ctx.Match.Chat("Server", fmt.Sprintf("%s was sent to %s's graveyard by Artisan Picora", x.Name, x.Player.Username()))
 		})
 

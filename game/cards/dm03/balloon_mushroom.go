@@ -30,7 +30,7 @@ func Psyshroom(c *match.Card) {
 			true,
 			func(x *match.Card) bool { return x.Civ == civ.Nature },
 		).Map(func(x *match.Card) {
-			card.Player.MoveCard(x.ID, match.GRAVEYARD, match.MANAZONE)
+			card.Player.MoveCard(x.ID, match.GRAVEYARD, match.MANAZONE, card.ID)
 		})
 	}))
 
