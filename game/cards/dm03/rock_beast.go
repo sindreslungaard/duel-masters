@@ -32,7 +32,7 @@ func Flametropus(c *match.Card) {
 			true,
 		).Map(func(x *match.Card) {
 
-			card.Player.MoveCard(x.ID, match.MANAZONE, match.GRAVEYARD)
+			card.Player.MoveCard(x.ID, match.MANAZONE, match.GRAVEYARD, card.ID)
 			ctx.Match.Chat("Server", fmt.Sprintf("%s was moved from %s manazone to their graveyard by Flametropus", x.Name, card.Player.Username()))
 
 			card.AddCondition(cnd.DoubleBreaker, nil, card.ID)

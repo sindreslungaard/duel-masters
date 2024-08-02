@@ -19,7 +19,6 @@ func NiofaHornedProtector(c *match.Card) {
 	c.ManaCost = 6
 	c.ManaRequirement = []string{civ.Nature}
 
-
 	c.Use(fx.Creature, fx.Evolution, fx.Doublebreaker, fx.When(fx.Summoned, func(card *match.Card, ctx *match.Context) {
 
 		cards := match.Filter(
@@ -35,7 +34,7 @@ func NiofaHornedProtector(c *match.Card) {
 		)
 
 		for _, c := range cards {
-			card.Player.MoveCard(c.ID, match.DECK, match.HAND)
+			card.Player.MoveCard(c.ID, match.DECK, match.HAND, card.ID)
 			ctx.Match.Chat("Server", fmt.Sprintf("%s was moved from %s's deck to their hand", c.Name, card.Player.Username()))
 		}
 

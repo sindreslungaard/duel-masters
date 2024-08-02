@@ -19,6 +19,12 @@ type ChargeManaEvent struct {
 	CardID string
 }
 
+// BreakShieldEvent is fired before the shield is broken
+type BreakShieldEvent struct {
+	CardID string
+	Source string // the card id that caused the shield to break
+}
+
 // BrokenShieldEvent is fired right after a shield was broken
 type BrokenShieldEvent struct {
 	CardID string
@@ -32,17 +38,34 @@ type ShieldTriggerEvent struct {
 	Source string // the card id that caused the shield to break
 }
 
-// CardMoved is fired from the *Player.MoveCard method after moving a card between containers
-type CardMoved struct {
+// ShieldTriggerPlayedEvent is fired when a shield trigger is played
+type ShieldTriggerPlayedEvent struct {
+	Card   *Card
+	Source string // the card id that caused the shield to break
+}
+
+// MoveCard is fired from the *Player.MoveCard method before moving a card between containers
+type MoveCard struct {
 	CardID string
 	From   string
 	To     string
+	Source string // What caused the card to move, usually the ID of a card
+}
+
+// CardMoved is fired from the *Player.MoveCard method after moving a card between containers
+type CardMoved struct {
+	CardID        string
+	From          string
+	To            string
+	Source        string // What caused the card to move, usually the ID of a card
+	MatchPlayerID byte
 }
 
 // SpellCast is fired when a spell is cast, either from being played or from shield triggers
 type SpellCast struct {
-	CardID     string
-	FromShield bool
+	CardID        string
+	FromShield    bool
+	MatchPlayerID byte
 }
 
 // AttackPlayer is fired when the player attempts to use a creature to attack the player

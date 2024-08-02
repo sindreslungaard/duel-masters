@@ -25,7 +25,7 @@ func LenaVizierOfBrilliance(c *match.Card) {
 
 		for _, spell := range spells {
 
-			card.Player.MoveCard(spell.ID, match.MANAZONE, match.HAND)
+			card.Player.MoveCard(spell.ID, match.MANAZONE, match.HAND, card.ID)
 			ctx.Match.Chat("Server", fmt.Sprintf("%s retrieved %s from the mana zone to their hand", spell.Player.Username(), spell.Name))
 
 		}

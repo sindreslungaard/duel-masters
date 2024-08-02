@@ -284,7 +284,7 @@ func (p *Player) InitShieldzone() {
 
 	for _, card := range cards {
 
-		p.MoveCard(card.ID, DECK, SHIELDZONE)
+		p.MoveCard(card.ID, DECK, SHIELDZONE, "init_shieldzone")
 
 	}
 
@@ -329,7 +329,7 @@ func (p *Player) DrawCards(n int) {
 	p.mutex.Unlock()
 
 	for _, card := range toMove {
-		p.MoveCard(card, DECK, HAND)
+		p.MoveCard(card, DECK, HAND, "draw")
 	}
 
 	if n > 1 {
@@ -392,7 +392,25 @@ func (p *Player) GetCard(id string, container string) (*Card, error) {
 }
 
 // MoveCard tries to move a card from container a to container b
-func (p *Player) MoveCard(cardID string, from string, to string) (*Card, error) {
+func (p *Player) MoveCard(cardID string, from string, to string, source string) (*Card, error) {
+	c, err := p.GetCard(cardID, from)
+
+	if err != nil {
+		return nil, err
+	}
+
+	ctx := NewContext(p.match, &MoveCard{
+		CardID: cardID,
+		From:   from,
+		To:     to,
+		Source: source,
+	})
+
+	p.match.HandleFx(ctx)
+
+	if ctx.Cancelled() {
+		return c, nil
+	}
 
 	cFrom, err := p.ContainerRef(from)
 
@@ -440,13 +458,14 @@ func (p *Player) MoveCard(cardID string, from string, to string) (*Card, error) 
 	p.mutex.Unlock()
 
 	p.match.HandleFx(NewContext(p.match, &CardMoved{
-		CardID: ref.ID,
-		From:   from,
-		To:     to,
+		CardID:        ref.ID,
+		From:          from,
+		To:            to,
+		Source:        source,
+		MatchPlayerID: p.match.getPlayerMatchId(ref),
 	}))
 
 	return ref, nil
-
 }
 
 // MoveCard tries to move a card from container a to the front of container b

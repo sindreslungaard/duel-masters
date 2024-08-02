@@ -19,7 +19,6 @@
 
 <script>
 import { call } from "../remote";
-import { showMessageDialog } from "../helpers/showDialog"
 
 export default {
 
@@ -74,9 +73,9 @@ export default {
           public: false,
         }
       }).then(res => {
-        showMessageDialog(this.$modal, "Successfully saved deck");
+        alert("Successfully saved deck")
       }).catch(error => {
-        showMessageDialog(this.$modal, "Invalid request. If you think this is an error please contact us via discord.");
+        alert("Invalid request. If you think this is an error please contact us via discord.")
       }).finally(() => {
         this.apiCallInProgess = false
       });

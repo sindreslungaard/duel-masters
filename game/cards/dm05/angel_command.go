@@ -47,7 +47,7 @@ func SyforceAuroraElemental(c *match.Card) {
 			func(c *match.Card) bool { return c.HasCondition(cnd.Spell) },
 		).Map(func(c *match.Card) {
 
-			c.Player.MoveCard(c.ID, match.MANAZONE, match.HAND)
+			c.Player.MoveCard(c.ID, match.MANAZONE, match.HAND, card.ID)
 			ctx.Match.Chat("Server", fmt.Sprintf("%s retrieved %s from the mana zone to their hand", c.Player.Username(), c.Name))
 
 		})

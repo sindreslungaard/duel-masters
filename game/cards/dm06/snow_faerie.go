@@ -34,7 +34,7 @@ func CharmiliaTheEnticer(c *match.Card) {
 		)
 
 		for _, c := range cards {
-			card.Player.MoveCard(c.ID, match.DECK, match.HAND)
+			card.Player.MoveCard(c.ID, match.DECK, match.HAND, card.ID)
 			ctx.Match.Chat("Server", fmt.Sprintf("%s was moved from %s's deck to their hand by Charmilia, the Enticer's tap abillity", c.Name, card.Player.Username()))
 		}
 

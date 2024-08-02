@@ -92,11 +92,11 @@ func UnicornFish(c *match.Card) {
 
 				for _, vid := range action.Cards {
 
-					ref, err := c.Player.MoveCard(vid, match.BATTLEZONE, match.HAND)
+					ref, err := c.Player.MoveCard(vid, match.BATTLEZONE, match.HAND, card.ID)
 
 					if err != nil {
 
-						ref, err := ctx.Match.Opponent(c.Player).MoveCard(vid, match.BATTLEZONE, match.HAND)
+						ref, err := ctx.Match.Opponent(c.Player).MoveCard(vid, match.BATTLEZONE, match.HAND, card.ID)
 
 						if err == nil {
 							ctx.Match.Chat("Server", fmt.Sprintf("%s was moved to %s's hand", ref.Name, ctx.Match.PlayerRef(ref.Player).Socket.User.Username))

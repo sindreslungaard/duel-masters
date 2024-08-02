@@ -136,9 +136,9 @@
 </template>
 
 <script>
-import Header from "../components/Header";
-import MuteIcon from "../components/MuteIcon";
-import { getSettings, setSettings, patchSettings } from "../helpers/settings";
+import Header from "../components/Header.vue";
+import MuteIcon from "../components/MuteIcon.vue";
+import { getSettings, patchSettings } from "../helpers/settings";
 import { call } from "../remote";
 
 export default {
@@ -196,7 +196,7 @@ export default {
 
         this.passwordSuccess = res.data.message;
       } catch (e) {
-        this.passwordError = e.response.data.error;
+        this.passwordError = e.response.data.message;
       }
     },
     async savePreferences() {
@@ -212,8 +212,8 @@ export default {
 
         this.preferencesSuccess = res.data.message;
       } catch (e) {
-        console.log(e.response.data.error);
-        this.preferencesError = e.response.data.error;
+        console.log(e.response.data.message);
+        this.preferencesError = e.response.data.message;
       }
     }
   },
