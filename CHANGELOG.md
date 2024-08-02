@@ -8,6 +8,7 @@
 - New card "Cosmogold, Spectral Knight" (thanks @Zayberex)
 - New card "Moontear, Spectral Knight" (thanks @Zayberex)
 - New card "Gariel, Elemental Of Sunbeams" (thanks @Zayberex)
+- New card "Rumblesaur Q" (thanks @Zayberex)
 
 ## 02/08/2024
 
