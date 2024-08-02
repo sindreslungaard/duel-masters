@@ -477,6 +477,8 @@ var DM06 = map[string]match.CardConstructor{
 	"7c33ae39-5079-471b-982c-98da274c9892": dm06.RazorpineTree,
 	"cc7916d4-9f3a-4993-8283-134f3bba105c": dm06.CliffcrushGiant,
 	"e0538282-a50e-4097-840c-80f262ce0416": dm06.CantankerousGiant,
+	"fee203a9-b5a8-4d01-abb9-12d07c62475d": dm06.CosmogoldSpectralKnight,
+	"efa301fb-a605-4ab5-ae3d-1fb49e2a83e6": dm06.MoontearSpectralKnight,
 	"f0ac300b-2ebd-49b6-aa43-34d5a131a715": dm06.GarielElementalOfSunbeams,
 	"3031a721-6725-42f3-a694-08e931eb9fc6": dm06.FeatherHornTheTracker,
 	"8fdf84b5-7fa2-4caa-820e-5c045fc51156": dm06.ParadiseHorn,
