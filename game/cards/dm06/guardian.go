@@ -51,7 +51,10 @@ func ForbosSanctumGuardianQ(c *match.Card) {
 				ctx.Match.Chat("Server", fmt.Sprintf("%s was moved from %s's deck to their hand", x.Name, card.Player.Username()))
 				card.Player.ShuffleDeck()
 			})
-)
+
+		}
+	})
+}
 
 func LuGilaSilverRiftGuardian(c *match.Card) {
 
