@@ -7,6 +7,7 @@
 - New card "Overload Cluster" (thanks @DanieloV)
 - New card "Lu Gila, Silver Rift Guardian" (thanks @DanieloV)
 - New card "Forbos, Sanctum Guardian Q" (thanks @DanieloV)
+- New card "Forbidding Totem" (thanks @DanieloV)
 
 ## 02/08/2024
 
