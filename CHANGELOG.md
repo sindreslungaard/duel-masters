@@ -7,6 +7,7 @@
 - New card "Shock Hurricane" (thanks @Zayberex)
 - New card "Cosmogold, Spectral Knight" (thanks @Zayberex)
 - New card "Moontear, Spectral Knight" (thanks @Zayberex)
+- New card "Gariel, Elemental Of Sunbeams" (thanks @Zayberex)
 
 ## 02/08/2024
 
