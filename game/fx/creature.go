@@ -129,7 +129,7 @@ func Creature(card *match.Card, ctx *match.Context) {
 
 					card.AddCondition(cnd.SummoningSickness, nil, nil)
 
-					card.Player.MoveCard(card.ID, match.HAND, match.BATTLEZONE)
+					card.Player.MoveCard(card.ID, match.HAND, match.BATTLEZONE, card.ID)
 					ctx.Match.Chat("Server", fmt.Sprintf("%s summoned %s to the battle zone", card.Player.Username(), card.Name))
 
 				}
@@ -474,7 +474,7 @@ func Creature(card *match.Card, ctx *match.Context) {
 		}
 
 		ctx.ScheduleAfter(func() {
-			card.Player.MoveCard(card.ID, match.BATTLEZONE, match.GRAVEYARD)
+			card.Player.MoveCard(card.ID, match.BATTLEZONE, match.GRAVEYARD, card.ID)
 
 			// Slayer
 			if event.Context == match.DestroyedInBattle {

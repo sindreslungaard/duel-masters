@@ -52,11 +52,11 @@ func Emeral(c *match.Card) {
 				)
 
 				for _, card := range toShield {
-					card.Player.MoveCard(card.ID, match.HAND, match.SHIELDZONE)
+					card.Player.MoveCard(card.ID, match.HAND, match.SHIELDZONE, c.ID)
 				}
 
 				for _, card := range toHand {
-					card.Player.MoveCard(card.ID, match.SHIELDZONE, match.HAND)
+					card.Player.MoveCard(card.ID, match.SHIELDZONE, match.HAND, c.ID)
 				}
 
 			}
@@ -89,7 +89,7 @@ func Shtra(c *match.Card) {
 			1,
 			false,
 		).Map(func(c *match.Card) {
-			c.Player.MoveCard(c.ID, match.MANAZONE, match.HAND)
+			c.Player.MoveCard(c.ID, match.MANAZONE, match.HAND, card.ID)
 			ctx.Match.Chat("Server", fmt.Sprintf("%s was moved to %s's manazone from their hand by Shtra", c.Name, c.Player.Username()))
 		})
 
@@ -106,7 +106,7 @@ func Shtra(c *match.Card) {
 			1,
 			false,
 		).Map(func(c *match.Card) {
-			c.Player.MoveCard(c.ID, match.MANAZONE, match.HAND)
+			c.Player.MoveCard(c.ID, match.MANAZONE, match.HAND, card.ID)
 			ctx.Match.Chat("Server", fmt.Sprintf("%s was moved to %s's manazone from their hand by Shtra", c.Name, c.Player.Username()))
 		})
 

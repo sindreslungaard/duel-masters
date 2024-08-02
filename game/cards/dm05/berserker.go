@@ -55,7 +55,7 @@ func KulusSoulshineEnforcer(c *match.Card) {
 
 			for _, toMove := range cards {
 
-				card.Player.MoveCard(toMove.ID, match.DECK, match.MANAZONE)
+				card.Player.MoveCard(toMove.ID, match.DECK, match.MANAZONE, card.ID)
 				ctx.Match.Chat("Server", fmt.Sprintf("%s put %s into the manazone from the top of their deck", card.Player.Username(), toMove.Name))
 
 			}

@@ -194,12 +194,20 @@ func (m *Match) GetPower(card *Card, isAttacking bool) int {
 func (m *Match) CastSpell(card *Card, fromShield bool) {
 
 	m.HandleFx(NewContext(m, &SpellCast{
-		CardID:     card.ID,
-		FromShield: fromShield,
+		CardID:        card.ID,
+		FromShield:    fromShield,
+		MatchPlayerID: m.getPlayerMatchId(card),
 	}))
 
 	m.BroadcastState()
 
+}
+
+func (m *Match) getPlayerMatchId(card *Card) byte {
+	if card.Player == m.Player1.Player {
+		return 1
+	}
+	return 2
 }
 
 // Battle handles a battle between two creatures
@@ -226,7 +234,7 @@ func (m *Match) Destroy(card *Card, source *Card, context CreatureDestroyedConte
 // MoveCard moves a card and sends a chat message about what source moved it
 func (m *Match) MoveCard(card *Card, destination string, source *Card) {
 
-	_, err := card.Player.MoveCard(card.ID, card.Zone, destination)
+	_, err := card.Player.MoveCard(card.ID, card.Zone, destination, source.ID)
 
 	if err != nil {
 		return
@@ -260,7 +268,7 @@ func (m *Match) BreakShields(shields []*Card, source string) {
 
 	for _, shield := range shields {
 
-		card, err := shield.Player.MoveCard(shield.ID, SHIELDZONE, HAND)
+		card, err := shield.Player.MoveCard(shield.ID, SHIELDZONE, HAND, source)
 
 		if err != nil {
 			continue
@@ -305,6 +313,11 @@ func (m *Match) BreakShields(shields []*Card, source string) {
 				} else {
 					m.MoveCard(card, BATTLEZONE, card)
 				}
+
+				m.HandleFx(NewContext(m, &ShieldTriggerPlayedEvent{
+					Card:   card,
+					Source: source,
+				}))
 
 				m.CloseAction(card.Player)
 
@@ -530,7 +543,7 @@ func (m *Match) ActionWarning(p *Player, message string) {
 	})
 }
 
-// DefaultActionWarning sends an actionw arning with a predefined message
+// DefaultActionWarning sends an action warning with a predefined message
 func (m *Match) DefaultActionWarning(p *Player) {
 	m.PlayerRef(p).Socket.Send(server.ActionWarningMessage{
 		Header:  "action_error",
@@ -898,7 +911,7 @@ func (m *Match) ChargeMana(p *PlayerReference, cardID string) {
 		return
 	}
 
-	if card, err := p.Player.MoveCard(cardID, HAND, MANAZONE); err == nil {
+	if card, err := p.Player.MoveCard(cardID, HAND, MANAZONE, cardID); err == nil {
 		p.Player.HasChargedMana = true
 		m.BroadcastState()
 		m.Chat("Server", fmt.Sprintf("%s was added to %s's manazone", card.Name, p.Socket.User.Username))
@@ -1274,7 +1287,7 @@ func (m *Match) Parse(s *server.Socket, data []byte) {
 				}
 
 				for _, c := range m.CurrentPlayer().Player.hand {
-					m.CurrentPlayer().Player.MoveCard(c.ID, HAND, MANAZONE)
+					m.CurrentPlayer().Player.MoveCard(c.ID, HAND, MANAZONE, "cmd /mana")
 					m.Chat("Server", fmt.Sprintf("%s was moved to %s's mana zone by an admin command", c.Name, s.User.Username))
 				}
 

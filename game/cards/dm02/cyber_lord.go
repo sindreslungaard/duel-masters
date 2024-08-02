@@ -69,7 +69,7 @@ func Corile(c *match.Card) {
 			false,
 		).Map(func(x *match.Card) {
 			// temporarily move this card to the hidden zone
-			x.Player.MoveCard(x.ID, match.BATTLEZONE, match.HIDDENZONE)
+			x.Player.MoveCard(x.ID, match.BATTLEZONE, match.HIDDENZONE, card.ID)
 
 			// finds all attached cards recursively and adds references of them to toMove[]
 			addRecursive(x)

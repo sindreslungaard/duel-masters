@@ -85,7 +85,7 @@ func Evolution(card *match.Card, ctx *match.Context) {
 
 		card.ClearAttachments()
 		card.Tapped = creature.Tapped
-		card.Player.MoveCard(creature.ID, match.BATTLEZONE, match.HIDDENZONE)
+		card.Player.MoveCard(creature.ID, match.BATTLEZONE, match.HIDDENZONE, card.ID)
 		card.Attach(creature)
 		card.AddCondition(cnd.Evolution, true, card.ID)
 	}
@@ -98,7 +98,7 @@ func Evolution(card *match.Card, ctx *match.Context) {
 		}
 
 		for _, creature := range card.Attachments() {
-			card.Player.MoveCard(creature.ID, match.HIDDENZONE, event.To)
+			card.Player.MoveCard(creature.ID, match.HIDDENZONE, event.To, card.ID)
 			ctx.Match.Chat("Server", fmt.Sprintf("%s was sent to the %s together with %s", creature.Name, event.To, card.Name))
 		}
 

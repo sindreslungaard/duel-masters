@@ -202,7 +202,7 @@ func CrystalMemory(c *match.Card) {
 
 			for _, selectedCard := range selectedCards {
 
-				card.Player.MoveCard(selectedCard.ID, match.DECK, match.HAND)
+				card.Player.MoveCard(selectedCard.ID, match.DECK, match.HAND, card.ID)
 
 			}
 
@@ -232,7 +232,7 @@ func DarkReversal(c *match.Card) {
 
 			for _, creature := range creatures {
 
-				card.Player.MoveCard(creature.ID, match.GRAVEYARD, match.HAND)
+				card.Player.MoveCard(creature.ID, match.GRAVEYARD, match.HAND, card.ID)
 				ctx.Match.Chat("Server", fmt.Sprintf("%s retrieved %s from their graveyard", card.Player.Username(), creature.Name))
 
 			}
@@ -285,7 +285,7 @@ func DimensionGate(c *match.Card) {
 
 			for _, creature := range creatures {
 
-				card.Player.MoveCard(creature.ID, match.DECK, match.HAND)
+				card.Player.MoveCard(creature.ID, match.DECK, match.HAND, card.ID)
 				ctx.Match.Chat("Server", fmt.Sprintf("%s retrieved %s from the deck to their hand", card.Player.Username(), creature.Name))
 
 			}
@@ -320,7 +320,7 @@ func GhostTouch(c *match.Card) {
 				return
 			}
 
-			discardedCard, err := ctx.Match.Opponent(card.Player).MoveCard(hand[rand.Intn(len(hand))].ID, match.HAND, match.GRAVEYARD)
+			discardedCard, err := ctx.Match.Opponent(card.Player).MoveCard(hand[rand.Intn(len(hand))].ID, match.HAND, match.GRAVEYARD, card.ID)
 			if err == nil {
 				ctx.Match.Chat("Server", fmt.Sprintf("%s was discarded from %s's hand", discardedCard.Name, discardedCard.Player.Username()))
 			}
@@ -458,7 +458,7 @@ func NaturalSnare(c *match.Card) {
 
 			for _, creature := range creatures {
 
-				creature.Player.MoveCard(creature.ID, match.BATTLEZONE, match.MANAZONE)
+				creature.Player.MoveCard(creature.ID, match.BATTLEZONE, match.MANAZONE, card.ID)
 				creature.Tapped = false
 				ctx.Match.Chat("Server", fmt.Sprintf("%s was moved to %s's manazone", creature.Name, creature.Player.Username()))
 
@@ -486,7 +486,7 @@ func PangeasSong(c *match.Card) {
 
 			for _, creature := range creatures {
 
-				creature.Player.MoveCard(creature.ID, match.BATTLEZONE, match.MANAZONE)
+				creature.Player.MoveCard(creature.ID, match.BATTLEZONE, match.MANAZONE, card.ID)
 				creature.Tapped = false
 				ctx.Match.Chat("Server", fmt.Sprintf("%s was moved to %s's manazone", creature.Name, creature.Player.Username()))
 
@@ -598,11 +598,11 @@ func SpiralGate(c *match.Card) {
 
 				for _, vid := range action.Cards {
 
-					ref, err := c.Player.MoveCard(vid, match.BATTLEZONE, match.HAND)
+					ref, err := c.Player.MoveCard(vid, match.BATTLEZONE, match.HAND, card.ID)
 
 					if err != nil {
 
-						ref, err := ctx.Match.Opponent(c.Player).MoveCard(vid, match.BATTLEZONE, match.HAND)
+						ref, err := ctx.Match.Opponent(c.Player).MoveCard(vid, match.BATTLEZONE, match.HAND, card.ID)
 
 						if err == nil {
 							ctx.Match.Chat("Server", fmt.Sprintf("%s was moved to %s's hand", ref.Name, ctx.Match.PlayerRef(ref.Player).Socket.User.Username))
@@ -672,11 +672,11 @@ func Teleportation(c *match.Card) {
 
 				for _, vid := range action.Cards {
 
-					ref, err := c.Player.MoveCard(vid, match.BATTLEZONE, match.HAND)
+					ref, err := c.Player.MoveCard(vid, match.BATTLEZONE, match.HAND, card.ID)
 
 					if err != nil {
 
-						ref, err := ctx.Match.Opponent(c.Player).MoveCard(vid, match.BATTLEZONE, match.HAND)
+						ref, err := ctx.Match.Opponent(c.Player).MoveCard(vid, match.BATTLEZONE, match.HAND, card.ID)
 
 						if err == nil {
 							ctx.Match.Chat("Server", fmt.Sprintf("%s was moved to %s's hand", ref.Name, ctx.Match.PlayerRef(ref.Player).Socket.User.Username))
@@ -768,7 +768,7 @@ func UltimateForce(c *match.Card) {
 
 			for _, toMove := range cards {
 
-				card.Player.MoveCard(toMove.ID, match.DECK, match.MANAZONE)
+				card.Player.MoveCard(toMove.ID, match.DECK, match.MANAZONE, card.ID)
 				ctx.Match.Chat("Server", fmt.Sprintf("%s put %s into the manazone from the top of their deck", card.Player.Username(), toMove.Name))
 
 			}

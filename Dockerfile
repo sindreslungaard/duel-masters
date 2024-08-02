@@ -1,4 +1,4 @@
-FROM golang:1.18-alpine as build
+FROM golang:1.22-alpine as build
 
 WORKDIR /tmp/duel-masters
 ENV NODE_OPTIONS=--openssl-legacy-provider
@@ -16,7 +16,7 @@ RUN go get -d -v ./... \
     && mv ./webapp/dist ./build/webapp
 
 
-FROM golang:1.18-alpine
+FROM golang:1.22-alpine
 
 WORKDIR /go/src/duel-masters
 COPY --from=build /tmp/duel-masters/build .

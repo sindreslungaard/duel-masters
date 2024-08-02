@@ -25,7 +25,7 @@ func RaptorFish(c *match.Card) {
 		}
 
 		for _, x := range hand {
-			x.Player.MoveCard(x.ID, match.HAND, match.DECK)
+			x.Player.MoveCard(x.ID, match.HAND, match.DECK, card.ID)
 		}
 
 		card.Player.ShuffleDeck()

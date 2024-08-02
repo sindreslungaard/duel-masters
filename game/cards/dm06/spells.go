@@ -8,35 +8,33 @@ import (
 	"fmt"
 )
 
-// func ProtectiveForce(c *match.Card) {
+func ProtectiveForce(c *match.Card) {
 
-// 	c.Name = "Protective Force"
-// 	c.Civ = civ.Light
-// 	c.ManaCost = 1
-// 	c.ManaRequirement = []string{civ.Light}
+	c.Name = "Protective Force"
+	c.Civ = civ.Light
+	c.ManaCost = 1
+	c.ManaRequirement = []string{civ.Light}
 
-// 	c.Use(fx.Spell, fx.When(fx.SpellCast, func(card *match.Card, ctx *match.Context) {
+	c.Use(fx.Spell, fx.ShieldTrigger, fx.When(fx.SpellCast, func(card *match.Card, ctx *match.Context) {
 
-// 		fx.SelectFilter(
-// 			card.Player,
-// 			ctx.Match,
-// 			card.Player,
-// 			match.BATTLEZONE,
-// 			"Protective Force: Select a blocker to give +4000 power to until the end of the turn",
-// 			1,
-// 			1,
-// 			false,
-// 			func(x *match.Card) bool {
-// 				return x.HasCondition(cnd.Blocker)
-// 			},
-// 		).Map(func(x *match.Card) {
-// 			x.AddCondition(cnd.PowerAmplifier, 4000, card.ID)
-// 		})
+		fx.SelectFilter(
+			card.Player,
+			ctx.Match,
+			card.Player,
+			match.BATTLEZONE,
+			"Select 1 creature with \"Blocker\" from your battlezone that will gain +4000 power",
+			1,
+			1,
+			false,
+			func(x *match.Card) bool { return x.HasCondition(cnd.Blocker) },
+		).Map(func(x *match.Card) {
+			x.AddCondition(cnd.PowerAmplifier, 4000, card.ID)
+			ctx.Match.Chat("Server", fmt.Sprintf("%s was given +4000 power", x.Name))
+		})
 
-// 		// TODO: make sure the condition is removed at the end of opponent's turn if shield trigger
+	}))
 
-// 	}))
-// }
+}
 
 func InvincibleAura(c *match.Card) {
 
@@ -50,7 +48,7 @@ func InvincibleAura(c *match.Card) {
 		topCard := card.Player.PeekDeck(3)
 
 		for _, c := range topCard {
-			card.Player.MoveCard(c.ID, match.DECK, match.SHIELDZONE)
+			card.Player.MoveCard(c.ID, match.DECK, match.SHIELDZONE, card.ID)
 		}
 	}))
 }
@@ -68,7 +66,7 @@ func InvincibleTechnology(c *match.Card) {
 
 		for _, selectedCard := range selectedCards {
 
-			card.Player.MoveCard(selectedCard.ID, match.DECK, match.HAND)
+			card.Player.MoveCard(selectedCard.ID, match.DECK, match.HAND, card.ID)
 			ctx.Match.Chat("Server", fmt.Sprintf("%s retrieved %s from the deck to their hand", card.Player.Username(), selectedCard.Name))
 		}
 
@@ -165,7 +163,7 @@ func SphereOfWonder(c *match.Card) {
 
 				for _, toMove := range cards {
 
-					card.Player.MoveCard(toMove.ID, match.DECK, match.SHIELDZONE)
+					card.Player.MoveCard(toMove.ID, match.DECK, match.SHIELDZONE, card.ID)
 					ctx.Match.Chat("Server", fmt.Sprintf("%s put a shield into the shieldzone from the top of their deck by Sphere of Wonder's ability", card.Player.Username()))
 
 				}
@@ -199,7 +197,7 @@ func MysticDreamscape(c *match.Card) {
 				true,
 			).Map(func(x *match.Card) {
 				x.Tapped = false
-				card.Player.MoveCard(x.ID, match.MANAZONE, match.HAND)
+				card.Player.MoveCard(x.ID, match.MANAZONE, match.HAND, card.ID)
 				ctx.Match.Chat("Server", fmt.Sprintf("%s was moved to %s's hand from their manazone by Mystic Dreamscape", x.Name, card.Player.Username()))
 			})
 
@@ -229,7 +227,7 @@ func FutureSlash(c *match.Card) {
 			2,
 			true,
 		).Map(func(x *match.Card) {
-			x.Player.MoveCard(x.ID, match.DECK, match.GRAVEYARD)
+			x.Player.MoveCard(x.ID, match.DECK, match.GRAVEYARD, card.ID)
 			ctx.Match.Chat("Server", fmt.Sprintf("%s put %s in graveyard from their opponent's deck", x.Player.Username(), x.Name))
 		})
 
@@ -248,6 +246,10 @@ func ProclamationOfDeath(c *match.Card) {
 
 	c.Use(fx.Spell, fx.ShieldTrigger, func(card *match.Card, ctx *match.Context) {
 		if match.AmICasted(card, ctx) {
+
+			ctx.Match.Wait(card.Player, "Waiting for your opponent to make an action")
+			defer ctx.Match.EndWait(card.Player)
+
 			creatures := fx.Select(ctx.Match.Opponent(card.Player), ctx.Match, ctx.Match.Opponent(card.Player), match.BATTLEZONE, "Proclamation of Death: Select 1 creature from your battlezone that will be sent to your graveyard", 1, 1, false)
 
 			for _, creature := range creatures {
@@ -324,7 +326,7 @@ func MysticTreasureChest(c *match.Card) {
 			1,
 			true,
 			func(c *match.Card) bool { return c.Civ != civ.Nature }).Map(func(x *match.Card) {
-			x.Player.MoveCard(x.ID, match.DECK, match.MANAZONE)
+			x.Player.MoveCard(x.ID, match.DECK, match.MANAZONE, card.ID)
 			ctx.Match.Chat("Server", fmt.Sprintf("%s put %s in their manazone from their deck", x.Player.Username(), x.Name))
 		})
 
@@ -359,7 +361,7 @@ func PangaeasWill(c *match.Card) {
 
 				if len(x.Attachments()) > 0 {
 					baseCard := x.Attachments()[0]
-					baseCard.Player.MoveCard(baseCard.ID, match.HIDDENZONE, match.BATTLEZONE)
+					baseCard.Player.MoveCard(baseCard.ID, match.HIDDENZONE, match.BATTLEZONE, card.ID)
 					if tapped && !baseCard.Tapped {
 						baseCard.Tapped = true
 					}
@@ -388,7 +390,7 @@ func FaerieLife(c *match.Card) {
 
 			for _, toMove := range cards {
 
-				card.Player.MoveCard(toMove.ID, match.DECK, match.MANAZONE)
+				card.Player.MoveCard(toMove.ID, match.DECK, match.MANAZONE, card.ID)
 				ctx.Match.Chat("Server", fmt.Sprintf("%s put %s into the manazone from the top of their deck", card.Player.Username(), toMove.Name))
 
 			}
@@ -458,5 +460,198 @@ func EnergyStream(c *match.Card) {
 
 		}
 	})
+
+}
+
+func RainOfArrows(c *match.Card) {
+
+	c.Name = "Rain of Arrows"
+	c.Civ = civ.Light
+	c.ManaCost = 2
+	c.ManaRequirement = []string{civ.Light}
+
+	c.Use(fx.Spell, fx.When(fx.SpellCast, func(card *match.Card, ctx *match.Context) {
+
+		opponentHand, err := ctx.Match.Opponent(card.Player).Container(match.HAND)
+
+		if err != nil {
+			return
+		}
+
+		ids := make([]string, 0)
+
+		for _, c := range opponentHand {
+			ids = append(ids, c.ImageID)
+		}
+
+		ctx.Match.ShowCards(
+			card.Player,
+			"Your opponent's Hand:",
+			ids,
+		)
+
+		for _, c := range opponentHand {
+			if c.Civ == civ.Darkness && c.HasCondition(cnd.Spell) {
+				c.Player.MoveCard(c.ID, match.HAND, match.GRAVEYARD, card.ID)
+				ctx.Match.Chat("Server", fmt.Sprintf("%s was moved to %s's graveyard by %s", c.Name, c.Player.Username(), card.Name))
+			}
+		}
+
+	}))
+
+}
+
+// CometMissile ...
+func CometMissile(c *match.Card) {
+
+	c.Name = "Comet Missile"
+	c.Civ = civ.Fire
+	c.ManaCost = 1
+	c.ManaRequirement = []string{civ.Fire}
+
+	c.Use(fx.Spell, fx.ShieldTrigger, fx.When(fx.SpellCast, func(card *match.Card, ctx *match.Context) {
+
+		creatures := fx.SelectFilter(
+			card.Player,
+			ctx.Match,
+			ctx.Match.Opponent(card.Player),
+			match.BATTLEZONE,
+			"Destroy one of your opponent's creatures that has blocker and has power 6000 or less",
+			1,
+			1,
+			false,
+			func(x *match.Card) bool { return x.HasCondition(cnd.Blocker) && ctx.Match.GetPower(x, false) <= 6000 })
+
+		for _, creature := range creatures {
+
+			ctx.Match.Destroy(creature, card, match.DestroyedBySpell)
+
+		}
+
+	}))
+
+}
+
+// CrisisBoulder ...
+func CrisisBoulder(c *match.Card) {
+
+	c.Name = "Crisis Boulder"
+	c.Civ = civ.Fire
+	c.ManaCost = 4
+	c.ManaRequirement = []string{civ.Fire}
+
+	c.Use(fx.Spell, fx.ShieldTrigger, fx.When(fx.SpellCast, func(card *match.Card, ctx *match.Context) {
+
+		cards := make(map[string][]*match.Card)
+
+		cards["Your creatures"] = fx.Find(ctx.Match.Opponent(card.Player), match.BATTLEZONE)
+		cards["Your mana"] = fx.Find(ctx.Match.Opponent(card.Player), match.MANAZONE)
+
+		fx.SelectMultipart(
+			ctx.Match.Opponent(card.Player),
+			ctx.Match,
+			cards,
+			fmt.Sprintf("%s: Choose 1 of your creatures or a card in your mana zone it will be sent to your graveyard.", card.Name),
+			1,
+			1,
+			false).Map(func(c *match.Card) {
+			c.Player.MoveCard(c.ID, c.Zone, match.GRAVEYARD, card.ID)
+			ctx.Match.Chat("Server", fmt.Sprintf("%s was moved to %s's graveyard by %s", c.Name, c.Player.Username(), card.Name))
+		})
+
+	}))
+}
+
+// IntenseEvil ...
+func IntenseEvil(c *match.Card) {
+
+	c.Name = "Intense Evil"
+	c.Civ = civ.Darkness
+	c.ManaCost = 3
+	c.ManaRequirement = []string{civ.Darkness}
+
+	c.Use(fx.Spell, fx.ShieldTrigger, fx.When(fx.SpellCast, func(card *match.Card, ctx *match.Context) {
+
+		battleZone, err := card.Player.Container(match.BATTLEZONE)
+
+		if err != nil {
+			return
+		}
+
+		nrCreature := len(battleZone)
+
+		selected := fx.Select(
+			card.Player,
+			ctx.Match,
+			card.Player,
+			match.BATTLEZONE,
+			"Intense Evil: Destroy any number of your creatures.",
+			0,
+			nrCreature,
+			false,
+		)
+
+		nrSelected := len(selected)
+
+		selected.Map(func(x *match.Card) {
+			ctx.Match.Destroy(x, card, match.DestroyedBySpell)
+		})
+
+		card.Player.DrawCards(nrSelected)
+
+	}))
+}
+
+// ShockHurricane ...
+func ShockHurricane(c *match.Card) {
+
+	c.Name = "Shock Hurricane"
+	c.Civ = civ.Water
+	c.ManaCost = 5
+	c.ManaRequirement = []string{civ.Water}
+
+	c.Use(fx.Spell, fx.When(fx.SpellCast, func(card *match.Card, ctx *match.Context) {
+
+		battleZone, err := card.Player.Container(match.BATTLEZONE)
+
+		if err != nil {
+			return
+		}
+
+		nrCreature := len(battleZone)
+
+		selected := fx.Select(
+			card.Player,
+			ctx.Match,
+			card.Player,
+			match.BATTLEZONE,
+			"Shock Hurricane: Return any number of your creatures from the battlezone to your hand.",
+			0,
+			nrCreature,
+			false,
+		)
+
+		nrSelected := len(selected)
+
+		selected.Map(func(x *match.Card) {
+			card.Player.MoveCard(x.ID, match.BATTLEZONE, match.HAND, card.ID)
+			ctx.Match.Chat("Server", fmt.Sprintf("%s was moved from %s's battlezone to his hand.", x.Name, x.Player.Username()))
+		})
+
+		fx.Select(
+			card.Player,
+			ctx.Match,
+			ctx.Match.Opponent(card.Player),
+			match.BATTLEZONE,
+			fmt.Sprintf("%s: Choose %d creature(s) in the battlezone that will be sent to your opponent's hand", card.Name, nrSelected),
+			0,
+			nrSelected,
+			false,
+		).Map(func(creature *match.Card) {
+			creature.Player.MoveCard(creature.ID, match.BATTLEZONE, match.HAND, card.ID)
+			ctx.Match.Chat("Server", fmt.Sprintf("%s was returned to %s's hand by %s", creature.Name, creature.Player.Username(), card.Name))
+		})
+
+	}))
 
 }

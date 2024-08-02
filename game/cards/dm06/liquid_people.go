@@ -19,3 +19,15 @@ func CrystalJouster(c *match.Card) {
 	c.Use(fx.Creature, fx.Evolution, fx.Doublebreaker, fx.ReturnToHand)
 
 }
+
+func AquaRider(c *match.Card) {
+
+	c.Name = "Aqua Rider"
+	c.Power = 2000
+	c.Civ = civ.Water
+	c.Family = []string{family.LiquidPeople}
+	c.ManaCost = 4
+	c.ManaRequirement = []string{civ.Water}
+
+	c.Use(fx.Creature, ReceiveBlockerWhenOpponentPlaysCreatureOrSpell)
+}

@@ -103,14 +103,14 @@ func SaucerHeadShark(c *match.Card) {
 
 				for _, creature := range myBattlezone {
 					if ctx.Match.GetPower(creature, false) <= 2000 {
-						creature.Player.MoveCard(creature.ID, match.BATTLEZONE, match.HAND)
+						creature.Player.MoveCard(creature.ID, match.BATTLEZONE, match.HAND, card.ID)
 						ctx.Match.Chat("Server", fmt.Sprintf("%s was returned to %s's hand by Saucer-Head Shark", creature.Name, creature.Player.Username()))
 					}
 				}
 
 				for _, creature := range opponentBattlezone {
 					if ctx.Match.GetPower(creature, false) <= 2000 {
-						creature.Player.MoveCard(creature.ID, match.BATTLEZONE, match.HAND)
+						creature.Player.MoveCard(creature.ID, match.BATTLEZONE, match.HAND, card.ID)
 						ctx.Match.Chat("Server", fmt.Sprintf("%s was returned to %s's hand by Saucer-Head Shark", creature.Name, creature.Player.Username()))
 					}
 				}

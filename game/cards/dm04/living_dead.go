@@ -31,7 +31,7 @@ func SkeletonThiefTheRevealer(c *match.Card) {
 			true,
 			func(x *match.Card) bool { return x.HasFamily(family.LivingDead) },
 		).Map(func(x *match.Card) {
-			card.Player.MoveCard(x.ID, match.GRAVEYARD, match.HAND)
+			card.Player.MoveCard(x.ID, match.GRAVEYARD, match.HAND, card.ID)
 			ctx.Match.Chat("Server", fmt.Sprintf("%s was moved to %s's hand from their graveyard by Skeleton Thief, the Revealer", x.Name, card.Player.Username()))
 		})
 

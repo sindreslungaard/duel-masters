@@ -32,7 +32,7 @@ func BloodwingMantis(c *match.Card) {
 			false,
 			func(c *match.Card) bool { return c.HasCondition(cnd.Creature) },
 		).Map(func(c *match.Card) {
-			c.Player.MoveCard(c.ID, match.MANAZONE, match.HAND)
+			c.Player.MoveCard(c.ID, match.MANAZONE, match.HAND, card.ID)
 			ctx.Match.Chat("Server", fmt.Sprintf("%s was returned to %s's hand from manazone", c.Name, c.Player.Username()))
 		})
 
@@ -62,7 +62,7 @@ func ScissorScarab(c *match.Card) {
 			1,
 			true,
 			func(c *match.Card) bool { return c.HasFamily(family.GiantInsect) }).Map(func(c *match.Card) {
-			card.Player.MoveCard(c.ID, match.DECK, match.HAND)
+			card.Player.MoveCard(c.ID, match.DECK, match.HAND, card.ID)
 			ctx.Match.Chat("Server", fmt.Sprintf("%s was moved from %s's deck to their hand", c.Name, card.Player.Username()))
 		})
 
@@ -96,7 +96,7 @@ func AmbushScorpion(c *match.Card) {
 			func(c *match.Card) bool { return c.Name == card.Name },
 		).Map(func(c *match.Card) {
 
-			c.Player.MoveCard(c.ID, match.MANAZONE, match.BATTLEZONE)
+			c.Player.MoveCard(c.ID, match.MANAZONE, match.BATTLEZONE, card.ID)
 
 			if ctx.Match.IsPlayerTurn(card.Player) {
 				c.AddCondition(cnd.SummoningSickness, nil, nil)
@@ -134,7 +134,7 @@ func ObsidianScarab(c *match.Card) {
 			func(c *match.Card) bool { return c.Name == card.Name },
 		).Map(func(c *match.Card) {
 
-			c.Player.MoveCard(c.ID, match.MANAZONE, match.BATTLEZONE)
+			c.Player.MoveCard(c.ID, match.MANAZONE, match.BATTLEZONE, card.ID)
 
 			if ctx.Match.IsPlayerTurn(card.Player) {
 				c.AddCondition(cnd.SummoningSickness, nil, nil)
