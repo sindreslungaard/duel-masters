@@ -194,12 +194,20 @@ func (m *Match) GetPower(card *Card, isAttacking bool) int {
 func (m *Match) CastSpell(card *Card, fromShield bool) {
 
 	m.HandleFx(NewContext(m, &SpellCast{
-		CardID:     card.ID,
-		FromShield: fromShield,
+		CardID:        card.ID,
+		FromShield:    fromShield,
+		MatchPlayerID: m.getPlayerMatchId(card),
 	}))
 
 	m.BroadcastState()
 
+}
+
+func (m *Match) getPlayerMatchId(card *Card) byte {
+	if card.Player == m.Player1.Player {
+		return 1
+	}
+	return 2
 }
 
 // Battle handles a battle between two creatures
@@ -535,7 +543,7 @@ func (m *Match) ActionWarning(p *Player, message string) {
 	})
 }
 
-// DefaultActionWarning sends an actionw arning with a predefined message
+// DefaultActionWarning sends an action warning with a predefined message
 func (m *Match) DefaultActionWarning(p *Player) {
 	m.PlayerRef(p).Socket.Send(server.ActionWarningMessage{
 		Header:  "action_error",

@@ -458,10 +458,11 @@ func (p *Player) MoveCard(cardID string, from string, to string, source string) 
 	p.mutex.Unlock()
 
 	p.match.HandleFx(NewContext(p.match, &CardMoved{
-		CardID: ref.ID,
-		From:   from,
-		To:     to,
-		Source: source,
+		CardID:        ref.ID,
+		From:          from,
+		To:            to,
+		Source:        source,
+		MatchPlayerID: p.match.getPlayerMatchId(ref),
 	}))
 
 	return ref, nil
