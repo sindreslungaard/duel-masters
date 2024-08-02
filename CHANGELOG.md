@@ -2,7 +2,10 @@
 
 ## [Unreleased]
 
-- No unreleased changes
+- New card "King Triumphant" (thanks @DanieloV)
+- New card "Aqua Rider" (thanks @DanieloV)
+- New card "Overload Cluster" (thanks @DanieloV)
+- New card "Lu Gila, Silver Rift Guardian" (thanks @DanieloV)
 
 ## 02/08/2024
 
