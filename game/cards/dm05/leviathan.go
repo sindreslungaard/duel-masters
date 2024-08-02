@@ -24,7 +24,7 @@ func KingTsunami(c *match.Card) {
 
 			if creature.ID != card.ID {
 
-				creature.Player.MoveCard(creature.ID, match.BATTLEZONE, match.HAND)
+				creature.Player.MoveCard(creature.ID, match.BATTLEZONE, match.HAND, card.ID)
 				ctx.Match.Chat("Server", fmt.Sprintf("%s was returned to %s's hand by %s", creature.Name, creature.Player.Username(), card.Name))
 
 			}
@@ -58,7 +58,7 @@ func KingMazelan(c *match.Card) {
 			1,
 			1,
 			true).Map(func(creature *match.Card) {
-			creature.Player.MoveCard(creature.ID, match.BATTLEZONE, match.HAND)
+			creature.Player.MoveCard(creature.ID, match.BATTLEZONE, match.HAND, card.ID)
 			ctx.Match.Chat("Server", fmt.Sprintf("%s was returned to %s's hand by %s", creature.Name, creature.Player.Username(), card.Name))
 		})
 

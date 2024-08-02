@@ -26,7 +26,7 @@ func SnorkLaShrineGuardian(c *match.Card) {
 
 		if event, ok := ctx.Event.(*match.CardMoved); ok && event.From == match.MANAZONE && event.To == match.GRAVEYARD {
 
-			card.Player.MoveCard(event.CardID, match.GRAVEYARD, match.MANAZONE)
+			card.Player.MoveCard(event.CardID, match.GRAVEYARD, match.MANAZONE, card.ID)
 			ctx.Match.Chat("Server", "Snork La, Shrine Guardian prevented card from being discarded from the manazone")
 
 		}

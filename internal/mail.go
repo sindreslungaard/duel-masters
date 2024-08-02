@@ -58,7 +58,7 @@ func SendMail(to string, subject string, body string) error {
 		return err
 	}
 
-	logrus.Info("Sent an email to %s with subject %s", to, subject)
+	logrus.Infof("Sent an email to %s with subject %s", to, subject)
 
 	return nil
 

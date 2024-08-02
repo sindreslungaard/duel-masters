@@ -2,7 +2,30 @@
 
 ## [Unreleased]
 
-No unreleased changes
+- No unreleased changes
+
+## 02/08/2024
+
+- Corrected "Muramasa, Duke of Blades"'s power from 2000 to 3000
+- Updated "Liquid Scope" to show both the opponent's hand and shieldzone, instead of just the shieldzone (thanks @Calinachos)
+- New card "Illusory Berry" (thanks @DanieloV)
+- New card "Torchclencher" (thanks @DanieloV)
+- Updated deckbuilder to display and filter correctly on cards wityh multiple races (thanks @DanieloV)
+- Added missing survivor effect to "Promephius Q" (thanks @jyotiskaghosh)
+- New card "King Triumphant" (thanks @DanieloV)
+- New card "Aqua Rider" (thanks @DanieloV)
+- New card "Overload Cluster" (thanks @DanieloV)
+- New card "Lu Gila, Silver Rift Guardian" (thanks @DanieloV)
+- New card "Forbos, Sanctum Guardian Q" (thanks @DanieloV)
+- New card "Forbidding Totem" (thanks @DanieloV)
+- New card "Cocco Lupia"
+
+## 19/05/2024
+
+- Fixed an issue where "Pokolul" would untap even if the opponent chose to not play the shield trigger
+- Fixed an issue where "Bolmeteus Steel Dragon" would move broken shields to the opponent's hand before discarding it, triggering side effects from other cards
+- Fixed an issue with the popup modal used by cards like "Rain of Arrows" to show cards to the user not fitting all cards on screen
+- Fixed an issue with "Factory Shell Q" allowing the player to select all creatures and not just survivors. Also fixed an issue where the selected card was not moved to the player's hand
 
 ## 31/03/2024
 
@@ -37,7 +60,7 @@ No unreleased changes
 - New card "Bliss Totem, Avatar of Luck" (thanks @Zayberex)
 - New card "Clobber Totem" (thanks @Zayberex)
 - New card "Laveil Seeker Of Catastrophe" (thanks @Zayberex)
-- New card "Dava Torey Seeker Of Cloudss" (thanks @Zayberex)
+- New card "Dava Torey Seeker Of Clouds" (thanks @Zayberex)
 
 ## 10/11/2023
 

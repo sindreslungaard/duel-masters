@@ -64,7 +64,7 @@ func TroxGeneralOfDestruction(c *match.Card) {
 				return
 			}
 
-			discarded, err := ctx.Match.Opponent(card.Player).MoveCard(hand[rand.Intn(len(hand))].ID, match.HAND, match.GRAVEYARD)
+			discarded, err := ctx.Match.Opponent(card.Player).MoveCard(hand[rand.Intn(len(hand))].ID, match.HAND, match.GRAVEYARD, card.ID)
 			if err != nil {
 				return
 			}

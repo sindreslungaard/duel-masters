@@ -10,13 +10,13 @@ import (
 
 // CardInfo struct is used for the card database api
 type CardInfo struct {
-	UID          string `json:"uid"`
-	Name         string `json:"name"`
-	Civilization string `json:"civilization"`
-	Family       string `json:"family"`
-	ManaCost     int    `json:"manaCost"`
-	Set          string `json:"set"`
-	Type         string `json:"type"`
+	UID          string   `json:"uid"`
+	Name         string   `json:"name"`
+	Civilization string   `json:"civilization"`
+	Family       []string `json:"family"`
+	ManaCost     int      `json:"manaCost"`
+	Set          string   `json:"set"`
+	Type         string   `json:"type"`
 }
 
 // Register holds all the card info
@@ -44,10 +44,8 @@ func CreateCardCache() {
 			}
 
 			if len(card.Family) > 0 {
-				entry.Family = card.Family[0]
-			}
-
-			if entry.Family == "" {
+				entry.Family = card.Family
+			} else {
 				entry.Type = "Spell"
 			}
 

@@ -23,7 +23,7 @@ func EnchantedSoil(c *match.Card) {
 			fx.SelectFilter(card.Player, ctx.Match, card.Player, match.GRAVEYARD, "Enchanted Soil: Select 2 creatures from your graveyard and put it in your manazone", 0, 2, true, func(x *match.Card) bool {
 				return x.HasCondition(cnd.Creature)
 			}).Map(func(c *match.Card) {
-				card.Player.MoveCard(c.ID, match.GRAVEYARD, match.MANAZONE)
+				card.Player.MoveCard(c.ID, match.GRAVEYARD, match.MANAZONE, card.ID)
 				ctx.Match.Chat("Server", fmt.Sprintf("%s was moved to %s's manazone by %s", c.Name, c.Player.Username(), card.Name))
 			})
 
@@ -44,7 +44,7 @@ func SchemingHands(c *match.Card) {
 		if match.AmICasted(card, ctx) {
 
 			fx.Select(card.Player, ctx.Match, ctx.Match.Opponent(card.Player), match.HAND, "Scheming Hands: Discard a card from your opponent's hand", 0, 1, false).Map(func(c *match.Card) {
-				c.Player.MoveCard(c.ID, match.HAND, match.GRAVEYARD)
+				c.Player.MoveCard(c.ID, match.HAND, match.GRAVEYARD, card.ID)
 				ctx.Match.Chat("Server", fmt.Sprintf("%s was moved to %s's graveyard by %s", c.Name, c.Player.Username(), card.Name))
 			})
 
@@ -69,7 +69,7 @@ func CyclonePanic(c *match.Card) {
 			n1 := len(cards1)
 
 			for _, c1 := range cards1 {
-				card.Player.MoveCard(c1.ID, match.HAND, match.DECK)
+				card.Player.MoveCard(c1.ID, match.HAND, match.DECK, card.ID)
 			}
 
 			card.Player.ShuffleDeck()
@@ -80,7 +80,7 @@ func CyclonePanic(c *match.Card) {
 			n2 := len(cards2)
 
 			for _, c2 := range cards2 {
-				ctx.Match.Opponent(card.Player).MoveCard(c2.ID, match.HAND, match.DECK)
+				ctx.Match.Opponent(card.Player).MoveCard(c2.ID, match.HAND, match.DECK, card.ID)
 			}
 
 			ctx.Match.Opponent(card.Player).ShuffleDeck()
@@ -110,7 +110,7 @@ func GlorySnow(c *match.Card) {
 
 				for _, toMove := range cards {
 
-					card.Player.MoveCard(toMove.ID, match.DECK, match.MANAZONE)
+					card.Player.MoveCard(toMove.ID, match.DECK, match.MANAZONE, card.ID)
 					ctx.Match.Chat("Server", fmt.Sprintf("%s put %s into the manazone from the top of their deck", card.Player.Username(), toMove.Name))
 
 				}
@@ -221,7 +221,7 @@ func BrutalCharge(c *match.Card) {
 					true,
 					func(c *match.Card) bool { return c.HasCondition(cnd.Creature) },
 				).Map(func(c *match.Card) {
-					c.Player.MoveCard(c.ID, match.DECK, match.HAND)
+					c.Player.MoveCard(c.ID, match.DECK, match.HAND, card.ID)
 					ctx.Match.Chat("Server", fmt.Sprintf("%s was moved from %s's deck to their hand by %s", c.Name, c.Player.Username(), card.Name))
 				})
 
@@ -284,7 +284,7 @@ func DivineRiptide(c *match.Card) {
 	c.Use(fx.Spell, fx.When(fx.SpellCast, func(card *match.Card, ctx *match.Context) {
 
 		for _, c := range append(fx.Find(card.Player, match.MANAZONE), fx.Find(ctx.Match.Opponent(card.Player), match.MANAZONE)...) {
-			c.Player.MoveCard(c.ID, match.MANAZONE, match.HAND)
+			c.Player.MoveCard(c.ID, match.MANAZONE, match.HAND, card.ID)
 			ctx.Match.Chat("Server", fmt.Sprintf("%s was moved to %s's hand from their mana zone by %s", c.Name, c.Player.Username(), card.Name))
 		}
 
@@ -314,7 +314,7 @@ func CataclysmicEruption(c *match.Card) {
 			n,
 			false,
 		).Map(func(c *match.Card) {
-			c.Player.MoveCard(c.ID, match.MANAZONE, match.GRAVEYARD)
+			c.Player.MoveCard(c.ID, match.MANAZONE, match.GRAVEYARD, card.ID)
 			ctx.Match.Chat("Server", fmt.Sprintf("%s was put into %s's graveyard from their manazone by %s", c.Name, c.Player.Username(), card.Name))
 		})
 

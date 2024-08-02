@@ -26,7 +26,7 @@ func RumblingTerahorn(c *match.Card) {
 			cards := match.SearchForCnd(card.Player, ctx.Match, card.Player, match.DECK, cnd.Creature, "Select 1 creature from your deck that will be shown to your opponent and sent to your hand", 1, 1, true)
 
 			for _, c := range cards {
-				card.Player.MoveCard(c.ID, match.DECK, match.HAND)
+				card.Player.MoveCard(c.ID, match.DECK, match.HAND, card.ID)
 				ctx.Match.Chat("Server", fmt.Sprintf("%s was moved from %s's deck to their hand", c.Name, card.Player.Username()))
 			}
 
@@ -52,15 +52,15 @@ func LeapingTornadoHorn(c *match.Card) {
 
 		power := 0
 
-		if (attacking) {
+		if attacking {
 			for _, creature := range fx.Find(c.Player, match.BATTLEZONE) {
 				if creature == c {
 					continue
 				}
 				power += 1000
-			}	
+			}
 		}
-	
+
 		return power
 	}
 

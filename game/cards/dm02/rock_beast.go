@@ -91,7 +91,7 @@ func Bombersaur(c *match.Card) {
 
 						for _, id := range action.Cards {
 
-							p.MoveCard(id, match.MANAZONE, match.GRAVEYARD)
+							p.MoveCard(id, match.MANAZONE, match.GRAVEYARD, card.ID)
 
 							ctx.Match.Chat("Server", fmt.Sprintf("Bombersaur destroyed %v of %s's mana", toSelect, p.Username()))
 

@@ -40,7 +40,7 @@ func ExplosiveFighterUcarn(c *match.Card) {
 				cards := match.Search(card.Player, ctx.Match, card.Player, match.MANAZONE, "Explosive Fighter Ucarn: Select 2 cards from your manazone that will be sent to your graveyard", 2, 2, false)
 
 				for _, manaCard := range cards {
-					card.Player.MoveCard(manaCard.ID, match.MANAZONE, match.GRAVEYARD)
+					card.Player.MoveCard(manaCard.ID, match.MANAZONE, match.GRAVEYARD, card.ID)
 					ctx.Match.Chat("Server", fmt.Sprintf("%s was sent from %s's manazone to their graveyard", manaCard.ID, card.Name))
 				}
 
@@ -83,7 +83,7 @@ func OnslaughterTriceps(c *match.Card) {
 				cards := match.Search(card.Player, ctx.Match, card.Player, match.MANAZONE, "Onslaughter Triceps: Select 1 card from your manazone that will be sent to your graveyard", 1, 1, false)
 
 				for _, manaCard := range cards {
-					card.Player.MoveCard(manaCard.ID, match.MANAZONE, match.GRAVEYARD)
+					card.Player.MoveCard(manaCard.ID, match.MANAZONE, match.GRAVEYARD, card.ID)
 					ctx.Match.Chat("Server", fmt.Sprintf("%s was sent from %s's manazone to their graveyard", manaCard.Name, card.Player.Username()))
 				}
 

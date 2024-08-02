@@ -1,22 +1,18 @@
-import Vue from "vue";
-import VModal from "vue-js-modal";
+import { createApp } from 'vue'
 import App from "./App.vue";
 import router from "./router";
-import store from "./store";
+import { store } from "./store";
 
 // self-invoking directives
-import "./directives/draggable";
-import "./directives/closable";
+import draggable from './directives/draggable';
+import closable from './directives/closable';
 
-Vue.config.productionTip = false;
+const myApp = createApp(App)
+myApp
+.use(store)
+.use(router)
 
-Vue.use(VModal, {
-  dynamic: true,
-  dynamicDefaults: { height: "auto", scrollable: true }
-});
+myApp.directive("click-outside", closable)
+myApp.directive("draggable", draggable) 
 
-new Vue({
-  router,
-  store,
-  render: h => h(App)
-}).$mount("#app");
+myApp.mount('#app')

@@ -48,7 +48,7 @@ func FactoryShellQ(c *match.Card) {
 			return
 		}
 
-		if event, ok := ctx.Event.(*match.CardMoved); ok {
+		if event, ok := ctx.Event.(*match.CardMoved); ok && event.To == match.BATTLEZONE {
 
 			creature, err := card.Player.GetCard(event.CardID, match.BATTLEZONE)
 
@@ -56,7 +56,7 @@ func FactoryShellQ(c *match.Card) {
 				return
 			}
 
-			if !creature.HasFamily(family.Survivor) || event.To != match.BATTLEZONE {
+			if !creature.HasFamily(family.Survivor) {
 				return
 			}
 
@@ -69,10 +69,10 @@ func FactoryShellQ(c *match.Card) {
 				1,
 				1,
 				true,
-				func(x *match.Card) bool { return x.HasCondition(cnd.Creature) },
+				func(x *match.Card) bool { return x.HasCondition(cnd.Survivor) },
 			).Map(func(x *match.Card) {
-				card.Player.MoveCard(c.ID, match.DECK, match.HAND)
-				ctx.Match.Chat("Server", fmt.Sprintf("%s was moved from %s's deck to their hand", c.Name, card.Player.Username()))
+				card.Player.MoveCard(x.ID, match.DECK, match.HAND, card.ID)
+				ctx.Match.Chat("Server", fmt.Sprintf("%s was moved from %s's deck to their hand", x.Name, card.Player.Username()))
 				card.Player.ShuffleDeck()
 			})
 
