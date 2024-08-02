@@ -496,4 +496,5 @@ var DM06 = map[string]match.CardConstructor{
 	"1ec9f300-c8cb-41c2-b9a8-b46408c49098": dm06.OverloadCluster,
 	"cf8b1897-0044-4a13-9114-c1c3ba51bedd": dm06.AquaRider,
 	"38ea8acd-e8e3-4bd9-a7c9-7d74761c3712": dm06.KingTriumphant,
+	"8b7fc29b-d79c-4b08-a88e-9d055d02c6e8": dm06.CoccoLupia,
 }

@@ -8,6 +8,7 @@
 - New card "Lu Gila, Silver Rift Guardian" (thanks @DanieloV)
 - New card "Forbos, Sanctum Guardian Q" (thanks @DanieloV)
 - New card "Forbidding Totem" (thanks @DanieloV)
+- New card "Cocco Lupia"
 
 ## 02/08/2024
 
