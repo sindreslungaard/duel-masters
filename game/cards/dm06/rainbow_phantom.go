@@ -31,7 +31,7 @@ func CosmogoldSpectralKnight(c *match.Card) {
 			true,
 			func(x *match.Card) bool { return x.HasCondition(cnd.Spell) },
 		).Map(func(spell *match.Card) {
-			card.Player.MoveCard(spell.ID, match.MANAZONE, match.HAND)
+			card.Player.MoveCard(spell.ID, match.MANAZONE, match.HAND, card.ID)
 			ctx.Match.Chat("Server", fmt.Sprintf("%s retrieved %s from the mana zone to their hand using %s's tap ability", spell.Player.Username(), spell.Name, card.Name))
 			card.Tapped = true
 		})
