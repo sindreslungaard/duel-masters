@@ -22,7 +22,7 @@ func ProtectiveForce(c *match.Card) {
 			ctx.Match,
 			card.Player,
 			match.BATTLEZONE,
-			"Select 1 creature with \"Blocker\" from your battlezone",
+			"Select 1 creature with \"Blocker\" from your battlezone that will gain +4000 power",
 			1,
 			1,
 			false,
@@ -634,7 +634,7 @@ func ShockHurricane(c *match.Card) {
 		nrSelected := len(selected)
 
 		selected.Map(func(x *match.Card) {
-			card.Player.MoveCard(x.ID, match.BATTLEZONE, match.HAND)
+			card.Player.MoveCard(x.ID, match.BATTLEZONE, match.HAND, card.ID)
 			ctx.Match.Chat("Server", fmt.Sprintf("%s was moved from %s's battlezone to his hand.", x.Name, x.Player.Username()))
 		})
 
@@ -646,8 +646,9 @@ func ShockHurricane(c *match.Card) {
 			fmt.Sprintf("%s: Choose %d creature(s) in the battlezone that will be sent to your opponent's hand", card.Name, nrSelected),
 			0,
 			nrSelected,
-			false).Map(func(creature *match.Card) {
-			creature.Player.MoveCard(creature.ID, match.BATTLEZONE, match.HAND)
+			false,
+		).Map(func(creature *match.Card) {
+			creature.Player.MoveCard(creature.ID, match.BATTLEZONE, match.HAND, card.ID)
 			ctx.Match.Chat("Server", fmt.Sprintf("%s was returned to %s's hand by %s", creature.Name, creature.Player.Username(), card.Name))
 		})
 
