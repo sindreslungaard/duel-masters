@@ -1,5 +1,3 @@
-import Vue from "vue";
-
 let isDragging = false;
 let mouseDown = false;
 let currentlyDragging;
@@ -58,10 +56,10 @@ let onMouseMove = function(event) {
 document.addEventListener("mousemove", onMouseMove.bind(this));
 document.addEventListener("mouseup", onMouseUp);
 
-Vue.directive("draggable", {
-  bind: function(el) {
+export default {
+  mounted: function(el) {
     el.addEventListener("mousedown", event => {
       onMouseDown(event, el);
     });
   }
-});
+};
