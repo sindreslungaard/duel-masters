@@ -2,13 +2,7 @@
 
 ## [Unreleased]
 
-- New card "Protective Force" (thanks @Zayberex)
-- New card "Intense Evil" (thanks @Zayberex)
-- New card "Shock Hurricane" (thanks @Zayberex)
-- New card "Cosmogold, Spectral Knight" (thanks @Zayberex)
-- New card "Moontear, Spectral Knight" (thanks @Zayberex)
-- New card "Gariel, Elemental Of Sunbeams" (thanks @Zayberex)
-- New card "Rumblesaur Q" (thanks @Zayberex)
+- No unreleased changes
 
 ## 02/08/2024
 
@@ -24,6 +18,13 @@
 - New card "Lu Gila, Silver Rift Guardian" (thanks @DanieloV)
 - New card "Forbos, Sanctum Guardian Q" (thanks @DanieloV)
 - New card "Forbidding Totem" (thanks @DanieloV)
+- New card "Protective Force" (thanks @Zayberex)
+- New card "Intense Evil" (thanks @Zayberex)
+- New card "Shock Hurricane" (thanks @Zayberex)
+- New card "Cosmogold, Spectral Knight" (thanks @Zayberex)
+- New card "Moontear, Spectral Knight" (thanks @Zayberex)
+- New card "Gariel, Elemental Of Sunbeams" (thanks @Zayberex)
+- New card "Rumblesaur Q" (thanks @Zayberex)
 - New card "Cocco Lupia"
 
 ## 19/05/2024
