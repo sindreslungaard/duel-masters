@@ -118,14 +118,19 @@
         </div>
         <div class="catalogue-cards-wrapper">
           <div class="catalogue-cards">
-            <img
-              class="catalgoue-card"
-              :style="{ 'height': cardSize + 'px' }"
+            <div
               v-for="card in filteredAndSortedCards"
-              :src="`https://scans.shobu.io/${card.uid}.jpg`"
-              :alt="card.name"
+              class="catalogue-card"
+              :style="{ 'height': cardSize + 'px' }"
               @click="tryAddCard(card)"
-            />
+              >
+              <v-lazy-image
+                class="max-w-full rounded-2xl"
+                :src="`https://scans.shobu.io/${card.uid}.jpg`"
+                src-placeholder="https://scans.shobu.io/backside.jpg"
+                :alt="card.name"
+              />
+            </div>
           </div>
         </div>
       </div>
@@ -228,6 +233,7 @@
 <script>
 import { call } from "../remote";
 import Header from "../components/Header.vue";
+import VLazyImage from "v-lazy-image/v2";
 
 const ALL_FAMILIES = 'All Races';
 const ALL_SETS = 'All Sets'
@@ -271,7 +277,8 @@ function playSound (sound) {
 export default {
   name: "decks",
   components: {
-    Header
+    Header,
+    VLazyImage
   },
   computed: {
     username: () => localStorage.getItem("username")
@@ -390,18 +397,15 @@ export default {
     },
 
     tryRemoveCard(card) {
-      let toSlice = -1;
-      for (let i = 0; i < this.selectedDeck.cards.length; i++) {
-        if (this.selectedDeck.cards[i] === card.uid) {
-          toSlice = i;
-        }
-      }
-      if (toSlice < 0) {
-        return;
-      }
+      let uid = card.uid;
+      let toSlice = this.selectedDeck.cards.indexOf(uid);
+      if (toSlice < 0) return;
 
       playSound("/assets/sounds/card-removed.wav");
       this.selectedDeck.cards.splice(toSlice, 1);
+      if (this.selectedDeck.cards.indexOf(uid) < 0 && this.previewCard.uid === uid ) {
+        this.previewCard = null 
+      }
     },
 
     modifyCatalogueCardSize(addition) {
@@ -1004,9 +1008,8 @@ select:active {
   color: white;
 }
 
-.catalgoue-card {
-  width: auto;
-  border-radius: 15px;
+.catalogue-card {
+  aspect-ratio: 264/367;
   margin-bottom: 5px;
   cursor: pointer;
 }
