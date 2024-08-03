@@ -7,6 +7,7 @@ import (
 	"duel-masters/game/cards/dm04"
 	"duel-masters/game/cards/dm05"
 	"duel-masters/game/cards/dm06"
+	"duel-masters/game/cards/dm07"
 	"duel-masters/game/match"
 )
 
@@ -18,6 +19,7 @@ var Sets = map[string]*map[string]match.CardConstructor{
 	"dm-04": &DM04,
 	"dm-05": &DM05,
 	"dm-06": &DM06,
+	"dm-07": &DM07,
 }
 
 // DM01 is a map with all the card id's in the game and corresponding CardConstructor for dm01
@@ -504,4 +506,18 @@ var DM06 = map[string]match.CardConstructor{
 	"cf8b1897-0044-4a13-9114-c1c3ba51bedd": dm06.AquaRider,
 	"38ea8acd-e8e3-4bd9-a7c9-7d74761c3712": dm06.KingTriumphant,
 	"8b7fc29b-d79c-4b08-a88e-9d055d02c6e8": dm06.CoccoLupia,
+}
+
+var DM07 = map[string]match.CardConstructor{
+	"350d2dde-2abf-48c0-a1da-63dff2d00bfa": dm07.HopelessVortex,
+	"dd842b81-e187-44e3-92f2-a36826718849": dm07.FreezingIcehammer,
+	"30272397-4b70-4b40-b7ee-8399ebe099d6": dm07.FruitOfEternity,
+	"dca76df6-bd90-46d2-b032-30560f71de4d": dm07.VacuumGel,
+	//"8501c2f8-7dd2-4c2f-aa80-8025c8998371": dm07.JusticeJamming,
+	"119afa07-1a17-4197-8df9-3ee4254f0a58": dm07.MiraclePortal,
+	"25d36779-1263-4777-aaa1-6c2949addbbf": dm07.VenomCharger,
+	"507077aa-7b0b-42c8-a38e-7ff28846c159": dm07.EnergyCharger,
+	"a3569344-7a9a-476a-9afc-35e9c28ad209": dm07.LightningCharger,
+	"8de000dc-4cd9-4a6b-bccc-acfae89211ef": dm07.MulchCharger,
+	"a1ed67a1-2143-461e-b2ee-7d74ec6773e5": dm07.RiptideCharger,
 }
