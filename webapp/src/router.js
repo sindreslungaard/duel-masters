@@ -1,9 +1,14 @@
-import { createRouter, createWebHistory } from "vue-router";
+import Vue from "vue";
+import Router from "vue-router";
+import axios from "axios";
 import { call } from "./remote";
 import { store } from "./store";
 
-const router = createRouter({
-  history: createWebHistory(import.meta.env.BASE_URL),
+Vue.use(Router);
+
+const router = new Router({
+  mode: "history",
+  base: process.env.BASE_URL,
   routes: [
     {
       path: "/",

@@ -268,8 +268,6 @@ import { call, ws_protocol, host } from "../remote";
 import Header from "../components/Header.vue";
 import Username from "../components/Username.vue";
 import { getSettings, didSeeMuteWarning } from "../helpers/settings";
-import 'setimmediate';
-
 import {
   format,
   fromUnixTime,
