@@ -50,7 +50,7 @@ func MoontearSpectralKnight(c *match.Card) {
 
 	spellcast := false
 
-	c.Use(fx.Creature, fx.Doublebreaker, func(card *match.Card, ctx *match.Context) {
+	c.Use(fx.Creature, func(card *match.Card, ctx *match.Context) {
 
 		if _, ok := ctx.Event.(*match.SpellCast); ok {
 			spellcast = true
