@@ -235,7 +235,7 @@ export default {
     addEventListener("storage", this.refresh);
   },
 
-  beforeDestroy() {
+  beforeUnmount() {
     removeEventListener("storage", this.refresh);
   }
 };

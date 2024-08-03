@@ -47,7 +47,7 @@ export default {
     addEventListener("storageUpdated", this.updateIsMuted);
   },
 
-  beforeDestroy() {
+  beforeUnmount() {
     removeEventListener("storage", this.updateIsMuted);
     removeEventListener("storageUpdated", this.updateIsMuted);
   }

@@ -677,7 +677,7 @@ export default {
       this.errorMessage = "Connection lost";
     }
   },
-  beforeDestroy() {
+  beforeUnmount() {
     removeEventListener("storage", this.onSettingsChanged);
     this.ws.close();
   }
