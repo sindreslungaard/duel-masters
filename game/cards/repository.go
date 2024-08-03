@@ -7,6 +7,7 @@ import (
 	"duel-masters/game/cards/dm04"
 	"duel-masters/game/cards/dm05"
 	"duel-masters/game/cards/dm06"
+	"duel-masters/game/cards/dm07"
 	"duel-masters/game/match"
 )
 
@@ -18,6 +19,7 @@ var Sets = map[string]*map[string]match.CardConstructor{
 	"dm-04": &DM04,
 	"dm-05": &DM05,
 	"dm-06": &DM06,
+	"dm-07": &DM07,
 }
 
 // DM01 is a map with all the card id's in the game and corresponding CardConstructor for dm01
@@ -504,4 +506,10 @@ var DM06 = map[string]match.CardConstructor{
 	"cf8b1897-0044-4a13-9114-c1c3ba51bedd": dm06.AquaRider,
 	"38ea8acd-e8e3-4bd9-a7c9-7d74761c3712": dm06.KingTriumphant,
 	"8b7fc29b-d79c-4b08-a88e-9d055d02c6e8": dm06.CoccoLupia,
+}
+
+var DM07 = map[string]match.CardConstructor{
+	"350d2dde-2abf-48c0-a1da-63dff2d00bfa": dm07.HopelessVortex,
+	"3fc5db56-616c-49c4-8ddc-2d922e9c4a54": dm07.KizarBasikuTheOutrageous,
+	"7148214f-dc9c-4fb4-835c-cd6064e247df": dm07.RomVizierOfTendrils,
 }
