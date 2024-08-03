@@ -1,6 +1,8 @@
 import { createRouter, createWebHistory } from "vue-router";
 import { call } from "./remote";
 import { store } from "./store";
+import { getSettings } from "./helpers/settings";
+
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -57,7 +59,12 @@ const router = createRouter({
     {
       path: "/decks",
       name: "decks",
-      component: () => import("./views/Decks.vue"),
+      component: () => {
+        if (getSettings().newDeckBuilder) {
+          return import("./views/DecksNew.vue")
+        }  
+        return import("./views/Decks.vue")
+      },
       meta: { auth: true }
     },
 

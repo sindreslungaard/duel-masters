@@ -3,7 +3,13 @@
     <div v-show="warning" @click="closeOverlay()" class="overlay"></div>
 
     <span v-if="previewCard">
-      <div class="card-preview">
+      <div 
+        class="card-preview" 
+        :style="{
+          'top': previewCardTop + 'px', 
+          'left': previewCardLeft + 'px',
+        }" 
+      >
         <img
           :src="`https://scans.shobu.io/${previewCard.uid}.jpg`"
           alt="Full card"
@@ -43,146 +49,109 @@
     <Header></Header>
 
     <div class="main">
-      <div class="left bg">
-        <div class="cards-table">
-          <table>
-            <tr>
-              <th>
-                <div class="sort-btn" @click="toggleSort('name')">
-                  Card Name
-                  <img
-                    class="sort-ico"
-                    width="25px"
-                    :src="`/assets/images/${sortIcons.name}.png`"
-                  />
-                </div>
-                <input
-                  v-model="filterCardName"
-                  type="search"
-                  placeholder="Type to search"
-                />
-              </th>
-              <th>
-                <div class="sort-btn" @click="toggleSort('set')">
-                  Set
-                  <img
-                    class="sort-ico"
-                    width="25px"
-                    :src="`/assets/images/${sortIcons.set}.png`"
-                  />
-                </div>
-                <select v-model="filterSet">
-                  <option
-                    class="set"
-                    v-for="(set, index) in sets"
-                    :key="index"
-                    :value="set"
-                    >{{ set }}</option
-                  >
-                </select>
-              </th>
-              <th>
-                <div class="sort-btn" @click="toggleSort('civilization')">
-                  Civilization
-                  <img
-                    class="sort-ico"
-                    width="25px"
-                    :src="`/assets/images/${sortIcons.civilization}.png`"
-                  />
-                </div>
-                <select v-model="filterCivilization">
-                  <option value="all">All</option>
-                  <option value="fire">Fire</option>
-                  <option value="water">Water</option>
-                  <option value="nature">Nature</option>
-                  <option value="light">Light</option>
-                  <option value="darkness">Darkness</option>
-                </select>
-              </th>
-              <th>
-                <div class="sort-btn" @click="toggleSort('manaCost')">
-                  Mana
-                  <img
-                    class="sort-ico"
-                    width="25px"
-                    :src="`/assets/images/${sortIcons.manaCost}.png`"
-                  />
-                </div>
-              </th>
-              <th>
-                <div class="sort-btn" @click="toggleSort('family')">
-                  Race
-                  <img
-                    class="sort-ico"
-                    width="25px"
-                    :src="`/assets/images/${sortIcons.family}.png`"
-                  />
-                </div>
-                <select v-model="filterFamily">
-                  <option
-                    class="family"
-                    v-for="(family, index) in families"
-                    :key="index"
-                    :value="family"
-                    >{{ family }}</option
-                  >
-                </select>
-              </th>
-            </tr>
-            <tr
-              @contextmenu.prevent="previewCard = card"
-              @click="
-                selectedFromDeck = card;
-                selected = card;
-              "
-              v-for="(card, index) in filteredAndSortedCards"
-              :key="index"
-              :class="[{ selected: selected && selected.uid === card.uid }]"
+      <div class="catalogue">
+        <div class="catalogue-top-bar">
+          <div class="catalogue-filters">
+            <input
+              v-model="filterCardName"
+              class="catalogue-filter"
+              type="search"
+              placeholder="Type to search"
+            />
+            <div 
+              v-for="civ in ['light', 'darkness', 'nature', 'fire', 'water']" 
+              class="civ-filter"
+              :class="['civ-color-' + civ, filterCivilization[civ] ? 'civ-filter-selected' : '']"
+              @click="filterCivilization[civ] = !filterCivilization[civ]">
+            </div>
+            <div style="margin-left: 5px;">
+              <select 
+                class="catalogue-filter"
+                v-model="filterFamily">
+                <option
+                  class="family"
+                  v-for="(family, index) in families"
+                  :key="index"
+                  :value="family"
+                  >{{ family }}</option
+                >
+              </select>
+            </div>
+            <div 
+              v-for="manaNr in ['1', '2', '3', '4', '5', '6', '7+']" 
+              class="mana-filter"
+              :class="{'mana-filter-selected': filterMana[manaNr]}"
+              @click="filterMana[manaNr] = !filterMana[manaNr]"
             >
-              <td
-                @mouseover="previewCard = card"
-                @mouseleave="previewCard = null"
+              {{manaNr}}
+            </div>
+            <select 
+              v-model="filterSet"
+              class="catalogue-filter"
+            >
+              <option
+                class="set"
+                v-for="(set, index) in sets"
+                :key="index"
+                :value="set"
+                >{{ set }}</option
               >
-                {{ card.name }}
-              </td>
-              <td class="set">{{ card.set }}</td>
-              <td class="civilization">{{ card.civilization }}</td>
-              <td class="manaCost">{{ card.manaCost }}</td>
-              <td class="family">{{ displayFamily(card.family) }}</td>
-            </tr>
-          </table>
+            </select>
+            <img
+              class="reset-icon"
+              src="/assets/images/reset-icon.svg"
+              @click="resetFilters"
+            />
+          </div>
+          <div class="zoom-icons">
+            <img
+              class="zoom-icon"
+              @click="modifyCatalogueCardSize(10)"
+              src="/assets/images/zoom-in-icon.svg"
+            />
+            <img
+              @click="modifyCatalogueCardSize(-10)"
+              class="zoom-icon"
+              src="/assets/images/zoom-out-icon.svg"
+            />
+          </div>
+        </div>
+        <div class="catalogue-cards-wrapper">
+          <div class="catalogue-cards">
+            <div
+              v-for="card in filteredAndSortedCards"
+              class="catalogue-card"
+              :style="{ 'height': cardSize + 'px' }"
+              @click="tryAddCard(card)"
+              >
+              <v-lazy-image
+                class="max-w-full rounded-2xl"
+                :src="`https://scans.shobu.io/${card.uid}.jpg`"
+                src-placeholder="https://scans.shobu.io/backside.jpg"
+                :alt="card.name"
+              />
+            </div>
+          </div>
         </div>
       </div>
 
-      <div class="middle">
-        <div
-          v-show="!showWizard"
-          @click="tryAddCard()"
-          class="arrow-green"
-        ></div>
-        <div
-          v-show="!showWizard"
-          @click="tryRemoveCard()"
-          class="arrow-red"
-        ></div>
-      </div>
-
-      <div class="right">
-        <select v-model="selectedDeckUid" class="fl" style="margin: 0;">
+      <div class="right" ref="rightSide">
+        <span class="deck-card-total" v-if="selectedDeck">({{selectedDeck.cards.length}})</span>
+        <select v-model="selectedDeckUid" style="margin: 0;">
           <option
             v-for="(deck, index) in decks"
             :key="index"
             :value="deck.uid"
             >{{ deck.name }}</option
           >
-        </select>
-        <img
-          @click="showWizard = true"
-          class="fl edit-ico"
-          width="25px"
-          src="/assets/images/edit_icon.png"
-        />
-        <div class="right-btns">
+        </select> 
+        <div class="deck-secondary-buttons">
+          <img
+            @click="showWizard = true"
+            class="fl edit-ico"
+            width="25px"
+            src="/assets/images/edit_icon.png"
+          />
           <a
             :href="'/deck/' + selectedDeckUid"
             v-if="selectedDeck && selectedDeck.public"
@@ -218,7 +187,8 @@
               src="/assets/images/list_icon.png"
             />
           </a>
-
+        </div>
+        <div class="deck-crud-buttons">
           <div @click="newDeck()" class="btn new font-bold text-xs">NEW DECK</div>
           <template
             v-if="
@@ -229,110 +199,30 @@
             <div @click="discard()" class="btn discard">Discard</div>
           </template>
         </div>
-
-        <div v-if="selectedDeck" class="right-content bg">
-          <div class="cards-table">
-            <table>
-              <tr>
-                <th>
-                  <div class="sort-btn" @click="toggleSortForDeck('count')">
-                    Quantity ({{ selectedDeck.cards.length }})
-                    <img
-                      class="sort-ico"
-                      width="25px"
-                      :src="`/assets/images/${sortDeckIcons.count}.png`"
-                    />
-                  </div>
-                </th>
-
-                <th>
-                  <div class="sort-btn" @click="toggleSortForDeck('name')">
-                    Card Name
-                    <img
-                      class="sort-ico"
-                      width="25px"
-                      :src="`/assets/images/${sortDeckIcons.name}.png`"
-                    />
-                  </div>
-                </th>
-
-                <th>
-                  <div class="sort-btn" @click="toggleSortForDeck('set')">
-                    Set
-                    <img
-                      class="sort-ico"
-                      width="25px"
-                      :src="`/assets/images/${sortDeckIcons.set}.png`"
-                    />
-                  </div>
-                </th>
-
-                <th>
-                  <div
-                    class="sort-btn"
-                    @click="toggleSortForDeck('civilization')"
-                  >
-                    Civilization
-                    <img
-                      class="sort-ico"
-                      width="25px"
-                      :src="`/assets/images/${sortDeckIcons.civilization}.png`"
-                    />
-                  </div>
-                </th>
-
-                <th>
-                  <div class="sort-btn" @click="toggleSortForDeck('manaCost')">
-                    Mana
-                    <img
-                      class="sort-ico"
-                      width="25px"
-                      :src="`/assets/images/${sortDeckIcons.manaCost}.png`"
-                    />
-                  </div>
-                </th>
-
-                <th>
-                  <div class="sort-btn" @click="toggleSortForDeck('family')">
-                    Race
-                    <img
-                      class="sort-ico"
-                      width="25px"
-                      :src="`/assets/images/${sortDeckIcons.family}.png`"
-                    />
-                  </div>
-                </th>
-              </tr>
-              <template v-if="selectedDeck">
-                <tr
-                  @contextmenu.prevent="previewCard = card"
-                  @click="
-                    selected = card;
-                    selectedFromDeck = card;
-                  "
-                  v-for="(card, index) in getCardsForDeck(selectedDeck.cards)"
-                  :key="index"
-                  :class="[
-                    {
-                      selected:
-                        selectedFromDeck && selectedFromDeck.uid === card.uid
-                    }
-                  ]"
-                >
-                  <td>{{ card.count }}</td>
-                  <td
-                    @mouseover="previewCard = card"
-                    @mouseleave="previewCard = null"
-                  >
-                    {{ card.name }}
-                  </td>
-                  <td class="set">{{ card.set }}</td>
-                  <td class="civilization">{{ card.civilization }}</td>
-                  <td class="manaCost">{{ card.manaCost }}</td>
-                  <td class="family">{{ displayFamily(card.family) }}</td>
-                </tr>
-              </template>
-            </table>
+        <div v-if="selectedDeck" class="right-content">
+          <div
+            class="deck-card-slot"
+            v-for="(card, index) in getCardsForDeck(selectedDeck.cards)"
+            :key="index"
+            @mouseover="setPreviewCard($event, card)"
+            @mouseleave="previewCard = null"
+          >
+            <div class="deck-card-counter">
+              {{ card.count }}x
+            </div>
+            <div
+              class="deck-card-oval"
+              :class="'card-' + card.civilization.toLowerCase()"
+              :key="index"
+              @click="tryRemoveCard(card)"
+            >
+              <div class="deck-card-name">
+                {{ card.name }}                  
+              </div>
+              <div class="deck-card-mana">
+                {{ card.manaCost }}
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -343,7 +233,10 @@
 <script>
 import { call } from "../remote";
 import Header from "../components/Header.vue";
-import config from "../config";
+import VLazyImage from "v-lazy-image";
+
+const ALL_FAMILIES = 'All Races';
+const ALL_SETS = 'All Sets'
 
 const permissions = () => {
   let p = localStorage.getItem("permissions");
@@ -373,10 +266,20 @@ function compareCards(card1, card2, sort) {
             cat1.localeCompare(cat2);
 }
 
+function playSound (sound) {
+  if(sound) {
+    var audio = new Audio(sound);
+    audio.volume = 0.2;
+    audio.play();
+  }
+}
+
 export default {
   name: "decks",
   components: {
-    Header
+    Header,
+    VLazyImage,
+
   },
   computed: {
     username: () => localStorage.getItem("username")
@@ -387,33 +290,57 @@ export default {
       showWizard: false,
 
       filterCardName: "",
-      filterCivilization: "all",
-      filterFamily: "All",
-      filterSet: "All",
-      families: ["All", "Spell"],
-      sort: {
-        by: "name",
-        directionNum: 1
+      filterFamily: ALL_FAMILIES,
+      filterSet: ALL_SETS,
+      families: [ALL_FAMILIES, "Spell"],
+      filterCivilization: {
+        "light": false,
+        "darkness": false,
+        "nature": false,
+        "fire": false,
+        "water": false,
       },
-      sortForDeck: {
-        by: "name",
-        directionNum: 1
+      filterMana: {
+        '1': false,
+        '2': false,
+        '3': false,
+        '4': false,
+        '5': false,
+        '6': false,
+        '7+': false,
       },
 
       sets: [],
       cards: [],
-      selected: null,
-      selectedFromDeck: null,
 
       decks: [],
       selectedDeck: null,
       selectedDeckUid: null,
       deckCopy: null,
 
-      previewCard: null
+      previewCard: null,
+      previewCardTop: 0,
+      previewCardLeft: 0,
+
+      cardSize: 360,
     };
   },
   methods: {
+    setPreviewCard(event, card) {
+      let positionY = event.clientY - 420/2;
+      console.log(this.$refs.rightSide);
+      let positionX = this.$refs.rightSide.getBoundingClientRect().x - 300;
+      if (positionY + 420 > window.innerHeight) {
+        positionY = window.innerHeight - 420;
+      }
+      if (positionY < 10) {
+        positionY = 10;
+      }
+      this.previewCardTop = positionY;
+      this.previewCardLeft = positionX;
+      this.previewCard = card;
+    },
+
     selectDeck(deck) {
       this.selectedDeck = deck;
       this.deckCopy = JSON.parse(JSON.stringify(deck));
@@ -424,27 +351,20 @@ export default {
       return card;
     },
 
-    toggleSort(by) {
-      this.sort = {
-        directionNum: this.sort.by === by ? -this.sort.directionNum : 1,
-        by
-      };
-    },
-
-    toggleSortForDeck(by) {
-      this.sortForDeck = {
-        directionNum:
-          this.sortForDeck.by === by ? -this.sortForDeck.directionNum : 1,
-        by
-      };
+    resetFilters() {
+      Object.keys(this.filterCivilization).forEach(civ => this.filterCivilization[civ] = false);
+      Object.keys(this.filterMana).forEach(manaCost => this.filterMana[manaCost] = false);
+      this.filterFamily = ALL_FAMILIES;
+      this.filterSet = ALL_SETS;
+      this.filterCardName = '';
     },
 
     getCardsForDeck(cardUids) {
       let cards = [];
       for (let uid of cardUids) {
-        let card = JSON.parse(
-          JSON.stringify(this.cards.find(x => x.uid === uid))
-        );
+        let card = this.cards.find(x => x.uid === uid)
+        if (card === undefined) return [];
+        card = JSON.parse(JSON.stringify(card));
 
         let existingCard = cards.find(x => x.uid === card.uid);
         if (existingCard) {
@@ -455,43 +375,42 @@ export default {
         }
       }
 
-      cards.sort((c1, c2) => compareCards(c1, c2, this.sortForDeck));
+      cards.sort((c1, c2) => compareCards(c1, c2, {
+        by: "manaCost",
+        directionNum: 1
+      }));
 
       return cards;
     },
 
-    tryAddCard() {
-      if (!this.selected) {
-        return;
-      }
-
+    tryAddCard(card) {
       if (
-        this.selectedDeck.cards.filter(x => x == this.selected.uid).length >= 4
+        this.selectedDeck.cards.filter(x => x == card.uid).length >= 4
       ) {
         if (!permissions().includes("admin")) {
+          playSound("/assets/sounds/card-limit.wav");
           return;
         }
       }
 
-      this.selectedDeck.cards.push(this.selected.uid);
+      this.selectedDeck.cards.push(card.uid);
+      playSound("/assets/sounds/card-added.mp3");
     },
 
-    tryRemoveCard() {
-      if (!this.selectedFromDeck) {
-        return;
-      }
+    tryRemoveCard(card) {
+      let uid = card.uid;
+      let toSlice = this.selectedDeck.cards.indexOf(uid);
+      if (toSlice < 0) return;
 
-      let toSlice = -1;
-      for (let i = 0; i < this.selectedDeck.cards.length; i++) {
-        if (this.selectedDeck.cards[i] === this.selectedFromDeck.uid) {
-          toSlice = i;
-        }
-      }
-      if (toSlice < 0) {
-        return;
-      }
-
+      playSound("/assets/sounds/card-removed.wav");
       this.selectedDeck.cards.splice(toSlice, 1);
+      if (this.selectedDeck.cards.indexOf(uid) < 0 && this.previewCard.uid === uid ) {
+        this.previewCard = null 
+      }
+    },
+
+    modifyCatalogueCardSize(addition) {
+      this.cardSize += addition
     },
 
     copyDeckList() {
@@ -604,18 +523,32 @@ export default {
         call({ path: "/cards", method: "GET" }),
         call({ path: "/decks", method: "GET" })
       ]);
-
       let sets = {};
+      let cardsCiv = {
+        "light": [],
+        "darkness": [],
+        "nature": [],
+        "fire": [],
+        "water": [],
+      };
       for (let card of cards.data) {
+        cardsCiv[card.civilization.toLowerCase()].push(card);
         if (!sets[card.set]) {
           sets[card.set] = true;
         }
       }
       this.sets = Object.keys(sets);
-      this.sets.push("All");
+      this.sets.push(ALL_SETS);
       this.sets.sort();
 
-      this.cards = cards.data;
+      let sortedCards = [];
+      Object.values(cardsCiv).forEach(
+        civSet => sortedCards.push(...civSet.sort((c1, c2) => 
+          compareCards(c1, c2, { by: "manaCost", directionNum: 1 })
+        ))
+      );
+
+      this.cards = sortedCards;
       this.decks = decks.data;
 
       if (this.decks.length < 1) {
@@ -664,17 +597,18 @@ export default {
         card.name.toLowerCase().includes(this.filterCardName.toLowerCase())
       );
 
-      if (this.filterSet !== "All") {
+      if (this.filterSet !== ALL_SETS) {
         cards = cards.filter(card => card.set === this.filterSet);
       }
 
-      if (this.filterCivilization !== "all") {
+      let filterCivilizationValues = Object.values(this.filterCivilization);
+      if (!(filterCivilizationValues.every(v => v === filterCivilizationValues[0]))) {
         cards = cards.filter(
-          card => card.civilization === this.filterCivilization
+          card => this.filterCivilization[card.civilization] 
         );
       }
 
-      if (this.filterFamily.toLowerCase() !== "all") {
+      if (this.filterFamily.toLowerCase() !== ALL_FAMILIES.toLowerCase()) {
         cards = cards.filter(
           card => 
             (this.filterFamily.toLowerCase() === "spell" && !card.family) || 
@@ -682,46 +616,34 @@ export default {
         );
       }
 
-      cards.sort((c1, c2) => compareCards(c1, c2, this.sort));
+      let filterManaValues = Object.values(this.filterMana);
+      if (!(filterManaValues.every(v => v === filterManaValues[0]))) {
+        cards = cards.filter(
+          card => {
+            if (card.manaCost > 6)
+              return this.filterMana['7+'];
+            else
+              return this.filterMana[card.manaCost.toString()];
+          } 
+        );
+      }
 
       return cards;
     },
-
-    sortIcons() {
-      const result = {
-        name: "arrow_up_down",
-        set: "arrow_up_down",
-        civilization: "arrow_up_down",
-        manaCost: "arrow_up_down",
-        family: "arrow_up_down"
-      };
-
-      result[this.sort.by] =
-        this.sort.directionNum === 1 ? "arrow_down" : "arrow_up";
-
-      return result;
-    },
-
-    sortDeckIcons() {
-      const result = {
-        count: "arrow_up_down",
-        name: "arrow_up_down",
-        set: "arrow_up_down",
-        civilization: "arrow_up_down",
-        manaCost: "arrow_up_down",
-        family: "arrow_up_down"
-      };
-
-      result[this.sortForDeck.by] =
-        this.sortForDeck.directionNum === 1 ? "arrow_down" : "arrow_up";
-
-      return result;
-    }
   }
 };
 </script>
 
 <style scoped lang="scss">
+
+$catalogue-main-color: #b8b7b7;
+$catalogue-secondary-color: #e0dede;
+$civ-nature-base-color: #118141;
+$civ-fire-base-color: #D12027;
+$civ-water-base-color: #47C6F2;
+$civ-light-base-color: #FAD241;
+$civ-darkness-base-color: #65696C;
+
 .helper {
   display: block !important;
   margin-bottom: 5px;
@@ -740,35 +662,6 @@ export default {
   display: block;
 }
 
-.arrow-green {
-  width: 40px;
-  height: 40px;
-  margin: 0 auto;
-  background: url("/assets/images/arrow_green_icon.png");
-  background-size: cover;
-  transform: rotate(0deg) scaleX(-1);
-  opacity: 0.8;
-}
-
-.arrow-red {
-  width: 40px;
-  height: 40px;
-  margin: 0 auto;
-  background: url("/assets/images/arrow_red_icon.png");
-  background-size: cover;
-  transform: rotate(0deg) scaleX(-1);
-  opacity: 0.8;
-}
-
-.arrow-green:hover {
-  cursor: pointer;
-  opacity: 1;
-}
-
-.arrow-red:hover {
-  cursor: pointer;
-  opacity: 1;
-}
 
 .edit-ico {
   filter: invert(70%);
@@ -783,8 +676,80 @@ export default {
   float: left;
 }
 
-.right-btns {
-  text-align: right;
+.zoom-icons {
+  display: inline-flex;
+  align-items: flex-end;
+  align-self: end;
+  padding: 5px 10px 5px 10px;
+  margin-right: 10px;
+  margin-left: 5px;
+  justify-content: space-between;
+  gap: 10px;
+  background-color: $catalogue-main-color;
+}
+
+.zoom-icon {
+  width: 25px;
+}
+
+.reset-icon {
+  width: 35px;
+  margin-left: 20px;
+  background-color: lightsalmon;
+  cursor: pointer;
+}
+
+.civ-filter {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  display: inline-block;
+  margin-left: 5px;
+  cursor: pointer;
+  border: 4px solid $catalogue-secondary-color;
+}
+
+.civ-filter-selected {
+  border: 4px solid black;
+}
+
+.civ-color-fire {
+  background-color: $civ-fire-base-color;
+}
+
+.civ-color-water {
+  background-color: $civ-water-base-color;
+}
+
+.civ-color-light {
+  background-color: $civ-light-base-color;
+}
+
+.civ-color-darkness {
+  background-color: $civ-darkness-base-color;
+}
+
+.civ-color-nature {
+  background-color: $civ-nature-base-color;
+}
+
+.mana-filter {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 5px;
+  cursor: pointer;
+  color: white  ;
+  background-color: black;
+  font-weight: 600;
+  border: 4px solid $catalogue-secondary-color;
+}
+
+.mana-filter-selected {
+  border: 4px solid orange;
 }
 
 .new {
@@ -822,21 +787,16 @@ export default {
 }
 
 .right-content {
-  width: 100%;
-  height: calc(100% - 40px);
+  height: calc(100% - 20px);
   margin-top: 10px;
-  overflow: auto;
-}
-
-.right-content table {
-  padding-top: 10px !important;
+  overflow-y: auto;
 }
 
 .card-preview {
   width: 300px;
   text-align: center;
   border-radius: 4px;
-  height: 480px;
+  height: 420px;
   z-index: 2005;
   position: absolute;
   left: calc(50% - 150px);
@@ -846,7 +806,6 @@ export default {
 .card-preview > img {
   width: 300px;
   border-radius: 15px;
-  margin-bottom: 10px;
 }
 
 .overlay {
@@ -890,13 +849,6 @@ select option {
   background: #111;
 }
 
-th {
-  input,
-  select {
-    margin: 0;
-    width: 100% !important;
-  }
-}
 
 input:focus,
 textarea:focus,
@@ -909,59 +861,164 @@ select:active {
   outline: none;
 }
 
-table {
-  font-family: arial, sans-serif;
-  border-collapse: collapse;
+.deck-crud-buttons {
+  display: inline-flex;
+  align-items: center;
+}
+
+.deck-secondary-buttons {
+  display: inline-flex;
+}
+
+.deck-card-total {
+  padding: 2px;
+  background-color: lightgray;
+  color: black;
+}
+
+.deck-card-slot {
+  display: flex;
+  margin-bottom: 4px;
+  align-items: center;
   width: 100%;
-  font-size: 14px;
-  user-select: none;
-  max-height: calc(100vh - 115px);
-  overflow: scroll;
 }
 
-td,
-th {
-  border: 1px solid #1D202A;
-  text-align: left;
-  padding: 8px;
+.deck-card-oval {
+  border-radius: 10px / 20px;
+  color: #000;
+  padding-left: 7px;
+  padding-right: 3px;
+  border: 3px solid;
+  flex-grow: 1;
+  display: inline-flex;
+  justify-content: space-between;
+  align-items: center;
   cursor: pointer;
+  min-width: 0;
 }
 
-.bg {
-  background: url(/assets/images/overlay_30.png);
-  border-radius: 4px;
+.deck-card-name {
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+  font-size: 17px;
+  font-family: "Perceval Bold", "Roboto", sans-serif;
 }
 
-.left,
+.deck-card-mana {
+  display: inline-block;
+  background-color: black;
+  color: white;
+  font-weight: 600;
+  border-radius: 50%;
+  padding-left: 7px;
+  padding-right: 7px;
+  margin-top: 2px;
+  margin-bottom: 2px;
+}
+
+.deck-card-counter {
+  border-radius: 10px / 20px;
+  color: black;
+  padding-left: 6px;
+  padding-right: 9px;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  background: radial-gradient(40% 100% at right, transparent 50%, lightgray 51%);
+  display: inline-block;
+  flex-grow: 0;
+  margin-right: -3px;
+}
+
+.card-fire {
+  border-color: $civ-fire-base-color;
+  background: radial-gradient(#F0DDD5 0%, #E39E7F 80%, $civ-fire-base-color 100%);
+}
+
+.card-nature {
+  border-color: $civ-nature-base-color;
+  background: radial-gradient(#E1EBD0 0%, #84C188 80%, $civ-nature-base-color 100%);
+}
+
+.card-water {
+  border-color: $civ-water-base-color;
+  background: radial-gradient(#D4EDF8 0%, #93D4DE 80%, $civ-water-base-color 100%);
+}
+
+.card-darkness {
+  border-color: $civ-darkness-base-color;
+  background: radial-gradient(#CCD1D5 0%, #CACFD2 80%, $civ-darkness-base-color 100%);
+}
+
+.card-light {
+  border-color: $civ-light-base-color;
+  background: radial-gradient(#FCF7D0 0%, #FBF396 80%, $civ-light-base-color 100%);
+}
+
 .right {
+  display: inline-block;
+  height: calc(100vh - 110px);
+  overflow-y: auto;
+  width: calc(20% - 10px);
+  max-width: 380px;
+  flex-shrink: 0;
+}
+
+.catalogue {
   display: inline-block;
   height: calc(100vh - 115px);
-  overflow: auto;
+  min-width: calc(80% - 10px);
+  background-color: $catalogue-main-color;
+  margin-right: 20px;
+  flex-grow: 1;
 }
 
-.cards-table {
-  margin: 10px;
-  width: calc(100% - 10px * 2);
+.catalogue-cards-wrapper {
+  overflow-y: auto;
+  width: 100%;
+  height: 100%;
+  background-color: $catalogue-main-color;
 }
 
-.left {
-  width: calc(50% - 100px / 2);
+.catalogue-cards {
+  width: calc(100% - 10px);
+  display: inline-flex;
+  flex-wrap:wrap;
+  gap: 5px;
+  justify-content: space-evenly;
+  
+  padding: 5px;
 }
 
-.middle {
-  display: inline-block;
-  width: 100px;
-  text-align: center;
-  overflow: auto;
-  height: calc(52vh - 115px / 2);
+.catalogue-top-bar {
+  display: flex;
+  justify-content: space-between;
+  background-color: $catalogue-secondary-color;
 }
 
-.right {
-  width: calc(50% - 100px / 2);
+.catalogue-filters {
+  margin-left: 10px;
+  flex-wrap: wrap;
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 0;
+}
+
+.catalogue-filter {
+  background-color: black;
+  color: white;
+}
+
+.catalogue-card {
+  aspect-ratio: 264/367;
+  margin-bottom: 5px;
+  cursor: pointer;
 }
 
 .main {
   margin: 0 15px;
+  display: flex;
+  align-items: flex-start;
 }
 
 .new-duel .backdrop {
@@ -1128,23 +1185,6 @@ a {
   white-space: pre-wrap;
 }
 
-.sort-btn {
-  white-space: nowrap;
-  margin-bottom: 10px;
-  display: flex;
-  align-items: center;
-
-  .sort-ico {
-    margin-left: 5px;
-    filter: invert(70%);
-
-    &:hover {
-      filter: invert(80%);
-      cursor: pointer;
-    }
-  }
-}
-
 .btn {
   display: inline-block;
   background: #5865F2;
@@ -1164,16 +1204,5 @@ a {
 
 .btn:active {
   background: #4c58d3 !important;
-}
-
-.set {
-  text-transform: uppercase;
-}
-
-.family {
-}
-
-.civilization {
-  text-transform: capitalize;
 }
 </style>
