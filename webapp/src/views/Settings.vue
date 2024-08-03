@@ -136,9 +136,9 @@
 </template>
 
 <script>
-import Header from "../components/Header";
-import MuteIcon from "../components/MuteIcon";
-import { getSettings, setSettings, patchSettings } from "../helpers/settings";
+import Header from "../components/Header.vue";
+import MuteIcon from "../components/MuteIcon.vue";
+import { getSettings, patchSettings } from "../helpers/settings";
 import { call } from "../remote";
 
 export default {
@@ -235,7 +235,7 @@ export default {
     addEventListener("storage", this.refresh);
   },
 
-  beforeDestroy() {
+  beforeUnmount() {
     removeEventListener("storage", this.refresh);
   }
 };
