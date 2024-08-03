@@ -2,7 +2,6 @@
 
 ## [Unreleased]
 
-- No unreleased changes
 - New card "Vess, the Oracle" (thanks @jyotiskaghosh)
 - New card "Yuluk, the Oracle" (thanks @jyotiskaghosh)
 - Removed doublebreaker from "Moontear Spectral Knight" (thanks @jyotiskaghosh)
