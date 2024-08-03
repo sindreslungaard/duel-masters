@@ -33,7 +33,8 @@ export const getSettings = () =>
       JSON.stringify({
         muted: [],
         didMute: false,
-        noUpsideDownCards: false
+        noUpsideDownCards: false,
+        newDeckBuilder: false,
       })
   );
 
