@@ -1,14 +1,11 @@
-import Vue from "vue";
-import Router from "vue-router";
-import axios from "axios";
+import { createRouter, createWebHistory } from "vue-router";
 import { call } from "./remote";
 import { store } from "./store";
+import { getSettings } from "./helpers/settings";
 
-Vue.use(Router);
 
-const router = new Router({
-  mode: "history",
-  base: process.env.BASE_URL,
+const router = createRouter({
+  history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
       path: "/",
@@ -62,7 +59,12 @@ const router = new Router({
     {
       path: "/decks",
       name: "decks",
-      component: () => import("./views/Decks.vue"),
+      component: () => {
+        if (getSettings().newDeckBuilder) {
+          return import("./views/DecksNew.vue")
+        }  
+        return import("./views/Decks.vue")
+      },
       meta: { auth: true }
     },
 

@@ -7,6 +7,13 @@
 <style>
 /* prettier-ignore */
 @import url(https://fonts.googleapis.com/css?family=Roboto:300,400,500,600,700);
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+@font-face {
+  font-family: 'Perceval Bold';
+  src: url('/assets/fonts/PercevalBold.ttf');
+}
 
 html {
   min-height: 100%;

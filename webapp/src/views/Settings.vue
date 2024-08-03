@@ -90,6 +90,17 @@
               Flip all cards that would otherwise be upside down
             </label>
           </div>
+          <div class="checkbox-container">
+            <input
+              type="checkbox"
+              id="newDeckBuilder"
+              :checked="settings.newDeckBuilder"
+              @change="setNewDeckBuilder($event)"
+            />
+            <label for="newDeckBuilder">
+              Use catalogue style deck builder. (When loading it the first time it can be slow depending on your internet)
+            </label>
+          </div>
         </div>
       </div>
     </div>
@@ -136,9 +147,9 @@
 </template>
 
 <script>
-import Header from "../components/Header";
-import MuteIcon from "../components/MuteIcon";
-import { getSettings, setSettings, patchSettings } from "../helpers/settings";
+import Header from "../components/Header.vue";
+import MuteIcon from "../components/MuteIcon.vue";
+import { getSettings, patchSettings } from "../helpers/settings";
 import { call } from "../remote";
 
 export default {
@@ -168,6 +179,11 @@ export default {
 
     setUpsideDownCards(e) {
       patchSettings({ noUpsideDownCards: e.target.checked });
+    },
+
+    setNewDeckBuilder(e) {
+      patchSettings({ newDeckBuilder: e.target.checked });
+      location.reload();
     },
 
     async changePassword() {
@@ -235,7 +251,7 @@ export default {
     addEventListener("storage", this.refresh);
   },
 
-  beforeDestroy() {
+  beforeUnmount() {
     removeEventListener("storage", this.refresh);
   }
 };
