@@ -32,3 +32,16 @@ func MightyBanditAceOfThieves(c *match.Card) {
 		}
 	}))
 }
+
+func InnocentHunterBladeOfAll(c *match.Card) {
+
+	c.Name = "Innocent Hunter, Blade Of All"
+	c.Power = 1000
+	c.Civ = civ.Nature
+	c.Family = []string{family.BeastFolk}
+	c.ManaCost = 4
+	c.ManaRequirement = []string{civ.Nature}
+
+	c.Use(fx.Creature, fx.EvolveIntoAnyFamily)
+
+}
