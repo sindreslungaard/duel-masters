@@ -28,9 +28,7 @@ func RikabusScrewdriver(c *match.Card) {
 	c.Family = []string{family.Xenoparts}
 	c.ManaCost = 2
 	c.ManaRequirement = []string{civ.Fire}
-	c.TapAbility = true
-
-	c.Use(fx.Creature, fx.When(fx.TapAbility, func(card *match.Card, ctx *match.Context) {
+	c.TapAbility = func(card *match.Card, ctx *match.Context) {
 		fx.SelectFilter(
 			card.Player,
 			ctx.Match,
@@ -43,7 +41,8 @@ func RikabusScrewdriver(c *match.Card) {
 			func(x *match.Card) bool { return x.HasCondition(cnd.Blocker) },
 		).Map(func(x *match.Card) {
 			ctx.Match.Destroy(x, card, match.DestroyedByMiscAbility)
-			card.Tapped = true
 		})
-	}))
+	}
+
+	c.Use(fx.Creature, fx.TapAbility)
 }

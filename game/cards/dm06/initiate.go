@@ -85,9 +85,7 @@ func ChenTregVizierOfBlades(c *match.Card) {
 	c.Family = []string{family.Initiate}
 	c.ManaCost = 5
 	c.ManaRequirement = []string{civ.Light}
-	c.TapAbility = true
-
-	c.Use(fx.Creature, fx.When(fx.TapAbility, func(card *match.Card, ctx *match.Context) {
+	c.TapAbility = func(card *match.Card, ctx *match.Context) {
 
 		creatures := match.Search(card.Player, ctx.Match, ctx.Match.Opponent(card.Player), match.BATTLEZONE, "Chen Treg, Vizier of Blades: Select 1 of your opponent's creature and tap it.", 1, 1, false)
 
@@ -95,6 +93,7 @@ func ChenTregVizierOfBlades(c *match.Card) {
 			creature.Tapped = true
 		}
 
-		card.Tapped = true
-	}))
+	}
+
+	c.Use(fx.Creature, fx.TapAbility)
 }
