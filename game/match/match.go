@@ -662,11 +662,20 @@ func (m *Match) NewBacksideAction(player *Player, cards []*Card, minSelections i
 
 // NewMultipartAction prompts the user to make a selection of the specified {string: []Cards}
 func (m *Match) NewMultipartAction(player *Player, cards map[string][]*Card, minSelections int, maxSelections int, text string, cancellable bool) {
+	m.newMultipartActionBase(player, cards, minSelections, maxSelections, text, cancellable, false)
+}
+
+// NewMultipartAction prompts the user to make a selection of the specified {string: []Cards}
+func (m *Match) NewMultipartActionBackside(player *Player, cards map[string][]*Card, minSelections int, maxSelections int, text string, cancellable bool) {
+	m.newMultipartActionBase(player, cards, minSelections, maxSelections, text, cancellable, true)
+}
+
+func (m *Match) newMultipartActionBase(player *Player, cards map[string][]*Card, minSelections int, maxSelections int, text string, cancellable bool, backsideOnly bool) {
 
 	cardMap := make(map[string][]server.CardState)
 
 	for key, cards := range cards {
-		cardMap[key] = denormalizeCards(cards, false)
+		cardMap[key] = denormalizeCards(cards, backsideOnly)
 	}
 
 	msg := &server.MultipartActionMessage{
