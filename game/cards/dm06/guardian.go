@@ -101,3 +101,44 @@ func LuGilaSilverRiftGuardian(c *match.Card) {
 	})
 
 }
+
+func ArcBinetheAstounding(c *match.Card) {
+
+	c.Name = "Arc Bine, the Astounding"
+	c.Power = 5000
+	c.Civ = civ.Light
+	c.Family = []string{family.Guardian}
+	c.ManaCost = 5
+	c.ManaRequirement = []string{civ.Light}
+	c.TapAbility = arcBinetheAstoundingSpecialAbility
+
+	c.Use(fx.Creature, fx.Evolution, fx.TapAbility,
+		fx.When(fx.Summoned, func(card *match.Card, ctx *match.Context) {
+
+			fx.GiveTapAbilityToAllies(
+				card,
+				ctx,
+				func(x *match.Card) bool { return x.ID != card.ID && x.Civ == civ.Light },
+				arcBinetheAstoundingSpecialAbility,
+			)
+
+		}),
+	)
+
+}
+
+func arcBinetheAstoundingSpecialAbility(card *match.Card, ctx *match.Context) {
+	creatures := fx.Select(
+		card.Player,
+		ctx.Match,
+		ctx.Match.Opponent(card.Player),
+		match.BATTLEZONE,
+		"Select 1 of your opponent's creature and tap it.",
+		1,
+		1,
+		false)
+
+	for _, creature := range creatures {
+		creature.Tapped = true
+	}
+}

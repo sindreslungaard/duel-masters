@@ -36,7 +36,7 @@ type Card struct {
 	ManaCost        int
 	ManaRequirement []string
 	PowerModifier   func(m *Match, attacking bool) int
-	TapAbility      bool
+	TapAbility      func(card *Card, ctx *Context)
 
 	attachedCards []*Card
 	conditions    []Condition
