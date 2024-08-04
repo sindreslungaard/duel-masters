@@ -63,9 +63,7 @@ func GrimSoulShadowOfReversal(c *match.Card) {
 	c.Family = []string{family.Ghost}
 	c.ManaCost = 5
 	c.ManaRequirement = []string{civ.Darkness}
-	c.TapAbility = true
-
-	c.Use(fx.Creature, fx.When(fx.TapAbility, func(card *match.Card, ctx *match.Context) {
+	c.TapAbility = func(card *match.Card, ctx *match.Context) {
 
 		fx.SelectFilter(
 			card.Player,
@@ -80,10 +78,10 @@ func GrimSoulShadowOfReversal(c *match.Card) {
 		).Map(func(x *match.Card) {
 			card.Player.MoveCard(x.ID, match.GRAVEYARD, match.HAND, card.ID)
 			ctx.Match.Chat("Server", fmt.Sprintf("%s was moved to %s's hand from their graveyard by Grim Soul, Shadow of Reversal", x.Name, card.Player.Username()))
-			card.Tapped = true
-
 		})
-	}))
+	}
+
+	c.Use(fx.Creature, fx.TapAbility)
 }
 
 func LoneTearShadowOfSolitude(c *match.Card) {
