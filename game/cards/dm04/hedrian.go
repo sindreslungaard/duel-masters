@@ -6,7 +6,6 @@ import (
 	"duel-masters/game/fx"
 	"duel-masters/game/match"
 	"fmt"
-	"math/rand"
 )
 
 // Locomotiver ...
@@ -19,21 +18,7 @@ func Locomotiver(c *match.Card) {
 	c.ManaCost = 4
 	c.ManaRequirement = []string{civ.Darkness}
 
-	c.Use(fx.Creature, fx.ShieldTrigger, fx.When(fx.Summoned, func(card *match.Card, ctx *match.Context) {
-
-		hand, err := ctx.Match.Opponent(card.Player).Container(match.HAND)
-
-		if err != nil {
-			return
-		}
-
-		if len(hand) > 0 {
-			discardedCard, err := ctx.Match.Opponent(card.Player).MoveCard(hand[rand.Intn(len(hand))].ID, match.HAND, match.GRAVEYARD, card.ID)
-			if err == nil {
-				ctx.Match.Chat("Server", fmt.Sprintf("%s was discarded from %s's hand", discardedCard.Name, discardedCard.Player.Username()))
-			}
-		}
-	}))
+	c.Use(fx.Creature, fx.ShieldTrigger, fx.When(fx.Summoned, fx.OpponentDiscardsRandomCard))
 }
 
 // MongrelMan ...

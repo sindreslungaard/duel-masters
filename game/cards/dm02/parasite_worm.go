@@ -5,8 +5,6 @@ import (
 	"duel-masters/game/family"
 	"duel-masters/game/fx"
 	"duel-masters/game/match"
-	"fmt"
-	"math/rand"
 )
 
 // ChaosWorm ...
@@ -62,18 +60,7 @@ func HorridWorm(c *match.Card) {
 	c.ManaCost = 3
 	c.ManaRequirement = []string{civ.Darkness}
 
-	c.Use(fx.Creature, fx.When(fx.AttackConfirmed, func(card *match.Card, ctx *match.Context) {
-		hand := fx.Find(ctx.Match.Opponent(card.Player), match.HAND)
-
-		if len(hand) < 1 {
-			return
-		}
-
-		discardedCard, err := ctx.Match.Opponent(card.Player).MoveCard(hand[rand.Intn(len(hand))].ID, match.HAND, match.GRAVEYARD, card.ID)
-		if err == nil {
-			ctx.Match.Chat("Server", fmt.Sprintf("%s was discarded from %s's hand by Horrid Worm", discardedCard.Name, discardedCard.Player.Username()))
-		}
-	}))
+	c.Use(fx.Creature, fx.When(fx.AttackConfirmed, fx.OpponentDiscardsRandomCard))
 
 }
 

@@ -6,7 +6,6 @@ import (
 	"duel-masters/game/fx"
 	"duel-masters/game/match"
 	"fmt"
-	"math/rand"
 )
 
 // BallomMasterOfDeath ...
@@ -58,19 +57,7 @@ func TroxGeneralOfDestruction(c *match.Card) {
 			card.Player,
 			match.BATTLEZONE,
 			func(x *match.Card) bool { return x.Civ == civ.Darkness && x.ID != card.ID },
-		).Map(func(x *match.Card) {
-			hand, err := ctx.Match.Opponent(card.Player).Container(match.HAND)
-			if err != nil || len(hand) == 0 {
-				return
-			}
-
-			discarded, err := ctx.Match.Opponent(card.Player).MoveCard(hand[rand.Intn(len(hand))].ID, match.HAND, match.GRAVEYARD, card.ID)
-			if err != nil {
-				return
-			}
-
-			ctx.Match.Chat("Server", fmt.Sprintf("%s was discarded from %s's hand by Trox, General of Destruction", discarded.Name, discarded.Player.Username()))
-		})
+		).Map(func(x *match.Card) { fx.OpponentDiscardsRandomCard(card, ctx) })
 
 	}))
 }
