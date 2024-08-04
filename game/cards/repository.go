@@ -506,4 +506,5 @@ var DM06 = map[string]match.CardConstructor{
 	"8b7fc29b-d79c-4b08-a88e-9d055d02c6e8": dm06.CoccoLupia,
 	"38617d18-b12a-4618-8a26-3effab948fcb": dm06.VessTheOracle,
 	"a8dbcc5e-a9e8-4cc6-8b87-3b53a5701371": dm06.YulukTheOracle,
+	"7732053b-6ec5-4a62-a5c1-cccff5583366": dm06.LivingCitadelVosh,
 }

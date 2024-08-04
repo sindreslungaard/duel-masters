@@ -22,4 +22,5 @@ const (
 	IncreasedCost       = "increased_cost"
 	Evolution           = "evolution"
 	Survivor            = "survivor"
+	TapAbility          = "tap_ability"
 )
