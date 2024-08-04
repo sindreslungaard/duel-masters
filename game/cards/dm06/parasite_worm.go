@@ -17,7 +17,6 @@ func GraveWormQ(c *match.Card) {
 	c.Family = []string{family.ParasiteWorm, family.Survivor}
 	c.ManaCost = 5
 	c.ManaRequirement = []string{civ.Darkness}
-	c.TapAbility = true
 
 	c.Use(fx.Creature, fx.Survivor, func(card *match.Card, ctx *match.Context) {
 

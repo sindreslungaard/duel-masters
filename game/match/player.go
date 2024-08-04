@@ -612,7 +612,7 @@ func denormalizeCards(cards []*Card, partial bool) []server.CardState {
 			flags |= TappedFlag
 		}
 
-		if card.TapAbility {
+		if card.HasCondition(cnd.TapAbility) {
 			flags |= TapAbilityFlag
 		}
 

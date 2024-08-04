@@ -82,6 +82,12 @@ func LeQuistTheOracle(c *match.Card) {
 				x.Tapped = true
 			})
 
+			fx.FindFilter(card.Player, match.BATTLEZONE, func(x *match.Card) bool {
+				return x.ID == toTap
+			}).Map(func(x *match.Card) {
+				x.Tapped = true
+			})
+
 			toTap = ""
 
 		}
