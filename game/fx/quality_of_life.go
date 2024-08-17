@@ -128,6 +128,15 @@ func SelectFilter(p *match.Player, m *match.Match, containerOwner *match.Player,
 
 // SelectMultipart prompts the user to select n cards from the specified list of cards
 func SelectMultipart(p *match.Player, m *match.Match, cards map[string][]*match.Card, text string, min int, max int, cancellable bool) CardCollection {
+	return selectMultipartBase(p, m, cards, text, min, max, cancellable, false)
+}
+
+// SelectMultipart prompts the user to select n cards from the specified list of cards
+func SelectMultipartBackside(p *match.Player, m *match.Match, cards map[string][]*match.Card, text string, min int, max int, cancellable bool) CardCollection {
+	return selectMultipartBase(p, m, cards, text, min, max, cancellable, true)
+}
+
+func selectMultipartBase(p *match.Player, m *match.Match, cards map[string][]*match.Card, text string, min int, max int, cancellable bool, backsideOnly bool) CardCollection {
 
 	result := make([]*match.Card, 0)
 
@@ -139,11 +148,15 @@ func SelectMultipart(p *match.Player, m *match.Match, cards map[string][]*match.
 		}
 	}
 
-	if notEmpty != true {
+	if !notEmpty {
 		return result
 	}
 
-	m.NewMultipartAction(p, cards, min, max, text, cancellable)
+	if backsideOnly {
+		m.NewMultipartActionBackside(p, cards, min, max, text, cancellable)
+	} else {
+		m.NewMultipartAction(p, cards, min, max, text, cancellable)
+	}
 
 	defer m.CloseAction(p)
 
