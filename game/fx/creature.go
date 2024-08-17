@@ -492,6 +492,14 @@ func Creature(card *match.Card, ctx *match.Context) {
 			return
 		}
 
+		// According to this https://duelmasters.fandom.com/wiki/Tap_Ability#Details if a creature
+		// can't legally attack, it can't use a tap ability either.
+		if card.HasCondition(cnd.CantAttackCreatures) && card.HasCondition(cnd.CantAttackPlayers) {
+			ctx.Match.WarnPlayer(card.Player, "A card that can't attack can't use tap abilities")
+			ctx.InterruptFlow()
+			return
+		}
+
 		// Do this last in case any other cards want to interrupt the flow
 		ctx.ScheduleAfter(func() {
 
