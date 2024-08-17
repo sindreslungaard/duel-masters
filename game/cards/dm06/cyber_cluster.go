@@ -17,14 +17,12 @@ func NeonCluster(c *match.Card) {
 	c.Family = []string{family.CyberCluster}
 	c.ManaCost = 7
 	c.ManaRequirement = []string{civ.Water}
-	c.TapAbility = true
-
-	c.Use(fx.Creature, fx.When(fx.TapAbility, func(card *match.Card, ctx *match.Context) {
+	c.TapAbility = func(card *match.Card, ctx *match.Context) {
 		ctx.Match.Chat("Server", fmt.Sprintf("%s activated %s's tap ability to draw 2 cards", card.Player.Username(), card.Name))
 		card.Player.DrawCards(2)
-		card.Tapped = true
-	}))
+	}
 
+	c.Use(fx.Creature, fx.TapAbility)
 }
 
 func OverloadCluster(c *match.Card) {
@@ -73,4 +71,33 @@ func ReceiveBlockerWhenOpponentPlaysCard(card *match.Card, ctx *match.Context, p
 		card.AddCondition(cnd.Blocker, nil, card.ID)
 	})
 
+}
+
+func FortMegacluster(c *match.Card) {
+
+	c.Name = "Fort Megacluster"
+	c.Power = 5000
+	c.Civ = civ.Water
+	c.Family = []string{family.CyberCluster}
+	c.ManaCost = 5
+	c.ManaRequirement = []string{civ.Water}
+	c.TapAbility = fortMegaclusterTapAbility
+
+	c.Use(fx.Creature, fx.Evolution, fx.TapAbility,
+		fx.When(fx.Summoned, func(card *match.Card, ctx *match.Context) {
+
+			fx.GiveTapAbilityToAllies(
+				card,
+				ctx,
+				func(x *match.Card) bool { return x.ID != card.ID && x.Civ == civ.Water },
+				fortMegaclusterTapAbility,
+			)
+
+		}),
+	)
+}
+
+func fortMegaclusterTapAbility(card *match.Card, ctx *match.Context) {
+	card.Player.DrawCards(1)
+	ctx.Match.Chat("Server", fmt.Sprintf("%s activated %s's tap ability to draw 1 cards", card.Player.Username(), card.Name))
 }

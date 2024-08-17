@@ -969,7 +969,7 @@ func (m *Match) AttackPlayer(p *PlayerReference, cardID string) {
 
 }
 
-// AttackCreature is called when the player attempts to attack the opposing player
+// AttackCreature is called when the player attempts to attack an opposing creature
 func (m *Match) AttackCreature(p *PlayerReference, cardID string) {
 
 	_, err := p.Player.GetCard(cardID, BATTLEZONE)

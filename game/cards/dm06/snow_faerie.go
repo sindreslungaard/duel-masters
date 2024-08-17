@@ -17,9 +17,7 @@ func CharmiliaTheEnticer(c *match.Card) {
 	c.Family = []string{family.SnowFaerie}
 	c.ManaCost = 4
 	c.ManaRequirement = []string{civ.Nature}
-	c.TapAbility = true
-
-	c.Use(fx.Creature, fx.When(fx.TapAbility, func(card *match.Card, ctx *match.Context) {
+	c.TapAbility = func(card *match.Card, ctx *match.Context) {
 
 		cards := match.Filter(
 			card.Player,
@@ -39,8 +37,9 @@ func CharmiliaTheEnticer(c *match.Card) {
 		}
 
 		card.Player.ShuffleDeck()
-		card.Tapped = true
-	}))
+	}
+
+	c.Use(fx.Creature, fx.TapAbility)
 }
 
 func GarabonTheGlider(c *match.Card) {
