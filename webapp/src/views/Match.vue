@@ -76,7 +76,7 @@
     <!-- action (card selection) -->
     <div v-if="action" id="action" class="action noselect">
       <span v-draggable data-ref="action">{{ action.text }}</span>
-      <span v-if="action.cards"
+      <span v-if="action.cards && action.maxSelections > 0"
         ><i> Tip: click and drag to (de)select faster</i></span
       >
       <template v-if="actionObject">
