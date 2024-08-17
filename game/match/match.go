@@ -11,6 +11,8 @@ import (
 	"fmt"
 	"math/rand"
 	"runtime/debug"
+	"strconv"
+	"strings"
 	"time"
 
 	"github.com/sirupsen/logrus"
@@ -1250,51 +1252,7 @@ func (m *Match) Parse(s *server.Socket, data []byte) {
 				return
 			}
 
-			runes := []rune(msg.Message)
-			if string(runes[0:4]) == "/add" {
-
-				hasRights := false
-
-				for _, permission := range s.User.Permissions {
-					if permission == "admin" {
-						hasRights = true
-					}
-				}
-
-				if !hasRights {
-					return
-				}
-
-				// Spawn card
-				m.CurrentPlayer().Player.SpawnCard(string(runes[5:]))
-				m.BroadcastState()
-
-				return
-			}
-
-			if string(runes[0:5]) == "/mana" {
-
-				hasRights := false
-
-				for _, permission := range s.User.Permissions {
-					if permission == "admin" {
-						hasRights = true
-					}
-				}
-
-				if !hasRights {
-					return
-				}
-
-				for _, c := range m.CurrentPlayer().Player.hand {
-					m.CurrentPlayer().Player.MoveCard(c.ID, HAND, MANAZONE, "cmd /mana")
-					m.Chat("Server", fmt.Sprintf("%s was moved to %s's mana zone by an admin command", c.Name, s.User.Username))
-				}
-
-				m.BroadcastState()
-
-				return
-			}
+			m.handleAdminMesseges(msg.Message, s.User)
 
 			if s.User.Chatblocked {
 				s.Send(&server.ChatMessage{
@@ -1803,5 +1761,94 @@ func (p *PlayerReference) Dispose() {
 
 	if p.Socket != nil {
 		p.Socket.Close()
+	}
+}
+
+func (m *Match) handleAdminMesseges(message string, user db.User) {
+
+	hasRights := false
+
+	for _, permission := range user.Permissions {
+		if permission == "admin" {
+			hasRights = true
+		}
+	}
+
+	if !hasRights {
+		return
+	}
+
+	currentPlayer := m.CurrentPlayer().Player
+
+	if string(message[0:4]) == "/add" {
+
+		// Spawn card in hand
+		currentPlayer.SpawnCard(string(message[5:]), HAND)
+		m.BroadcastState()
+		return
+	}
+
+	// /mana hand - will add all the cards in your hand to the manazone
+	// /mana red 4 - add 4 fire mana
+	// /mana n - add 1 nature mana
+	// /mana imageID 3 - add 3 mana of that specific card
+	if string(message[0:5]) == "/mana" {
+
+		msgParts := strings.Split(message, " ")
+
+		var manaToAdd string
+		switch msgParts[1] {
+		case "hand":
+			for _, c := range currentPlayer.hand {
+				currentPlayer.MoveCard(c.ID, HAND, MANAZONE, "cmd /mana")
+				m.Chat("Server", fmt.Sprintf("%s was moved to %s's mana zone by an admin command", c.Name, user.Username))
+			}
+		case "fire", "f", "red":
+			manaToAdd = "af3bc221-1cc2-4f58-83ea-2673ac2c66c5"
+		case "water", "w", "blue":
+			manaToAdd = "9781089f-1aa9-4a75-b106-35e9d431e31d"
+		case "light", "l", "yellow":
+			manaToAdd = "7b58e8c2-0b1e-4ef5-812f-e667c2092c73"
+		case "darkness", "d", "black":
+			manaToAdd = "e2b992ee-91a3-49d3-8228-7be60a0b9ec5"
+		case "nature", "n", "green":
+			manaToAdd = "1d72eb3e-5185-449a-a16f-391bd2338343"
+		default:
+			manaToAdd = msgParts[1]
+		}
+
+		if manaToAdd != "" {
+			count := 1
+			if len(msgParts) > 2 {
+				number, err := strconv.Atoi(msgParts[2])
+				if err == nil && number <= 5 || number >= 1 {
+					count = number
+				}
+			}
+
+			for i := 0; i < count; i++ {
+				currentPlayer.SpawnCard(manaToAdd, MANAZONE)
+			}
+		}
+
+		m.BroadcastState()
+
+		return
+	}
+
+	if string(message[0:7]) == "/shield" {
+
+		// Spawn shield
+		currentPlayer.SpawnCard(string(message[8:]), SHIELDZONE)
+		m.BroadcastState()
+		return
+	}
+
+	if string(message[0:5]) == "/deck" {
+
+		// Spawn card in deck
+		m.CurrentPlayer().Player.SpawnCard(string(message[6:]), DECK)
+		m.BroadcastState()
+		return
 	}
 }
