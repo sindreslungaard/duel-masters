@@ -18,3 +18,27 @@ func Gigagriff(c *match.Card) {
 
 	c.Use(fx.Creature, fx.Blocker, fx.Slayer, fx.CantAttackPlayers, fx.CantAttackCreatures)
 }
+
+func PhantasmalHorrorGigazald(c *match.Card) {
+
+	c.Name = "Phantasmal Horror Gigazald"
+	c.Power = 5000
+	c.Civ = civ.Darkness
+	c.Family = []string{family.Chimera}
+	c.ManaCost = 5
+	c.ManaRequirement = []string{civ.Darkness}
+	c.TapAbility = fx.OpponentDiscardsRandomCard
+
+	c.Use(fx.Creature, fx.Evolution, fx.TapAbility,
+		fx.When(fx.Summoned, func(card *match.Card, ctx *match.Context) {
+
+			fx.GiveTapAbilityToAllies(
+				card,
+				ctx,
+				func(x *match.Card) bool { return x.ID != card.ID && x.Civ == civ.Darkness },
+				fx.OpponentDiscardsRandomCard,
+			)
+
+		}),
+	)
+}
