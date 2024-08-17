@@ -12,6 +12,9 @@
 - New card "Adomis, the Oracle" (thanks @DanieloV)
 - New card "Innocent Hunter, Blade Of All" (thanks @DanieloV)
 - Updated "Aqua Hulcus" to optionally draw instead of always drawing (thanks @DanieloV)
+- New card "Vess, the Oracle" (thanks @jyotiskaghosh)
+- New card "Yuluk, the Oracle" (thanks @jyotiskaghosh)
+- Removed doublebreaker from "Moontear Spectral Knight" (thanks @jyotiskaghosh)
 
 ## 02/08/2024
 

@@ -18,9 +18,7 @@ func BlissTotemAvatarOfLuck(c *match.Card) {
 	c.Family = []string{family.MysteryTotem}
 	c.ManaCost = 6
 	c.ManaRequirement = []string{civ.Nature}
-	c.TapAbility = true
-
-	c.Use(fx.Creature, fx.When(fx.TapAbility, func(card *match.Card, ctx *match.Context) {
+	c.TapAbility = func(card *match.Card, ctx *match.Context) {
 
 		fx.Select(
 			card.Player,
@@ -34,11 +32,11 @@ func BlissTotemAvatarOfLuck(c *match.Card) {
 		).Map(func(c *match.Card) {
 			card.Player.MoveCard(c.ID, match.GRAVEYARD, match.MANAZONE, card.ID)
 			ctx.Match.Chat("Server", fmt.Sprintf("%s was moved to %s's manazone by %s", c.Name, c.Player.Username(), card.Name))
-
-			card.Tapped = true
 		})
 
-	}))
+	}
+
+	c.Use(fx.Creature, fx.TapAbility)
 }
 
 func ClobberTotem(c *match.Card) {

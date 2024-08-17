@@ -247,7 +247,7 @@ func (p *Player) DestroyDeck() {
 
 // SpawnCard creates a new card from an id and adds it to the players hand
 // used for debugging and development
-func (p *Player) SpawnCard(id string) {
+func (p *Player) SpawnCard(id string, area string) {
 
 	p.mutex.Lock()
 
@@ -260,10 +260,23 @@ func (p *Player) SpawnCard(id string) {
 		return
 	}
 
-	c.Zone = HAND
+	c.Zone = area
 
-	p.hand = append(p.hand, c)
-
+	switch area {
+	case HAND:
+		p.hand = append(p.hand, c)
+	case MANAZONE:
+		p.manazone = append(p.manazone, c)
+	case SHIELDZONE:
+		p.shieldzone = append(p.shieldzone, c)
+		p.ShieldCounter = p.ShieldCounter + 1
+		p.ShieldMap[c.ID] = p.ShieldCounter
+	case DECK:
+		p.deck = append(p.deck, c)
+	default:
+		logrus.Warnf("Failed to create card with id %s - invalid area", id)
+		return
+	}
 }
 
 // ShuffleDeck randomizes the order of cards in the players deck
@@ -612,7 +625,7 @@ func denormalizeCards(cards []*Card, partial bool) []server.CardState {
 			flags |= TappedFlag
 		}
 
-		if card.TapAbility {
+		if card.HasCondition(cnd.TapAbility) {
 			flags |= TapAbilityFlag
 		}
 

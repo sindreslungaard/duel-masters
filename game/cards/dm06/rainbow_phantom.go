@@ -17,9 +17,7 @@ func CosmogoldSpectralKnight(c *match.Card) {
 	c.Family = []string{family.RainbowPhantom}
 	c.ManaCost = 4
 	c.ManaRequirement = []string{civ.Light}
-	c.TapAbility = true
-
-	c.Use(fx.Creature, fx.When(fx.TapAbility, func(card *match.Card, ctx *match.Context) {
+	c.TapAbility = func(card *match.Card, ctx *match.Context) {
 		fx.SelectFilter(
 			card.Player,
 			ctx.Match,
@@ -33,9 +31,10 @@ func CosmogoldSpectralKnight(c *match.Card) {
 		).Map(func(spell *match.Card) {
 			card.Player.MoveCard(spell.ID, match.MANAZONE, match.HAND, card.ID)
 			ctx.Match.Chat("Server", fmt.Sprintf("%s retrieved %s from the mana zone to their hand using %s's tap ability", spell.Player.Username(), spell.Name, card.Name))
-			card.Tapped = true
 		})
-	}))
+	}
+
+	c.Use(fx.Creature, fx.TapAbility)
 
 }
 
@@ -50,7 +49,7 @@ func MoontearSpectralKnight(c *match.Card) {
 
 	spellcast := false
 
-	c.Use(fx.Creature, fx.Doublebreaker, func(card *match.Card, ctx *match.Context) {
+	c.Use(fx.Creature, func(card *match.Card, ctx *match.Context) {
 
 		if _, ok := ctx.Event.(*match.SpellCast); ok {
 			spellcast = true
