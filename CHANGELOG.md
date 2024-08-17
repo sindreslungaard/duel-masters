@@ -2,7 +2,16 @@
 
 ## [Unreleased]
 
-- No unreleased changes
+- New card "Phantasmal Horror Gigazald" (thanks @DanieloV)
+- New card "Fort Megacluster" (thanks @DanieloV)
+- New card "Lava Walker Executo" (thanks @DanieloV)
+- New card "Arc Bine, the Astounding" (thanks @DanieloV)
+- New card "Tank Mutant" (thanks @DanieloV)
+- New card "Bazooka Mutant" (thanks @DanieloV)
+- New card "Armored Scout Gestuchar" (thanks @DanieloV)
+- New card "Adomis, the Oracle" (thanks @DanieloV)
+- New card "Innocent Hunter, Blade Of All" (thanks @DanieloV)
+- Updated "Aqua Hulcus" to optionally draw instead of always drawing (thanks @DanieloV)
 
 ## 02/08/2024
 
