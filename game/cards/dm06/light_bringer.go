@@ -53,3 +53,38 @@ func YulukTheOracle(c *match.Card) {
 		}
 	})
 }
+
+func AdomisTheOracle(c *match.Card) {
+
+	c.Name = "Adomis, the Oracle"
+	c.Power = 2000
+	c.Civ = civ.Light
+	c.Family = []string{family.LightBringer}
+	c.ManaCost = 3
+	c.ManaRequirement = []string{civ.Light}
+	c.TapAbility = func(card *match.Card, ctx *match.Context) {
+
+		cards := make(map[string][]*match.Card)
+		cards["Your shields"] = fx.Find(c.Player, match.SHIELDZONE)
+		cards["Opponent's shields"] = fx.Find(ctx.Match.Opponent(c.Player), match.SHIELDZONE)
+
+		fx.SelectMultipartBackside(
+			card.Player,
+			ctx.Match,
+			cards,
+			"Select 1 shield that will be shown to you",
+			1,
+			1,
+			true,
+		).Map(func(x *match.Card) {
+			ctx.Match.ShowCards(
+				card.Player,
+				"The shield is:",
+				[]string{x.ImageID},
+			)
+		})
+
+	}
+
+	c.Use(fx.Creature, fx.TapAbility)
+}
