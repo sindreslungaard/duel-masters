@@ -17,9 +17,7 @@ func Sopian(c *match.Card) {
 	c.Family = []string{family.CyberLord}
 	c.ManaCost = 4
 	c.ManaRequirement = []string{civ.Water}
-	c.TapAbility = true
-
-	c.Use(fx.Creature, fx.When(fx.TapAbility, func(card *match.Card, ctx *match.Context) {
+	c.TapAbility = func(card *match.Card, ctx *match.Context) {
 
 		creatures := match.Search(card.Player, ctx.Match, card.Player, match.BATTLEZONE, "Select 1 creature from your battlezone that will gain \"Can't be blocked this turn\"", 1, 1, false)
 		for _, creature := range creatures {
@@ -27,7 +25,8 @@ func Sopian(c *match.Card) {
 			creature.AddCondition(cnd.CantBeBlocked, 1, card.ID)
 			ctx.Match.Chat("Server", fmt.Sprintf("%s was given \"Cant be blocked this turn by %s\"", creature.Name, card.Name))
 
-			card.Tapped = true
 		}
-	}))
+	}
+
+	c.Use(fx.Creature, fx.TapAbility)
 }

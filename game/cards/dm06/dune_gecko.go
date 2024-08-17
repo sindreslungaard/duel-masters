@@ -17,9 +17,7 @@ func LegionnaireLizard(c *match.Card) {
 	c.Family = []string{family.DuneGecko}
 	c.ManaCost = 6
 	c.ManaRequirement = []string{civ.Fire}
-	c.TapAbility = true
-
-	c.Use(fx.Creature, fx.SpeedAttacker, fx.When(fx.TapAbility, func(card *match.Card, ctx *match.Context) {
+	c.TapAbility = func(card *match.Card, ctx *match.Context) {
 
 		ctx.Match.Chat("Server", fmt.Sprintf("%s activated %s's tap ability to give creature  \"Speed Attacker this turn\"", card.Player.Username(), card.Name))
 		creatures := match.Filter(card.Player, ctx.Match, card.Player, match.BATTLEZONE, "Select 1 creature from your battlezone that will gain \"Speed attacker\"", 1, 1, false, func(x *match.Card) bool { return x.ID != card.ID })
@@ -28,9 +26,10 @@ func LegionnaireLizard(c *match.Card) {
 			creature.RemoveCondition(cnd.SummoningSickness)
 			ctx.Match.Chat("Server", fmt.Sprintf("%s was given \"Speed Attacker by %s\"", creature.Name, card.Name))
 
-			card.Tapped = true
 		}
-	}))
+	}
+
+	c.Use(fx.Creature, fx.SpeedAttacker, fx.TapAbility)
 }
 
 func BadlandsLizard(c *match.Card) {

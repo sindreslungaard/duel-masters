@@ -51,9 +51,7 @@ func MigasaAdeptOfChaos(c *match.Card) {
 	c.Family = []string{family.Human}
 	c.ManaCost = 3
 	c.ManaRequirement = []string{civ.Fire}
-	c.TapAbility = true
-
-	c.Use(fx.Creature, fx.When(fx.TapAbility, func(card *match.Card, ctx *match.Context) {
+	c.TapAbility = func(card *match.Card, ctx *match.Context) {
 
 		ctx.Match.Chat("Server", fmt.Sprintf("%s activated %s's tap ability", card.Player.Username(), card.Name))
 		creatures := match.Filter(card.Player, ctx.Match, card.Player, match.BATTLEZONE, "Select 1 fire creature from your battlezone that will gain double breaker", 1, 1, false, func(x *match.Card) bool { return x.Civ == civ.Fire && x.ID != card.ID })
@@ -61,11 +59,11 @@ func MigasaAdeptOfChaos(c *match.Card) {
 			if creature.Civ == civ.Fire {
 				creature.AddCondition(cnd.DoubleBreaker, true, card.ID)
 				ctx.Match.Chat("Server", fmt.Sprintf("%s was given double breaker power by %s until end of turn", creature.Name, card.Name))
-
-				card.Tapped = true
 			}
 		}
-	}))
+	}
+
+	c.Use(fx.Creature, fx.TapAbility)
 }
 
 func ChoyaTheUnheeding(c *match.Card) {
