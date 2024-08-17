@@ -30,3 +30,16 @@ func MightyBanditAceOfThievesTapAbility(card *match.Card, ctx *match.Context) {
 		ctx.Match.Chat("Server", fmt.Sprintf("%s was given +5000 power by %s until end of turn", creature.Name, card.Name))
 	}
 }
+
+func InnocentHunterBladeOfAll(c *match.Card) {
+
+	c.Name = "Innocent Hunter, Blade Of All"
+	c.Power = 1000
+	c.Civ = civ.Nature
+	c.Family = []string{family.BeastFolk}
+	c.ManaCost = 4
+	c.ManaRequirement = []string{civ.Nature}
+
+	c.Use(fx.Creature, fx.EvolveIntoAnyFamily)
+
+}
