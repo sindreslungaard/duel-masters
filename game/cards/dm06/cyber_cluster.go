@@ -72,3 +72,32 @@ func ReceiveBlockerWhenOpponentPlaysCard(card *match.Card, ctx *match.Context, p
 	})
 
 }
+
+func FortMegacluster(c *match.Card) {
+
+	c.Name = "Fort Megacluster"
+	c.Power = 5000
+	c.Civ = civ.Water
+	c.Family = []string{family.CyberCluster}
+	c.ManaCost = 5
+	c.ManaRequirement = []string{civ.Water}
+	c.TapAbility = fortMegaclusterTapAbility
+
+	c.Use(fx.Creature, fx.Evolution, fx.TapAbility,
+		fx.When(fx.Summoned, func(card *match.Card, ctx *match.Context) {
+
+			fx.GiveTapAbilityToAllies(
+				card,
+				ctx,
+				func(x *match.Card) bool { return x.ID != card.ID && x.Civ == civ.Water },
+				fortMegaclusterTapAbility,
+			)
+
+		}),
+	)
+}
+
+func fortMegaclusterTapAbility(card *match.Card, ctx *match.Context) {
+	card.Player.DrawCards(1)
+	ctx.Match.Chat("Server", fmt.Sprintf("%s activated %s's tap ability to draw 1 cards", card.Player.Username(), card.Name))
+}
