@@ -100,6 +100,7 @@
             <img
               class="reset-icon"
               src="/assets/images/reset-icon.svg"
+              v-tooltip="'Reset all filters'"
               @click="resetFilters"
             />
           </div>
@@ -108,11 +109,13 @@
               class="zoom-icon"
               @click="modifyCatalogueCardSize(10)"
               src="/assets/images/zoom-in-icon.svg"
+              v-tooltip="'Increase card size'"
             />
             <img
               @click="modifyCatalogueCardSize(-10)"
               class="zoom-icon"
               src="/assets/images/zoom-out-icon.svg"
+              v-tooltip="'Decrease card size'"
             />
           </div>
         </div>
@@ -151,11 +154,13 @@
             class="fl edit-ico"
             width="25px"
             src="/assets/images/edit_icon.png"
+            v-tooltip="'Edit deck info'"
           />
           <a
             :href="'/deck/' + selectedDeckUid"
             v-if="selectedDeck && selectedDeck.public"
             target="_blank"
+            v-tooltip="'Share deck'"
           >
             <img
               class="fl edit-ico share"
@@ -168,6 +173,7 @@
             v-if="selectedDeck && selectedDeck.uid"
             @click="deleteDeck(selectedDeckUid)"
             target="_blank"
+            v-tooltip="'Delete deck'"
           >
             <img
               class="fl edit-ico share"
@@ -180,6 +186,7 @@
             v-if="selectedDeck && selectedDeck.uid"
             @click="copyDeckList()"
             target="_blank"
+            v-tooltip="'Copy deck list'"
           >
             <img
               class="fl edit-ico share"
@@ -690,6 +697,7 @@ $civ-darkness-base-color: #65696C;
 
 .zoom-icon {
   width: 25px;
+  cursor: pointer;
 }
 
 .reset-icon {
