@@ -16,9 +16,11 @@ func TankMutant(c *match.Card) {
 	c.Family = []string{family.Hedrian}
 	c.ManaCost = 9
 	c.ManaRequirement = []string{civ.Darkness}
-	c.TapAbility = true
+	c.TapAbility = func(card *match.Card, ctx *match.Context) {
 
-	c.Use(fx.Creature, fx.When(fx.TapAbility, func(card *match.Card, ctx *match.Context) {
+		ctx.Match.Wait(card.Player, "Waiting for your opponent to make an action")
+		defer ctx.Match.EndWait(card.Player)
+
 		fx.Select(
 			ctx.Match.Opponent(card.Player),
 			ctx.Match,
@@ -31,9 +33,9 @@ func TankMutant(c *match.Card) {
 		).Map(func(creature *match.Card) {
 			ctx.Match.Destroy(creature, card, match.DestroyedByMiscAbility)
 		})
+	}
 
-		card.Tapped = true
-	}))
+	c.Use(fx.Creature, fx.TapAbility)
 
 }
 

@@ -18,7 +18,7 @@ func AquaHulcus(c *match.Card) {
 	c.ManaCost = 3
 	c.ManaRequirement = []string{civ.Water}
 
-	c.Use(fx.Creature, fx.Draw1)
+	c.Use(fx.Creature, fx.When(fx.Summoned, fx.MayDraw1))
 
 }
 

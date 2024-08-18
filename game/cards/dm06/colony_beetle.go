@@ -81,3 +81,38 @@ func FactoryShellQ(c *match.Card) {
 	})
 
 }
+
+func LivingCitadelVosh(c *match.Card) {
+
+	c.Name = "Living Citadel Vosh"
+	c.Power = 5000
+	c.Civ = civ.Nature
+	c.Family = []string{family.ColonyBeetle}
+	c.ManaCost = 5
+	c.ManaRequirement = []string{civ.Nature}
+	c.TapAbility = livingCitadelVoshTapAbility
+
+	c.Use(fx.Creature, fx.Evolution, fx.TapAbility,
+		fx.When(fx.Summoned, func(card *match.Card, ctx *match.Context) {
+
+			fx.GiveTapAbilityToAllies(
+				card,
+				ctx,
+				func(x *match.Card) bool { return x.ID != card.ID && x.Civ == civ.Nature },
+				livingCitadelVoshTapAbility,
+			)
+
+		}),
+	)
+}
+
+func livingCitadelVoshTapAbility(card *match.Card, ctx *match.Context) {
+	cards := card.Player.PeekDeck(1)
+
+	for _, toMove := range cards {
+
+		card.Player.MoveCard(toMove.ID, match.DECK, match.MANAZONE, card.ID)
+		ctx.Match.Chat("Server", fmt.Sprintf("%s put %s into the manazone from the top of their deck", card.Player.Username(), toMove.Name))
+
+	}
+}

@@ -1,9 +1,7 @@
 package fx
 
 import (
-	"duel-masters/game/cnd"
 	"duel-masters/game/match"
-	"fmt"
 )
 
 // CardCollection is a slice of cards with a mapping function
@@ -130,6 +128,15 @@ func SelectFilter(p *match.Player, m *match.Match, containerOwner *match.Player,
 
 // SelectMultipart prompts the user to select n cards from the specified list of cards
 func SelectMultipart(p *match.Player, m *match.Match, cards map[string][]*match.Card, text string, min int, max int, cancellable bool) CardCollection {
+	return selectMultipartBase(p, m, cards, text, min, max, cancellable, false)
+}
+
+// SelectMultipart prompts the user to select n cards from the specified list of cards
+func SelectMultipartBackside(p *match.Player, m *match.Match, cards map[string][]*match.Card, text string, min int, max int, cancellable bool) CardCollection {
+	return selectMultipartBase(p, m, cards, text, min, max, cancellable, true)
+}
+
+func selectMultipartBase(p *match.Player, m *match.Match, cards map[string][]*match.Card, text string, min int, max int, cancellable bool, backsideOnly bool) CardCollection {
 
 	result := make([]*match.Card, 0)
 
@@ -141,11 +148,15 @@ func SelectMultipart(p *match.Player, m *match.Match, cards map[string][]*match.
 		}
 	}
 
-	if notEmpty != true {
+	if !notEmpty {
 		return result
 	}
 
-	m.NewMultipartAction(p, cards, min, max, text, cancellable)
+	if backsideOnly {
+		m.NewMultipartActionBackside(p, cards, min, max, text, cancellable)
+	} else {
+		m.NewMultipartAction(p, cards, min, max, text, cancellable)
+	}
 
 	defer m.CloseAction(p)
 
@@ -333,30 +344,6 @@ func AttackingCreature(card *match.Card, ctx *match.Context) bool {
 
 	return false
 
-}
-
-func TapAbility(card *match.Card, ctx *match.Context) bool {
-	if event, ok := ctx.Event.(*match.TapAbility); ok {
-
-		if event.CardID != card.ID {
-			return false
-		}
-
-		if card.HasCondition(cnd.SummoningSickness) {
-			ctx.Match.WarnPlayer(card.Player, fmt.Sprintf("%s can't use tap ability because it has summoning sickness", card.Name))
-			return false
-		}
-
-		if card.Tapped {
-			ctx.Match.WarnPlayer(card.Player, fmt.Sprintf("%s can't use tap ability because it is already tapped", card.Name))
-			return false
-		}
-
-		return true
-
-	}
-
-	return false
 }
 
 // Destroyed returns true if the card was destroyed

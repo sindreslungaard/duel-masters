@@ -70,3 +70,16 @@ func DrawToMana(card *match.Card, ctx *match.Context) {
 	}
 
 }
+
+func MayDraw1(card *match.Card, ctx *match.Context) {
+
+	ctx.Match.NewAction(card.Player, nil, 0, 0, "Do you want to draw a card?", true)
+
+	action := <-card.Player.Action
+
+	if !action.Cancel {
+		draw(card, ctx, 1)
+	}
+	ctx.Match.CloseAction(card.Player)
+
+}

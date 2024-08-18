@@ -2,6 +2,7 @@ package dm06
 
 import (
 	"duel-masters/game/civ"
+	"duel-masters/game/cnd"
 	"duel-masters/game/family"
 	"duel-masters/game/fx"
 	"duel-masters/game/match"
@@ -49,4 +50,47 @@ func Torchclencher(c *match.Card) {
 		return power
 	}
 
+}
+
+func LavaWalkerExecuto(c *match.Card) {
+
+	c.Name = "Lava Walker Executo"
+	c.Power = 5000
+	c.Civ = civ.Fire
+	c.Family = []string{family.Dragonoid}
+	c.ManaCost = 4
+	c.ManaRequirement = []string{civ.Fire}
+	c.TapAbility = lavaWalkerExecutoTapAbility
+
+	c.Use(fx.Creature, fx.Evolution, fx.TapAbility,
+		fx.When(fx.Summoned, func(card *match.Card, ctx *match.Context) {
+
+			fx.GiveTapAbilityToAllies(
+				card,
+				ctx,
+				func(x *match.Card) bool { return x.ID != card.ID && x.Civ == civ.Fire },
+				lavaWalkerExecutoTapAbility,
+			)
+
+		}),
+	)
+
+}
+
+func lavaWalkerExecutoTapAbility(card *match.Card, ctx *match.Context) {
+	creatures := fx.SelectFilter(
+		card.Player,
+		ctx.Match,
+		card.Player,
+		match.BATTLEZONE,
+		"Select 1 fire creature from your battlezone that will gain +3000 Power",
+		1,
+		1,
+		false,
+		func(x *match.Card) bool { return x.Civ == civ.Fire },
+	)
+	for _, creature := range creatures {
+		creature.AddCondition(cnd.PowerAmplifier, 3000, card.ID)
+		ctx.Match.Chat("Server", fmt.Sprintf("%s was given +3000 power by %s until end of turn", creature.Name, card.Name))
+	}
 }

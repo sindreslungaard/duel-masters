@@ -467,6 +467,109 @@ func Creature(card *match.Card, ctx *match.Context) {
 
 	}
 
+	if event, ok := ctx.Event.(*match.TapAbility); ok {
+
+		// Is this event for me or someone else?
+		if event.CardID != card.ID {
+			return
+		}
+
+		if card.HasCondition(cnd.SummoningSickness) {
+			ctx.Match.WarnPlayer(card.Player, fmt.Sprintf("%s can't use tap ability because it has summoning sickness", card.Name))
+			ctx.InterruptFlow()
+			return
+		}
+
+		if card.Tapped {
+			ctx.Match.WarnPlayer(card.Player, fmt.Sprintf("%s can't use tap ability because it is already tapped", card.Name))
+			ctx.InterruptFlow()
+			return
+		}
+
+		if !card.HasCondition(cnd.TapAbility) {
+			ctx.Match.WarnPlayer(card.Player, fmt.Sprintf("%s doesn't have any related tap abilities", card.Name))
+			ctx.InterruptFlow()
+			return
+		}
+
+		// According to this https://duelmasters.fandom.com/wiki/Tap_Ability#Details if a creature
+		// can't legally attack, it can't use a tap ability either.
+		if card.HasCondition(cnd.CantAttackCreatures) && card.HasCondition(cnd.CantAttackPlayers) {
+			ctx.Match.WarnPlayer(card.Player, "A card that can't attack can't use tap abilities")
+			ctx.InterruptFlow()
+			return
+		}
+
+		// Do this last in case any other cards want to interrupt the flow
+		ctx.ScheduleAfter(func() {
+
+			tapConditions := make([]*match.Condition, 0)
+			tapConditionsSourceCards := make([]*match.Card, 0)
+
+			for _, condition := range card.Conditions() {
+				if condition.ID != cnd.TapAbility {
+					continue
+				}
+				tapConditions = append(tapConditions, &condition)
+				id, _ := condition.Src.(string)
+				sourceCard, err := card.Player.GetCard(id, match.BATTLEZONE)
+				if err == nil {
+					tapConditionsSourceCards = append(tapConditionsSourceCards, sourceCard)
+				}
+			}
+			var tapEffect interface{}
+
+			if len(tapConditions) > 1 {
+
+				ctx.Match.NewAction(
+					card.Player,
+					tapConditionsSourceCards,
+					1,
+					1,
+					"Select the source of the tap effect",
+					true)
+
+				for {
+
+					action := <-card.Player.Action
+
+					if action.Cancel {
+						ctx.InterruptFlow()
+						ctx.Match.CloseAction(card.Player)
+						return
+					}
+
+					if len(action.Cards) != 1 || !match.AssertCardsIn(tapConditionsSourceCards, action.Cards[0]) {
+						ctx.Match.ActionWarning(card.Player, "Your selection of cards does not fulfill the requirements")
+						continue
+					}
+
+					for _, condition := range tapConditions {
+
+						if condition.Src == action.Cards[0] {
+							tapEffect = condition.Val
+						}
+
+					}
+
+					ctx.Match.CloseAction(card.Player)
+
+					break
+
+				}
+			} else {
+				tapEffect = tapConditions[0].Val
+			}
+
+			if f, ok := tapEffect.(func(card *match.Card, ctx *match.Context)); ok {
+				f(card, ctx)
+			}
+
+			card.Tapped = true
+		})
+
+	}
+
 	// When destroyed
 	if event, ok := ctx.Event.(*match.CreatureDestroyed); ok {
 		if event.Card != card {

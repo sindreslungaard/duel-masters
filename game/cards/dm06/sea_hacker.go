@@ -16,9 +16,7 @@ func Aeropica(c *match.Card) {
 	c.Family = []string{family.SeaHacker}
 	c.ManaCost = 7
 	c.ManaRequirement = []string{civ.Water}
-	c.TapAbility = true
-
-	c.Use(fx.Creature, fx.When(fx.TapAbility, func(card *match.Card, ctx *match.Context) {
+	c.TapAbility = func(card *match.Card, ctx *match.Context) {
 
 		cards := make(map[string][]*match.Card)
 
@@ -37,9 +35,9 @@ func Aeropica(c *match.Card) {
 			ctx.Match.Chat("Server", fmt.Sprintf("%s was returned to %s's hand by %s", creature.Name, creature.Player.Username(), card.Name))
 		})
 
-		card.Tapped = true
+	}
 
-	}))
+	c.Use(fx.Creature, fx.TapAbility)
 }
 
 func Zepimeteus(c *match.Card) {
