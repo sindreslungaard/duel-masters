@@ -62,7 +62,7 @@ func InvincibleTechnology(c *match.Card) {
 
 	c.Use(fx.Spell, fx.When(fx.SpellCast, func(card *match.Card, ctx *match.Context) {
 
-		selectedCards := match.Search(card.Player, ctx.Match, card.Player, match.DECK, "Select any number of cards from your deck that will be sent to your hand", 1, 100, false)
+		selectedCards := fx.Select(card.Player, ctx.Match, card.Player, match.DECK, "Select any number of cards from your deck that will be sent to your hand", 0, 100, false)
 
 		for _, selectedCard := range selectedCards {
 
@@ -316,7 +316,7 @@ func MysticTreasureChest(c *match.Card) {
 
 	c.Use(fx.Spell, fx.When(fx.SpellCast, func(card *match.Card, ctx *match.Context) {
 
-		fx.SelectFilter(
+		fx.SelectFilterFullList(
 			card.Player,
 			ctx.Match,
 			card.Player,
@@ -325,7 +325,9 @@ func MysticTreasureChest(c *match.Card) {
 			1,
 			1,
 			true,
-			func(c *match.Card) bool { return c.Civ != civ.Nature }).Map(func(x *match.Card) {
+			func(c *match.Card) bool { return c.Civ != civ.Nature },
+			true,
+		).Map(func(x *match.Card) {
 			x.Player.MoveCard(x.ID, match.DECK, match.MANAZONE, card.ID)
 			ctx.Match.Chat("Server", fmt.Sprintf("%s put %s in their manazone from their deck", x.Player.Username(), x.Name))
 		})

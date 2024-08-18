@@ -36,7 +36,7 @@ func ForbosSanctumGuardianQ(c *match.Card) {
 				return
 			}
 
-			fx.SelectFilter(
+			fx.SelectFilterFullList(
 				card.Player,
 				ctx.Match,
 				card.Player,
@@ -46,6 +46,7 @@ func ForbosSanctumGuardianQ(c *match.Card) {
 				1,
 				true,
 				func(x *match.Card) bool { return x.HasCondition(cnd.Spell) },
+				true,
 			).Map(func(x *match.Card) {
 				card.Player.MoveCard(x.ID, match.DECK, match.HAND, card.ID)
 				ctx.Match.Chat("Server", fmt.Sprintf("%s was moved from %s's deck to their hand", x.Name, card.Player.Username()))

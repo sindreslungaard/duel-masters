@@ -19,22 +19,29 @@ func RumblingTerahorn(c *match.Card) {
 	c.ManaCost = 5
 	c.ManaRequirement = []string{civ.Nature}
 
-	c.Use(fx.Creature, func(card *match.Card, ctx *match.Context) {
+	c.Use(fx.Creature, fx.When(fx.Summoned, func(card *match.Card, ctx *match.Context) {
 
-		if match.AmISummoned(card, ctx) {
+		cards := fx.SelectFilterFullList(
+			card.Player,
+			ctx.Match,
+			card.Player,
+			match.DECK,
+			"Select 1 creature from your deck that will be shown to your opponent and sent to your hand",
+			1,
+			1,
+			true,
+			func(x *match.Card) bool { return x.HasCondition(cnd.Creature) },
+			true,
+		)
 
-			cards := match.SearchForCnd(card.Player, ctx.Match, card.Player, match.DECK, cnd.Creature, "Select 1 creature from your deck that will be shown to your opponent and sent to your hand", 1, 1, true)
-
-			for _, c := range cards {
-				card.Player.MoveCard(c.ID, match.DECK, match.HAND, card.ID)
-				ctx.Match.Chat("Server", fmt.Sprintf("%s was moved from %s's deck to their hand", c.Name, card.Player.Username()))
-			}
-
-			card.Player.ShuffleDeck()
-
+		for _, c := range cards {
+			card.Player.MoveCard(c.ID, match.DECK, match.HAND, card.ID)
+			ctx.Match.Chat("Server", fmt.Sprintf("%s was moved from %s's deck to their hand", c.Name, card.Player.Username()))
 		}
 
-	})
+		card.Player.ShuffleDeck()
+
+	}))
 
 }
 

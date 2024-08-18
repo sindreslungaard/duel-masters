@@ -23,7 +23,7 @@ func LagunaLightningEnforcer(c *match.Card) {
 
 		ctx.ScheduleAfter(func() {
 
-			fx.SelectFilter(card.Player,
+			fx.SelectFilterFullList(card.Player,
 				ctx.Match,
 				card.Player,
 				match.DECK,
@@ -32,6 +32,7 @@ func LagunaLightningEnforcer(c *match.Card) {
 				1,
 				true,
 				func(x *match.Card) bool { return x.HasCondition(cnd.Spell) },
+				true,
 			).Map(func(x *match.Card) {
 				x.Player.MoveCard(x.ID, match.DECK, match.HAND, card.ID)
 				ctx.Match.Chat("Server", fmt.Sprintf("%s retrieved %s from their deck to their hand", x.Player.Username(), x.Name))

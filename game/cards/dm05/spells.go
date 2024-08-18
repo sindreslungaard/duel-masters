@@ -210,7 +210,7 @@ func BrutalCharge(c *match.Card) {
 
 			if cardPlayed {
 
-				fx.SelectFilter(
+				fx.SelectFilterFullList(
 					card.Player,
 					ctx.Match,
 					card.Player,
@@ -220,6 +220,7 @@ func BrutalCharge(c *match.Card) {
 					shieldsBroken,
 					true,
 					func(c *match.Card) bool { return c.HasCondition(cnd.Creature) },
+					true,
 				).Map(func(c *match.Card) {
 					c.Player.MoveCard(c.ID, match.DECK, match.HAND, card.ID)
 					ctx.Match.Chat("Server", fmt.Sprintf("%s was moved from %s's deck to their hand by %s", c.Name, c.Player.Username(), card.Name))

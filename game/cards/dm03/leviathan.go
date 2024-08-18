@@ -97,7 +97,7 @@ func KingPonitas(c *match.Card) {
 	c.Use(fx.Creature, fx.When(fx.Attacking, func(card *match.Card, ctx *match.Context) {
 
 		ctx.ScheduleAfter(func() {
-			waterCards := match.Filter(card.Player, ctx.Match, card.Player, match.DECK, "Select 1 wated card from your deck that will be shown to your opponent and sent to your hand", 1, 1, false, func(x *match.Card) bool { return x.Civ == civ.Water })
+			waterCards := fx.SelectFilterFullList(card.Player, ctx.Match, card.Player, match.DECK, "Select 1 water card from your deck that will be shown to your opponent and sent to your hand", 1, 1, true, func(x *match.Card) bool { return x.Civ == civ.Water }, true)
 
 			for _, waterCard := range waterCards {
 

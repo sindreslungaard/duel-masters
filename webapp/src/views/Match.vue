@@ -109,6 +109,20 @@
             />
           </div>
         </div>
+        <div v-for="(card, index) in action.unselectableCards" :key="index" class="card">
+          <div class="action-shield-number">
+            <span>{{
+              state.me.shieldMap[card.virtualId] ||
+              state.opponent.shieldMap[card.virtualId]
+            }}</span>
+            <img
+              @contextmenu.prevent="showLarge(card)"
+              @dragstart.prevent=""
+              class="no-drag unselectable-card"
+              :src="`https://scans.shobu.io/${card.uid}.jpg`"
+            />
+          </div>
+        </div>
       </div>
       <div v-if="actionObject && action.cards" class="action-cards">
         <div
@@ -1232,7 +1246,8 @@ export default {
               text: data.text,
               minSelection: data.minSelection,
               maxSelections: data.maxSelections,
-              cancellable: data.cancellable
+              cancellable: data.cancellable,
+              unselectableCards: data.unselectableCards,
             };
             break;
           }
@@ -1910,5 +1925,9 @@ export default {
 
 .card-action-group {
   display: flex;
+}
+
+.unselectable-card {
+  filter: brightness(50%)
 }
 </style>

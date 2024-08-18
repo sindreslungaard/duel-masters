@@ -21,7 +21,7 @@ func NiofaHornedProtector(c *match.Card) {
 
 	c.Use(fx.Creature, fx.Evolution, fx.Doublebreaker, fx.When(fx.Summoned, func(card *match.Card, ctx *match.Context) {
 
-		cards := match.Filter(
+		cards := fx.SelectFilterFullList(
 			card.Player,
 			ctx.Match,
 			card.Player,
@@ -31,6 +31,7 @@ func NiofaHornedProtector(c *match.Card) {
 			1,
 			false,
 			func(x *match.Card) bool { return x.HasCondition(cnd.Creature) && x.Civ == civ.Nature },
+			true,
 		)
 
 		for _, c := range cards {
