@@ -53,7 +53,7 @@
         <div class="catalogue-top-bar">
           <div class="catalogue-filters">
             <input
-              v-model="filterCardName"
+              v-model="filterCard"
               class="catalogue-filter"
               type="search"
               placeholder="Type to search"
@@ -289,7 +289,7 @@ export default {
       warning: "",
       showWizard: false,
 
-      filterCardName: "",
+      filterCard: "",
       filterFamily: ALL_FAMILIES,
       filterSet: ALL_SETS,
       families: [ALL_FAMILIES, "Spell"],
@@ -356,7 +356,7 @@ export default {
       Object.keys(this.filterMana).forEach(manaCost => this.filterMana[manaCost] = false);
       this.filterFamily = ALL_FAMILIES;
       this.filterSet = ALL_SETS;
-      this.filterCardName = '';
+      this.filterCard = '';
     },
 
     getCardsForDeck(cardUids) {
@@ -594,7 +594,8 @@ export default {
   computed: {
     filteredAndSortedCards() {
       let cards = this.cards.filter(card =>
-        card.name.toLowerCase().includes(this.filterCardName.toLowerCase())
+        card.name.toLowerCase().includes(this.filterCard.toLowerCase()) ||
+          card.text.toLowerCase().includes(this.filterCard.toLowerCase())
       );
 
       if (this.filterSet !== ALL_SETS) {
