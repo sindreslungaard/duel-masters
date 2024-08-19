@@ -21,7 +21,7 @@ func ZorvazTheBonecrusher(c *match.Card) {
 
 func VileMulderWingOfTheVoid(c *match.Card) {
 
-	c.Name = "Vile Mulder, Wing Of The Void"
+	c.Name = "Vile Mulder, Wing of the Void"
 	c.Power = 7000
 	c.Civ = civ.Darkness
 	c.Family = []string{family.DemonCommand}
@@ -33,7 +33,7 @@ func VileMulderWingOfTheVoid(c *match.Card) {
 
 func DaidalosGeneralOfFury(c *match.Card) {
 
-	c.Name = "Daidalos, General Of Fury"
+	c.Name = "Daidalos, General of Fury"
 	c.Power = 11000
 	c.Civ = civ.Darkness
 	c.Family = []string{family.DemonCommand}
@@ -59,7 +59,7 @@ func DaidalosGeneralOfFury(c *match.Card) {
 
 func GnarvashMerchantOfBlood(c *match.Card) {
 
-	c.Name = "Gnarvash, Merchant Of Blood"
+	c.Name = "Gnarvash, Merchant of Blood"
 	c.Power = 8000
 	c.Civ = civ.Darkness
 	c.Family = []string{family.DemonCommand}

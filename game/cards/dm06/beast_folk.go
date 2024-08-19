@@ -33,7 +33,7 @@ func MightyBanditAceOfThievesTapAbility(card *match.Card, ctx *match.Context) {
 
 func InnocentHunterBladeOfAll(c *match.Card) {
 
-	c.Name = "Innocent Hunter, Blade Of All"
+	c.Name = "Innocent Hunter, Blade of All"
 	c.Power = 1000
 	c.Civ = civ.Nature
 	c.Family = []string{family.BeastFolk}
