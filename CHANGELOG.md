@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+- No unreleased changes
+
+## 05/09/2024
+
 - New card "Phantasmal Horror Gigazald" (thanks @DanieloV)
 - New card "Fort Megacluster" (thanks @DanieloV)
 - New card "Lava Walker Executo" (thanks @DanieloV)
