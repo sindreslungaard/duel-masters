@@ -268,6 +268,8 @@ import { call, ws_protocol, host } from "../remote";
 import Header from "../components/Header.vue";
 import Username from "../components/Username.vue";
 import { getSettings, didSeeMuteWarning } from "../helpers/settings";
+import 'setimmediate';
+
 import {
   format,
   fromUnixTime,
@@ -675,7 +677,7 @@ export default {
       this.errorMessage = "Connection lost";
     }
   },
-  beforeDestroy() {
+  beforeUnmount() {
     removeEventListener("storage", this.onSettingsChanged);
     this.ws.close();
   }

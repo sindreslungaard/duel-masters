@@ -1292,7 +1292,7 @@ export default {
       e.clearSelection();
     });
   },
-  beforeDestroy() {
+  beforeUnmount() {
     removeEventListener("storage", this.onSettingsChanged);
 
     this.preventReconnect = true;
