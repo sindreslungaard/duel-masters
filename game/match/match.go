@@ -268,6 +268,8 @@ func (m *Match) BreakShields(shields []*Card, source string) {
 
 	m.ReportActionInChat(shields[0].Player, fmt.Sprintf("%v of %v's shields were broken", len(shields), m.PlayerRef(shields[0].Player).Socket.User.Username))
 
+	var shieldTriggers []*Card
+
 	for _, shield := range shields {
 
 		card, err := shield.Player.MoveCard(shield.ID, SHIELDZONE, HAND, source)
@@ -280,56 +282,99 @@ func (m *Match) BreakShields(shields []*Card, source string) {
 
 		// Handle shield triggers
 		if card.HasCondition(cnd.ShieldTrigger) {
+			shieldTriggers = append(shieldTriggers, card)
+		}
 
-			ctx := NewContext(m, &ShieldTriggerEvent{
-				Card:   card,
-				Source: source,
-			})
+	}
 
-			m.HandleFx(ctx)
+	for len(shieldTriggers) > 0 {
 
-			if ctx.Cancelled() {
+		// we broadcast state here as it's needed to move the cards to the hand and
+		// after each used shieldtrigger
+		m.BroadcastState()
+
+		event := &ShieldTriggerEvent{
+			Cards:  shieldTriggers,
+			Source: source,
+		}
+		ctx := NewContext(m, event)
+		m.HandleFx(ctx)
+
+		playableShieldTriggers := event.Cards
+
+		if ctx.Cancelled() || len(playableShieldTriggers) == 0 {
+			return
+		}
+
+		player := shieldTriggers[0].Player
+		opponent := m.Opponent(player)
+
+		m.Wait(opponent, "Waiting for your opponent to make an action")
+
+		m.NewActionFullList(
+			player,
+			playableShieldTriggers,
+			1,
+			1,
+			"Shield trigger! If those cards are playable you can do so for free one at a time.",
+			true,
+			event.UnplayableCards,
+		)
+
+		for {
+
+			action := <-player.Action
+
+			if action.Cancel {
+				m.CloseAction(player)
+				m.EndWait(opponent)
+				return
+			}
+
+			if len(action.Cards) != 1 {
+				m.DefaultActionWarning(player)
 				continue
 			}
 
-			m.Wait(m.Opponent(card.Player), "Waiting for your opponent to make an action")
-
-			m.NewAction(card.Player, []*Card{card}, 1, 1, "Shield trigger! Choose the card to use for free or close to keep it in your hand", true)
-
-			for {
-
-				action := <-card.Player.Action
-
-				if action.Cancel {
-					m.CloseAction(card.Player)
-					break
+			var card *Card
+			for _, shieldTrigger := range playableShieldTriggers {
+				if shieldTrigger.ID == action.Cards[0] {
+					card = shieldTrigger
 				}
-
-				if len(action.Cards) < 1 {
-					m.DefaultActionWarning(card.Player)
-					continue
-				}
-
-				if card.HasCondition(cnd.Spell) {
-					m.CastSpell(card, true)
-				} else {
-					m.MoveCard(card, BATTLEZONE, card)
-				}
-
-				m.HandleFx(NewContext(m, &ShieldTriggerPlayedEvent{
-					Card:   card,
-					Source: source,
-				}))
-
-				m.CloseAction(card.Player)
-
-				break
-
 			}
 
-			m.EndWait(m.Opponent(card.Player))
+			if card == nil {
+				m.DefaultActionWarning(player)
+				continue
+			}
+
+			if card.HasCondition(cnd.Spell) {
+				m.CastSpell(card, true)
+			} else {
+				m.MoveCard(card, BATTLEZONE, card)
+			}
+
+			// Elimnate all shield triggers from that list that are not in hand anymore for any reason.
+			var stillValidShieldtriggers []*Card
+			for _, shieldTrigger := range shieldTriggers {
+				if shieldTrigger.Zone == HAND {
+					stillValidShieldtriggers = append(stillValidShieldtriggers, shieldTrigger)
+				}
+			}
+			shieldTriggers = stillValidShieldtriggers
+
+			m.HandleFx(NewContext(m, &ShieldTriggerPlayedEvent{
+				Card:   card,
+				Source: source,
+			}))
+
+			m.CloseAction(card.Player)
+
+			break
 
 		}
+
+		m.EndWait(opponent)
 
 	}
 
