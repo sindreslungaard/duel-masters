@@ -242,7 +242,7 @@ func (m *Match) MoveCard(card *Card, destination string, source *Card) {
 		return
 	}
 
-	m.Chat("Server", fmt.Sprintf("%s was moved to %s %s by %s", card.Name, card.Player.Username(), destination, source.Name))
+	m.Chat("Server", fmt.Sprintf("%s was moved to %s %s by %s", m.FormatDisplayableCard(card), card.Player.Username(), destination, m.FormatDisplayableCard(source)))
 
 }
 
@@ -420,6 +420,10 @@ func (m *Match) ColorChat(sender string, message string, color string) {
 // Chat sends a chat message with the default color
 func (m *Match) Chat(sender string, message string) {
 	m.ColorChat(sender, message, "#ccc")
+}
+
+func (m *Match) FormatDisplayableCard(card *Card) string {
+	return fmt.Sprintf("(%s;%s)", card.Name, card.ImageID)
 }
 
 func (m *Match) Broadcast(msg interface{}) {
@@ -925,7 +929,9 @@ func (m *Match) ChargeMana(p *PlayerReference, cardID string) {
 	if card, err := p.Player.MoveCard(cardID, HAND, MANAZONE, cardID); err == nil {
 		p.Player.HasChargedMana = true
 		m.BroadcastState()
-		m.Chat("Server", fmt.Sprintf("%s was added to %s's manazone", card.Name, p.Socket.User.Username))
+		m.Chat("Server", fmt.Sprintf("%s was added to %s's manazone",
+			m.FormatDisplayableCard(card),
+			p.Socket.User.Username))
 	}
 
 }

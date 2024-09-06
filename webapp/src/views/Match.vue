@@ -51,6 +51,12 @@
       </p>
     </div>
 
+    <CardPreviewPopup 
+      :uid = chatCardPreviewUID
+      :event = chatCardEvent
+      :side = "'right'"
+    />
+
     <div v-if="previewCard" class="card-preview">
       <img :src="`https://scans.shobu.io/${previewCard.uid}.jpg`" />
       <div @click="dismissLarge()" class="btn">Close</div>
@@ -201,7 +207,22 @@
                     : message.sender + ":"
                 }}
               </div>
-              <div class="message-text">{{ message.message }}</div>
+              <div class="message-text">
+                <template v-for="obj in message.message">
+                  <template v-if="obj.uid">
+                    <span
+                      @mouseover="chatCardEvent = $event; chatCardPreviewUID = obj.uid"
+                      @mouseleave="chatCardPreviewUID = null"
+                      class="chat-card"
+                    >
+                      {{ obj.text }}
+                    </span>
+                  </template>
+                  <template v-else>
+                    {{ obj.text }}
+                  </template> 
+                </template>
+              </div>
               <div class="mute-icon-container">
                 <MuteIcon
                   v-if="
@@ -673,6 +694,7 @@ import Username from "../components/Username.vue";
 import MuteIcon from "../components/MuteIcon.vue";
 import { getSettings, didSeeMuteWarning } from "../helpers/settings";
 import { store } from "../store";
+import CardPreviewPopup from "../components/CardPreviewPopup.vue";
 
 const send = (client, message) => {
   client.send(JSON.stringify(message));
@@ -697,11 +719,34 @@ function sound(src) {
 let turnSound = new sound("/assets/turn.mp3");
 let playerJoinedSound = new sound("/assets/player_joined.mp3");
 
+function splitServerMessage(text) {
+  let textParts = []
+  let currentIndex = 0
+  const regExp = /\(([^)]+)\)/g;
+  let parts;
+  let execResult = regExp.exec(text)
+  while (execResult !== null ) {
+    if (execResult.index > currentIndex) {
+      textParts.push({text: text.substring(currentIndex, execResult.index) })
+      currentIndex = execResult.index
+    }
+    parts = execResult[1].split(";")
+    textParts.push({text: parts[0], uid: parts[1]})
+    currentIndex += execResult[0].length
+    execResult = regExp.exec(text)
+  }
+  if (currentIndex < text.length) {
+    textParts.push({text: text.substring(currentIndex, text.length) })
+  }
+  return textParts;
+}
+
 export default {
   name: "game",
   components: {
     Username,
-    MuteIcon
+    MuteIcon,
+    CardPreviewPopup,
   },
   data() {
     return {
@@ -756,7 +801,10 @@ export default {
 
       TAPPED_FLAG: 1,
       PLAYABLE_FLAG: 2,
-      TAP_ABILITY_FLAG: 4
+      TAP_ABILITY_FLAG: 4,
+
+      chatCardPreviewUID: null,
+      chatCardEvent: null,
     };
   },
   computed: {
@@ -1197,7 +1245,7 @@ export default {
           }
 
           case "chat": {
-            this.chat(data.sender, data.color, data.message);
+            this.chat(data.sender, data.color, splitServerMessage(data.message));
             break;
           }
 
@@ -1786,10 +1834,6 @@ export default {
   margin-bottom: 3px;
 }
 
-.bt {
-  /* border-top: 1px solid #555; */
-}
-
 .hand {
   width: calc(100% - 301px);
   float: left;
@@ -1910,5 +1954,10 @@ export default {
 
 .card-action-group {
   display: flex;
+}
+
+.chat-card {
+  cursor: pointer;
+  font-weight: 600;
 }
 </style>
