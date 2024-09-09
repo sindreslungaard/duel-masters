@@ -4,6 +4,10 @@
 
 - No unreleased changes
 
+## 09/09/2024
+
+- Opt-in redesigned deck builder (thanks @DanieloV)
+
 ## 05/09/2024
 
 - New card "Phantasmal Horror Gigazald" (thanks @DanieloV)
