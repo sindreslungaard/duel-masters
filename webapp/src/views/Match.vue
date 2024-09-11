@@ -45,7 +45,7 @@
       <div @click="warning = ''" class="btn">Close</div>
     </div>
 
-    <div v-show="wait" class="error">
+    <div v-show="wait" class="error wait">
       <p>
         {{ wait }}<span class="dots">{{ loadingDots }}</span>
       </p>
@@ -1739,6 +1739,10 @@ export default {
   padding: 10px;
   font-size: 14px;
   color: #ccc;
+}
+
+.wait {
+  z-index: 2000;
 }
 
 .overlay {
