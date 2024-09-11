@@ -2,7 +2,13 @@
 
 ## [Unreleased]
 
-- No unreleased changes
+- New card "Tank Mutant" (thanks @jyotiskaghosh)
+- New card "Bazooka Mutant" (thanks @jyotiskaghosh)
+- Fix for "Snake Attack" not enforcing shield destruction (thanks @DanieloV)
+- Added tooltips to new deck builder (thanks @DanieloV)
+- Added search by card text filter to new deck builder (thanks @DanieloV)
+- Fix for "Cyclone Panic" shuffling itself into deck instead of going to the graveyard when played (thanks @DanieloV)
+- Fix for waiting popup appearing over action popup and blocking functionality in certain situations (thanks @DanieloV)
 
 ## 09/09/2024
 
