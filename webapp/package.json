@@ -12,6 +12,7 @@
     "clipboard": "^2.0.6",
     "date-fns": "^2.25.0",
     "dayjs": "^1.10.7",
+    "floating-vue": "^5.2.2",
     "marked": "^13.0.0",
     "setimmediate": "^1.0.5",
     "v-lazy-image": "^2.1.1",
