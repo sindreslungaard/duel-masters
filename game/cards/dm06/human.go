@@ -68,7 +68,7 @@ func MigasaAdeptOfChaos(c *match.Card) {
 
 func ChoyaTheUnheeding(c *match.Card) {
 
-	c.Name = "Choya, The Unheeding"
+	c.Name = "Choya, the Unheeding"
 	c.Power = 1000
 	c.Civ = civ.Fire
 	c.Family = []string{family.Human}

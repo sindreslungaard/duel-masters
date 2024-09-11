@@ -81,10 +81,10 @@ func StampedingLonghorn(c *match.Card) {
 
 }
 
-// TriHornShepherd ...
-func TriHornShepherd(c *match.Card) {
+// TrihornShepherd ...
+func TrihornShepherd(c *match.Card) {
 
-	c.Name = "Tri-Horn Shepherd"
+	c.Name = "Tri-horn Shepherd"
 	c.Power = 5000
 	c.Civ = civ.Nature
 	c.Family = []string{family.HornedBeast}
