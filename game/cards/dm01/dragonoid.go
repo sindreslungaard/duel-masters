@@ -68,7 +68,7 @@ func FireSweeperBurningHellion(c *match.Card) {
 // OnslaughterTriceps ...
 func OnslaughterTriceps(c *match.Card) {
 
-	c.Name = "OnslaughterTriceps"
+	c.Name = "Onslaughter Triceps"
 	c.Power = 5000
 	c.Civ = civ.Fire
 	c.Family = []string{family.Dragonoid}

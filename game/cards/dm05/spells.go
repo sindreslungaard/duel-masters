@@ -60,36 +60,36 @@ func CyclonePanic(c *match.Card) {
 	c.ManaCost = 3
 	c.ManaRequirement = []string{civ.Fire}
 
-	c.Use(fx.Spell, fx.ShieldTrigger, func(card *match.Card, ctx *match.Context) {
+	c.Use(fx.Spell, fx.ShieldTrigger, fx.When(fx.SpellCast, func(card *match.Card, ctx *match.Context) {
 
-		if match.AmICasted(card, ctx) {
+		// p1
+		cards1 := fx.Find(card.Player, match.HAND)
+		n1 := 0
 
-			// p1
-			cards1 := fx.Find(card.Player, match.HAND)
-			n1 := len(cards1)
-
-			for _, c1 := range cards1 {
+		for _, c1 := range cards1 {
+			if c1.ID != card.ID {
 				card.Player.MoveCard(c1.ID, match.HAND, match.DECK, card.ID)
+				n1 += 1
 			}
-
-			card.Player.ShuffleDeck()
-			card.Player.DrawCards(n1)
-
-			// p2
-			cards2 := fx.Find(ctx.Match.Opponent(card.Player), match.HAND)
-			n2 := len(cards2)
-
-			for _, c2 := range cards2 {
-				ctx.Match.Opponent(card.Player).MoveCard(c2.ID, match.HAND, match.DECK, card.ID)
-			}
-
-			ctx.Match.Opponent(card.Player).ShuffleDeck()
-			ctx.Match.Opponent(card.Player).DrawCards(n2)
-
-			ctx.Match.Chat("Server", "Cyclone Panic: Both players shuffled their deck and replaced the cards in their hand with new ones")
-
 		}
-	})
+
+		card.Player.ShuffleDeck()
+		card.Player.DrawCards(n1)
+
+		// p2
+		cards2 := fx.Find(ctx.Match.Opponent(card.Player), match.HAND)
+		n2 := len(cards2)
+
+		for _, c2 := range cards2 {
+			ctx.Match.Opponent(card.Player).MoveCard(c2.ID, match.HAND, match.DECK, card.ID)
+		}
+
+		ctx.Match.Opponent(card.Player).ShuffleDeck()
+		ctx.Match.Opponent(card.Player).DrawCards(n2)
+
+		ctx.Match.Chat("Server", "Cyclone Panic: Both players shuffled their deck and replaced the cards in their hand with new ones")
+
+	}))
 }
 
 // GlorySnow ...

@@ -53,7 +53,7 @@
         <div class="catalogue-top-bar">
           <div class="catalogue-filters">
             <input
-              v-model="filterCardName"
+              v-model="filterCard"
               class="catalogue-filter"
               type="search"
               placeholder="Type to search"
@@ -100,6 +100,7 @@
             <img
               class="reset-icon"
               src="/assets/images/reset-icon.svg"
+              v-tooltip="'Reset all filters'"
               @click="resetFilters"
             />
           </div>
@@ -108,11 +109,13 @@
               class="zoom-icon"
               @click="modifyCatalogueCardSize(10)"
               src="/assets/images/zoom-in-icon.svg"
+              v-tooltip="'Increase card size'"
             />
             <img
               @click="modifyCatalogueCardSize(-10)"
               class="zoom-icon"
               src="/assets/images/zoom-out-icon.svg"
+              v-tooltip="'Decrease card size'"
             />
           </div>
         </div>
@@ -151,11 +154,13 @@
             class="fl edit-ico"
             width="25px"
             src="/assets/images/edit_icon.png"
+            v-tooltip="'Edit deck info'"
           />
           <a
             :href="'/deck/' + selectedDeckUid"
             v-if="selectedDeck && selectedDeck.public"
             target="_blank"
+            v-tooltip="'Share deck'"
           >
             <img
               class="fl edit-ico share"
@@ -168,6 +173,7 @@
             v-if="selectedDeck && selectedDeck.uid"
             @click="deleteDeck(selectedDeckUid)"
             target="_blank"
+            v-tooltip="'Delete deck'"
           >
             <img
               class="fl edit-ico share"
@@ -180,6 +186,7 @@
             v-if="selectedDeck && selectedDeck.uid"
             @click="copyDeckList()"
             target="_blank"
+            v-tooltip="'Copy deck list'"
           >
             <img
               class="fl edit-ico share"
@@ -289,7 +296,7 @@ export default {
       warning: "",
       showWizard: false,
 
-      filterCardName: "",
+      filterCard: "",
       filterFamily: ALL_FAMILIES,
       filterSet: ALL_SETS,
       families: [ALL_FAMILIES, "Spell"],
@@ -356,7 +363,7 @@ export default {
       Object.keys(this.filterMana).forEach(manaCost => this.filterMana[manaCost] = false);
       this.filterFamily = ALL_FAMILIES;
       this.filterSet = ALL_SETS;
-      this.filterCardName = '';
+      this.filterCard = '';
     },
 
     getCardsForDeck(cardUids) {
@@ -594,7 +601,8 @@ export default {
   computed: {
     filteredAndSortedCards() {
       let cards = this.cards.filter(card =>
-        card.name.toLowerCase().includes(this.filterCardName.toLowerCase())
+        card.name.toLowerCase().includes(this.filterCard.toLowerCase()) ||
+          card.text.toLowerCase().includes(this.filterCard.toLowerCase())
       );
 
       if (this.filterSet !== ALL_SETS) {
@@ -690,6 +698,7 @@ $civ-darkness-base-color: #65696C;
 
 .zoom-icon {
   width: 25px;
+  cursor: pointer;
 }
 
 .reset-icon {

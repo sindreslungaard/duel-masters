@@ -9,7 +9,7 @@ import (
 
 func GarielElementalOfSunbeams(c *match.Card) {
 
-	c.Name = "Gariel, Elemental Of Sunbeams"
+	c.Name = "Gariel, Elemental of Sunbeams"
 	c.Power = 7500
 	c.Civ = civ.Light
 	c.Family = []string{family.AngelCommand}

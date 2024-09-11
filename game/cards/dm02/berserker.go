@@ -12,7 +12,7 @@ import (
 // LagunaLightningEnforcer ...
 func LagunaLightningEnforcer(c *match.Card) {
 
-	c.Name = "Laguna Lightning Enforcer"
+	c.Name = "Laguna, Lightning Enforcer"
 	c.Power = 2500
 	c.Civ = civ.Light
 	c.Family = []string{family.Berserker}

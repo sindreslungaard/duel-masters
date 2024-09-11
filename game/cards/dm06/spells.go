@@ -402,7 +402,7 @@ func FaerieLife(c *match.Card) {
 
 func BondsOfJustice(c *match.Card) {
 
-	c.Name = "Bonds of Jusitce"
+	c.Name = "Bonds of Justice"
 	c.Civ = civ.Light
 	c.ManaCost = 4
 	c.ManaRequirement = []string{civ.Light}

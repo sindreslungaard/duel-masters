@@ -10,7 +10,7 @@ import (
 
 func LaveilSeekerOfCatastrophe(c *match.Card) {
 
-	c.Name = "Laveil Seeker Of Catastrophe"
+	c.Name = "Laveil, Seeker of Catastrophe"
 	c.Power = 8500
 	c.Civ = civ.Light
 	c.Family = []string{family.MechaThunder}
@@ -23,7 +23,7 @@ func LaveilSeekerOfCatastrophe(c *match.Card) {
 
 func DavaToreySeekerOfClouds(c *match.Card) {
 
-	c.Name = "Dava Torey Seeker Of Clouds"
+	c.Name = "Dava Torey, Seeker of Clouds"
 	c.Power = 5500
 	c.Civ = civ.Light
 	c.Family = []string{family.MechaThunder}

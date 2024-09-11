@@ -448,10 +448,10 @@ func NaturalSnare(c *match.Card) {
 
 }
 
-// PangeasSong ...
-func PangeasSong(c *match.Card) {
+// PangaeasSong ...
+func PangaeasSong(c *match.Card) {
 
-	c.Name = "Pangea's Song"
+	c.Name = "Pangaea's Song"
 	c.Civ = civ.Nature
 	c.ManaCost = 1
 	c.ManaRequirement = []string{civ.Nature}
