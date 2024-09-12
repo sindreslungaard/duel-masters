@@ -20,7 +20,7 @@ func MetalwingSkyterror(c *match.Card) {
 
 	c.Use(fx.Creature, fx.Doublebreaker, fx.When(fx.Attacking, func(card *match.Card, ctx *match.Context) {
 
-		fx.SelectFilter(
+		fx.SelectFilterSelectablesOnly(
 			card.Player,
 			ctx.Match,
 			ctx.Match.Opponent(card.Player),

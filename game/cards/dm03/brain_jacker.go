@@ -23,7 +23,7 @@ func BonePiercer(c *match.Card) {
 
 		ctx.Match.Wait(ctx.Match.Opponent(c.Player), "Waiting for your opponent to make an action")
 
-		fx.SelectFilter(
+		fx.SelectFilterSelectablesOnly(
 			card.Player,
 			ctx.Match,
 			card.Player,

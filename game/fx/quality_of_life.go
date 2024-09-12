@@ -63,19 +63,19 @@ func When(test func(*match.Card, *match.Context) bool, h func(*match.Card, *matc
 
 // Select prompts the user to select n cards from the specified container
 func Select(p *match.Player, m *match.Match, containerOwner *match.Player, containerName string, text string, min int, max int, cancellable bool) CardCollection {
-	return SelectFilter(p, m, containerOwner, containerName, text, min, max, cancellable, func(x *match.Card) bool { return true })
+	return SelectFilterSelectablesOnly(p, m, containerOwner, containerName, text, min, max, cancellable, func(x *match.Card) bool { return true })
 }
 
-// SelectFilter prompts the user to select n cards from the specified container that matches the given filter
+// SelectFilterSelectablesOnly prompts the user to select n cards from the specified container that matches the given filter
 //
-// Deprecated: New cards should use `fx.SelectFilterFullList`
-func SelectFilter(p *match.Player, m *match.Match, containerOwner *match.Player, containerName string, text string, min int, max int, cancellable bool, filter func(*match.Card) bool) CardCollection {
-	return SelectFilterFullList(p, m, containerOwner, containerName, text, min, max, cancellable, filter, false)
+// Deprecated: New cards should use `fx.SelectFilter`
+func SelectFilterSelectablesOnly(p *match.Player, m *match.Match, containerOwner *match.Player, containerName string, text string, min int, max int, cancellable bool, filter func(*match.Card) bool) CardCollection {
+	return SelectFilter(p, m, containerOwner, containerName, text, min, max, cancellable, filter, false)
 }
 
 // SelectFilter prompts the user to select n cards from the specified container that matches the given filter.
 // It also allows to show all the other cards from the container that are unselectable
-func SelectFilterFullList(p *match.Player, m *match.Match, containerOwner *match.Player, containerName string, text string, min int, max int, cancellable bool, filter func(*match.Card) bool, showUnselectables bool) CardCollection {
+func SelectFilter(p *match.Player, m *match.Match, containerOwner *match.Player, containerName string, text string, min int, max int, cancellable bool, filter func(*match.Card) bool, showUnselectables bool) CardCollection {
 
 	result := make([]*match.Card, 0)
 

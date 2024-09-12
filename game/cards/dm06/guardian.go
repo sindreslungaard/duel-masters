@@ -36,7 +36,7 @@ func ForbosSanctumGuardianQ(c *match.Card) {
 				return
 			}
 
-			fx.SelectFilterFullList(
+			fx.SelectFilter(
 				card.Player,
 				ctx.Match,
 				card.Player,

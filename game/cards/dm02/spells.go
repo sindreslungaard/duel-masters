@@ -66,7 +66,7 @@ func LogicCube(c *match.Card) {
 
 	c.Use(fx.Spell, fx.ShieldTrigger, fx.When(fx.SpellCast, func(card *match.Card, ctx *match.Context) {
 
-		creatures := fx.SelectFilterFullList(
+		creatures := fx.SelectFilter(
 			card.Player,
 			ctx.Match,
 			card.Player,
@@ -125,7 +125,7 @@ func CriticalBlade(c *match.Card) {
 
 	c.Use(fx.Spell, fx.ShieldTrigger, fx.When(fx.SpellCast, func(card *match.Card, ctx *match.Context) {
 
-		fx.SelectFilter(
+		fx.SelectFilterSelectablesOnly(
 			card.Player,
 			ctx.Match,
 			ctx.Match.Opponent(card.Player),

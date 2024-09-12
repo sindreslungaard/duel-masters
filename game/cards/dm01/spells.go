@@ -273,7 +273,7 @@ func DimensionGate(c *match.Card) {
 
 	c.Use(fx.Spell, fx.ShieldTrigger, fx.When(fx.SpellCast, func(card *match.Card, ctx *match.Context) {
 
-		creatures := fx.SelectFilterFullList(card.Player, ctx.Match, card.Player, match.DECK, "Select 1 creature from your deck that will be shown to your opponent and sent to your hand", 1, 1, true, func(x *match.Card) bool { return x.HasCondition(cnd.Creature) }, true)
+		creatures := fx.SelectFilter(card.Player, ctx.Match, card.Player, match.DECK, "Select 1 creature from your deck that will be shown to your opponent and sent to your hand", 1, 1, true, func(x *match.Card) bool { return x.HasCondition(cnd.Creature) }, true)
 
 		for _, creature := range creatures {
 

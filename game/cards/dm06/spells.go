@@ -17,7 +17,7 @@ func ProtectiveForce(c *match.Card) {
 
 	c.Use(fx.Spell, fx.ShieldTrigger, fx.When(fx.SpellCast, func(card *match.Card, ctx *match.Context) {
 
-		fx.SelectFilter(
+		fx.SelectFilterSelectablesOnly(
 			card.Player,
 			ctx.Match,
 			card.Player,
@@ -316,7 +316,7 @@ func MysticTreasureChest(c *match.Card) {
 
 	c.Use(fx.Spell, fx.When(fx.SpellCast, func(card *match.Card, ctx *match.Context) {
 
-		fx.SelectFilterFullList(
+		fx.SelectFilter(
 			card.Player,
 			ctx.Match,
 			card.Player,
@@ -348,7 +348,7 @@ func PangaeasWill(c *match.Card) {
 
 		if match.AmICasted(card, ctx) {
 
-			fx.SelectFilter(
+			fx.SelectFilterSelectablesOnly(
 				card.Player,
 				ctx.Match,
 				ctx.Match.Opponent(card.Player),
@@ -513,7 +513,7 @@ func CometMissile(c *match.Card) {
 
 	c.Use(fx.Spell, fx.ShieldTrigger, fx.When(fx.SpellCast, func(card *match.Card, ctx *match.Context) {
 
-		creatures := fx.SelectFilter(
+		creatures := fx.SelectFilterSelectablesOnly(
 			card.Player,
 			ctx.Match,
 			ctx.Match.Opponent(card.Player),

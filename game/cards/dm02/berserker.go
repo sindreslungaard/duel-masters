@@ -23,7 +23,7 @@ func LagunaLightningEnforcer(c *match.Card) {
 
 		ctx.ScheduleAfter(func() {
 
-			fx.SelectFilterFullList(card.Player,
+			fx.SelectFilter(card.Player,
 				ctx.Match,
 				card.Player,
 				match.DECK,

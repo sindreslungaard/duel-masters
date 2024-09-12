@@ -22,7 +22,7 @@ func StainedGlass(c *match.Card) {
 
 		ctx.ScheduleAfter(func() {
 
-			fx.SelectFilter(
+			fx.SelectFilterSelectablesOnly(
 				card.Player,
 				ctx.Match,
 				ctx.Match.Opponent(card.Player),

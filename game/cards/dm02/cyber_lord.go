@@ -80,7 +80,7 @@ func Corile(c *match.Card) {
 
 			ctx.Match.Wait(card.Player, "Waiting for your opponent to make an action...")
 
-			fx.SelectFilter(
+			fx.SelectFilterSelectablesOnly(
 				ctx.Match.Opponent(card.Player),
 				ctx.Match,
 				ctx.Match.Opponent(card.Player),

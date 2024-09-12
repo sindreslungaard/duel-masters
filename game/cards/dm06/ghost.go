@@ -65,7 +65,7 @@ func GrimSoulShadowOfReversal(c *match.Card) {
 	c.ManaRequirement = []string{civ.Darkness}
 	c.TapAbility = func(card *match.Card, ctx *match.Context) {
 
-		fx.SelectFilter(
+		fx.SelectFilterSelectablesOnly(
 			card.Player,
 			ctx.Match,
 			card.Player,

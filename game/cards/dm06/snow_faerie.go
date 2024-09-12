@@ -19,7 +19,7 @@ func CharmiliaTheEnticer(c *match.Card) {
 	c.ManaRequirement = []string{civ.Nature}
 	c.TapAbility = func(card *match.Card, ctx *match.Context) {
 
-		cards := fx.SelectFilterFullList(
+		cards := fx.SelectFilter(
 			card.Player,
 			ctx.Match,
 			card.Player,

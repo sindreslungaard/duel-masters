@@ -118,7 +118,7 @@
             <img
               @contextmenu.prevent="showLarge(card)"
               @dragstart.prevent=""
-              class="no-drag unselectable-card"
+              class="no-drag brightness-50 cursor-not-allowed"
               :src="`https://scans.shobu.io/${card.uid}.jpg`"
             />
           </div>
@@ -1925,9 +1925,5 @@ export default {
 
 .card-action-group {
   display: flex;
-}
-
-.unselectable-card {
-  filter: brightness(50%)
 }
 </style>

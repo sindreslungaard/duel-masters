@@ -29,7 +29,7 @@ func JackViperShadowofDoom(c *match.Card) {
 			event.Card.Player == card.Player &&
 			event.Card.Civ == civ.Darkness {
 
-			fx.SelectFilter(
+			fx.SelectFilterSelectablesOnly(
 				card.Player,
 				ctx.Match,
 				card.Player,

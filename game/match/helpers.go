@@ -74,7 +74,7 @@ func Search(p *Player, m *Match, containerOwner *Player, containerName string, t
 
 // SearchForCnd prompts the user to select n cards from the specified container that matches the given condition
 //
-// Deprecated: New cards should use `fx.SelectFilter`
+// Deprecated: New cards should use `fx.SelectFilterSelectablesOnly`
 func SearchForCnd(p *Player, m *Match, containerOwner *Player, containerName string, condition string, text string, min int, max int, cancellable bool) []*Card {
 
 	result := make([]*Card, 0)
@@ -135,7 +135,7 @@ func SearchForCnd(p *Player, m *Match, containerOwner *Player, containerName str
 
 // SearchForFamily prompts the user to select n cards from the specified container that matches the given family
 //
-// Deprecated: New cards should use `fx.SelectFilter`
+// Deprecated: New cards should use `fx.SelectFilterSelectablesOnly`
 func SearchForFamily(p *Player, m *Match, containerOwner *Player, containerName string, family string, text string, min int, max int, cancellable bool) []*Card {
 
 	result := make([]*Card, 0)
@@ -196,7 +196,7 @@ func SearchForFamily(p *Player, m *Match, containerOwner *Player, containerName 
 
 // Filter prompts the user to select n cards from the specified container that matches the given filter
 //
-// Deprecated: New cards should use `fx.SelectFilter`
+// Deprecated: New cards should use `fx.SelectFilterSelectablesOnly`
 func Filter(p *Player, m *Match, containerOwner *Player, containerName string, text string, min int, max int, cancellable bool, filter func(*Card) bool) []*Card {
 
 	result := make([]*Card, 0)

@@ -29,7 +29,7 @@ func KipChippotto(c *match.Card) {
 			event.Card.Player == card.Player &&
 			event.Card.HasFamily(family.ArmoredDragon) {
 
-			fx.SelectFilter(
+			fx.SelectFilterSelectablesOnly(
 				card.Player,
 				ctx.Match,
 				card.Player,
