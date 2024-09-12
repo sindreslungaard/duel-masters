@@ -198,15 +198,15 @@ func (m *Match) CastSpell(card *Card, fromShield bool) {
 	m.HandleFx(NewContext(m, &SpellCast{
 		CardID:        card.ID,
 		FromShield:    fromShield,
-		MatchPlayerID: m.getPlayerMatchId(card),
+		MatchPlayerID: m.getPlayerMatchId(card.Player),
 	}))
 
 	m.BroadcastState()
 
 }
 
-func (m *Match) getPlayerMatchId(card *Card) byte {
-	if card.Player == m.Player1.Player {
+func (m *Match) getPlayerMatchId(player *Player) byte {
+	if player == m.Player1.Player {
 		return 1
 	}
 	return 2
@@ -242,7 +242,7 @@ func (m *Match) MoveCard(card *Card, destination string, source *Card) {
 		return
 	}
 
-	m.Chat("Server", fmt.Sprintf("%s was moved to %s %s by %s", card.Name, card.Player.Username(), destination, source.Name))
+	m.ReportActionInChat(card.Player, fmt.Sprintf("%s was moved to %s %s by %s", card.Name, card.Player.Username(), destination, source.Name))
 
 }
 
@@ -415,6 +415,11 @@ func (m *Match) ColorChat(sender string, message string, color string) {
 	}
 
 	m.Broadcast(msg)
+}
+
+func (m *Match) ReportActionInChat(player *Player, message string) {
+	sender := fmt.Sprintf("Server_%d", m.getPlayerMatchId(player))
+	m.ColorChat(sender, message, "#ccc")
 }
 
 // Chat sends a chat message with the default color
@@ -878,7 +883,7 @@ func (m *Match) StartOfTurnStep() {
 
 	m.HandleFx(ctx)
 
-	m.Chat("Server", fmt.Sprintf("Your turn, %s", m.CurrentPlayer().Socket.User.Username))
+	m.ReportActionInChat(m.CurrentPlayer().Player, fmt.Sprintf("Your turn, %s", m.CurrentPlayer().Socket.User.Username))
 
 	m.DrawStep()
 
@@ -923,7 +928,7 @@ func (m *Match) EndStep() {
 
 	m.HandleFx(ctx)
 
-	m.Chat("Server", fmt.Sprintf("%s ended their turn", m.CurrentPlayer().Socket.User.Username))
+	m.ReportActionInChat(m.CurrentPlayer().Player, fmt.Sprintf("%s ended their turn", m.CurrentPlayer().Socket.User.Username))
 
 	m.EndOfTurnTriggers()
 
@@ -968,7 +973,7 @@ func (m *Match) ChargeMana(p *PlayerReference, cardID string) {
 	if card, err := p.Player.MoveCard(cardID, HAND, MANAZONE, cardID); err == nil {
 		p.Player.HasChargedMana = true
 		m.BroadcastState()
-		m.Chat("Server", fmt.Sprintf("%s was added to %s's manazone", card.Name, p.Socket.User.Username))
+		m.ReportActionInChat(p.Player, fmt.Sprintf("%s was added to %s's manazone", card.Name, p.Socket.User.Username))
 	}
 
 }
