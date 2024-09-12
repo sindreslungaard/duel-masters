@@ -136,7 +136,7 @@ func Gigargon(c *match.Card) {
 
 				for _, creature := range creatures {
 					card.Player.MoveCard(creature.ID, match.GRAVEYARD, match.HAND, card.ID)
-					ctx.Match.Chat("Server", fmt.Sprintf("%s was returned to %s's hand from their graveyard", creature.Name, card.Player.Username()))
+					ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s was returned to %s's hand from their graveyard", creature.Name, card.Player.Username()))
 				}
 
 			}

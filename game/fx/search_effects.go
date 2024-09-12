@@ -20,7 +20,7 @@ func SearchDeckMoveCardsZone(card *match.Card, ctx *match.Context, quantity int,
 		true,
 	).Map(func(x *match.Card) {
 		x.Player.MoveCard(x.ID, match.DECK, newZone, card.ID)
-		ctx.Match.ReportActionInChat(card.Player, resultText)
+		ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf(resultText, x.Name))
 	})
 
 	ShuffleDeck(card, ctx, false)

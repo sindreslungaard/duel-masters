@@ -58,7 +58,7 @@ func ThornyMandra(c *match.Card) {
 				for _, creature := range creatures {
 					creature.Tapped = false
 					card.Player.MoveCard(creature.ID, match.GRAVEYARD, match.MANAZONE, card.ID)
-					ctx.Match.Chat("Server", fmt.Sprintf("%s was moved from %s's graveyard to their manazone", creature.Name, card.Player.Username()))
+					ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s was moved from %s's graveyard to their manazone", creature.Name, card.Player.Username()))
 				}
 
 			}
