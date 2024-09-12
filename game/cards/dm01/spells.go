@@ -187,17 +187,23 @@ func CrystalMemory(c *match.Card) {
 
 	c.Use(fx.Spell, fx.ShieldTrigger, fx.When(fx.SpellCast, func(card *match.Card, ctx *match.Context) {
 
-		selectedCards := fx.Select(card.Player, ctx.Match, card.Player, match.DECK, "Select 1 card from your deck that will be sent to your hand", 1, 1, true)
+		selectedCards := fx.Select(
+			card.Player,
+			ctx.Match,
+			card.Player,
+			match.DECK,
+			fmt.Sprintf("%s effect: Select 1 card from your deck that will be sent to your hand", card.Name),
+			1,
+			1,
+			true,
+		)
 
 		for _, selectedCard := range selectedCards {
-
 			card.Player.MoveCard(selectedCard.ID, match.DECK, match.HAND, card.ID)
-
+			ctx.Match.ReportActionInChat(card.Player, card.Player.Username()+" retrieved a card from their deck")
 		}
 
-		card.Player.ShuffleDeck()
-
-		ctx.Match.Chat("Server", card.Player.Username()+" retrieved a card from their deck")
+		fx.ShuffleDeck(card, ctx, false)
 
 	}))
 }
@@ -263,20 +269,7 @@ func DimensionGate(c *match.Card) {
 	c.ManaCost = 3
 	c.ManaRequirement = []string{civ.Nature}
 
-	c.Use(fx.Spell, fx.ShieldTrigger, fx.When(fx.SpellCast, func(card *match.Card, ctx *match.Context) {
-
-		creatures := fx.SelectFilter(card.Player, ctx.Match, card.Player, match.DECK, "Select 1 creature from your deck that will be shown to your opponent and sent to your hand", 1, 1, true, func(x *match.Card) bool { return x.HasCondition(cnd.Creature) }, true)
-
-		for _, creature := range creatures {
-
-			card.Player.MoveCard(creature.ID, match.DECK, match.HAND, card.ID)
-			ctx.Match.Chat("Server", fmt.Sprintf("%s retrieved %s from the deck to their hand", card.Player.Username(), creature.Name))
-
-		}
-
-		card.Player.ShuffleDeck()
-
-	}))
+	c.Use(fx.Spell, fx.ShieldTrigger, fx.When(fx.SpellCast, fx.SearchDeckTake1Creature))
 
 }
 

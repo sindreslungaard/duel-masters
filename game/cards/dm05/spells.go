@@ -208,30 +208,20 @@ func BrutalCharge(c *match.Card) {
 		}),
 		fx.When(fx.EndOfMyTurn, func(card *match.Card, ctx *match.Context) {
 
-			if cardPlayed {
-
-				fx.SelectFilter(
-					card.Player,
-					ctx.Match,
-					card.Player,
-					match.DECK,
-					fmt.Sprintf("Select %d creature from your deck that will be shown to your opponent and sent to your hand", shieldsBroken),
-					shieldsBroken,
-					shieldsBroken,
-					true,
-					func(c *match.Card) bool { return c.HasCondition(cnd.Creature) },
-					true,
-				).Map(func(c *match.Card) {
-					c.Player.MoveCard(c.ID, match.DECK, match.HAND, card.ID)
-					ctx.Match.Chat("Server", fmt.Sprintf("%s was moved from %s's deck to their hand by %s", c.Name, c.Player.Username(), card.Name))
-				})
-
-				card.Player.ShuffleDeck()
-
-				cardPlayed = false
-				shieldsBroken = 0
-
+			if !cardPlayed {
+				return
 			}
+
+			fx.SearchDeckTakeCards(
+				card,
+				ctx,
+				shieldsBroken,
+				func(x *match.Card) bool { return x.HasCondition(cnd.Creature) },
+				"creature(s)",
+			)
+
+			cardPlayed = false
+			shieldsBroken = 0
 
 		}))
 

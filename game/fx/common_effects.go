@@ -57,3 +57,16 @@ func OpponentDiscardsRandomCard(card *match.Card, ctx *match.Context) {
 	}
 
 }
+
+// To be used as part of a card effect, not for initial shuffle
+func ShuffleDeck(card *match.Card, ctx *match.Context, forOpponent bool) {
+	if !forOpponent {
+		card.Player.ShuffleDeck()
+		ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s shuffled their deck", card.Player.Username()))
+	} else {
+		opponent := ctx.Match.Opponent(card.Player)
+		opponent.ShuffleDeck()
+		ctx.Match.ReportActionInChat(opponent, fmt.Sprintf("%s deck shuffled by %s effect", opponent.Username(), card.Name))
+	}
+
+}

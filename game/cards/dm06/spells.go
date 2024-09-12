@@ -62,15 +62,13 @@ func InvincibleTechnology(c *match.Card) {
 
 	c.Use(fx.Spell, fx.When(fx.SpellCast, func(card *match.Card, ctx *match.Context) {
 
-		selectedCards := fx.Select(card.Player, ctx.Match, card.Player, match.DECK, "Select any number of cards from your deck that will be sent to your hand", 0, 100, false)
-
-		for _, selectedCard := range selectedCards {
-
-			card.Player.MoveCard(selectedCard.ID, match.DECK, match.HAND, card.ID)
-			ctx.Match.Chat("Server", fmt.Sprintf("%s retrieved %s from the deck to their hand", card.Player.Username(), selectedCard.Name))
-		}
-
-		card.Player.ShuffleDeck()
+		fx.SearchDeckTakeCards(
+			card,
+			ctx,
+			100,
+			func(x *match.Card) bool { return true },
+			"cards",
+		)
 
 	}))
 }
@@ -228,10 +226,10 @@ func FutureSlash(c *match.Card) {
 			true,
 		).Map(func(x *match.Card) {
 			x.Player.MoveCard(x.ID, match.DECK, match.GRAVEYARD, card.ID)
-			ctx.Match.Chat("Server", fmt.Sprintf("%s put %s in graveyard from their opponent's deck", x.Player.Username(), x.Name))
+			ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s put %s in graveyard from their opponent's deck", x.Player.Username(), x.Name))
 		})
 
-		opponent.ShuffleDeck()
+		fx.ShuffleDeck(card, ctx, true)
 
 	}))
 
@@ -316,23 +314,13 @@ func MysticTreasureChest(c *match.Card) {
 
 	c.Use(fx.Spell, fx.When(fx.SpellCast, func(card *match.Card, ctx *match.Context) {
 
-		fx.SelectFilter(
-			card.Player,
-			ctx.Match,
-			card.Player,
-			match.DECK,
-			"Mystic Treasure Chest: Put a non-nature card from your deck into your manazone",
+		fx.SearchDeckPutIntoManazone(
+			card,
+			ctx,
 			1,
-			1,
-			true,
-			func(c *match.Card) bool { return c.Civ != civ.Nature },
-			true,
-		).Map(func(x *match.Card) {
-			x.Player.MoveCard(x.ID, match.DECK, match.MANAZONE, card.ID)
-			ctx.Match.Chat("Server", fmt.Sprintf("%s put %s in their manazone from their deck", x.Player.Username(), x.Name))
-		})
-
-		card.Player.ShuffleDeck()
+			func(x *match.Card) bool { return x.Civ != civ.Nature },
+			"non-nature card",
+		)
 
 	}))
 }

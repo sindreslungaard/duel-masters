@@ -60,22 +60,13 @@ func FactoryShellQ(c *match.Card) {
 				return
 			}
 
-			fx.SelectFilter(
-				card.Player,
-				ctx.Match,
-				card.Player,
-				match.DECK,
-				"Select 1 survivor from your deck that will be shown to your opponent and sent to your hand",
+			fx.SearchDeckTakeCards(
+				card,
+				ctx,
 				1,
-				1,
-				true,
 				func(x *match.Card) bool { return x.HasCondition(cnd.Survivor) },
-				true,
-			).Map(func(x *match.Card) {
-				card.Player.MoveCard(x.ID, match.DECK, match.HAND, card.ID)
-				ctx.Match.Chat("Server", fmt.Sprintf("%s was moved from %s's deck to their hand", x.Name, card.Player.Username()))
-				card.Player.ShuffleDeck()
-			})
+				"survivor",
+			)
 
 		}
 
