@@ -27,7 +27,7 @@ func ChaosFish(c *match.Card) {
 
 		ctx.ScheduleAfter(func() {
 			nrCardsToDraw := (getWaterCardsInYourBattleZone(card) - 1) //-1 to exclude self
-			card.Player.DrawCards(nrCardsToDraw)
+			fx.DrawBetween(card, ctx, 0, nrCardsToDraw)
 		})
 	}))
 

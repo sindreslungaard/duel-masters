@@ -17,6 +17,6 @@ func MagrisVizierOfMagnetism(c *match.Card) {
 	c.ManaCost = 4
 	c.ManaRequirement = []string{civ.Light}
 
-	c.Use(fx.Creature, fx.Draw1)
+	c.Use(fx.Creature, fx.When(fx.Summoned, fx.MayDraw1))
 
 }

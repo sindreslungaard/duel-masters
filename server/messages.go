@@ -68,6 +68,7 @@ type WarningMessage struct {
 // ActionMessage is used to prompt the user to make a selection of the specified cards
 type ActionMessage struct {
 	Header            string      `json:"header"`
+	ActionType        string      `json:"actionType"`
 	Cards             []CardState `json:"cards"`
 	Text              string      `json:"text"`
 	MinSelections     int         `json:"minSelections"`

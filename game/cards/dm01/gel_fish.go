@@ -18,32 +18,13 @@ func IllusionaryMerfolk(c *match.Card) {
 	c.ManaCost = 5
 	c.ManaRequirement = []string{civ.Water}
 
-	c.Use(fx.Creature, func(card *match.Card, ctx *match.Context) {
+	c.Use(fx.Creature, fx.When(fx.Summoned, func(card *match.Card, ctx *match.Context) {
 
-		if event, ok := ctx.Event.(*match.CardMoved); ok {
-
-			if event.CardID == card.ID && event.To == match.BATTLEZONE {
-
-				battlezone, err := card.Player.Container(match.BATTLEZONE)
-
-				if err != nil {
-					return
-				}
-
-				for _, creature := range battlezone {
-
-					if creature.HasFamily(family.CyberLord) {
-						card.Player.DrawCards(3)
-						return
-					}
-
-				}
-
-			}
-
+		if match.ContainerHas(card.Player, match.BATTLEZONE, func(x *match.Card) bool { return x.HasFamily(family.CyberLord) }) {
+			fx.DrawUpTo3(card, ctx)
 		}
 
-	})
+	}))
 
 }
 

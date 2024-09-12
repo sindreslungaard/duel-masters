@@ -703,6 +703,44 @@ func (m *Match) newMultipartActionBase(player *Player, cards map[string][]*Card,
 
 }
 
+// NewCountAction prompts the user to select a number in an interval
+func (m *Match) NewCountAction(player *Player, text string, minSelections int, maxSelections int) {
+
+	msg := &server.ActionMessage{
+		Header:        "action",
+		ActionType:    "count",
+		Text:          text,
+		MinSelections: minSelections,
+		MaxSelections: maxSelections,
+	}
+
+	player.ActionState = PlayerActionState{
+		resolved: false,
+		data:     msg,
+	}
+
+	m.PlayerRef(player).Socket.Send(msg)
+
+}
+
+// NewQuestionAction prompts the user to answer a yes/no question
+func (m *Match) NewQuestionAction(player *Player, text string) {
+
+	msg := &server.ActionMessage{
+		Header:     "action",
+		ActionType: "question",
+		Text:       text,
+	}
+
+	player.ActionState = PlayerActionState{
+		resolved: false,
+		data:     msg,
+	}
+
+	m.PlayerRef(player).Socket.Send(msg)
+
+}
+
 // CloseAction closes the card selection popup for the given player
 func (m *Match) CloseAction(p *Player) {
 	p.ActionState.resolved = true
@@ -1835,7 +1873,7 @@ func (m *Match) handleAdminMesseges(message string, user db.User) {
 			count := 1
 			if len(msgParts) > 2 {
 				number, err := strconv.Atoi(msgParts[2])
-				if err == nil && number <= 5 || number >= 1 {
+				if err == nil && number >= 1 {
 					count = number
 				}
 			}

@@ -46,6 +46,7 @@ type Spectator struct {
 // PlayerAction is the parsed response we retrieve after prompting the client for a selection of cards
 type PlayerAction struct {
 	Cards  []string `json:"cards"`
+	Count  int      `json:"count"`
 	Cancel bool     `json:"cancel"`
 }
 
@@ -345,10 +346,10 @@ func (p *Player) DrawCards(n int) {
 		p.MoveCard(card, DECK, HAND, "draw")
 	}
 
-	if n > 1 {
-		p.match.Chat("Server", fmt.Sprintf("%s drew %v cards", p.match.PlayerRef(p).Socket.User.Username, n))
-	} else {
+	if n == 1 {
 		p.match.Chat("Server", fmt.Sprintf("%s drew %v card", p.match.PlayerRef(p).Socket.User.Username, n))
+	} else {
+		p.match.Chat("Server", fmt.Sprintf("%s drew %v cards", p.match.PlayerRef(p).Socket.User.Username, n))
 	}
 
 	if len(p.deck) <= 0 {
