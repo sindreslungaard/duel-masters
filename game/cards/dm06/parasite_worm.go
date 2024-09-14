@@ -45,7 +45,7 @@ func GraveWormQ(c *match.Card) {
 					func(x *match.Card) bool { return x.HasFamily(family.Survivor) && x.HasCondition(cnd.Creature) },
 				).Map(func(x *match.Card) {
 					card.Player.MoveCard(x.ID, match.GRAVEYARD, match.HAND, card.ID)
-					ctx.Match.Chat("Server", fmt.Sprintf("%s was moved to %s's hand from their graveyard by Grave Worm Q's survivor ability", x.Name, card.Player.Username()))
+					ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s was moved to %s's hand from their graveyard by Grave Worm Q's survivor ability", x.Name, card.Player.Username()))
 
 				})
 

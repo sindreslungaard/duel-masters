@@ -104,7 +104,7 @@ func livingCitadelVoshTapAbility(card *match.Card, ctx *match.Context) {
 	for _, toMove := range cards {
 
 		card.Player.MoveCard(toMove.ID, match.DECK, match.MANAZONE, card.ID)
-		ctx.Match.Chat("Server", fmt.Sprintf("%s put %s into the manazone from the top of their deck", card.Player.Username(), toMove.Name))
+		ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s put %s into the manazone from the top of their deck", card.Player.Username(), toMove.Name))
 
 	}
 }

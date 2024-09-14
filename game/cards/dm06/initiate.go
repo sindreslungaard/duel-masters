@@ -29,7 +29,7 @@ func CrazeValkyrieTheDrastic(c *match.Card) {
 				for _, creature := range creatures {
 					creature.Tapped = true
 
-					ctx.Match.Chat("Server", fmt.Sprintf("%s was tapped by %s's %s", creature.Name, card.Player.Username(), card.Name))
+					ctx.Match.ReportActionInChat(ctx.Match.Opponent(card.Player), fmt.Sprintf("%s was tapped by %s's %s", creature.Name, card.Player.Username(), card.Name))
 				}
 
 			}

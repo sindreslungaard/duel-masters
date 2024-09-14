@@ -23,7 +23,7 @@ func Sopian(c *match.Card) {
 		for _, creature := range creatures {
 
 			creature.AddCondition(cnd.CantBeBlocked, 1, card.ID)
-			ctx.Match.Chat("Server", fmt.Sprintf("%s was given \"Cant be blocked this turn by %s\"", creature.Name, card.Name))
+			ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s was given \"Cant be blocked this turn by %s\"", creature.Name, card.Name))
 
 		}
 	}

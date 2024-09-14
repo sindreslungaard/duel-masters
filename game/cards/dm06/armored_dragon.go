@@ -22,7 +22,7 @@ func BazagazealDragon(c *match.Card) {
 		}
 
 		card.Player.MoveCard(card.ID, match.BATTLEZONE, match.HAND, card.ID)
-		ctx.Match.Chat("Server", fmt.Sprintf("%s was returned to the %s's hand", c.Name, c.Player.Username()))
+		ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s was returned to the %s's hand", c.Name, c.Player.Username()))
 	}))
 
 }
@@ -48,7 +48,7 @@ func BolmeteusSteelDragon(c *match.Card) {
 		if event, ok := ctx.Event.(*match.MoveCard); ok && event.From == match.SHIELDZONE && event.To == match.HAND && event.Source == card.ID {
 			moved, err := ctx.Match.Opponent(card.Player).MoveCard(event.CardID, match.SHIELDZONE, match.GRAVEYARD, card.ID)
 			if err == nil {
-				ctx.Match.Chat("Server", fmt.Sprintf("%s was moved to %s's graveyard instead of hand by %s", moved.Name, ctx.Match.Opponent(card.Player).Username(), card.Name))
+				ctx.Match.ReportActionInChat(ctx.Match.Opponent(card.Player), fmt.Sprintf("%s was moved to %s's graveyard instead of hand by %s", moved.Name, ctx.Match.Opponent(card.Player).Username(), card.Name))
 			}
 
 			ctx.InterruptFlow()

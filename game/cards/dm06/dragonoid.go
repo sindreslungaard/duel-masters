@@ -24,7 +24,7 @@ func PyrofighterMagnus(c *match.Card) {
 		}
 
 		card.Player.MoveCard(card.ID, match.BATTLEZONE, match.HAND, card.ID)
-		ctx.Match.Chat("Server", fmt.Sprintf("%s was returned to the %s's hand", c.Name, c.Player.Username()))
+		ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s was returned to the %s's hand", c.Name, c.Player.Username()))
 	}))
 }
 
@@ -91,6 +91,6 @@ func lavaWalkerExecutoTapAbility(card *match.Card, ctx *match.Context) {
 	)
 	for _, creature := range creatures {
 		creature.AddCondition(cnd.PowerAmplifier, 3000, card.ID)
-		ctx.Match.Chat("Server", fmt.Sprintf("%s was given +3000 power by %s until end of turn", creature.Name, card.Name))
+		ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s was given +3000 power by %s until end of turn", creature.Name, card.Name))
 	}
 }
