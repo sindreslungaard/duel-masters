@@ -226,6 +226,7 @@
             <div
               class="message"
               :class="{
+                'server_general': message.sender.toLowerCase() === 'server',
                 'server_action_player_1': message.sender.toLowerCase() === 'server_1',
                 'server_action_player_2': message.sender.toLowerCase() === 'server_2',
                 'chat-message': !isFromServer(message) && !playmat,
@@ -239,14 +240,9 @@
               <div
                 class="message-sender"
                 :style="{ color: message.color || 'orange' }"
-                v-if="message.sender.toLowerCase() != 'server_1' && 
-                      message.sender.toLowerCase() != 'server_2'"
+                v-if="!isFromServer(message)"
               >
-                {{
-                  message.sender.toLowerCase() == "server"
-                    ? "-"
-                    : message.sender + ":"
-                }}
+                {{ message.sender + ":" }}
               </div>
               <div class="message-text">{{ message.message }}</div>
               <div class="mute-icon-container">
@@ -2026,6 +2022,12 @@ export default {
   max-width: 80%;
   align-self: flex-end;
   background: rgba(124, 127, 143, 0.5)
+}
+
+.server_general {
+  max-width: 80%;
+  align-self: center;
+  text-align: center;
 }
 
 .chat-message {
