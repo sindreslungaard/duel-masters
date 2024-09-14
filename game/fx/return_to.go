@@ -16,7 +16,7 @@ func ReturnToHand(card *match.Card, ctx *match.Context) {
 			ctx.InterruptFlow()
 
 			card.Player.MoveCard(card.ID, match.BATTLEZONE, match.HAND, card.ID)
-			ctx.Match.Chat("Server", fmt.Sprintf("%s was destroyed by %s and returned to the hand", event.Card.Name, event.Source.Name))
+			ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s was destroyed by %s and returned to the hand", event.Card.Name, event.Source.Name))
 
 		}
 
@@ -36,7 +36,7 @@ func ReturnToMana(card *match.Card, ctx *match.Context) {
 
 			card.Player.MoveCard(card.ID, match.BATTLEZONE, match.MANAZONE, card.ID)
 			card.Tapped = false
-			ctx.Match.Chat("Server", fmt.Sprintf("%s was destroyed by %s and moved to the mana zone", event.Card.Name, event.Source.Name))
+			ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s was destroyed by %s and moved to the mana zone", event.Card.Name, event.Source.Name))
 
 		}
 
@@ -56,7 +56,7 @@ func ReturnToShield(card *match.Card, ctx *match.Context) {
 
 			card.Player.MoveCard(card.ID, match.BATTLEZONE, match.SHIELDZONE, card.ID)
 			card.Tapped = false
-			ctx.Match.Chat("Server", fmt.Sprintf("%s was destroyed by %s and moved to the shield zone", event.Card.Name, event.Source.Name))
+			ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s was destroyed by %s and moved to the shield zone", event.Card.Name, event.Source.Name))
 
 		}
 

@@ -229,7 +229,7 @@ func (m *Match) Battle(attacker *Card, defender *Card, blocked bool) {
 func (m *Match) Destroy(card *Card, source *Card, context CreatureDestroyedContext) {
 
 	m.HandleFx(NewContext(m, &CreatureDestroyed{Card: card, Source: source, Context: context}))
-	m.Chat("Server", fmt.Sprintf("%s (%v) was destroyed by %s", card.Name, m.GetPower(card, false), source.Name))
+	m.ReportActionInChat(card.Player, fmt.Sprintf("%s (%v) was destroyed by %s", card.Name, m.GetPower(card, false), source.Name))
 
 }
 
@@ -255,7 +255,7 @@ func (m *Match) MoveCardToFront(card *Card, destination string, source *Card) {
 		return
 	}
 
-	m.Chat("Server", fmt.Sprintf("%s was moved to %s's %s by %s", card.Name, card.Player.Username(), destination, source.Name))
+	m.ReportActionInChat(card.Player, fmt.Sprintf("%s was moved to %s's %s by %s", card.Name, card.Player.Username(), destination, source.Name))
 
 }
 
@@ -266,7 +266,7 @@ func (m *Match) BreakShields(shields []*Card, source string) {
 		return
 	}
 
-	m.Chat("Server", fmt.Sprintf("%v of %v's shields were broken", len(shields), m.PlayerRef(shields[0].Player).Socket.User.Username))
+	m.ReportActionInChat(shields[0].Player, fmt.Sprintf("%v of %v's shields were broken", len(shields), m.PlayerRef(shields[0].Player).Socket.User.Username))
 
 	for _, shield := range shields {
 
