@@ -37,7 +37,7 @@ func BolzardDragon(c *match.Card) {
 
 			for _, mana := range manaCards {
 				mana.Player.MoveCard(mana.ID, match.MANAZONE, match.GRAVEYARD, card.ID)
-				ctx.Match.Chat("Server", fmt.Sprintf("%s was sent from %s's manazone to their graveyard by %s", mana.Name, mana.Player.Username(), card.Name))
+				ctx.Match.ReportActionInChat(ctx.Match.Opponent(card.Player), fmt.Sprintf("%s was sent from %s's manazone to their graveyard by %s", mana.Name, mana.Player.Username(), card.Name))
 			}
 		}
 

@@ -34,7 +34,7 @@ func StainedGlass(c *match.Card) {
 				func(x *match.Card) bool { return x.Civ == civ.Fire || x.Civ == civ.Nature },
 			).Map(func(x *match.Card) {
 				x.Player.MoveCard(x.ID, match.BATTLEZONE, match.HAND, card.ID)
-				ctx.Match.Chat("Server", fmt.Sprintf("%s was sent to %s's hand from the battle zone by Stained Glass", x.Name, x.Player.Username()))
+				ctx.Match.ReportActionInChat(ctx.Match.Opponent(card.Player), fmt.Sprintf("%s was sent to %s's hand from the battle zone by Stained Glass", x.Name, x.Player.Username()))
 			})
 
 		})

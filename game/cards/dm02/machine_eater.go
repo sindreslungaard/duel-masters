@@ -62,7 +62,7 @@ func EngineerKipo(c *match.Card) {
 
 							p.MoveCard(id, match.MANAZONE, match.GRAVEYARD, card.ID)
 
-							ctx.Match.Chat("Server", fmt.Sprintf("Engineer Kipo destroyed %v of %s's mana", toSelect, p.Username()))
+							ctx.Match.ReportActionInChat(p, fmt.Sprintf("Engineer Kipo destroyed %v of %s's mana", toSelect, p.Username()))
 
 						}
 

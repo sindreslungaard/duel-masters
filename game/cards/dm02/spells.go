@@ -177,7 +177,7 @@ func ManaCrisis(c *match.Card) {
 			false,
 		).Map(func(x *match.Card) {
 			x.Player.MoveCard(x.ID, match.MANAZONE, match.GRAVEYARD, card.ID)
-			ctx.Match.Chat("Server", fmt.Sprintf("%s was put into %s's graveyard from their manazone by %s", x.Name, x.Player.Username(), card.Name))
+			ctx.Match.ReportActionInChat(ctx.Match.Opponent(card.Player), fmt.Sprintf("%s was put into %s's graveyard from their manazone by %s", x.Name, x.Player.Username(), card.Name))
 		})
 
 	}))
@@ -200,7 +200,7 @@ func RumbleGate(c *match.Card) {
 		).Map(func(x *match.Card) {
 			x.AddCondition(cnd.PowerAmplifier, 1000, card.ID)
 			x.AddCondition(cnd.AttackUntapped, nil, card.ID)
-			ctx.Match.Chat("Server", fmt.Sprintf("%s can attack untapped creatures and was given +1000 power until the end of this turn by %s", x.Name, card.Name))
+			ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s can attack untapped creatures and was given +1000 power until the end of this turn by %s", x.Name, card.Name))
 		})
 
 	}))
@@ -224,7 +224,7 @@ func LostSoul(c *match.Card) {
 			ctx.Match.Opponent(card.Player).MoveCard(x.ID, match.HAND, match.GRAVEYARD, card.ID)
 		})
 
-		ctx.Match.Chat("Server", fmt.Sprintf("%s's hand was discarded by %s", ctx.Match.Opponent(card.Player).Username(), card.Name))
+		ctx.Match.ReportActionInChat(ctx.Match.Opponent(card.Player), fmt.Sprintf("%s's hand was discarded by %s", ctx.Match.Opponent(card.Player).Username(), card.Name))
 
 	}))
 
