@@ -35,7 +35,7 @@ func DoboulgyserGiantRockBeast(c *match.Card) {
 			).Map(func(x *match.Card) {
 
 				ctx.Match.Destroy(x, card, match.DestroyedByMiscAbility)
-				ctx.Match.Chat("Server", fmt.Sprintf("%s was destroyed by Doboulgyser", x.Name))
+				ctx.Match.ReportActionInChat(ctx.Match.Opponent(card.Player), fmt.Sprintf("%s was destroyed by Doboulgyser", x.Name))
 			})
 
 		}
@@ -67,7 +67,7 @@ func Magmarex(c *match.Card) {
 				func(x *match.Card) bool { return ctx.Match.GetPower(x, false) == 1000 },
 			).Map(func(x *match.Card) {
 				ctx.Match.Destroy(x, card, match.DestroyedByMiscAbility)
-				ctx.Match.Chat("Server", fmt.Sprintf("%s was destroyed by Magmarex", x.Name))
+				ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s was destroyed by Magmarex", x.Name))
 			})
 
 			fx.FindFilter(
@@ -76,7 +76,7 @@ func Magmarex(c *match.Card) {
 				func(x *match.Card) bool { return ctx.Match.GetPower(x, false) == 1000 },
 			).Map(func(x *match.Card) {
 				ctx.Match.Destroy(x, card, match.DestroyedByMiscAbility)
-				ctx.Match.Chat("Server", fmt.Sprintf("%s was destroyed by Magmarex", x.Name))
+				ctx.Match.ReportActionInChat(ctx.Match.Opponent(card.Player), fmt.Sprintf("%s was destroyed by Magmarex", x.Name))
 			})
 
 		}

@@ -33,7 +33,7 @@ func BloodwingMantis(c *match.Card) {
 			func(c *match.Card) bool { return c.HasCondition(cnd.Creature) },
 		).Map(func(c *match.Card) {
 			c.Player.MoveCard(c.ID, match.MANAZONE, match.HAND, card.ID)
-			ctx.Match.Chat("Server", fmt.Sprintf("%s was returned to %s's hand from manazone", c.Name, c.Player.Username()))
+			ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s was returned to %s's hand from manazone", c.Name, c.Player.Username()))
 		})
 
 	}))
@@ -94,7 +94,7 @@ func AmbushScorpion(c *match.Card) {
 				c.AddCondition(cnd.SummoningSickness, nil, nil)
 			}
 
-			ctx.Match.Chat("Server", fmt.Sprintf("%s was moved to %s's battlezone from their manazone", c.Name, c.Player.Username()))
+			ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s was moved to %s's battlezone from their manazone", c.Name, c.Player.Username()))
 
 		})
 
@@ -132,7 +132,7 @@ func ObsidianScarab(c *match.Card) {
 				c.AddCondition(cnd.SummoningSickness, nil, nil)
 			}
 
-			ctx.Match.Chat("Server", fmt.Sprintf("%s was moved to %s's battlezone from their manazone", c.Name, c.Player.Username()))
+			ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s was moved to %s's battlezone from their manazone", c.Name, c.Player.Username()))
 
 		})
 
