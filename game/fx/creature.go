@@ -616,15 +616,15 @@ func Creature(card *match.Card, ctx *match.Context) {
 
 			if attackerPower > defenderPower {
 				m.HandleFx(match.NewContext(m, &match.CreatureDestroyed{Card: defender, Source: attacker, Blocked: blocked}))
-				m.Chat("Server", fmt.Sprintf("%s (%v) was destroyed by %s (%v)", defender.Name, defenderPower, attacker.Name, attackerPower))
+				m.Chat("Server", fmt.Sprintf("%s (%v) was destroyed by %s (%v)", ctx.Match.FormatDisplayableCard(defender), defenderPower, ctx.Match.FormatDisplayableCard(attacker), attackerPower))
 			} else if attackerPower == defenderPower {
 				m.HandleFx(match.NewContext(m, &match.CreatureDestroyed{Card: attacker, Source: defender, Blocked: blocked}))
-				m.Chat("Server", fmt.Sprintf("%s (%v) was destroyed by %s (%v)", attacker.Name, attackerPower, defender.Name, defenderPower))
+				m.Chat("Server", fmt.Sprintf("%s (%v) was destroyed by %s (%v)", ctx.Match.FormatDisplayableCard(attacker), attackerPower, ctx.Match.FormatDisplayableCard(defender), defenderPower))
 				m.HandleFx(match.NewContext(m, &match.CreatureDestroyed{Card: defender, Source: attacker, Blocked: blocked}))
-				m.Chat("Server", fmt.Sprintf("%s (%v) was destroyed by %s (%v)", defender.Name, defenderPower, attacker.Name, attackerPower))
+				m.Chat("Server", fmt.Sprintf("%s (%v) was destroyed by %s (%v)", ctx.Match.FormatDisplayableCard(defender), defenderPower, ctx.Match.FormatDisplayableCard(attacker), attackerPower))
 			} else if attackerPower < defenderPower {
 				m.HandleFx(match.NewContext(m, &match.CreatureDestroyed{Card: attacker, Source: defender, Blocked: blocked}))
-				m.Chat("Server", fmt.Sprintf("%s (%v) was destroyed by %s (%v)", attacker.Name, attackerPower, defender.Name, defenderPower))
+				m.Chat("Server", fmt.Sprintf("%s (%v) was destroyed by %s (%v)", ctx.Match.FormatDisplayableCard(attacker), attackerPower, ctx.Match.FormatDisplayableCard(defender), defenderPower))
 			}
 		})
 	}
