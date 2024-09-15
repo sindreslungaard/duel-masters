@@ -228,8 +228,11 @@ func (m *Match) Battle(attacker *Card, defender *Card, blocked bool) {
 // Destroy sends the given card to its players graveyard
 func (m *Match) Destroy(card *Card, source *Card, context CreatureDestroyedContext) {
 
-	m.HandleFx(NewContext(m, &CreatureDestroyed{Card: card, Source: source, Context: context}))
+	if card.Zone != BATTLEZONE {
+		return
+	}
 	m.ReportActionInChat(card.Player, fmt.Sprintf("%s (%v) was destroyed by %s", card.Name, m.GetPower(card, false), source.Name))
+	m.HandleFx(NewContext(m, &CreatureDestroyed{Card: card, Source: source, Context: context}))
 
 }
 
