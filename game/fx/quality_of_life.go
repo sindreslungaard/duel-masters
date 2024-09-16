@@ -215,6 +215,11 @@ func selectMultipartBase(p *match.Player, m *match.Match, cards map[string][]*ma
 		m.NewMultipartAction(p, cards, min, max, text, cancellable)
 	}
 
+	if !m.IsPlayerTurn(p) {
+		m.Wait(m.Opponent(p), "Waiting for your opponent to make an action")
+		defer m.EndWait(m.Opponent(p))
+	}
+
 	defer m.CloseAction(p)
 
 	for {
