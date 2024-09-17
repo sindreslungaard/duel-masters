@@ -17,24 +17,21 @@ func BaragaBladeOfGloom(c *match.Card) {
 	c.ManaCost = 4
 	c.ManaRequirement = []string{civ.Darkness}
 
-	c.Use(fx.Creature, func(card *match.Card, ctx *match.Context) {
+	c.Use(fx.Creature, fx.When(fx.Summoned, func(card *match.Card, ctx *match.Context) {
 
-		if match.AmISummoned(card, ctx) {
+		fx.SelectBackside(
+			card.Player,
+			ctx.Match,
+			card.Player,
+			match.SHIELDZONE,
+			"Baraga, Blade of Gloom: Move 1 of your shield to your hand.",
+			1,
+			1,
+			false,
+		).Map(func(x *match.Card) {
+			ctx.Match.MoveCard(x, match.HAND, card)
+		})
 
-			fx.SelectBackside(
-				card.Player,
-				ctx.Match,
-				card.Player,
-				match.SHIELDZONE,
-				"Baraga, Blade of Gloom: Move 1 of your shield to your hand.",
-				1,
-				1,
-				false,
-			).Map(func(x *match.Card) {
-				ctx.Match.MoveCard(x, match.HAND, card)
-			})
-
-		}
-	})
+	}))
 
 }

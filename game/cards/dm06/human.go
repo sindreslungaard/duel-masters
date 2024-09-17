@@ -18,28 +18,25 @@ func ArmoredDecimatorValkaizer(c *match.Card) {
 	c.ManaCost = 5
 	c.ManaRequirement = []string{civ.Fire}
 
-	c.Use(fx.Creature, fx.Evolution, func(card *match.Card, ctx *match.Context) {
+	c.Use(fx.Creature, fx.Evolution, fx.When(fx.Summoned, func(card *match.Card, ctx *match.Context) {
 
-		if match.AmISummoned(card, ctx) {
+		fx.SelectFilterSelectablesOnly(
+			card.Player,
+			ctx.Match,
+			ctx.Match.Opponent(card.Player),
+			match.BATTLEZONE,
+			"Armored Decimator Valkaizer: You may select 1 opponent's creature with 4000 or less power and destroy it.",
+			0,
+			1,
+			true,
+			func(x *match.Card) bool { return ctx.Match.GetPower(x, false) <= 4000 },
+		).Map(func(x *match.Card) {
 
-			fx.SelectFilterSelectablesOnly(
-				card.Player,
-				ctx.Match,
-				ctx.Match.Opponent(card.Player),
-				match.BATTLEZONE,
-				"Armored Decimator Valkaizer: You may select 1 opponent's creature with 4000 or less power and destroy it.",
-				0,
-				1,
-				true,
-				func(x *match.Card) bool { return ctx.Match.GetPower(x, false) <= 4000 },
-			).Map(func(x *match.Card) {
+			ctx.Match.Destroy(x, card, match.DestroyedByMiscAbility)
+			ctx.Match.ReportActionInChat(ctx.Match.Opponent(card.Player), fmt.Sprintf("%s was destroyed by Armored Decimator Valkaizer", x.Name))
+		})
 
-				ctx.Match.Destroy(x, card, match.DestroyedByMiscAbility)
-				ctx.Match.ReportActionInChat(ctx.Match.Opponent(card.Player), fmt.Sprintf("%s was destroyed by Armored Decimator Valkaizer", x.Name))
-			})
-
-		}
-	})
+	}))
 
 }
 
