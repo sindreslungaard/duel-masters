@@ -333,7 +333,25 @@ func SelectBacksideFilter(p *match.Player, m *match.Match, containerOwner *match
 // hooks are shorthands for checking if the context matches a certain condition
 
 // Summoned returns true if the card was summoned
+//
+// Does not activate if the card was under an Evolution card and becomes visible again.
 func Summoned(card *match.Card, ctx *match.Context) bool {
+	if event, ok := ctx.Event.(*match.CardMoved); ok {
+
+		if event.CardID == card.ID && event.To == match.BATTLEZONE && event.From != match.HIDDENZONE {
+			return true
+		}
+
+	}
+
+	return false
+}
+
+// InTheBattlezone returns true if the card arrives in the battlezone.
+//
+// Similar to summon but activates also if the card was under an Evolution card and becomes visible again.
+// Used for cards that have continuous effects while in the battlezone.
+func InTheBattlezone(card *match.Card, ctx *match.Context) bool {
 	if event, ok := ctx.Event.(*match.CardMoved); ok {
 
 		if event.CardID == card.ID && event.To == match.BATTLEZONE {
@@ -464,6 +482,10 @@ func ShieldBroken(card *match.Card, ctx *match.Context) bool {
 
 }
 
+// AnotherCreatureSummoned returns true if another card was summoned
+//
+// Does not activate if this current card is summoned.
+// Does not activate if a card that was under an Evolution card becomes visible again.
 func AnotherCreatureSummoned(card *match.Card, ctx *match.Context) bool {
 	if card.Zone != match.BATTLEZONE {
 		return false
@@ -471,7 +493,7 @@ func AnotherCreatureSummoned(card *match.Card, ctx *match.Context) bool {
 
 	if event, ok := ctx.Event.(*match.CardMoved); ok {
 
-		if event.CardID != card.ID && event.To == match.BATTLEZONE {
+		if event.CardID != card.ID && event.To == match.BATTLEZONE && event.From != match.HIDDENZONE {
 			return true
 		}
 
