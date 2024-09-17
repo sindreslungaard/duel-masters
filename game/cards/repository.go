@@ -7,6 +7,7 @@ import (
 	"duel-masters/game/cards/dm04"
 	"duel-masters/game/cards/dm05"
 	"duel-masters/game/cards/dm06"
+	"duel-masters/game/cards/dm07"
 	"duel-masters/game/match"
 )
 
@@ -521,7 +522,7 @@ var DM06 = map[string]match.CardConstructor{
 
 var DM07 = map[string]match.CardConstructor{
 	"d45c3c6a-da43-42c8-bf9f-e72aa8c59a36": nil,
-	"a7179172-1a44-46af-abf9-59daf43e67d9": nil,
+	"a7179172-1a44-46af-abf9-59daf43e67d9": dm07.CosmicNebula,
 	"504c57d4-d27a-42ce-bfff-36708b814c21": nil,
 	"19bc25dc-2b35-4676-ab72-a8b13b1828e0": nil,
 	"d9be6090-077b-4f34-95cc-d33b2266e45c": nil,
