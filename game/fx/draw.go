@@ -44,31 +44,28 @@ func Draw5(card *match.Card, ctx *match.Context) {
 	draw(card, ctx, 5)
 }
 
-// DrawToMana draws 1 card and puts it in the players manazone
-func DrawToMana(card *match.Card, ctx *match.Context) {
+// Draw1ToMana draws 1 card and puts it in the players manazone
+func Draw1ToMana(card *match.Card, ctx *match.Context) {
 
-	if event, ok := ctx.Event.(*match.CardMoved); ok {
+	cards := card.Player.PeekDeck(1)
 
-		if event.CardID == card.ID && (event.To == match.BATTLEZONE || event.To == match.SPELLZONE) {
-
-			cards := card.Player.PeekDeck(1)
-
-			if len(cards) < 1 {
-				return
-			}
-
-			c, err := card.Player.MoveCard(cards[0].ID, match.DECK, match.MANAZONE, card.ID)
-
-			if err != nil {
-				return
-			}
-
-			ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s was added to %s's manazone from the top of their deck", c.Name, ctx.Match.PlayerRef(card.Player).Socket.User.Username))
-
-		}
-
+	if len(cards) < 1 {
+		return
 	}
 
+	c, err := card.Player.MoveCard(cards[0].ID, match.DECK, match.MANAZONE, card.ID)
+
+	if err != nil {
+		return
+	}
+
+	ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s was added to %s's manazone from the top of their deck", c.Name, card.Player.Username()))
+
+}
+
+func Draw2ToMana(card *match.Card, ctx *match.Context) {
+	Draw1ToMana(card, ctx)
+	Draw1ToMana(card, ctx)
 }
 
 func MayDraw1(card *match.Card, ctx *match.Context) {

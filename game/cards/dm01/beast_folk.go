@@ -59,7 +59,7 @@ func BronzeArmTribe(c *match.Card) {
 	c.ManaCost = 3
 	c.ManaRequirement = []string{civ.Nature}
 
-	c.Use(fx.Creature, fx.DrawToMana)
+	c.Use(fx.Creature, fx.When(fx.Summoned, fx.Draw1ToMana))
 
 }
 
