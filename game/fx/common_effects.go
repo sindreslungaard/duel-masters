@@ -58,6 +58,11 @@ func OpponentDiscardsRandomCard(card *match.Card, ctx *match.Context) {
 
 }
 
+func OpponentDiscards2RandomCards(card *match.Card, ctx *match.Context) {
+	OpponentDiscardsRandomCard(card, ctx)
+	OpponentDiscardsRandomCard(card, ctx)
+}
+
 // To be used as part of a card effect, not for initial shuffle
 func ShuffleDeck(card *match.Card, ctx *match.Context, forOpponent bool) {
 	if !forOpponent {
