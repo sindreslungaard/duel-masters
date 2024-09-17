@@ -42,11 +42,8 @@ func ReceiveBlockerWhenOpponentPlaysCreatureOrSpell(card *match.Card, ctx *match
 		ReceiveBlockerWhenOpponentPlaysCard(card, ctx, event.MatchPlayerID)
 	}
 
-	if event, ok := ctx.Event.(*match.CardMoved); ok {
-		if event.To != match.BATTLEZONE {
-			return
-		}
-		ReceiveBlockerWhenOpponentPlaysCard(card, ctx, event.MatchPlayerID)
+	if fx.AnotherCreatureSummoned(card, ctx) {
+		ReceiveBlockerWhenOpponentPlaysCard(card, ctx, ctx.Event.(*match.CardMoved).MatchPlayerID)
 	}
 }
 
