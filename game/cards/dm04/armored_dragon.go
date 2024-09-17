@@ -18,27 +18,25 @@ func GalklifeDragon(c *match.Card) {
 	c.ManaCost = 7
 	c.ManaRequirement = []string{civ.Fire}
 
-	c.Use(fx.Creature, fx.Doublebreaker, func(card *match.Card, ctx *match.Context) {
+	c.Use(fx.Creature, fx.Doublebreaker, fx.When(fx.Summoned, func(card *match.Card, ctx *match.Context) {
 
-		if match.AmISummoned(card, ctx) {
+		fx.FindFilter(
+			card.Player,
+			match.BATTLEZONE,
+			func(x *match.Card) bool { return ctx.Match.GetPower(x, false) <= 4000 && x.Civ == civ.Light },
+		).Map(func(x *match.Card) {
+			ctx.Match.Destroy(x, card, match.DestroyedByMiscAbility)
+			ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s was destroyed by Galklife Dragon", x.Name))
+		})
 
-			fx.FindFilter(
-				card.Player,
-				match.BATTLEZONE,
-				func(x *match.Card) bool { return ctx.Match.GetPower(x, false) <= 4000 && x.Civ == civ.Light },
-			).Map(func(x *match.Card) {
-				ctx.Match.Destroy(x, card, match.DestroyedByMiscAbility)
-				ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s was destroyed by Galklife Dragon", x.Name))
-			})
+		fx.FindFilter(
+			ctx.Match.Opponent(card.Player),
+			match.BATTLEZONE,
+			func(x *match.Card) bool { return ctx.Match.GetPower(x, false) <= 4000 && x.Civ == civ.Light },
+		).Map(func(x *match.Card) {
+			ctx.Match.Destroy(x, card, match.DestroyedByMiscAbility)
+			ctx.Match.ReportActionInChat(ctx.Match.Opponent(card.Player), fmt.Sprintf("%s was destroyed by Galklife Dragon", x.Name))
+		})
 
-			fx.FindFilter(
-				ctx.Match.Opponent(card.Player),
-				match.BATTLEZONE,
-				func(x *match.Card) bool { return ctx.Match.GetPower(x, false) <= 4000 && x.Civ == civ.Light },
-			).Map(func(x *match.Card) {
-				ctx.Match.Destroy(x, card, match.DestroyedByMiscAbility)
-				ctx.Match.ReportActionInChat(ctx.Match.Opponent(card.Player), fmt.Sprintf("%s was destroyed by Galklife Dragon", x.Name))
-			})
-		}
-	})
+	}))
 }
