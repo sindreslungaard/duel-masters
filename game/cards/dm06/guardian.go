@@ -17,28 +17,7 @@ func ForbosSanctumGuardianQ(c *match.Card) {
 	c.ManaCost = 6
 	c.ManaRequirement = []string{civ.Light}
 
-	c.Use(fx.Creature, fx.Survivor, func(card *match.Card, ctx *match.Context) {
-
-		if !ctx.Match.IsPlayerTurn(card.Player) || card.Zone != match.BATTLEZONE {
-			return
-		}
-
-		if event, ok := ctx.Event.(*match.CardMoved); ok && event.To == match.BATTLEZONE {
-
-			creature, err := card.Player.GetCard(event.CardID, match.BATTLEZONE)
-
-			if err != nil {
-				return
-			}
-
-			if !creature.HasFamily(family.Survivor) {
-				return
-			}
-
-			fx.SearchDeckTake1Spell(card, ctx)
-
-		}
-	})
+	c.Use(fx.Creature, fx.Survivor, fx.When(fx.MySurvivorSummoned, fx.SearchDeckTake1Spell))
 }
 
 func LuGilaSilverRiftGuardian(c *match.Card) {

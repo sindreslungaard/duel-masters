@@ -1,6 +1,7 @@
 package fx
 
 import (
+	"duel-masters/game/family"
 	"duel-masters/game/match"
 )
 
@@ -322,15 +323,7 @@ func SelectBacksideFilter(p *match.Player, m *match.Match, containerOwner *match
 //
 // Does not activate if the card was under an Evolution card and becomes visible again.
 func Summoned(card *match.Card, ctx *match.Context) bool {
-	if event, ok := ctx.Event.(*match.CardMoved); ok {
-
-		if event.CardID == card.ID && event.To == match.BATTLEZONE && event.From != match.HIDDENZONE {
-			return true
-		}
-
-	}
-
-	return false
+	return CreatureSummoned(card, ctx) && ctx.Event.(*match.CardMoved).CardID == card.ID
 }
 
 // InTheBattlezone returns true if the card arrives in the battlezone.
@@ -468,24 +461,51 @@ func ShieldBroken(card *match.Card, ctx *match.Context) bool {
 
 }
 
-// AnotherCreatureSummoned returns true if another card was summoned
+// CreatureSummoned returns true if a card was summoned
 //
-// Does not activate if this current card is summoned.
 // Does not activate if a card that was under an Evolution card becomes visible again.
-func AnotherCreatureSummoned(card *match.Card, ctx *match.Context) bool {
+func CreatureSummoned(card *match.Card, ctx *match.Context) bool {
 	if card.Zone != match.BATTLEZONE {
 		return false
 	}
 
 	if event, ok := ctx.Event.(*match.CardMoved); ok {
 
-		if event.CardID != card.ID && event.To == match.BATTLEZONE && event.From != match.HIDDENZONE {
+		if event.To == match.BATTLEZONE && event.From != match.HIDDENZONE {
 			return true
 		}
 
 	}
 
 	return false
+}
+
+// MySurvivorSummoned returns true if one of my survivors is summoned
+//
+// Does not activate if a card that was under an Evolution card becomes visible again.
+func MySurvivorSummoned(card *match.Card, ctx *match.Context) bool {
+
+	if !CreatureSummoned(card, ctx) {
+		return false
+	}
+
+	creature, err := card.Player.GetCard(ctx.Event.(*match.CardMoved).CardID, match.BATTLEZONE)
+	if err != nil {
+		return false
+	}
+
+	if !creature.HasFamily(family.Survivor) {
+		return false
+	}
+	return true
+}
+
+// AnotherCreatureSummoned returns true if another card was summoned
+//
+// Does not activate if this current card is summoned.
+// Does not activate if a card that was under an Evolution card becomes visible again.
+func AnotherCreatureSummoned(card *match.Card, ctx *match.Context) bool {
+	return CreatureSummoned(card, ctx) && ctx.Event.(*match.CardMoved).CardID != card.ID
 }
 
 func AnotherCreatureDestroyed(card *match.Card, ctx *match.Context) bool {
