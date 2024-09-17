@@ -37,6 +37,10 @@ func CreateCardCache() {
 
 		for uid, c := range *set {
 
+			if c == nil {
+				continue
+			}
+
 			card := &match.Card{}
 
 			c(card)
