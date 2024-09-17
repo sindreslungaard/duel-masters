@@ -53,33 +53,26 @@ func Magmarex(c *match.Card) {
 	c.ManaCost = 5
 	c.ManaRequirement = []string{civ.Fire}
 
-	c.Use(fx.Creature, fx.ShieldTrigger, func(card *match.Card, ctx *match.Context) {
+	c.Use(fx.Creature, fx.ShieldTrigger, fx.When(fx.Summoned, func(card *match.Card, ctx *match.Context) {
 
-		if event, ok := ctx.Event.(*match.CardMoved); ok {
+		fx.FindFilter(
+			card.Player,
+			match.BATTLEZONE,
+			func(x *match.Card) bool { return ctx.Match.GetPower(x, false) == 1000 },
+		).Map(func(x *match.Card) {
+			ctx.Match.Destroy(x, card, match.DestroyedByMiscAbility)
+			ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s was destroyed by Magmarex", x.Name))
+		})
 
-			if event.CardID != card.ID || event.To != match.BATTLEZONE {
-				return
-			}
+		fx.FindFilter(
+			ctx.Match.Opponent(card.Player),
+			match.BATTLEZONE,
+			func(x *match.Card) bool { return ctx.Match.GetPower(x, false) == 1000 },
+		).Map(func(x *match.Card) {
+			ctx.Match.Destroy(x, card, match.DestroyedByMiscAbility)
+			ctx.Match.ReportActionInChat(ctx.Match.Opponent(card.Player), fmt.Sprintf("%s was destroyed by Magmarex", x.Name))
+		})
 
-			fx.FindFilter(
-				card.Player,
-				match.BATTLEZONE,
-				func(x *match.Card) bool { return ctx.Match.GetPower(x, false) == 1000 },
-			).Map(func(x *match.Card) {
-				ctx.Match.Destroy(x, card, match.DestroyedByMiscAbility)
-				ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s was destroyed by Magmarex", x.Name))
-			})
-
-			fx.FindFilter(
-				ctx.Match.Opponent(card.Player),
-				match.BATTLEZONE,
-				func(x *match.Card) bool { return ctx.Match.GetPower(x, false) == 1000 },
-			).Map(func(x *match.Card) {
-				ctx.Match.Destroy(x, card, match.DestroyedByMiscAbility)
-				ctx.Match.ReportActionInChat(ctx.Match.Opponent(card.Player), fmt.Sprintf("%s was destroyed by Magmarex", x.Name))
-			})
-
-		}
-	})
+	}))
 
 }

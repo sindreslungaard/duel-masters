@@ -17,45 +17,37 @@ func PoisonousMushroom(c *match.Card) {
 	c.ManaCost = 2
 	c.ManaRequirement = []string{civ.Nature}
 
-	c.Use(fx.Creature, func(card *match.Card, ctx *match.Context) {
+	c.Use(fx.Creature, fx.When(fx.Summoned, func(card *match.Card, ctx *match.Context) {
 
-		if event, ok := ctx.Event.(*match.CardMoved); ok {
+		hand, err := card.Player.Container(match.HAND)
 
-			if event.CardID == card.ID && event.To == match.BATTLEZONE {
+		if err != nil {
+			return
+		}
 
-				hand, err := card.Player.Container(match.HAND)
+		ctx.Match.NewAction(card.Player, hand, 1, 1, "Select 1 card from your hand that will be sent to your manazone. Choose close to cancel.", true)
 
-				if err != nil {
-					return
-				}
+		defer ctx.Match.CloseAction(card.Player)
 
-				ctx.Match.NewAction(card.Player, hand, 1, 1, "Select 1 card from your hand that will be sent to your manazone. Choose close to cancel.", true)
+		for {
 
-				defer ctx.Match.CloseAction(card.Player)
+			action := <-card.Player.Action
 
-				for {
-
-					action := <-card.Player.Action
-
-					if action.Cancel {
-						break
-					}
-
-					if len(action.Cards) != 1 || !match.AssertCardsIn(hand, action.Cards...) {
-						ctx.Match.DefaultActionWarning(card.Player)
-						continue
-					}
-
-					card.Player.MoveCard(action.Cards[0], match.HAND, match.MANAZONE, card.ID)
-
-					break
-
-				}
-
+			if action.Cancel {
+				break
 			}
+
+			if len(action.Cards) != 1 || !match.AssertCardsIn(hand, action.Cards...) {
+				ctx.Match.DefaultActionWarning(card.Player)
+				continue
+			}
+
+			card.Player.MoveCard(action.Cards[0], match.HAND, match.MANAZONE, card.ID)
+
+			break
 
 		}
 
-	})
+	}))
 
 }

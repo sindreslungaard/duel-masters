@@ -46,46 +46,38 @@ func ScarletSkyterror(c *match.Card) {
 	c.ManaCost = 8
 	c.ManaRequirement = []string{civ.Fire}
 
-	c.Use(fx.Creature, func(card *match.Card, ctx *match.Context) {
+	c.Use(fx.Creature, fx.When(fx.Summoned, func(card *match.Card, ctx *match.Context) {
 
-		if event, ok := ctx.Event.(*match.CardMoved); ok {
+		blockers := make([]*match.Card, 0)
 
-			if event.CardID != card.ID || event.To != match.BATTLEZONE {
-				return
-			}
+		myBattlezone, err := card.Player.Container(match.BATTLEZONE)
 
-			blockers := make([]*match.Card, 0)
-
-			myBattlezone, err := card.Player.Container(match.BATTLEZONE)
-
-			if err != nil {
-				return
-			}
-
-			opponentBattlezone, err := ctx.Match.Opponent(card.Player).Container(match.BATTLEZONE)
-
-			if err != nil {
-				return
-			}
-
-			for _, creature := range myBattlezone {
-				if creature.HasCondition(cnd.Blocker) {
-					blockers = append(blockers, creature)
-				}
-			}
-
-			for _, creature := range opponentBattlezone {
-				if creature.HasCondition(cnd.Blocker) {
-					blockers = append(blockers, creature)
-				}
-			}
-
-			for _, blocker := range blockers {
-				ctx.Match.Destroy(blocker, card, match.DestroyedByMiscAbility)
-			}
-
+		if err != nil {
+			return
 		}
 
-	})
+		opponentBattlezone, err := ctx.Match.Opponent(card.Player).Container(match.BATTLEZONE)
+
+		if err != nil {
+			return
+		}
+
+		for _, creature := range myBattlezone {
+			if creature.HasCondition(cnd.Blocker) {
+				blockers = append(blockers, creature)
+			}
+		}
+
+		for _, creature := range opponentBattlezone {
+			if creature.HasCondition(cnd.Blocker) {
+				blockers = append(blockers, creature)
+			}
+		}
+
+		for _, blocker := range blockers {
+			ctx.Match.Destroy(blocker, card, match.DestroyedByMiscAbility)
+		}
+
+	}))
 
 }

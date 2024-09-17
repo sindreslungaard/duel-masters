@@ -17,23 +17,15 @@ func StingerWorm(c *match.Card) {
 	c.ManaCost = 3
 	c.ManaRequirement = []string{civ.Darkness}
 
-	c.Use(fx.Creature, func(card *match.Card, ctx *match.Context) {
+	c.Use(fx.Creature, fx.When(fx.Summoned, func(card *match.Card, ctx *match.Context) {
 
-		if event, ok := ctx.Event.(*match.CardMoved); ok {
+		creatures := match.Search(card.Player, ctx.Match, card.Player, match.BATTLEZONE, "Stinger Worm: Select 1 creature from your battlezone that will be sent to your graveyard", 1, 1, false)
 
-			if event.CardID == card.ID && event.To == match.BATTLEZONE {
-
-				creatures := match.Search(card.Player, ctx.Match, card.Player, match.BATTLEZONE, "Stinger Worm: Select 1 creature from your battlezone that will be sent to your graveyard", 1, 1, false)
-
-				for _, creature := range creatures {
-					ctx.Match.Destroy(creature, card, match.DestroyedByMiscAbility)
-				}
-
-			}
-
+		for _, creature := range creatures {
+			ctx.Match.Destroy(creature, card, match.DestroyedByMiscAbility)
 		}
 
-	})
+	}))
 
 }
 

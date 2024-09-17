@@ -47,23 +47,16 @@ func ThornyMandra(c *match.Card) {
 	c.ManaCost = 5
 	c.ManaRequirement = []string{civ.Nature}
 
-	c.Use(fx.Creature, func(card *match.Card, ctx *match.Context) {
+	c.Use(fx.Creature, fx.When(fx.Summoned, func(card *match.Card, ctx *match.Context) {
 
-		if event, ok := ctx.Event.(*match.CardMoved); ok {
+		creatures := match.SearchForCnd(card.Player, ctx.Match, card.Player, match.GRAVEYARD, cnd.Creature, "Thorny Mandra: Select 1 creature from your battlezone that will be sent to your manazone", 1, 1, true)
 
-			if event.CardID == card.ID && event.To == match.BATTLEZONE {
-
-				creatures := match.SearchForCnd(card.Player, ctx.Match, card.Player, match.GRAVEYARD, cnd.Creature, "Thorny Mandra: Select 1 creature from your battlezone that will be sent to your manazone", 1, 1, true)
-
-				for _, creature := range creatures {
-					creature.Tapped = false
-					card.Player.MoveCard(creature.ID, match.GRAVEYARD, match.MANAZONE, card.ID)
-					ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s was moved from %s's graveyard to their manazone", creature.Name, card.Player.Username()))
-				}
-
-			}
+		for _, creature := range creatures {
+			creature.Tapped = false
+			card.Player.MoveCard(creature.ID, match.GRAVEYARD, match.MANAZONE, card.ID)
+			ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s was moved from %s's graveyard to their manazone", creature.Name, card.Player.Username()))
 		}
 
-	})
+	}))
 
 }
