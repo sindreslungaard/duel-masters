@@ -66,40 +66,32 @@ func SaucerHeadShark(c *match.Card) {
 	c.ManaCost = 5
 	c.ManaRequirement = []string{civ.Water}
 
-	c.Use(fx.Creature, func(card *match.Card, ctx *match.Context) {
+	c.Use(fx.Creature, fx.When(fx.Summoned, func(card *match.Card, ctx *match.Context) {
 
-		if event, ok := ctx.Event.(*match.CardMoved); ok {
-
-			if event.CardID == card.ID && event.To == match.BATTLEZONE {
-
-				myBattlezone, err := card.Player.Container(match.BATTLEZONE)
-				if err != nil {
-					return
-				}
-
-				opponentBattlezone, err := ctx.Match.Opponent(card.Player).Container(match.BATTLEZONE)
-				if err != nil {
-					return
-				}
-
-				for _, creature := range myBattlezone {
-					if ctx.Match.GetPower(creature, false) <= 2000 {
-						creature.Player.MoveCard(creature.ID, match.BATTLEZONE, match.HAND, card.ID)
-						ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s was returned to %s's hand by Saucer-Head Shark", creature.Name, creature.Player.Username()))
-					}
-				}
-
-				for _, creature := range opponentBattlezone {
-					if ctx.Match.GetPower(creature, false) <= 2000 {
-						creature.Player.MoveCard(creature.ID, match.BATTLEZONE, match.HAND, card.ID)
-						ctx.Match.ReportActionInChat(ctx.Match.Opponent(card.Player), fmt.Sprintf("%s was returned to %s's hand by Saucer-Head Shark", creature.Name, creature.Player.Username()))
-					}
-				}
-
-			}
-
+		myBattlezone, err := card.Player.Container(match.BATTLEZONE)
+		if err != nil {
+			return
 		}
 
-	})
+		opponentBattlezone, err := ctx.Match.Opponent(card.Player).Container(match.BATTLEZONE)
+		if err != nil {
+			return
+		}
+
+		for _, creature := range myBattlezone {
+			if ctx.Match.GetPower(creature, false) <= 2000 {
+				creature.Player.MoveCard(creature.ID, match.BATTLEZONE, match.HAND, card.ID)
+				ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s was returned to %s's hand by Saucer-Head Shark", creature.Name, creature.Player.Username()))
+			}
+		}
+
+		for _, creature := range opponentBattlezone {
+			if ctx.Match.GetPower(creature, false) <= 2000 {
+				creature.Player.MoveCard(creature.ID, match.BATTLEZONE, match.HAND, card.ID)
+				ctx.Match.ReportActionInChat(ctx.Match.Opponent(card.Player), fmt.Sprintf("%s was returned to %s's hand by Saucer-Head Shark", creature.Name, creature.Player.Username()))
+			}
+		}
+
+	}))
 
 }

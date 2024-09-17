@@ -32,22 +32,16 @@ func ExplosiveFighterUcarn(c *match.Card) {
 	c.ManaCost = 5
 	c.ManaRequirement = []string{civ.Fire}
 
-	c.Use(fx.Creature, fx.Doublebreaker, func(card *match.Card, ctx *match.Context) {
-		if event, ok := ctx.Event.(*match.CardMoved); ok {
+	c.Use(fx.Creature, fx.Doublebreaker, fx.When(fx.Summoned, func(card *match.Card, ctx *match.Context) {
 
-			if event.CardID == card.ID && event.To == match.BATTLEZONE {
+		cards := match.Search(card.Player, ctx.Match, card.Player, match.MANAZONE, "Explosive Fighter Ucarn: Select 2 cards from your manazone that will be sent to your graveyard", 2, 2, false)
 
-				cards := match.Search(card.Player, ctx.Match, card.Player, match.MANAZONE, "Explosive Fighter Ucarn: Select 2 cards from your manazone that will be sent to your graveyard", 2, 2, false)
-
-				for _, manaCard := range cards {
-					card.Player.MoveCard(manaCard.ID, match.MANAZONE, match.GRAVEYARD, card.ID)
-					ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s was sent from %s's manazone to their graveyard", manaCard.ID, card.Name))
-				}
-
-			}
-
+		for _, manaCard := range cards {
+			card.Player.MoveCard(manaCard.ID, match.MANAZONE, match.GRAVEYARD, card.ID)
+			ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s was sent from %s's manazone to their graveyard", manaCard.ID, card.Name))
 		}
-	})
+
+	}))
 
 }
 
@@ -75,22 +69,16 @@ func OnslaughterTriceps(c *match.Card) {
 	c.ManaCost = 3
 	c.ManaRequirement = []string{civ.Fire}
 
-	c.Use(fx.Creature, func(card *match.Card, ctx *match.Context) {
-		if event, ok := ctx.Event.(*match.CardMoved); ok {
+	c.Use(fx.Creature, fx.When(fx.Summoned, func(card *match.Card, ctx *match.Context) {
 
-			if event.CardID == card.ID && event.To == match.BATTLEZONE {
+		cards := match.Search(card.Player, ctx.Match, card.Player, match.MANAZONE, "Onslaughter Triceps: Select 1 card from your manazone that will be sent to your graveyard", 1, 1, false)
 
-				cards := match.Search(card.Player, ctx.Match, card.Player, match.MANAZONE, "Onslaughter Triceps: Select 1 card from your manazone that will be sent to your graveyard", 1, 1, false)
-
-				for _, manaCard := range cards {
-					card.Player.MoveCard(manaCard.ID, match.MANAZONE, match.GRAVEYARD, card.ID)
-					ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s was sent from %s's manazone to their graveyard", manaCard.Name, card.Player.Username()))
-				}
-
-			}
-
+		for _, manaCard := range cards {
+			card.Player.MoveCard(manaCard.ID, match.MANAZONE, match.GRAVEYARD, card.ID)
+			ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s was sent from %s's manazone to their graveyard", manaCard.Name, card.Player.Username()))
 		}
-	})
+
+	}))
 
 }
 

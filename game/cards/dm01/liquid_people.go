@@ -46,76 +46,68 @@ func AquaSniper(c *match.Card) {
 	c.ManaCost = 8
 	c.ManaRequirement = []string{civ.Water}
 
-	c.Use(fx.Creature, func(card *match.Card, ctx *match.Context) {
+	c.Use(fx.Creature, fx.When(fx.Summoned, func(card *match.Card, ctx *match.Context) {
 
-		if event, ok := ctx.Event.(*match.CardMoved); ok {
+		cards := make(map[string][]*match.Card)
 
-			if event.CardID != card.ID || event.To != match.BATTLEZONE {
-				return
+		myCards, err := card.Player.Container(match.BATTLEZONE)
+
+		if err != nil {
+			return
+		}
+
+		opponentCards, err := ctx.Match.Opponent(card.Player).Container(match.BATTLEZONE)
+
+		if err != nil {
+			return
+		}
+
+		if len(myCards) < 1 && len(opponentCards) < 1 {
+			return
+		}
+
+		cards["Your creatures"] = myCards
+		cards["Opponent's creatures"] = opponentCards
+
+		ctx.Match.NewMultipartAction(card.Player, cards, 1, 2, "Choose up to 2 creatures in the battle zone and return them to their owners' hands", true)
+
+		for {
+
+			action := <-card.Player.Action
+
+			if action.Cancel {
+				break
 			}
 
-			cards := make(map[string][]*match.Card)
-
-			myCards, err := card.Player.Container(match.BATTLEZONE)
-
-			if err != nil {
-				return
+			if len(action.Cards) < 1 || len(action.Cards) > 2 {
+				break
 			}
 
-			opponentCards, err := ctx.Match.Opponent(card.Player).Container(match.BATTLEZONE)
+			for _, vid := range action.Cards {
 
-			if err != nil {
-				return
-			}
+				ref, err := c.Player.MoveCard(vid, match.BATTLEZONE, match.HAND, card.ID)
 
-			if len(myCards) < 1 && len(opponentCards) < 1 {
-				return
-			}
+				if err != nil {
 
-			cards["Your creatures"] = myCards
-			cards["Opponent's creatures"] = opponentCards
+					ref, err := ctx.Match.Opponent(c.Player).MoveCard(vid, match.BATTLEZONE, match.HAND, card.ID)
 
-			ctx.Match.NewMultipartAction(card.Player, cards, 1, 2, "Choose up to 2 creatures in the battle zone and return them to their owners' hands", true)
-
-			for {
-
-				action := <-card.Player.Action
-
-				if action.Cancel {
-					break
-				}
-
-				if len(action.Cards) < 1 || len(action.Cards) > 2 {
-					break
-				}
-
-				for _, vid := range action.Cards {
-
-					ref, err := c.Player.MoveCard(vid, match.BATTLEZONE, match.HAND, card.ID)
-
-					if err != nil {
-
-						ref, err := ctx.Match.Opponent(c.Player).MoveCard(vid, match.BATTLEZONE, match.HAND, card.ID)
-
-						if err == nil {
-							ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s was moved to %s's hand", ref.Name, ctx.Match.PlayerRef(ref.Player).Socket.User.Username))
-						}
-
-					} else {
+					if err == nil {
 						ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s was moved to %s's hand", ref.Name, ctx.Match.PlayerRef(ref.Player).Socket.User.Username))
 					}
 
+				} else {
+					ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s was moved to %s's hand", ref.Name, ctx.Match.PlayerRef(ref.Player).Socket.User.Username))
 				}
-
-				break
 
 			}
 
-			ctx.Match.CloseAction(c.Player)
+			break
 
 		}
 
-	})
+		ctx.Match.CloseAction(c.Player)
+
+	}))
 
 }
 
