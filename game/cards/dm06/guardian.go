@@ -98,7 +98,7 @@ func ArcBinetheAstounding(c *match.Card) {
 	c.TapAbility = arcBinetheAstoundingSpecialAbility
 
 	c.Use(fx.Creature, fx.Evolution, fx.TapAbility,
-		fx.When(fx.Summoned, func(card *match.Card, ctx *match.Context) {
+		fx.When(fx.InTheBattlezone, func(card *match.Card, ctx *match.Context) {
 
 			fx.GiveTapAbilityToAllies(
 				card,
