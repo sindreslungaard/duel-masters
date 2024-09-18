@@ -529,7 +529,7 @@ var DM07 = map[string]match.CardConstructor{
 	"d1fe4c40-637e-4e5c-a769-0d2fc8aa11ca": nil,
 	"c3c7ac05-c847-4842-9504-22e29fa24a2f": nil,
 	"b6863540-2985-4349-aa82-05f9dbe36993": nil,
-	"44293c09-875b-4582-99cd-450b544c875d": nil,
+	"44293c09-875b-4582-99cd-450b544c875d": dm07.ArmoredTransportGaliacruse,
 	"38504a0f-da4a-4855-9d93-08866f8b955d": nil,
 	"7e664555-207b-47d6-8078-f40c5885021d": nil,
 	"f603d464-3492-40ba-990d-85dc02814966": nil,
