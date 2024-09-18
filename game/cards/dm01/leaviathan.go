@@ -45,6 +45,6 @@ func KingRippedHide(c *match.Card) {
 	c.ManaCost = 7
 	c.ManaRequirement = []string{civ.Water}
 
-	c.Use(fx.Creature, fx.Draw2)
+	c.Use(fx.Creature, fx.When(fx.Summoned, fx.DrawUpTo2))
 
 }

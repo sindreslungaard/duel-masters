@@ -39,15 +39,7 @@ func BrainSerum(c *match.Card) {
 	c.ManaCost = 4
 	c.ManaRequirement = []string{civ.Water}
 
-	c.Use(fx.Spell, fx.ShieldTrigger, func(card *match.Card, ctx *match.Context) {
-
-		if match.AmICasted(card, ctx) {
-
-			card.Player.DrawCards(2)
-
-		}
-
-	})
+	c.Use(fx.Spell, fx.ShieldTrigger, fx.When(fx.SpellCast, fx.DrawUpTo2))
 
 }
 

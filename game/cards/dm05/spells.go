@@ -248,6 +248,9 @@ func MiracleQuest(c *match.Card) {
 	cardPlayed := false
 	shieldsBroken := 0
 
+	// TODO: This implementation needs improving
+	// It currently has a big draw at the end of turn, instead of multiple ones after each attack
+	// It also counts shields that an opponent might destroy by himself which it shouldn't
 	c.Use(
 		fx.Spell,
 		fx.When(fx.SpellCast, func(card *match.Card, ctx *match.Context) {
@@ -263,8 +266,7 @@ func MiracleQuest(c *match.Card) {
 		fx.When(fx.EndOfMyTurn, func(card *match.Card, ctx *match.Context) {
 
 			if cardPlayed {
-
-				card.Player.DrawCards(shieldsBroken * 2)
+				fx.MayDrawAmount(card, ctx, shieldsBroken*2)
 
 				cardPlayed = false
 				shieldsBroken = 0

@@ -39,7 +39,7 @@ func PlasmaChaser(c *match.Card) {
 			return
 		}
 
-		card.Player.DrawCards(toDraw)
+		fx.MayDrawAmount(card, ctx, toDraw)
 
 	}))
 
