@@ -9,6 +9,10 @@
 - Added search by card text filter to new deck builder (thanks @DanieloV)
 - Fix for "Cyclone Panic" shuffling itself into deck instead of going to the graveyard when played (thanks @DanieloV)
 - Fix for waiting popup appearing over action popup and blocking functionality in certain situations (thanks @DanieloV)
+- Added unselectable cards when searching deck (thanks @DanieloV)
+- Added yes/no and number based player actions (thanks @DanieloV)
+- Added Match chat player visual separation (thanks @DanieloV)
+- Added option to select execution order of shield triggers (thanks @DanieloV)
 
 ## 09/09/2024
 
