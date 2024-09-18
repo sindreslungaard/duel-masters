@@ -1881,23 +1881,23 @@ func (m *Match) handleAdminMesseges(message string, user db.User) {
 	}
 
 	currentPlayer := m.CurrentPlayer().Player
-
-	if string(message[0:4]) == "/add" {
-
-		// Spawn card in hand
-		currentPlayer.SpawnCard(string(message[5:]), HAND)
-		m.BroadcastState()
+	msgParts := strings.Split(message, " ")
+	if len(msgParts) < 2 {
 		return
 	}
+
+	switch msgParts[0] {
+	case "/add":
+		// Spawn card in hand
+		currentPlayer.SpawnCard(msgParts[1], HAND)
+		m.BroadcastState()
+		return
 
 	// /mana hand - will add all the cards in your hand to the manazone
 	// /mana red 4 - add 4 fire mana
 	// /mana n - add 1 nature mana
 	// /mana imageID 3 - add 3 mana of that specific card
-	if string(message[0:5]) == "/mana" {
-
-		msgParts := strings.Split(message, " ")
-
+	case "/mana":
 		var manaToAdd string
 		switch msgParts[1] {
 		case "hand":
@@ -1936,21 +1936,20 @@ func (m *Match) handleAdminMesseges(message string, user db.User) {
 		m.BroadcastState()
 
 		return
-	}
 
-	if string(message[0:7]) == "/shield" {
+	case "/shield":
 
 		// Spawn shield
-		currentPlayer.SpawnCard(string(message[8:]), SHIELDZONE)
+		currentPlayer.SpawnCard(msgParts[1], SHIELDZONE)
 		m.BroadcastState()
 		return
-	}
 
-	if string(message[0:5]) == "/deck" {
+	case "/deck":
 
 		// Spawn card in deck
-		m.CurrentPlayer().Player.SpawnCard(string(message[6:]), DECK)
+		currentPlayer.SpawnCard(msgParts[1], DECK)
 		m.BroadcastState()
 		return
+
 	}
 }
