@@ -544,9 +544,14 @@ func CrisisBoulder(c *match.Card) {
 			fmt.Sprintf("%s: Choose 1 of your creatures or a card in your mana zone it will be sent to your graveyard.", card.Name),
 			1,
 			1,
-			false).Map(func(c *match.Card) {
-			c.Player.MoveCard(c.ID, c.Zone, match.GRAVEYARD, card.ID)
-			ctx.Match.ReportActionInChat(ctx.Match.Opponent(card.Player), fmt.Sprintf("%s was moved to %s's graveyard by %s", c.Name, c.Player.Username(), card.Name))
+			false,
+		).Map(func(selectedCard *match.Card) {
+			if selectedCard.Zone == match.BATTLEZONE {
+				ctx.Match.Destroy(selectedCard, card, match.DestroyedBySpell)
+				return
+			}
+			selectedCard.Player.MoveCard(selectedCard.ID, selectedCard.Zone, match.GRAVEYARD, card.ID)
+			ctx.Match.ReportActionInChat(ctx.Match.Opponent(card.Player), fmt.Sprintf("%s was moved to %s's graveyard by %s", selectedCard.Name, selectedCard.Player.Username(), card.Name))
 		})
 
 	}))
