@@ -24,6 +24,21 @@ func (c CardCollection) Or(h func()) {
 	h()
 }
 
+func FilterCardList(cards []*match.Card, filter func(*match.Card) bool) (CardCollection, CardCollection) {
+	accepted := make([]*match.Card, 0)
+	rejected := make([]*match.Card, 0)
+
+	for _, mCard := range cards {
+		if filter(mCard) {
+			accepted = append(accepted, mCard)
+		} else {
+			rejected = append(rejected, mCard)
+		}
+	}
+
+	return accepted, rejected
+}
+
 // FindFilter returns a CardCollection matching the filter
 func FindFilter(p *match.Player, collection string, h func(card *match.Card) bool) CardCollection {
 
@@ -131,15 +146,9 @@ func SelectFilter(p *match.Player, m *match.Match, containerOwner *match.Player,
 		return result
 	}
 
-	filtered := make([]*match.Card, 0)
-	unselectables := make([]*match.Card, 0)
-
-	for _, mCard := range cards {
-		if filter(mCard) {
-			filtered = append(filtered, mCard)
-		} else if showUnselectables {
-			unselectables = append(unselectables, mCard)
-		}
+	filtered, unselectables := FilterCardList(cards, filter)
+	if !showUnselectables {
+		unselectables = nil
 	}
 
 	if len(filtered) < 1 {

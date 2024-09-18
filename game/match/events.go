@@ -34,8 +34,9 @@ type BrokenShieldEvent struct {
 // ShieldTriggerEvent is fired when a shield with shieldtrigger is broken
 // can be cancelled to prevent the player from playing the card immediately
 type ShieldTriggerEvent struct {
-	Card   *Card
-	Source string // the card id that caused the shield to break
+	Cards           []*Card
+	UnplayableCards []*Card
+	Source          string // the card id that caused the shield to break
 }
 
 // ShieldTriggerPlayedEvent is fired when a shield trigger is played
