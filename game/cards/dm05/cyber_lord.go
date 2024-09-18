@@ -34,7 +34,7 @@ func Pokolul(c *match.Card) {
 
 		if _, ok := ctx.Event.(*match.ShieldTriggerPlayedEvent); ok && isAttacking {
 			card.Tapped = false
-			ctx.Match.Chat("Server", fmt.Sprintf("%s untapped", card.Name))
+			ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s untapped", card.Name))
 		}
 
 	})

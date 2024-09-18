@@ -6,7 +6,6 @@ import (
 	"duel-masters/game/family"
 	"duel-masters/game/fx"
 	"duel-masters/game/match"
-	"fmt"
 )
 
 // NiofaHornedProtector ...
@@ -21,24 +20,13 @@ func NiofaHornedProtector(c *match.Card) {
 
 	c.Use(fx.Creature, fx.Evolution, fx.Doublebreaker, fx.When(fx.Summoned, func(card *match.Card, ctx *match.Context) {
 
-		cards := match.Filter(
-			card.Player,
-			ctx.Match,
-			card.Player,
-			match.DECK,
-			"Select 1 nature creature from your deck that will be shown to your opponent and sent to your hand",
-			0,
+		fx.SearchDeckTakeCards(
+			card,
+			ctx,
 			1,
-			false,
 			func(x *match.Card) bool { return x.HasCondition(cnd.Creature) && x.Civ == civ.Nature },
+			"nature creature",
 		)
-
-		for _, c := range cards {
-			card.Player.MoveCard(c.ID, match.DECK, match.HAND, card.ID)
-			ctx.Match.Chat("Server", fmt.Sprintf("%s was moved from %s's deck to their hand", c.Name, card.Player.Username()))
-		}
-
-		card.Player.ShuffleDeck()
 
 	}))
 

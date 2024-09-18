@@ -76,7 +76,7 @@ func StormShell(c *match.Card) {
 					break
 				}
 
-				ctx.Match.Chat("Server", fmt.Sprintf("%s was moved from %s's battlezone to their manazone", movedCard.Name, opponent.Username()))
+				ctx.Match.ReportActionInChat(ctx.Match.Opponent(card.Player), fmt.Sprintf("%s was moved from %s's battlezone to their manazone", movedCard.Name, opponent.Username()))
 
 				break
 

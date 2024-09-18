@@ -41,7 +41,7 @@ func ExplosiveFighterUcarn(c *match.Card) {
 
 				for _, manaCard := range cards {
 					card.Player.MoveCard(manaCard.ID, match.MANAZONE, match.GRAVEYARD, card.ID)
-					ctx.Match.Chat("Server", fmt.Sprintf("%s was sent from %s's manazone to their graveyard", manaCard.ID, card.Name))
+					ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s was sent from %s's manazone to their graveyard", manaCard.ID, card.Name))
 				}
 
 			}
@@ -84,7 +84,7 @@ func OnslaughterTriceps(c *match.Card) {
 
 				for _, manaCard := range cards {
 					card.Player.MoveCard(manaCard.ID, match.MANAZONE, match.GRAVEYARD, card.ID)
-					ctx.Match.Chat("Server", fmt.Sprintf("%s was sent from %s's manazone to their graveyard", manaCard.Name, card.Player.Username()))
+					ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s was sent from %s's manazone to their graveyard", manaCard.Name, card.Player.Username()))
 				}
 
 			}

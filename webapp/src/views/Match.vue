@@ -76,26 +76,91 @@
     <!-- action (card selection) -->
     <div v-if="action" id="action" class="action noselect">
       <span v-draggable data-ref="action">{{ action.text }}</span>
-      <span v-if="action.cards && action.maxSelections > 0"
-        ><i> Tip: click and drag to (de)select faster</i></span
-      >
-      <template v-if="actionObject">
-        <select class="action-select" v-model="actionDrowdownSelection">
-          <option
+      <template v-if="action.actionType == 'count'">
+        <div class="flex justify-center mb-4">
+          <img
+            class="h-8"
+            :class="{'inactive-svg-button' : actionCount == action.minSelections}"
+            @click="modifyActionCount(-1)"
+            src="/assets/images/left-arrow.svg"
+          />
+          <input
+            class="ml-2 mr-2 w-4 bg-white pointer-events-none text-center" 
+            v-model.number="actionCount" 
+            :disabled="true"
+          />
+          <img
+            class="h-8"
+            :class="{'inactive-svg-button' : actionCount == action.maxSelections}"
+            @click="modifyActionCount(1)"
+            src="/assets/images/right-arrow.svg"
+          />
+        </div>
+        <div @click="chooseDrawAction()" class="btn">Draw {{ actionCount }}</div>
+      </template>
+      <template v-else-if="action.actionType == 'question'">
+        <div @click="chooseAction()" class="btn">
+          Yes
+        </div>
+        <div @click="cancelAction()" class="btn">
+          No
+        </div>
+      </template>
+      <template v-else>
+        <span v-if="action.cards && action.maxSelections > 0">
+          <i> Tip: click and drag to (de)select faster</i>
+        </span>
+        <template v-if="actionObject">
+          <select class="action-select" v-model="actionDrowdownSelection">
+            <option
             v-for="(option, index) in actionObject"
             :key="index"
             :value="index"
             >{{ index }}</option
-          >
-        </select>
-      </template>
-      <div v-if="!actionObject && action.cards" class="action-cards">
-        <div v-for="(card, index) in action.cards" :key="index" class="card">
-          <div class="action-shield-number">
-            <span>{{
-              state.me.shieldMap[card.virtualId] ||
+            >
+          </select>
+        </template>
+        <div v-if="!actionObject && action.cards" class="action-cards">
+          <div v-for="(card, index) in action.cards" :key="index" class="card">
+            <div class="action-shield-number">
+              <span>{{
+                state.me.shieldMap[card.virtualId] ||
                 state.opponent.shieldMap[card.virtualId]
-            }}</span>
+              }}</span>
+            <img
+            @contextmenu.prevent="showLarge(card)"
+            @dragstart.prevent=""
+            @mouseenter="actionSelectMouseEnter($event, card)"
+            @mousedown="actionSelect(card)"
+            :class="[
+              'no-drag',
+              actionSelects.includes(card) ? 'glow-' + card.civilization : ''
+            ]"
+              :src="`https://scans.shobu.io/${card.uid}.jpg`"
+              />
+            </div>
+          </div>
+          <div v-for="(card, index) in action.unselectableCards" :key="index" class="card">
+            <div class="action-shield-number">
+              <span>{{
+                state.me.shieldMap[card.virtualId] ||
+                state.opponent.shieldMap[card.virtualId]
+              }}</span>
+            <img
+            @contextmenu.prevent="showLarge(card)"
+            @dragstart.prevent=""
+            class="no-drag brightness-50 cursor-not-allowed"
+            :src="`https://scans.shobu.io/${card.uid}.jpg`"
+            />
+            </div>
+          </div>
+        </div>
+        <div v-if="actionObject && action.cards" class="action-cards">
+          <div
+            v-for="(card, index) in actionObject[actionDrowdownSelection]"
+            :key="index"
+            class="card"
+          >
             <img
               @contextmenu.prevent="showLarge(card)"
               @dragstart.prevent=""
@@ -106,37 +171,19 @@
                 actionSelects.includes(card) ? 'glow-' + card.civilization : ''
               ]"
               :src="`https://scans.shobu.io/${card.uid}.jpg`"
-            />
+              />
           </div>
+          <p v-if="actionObject[actionDrowdownSelection].length < 1">
+            There's no cards in this category. Use the dropdown above to switch
+            category.
+          </p>
         </div>
-      </div>
-      <div v-if="actionObject && action.cards" class="action-cards">
-        <div
-          v-for="(card, index) in actionObject[actionDrowdownSelection]"
-          :key="index"
-          class="card"
-        >
-          <img
-            @contextmenu.prevent="showLarge(card)"
-            @dragstart.prevent=""
-            @mouseenter="actionSelectMouseEnter($event, card)"
-            @mousedown="actionSelect(card)"
-            :class="[
-              'no-drag',
-              actionSelects.includes(card) ? 'glow-' + card.civilization : ''
-            ]"
-            :src="`https://scans.shobu.io/${card.uid}.jpg`"
-          />
+        <div @click="chooseAction()" class="btn">Choose</div>
+        <div @click="cancelAction()" v-if="action.cancellable" class="btn">
+          Close
         </div>
-        <p v-if="actionObject[actionDrowdownSelection].length < 1">
-          There's no cards in this category. Use the dropdown above to switch
-          category.
-        </p>
-      </div>
-      <div @click="chooseAction()" class="btn">Choose</div>
-      <div @click="cancelAction()" v-if="action.cancellable" class="btn">
-        Close
-      </div>
+      </template>
+
       <span style="color: red">{{ actionError }}</span>
     </div>
 
@@ -175,16 +222,15 @@
         :style="playmat ? 'background: url(/assets/images/overlay_30.png)' : ''"
       >
         <div class="messages">
-          <div id="messages" class="messages-helper">
+          <div id="messages" class="messages-helper flex flex-col">
             <div
               class="message"
-              :style="{
-                background:
-                  message.sender.toLowerCase() === 'server'
-                    ? 'none'
-                    : playmat
-                    ? 'url(/assets/images/overlay_30.png)'
-                    : '#202124'
+              :class="{
+                'server_general': message.sender.toLowerCase() === 'server',
+                'server_action_player_1': message.sender.toLowerCase() === 'server_1',
+                'server_action_player_2': message.sender.toLowerCase() === 'server_2',
+                'chat-message': !isFromServer(message) && !playmat,
+                'chat-message-playmat': !isFromServer(message) && playmat,
               }"
               v-for="(message, index) in chatMessages.filter(
                 m => !settings.muted.includes(m.sender)
@@ -194,18 +240,15 @@
               <div
                 class="message-sender"
                 :style="{ color: message.color || 'orange' }"
+                v-if="!isFromServer(message)"
               >
-                {{
-                  message.sender.toLowerCase() == "server"
-                    ? "-"
-                    : message.sender + ":"
-                }}
+                {{ message.sender + ":" }}
               </div>
               <div class="message-text">{{ message.message }}</div>
               <div class="mute-icon-container">
                 <MuteIcon
                   v-if="
-                    !['server', username].includes(message.sender.toLowerCase())
+                    !['server', 'server_1', 'server_2', username].includes(message.sender.toLowerCase())
                   "
                   :player="message.sender"
                   @toggled="onSettingsChanged()"
@@ -748,6 +791,7 @@ export default {
       actionSelects: [],
       actionObject: null,
       actionDrowdownSelection: null,
+      actionCount: null,
 
       previewCard: null,
       previewCards: null,
@@ -781,6 +825,18 @@ export default {
         let container = document.getElementById("messages");
         container.scrollTop = container.scrollHeight;
       });
+    },
+
+    isFromServer(messageObj){
+      let sender = messageObj.sender.toLowerCase()
+      if ( 
+        sender === 'server' ||
+        sender === 'server_1' ||
+        sender === 'server_2'
+      )
+        return true;
+
+      return false;
     },
 
     onSettingsChanged(e) {
@@ -875,6 +931,22 @@ export default {
         cards.push(card.virtualId);
       }
       this.ws.send(JSON.stringify({ header: "action", cards, cancel: false }));
+    },
+
+    chooseDrawAction() {
+      if (!this.action) {
+        return;
+      }
+      this.ws.send(JSON.stringify({ header: "action", count: this.actionCount, cancel: false }));
+    },
+
+    modifyActionCount(modifier) {
+      var newCount = this.actionCount + modifier
+      if (newCount > this.action.maxSelections || newCount < this.action.minSelections) {
+        // Play sound for reaching limit here if needed
+        return;
+      }  
+      this.actionCount = newCount 
     },
 
     addToManazone() {
@@ -1219,21 +1291,41 @@ export default {
 
           case "action": {
             (this.actionError = ""), (this.actionSelects = []);
-            if (!(data.cards instanceof Array)) {
-              this.actionObject = data.cards;
-              console.log(Object.keys(data.cards)[0]);
-              this.actionDrowdownSelection = Object.keys(data.cards)[0];
+
+            switch (data.actionType) {
+              case 'count':
+                this.actionCount = data.maxSelections
+                this.action = {
+                  text: data.text,
+                  minSelections: data.minSelections,
+                  maxSelections: data.maxSelections,
+                  actionType: data.actionType,
+                };
+                break
+              case 'question':
+                this.action = {
+                  text: data.text,
+                  actionType: data.actionType,
+                  cancellable: true,
+                };
+                break
+              default: 
+                if (!(data.cards instanceof Array)) {
+                  this.actionObject = data.cards;
+                  this.actionDrowdownSelection = Object.keys(data.cards)[0];
+                }
+                this.action = {
+                  cards:
+                    data.cards instanceof Array
+                      ? data.cards
+                      : Object.keys(data.cards)[0],
+                  text: data.text,
+                  minSelection: data.minSelection,
+                  maxSelections: data.maxSelections,
+                  cancellable: data.cancellable,
+                  unselectableCards: data.unselectableCards,
+                };
             }
-            this.action = {
-              cards:
-                data.cards instanceof Array
-                  ? data.cards
-                  : Object.keys(data.cards)[0],
-              text: data.text,
-              minSelection: data.minSelection,
-              maxSelections: data.maxSelections,
-              cancellable: data.cancellable
-            };
             break;
           }
 
@@ -1910,5 +2002,39 @@ export default {
 
 .card-action-group {
   display: flex;
+}
+
+.active-svg-button {
+  color: #5865F2;
+}
+
+.inactive-svg-button {
+  filter: grayscale(10); 
+}
+
+.server_action_player_1 {
+  max-width: 80%;
+  align-self: flex-start;
+  background: rgba(181, 124, 60, 0.4)
+}
+
+.server_action_player_2 {
+  max-width: 80%;
+  align-self: flex-end;
+  background: rgba(124, 127, 143, 0.5)
+}
+
+.server_general {
+  max-width: 80%;
+  align-self: center;
+  text-align: center;
+}
+
+.chat-message {
+  background: #202124
+}
+
+.chat-message-playmat {
+  background: rgba(0, 0, 0, 0.3)
 }
 </style>

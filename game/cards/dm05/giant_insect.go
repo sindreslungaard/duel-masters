@@ -21,7 +21,7 @@ func BloodwingMantis(c *match.Card) {
 
 	c.Use(fx.Creature, fx.Doublebreaker, fx.When(fx.AttackConfirmed, func(card *match.Card, ctx *match.Context) {
 
-		fx.SelectFilter(
+		fx.SelectFilterSelectablesOnly(
 			card.Player,
 			ctx.Match,
 			card.Player,
@@ -33,7 +33,7 @@ func BloodwingMantis(c *match.Card) {
 			func(c *match.Card) bool { return c.HasCondition(cnd.Creature) },
 		).Map(func(c *match.Card) {
 			c.Player.MoveCard(c.ID, match.MANAZONE, match.HAND, card.ID)
-			ctx.Match.Chat("Server", fmt.Sprintf("%s was returned to %s's hand from manazone", c.Name, c.Player.Username()))
+			ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s was returned to %s's hand from manazone", c.Name, c.Player.Username()))
 		})
 
 	}))
@@ -52,21 +52,13 @@ func ScissorScarab(c *match.Card) {
 
 	c.Use(fx.Creature, fx.When(fx.Summoned, func(card *match.Card, ctx *match.Context) {
 
-		fx.SelectFilter(
-			card.Player,
-			ctx.Match,
-			card.Player,
-			match.DECK,
-			fmt.Sprintf("%s: Select 1 Giant Insect from your deck that will be shown to your opponent and sent to your hand", card.Name),
+		fx.SearchDeckTakeCards(
+			card,
+			ctx,
 			1,
-			1,
-			true,
-			func(c *match.Card) bool { return c.HasFamily(family.GiantInsect) }).Map(func(c *match.Card) {
-			card.Player.MoveCard(c.ID, match.DECK, match.HAND, card.ID)
-			ctx.Match.Chat("Server", fmt.Sprintf("%s was moved from %s's deck to their hand", c.Name, card.Player.Username()))
-		})
-
-		card.Player.ShuffleDeck()
+			func(x *match.Card) bool { return x.HasFamily(family.GiantInsect) },
+			"Giant Insect",
+		)
 
 	}))
 
@@ -84,7 +76,7 @@ func AmbushScorpion(c *match.Card) {
 
 	c.Use(fx.Creature, fx.PowerAttacker3000, fx.When(fx.Destroyed, func(card *match.Card, ctx *match.Context) {
 
-		fx.SelectFilter(
+		fx.SelectFilterSelectablesOnly(
 			card.Player,
 			ctx.Match,
 			card.Player,
@@ -102,7 +94,7 @@ func AmbushScorpion(c *match.Card) {
 				c.AddCondition(cnd.SummoningSickness, nil, nil)
 			}
 
-			ctx.Match.Chat("Server", fmt.Sprintf("%s was moved to %s's battlezone from their manazone", c.Name, c.Player.Username()))
+			ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s was moved to %s's battlezone from their manazone", c.Name, c.Player.Username()))
 
 		})
 
@@ -122,7 +114,7 @@ func ObsidianScarab(c *match.Card) {
 
 	c.Use(fx.Creature, fx.Doublebreaker, fx.PowerAttacker3000, fx.When(fx.Destroyed, func(card *match.Card, ctx *match.Context) {
 
-		fx.SelectFilter(
+		fx.SelectFilterSelectablesOnly(
 			card.Player,
 			ctx.Match,
 			card.Player,
@@ -140,7 +132,7 @@ func ObsidianScarab(c *match.Card) {
 				c.AddCondition(cnd.SummoningSickness, nil, nil)
 			}
 
-			ctx.Match.Chat("Server", fmt.Sprintf("%s was moved to %s's battlezone from their manazone", c.Name, c.Player.Username()))
+			ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s was moved to %s's battlezone from their manazone", c.Name, c.Player.Username()))
 
 		})
 

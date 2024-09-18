@@ -20,7 +20,7 @@ func SkeletonThiefTheRevealer(c *match.Card) {
 
 	c.Use(fx.Creature, fx.When(fx.Summoned, func(card *match.Card, ctx *match.Context) {
 
-		fx.SelectFilter(
+		fx.SelectFilterSelectablesOnly(
 			card.Player,
 			ctx.Match,
 			card.Player,
@@ -32,7 +32,7 @@ func SkeletonThiefTheRevealer(c *match.Card) {
 			func(x *match.Card) bool { return x.HasFamily(family.LivingDead) },
 		).Map(func(x *match.Card) {
 			card.Player.MoveCard(x.ID, match.GRAVEYARD, match.HAND, card.ID)
-			ctx.Match.Chat("Server", fmt.Sprintf("%s was moved to %s's hand from their graveyard by Skeleton Thief, the Revealer", x.Name, card.Player.Username()))
+			ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s was moved to %s's hand from their graveyard by Skeleton Thief, the Revealer", x.Name, card.Player.Username()))
 		})
 
 	}))

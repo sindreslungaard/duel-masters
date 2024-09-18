@@ -63,7 +63,7 @@ func DrawToMana(card *match.Card, ctx *match.Context) {
 				return
 			}
 
-			ctx.Match.Chat("Server", fmt.Sprintf("%s was added to %s's manazone from the top of their deck", c.Name, ctx.Match.PlayerRef(card.Player).Socket.User.Username))
+			ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s was added to %s's manazone from the top of their deck", c.Name, ctx.Match.PlayerRef(card.Player).Socket.User.Username))
 
 		}
 
@@ -72,14 +72,42 @@ func DrawToMana(card *match.Card, ctx *match.Context) {
 }
 
 func MayDraw1(card *match.Card, ctx *match.Context) {
+	MayDrawAmount(card, ctx, 1)
+}
 
-	ctx.Match.NewAction(card.Player, nil, 0, 0, "Do you want to draw a card?", true)
+func DrawUpTo2(card *match.Card, ctx *match.Context) {
+	DrawBetween(card, ctx, 0, 2)
+}
 
-	action := <-card.Player.Action
+func DrawUpTo3(card *match.Card, ctx *match.Context) {
+	DrawBetween(card, ctx, 0, 3)
+}
 
-	if !action.Cancel {
-		draw(card, ctx, 1)
+// This gives the player the choice to select a number of cards to draw between 2 provided limits
+func DrawBetween(card *match.Card, ctx *match.Context, min int, max int) {
+	count := max
+	if min != max {
+		count = SelectCount(
+			card.Player,
+			ctx.Match,
+			fmt.Sprintf("%s effect: Draw between %d and %d cards", card.Name, min, max),
+			min,
+			max)
 	}
-	ctx.Match.CloseAction(card.Player)
+	card.Player.DrawCards(count)
+}
 
+// This lets the player choose if they want to draw the full amount or none
+func MayDrawAmount(card *match.Card, ctx *match.Context, amount int) {
+	drawAmount := 0
+	textAmount := fmt.Sprintf("%d cards", amount)
+	if amount == 1 {
+		textAmount = "1 card"
+	}
+
+	if BinaryQuestion(card.Player, ctx.Match, fmt.Sprintf("Do you want to draw %s? (%s effect)", textAmount, card.Name)) {
+		drawAmount = amount
+	}
+
+	card.Player.DrawCards(drawAmount)
 }

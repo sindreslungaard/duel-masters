@@ -43,6 +43,16 @@ func GiveTapAbilityToAllies(card *match.Card, ctx *match.Context, alliesFilter f
 	})
 }
 
+func FilterShieldTriggers(ctx *match.Context, filter func(*match.Card) bool) {
+
+	if event, ok := ctx.Event.(*match.ShieldTriggerEvent); ok {
+		validCards, invalidCards := FilterCardList(event.Cards, filter)
+		event.Cards = validCards
+		event.UnplayableCards = append(event.UnplayableCards, invalidCards...)
+	}
+
+}
+
 func OpponentDiscardsRandomCard(card *match.Card, ctx *match.Context) {
 
 	hand, err := ctx.Match.Opponent(card.Player).Container(match.HAND)
@@ -53,7 +63,20 @@ func OpponentDiscardsRandomCard(card *match.Card, ctx *match.Context) {
 
 	discardedCard, err := ctx.Match.Opponent(card.Player).MoveCard(hand[rand.Intn(len(hand))].ID, match.HAND, match.GRAVEYARD, card.ID)
 	if err == nil {
-		ctx.Match.Chat("Server", fmt.Sprintf("%s was discarded from %s's hand by %s", discardedCard.Name, discardedCard.Player.Username(), card.Name))
+		ctx.Match.ReportActionInChat(ctx.Match.Opponent(card.Player), fmt.Sprintf("%s was discarded from %s's hand by %s", discardedCard.Name, discardedCard.Player.Username(), card.Name))
+	}
+
+}
+
+// To be used as part of a card effect, not for initial shuffle
+func ShuffleDeck(card *match.Card, ctx *match.Context, forOpponent bool) {
+	if !forOpponent {
+		card.Player.ShuffleDeck()
+		ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s shuffled their deck", card.Player.Username()))
+	} else {
+		opponent := ctx.Match.Opponent(card.Player)
+		opponent.ShuffleDeck()
+		ctx.Match.ReportActionInChat(opponent, fmt.Sprintf("%s deck shuffled by %s effect", opponent.Username(), card.Name))
 	}
 
 }

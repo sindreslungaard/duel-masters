@@ -30,7 +30,7 @@ func BallusDogfightEnforcerQ(c *match.Card) {
 			func(x *match.Card) bool { return x.HasFamily(family.Survivor) },
 		).Map(func(x *match.Card) {
 			x.Tapped = false
-			ctx.Match.Chat("Server", fmt.Sprintf("%s was untapped by %s's survivor ability", x.Name, card.Name))
+			ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s was untapped by %s's survivor ability", x.Name, card.Name))
 		})
 
 	}))
@@ -56,7 +56,7 @@ func KulusSoulshineEnforcer(c *match.Card) {
 			for _, toMove := range cards {
 
 				card.Player.MoveCard(toMove.ID, match.DECK, match.MANAZONE, card.ID)
-				ctx.Match.Chat("Server", fmt.Sprintf("%s put %s into the manazone from the top of their deck", card.Player.Username(), toMove.Name))
+				ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s put %s into the manazone from the top of their deck", card.Player.Username(), toMove.Name))
 
 			}
 		}

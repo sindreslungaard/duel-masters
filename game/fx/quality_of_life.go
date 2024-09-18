@@ -24,6 +24,21 @@ func (c CardCollection) Or(h func()) {
 	h()
 }
 
+func FilterCardList(cards []*match.Card, filter func(*match.Card) bool) (CardCollection, CardCollection) {
+	accepted := make([]*match.Card, 0)
+	rejected := make([]*match.Card, 0)
+
+	for _, mCard := range cards {
+		if filter(mCard) {
+			accepted = append(accepted, mCard)
+		} else {
+			rejected = append(rejected, mCard)
+		}
+	}
+
+	return accepted, rejected
+}
+
 // FindFilter returns a CardCollection matching the filter
 func FindFilter(p *match.Player, collection string, h func(card *match.Card) bool) CardCollection {
 
@@ -63,11 +78,65 @@ func When(test func(*match.Card, *match.Context) bool, h func(*match.Card, *matc
 
 // Select prompts the user to select n cards from the specified container
 func Select(p *match.Player, m *match.Match, containerOwner *match.Player, containerName string, text string, min int, max int, cancellable bool) CardCollection {
-	return SelectFilter(p, m, containerOwner, containerName, text, min, max, cancellable, func(x *match.Card) bool { return true })
+	return SelectFilterSelectablesOnly(p, m, containerOwner, containerName, text, min, max, cancellable, func(x *match.Card) bool { return true })
 }
 
-// SelectFilter prompts the user to select n cards from the specified container that matches the given filter
-func SelectFilter(p *match.Player, m *match.Match, containerOwner *match.Player, containerName string, text string, min int, max int, cancellable bool, filter func(*match.Card) bool) CardCollection {
+// SelectCount prompts to user to select a number in an interval
+func SelectCount(p *match.Player, m *match.Match, text string, min int, max int) int {
+	result := 0
+
+	m.NewCountAction(p, text, min, max)
+
+	defer m.CloseAction(p)
+
+	if !m.IsPlayerTurn(p) {
+		m.Wait(m.Opponent(p), "Waiting for your opponent to make an action")
+		defer m.EndWait(m.Opponent(p))
+	}
+
+	for {
+
+		action := <-p.Action
+
+		if action.Count < min || action.Count > max {
+			m.ActionWarning(p, "The amount selected does not match the requirements")
+			continue
+		}
+
+		result = action.Count
+
+		break
+
+	}
+
+	return result
+}
+
+func BinaryQuestion(p *match.Player, m *match.Match, text string) bool {
+	m.NewQuestionAction(p, text)
+
+	defer m.CloseAction(p)
+
+	if !m.IsPlayerTurn(p) {
+		m.Wait(m.Opponent(p), "Waiting for your opponent to make an action")
+		defer m.EndWait(m.Opponent(p))
+	}
+
+	action := <-p.Action
+
+	return !action.Cancel
+}
+
+// SelectFilterSelectablesOnly prompts the user to select n cards from the specified container that matches the given filter
+//
+// Deprecated: New cards should use `fx.SelectFilter`
+func SelectFilterSelectablesOnly(p *match.Player, m *match.Match, containerOwner *match.Player, containerName string, text string, min int, max int, cancellable bool, filter func(*match.Card) bool) CardCollection {
+	return SelectFilter(p, m, containerOwner, containerName, text, min, max, cancellable, filter, false)
+}
+
+// SelectFilter prompts the user to select n cards from the specified container that matches the given filter.
+// It also allows to show all the other cards from the container that are unselectable
+func SelectFilter(p *match.Player, m *match.Match, containerOwner *match.Player, containerName string, text string, min int, max int, cancellable bool, filter func(*match.Card) bool, showUnselectables bool) CardCollection {
 
 	result := make([]*match.Card, 0)
 
@@ -77,19 +146,16 @@ func SelectFilter(p *match.Player, m *match.Match, containerOwner *match.Player,
 		return result
 	}
 
-	filtered := make([]*match.Card, 0)
-
-	for _, mCard := range cards {
-		if filter(mCard) {
-			filtered = append(filtered, mCard)
-		}
+	filtered, unselectables := FilterCardList(cards, filter)
+	if !showUnselectables {
+		unselectables = nil
 	}
 
 	if len(filtered) < 1 {
 		return result
 	}
 
-	m.NewAction(p, filtered, min, max, text, cancellable)
+	m.NewActionFullList(p, filtered, min, max, text, cancellable, unselectables)
 
 	defer m.CloseAction(p)
 
@@ -391,4 +457,35 @@ func ShieldBroken(card *match.Card, ctx *match.Context) bool {
 	_, ok := ctx.Event.(*match.BrokenShieldEvent)
 	return ok
 
+}
+
+func AnotherCreatureSummoned(card *match.Card, ctx *match.Context) bool {
+	if card.Zone != match.BATTLEZONE {
+		return false
+	}
+
+	if event, ok := ctx.Event.(*match.CardMoved); ok {
+
+		if event.CardID != card.ID && event.To == match.BATTLEZONE {
+			return true
+		}
+
+	}
+
+	return false
+}
+
+func AnotherCreatureDestroyed(card *match.Card, ctx *match.Context) bool {
+	if card.Zone != match.BATTLEZONE {
+		return false
+	}
+
+	if event, ok := ctx.Event.(*match.CardMoved); ok &&
+		event.From == match.BATTLEZONE &&
+		event.To == match.GRAVEYARD &&
+		event.CardID != card.ID {
+		return true
+	}
+
+	return false
 }

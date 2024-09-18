@@ -74,7 +74,7 @@ func SilverAxe(c *match.Card) {
 			return
 		}
 
-		ctx.Match.Chat("Server", fmt.Sprintf("%s was added to %s's manazone from the top of their deck", c.Name, ctx.Match.PlayerRef(card.Player).Socket.User.Username))
+		ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s was added to %s's manazone from the top of their deck", c.Name, ctx.Match.PlayerRef(card.Player).Socket.User.Username))
 
 	}))
 

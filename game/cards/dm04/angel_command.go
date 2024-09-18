@@ -49,7 +49,7 @@ func RimuelCloudbreakElemental(c *match.Card) {
 			false,
 		).Map(func(x *match.Card) {
 			x.Tapped = true
-			ctx.Match.Chat("Server", fmt.Sprintf("%s's %s was tapped by Rimuel, Cloudbreak Elemental", x.Player.Username(), x.Name))
+			ctx.Match.ReportActionInChat(ctx.Match.Opponent(card.Player), fmt.Sprintf("%s's %s was tapped by Rimuel, Cloudbreak Elemental", x.Player.Username(), x.Name))
 		})
 	}))
 
@@ -71,13 +71,7 @@ func AlcadeiasLordOfSpirits(c *match.Card) {
 			return
 		}
 
-		if event, ok := ctx.Event.(*match.ShieldTriggerEvent); ok {
-
-			if event.Card.Civ != civ.Light && event.Card.HasCondition(cnd.Spell) {
-				ctx.InterruptFlow()
-			}
-
-		}
+		fx.FilterShieldTriggers(ctx, func(x *match.Card) bool { return x.Civ == civ.Light || !x.HasCondition(cnd.Spell) })
 
 		if event, ok := ctx.Event.(*match.PlayCardEvent); ok {
 

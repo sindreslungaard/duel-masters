@@ -22,7 +22,7 @@ func AuraBlast(c *match.Card) {
 
 			card.Player.MapContainer(match.BATTLEZONE, func(creature *match.Card) {
 				creature.AddCondition(cnd.PowerAttacker, 2000, card.ID)
-				ctx.Match.Chat("Server", fmt.Sprintf("%s was given power attacker +2000", creature.Name))
+				ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s was given power attacker +2000", creature.Name))
 			})
 
 		}
@@ -39,15 +39,7 @@ func BrainSerum(c *match.Card) {
 	c.ManaCost = 4
 	c.ManaRequirement = []string{civ.Water}
 
-	c.Use(fx.Spell, fx.ShieldTrigger, func(card *match.Card, ctx *match.Context) {
-
-		if match.AmICasted(card, ctx) {
-
-			card.Player.DrawCards(2)
-
-		}
-
-	})
+	c.Use(fx.Spell, fx.ShieldTrigger, fx.When(fx.SpellCast, fx.DrawUpTo2))
 
 }
 
@@ -68,7 +60,7 @@ func BurningPower(c *match.Card) {
 			for _, creature := range creatures {
 
 				creature.AddCondition(cnd.PowerAttacker, 2000, card.ID)
-				ctx.Match.Chat("Server", fmt.Sprintf("%s was given power attacker +2000", creature.Name))
+				ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s was given power attacker +2000", creature.Name))
 
 			}
 
@@ -95,7 +87,7 @@ func ChaosStrike(c *match.Card) {
 			for _, creature := range creatures {
 
 				creature.Tapped = true
-				ctx.Match.Chat("Server", fmt.Sprintf("%s was tapped by %s", creature.Name, card.Name))
+				ctx.Match.ReportActionInChat(ctx.Match.Opponent(card.Player), fmt.Sprintf("%s was tapped by %s", creature.Name, card.Name))
 
 			}
 
@@ -126,7 +118,7 @@ func CreepingPlague(c *match.Card) {
 					}
 
 					event.Attacker.AddCondition(cnd.Slayer, nil, card.ID)
-					ctx.Match.Chat("Server", fmt.Sprintf("%s was given \"Slayer\" by %s", event.Attacker.Name, card.Name))
+					ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s was given \"Slayer\" by %s", event.Attacker.Name, card.Name))
 
 				}
 
@@ -139,21 +131,6 @@ func CreepingPlague(c *match.Card) {
 			})
 
 		}
-
-		/* if match.AmICasted(card, ctx) {
-			card.AddCondition(cnd.Active, nil, card.ID)
-		}
-
-		if event, ok := ctx.Event.(*match.Battle); ok {
-
-			if !event.Blocked || !card.HasCondition(cnd.Active) {
-				return
-			}
-
-			event.Attacker.AddCondition(cnd.Slayer, nil, card.ID)
-			ctx.Match.Chat("Server", fmt.Sprintf("%s was given \"Slayer\" by %s", event.Attacker.Name, card.Name))
-
-		} */
 
 	})
 
@@ -193,26 +170,27 @@ func CrystalMemory(c *match.Card) {
 	c.ManaCost = 4
 	c.ManaRequirement = []string{civ.Water}
 
-	c.Use(fx.Spell, fx.ShieldTrigger, func(card *match.Card, ctx *match.Context) {
+	c.Use(fx.Spell, fx.ShieldTrigger, fx.When(fx.SpellCast, func(card *match.Card, ctx *match.Context) {
 
-		if match.AmICasted(card, ctx) {
+		selectedCards := fx.Select(
+			card.Player,
+			ctx.Match,
+			card.Player,
+			match.DECK,
+			fmt.Sprintf("%s effect: Select 1 card from your deck that will be sent to your hand", card.Name),
+			1,
+			1,
+			true,
+		)
 
-			selectedCards := match.Search(card.Player, ctx.Match, card.Player, match.DECK, "Select 1 card from your deck that will be sent to your hand", 1, 1, false)
-
-			for _, selectedCard := range selectedCards {
-
-				card.Player.MoveCard(selectedCard.ID, match.DECK, match.HAND, card.ID)
-
-			}
-
-			card.Player.ShuffleDeck()
-
-			ctx.Match.Chat("Server", card.Player.Username()+" retrieved a card from their deck")
-
+		for _, selectedCard := range selectedCards {
+			card.Player.MoveCard(selectedCard.ID, match.DECK, match.HAND, card.ID)
+			ctx.Match.ReportActionInChat(card.Player, card.Player.Username()+" retrieved a card from their deck")
 		}
 
-	})
+		fx.ShuffleDeck(card, ctx, false)
 
+	}))
 }
 
 // DarkReversal ...
@@ -232,7 +210,7 @@ func DarkReversal(c *match.Card) {
 			for _, creature := range creatures {
 
 				card.Player.MoveCard(creature.ID, match.GRAVEYARD, match.HAND, card.ID)
-				ctx.Match.Chat("Server", fmt.Sprintf("%s retrieved %s from their graveyard", card.Player.Username(), creature.Name))
+				ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s retrieved %s from their graveyard", card.Player.Username(), creature.Name))
 
 			}
 
@@ -276,24 +254,7 @@ func DimensionGate(c *match.Card) {
 	c.ManaCost = 3
 	c.ManaRequirement = []string{civ.Nature}
 
-	c.Use(fx.Spell, fx.ShieldTrigger, func(card *match.Card, ctx *match.Context) {
-
-		if match.AmICasted(card, ctx) {
-
-			creatures := match.Filter(card.Player, ctx.Match, card.Player, match.DECK, "Select 1 creature from your deck that will be shown to your opponent and sent to your hand", 1, 1, false, func(x *match.Card) bool { return x.HasCondition(cnd.Creature) })
-
-			for _, creature := range creatures {
-
-				card.Player.MoveCard(creature.ID, match.DECK, match.HAND, card.ID)
-				ctx.Match.Chat("Server", fmt.Sprintf("%s retrieved %s from the deck to their hand", card.Player.Username(), creature.Name))
-
-			}
-
-			card.Player.ShuffleDeck()
-
-		}
-
-	})
+	c.Use(fx.Spell, fx.ShieldTrigger, fx.When(fx.SpellCast, fx.SearchDeckTake1Creature))
 
 }
 
@@ -329,7 +290,7 @@ func HolyAwe(c *match.Card) {
 
 			for _, creature := range creatures {
 				creature.Tapped = true
-				ctx.Match.Chat("Server", fmt.Sprintf("%s was tapped by Holy Awe", creature.Name))
+				ctx.Match.ReportActionInChat(ctx.Match.Opponent(card.Player), fmt.Sprintf("%s was tapped by Holy Awe", creature.Name))
 			}
 
 		}
@@ -355,7 +316,7 @@ func LaserWing(c *match.Card) {
 			for _, creature := range creatures {
 
 				creature.AddCondition(cnd.CantBeBlocked, nil, card.ID)
-				ctx.Match.Chat("Server", creature.Name+" can't be blocked this turn")
+				ctx.Match.ReportActionInChat(card.Player, creature.Name+" can't be blocked this turn")
 
 			}
 
@@ -383,7 +344,7 @@ func MagmaGazer(c *match.Card) {
 
 				creature.AddCondition(cnd.PowerAttacker, 4000, card.ID)
 				creature.AddCondition(cnd.DoubleBreaker, nil, card.ID)
-				ctx.Match.Chat("Server", fmt.Sprintf("%s was given power attacker +4000 and double breaker until the end of the turn", creature.Name))
+				ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s was given power attacker +4000 and double breaker until the end of the turn", creature.Name))
 
 			}
 
@@ -410,7 +371,7 @@ func MoonlightFlash(c *match.Card) {
 			for _, creature := range creatures {
 
 				creature.Tapped = true
-				ctx.Match.Chat("Server", creature.Name+" was tapped")
+				ctx.Match.ReportActionInChat(ctx.Match.Opponent(card.Player), creature.Name+" was tapped")
 
 			}
 
@@ -438,7 +399,7 @@ func NaturalSnare(c *match.Card) {
 
 				creature.Player.MoveCard(creature.ID, match.BATTLEZONE, match.MANAZONE, card.ID)
 				creature.Tapped = false
-				ctx.Match.Chat("Server", fmt.Sprintf("%s was moved to %s's manazone", creature.Name, creature.Player.Username()))
+				ctx.Match.ReportActionInChat(ctx.Match.Opponent(card.Player), fmt.Sprintf("%s was moved to %s's manazone", creature.Name, creature.Player.Username()))
 
 			}
 
@@ -466,7 +427,7 @@ func PangaeasSong(c *match.Card) {
 
 				creature.Player.MoveCard(creature.ID, match.BATTLEZONE, match.MANAZONE, card.ID)
 				creature.Tapped = false
-				ctx.Match.Chat("Server", fmt.Sprintf("%s was moved to %s's manazone", creature.Name, creature.Player.Username()))
+				ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s was moved to %s's manazone", creature.Name, creature.Player.Username()))
 
 			}
 
@@ -493,7 +454,7 @@ func SolarRay(c *match.Card) {
 			for _, creature := range creatures {
 
 				creature.Tapped = true
-				ctx.Match.Chat("Server", creature.Name+" was tapped")
+				ctx.Match.ReportActionInChat(ctx.Match.Opponent(card.Player), creature.Name+" was tapped")
 
 			}
 
@@ -520,7 +481,7 @@ func SonicWing(c *match.Card) {
 			for _, creature := range creatures {
 
 				creature.AddCondition(cnd.CantBeBlocked, nil, card.ID)
-				ctx.Match.Chat("Server", creature.Name+" can't be blocked this turn")
+				ctx.Match.ReportActionInChat(card.Player, creature.Name+" can't be blocked this turn")
 
 			}
 
@@ -583,11 +544,11 @@ func SpiralGate(c *match.Card) {
 						ref, err := ctx.Match.Opponent(c.Player).MoveCard(vid, match.BATTLEZONE, match.HAND, card.ID)
 
 						if err == nil {
-							ctx.Match.Chat("Server", fmt.Sprintf("%s was moved to %s's hand", ref.Name, ctx.Match.PlayerRef(ref.Player).Socket.User.Username))
+							ctx.Match.ReportActionInChat(ctx.Match.Opponent(card.Player), fmt.Sprintf("%s was moved to %s's hand", ref.Name, ctx.Match.PlayerRef(ref.Player).Socket.User.Username))
 						}
 
 					} else {
-						ctx.Match.Chat("Server", fmt.Sprintf("%s was moved to %s's hand", ref.Name, ctx.Match.PlayerRef(ref.Player).Socket.User.Username))
+						ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s was moved to %s's hand", ref.Name, ctx.Match.PlayerRef(ref.Player).Socket.User.Username))
 					}
 
 				}
@@ -657,11 +618,11 @@ func Teleportation(c *match.Card) {
 						ref, err := ctx.Match.Opponent(c.Player).MoveCard(vid, match.BATTLEZONE, match.HAND, card.ID)
 
 						if err == nil {
-							ctx.Match.Chat("Server", fmt.Sprintf("%s was moved to %s's hand", ref.Name, ctx.Match.PlayerRef(ref.Player).Socket.User.Username))
+							ctx.Match.ReportActionInChat(ctx.Match.Opponent(card.Player), fmt.Sprintf("%s was moved to %s's hand", ref.Name, ctx.Match.PlayerRef(ref.Player).Socket.User.Username))
 						}
 
 					} else {
-						ctx.Match.Chat("Server", fmt.Sprintf("%s was moved to %s's hand", ref.Name, ctx.Match.PlayerRef(ref.Player).Socket.User.Username))
+						ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s was moved to %s's hand", ref.Name, ctx.Match.PlayerRef(ref.Player).Socket.User.Username))
 					}
 
 				}
@@ -747,7 +708,7 @@ func UltimateForce(c *match.Card) {
 			for _, toMove := range cards {
 
 				card.Player.MoveCard(toMove.ID, match.DECK, match.MANAZONE, card.ID)
-				ctx.Match.Chat("Server", fmt.Sprintf("%s put %s into the manazone from the top of their deck", card.Player.Username(), toMove.Name))
+				ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s put %s into the manazone from the top of their deck", card.Player.Username(), toMove.Name))
 
 			}
 
@@ -774,7 +735,7 @@ func VirtualTripwire(c *match.Card) {
 			for _, creature := range creatures {
 
 				creature.Tapped = true
-				ctx.Match.Chat("Server", fmt.Sprintf("%s was tapped by %s", creature.Name, card.Name))
+				ctx.Match.ReportActionInChat(ctx.Match.Opponent(card.Player), fmt.Sprintf("%s was tapped by %s", creature.Name, card.Name))
 
 			}
 

@@ -35,7 +35,7 @@ func PhalEegaDawnGuardian(c *match.Card) {
 
 	c.Use(fx.Creature, fx.When(fx.Summoned, func(card *match.Card, ctx *match.Context) {
 
-		fx.SelectFilter(
+		fx.SelectFilterSelectablesOnly(
 			card.Player,
 			ctx.Match,
 			card.Player,
@@ -50,7 +50,7 @@ func PhalEegaDawnGuardian(c *match.Card) {
 				return
 			}
 			card.Player.MoveCard(x.ID, match.GRAVEYARD, match.HAND, card.ID)
-			ctx.Match.Chat("Server", fmt.Sprintf("%s was returned to %s's hand from their graveyard by Phal Eega, Dawn Guardian", x.Name, x.Player.Username()))
+			ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s was returned to %s's hand from their graveyard by Phal Eega, Dawn Guardian", x.Name, x.Player.Username()))
 		})
 
 	}))
@@ -91,7 +91,7 @@ func LarbaGeerTheImmaculate(c *match.Card) {
 				func(x *match.Card) bool { return x.HasCondition(cnd.Blocker) },
 			).Map(func(x *match.Card) {
 				x.Tapped = true
-				ctx.Match.Chat("Server", fmt.Sprintf("%s was tapped by %s", x.Name, card.Name))
+				ctx.Match.ReportActionInChat(ctx.Match.Opponent(card.Player), fmt.Sprintf("%s was tapped by %s", x.Name, card.Name))
 			})
 
 		})

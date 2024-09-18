@@ -37,7 +37,7 @@ func DavaToreySeekerOfClouds(c *match.Card) {
 				if !ctx2.Match.IsPlayerTurn(card.Player) {
 					ctx2.ScheduleAfter(func() {
 						card.Player.MoveCard(card.ID, match.GRAVEYARD, match.BATTLEZONE, card.ID)
-						ctx2.Match.Chat("Server", fmt.Sprintf("%s was discarded and moved to the battle zone", card.Name))
+						ctx2.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s was discarded and moved to the battle zone", card.Name))
 					})
 
 				}

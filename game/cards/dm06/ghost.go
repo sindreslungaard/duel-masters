@@ -65,7 +65,7 @@ func GrimSoulShadowOfReversal(c *match.Card) {
 	c.ManaRequirement = []string{civ.Darkness}
 	c.TapAbility = func(card *match.Card, ctx *match.Context) {
 
-		fx.SelectFilter(
+		fx.SelectFilterSelectablesOnly(
 			card.Player,
 			ctx.Match,
 			card.Player,
@@ -77,7 +77,7 @@ func GrimSoulShadowOfReversal(c *match.Card) {
 			func(x *match.Card) bool { return x.Civ == civ.Darkness && x.HasCondition(cnd.Creature) },
 		).Map(func(x *match.Card) {
 			card.Player.MoveCard(x.ID, match.GRAVEYARD, match.HAND, card.ID)
-			ctx.Match.Chat("Server", fmt.Sprintf("%s was moved to %s's hand from their graveyard by Grim Soul, Shadow of Reversal", x.Name, card.Player.Username()))
+			ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s was moved to %s's hand from their graveyard by Grim Soul, Shadow of Reversal", x.Name, card.Player.Username()))
 		})
 	}
 

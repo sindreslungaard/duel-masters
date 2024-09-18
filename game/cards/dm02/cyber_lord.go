@@ -18,13 +18,7 @@ func HypersquidWalter(c *match.Card) {
 	c.ManaCost = 3
 	c.ManaRequirement = []string{civ.Water}
 
-	c.Use(fx.Creature, fx.When(fx.Attacking, func(card *match.Card, ctx *match.Context) {
-
-		ctx.ScheduleAfter(func() {
-			card.Player.DrawCards(1)
-		})
-
-	}))
+	c.Use(fx.Creature, fx.When(fx.Attacking, fx.MayDraw1))
 
 }
 
@@ -80,7 +74,7 @@ func Corile(c *match.Card) {
 
 			ctx.Match.Wait(card.Player, "Waiting for your opponent to make an action...")
 
-			fx.SelectFilter(
+			fx.SelectFilterSelectablesOnly(
 				ctx.Match.Opponent(card.Player),
 				ctx.Match,
 				ctx.Match.Opponent(card.Player),

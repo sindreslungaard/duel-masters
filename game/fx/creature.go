@@ -130,7 +130,7 @@ func Creature(card *match.Card, ctx *match.Context) {
 					card.AddCondition(cnd.SummoningSickness, nil, nil)
 
 					card.Player.MoveCard(card.ID, match.HAND, match.BATTLEZONE, card.ID)
-					ctx.Match.Chat("Server", fmt.Sprintf("%s summoned %s to the battle zone", card.Player.Username(), card.Name))
+					ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s summoned %s to the battle zone", card.Player.Username(), card.Name))
 
 				}
 
@@ -616,15 +616,15 @@ func Creature(card *match.Card, ctx *match.Context) {
 
 			if attackerPower > defenderPower {
 				m.HandleFx(match.NewContext(m, &match.CreatureDestroyed{Card: defender, Source: attacker, Blocked: blocked}))
-				m.Chat("Server", fmt.Sprintf("%s (%v) was destroyed by %s (%v)", defender.Name, defenderPower, attacker.Name, attackerPower))
+				m.ReportActionInChat(defender.Player, fmt.Sprintf("%s (%v) was destroyed by %s (%v)", defender.Name, defenderPower, attacker.Name, attackerPower))
 			} else if attackerPower == defenderPower {
 				m.HandleFx(match.NewContext(m, &match.CreatureDestroyed{Card: attacker, Source: defender, Blocked: blocked}))
-				m.Chat("Server", fmt.Sprintf("%s (%v) was destroyed by %s (%v)", attacker.Name, attackerPower, defender.Name, defenderPower))
+				m.ReportActionInChat(attacker.Player, fmt.Sprintf("%s (%v) was destroyed by %s (%v)", attacker.Name, attackerPower, defender.Name, defenderPower))
 				m.HandleFx(match.NewContext(m, &match.CreatureDestroyed{Card: defender, Source: attacker, Blocked: blocked}))
-				m.Chat("Server", fmt.Sprintf("%s (%v) was destroyed by %s (%v)", defender.Name, defenderPower, attacker.Name, attackerPower))
+				m.ReportActionInChat(defender.Player, fmt.Sprintf("%s (%v) was destroyed by %s (%v)", defender.Name, defenderPower, attacker.Name, attackerPower))
 			} else if attackerPower < defenderPower {
 				m.HandleFx(match.NewContext(m, &match.CreatureDestroyed{Card: attacker, Source: defender, Blocked: blocked}))
-				m.Chat("Server", fmt.Sprintf("%s (%v) was destroyed by %s (%v)", attacker.Name, attackerPower, defender.Name, defenderPower))
+				m.ReportActionInChat(attacker.Player, fmt.Sprintf("%s (%v) was destroyed by %s (%v)", attacker.Name, attackerPower, defender.Name, defenderPower))
 			}
 		})
 	}

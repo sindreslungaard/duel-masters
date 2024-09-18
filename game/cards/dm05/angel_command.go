@@ -35,7 +35,7 @@ func SyforceAuroraElemental(c *match.Card) {
 
 	c.Use(fx.Creature, fx.Blocker, fx.Doublebreaker, fx.When(fx.Summoned, func(card *match.Card, ctx *match.Context) {
 
-		fx.SelectFilter(
+		fx.SelectFilterSelectablesOnly(
 			card.Player,
 			ctx.Match,
 			card.Player,
@@ -48,7 +48,7 @@ func SyforceAuroraElemental(c *match.Card) {
 		).Map(func(c *match.Card) {
 
 			c.Player.MoveCard(c.ID, match.MANAZONE, match.HAND, card.ID)
-			ctx.Match.Chat("Server", fmt.Sprintf("%s retrieved %s from the mana zone to their hand", c.Player.Username(), c.Name))
+			ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s retrieved %s from the mana zone to their hand", c.Player.Username(), c.Name))
 
 		})
 

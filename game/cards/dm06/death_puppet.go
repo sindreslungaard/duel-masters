@@ -31,12 +31,12 @@ func LupaPoisonTippedDoll(c *match.Card) {
 	c.ManaRequirement = []string{civ.Darkness}
 	c.TapAbility = func(card *match.Card, ctx *match.Context) {
 
-		ctx.Match.Chat("Server", fmt.Sprintf("%s activated %s's tap ability", card.Player.Username(), card.Name))
+		ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s activated %s's tap ability", card.Player.Username(), card.Name))
 		creatures := match.Search(card.Player, ctx.Match, card.Player, match.BATTLEZONE, "Select 1 creature from your battlezone that will get 'slayer'", 1, 1, false)
 		for _, creature := range creatures {
 
 			creature.AddCondition(cnd.Slayer, 1, card.ID)
-			ctx.Match.Chat("Server", fmt.Sprintf("%s was given 'slayer' by %s until end of turn", creature.Name, card.Name))
+			ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s was given 'slayer' by %s until end of turn", creature.Name, card.Name))
 
 		}
 	}

@@ -198,15 +198,15 @@ func (m *Match) CastSpell(card *Card, fromShield bool) {
 	m.HandleFx(NewContext(m, &SpellCast{
 		CardID:        card.ID,
 		FromShield:    fromShield,
-		MatchPlayerID: m.getPlayerMatchId(card),
+		MatchPlayerID: m.getPlayerMatchId(card.Player),
 	}))
 
 	m.BroadcastState()
 
 }
 
-func (m *Match) getPlayerMatchId(card *Card) byte {
-	if card.Player == m.Player1.Player {
+func (m *Match) getPlayerMatchId(player *Player) byte {
+	if player == m.Player1.Player {
 		return 1
 	}
 	return 2
@@ -229,7 +229,7 @@ func (m *Match) Battle(attacker *Card, defender *Card, blocked bool) {
 func (m *Match) Destroy(card *Card, source *Card, context CreatureDestroyedContext) {
 
 	m.HandleFx(NewContext(m, &CreatureDestroyed{Card: card, Source: source, Context: context}))
-	m.Chat("Server", fmt.Sprintf("%s (%v) was destroyed by %s", card.Name, m.GetPower(card, false), source.Name))
+	m.ReportActionInChat(card.Player, fmt.Sprintf("%s (%v) was destroyed by %s", card.Name, m.GetPower(card, false), source.Name))
 
 }
 
@@ -242,7 +242,7 @@ func (m *Match) MoveCard(card *Card, destination string, source *Card) {
 		return
 	}
 
-	m.Chat("Server", fmt.Sprintf("%s was moved to %s %s by %s", card.Name, card.Player.Username(), destination, source.Name))
+	m.ReportActionInChat(card.Player, fmt.Sprintf("%s was moved to %s %s by %s", card.Name, card.Player.Username(), destination, source.Name))
 
 }
 
@@ -255,7 +255,7 @@ func (m *Match) MoveCardToFront(card *Card, destination string, source *Card) {
 		return
 	}
 
-	m.Chat("Server", fmt.Sprintf("%s was moved to %s's %s by %s", card.Name, card.Player.Username(), destination, source.Name))
+	m.ReportActionInChat(card.Player, fmt.Sprintf("%s was moved to %s's %s by %s", card.Name, card.Player.Username(), destination, source.Name))
 
 }
 
@@ -266,7 +266,9 @@ func (m *Match) BreakShields(shields []*Card, source string) {
 		return
 	}
 
-	m.Chat("Server", fmt.Sprintf("%v of %v's shields were broken", len(shields), m.PlayerRef(shields[0].Player).Socket.User.Username))
+	m.ReportActionInChat(shields[0].Player, fmt.Sprintf("%v of %v's shields were broken", len(shields), m.PlayerRef(shields[0].Player).Socket.User.Username))
+
+	var shieldTriggers []*Card
 
 	for _, shield := range shields {
 
@@ -280,56 +282,99 @@ func (m *Match) BreakShields(shields []*Card, source string) {
 
 		// Handle shield triggers
 		if card.HasCondition(cnd.ShieldTrigger) {
+			shieldTriggers = append(shieldTriggers, card)
+		}
 
-			ctx := NewContext(m, &ShieldTriggerEvent{
-				Card:   card,
-				Source: source,
-			})
+	}
 
-			m.HandleFx(ctx)
+	for len(shieldTriggers) > 0 {
 
-			if ctx.Cancelled() {
+		// we broadcast state here as it's needed to move the cards to the hand and
+		// after each used shieldtrigger
+		m.BroadcastState()
+
+		event := &ShieldTriggerEvent{
+			Cards:  shieldTriggers,
+			Source: source,
+		}
+		ctx := NewContext(m, event)
+		m.HandleFx(ctx)
+
+		playableShieldTriggers := event.Cards
+
+		if ctx.Cancelled() || len(playableShieldTriggers) == 0 {
+			return
+		}
+
+		player := shieldTriggers[0].Player
+		opponent := m.Opponent(player)
+
+		m.Wait(opponent, "Waiting for your opponent to make an action")
+
+		m.NewActionFullList(
+			player,
+			playableShieldTriggers,
+			1,
+			1,
+			"Shield trigger! If those cards are playable you can do so for free one at a time.",
+			true,
+			event.UnplayableCards,
+		)
+
+		for {
+
+			action := <-player.Action
+
+			if action.Cancel {
+				m.CloseAction(player)
+				m.EndWait(opponent)
+				return
+			}
+
+			if len(action.Cards) != 1 {
+				m.DefaultActionWarning(player)
 				continue
 			}
 
-			m.Wait(m.Opponent(card.Player), "Waiting for your opponent to make an action")
-
-			m.NewAction(card.Player, []*Card{card}, 1, 1, "Shield trigger! Choose the card to use for free or close to keep it in your hand", true)
-
-			for {
-
-				action := <-card.Player.Action
-
-				if action.Cancel {
-					m.CloseAction(card.Player)
-					break
+			var card *Card
+			for _, shieldTrigger := range playableShieldTriggers {
+				if shieldTrigger.ID == action.Cards[0] {
+					card = shieldTrigger
 				}
-
-				if len(action.Cards) < 1 {
-					m.DefaultActionWarning(card.Player)
-					continue
-				}
-
-				if card.HasCondition(cnd.Spell) {
-					m.CastSpell(card, true)
-				} else {
-					m.MoveCard(card, BATTLEZONE, card)
-				}
-
-				m.HandleFx(NewContext(m, &ShieldTriggerPlayedEvent{
-					Card:   card,
-					Source: source,
-				}))
-
-				m.CloseAction(card.Player)
-
-				break
-
 			}
 
-			m.EndWait(m.Opponent(card.Player))
+			if card == nil {
+				m.DefaultActionWarning(player)
+				continue
+			}
+
+			if card.HasCondition(cnd.Spell) {
+				m.CastSpell(card, true)
+			} else {
+				m.MoveCard(card, BATTLEZONE, card)
+			}
+
+			// Elimnate all shield triggers from that list that are not in hand anymore for any reason.
+			var stillValidShieldtriggers []*Card
+			for _, shieldTrigger := range shieldTriggers {
+				if shieldTrigger.Zone == HAND {
+					stillValidShieldtriggers = append(stillValidShieldtriggers, shieldTrigger)
+				}
+			}
+			shieldTriggers = stillValidShieldtriggers
+
+			m.HandleFx(NewContext(m, &ShieldTriggerPlayedEvent{
+				Card:   card,
+				Source: source,
+			}))
+
+			m.CloseAction(card.Player)
+
+			break
 
 		}
+
+		m.EndWait(opponent)
 
 	}
 
@@ -415,6 +460,11 @@ func (m *Match) ColorChat(sender string, message string, color string) {
 	}
 
 	m.Broadcast(msg)
+}
+
+func (m *Match) ReportActionInChat(player *Player, message string) {
+	sender := fmt.Sprintf("Server_%d", m.getPlayerMatchId(player))
+	m.ColorChat(sender, message, "#ccc")
 }
 
 // Chat sends a chat message with the default color
@@ -622,14 +672,19 @@ func (m *Match) HandleFx(ctx *Context) {
 
 // NewAction prompts the user to make a selection of the specified []Cards
 func (m *Match) NewAction(player *Player, cards []*Card, minSelections int, maxSelections int, text string, cancellable bool) {
+	m.NewActionFullList(player, cards, minSelections, maxSelections, text, cancellable, nil)
+}
+
+func (m *Match) NewActionFullList(player *Player, cards []*Card, minSelections int, maxSelections int, text string, cancellable bool, unselectableCards []*Card) {
 
 	msg := &server.ActionMessage{
-		Header:        "action",
-		Cards:         denormalizeCards(cards, false),
-		Text:          text,
-		MinSelections: minSelections,
-		MaxSelections: maxSelections,
-		Cancellable:   cancellable,
+		Header:            "action",
+		Cards:             denormalizeCards(cards, false),
+		Text:              text,
+		MinSelections:     minSelections,
+		MaxSelections:     maxSelections,
+		Cancellable:       cancellable,
+		UnselectableCards: denormalizeCards(unselectableCards, false),
 	}
 
 	player.ActionState = PlayerActionState{
@@ -687,6 +742,44 @@ func (m *Match) newMultipartActionBase(player *Player, cards map[string][]*Card,
 		MinSelections: minSelections,
 		MaxSelections: maxSelections,
 		Cancellable:   cancellable,
+	}
+
+	player.ActionState = PlayerActionState{
+		resolved: false,
+		data:     msg,
+	}
+
+	m.PlayerRef(player).Socket.Send(msg)
+
+}
+
+// NewCountAction prompts the user to select a number in an interval
+func (m *Match) NewCountAction(player *Player, text string, minSelections int, maxSelections int) {
+
+	msg := &server.ActionMessage{
+		Header:        "action",
+		ActionType:    "count",
+		Text:          text,
+		MinSelections: minSelections,
+		MaxSelections: maxSelections,
+	}
+
+	player.ActionState = PlayerActionState{
+		resolved: false,
+		data:     msg,
+	}
+
+	m.PlayerRef(player).Socket.Send(msg)
+
+}
+
+// NewQuestionAction prompts the user to answer a yes/no question
+func (m *Match) NewQuestionAction(player *Player, text string) {
+
+	msg := &server.ActionMessage{
+		Header:     "action",
+		ActionType: "question",
+		Text:       text,
 	}
 
 	player.ActionState = PlayerActionState{
@@ -835,7 +928,7 @@ func (m *Match) StartOfTurnStep() {
 
 	m.HandleFx(ctx)
 
-	m.Chat("Server", fmt.Sprintf("Your turn, %s", m.CurrentPlayer().Socket.User.Username))
+	m.ReportActionInChat(m.CurrentPlayer().Player, fmt.Sprintf("Your turn, %s", m.CurrentPlayer().Socket.User.Username))
 
 	m.DrawStep()
 
@@ -880,7 +973,7 @@ func (m *Match) EndStep() {
 
 	m.HandleFx(ctx)
 
-	m.Chat("Server", fmt.Sprintf("%s ended their turn", m.CurrentPlayer().Socket.User.Username))
+	m.ReportActionInChat(m.CurrentPlayer().Player, fmt.Sprintf("%s ended their turn", m.CurrentPlayer().Socket.User.Username))
 
 	m.EndOfTurnTriggers()
 
@@ -925,7 +1018,7 @@ func (m *Match) ChargeMana(p *PlayerReference, cardID string) {
 	if card, err := p.Player.MoveCard(cardID, HAND, MANAZONE, cardID); err == nil {
 		p.Player.HasChargedMana = true
 		m.BroadcastState()
-		m.Chat("Server", fmt.Sprintf("%s was added to %s's manazone", card.Name, p.Socket.User.Username))
+		m.ReportActionInChat(p.Player, fmt.Sprintf("%s was added to %s's manazone", card.Name, p.Socket.User.Username))
 	}
 
 }
@@ -1788,23 +1881,23 @@ func (m *Match) handleAdminMesseges(message string, user db.User) {
 	}
 
 	currentPlayer := m.CurrentPlayer().Player
-
-	if string(message[0:4]) == "/add" {
-
-		// Spawn card in hand
-		currentPlayer.SpawnCard(string(message[5:]), HAND)
-		m.BroadcastState()
+	msgParts := strings.Split(message, " ")
+	if len(msgParts) < 2 {
 		return
 	}
+
+	switch msgParts[0] {
+	case "/add":
+		// Spawn card in hand
+		currentPlayer.SpawnCard(msgParts[1], HAND)
+		m.BroadcastState()
+		return
 
 	// /mana hand - will add all the cards in your hand to the manazone
 	// /mana red 4 - add 4 fire mana
 	// /mana n - add 1 nature mana
 	// /mana imageID 3 - add 3 mana of that specific card
-	if string(message[0:5]) == "/mana" {
-
-		msgParts := strings.Split(message, " ")
-
+	case "/mana":
 		var manaToAdd string
 		switch msgParts[1] {
 		case "hand":
@@ -1830,7 +1923,7 @@ func (m *Match) handleAdminMesseges(message string, user db.User) {
 			count := 1
 			if len(msgParts) > 2 {
 				number, err := strconv.Atoi(msgParts[2])
-				if err == nil && number <= 5 || number >= 1 {
+				if err == nil && number >= 1 {
 					count = number
 				}
 			}
@@ -1843,21 +1936,20 @@ func (m *Match) handleAdminMesseges(message string, user db.User) {
 		m.BroadcastState()
 
 		return
-	}
 
-	if string(message[0:7]) == "/shield" {
+	case "/shield":
 
 		// Spawn shield
-		currentPlayer.SpawnCard(string(message[8:]), SHIELDZONE)
+		currentPlayer.SpawnCard(msgParts[1], SHIELDZONE)
 		m.BroadcastState()
 		return
-	}
 
-	if string(message[0:5]) == "/deck" {
+	case "/deck":
 
 		// Spawn card in deck
-		m.CurrentPlayer().Player.SpawnCard(string(message[6:]), DECK)
+		currentPlayer.SpawnCard(msgParts[1], DECK)
 		m.BroadcastState()
 		return
+
 	}
 }

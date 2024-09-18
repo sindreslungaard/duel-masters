@@ -17,11 +17,7 @@ func AstralWarper(c *match.Card) {
 	c.ManaCost = 6
 	c.ManaRequirement = []string{civ.Water}
 
-	c.Use(fx.Creature, fx.Evolution, fx.When(fx.Summoned, func(card *match.Card, ctx *match.Context) {
-		
-		//TODO: let the player select between 0 and 3
-		card.Player.DrawCards(3)
-	}))
+	c.Use(fx.Creature, fx.Evolution, fx.When(fx.Summoned, fx.DrawUpTo3))
 }
 
 // KeeperOfTheSunlitAbyss ...
@@ -35,13 +31,13 @@ func KeeperOfTheSunlitAbyss(c *match.Card) {
 	c.ManaRequirement = []string{civ.Water}
 
 	c.Use(fx.Creature, func(card *match.Card, ctx *match.Context) {
-		
+
 		if card.Zone != match.BATTLEZONE {
 			return
 		}
 
 		if event, ok := ctx.Event.(*match.GetPowerEvent); ok {
-			
+
 			if event.Card.Civ == civ.Light || event.Card.Civ == civ.Darkness {
 				event.Power += 1000
 			}

@@ -6,7 +6,6 @@ import (
 	"duel-masters/game/family"
 	"duel-masters/game/fx"
 	"duel-masters/game/match"
-	"fmt"
 )
 
 func ForbosSanctumGuardianQ(c *match.Card) {
@@ -36,21 +35,7 @@ func ForbosSanctumGuardianQ(c *match.Card) {
 				return
 			}
 
-			fx.SelectFilter(
-				card.Player,
-				ctx.Match,
-				card.Player,
-				match.DECK,
-				"Select 1 spell from your deck that will be shown to your opponent and sent to your hand",
-				1,
-				1,
-				true,
-				func(x *match.Card) bool { return x.HasCondition(cnd.Spell) },
-			).Map(func(x *match.Card) {
-				card.Player.MoveCard(x.ID, match.DECK, match.HAND, card.ID)
-				ctx.Match.Chat("Server", fmt.Sprintf("%s was moved from %s's deck to their hand", x.Name, card.Player.Username()))
-				card.Player.ShuffleDeck()
-			})
+			fx.SearchDeckTake1Spell(card, ctx)
 
 		}
 	})

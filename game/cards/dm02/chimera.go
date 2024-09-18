@@ -44,8 +44,8 @@ func Gigastand(c *match.Card) {
 			card.Player.MoveCard(card.ID, match.GRAVEYARD, match.HAND, card.ID)
 			hand[0].Player.MoveCard(hand[0].ID, match.HAND, match.GRAVEYARD, card.ID)
 
-			ctx.Match.Chat("Server", fmt.Sprintf("Gigastand was moved to %s's hand instead of the graveyard", card.Player.Username()))
-			ctx.Match.Chat("Server", fmt.Sprintf("%s was discarded from %s's hand", hand[0].Name, hand[0].Player.Username()))
+			ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("Gigastand was moved to %s's hand instead of the graveyard", card.Player.Username()))
+			ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s was discarded from %s's hand", hand[0].Name, hand[0].Player.Username()))
 
 		}
 

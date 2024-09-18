@@ -30,7 +30,7 @@ func ThreeEyedDragonfly(c *match.Card) {
 			// reset this before each attack attempt
 			selectedCard = ""
 
-			cards := fx.SelectFilter(
+			cards := fx.SelectFilterSelectablesOnly(
 				card.Player,
 				ctx.Match,
 				card.Player,
@@ -62,7 +62,7 @@ func ThreeEyedDragonfly(c *match.Card) {
 			}
 
 			ctx.Match.Destroy(x, card, match.DestroyedByMiscAbility)
-			ctx.Match.Chat("Server", fmt.Sprintf("%s was destroyed by Three-Eyed Dragonfly", x.Name))
+			ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s was destroyed by Three-Eyed Dragonfly", x.Name))
 		}),
 	)
 

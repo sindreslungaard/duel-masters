@@ -21,7 +21,7 @@ func SchukaDukeOfAmnesia(c *match.Card) {
 
 		for _, c := range append(fx.Find(card.Player, match.HAND), fx.Find(ctx.Match.Opponent(card.Player), match.HAND)...) {
 			c.Player.MoveCard(c.ID, match.HAND, match.GRAVEYARD, card.ID)
-			ctx.Match.Chat("Server", fmt.Sprintf("%s was was discarded from %s's hand by %s", c.Name, c.Player.Username(), card.Name))
+			ctx.Match.ReportActionInChat(c.Player, fmt.Sprintf("%s was was discarded from %s's hand by %s", c.Name, c.Player.Username(), card.Name))
 		}
 	}))
 }

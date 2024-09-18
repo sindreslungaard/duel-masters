@@ -93,7 +93,7 @@ func Bombersaur(c *match.Card) {
 
 							p.MoveCard(id, match.MANAZONE, match.GRAVEYARD, card.ID)
 
-							ctx.Match.Chat("Server", fmt.Sprintf("Bombersaur destroyed %v of %s's mana", toSelect, p.Username()))
+							ctx.Match.ReportActionInChat(p, fmt.Sprintf("Bombersaur destroyed %v of %s's mana", toSelect, p.Username()))
 
 						}
 

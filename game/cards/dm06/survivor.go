@@ -27,7 +27,7 @@ func QTronicHypermind(c *match.Card) {
 			return
 		}
 
-		card.Player.DrawCards(toDraw)
+		fx.DrawBetween(card, ctx, 0, toDraw)
 
 	}))
 }

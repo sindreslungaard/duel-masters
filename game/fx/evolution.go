@@ -101,7 +101,7 @@ func Evolution(card *match.Card, ctx *match.Context) {
 
 		for _, creature := range card.Attachments() {
 			card.Player.MoveCard(creature.ID, match.HIDDENZONE, event.To, card.ID)
-			ctx.Match.Chat("Server", fmt.Sprintf("%s was sent to the %s together with %s", creature.Name, event.To, card.Name))
+			ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s was sent to the %s together with %s", creature.Name, event.To, card.Name))
 		}
 
 		card.ClearAttachments()

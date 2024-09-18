@@ -129,7 +129,7 @@ func Spell(card *match.Card, ctx *match.Context) {
 			return
 		}
 
-		ctx.Match.Chat("Server", fmt.Sprintf("%s played the spell %s", card.Player.Username(), card.Name))
+		ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s played the spell %s", card.Player.Username(), card.Name))
 
 		ctx.ScheduleAfter(func() {
 			card.Player.MoveCard(card.ID, match.HAND, match.GRAVEYARD, card.ID)

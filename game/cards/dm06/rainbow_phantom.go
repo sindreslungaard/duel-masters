@@ -18,7 +18,7 @@ func CosmogoldSpectralKnight(c *match.Card) {
 	c.ManaCost = 4
 	c.ManaRequirement = []string{civ.Light}
 	c.TapAbility = func(card *match.Card, ctx *match.Context) {
-		fx.SelectFilter(
+		fx.SelectFilterSelectablesOnly(
 			card.Player,
 			ctx.Match,
 			card.Player,
@@ -30,7 +30,7 @@ func CosmogoldSpectralKnight(c *match.Card) {
 			func(x *match.Card) bool { return x.HasCondition(cnd.Spell) },
 		).Map(func(spell *match.Card) {
 			card.Player.MoveCard(spell.ID, match.MANAZONE, match.HAND, card.ID)
-			ctx.Match.Chat("Server", fmt.Sprintf("%s retrieved %s from the mana zone to their hand using %s's tap ability", spell.Player.Username(), spell.Name, card.Name))
+			ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s retrieved %s from the mana zone to their hand using %s's tap ability", spell.Player.Username(), spell.Name, card.Name))
 		})
 	}
 

@@ -117,7 +117,7 @@ func ToelVizierOfHope(c *match.Card) {
 				}
 
 				if madeChanges {
-					ctx.Match.Chat("Server", fmt.Sprintf("%s untapped all creatures in %s's battlezone", card.Name, card.Player.Username()))
+					ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s untapped all creatures in %s's battlezone", card.Name, card.Player.Username()))
 				}
 
 			}

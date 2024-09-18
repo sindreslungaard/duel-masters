@@ -29,7 +29,7 @@ func Gigamantis(c *match.Card) {
 			event.Card.Player == card.Player &&
 			event.Card.Civ == civ.Nature {
 
-			fx.SelectFilter(
+			fx.SelectFilterSelectablesOnly(
 				card.Player,
 				ctx.Match,
 				card.Player,
@@ -44,7 +44,7 @@ func Gigamantis(c *match.Card) {
 				ctx.InterruptFlow()
 
 				c.Player.MoveCard(c.ID, match.BATTLEZONE, match.MANAZONE, card.ID)
-				ctx.Match.Chat("Server", fmt.Sprintf("%s was moved to %s's mana by %s", c.Name, c.Player.Username(), card.Name))
+				ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s was moved to %s's mana by %s", c.Name, c.Player.Username(), card.Name))
 			})
 
 		}

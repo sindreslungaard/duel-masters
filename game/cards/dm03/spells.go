@@ -25,7 +25,7 @@ func BoomerangComet(c *match.Card) {
 			for _, card := range cards {
 
 				card.Player.MoveCard(card.ID, match.MANAZONE, match.HAND, c.ID)
-				ctx.Match.Chat("Server", fmt.Sprintf("%s retrieved %s from the mana zone to their hand", card.Player.Username(), card.Name))
+				ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s retrieved %s from the mana zone to their hand", card.Player.Username(), card.Name))
 
 			}
 
@@ -51,7 +51,7 @@ func LogicSphere(c *match.Card) {
 			for _, spell := range spells {
 
 				card.Player.MoveCard(spell.ID, match.MANAZONE, match.HAND, card.ID)
-				ctx.Match.Chat("Server", fmt.Sprintf("%s retrieved %s from the mana zone to their hand", spell.Player.Username(), spell.Name))
+				ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s retrieved %s from the mana zone to their hand", spell.Player.Username(), spell.Name))
 
 			}
 		}
@@ -70,7 +70,7 @@ func SundropArmor(c *match.Card) {
 
 		if match.AmICasted(card, ctx) {
 
-			fx.SelectFilter(
+			fx.SelectFilterSelectablesOnly(
 				card.Player,
 				ctx.Match,
 				card.Player,
@@ -178,10 +178,10 @@ func PsychicShaper(c *match.Card) {
 
 				if toMove.Civ == civ.Water {
 					card.Player.MoveCard(toMove.ID, match.DECK, match.HAND, card.ID)
-					ctx.Match.Chat("Server", fmt.Sprintf("%s put %s into the hand from the top of their deck", card.Player.Username(), toMove.Name))
+					ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s put %s into the hand from the top of their deck", card.Player.Username(), toMove.Name))
 				} else {
 					card.Player.MoveCard(toMove.ID, match.DECK, match.GRAVEYARD, card.ID)
-					ctx.Match.Chat("Server", fmt.Sprintf("%s put %s into the graveyard from the top of their deck", card.Player.Username(), toMove.Name))
+					ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s put %s into the graveyard from the top of their deck", card.Player.Username(), toMove.Name))
 				}
 			}
 		}
@@ -212,7 +212,7 @@ func EldritchPoison(c *match.Card) {
 
 				for _, creature := range creatures {
 					card.Player.MoveCard(creature.ID, match.MANAZONE, match.HAND, card.ID)
-					ctx.Match.Chat("Server", fmt.Sprintf("%s was moved to %s's hand from their mana zone", creature.Name, ctx.Match.PlayerRef(card.Player).Socket.User.Username))
+					ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s was moved to %s's hand from their mana zone", creature.Name, ctx.Match.PlayerRef(card.Player).Socket.User.Username))
 				}
 			}
 		}
@@ -283,7 +283,7 @@ func SnakeAttack(c *match.Card) {
 
 		for _, creature := range creatures {
 			creature.AddCondition(cnd.DoubleBreaker, nil, card.ID)
-			ctx.Match.Chat("Server", fmt.Sprintf("%s was given double breaker until the end of the turn", creature.Name))
+			ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s was given double breaker until the end of the turn", creature.Name))
 		}
 
 	}))
@@ -315,7 +315,7 @@ func BlazeCannon(c *match.Card) {
 
 				creature.AddCondition(cnd.PowerAttacker, 4000, card.ID)
 				creature.AddCondition(cnd.DoubleBreaker, nil, card.ID)
-				ctx.Match.Chat("Server", fmt.Sprintf("%s was given power attacker +4000 and double breaker until the end of the turn", creature.Name))
+				ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s was given power attacker +4000 and double breaker until the end of the turn", creature.Name))
 
 			}
 		}
@@ -396,7 +396,7 @@ func VolcanicArrows(c *match.Card) {
 				ctx.Match.MoveCard(x, match.GRAVEYARD, card)
 			})
 
-			fx.SelectFilter(
+			fx.SelectFilterSelectablesOnly(
 				card.Player,
 				ctx.Match,
 				ctx.Match.Opponent(card.Player),
@@ -487,7 +487,7 @@ func RoarOfTheEarth(c *match.Card) {
 
 		if match.AmICasted(card, ctx) {
 
-			fx.SelectFilter(
+			fx.SelectFilterSelectablesOnly(
 				card.Player,
 				ctx.Match,
 				card.Player,
