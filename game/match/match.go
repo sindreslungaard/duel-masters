@@ -622,14 +622,19 @@ func (m *Match) HandleFx(ctx *Context) {
 
 // NewAction prompts the user to make a selection of the specified []Cards
 func (m *Match) NewAction(player *Player, cards []*Card, minSelections int, maxSelections int, text string, cancellable bool) {
+	m.NewActionFullList(player, cards, minSelections, maxSelections, text, cancellable, nil)
+}
+
+func (m *Match) NewActionFullList(player *Player, cards []*Card, minSelections int, maxSelections int, text string, cancellable bool, unselectableCards []*Card) {
 
 	msg := &server.ActionMessage{
-		Header:        "action",
-		Cards:         denormalizeCards(cards, false),
-		Text:          text,
-		MinSelections: minSelections,
-		MaxSelections: maxSelections,
-		Cancellable:   cancellable,
+		Header:            "action",
+		Cards:             denormalizeCards(cards, false),
+		Text:              text,
+		MinSelections:     minSelections,
+		MaxSelections:     maxSelections,
+		Cancellable:       cancellable,
+		UnselectableCards: denormalizeCards(unselectableCards, false),
 	}
 
 	player.ActionState = PlayerActionState{

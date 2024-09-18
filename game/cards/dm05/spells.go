@@ -20,7 +20,7 @@ func EnchantedSoil(c *match.Card) {
 
 		if match.AmICasted(card, ctx) {
 
-			fx.SelectFilter(card.Player, ctx.Match, card.Player, match.GRAVEYARD, "Enchanted Soil: Select 2 creatures from your graveyard and put it in your manazone", 0, 2, true, func(x *match.Card) bool {
+			fx.SelectFilterSelectablesOnly(card.Player, ctx.Match, card.Player, match.GRAVEYARD, "Enchanted Soil: Select 2 creatures from your graveyard and put it in your manazone", 0, 2, true, func(x *match.Card) bool {
 				return x.HasCondition(cnd.Creature)
 			}).Map(func(c *match.Card) {
 				card.Player.MoveCard(c.ID, match.GRAVEYARD, match.MANAZONE, card.ID)
@@ -220,6 +220,7 @@ func BrutalCharge(c *match.Card) {
 					shieldsBroken,
 					true,
 					func(c *match.Card) bool { return c.HasCondition(cnd.Creature) },
+					true,
 				).Map(func(c *match.Card) {
 					c.Player.MoveCard(c.ID, match.DECK, match.HAND, card.ID)
 					ctx.Match.Chat("Server", fmt.Sprintf("%s was moved from %s's deck to their hand by %s", c.Name, c.Player.Username(), card.Name))

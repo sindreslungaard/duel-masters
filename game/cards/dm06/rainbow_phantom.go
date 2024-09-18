@@ -18,7 +18,7 @@ func CosmogoldSpectralKnight(c *match.Card) {
 	c.ManaCost = 4
 	c.ManaRequirement = []string{civ.Light}
 	c.TapAbility = func(card *match.Card, ctx *match.Context) {
-		fx.SelectFilter(
+		fx.SelectFilterSelectablesOnly(
 			card.Player,
 			ctx.Match,
 			card.Player,

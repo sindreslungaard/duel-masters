@@ -33,7 +33,7 @@ func GraveWormQ(c *match.Card) {
 			}
 
 			if creature.HasFamily(family.Survivor) && event.To == match.BATTLEZONE {
-				fx.SelectFilter(
+				fx.SelectFilterSelectablesOnly(
 					card.Player,
 					ctx.Match,
 					card.Player,

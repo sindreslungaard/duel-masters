@@ -21,7 +21,7 @@ func BloodwingMantis(c *match.Card) {
 
 	c.Use(fx.Creature, fx.Doublebreaker, fx.When(fx.AttackConfirmed, func(card *match.Card, ctx *match.Context) {
 
-		fx.SelectFilter(
+		fx.SelectFilterSelectablesOnly(
 			card.Player,
 			ctx.Match,
 			card.Player,
@@ -61,7 +61,9 @@ func ScissorScarab(c *match.Card) {
 			1,
 			1,
 			true,
-			func(c *match.Card) bool { return c.HasFamily(family.GiantInsect) }).Map(func(c *match.Card) {
+			func(c *match.Card) bool { return c.HasFamily(family.GiantInsect) },
+			true,
+		).Map(func(c *match.Card) {
 			card.Player.MoveCard(c.ID, match.DECK, match.HAND, card.ID)
 			ctx.Match.Chat("Server", fmt.Sprintf("%s was moved from %s's deck to their hand", c.Name, card.Player.Username()))
 		})
@@ -84,7 +86,7 @@ func AmbushScorpion(c *match.Card) {
 
 	c.Use(fx.Creature, fx.PowerAttacker3000, fx.When(fx.Destroyed, func(card *match.Card, ctx *match.Context) {
 
-		fx.SelectFilter(
+		fx.SelectFilterSelectablesOnly(
 			card.Player,
 			ctx.Match,
 			card.Player,
@@ -122,7 +124,7 @@ func ObsidianScarab(c *match.Card) {
 
 	c.Use(fx.Creature, fx.Doublebreaker, fx.PowerAttacker3000, fx.When(fx.Destroyed, func(card *match.Card, ctx *match.Context) {
 
-		fx.SelectFilter(
+		fx.SelectFilterSelectablesOnly(
 			card.Player,
 			ctx.Match,
 			card.Player,

@@ -29,7 +29,7 @@ func Gigamantis(c *match.Card) {
 			event.Card.Player == card.Player &&
 			event.Card.Civ == civ.Nature {
 
-			fx.SelectFilter(
+			fx.SelectFilterSelectablesOnly(
 				card.Player,
 				ctx.Match,
 				card.Player,

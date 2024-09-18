@@ -29,7 +29,7 @@ func RikabusScrewdriver(c *match.Card) {
 	c.ManaCost = 2
 	c.ManaRequirement = []string{civ.Fire}
 	c.TapAbility = func(card *match.Card, ctx *match.Context) {
-		fx.SelectFilter(
+		fx.SelectFilterSelectablesOnly(
 			card.Player,
 			ctx.Match,
 			ctx.Match.Opponent(card.Player),

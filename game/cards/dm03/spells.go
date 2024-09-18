@@ -70,7 +70,7 @@ func SundropArmor(c *match.Card) {
 
 		if match.AmICasted(card, ctx) {
 
-			fx.SelectFilter(
+			fx.SelectFilterSelectablesOnly(
 				card.Player,
 				ctx.Match,
 				card.Player,
@@ -396,7 +396,7 @@ func VolcanicArrows(c *match.Card) {
 				ctx.Match.MoveCard(x, match.GRAVEYARD, card)
 			})
 
-			fx.SelectFilter(
+			fx.SelectFilterSelectablesOnly(
 				card.Player,
 				ctx.Match,
 				ctx.Match.Opponent(card.Player),
@@ -487,7 +487,7 @@ func RoarOfTheEarth(c *match.Card) {
 
 		if match.AmICasted(card, ctx) {
 
-			fx.SelectFilter(
+			fx.SelectFilterSelectablesOnly(
 				card.Player,
 				ctx.Match,
 				card.Player,

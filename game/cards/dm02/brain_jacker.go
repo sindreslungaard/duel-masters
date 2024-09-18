@@ -23,7 +23,7 @@ func AmberPiercer(c *match.Card) {
 
 		ctx.ScheduleAfter(func() {
 
-			fx.SelectFilter(
+			fx.SelectFilterSelectablesOnly(
 				card.Player,
 				ctx.Match,
 				card.Player,

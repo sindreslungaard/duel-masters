@@ -30,7 +30,7 @@ func ThreeEyedDragonfly(c *match.Card) {
 			// reset this before each attack attempt
 			selectedCard = ""
 
-			cards := fx.SelectFilter(
+			cards := fx.SelectFilterSelectablesOnly(
 				card.Player,
 				ctx.Match,
 				card.Player,

@@ -67,12 +67,13 @@ type WarningMessage struct {
 
 // ActionMessage is used to prompt the user to make a selection of the specified cards
 type ActionMessage struct {
-	Header        string      `json:"header"`
-	Cards         []CardState `json:"cards"`
-	Text          string      `json:"text"`
-	MinSelections int         `json:"minSelections"`
-	MaxSelections int         `json:"maxSelections"`
-	Cancellable   bool        `json:"cancellable"`
+	Header            string      `json:"header"`
+	Cards             []CardState `json:"cards"`
+	Text              string      `json:"text"`
+	MinSelections     int         `json:"minSelections"`
+	MaxSelections     int         `json:"maxSelections"`
+	Cancellable       bool        `json:"cancellable"`
+	UnselectableCards []CardState `json:"unselectableCards"`
 }
 
 // MultipartActionMessage is used to prompt the user to make a selection of the specified cards

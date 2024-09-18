@@ -22,7 +22,7 @@ func PouchShell(c *match.Card) {
 
 		if match.AmISummoned(card, ctx) {
 
-			fx.SelectFilter(
+			fx.SelectFilterSelectablesOnly(
 				card.Player,
 				ctx.Match,
 				ctx.Match.Opponent(card.Player),

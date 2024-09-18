@@ -78,7 +78,7 @@ func LavaWalkerExecuto(c *match.Card) {
 }
 
 func lavaWalkerExecutoTapAbility(card *match.Card, ctx *match.Context) {
-	creatures := fx.SelectFilter(
+	creatures := fx.SelectFilterSelectablesOnly(
 		card.Player,
 		ctx.Match,
 		card.Player,

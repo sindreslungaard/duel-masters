@@ -84,7 +84,7 @@ func MegaDetonator(c *match.Card) {
 
 		n := 0
 
-		fx.SelectFilter(
+		fx.SelectFilterSelectablesOnly(
 			card.Player,
 			ctx.Match,
 			card.Player,

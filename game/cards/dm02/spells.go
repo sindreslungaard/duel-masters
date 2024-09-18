@@ -64,24 +64,31 @@ func LogicCube(c *match.Card) {
 	c.ManaCost = 3
 	c.ManaRequirement = []string{civ.Light}
 
-	c.Use(fx.Spell, fx.ShieldTrigger, func(card *match.Card, ctx *match.Context) {
+	c.Use(fx.Spell, fx.ShieldTrigger, fx.When(fx.SpellCast, func(card *match.Card, ctx *match.Context) {
 
-		if match.AmICasted(card, ctx) {
+		creatures := fx.SelectFilter(
+			card.Player,
+			ctx.Match,
+			card.Player,
+			match.DECK,
+			"Select 1 spell from your deck that will be shown to your opponent and sent to your hand",
+			1,
+			1,
+			true,
+			func(x *match.Card) bool { return x.HasCondition(cnd.Spell) },
+			true,
+		)
 
-			creatures := match.Filter(card.Player, ctx.Match, card.Player, match.DECK, "Select 1 spell from your deck that will be shown to your opponent and sent to your hand", 1, 1, false, func(x *match.Card) bool { return x.HasCondition(cnd.Spell) })
+		for _, creature := range creatures {
 
-			for _, creature := range creatures {
-
-				card.Player.MoveCard(creature.ID, match.DECK, match.HAND, card.ID)
-				ctx.Match.Chat("Server", fmt.Sprintf("%s retrieved %s from the deck to their hand", card.Player.Username(), creature.Name))
-
-			}
-
-			card.Player.ShuffleDeck()
+			card.Player.MoveCard(creature.ID, match.DECK, match.HAND, card.ID)
+			ctx.Match.Chat("Server", fmt.Sprintf("%s retrieved %s from the deck to their hand", card.Player.Username(), creature.Name))
 
 		}
 
-	})
+		card.Player.ShuffleDeck()
+
+	}))
 
 }
 
@@ -118,7 +125,7 @@ func CriticalBlade(c *match.Card) {
 
 	c.Use(fx.Spell, fx.ShieldTrigger, fx.When(fx.SpellCast, func(card *match.Card, ctx *match.Context) {
 
-		fx.SelectFilter(
+		fx.SelectFilterSelectablesOnly(
 			card.Player,
 			ctx.Match,
 			ctx.Match.Opponent(card.Player),

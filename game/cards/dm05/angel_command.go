@@ -35,7 +35,7 @@ func SyforceAuroraElemental(c *match.Card) {
 
 	c.Use(fx.Creature, fx.Blocker, fx.Doublebreaker, fx.When(fx.Summoned, func(card *match.Card, ctx *match.Context) {
 
-		fx.SelectFilter(
+		fx.SelectFilterSelectablesOnly(
 			card.Player,
 			ctx.Match,
 			card.Player,
