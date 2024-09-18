@@ -222,16 +222,14 @@
         :style="playmat ? 'background: url(/assets/images/overlay_30.png)' : ''"
       >
         <div class="messages">
-          <div id="messages" class="messages-helper">
+          <div id="messages" class="messages-helper flex flex-col">
             <div
               class="message"
-              :style="{
-                background:
-                  message.sender.toLowerCase() === 'server'
-                    ? 'none'
-                    : playmat
-                    ? 'url(/assets/images/overlay_30.png)'
-                    : '#202124'
+              :class="{
+                'server_action_player_1': message.sender.toLowerCase() === 'server_1',
+                'server_action_player_2': message.sender.toLowerCase() === 'server_2',
+                'chat-message': !isFromServer(message) && !playmat,
+                'chat-message-playmat': !isFromServer(message) && playmat,
               }"
               v-for="(message, index) in chatMessages.filter(
                 m => !settings.muted.includes(m.sender)
@@ -241,6 +239,8 @@
               <div
                 class="message-sender"
                 :style="{ color: message.color || 'orange' }"
+                v-if="message.sender.toLowerCase() != 'server_1' && 
+                      message.sender.toLowerCase() != 'server_2'"
               >
                 {{
                   message.sender.toLowerCase() == "server"
@@ -252,7 +252,7 @@
               <div class="mute-icon-container">
                 <MuteIcon
                   v-if="
-                    !['server', username].includes(message.sender.toLowerCase())
+                    !['server', 'server_1', 'server_2', username].includes(message.sender.toLowerCase())
                   "
                   :player="message.sender"
                   @toggled="onSettingsChanged()"
@@ -829,6 +829,18 @@ export default {
         let container = document.getElementById("messages");
         container.scrollTop = container.scrollHeight;
       });
+    },
+
+    isFromServer(messageObj){
+      let sender = messageObj.sender.toLowerCase()
+      if ( 
+        sender === 'server' ||
+        sender === 'server_1' ||
+        sender === 'server_2'
+      )
+        return true;
+
+      return false;
     },
 
     onSettingsChanged(e) {
@@ -2002,5 +2014,25 @@ export default {
 
 .inactive-svg-button {
   filter: grayscale(10); 
+}
+
+.server_action_player_1 {
+  max-width: 80%;
+  align-self: flex-start;
+  background: rgba(181, 124, 60, 0.4)
+}
+
+.server_action_player_2 {
+  max-width: 80%;
+  align-self: flex-end;
+  background: rgba(124, 127, 143, 0.5)
+}
+
+.chat-message {
+  background: #202124
+}
+
+.chat-message-playmat {
+  background: rgba(0, 0, 0, 0.3)
 }
 </style>
