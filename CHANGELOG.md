@@ -13,6 +13,8 @@
 - Added yes/no and number based player actions (thanks @DanieloV)
 - Added Match chat player visual separation (thanks @DanieloV)
 - Added option to select execution order of shield triggers (thanks @DanieloV)
+- Fix slayer creatures with after death effects (thanks @DanieloV)
+- Fix for "Crisis Boulder" not treating creatures moved from the battlezone as destroyed (thanks @DanieloV)
 
 ## 09/09/2024
 
