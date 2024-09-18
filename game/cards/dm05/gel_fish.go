@@ -53,7 +53,7 @@ func SplitHeadHydroturtleQ(c *match.Card) {
 
 		if creature.HasCondition(cnd.Survivor) {
 			fx.MayDraw1(card, ctx)
-			ctx.Match.Chat("Server", fmt.Sprintf("%s drew a card when %s attacked due to %s's survivor ability", card.Player.Username(), creature.Name, card.Name))
+			ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s drew a card when %s attacked due to %s's survivor ability", card.Player.Username(), creature.Name, card.Name))
 		}
 
 	})

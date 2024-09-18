@@ -28,7 +28,7 @@ func AquaDeformer(c *match.Card) {
 
 				for _, crd := range cards {
 					card.Player.MoveCard(crd.ID, match.MANAZONE, match.HAND, card.ID)
-					ctx.Match.Chat("Server", fmt.Sprintf("%s was moved to %s's hand from their mana zone", crd.Name, ctx.Match.PlayerRef(card.Player).Socket.User.Username))
+					ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s was moved to %s's hand from their mana zone", crd.Name, ctx.Match.PlayerRef(card.Player).Socket.User.Username))
 				}
 
 				ctx.Match.Wait(card.Player, "Waiting for your opponent to make an action")
@@ -38,7 +38,7 @@ func AquaDeformer(c *match.Card) {
 
 				for _, crd := range opponentCards {
 					ctx.Match.Opponent(card.Player).MoveCard(crd.ID, match.MANAZONE, match.HAND, card.ID)
-					ctx.Match.Chat("Server", fmt.Sprintf("%s was moved to %s's hand from their mana zone", crd.Name, ctx.Match.PlayerRef(ctx.Match.Opponent(card.Player)).Socket.User.Username))
+					ctx.Match.ReportActionInChat(ctx.Match.Opponent(card.Player), fmt.Sprintf("%s was moved to %s's hand from their mana zone", crd.Name, ctx.Match.PlayerRef(ctx.Match.Opponent(card.Player)).Socket.User.Username))
 				}
 
 			}

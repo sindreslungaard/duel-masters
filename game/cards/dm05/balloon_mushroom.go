@@ -33,7 +33,7 @@ func BalloonshroomQ(c *match.Card) {
 
 			card.Player.MoveCard(event.Card.ID, match.BATTLEZONE, match.MANAZONE, card.ID)
 			event.Card.Tapped = false
-			ctx.Match.Chat("Server", fmt.Sprintf("%s was destroyed by %s and moved to the mana zone", event.Card.Name, event.Source.Name))
+			ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s was destroyed by %s and moved to the mana zone", event.Card.Name, event.Source.Name))
 
 		}
 

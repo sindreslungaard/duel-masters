@@ -64,7 +64,7 @@ func CloneFactory(c *match.Card) {
 		).Map(func(x *match.Card) {
 			x.Tapped = false
 			card.Player.MoveCard(x.ID, match.MANAZONE, match.HAND, card.ID)
-			ctx.Match.Chat("Server", fmt.Sprintf("%s was moved to %s's hand from their manazone by Clone Factory", x.Name, card.Player.Username()))
+			ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s was moved to %s's hand from their manazone by Clone Factory", x.Name, card.Player.Username()))
 		})
 
 	}))
@@ -97,7 +97,7 @@ func MegaDetonator(c *match.Card) {
 		).Map(func(c *match.Card) {
 
 			card.Player.MoveCard(c.ID, match.HAND, match.GRAVEYARD, card.ID)
-			ctx.Match.Chat("Server", fmt.Sprintf("%s was moved to %s's graveyard from their hand by Mega Detonator", c.Name, card.Player.Username()))
+			ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s was moved to %s's graveyard from their hand by Mega Detonator", c.Name, card.Player.Username()))
 
 			n++
 
@@ -120,7 +120,7 @@ func MegaDetonator(c *match.Card) {
 			false,
 		).Map(func(x *match.Card) {
 			x.AddCondition(cnd.DoubleBreaker, true, card.ID)
-			ctx.Match.Chat("Server", fmt.Sprintf("%s got double breaker from Mega Detonator", x.Name))
+			ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s got double breaker from Mega Detonator", x.Name))
 		})
 
 	}))
@@ -179,7 +179,7 @@ func HydroHurricane(c *match.Card) {
 			false,
 		).Map(func(x *match.Card) {
 			x.Player.MoveCard(x.ID, match.MANAZONE, match.HAND, card.ID)
-			ctx.Match.Chat("Server", fmt.Sprintf("%s got moved to %s hand from his mana zone by Hydro Hurricane", x.Name, x.Player.Username()))
+			ctx.Match.ReportActionInChat(ctx.Match.Opponent(card.Player), fmt.Sprintf("%s got moved to %s hand from his mana zone by Hydro Hurricane", x.Name, x.Player.Username()))
 		})
 
 		nrDark := len(fx.FindFilter(
@@ -199,7 +199,7 @@ func HydroHurricane(c *match.Card) {
 			false,
 		).Map(func(x *match.Card) {
 			x.Player.MoveCard(x.ID, match.BATTLEZONE, match.HAND, card.ID)
-			ctx.Match.Chat("Server", fmt.Sprintf("%s got moved to %s hand from his battle zone by Hydro Hurricane", x.Name, x.Player.Username()))
+			ctx.Match.ReportActionInChat(ctx.Match.Opponent(card.Player), fmt.Sprintf("%s got moved to %s hand from his battle zone by Hydro Hurricane", x.Name, x.Player.Username()))
 		})
 	}))
 }
@@ -271,7 +271,7 @@ func ChainsOfSacrifice(c *match.Card) {
 		).Map(func(x *match.Card) {
 
 			ctx.Match.Destroy(x, card, match.DestroyedBySpell)
-			ctx.Match.Chat("Server", fmt.Sprintf("%s's %s has been destroyed.", x.Player.Username(), x.Name))
+			ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s's %s has been destroyed.", x.Player.Username(), x.Name))
 		})
 
 		fx.Select(
@@ -286,7 +286,7 @@ func ChainsOfSacrifice(c *match.Card) {
 		).Map(func(x *match.Card) {
 
 			ctx.Match.Destroy(x, card, match.DestroyedBySpell)
-			ctx.Match.Chat("Server", fmt.Sprintf("%s's %s has been destroyed.", x.Player.Username(), x.Name))
+			ctx.Match.ReportActionInChat(ctx.Match.Opponent(card.Player), fmt.Sprintf("%s's %s has been destroyed.", x.Player.Username(), x.Name))
 		})
 
 	}))
@@ -325,7 +325,7 @@ func Darkpact(c *match.Card) {
 
 		selected.Map(func(x *match.Card) {
 			card.Player.MoveCard(x.ID, match.MANAZONE, match.GRAVEYARD, card.ID)
-			ctx.Match.Chat("Server", fmt.Sprintf("%s was moved from %s's mana zone to his graveyard.", x.Name, x.Player.Username()))
+			ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s was moved from %s's mana zone to his graveyard.", x.Name, x.Player.Username()))
 		})
 
 		card.Player.DrawCards(nrSelected)
@@ -370,7 +370,7 @@ func SoulGulp(c *match.Card) {
 			false,
 		).Map(func(x *match.Card) {
 			x.Player.MoveCard(x.ID, match.HAND, match.GRAVEYARD, card.ID)
-			ctx.Match.Chat("Server", fmt.Sprintf("%s was moved from %s's hand to his graveyard.", x.Name, x.Player.Username()))
+			ctx.Match.ReportActionInChat(ctx.Match.Opponent(card.Player), fmt.Sprintf("%s was moved from %s's hand to his graveyard.", x.Name, x.Player.Username()))
 		})
 
 	}))
@@ -395,7 +395,7 @@ func WhiskingWhirlwind(c *match.Card) {
 				).Map(func(x *match.Card) {
 					if x.Tapped {
 						x.Tapped = false
-						ctx.Match.Chat("Server", fmt.Sprintf("%s was untapped by %s's effect", x.Name, card.Name))
+						ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s was untapped by %s's effect", x.Name, card.Name))
 					}
 				})
 				exit()

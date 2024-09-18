@@ -42,7 +42,7 @@ func MidnightCrawler(c *match.Card) {
 			false,
 		).Map(func(x *match.Card) {
 			x.Player.MoveCard(x.ID, match.MANAZONE, match.HAND, card.ID)
-			ctx.Match.Chat("Server", fmt.Sprintf("%s got moved to %s hand from his mana zone by Midnight Crawler", x.Name, x.Player.Username()))
+			ctx.Match.ReportActionInChat(ctx.Match.Opponent(card.Player), fmt.Sprintf("%s got moved to %s hand from his mana zone by Midnight Crawler", x.Name, x.Player.Username()))
 		})
 	}))
 }
@@ -69,7 +69,7 @@ func ThrashCrawler(c *match.Card) {
 			false,
 		).Map(func(x *match.Card) {
 			x.Player.MoveCard(x.ID, match.MANAZONE, match.HAND, card.ID)
-			ctx.Match.Chat("Server", fmt.Sprintf("%s got moved to %s hand from his mana zone by Thrash Crawler", x.Name, x.Player.Username()))
+			ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s got moved to %s hand from his mana zone by Thrash Crawler", x.Name, x.Player.Username()))
 		})
 	}))
 }

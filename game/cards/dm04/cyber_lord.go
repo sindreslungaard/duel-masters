@@ -26,10 +26,10 @@ func Marinomancer(c *match.Card) {
 
 			if toMove.Civ == civ.Light || toMove.Civ == civ.Darkness {
 				card.Player.MoveCard(toMove.ID, match.DECK, match.HAND, card.ID)
-				ctx.Match.Chat("Server", fmt.Sprintf("%s put %s into the hand from the top of their deck", card.Player.Username(), toMove.Name))
+				ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s put %s into the hand from the top of their deck", card.Player.Username(), toMove.Name))
 			} else {
 				card.Player.MoveCard(toMove.ID, match.DECK, match.GRAVEYARD, card.ID)
-				ctx.Match.Chat("Server", fmt.Sprintf("%s put %s into the graveyard from the top of their deck", card.Player.Username(), toMove.Name))
+				ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s put %s into the graveyard from the top of their deck", card.Player.Username(), toMove.Name))
 			}
 		}
 

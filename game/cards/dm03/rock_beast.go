@@ -33,11 +33,11 @@ func Flametropus(c *match.Card) {
 		).Map(func(x *match.Card) {
 
 			card.Player.MoveCard(x.ID, match.MANAZONE, match.GRAVEYARD, card.ID)
-			ctx.Match.Chat("Server", fmt.Sprintf("%s was moved from %s manazone to their graveyard by Flametropus", x.Name, card.Player.Username()))
+			ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s was moved from %s manazone to their graveyard by Flametropus", x.Name, card.Player.Username()))
 
 			card.AddCondition(cnd.DoubleBreaker, nil, card.ID)
 			card.AddCondition(cnd.PowerAttacker, 3000, card.ID)
-			ctx.Match.Chat("Server", fmt.Sprintf("%s was given power attacker +3000 and double breaker until the end of the turn", card.Name))
+			ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s was given power attacker +3000 and double breaker until the end of the turn", card.Name))
 
 		})
 

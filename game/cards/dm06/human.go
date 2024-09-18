@@ -35,7 +35,7 @@ func ArmoredDecimatorValkaizer(c *match.Card) {
 			).Map(func(x *match.Card) {
 
 				ctx.Match.Destroy(x, card, match.DestroyedByMiscAbility)
-				ctx.Match.Chat("Server", fmt.Sprintf("%s was destroyed by Armored Decimator Valkaizer", x.Name))
+				ctx.Match.ReportActionInChat(ctx.Match.Opponent(card.Player), fmt.Sprintf("%s was destroyed by Armored Decimator Valkaizer", x.Name))
 			})
 
 		}
@@ -53,12 +53,12 @@ func MigasaAdeptOfChaos(c *match.Card) {
 	c.ManaRequirement = []string{civ.Fire}
 	c.TapAbility = func(card *match.Card, ctx *match.Context) {
 
-		ctx.Match.Chat("Server", fmt.Sprintf("%s activated %s's tap ability", card.Player.Username(), card.Name))
+		ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s activated %s's tap ability", card.Player.Username(), card.Name))
 		creatures := match.Filter(card.Player, ctx.Match, card.Player, match.BATTLEZONE, "Select 1 fire creature from your battlezone that will gain double breaker", 1, 1, false, func(x *match.Card) bool { return x.Civ == civ.Fire && x.ID != card.ID })
 		for _, creature := range creatures {
 			if creature.Civ == civ.Fire {
 				creature.AddCondition(cnd.DoubleBreaker, true, card.ID)
-				ctx.Match.Chat("Server", fmt.Sprintf("%s was given double breaker power by %s until end of turn", creature.Name, card.Name))
+				ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s was given double breaker power by %s until end of turn", creature.Name, card.Name))
 			}
 		}
 	}

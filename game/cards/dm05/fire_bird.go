@@ -44,7 +44,7 @@ func KipChippotto(c *match.Card) {
 				ctx.InterruptFlow()
 
 				ctx.Match.Destroy(card, card, match.DestroyedByMiscAbility)
-				ctx.Match.Chat("Server", fmt.Sprintf("%s was destroyed instead of %s", card.Name, event.Card.Name))
+				ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s was destroyed instead of %s", card.Name, event.Card.Name))
 			})
 
 		}

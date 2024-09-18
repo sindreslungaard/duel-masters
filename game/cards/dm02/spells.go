@@ -64,31 +64,7 @@ func LogicCube(c *match.Card) {
 	c.ManaCost = 3
 	c.ManaRequirement = []string{civ.Light}
 
-	c.Use(fx.Spell, fx.ShieldTrigger, fx.When(fx.SpellCast, func(card *match.Card, ctx *match.Context) {
-
-		creatures := fx.SelectFilter(
-			card.Player,
-			ctx.Match,
-			card.Player,
-			match.DECK,
-			"Select 1 spell from your deck that will be shown to your opponent and sent to your hand",
-			1,
-			1,
-			true,
-			func(x *match.Card) bool { return x.HasCondition(cnd.Spell) },
-			true,
-		)
-
-		for _, creature := range creatures {
-
-			card.Player.MoveCard(creature.ID, match.DECK, match.HAND, card.ID)
-			ctx.Match.Chat("Server", fmt.Sprintf("%s retrieved %s from the deck to their hand", card.Player.Username(), creature.Name))
-
-		}
-
-		card.Player.ShuffleDeck()
-
-	}))
+	c.Use(fx.Spell, fx.ShieldTrigger, fx.When(fx.SpellCast, fx.SearchDeckTake1Spell))
 
 }
 
@@ -201,7 +177,7 @@ func ManaCrisis(c *match.Card) {
 			false,
 		).Map(func(x *match.Card) {
 			x.Player.MoveCard(x.ID, match.MANAZONE, match.GRAVEYARD, card.ID)
-			ctx.Match.Chat("Server", fmt.Sprintf("%s was put into %s's graveyard from their manazone by %s", x.Name, x.Player.Username(), card.Name))
+			ctx.Match.ReportActionInChat(ctx.Match.Opponent(card.Player), fmt.Sprintf("%s was put into %s's graveyard from their manazone by %s", x.Name, x.Player.Username(), card.Name))
 		})
 
 	}))
@@ -224,7 +200,7 @@ func RumbleGate(c *match.Card) {
 		).Map(func(x *match.Card) {
 			x.AddCondition(cnd.PowerAmplifier, 1000, card.ID)
 			x.AddCondition(cnd.AttackUntapped, nil, card.ID)
-			ctx.Match.Chat("Server", fmt.Sprintf("%s can attack untapped creatures and was given +1000 power until the end of this turn by %s", x.Name, card.Name))
+			ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s can attack untapped creatures and was given +1000 power until the end of this turn by %s", x.Name, card.Name))
 		})
 
 	}))
@@ -248,7 +224,7 @@ func LostSoul(c *match.Card) {
 			ctx.Match.Opponent(card.Player).MoveCard(x.ID, match.HAND, match.GRAVEYARD, card.ID)
 		})
 
-		ctx.Match.Chat("Server", fmt.Sprintf("%s's hand was discarded by %s", ctx.Match.Opponent(card.Player).Username(), card.Name))
+		ctx.Match.ReportActionInChat(ctx.Match.Opponent(card.Player), fmt.Sprintf("%s's hand was discarded by %s", ctx.Match.Opponent(card.Player).Username(), card.Name))
 
 	}))
 
@@ -264,21 +240,13 @@ func RainbowStone(c *match.Card) {
 
 	c.Use(fx.Spell, fx.When(fx.SpellCast, func(card *match.Card, ctx *match.Context) {
 
-		fx.Select(
-			card.Player,
-			ctx.Match,
-			card.Player,
-			match.DECK,
-			"Rainbow Stone: Put a card from your deck into your manazone",
+		fx.SearchDeckPutIntoManazone(
+			card,
+			ctx,
 			1,
-			1,
-			true,
-		).Map(func(x *match.Card) {
-			x.Player.MoveCard(x.ID, match.DECK, match.MANAZONE, card.ID)
-			ctx.Match.Chat("Server", fmt.Sprintf("%s put %s in their manazone from their deck", x.Player.Username(), x.Name))
-		})
-
-		card.Player.ShuffleDeck()
+			func(x *match.Card) bool { return true },
+			"card",
+		)
 
 	}))
 

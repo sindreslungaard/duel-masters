@@ -26,7 +26,7 @@ func BallomMasterOfDeath(c *match.Card) {
 			func(x *match.Card) bool { return x.Civ != civ.Darkness },
 		).Map(func(x *match.Card) {
 			ctx.Match.Destroy(x, card, match.DestroyedByMiscAbility)
-			ctx.Match.Chat("Server", fmt.Sprintf("%s was destroyed by Ballom, Master of Death", x.Name))
+			ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s was destroyed by Ballom, Master of Death", x.Name))
 		})
 
 		fx.FindFilter(
@@ -35,7 +35,7 @@ func BallomMasterOfDeath(c *match.Card) {
 			func(x *match.Card) bool { return x.Civ != civ.Darkness },
 		).Map(func(x *match.Card) {
 			ctx.Match.Destroy(x, card, match.DestroyedByMiscAbility)
-			ctx.Match.Chat("Server", fmt.Sprintf("%s was destroyed by Ballom, Master of Death", x.Name))
+			ctx.Match.ReportActionInChat(ctx.Match.Opponent(card.Player), fmt.Sprintf("%s was destroyed by Ballom, Master of Death", x.Name))
 		})
 	}))
 

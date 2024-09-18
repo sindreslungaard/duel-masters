@@ -65,11 +65,11 @@ func KingNeptas(c *match.Card) {
 					ref, err := ctx.Match.Opponent(c.Player).MoveCard(vid, match.BATTLEZONE, match.HAND, card.ID)
 
 					if err == nil {
-						ctx.Match.Chat("Server", fmt.Sprintf("%s was moved to %s's hand", ref.Name, ctx.Match.PlayerRef(ref.Player).Socket.User.Username))
+						ctx.Match.ReportActionInChat(ctx.Match.Opponent(card.Player), fmt.Sprintf("%s was moved to %s's hand", ref.Name, ctx.Match.PlayerRef(ref.Player).Socket.User.Username))
 					}
 
 				} else {
-					ctx.Match.Chat("Server", fmt.Sprintf("%s was moved to %s's hand", ref.Name, ctx.Match.PlayerRef(ref.Player).Socket.User.Username))
+					ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s was moved to %s's hand", ref.Name, ctx.Match.PlayerRef(ref.Player).Socket.User.Username))
 				}
 
 			}
@@ -96,18 +96,13 @@ func KingPonitas(c *match.Card) {
 
 	c.Use(fx.Creature, fx.When(fx.Attacking, func(card *match.Card, ctx *match.Context) {
 
-		ctx.ScheduleAfter(func() {
-			waterCards := fx.SelectFilter(card.Player, ctx.Match, card.Player, match.DECK, "Select 1 water card from your deck that will be shown to your opponent and sent to your hand", 1, 1, true, func(x *match.Card) bool { return x.Civ == civ.Water }, true)
-
-			for _, waterCard := range waterCards {
-
-				card.Player.MoveCard(waterCard.ID, match.DECK, match.HAND, card.ID)
-				ctx.Match.Chat("Server", fmt.Sprintf("%s retrieved %s from the deck to their hand", card.Player.Username(), waterCard.Name))
-
-			}
-
-			card.Player.ShuffleDeck()
-		})
+		fx.SearchDeckTakeCards(
+			card,
+			ctx,
+			1,
+			func(x *match.Card) bool { return x.Civ == civ.Water },
+			"water card",
+		)
 	}))
 }
 
