@@ -433,6 +433,19 @@ func AttackingCreature(card *match.Card, ctx *match.Context) bool {
 
 }
 
+// WouldBeDestroyed returns true if the card is about to be destroyed
+func WouldBeDestroyed(card *match.Card, ctx *match.Context) bool {
+
+	if event, ok := ctx.Event.(*match.CreatureDestroyed); ok {
+		if event.Card == card {
+			return true
+		}
+	}
+
+	return false
+
+}
+
 // Destroyed returns true if the card was destroyed
 func Destroyed(card *match.Card, ctx *match.Context) bool {
 
