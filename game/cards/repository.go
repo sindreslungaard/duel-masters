@@ -531,7 +531,7 @@ var DM07 = map[string]match.CardConstructor{
 	"b6863540-2985-4349-aa82-05f9dbe36993": nil,
 	"44293c09-875b-4582-99cd-450b544c875d": nil,
 	"38504a0f-da4a-4855-9d93-08866f8b955d": nil,
-	"7e664555-207b-47d6-8078-f40c5885021d": nil,
+	"7e664555-207b-47d6-8078-f40c5885021d": dm07.BexTheOracle,
 	"f603d464-3492-40ba-990d-85dc02814966": nil,
 	"8501c2f8-7dd2-4c2f-aa80-8025c8998371": nil,
 	"3fc5db56-616c-49c4-8ddc-2d922e9c4a54": nil,
