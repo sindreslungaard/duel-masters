@@ -80,3 +80,25 @@ func ShuffleDeck(card *match.Card, ctx *match.Context, forOpponent bool) {
 	}
 
 }
+
+func BlockerWhenNoShields(card *match.Card, ctx *match.Context) {
+
+	ctx.Match.ApplyPersistentEffect(func(ctx2 *match.Context, exit func()) {
+
+		notInTheBZ := card.Zone != match.BATTLEZONE
+		if notInTheBZ || IHaveShields(card, ctx2) {
+			card.RemoveSpecificConditionBySource(cnd.Blocker, card.ID)
+		}
+
+		if notInTheBZ {
+			exit()
+			return
+		}
+
+		if IDontHaveShields(card, ctx2) {
+			card.AddUniqueSourceCondition(cnd.Blocker, true, card.ID)
+		}
+
+	})
+
+}

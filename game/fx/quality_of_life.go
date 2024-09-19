@@ -77,6 +77,21 @@ func When(test func(*match.Card, *match.Context) bool, h func(*match.Card, *matc
 
 }
 
+// When performs the specified function if the test is successful
+func WhenAll(tests []func(*match.Card, *match.Context) bool, h func(*match.Card, *match.Context)) func(*match.Card, *match.Context) {
+
+	return func(card *match.Card, ctx *match.Context) {
+		for _, f := range tests {
+			if !f(card, ctx) {
+				return
+			}
+		}
+
+		h(card, ctx)
+	}
+
+}
+
 // Select prompts the user to select n cards from the specified container
 func Select(p *match.Player, m *match.Match, containerOwner *match.Player, containerName string, text string, min int, max int, cancellable bool) CardCollection {
 	return SelectFilterSelectablesOnly(p, m, containerOwner, containerName, text, min, max, cancellable, func(x *match.Card) bool { return true })
@@ -555,4 +570,20 @@ func MyDrawStep(card *match.Card, ctx *match.Context) bool {
 		}
 	}
 	return false
+}
+
+func IDontHaveShields(card *match.Card, ctx *match.Context) bool {
+	shields, err := card.Player.Container(match.SHIELDZONE)
+	if err != nil {
+		return false
+	}
+	return len(shields) == 0
+}
+
+func IHaveShields(card *match.Card, ctx *match.Context) bool {
+	shields, err := card.Player.Container(match.SHIELDZONE)
+	if err != nil {
+		return false
+	}
+	return len(shields) > 0
 }
