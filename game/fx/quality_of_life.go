@@ -459,17 +459,13 @@ func EndOfTurn(card *match.Card, ctx *match.Context) bool {
 
 // EndOfTurn returns true if the turn is ending, pre end of turn triggers
 func EndOfMyTurn(card *match.Card, ctx *match.Context) bool {
-	_, ok := ctx.Event.(*match.EndStep)
+	return EndOfTurn(card, ctx) && ctx.Match.IsPlayerTurn(card.Player)
+}
 
-	if !ok {
-		return false
-	}
-
-	if ctx.Match.IsPlayerTurn(card.Player) {
-		return true
-	}
-
-	return false
+// EndOfMyTurnWithCreatureInTheBZ returns true if the turn is ending,
+// pre end of turn triggers for creatures in the battlezone
+func EndOfMyTurnCreatureBZ(card *match.Card, ctx *match.Context) bool {
+	return EndOfMyTurn(card, ctx) && card.Zone == match.BATTLEZONE
 }
 
 // ShieldBroken returns true if a shield has been broken
