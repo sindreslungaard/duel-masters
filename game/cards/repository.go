@@ -516,4 +516,5 @@ var DM06 = map[string]match.CardConstructor{
 	"4121d282-d257-4b3b-8388-83fbb4829dd9": dm06.LavaWalkerExecuto,
 	"7fd21958-859f-4085-acab-c736de7667ef": dm06.FortMegacluster,
 	"569c34fc-614a-4aaf-a89b-d4e5dd49426c": dm06.PhantasmalHorrorGigazald,
+	"4387fa57-6ba9-4628-ad07-12bd02def4cb": dm06.Kyuroro,
 }
