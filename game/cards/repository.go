@@ -580,5 +580,5 @@ var DM07 = map[string]match.CardConstructor{
 	"bb3a50dd-049d-488d-b89c-779dcf29b82e": nil,
 	"3e3b883e-721c-42b9-8181-52e514695c7f": dm07.StingerHornTheDelver,
 	"a5cba5aa-271f-43b0-8350-ca94c5cdfe9a": nil,
-	"ced03efd-90c8-4303-83b4-16d2d1198aaf": nil,
+	"ced03efd-90c8-4303-83b4-16d2d1198aaf": dm07.WorldTreeRootOfLife,
 }
