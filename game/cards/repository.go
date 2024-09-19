@@ -552,7 +552,7 @@ var DM07 = map[string]match.CardConstructor{
 	"0106b420-f033-4f9e-b5a9-237f1d6ded0e": nil,
 	"395bac96-1ce7-4681-99fe-59ed2f6dd156": nil,
 	"b79da1ed-4d54-4396-bc8b-38594979cab2": nil,
-	"2a5fe0d2-134c-4a4d-bf90-cfafaa795a84": nil,
+	"2a5fe0d2-134c-4a4d-bf90-cfafaa795a84": dm07.GezaryUndercoverDoll,
 	"1532f8ae-1dc7-4609-a518-063f8de9c751": nil,
 	"350d2dde-2abf-48c0-a1da-63dff2d00bfa": nil,
 	"dbf22912-afdd-49cf-ac0a-6417886d8407": nil,
