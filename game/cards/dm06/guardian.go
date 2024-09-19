@@ -35,9 +35,11 @@ func LuGilaSilverRiftGuardian(c *match.Card) {
 			return
 		}
 
-		if fx.AnotherCreatureSummoned(card, ctx) {
-
-			event, _ := ctx.Event.(*match.CardMoved)
+		// Can have a full refactoring to fx.When after CardMoved uses card pointer
+		if event, ok := ctx.Event.(*match.CardMoved); ok {
+			if event.To != match.BATTLEZONE || event.From == match.HIDDENZONE {
+				return
+			}
 
 			playedCard, err := ctx.Match.Player1.Player.GetCard(event.CardID, match.BATTLEZONE)
 			if err != nil {

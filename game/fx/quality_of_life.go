@@ -337,7 +337,12 @@ func SelectBacksideFilter(p *match.Player, m *match.Match, containerOwner *match
 //
 // Does not activate if the card was under an Evolution card and becomes visible again.
 func Summoned(card *match.Card, ctx *match.Context) bool {
-	return CreatureSummoned(card, ctx) && ctx.Event.(*match.CardMoved).CardID == card.ID
+	event, ok := ctx.Event.(*match.CardMoved)
+	if !ok {
+		return false
+	}
+
+	return CreatureSummoned(card, ctx) && event.CardID == card.ID
 }
 
 // InTheBattlezone returns true if the card arrives in the battlezone.
@@ -503,7 +508,12 @@ func MySurvivorSummoned(card *match.Card, ctx *match.Context) bool {
 		return false
 	}
 
-	creature, err := card.Player.GetCard(ctx.Event.(*match.CardMoved).CardID, match.BATTLEZONE)
+	event, ok := ctx.Event.(*match.CardMoved)
+	if !ok {
+		return false
+	}
+
+	creature, err := card.Player.GetCard(event.CardID, match.BATTLEZONE)
 	if err != nil {
 		return false
 	}
@@ -519,7 +529,12 @@ func MySurvivorSummoned(card *match.Card, ctx *match.Context) bool {
 // Does not activate if this current card is summoned.
 // Does not activate if a card that was under an Evolution card becomes visible again.
 func AnotherCreatureSummoned(card *match.Card, ctx *match.Context) bool {
-	return CreatureSummoned(card, ctx) && ctx.Event.(*match.CardMoved).CardID != card.ID
+	event, ok := ctx.Event.(*match.CardMoved)
+	if !ok {
+		return false
+	}
+
+	return CreatureSummoned(card, ctx) && event.CardID != card.ID
 }
 
 func AnotherCreatureDestroyed(card *match.Card, ctx *match.Context) bool {
