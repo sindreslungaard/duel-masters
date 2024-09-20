@@ -558,7 +558,7 @@ var DM07 = map[string]match.CardConstructor{
 	"dbf22912-afdd-49cf-ac0a-6417886d8407": nil,
 	"36a25a40-d952-4c07-9625-ee88745d6df7": nil,
 	"50cf8db2-11e6-44e2-ad50-89b8041ee670": nil,
-	"b8303223-d073-42b9-8338-cc3b72e5ae69": nil,
+	"b8303223-d073-42b9-8338-cc3b72e5ae69": dm07.ThreeFacedAshuraFang,
 	"dca76df6-bd90-46d2-b032-30560f71de4d": nil,
 	"25d36779-1263-4777-aaa1-6c2949addbbf": nil,
 	"e0558aef-d2d3-4111-aa79-965cdc604f57": nil,

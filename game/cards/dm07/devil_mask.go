@@ -1,4 +1,4 @@
-package dm03
+package dm07
 
 import (
 	"duel-masters/game/civ"
@@ -7,16 +7,14 @@ import (
 	"duel-masters/game/match"
 )
 
-// BaragaBladeOfGloom ...
-func BaragaBladeOfGloom(c *match.Card) {
+func ThreeFacedAshuraFang(c *match.Card) {
 
-	c.Name = "Baraga, Blade of Gloom"
+	c.Name = "Three-Faced Ashura Fang"
 	c.Power = 4000
 	c.Civ = civ.Darkness
-	c.Family = []string{family.DarkLord}
+	c.Family = []string{family.DevilMask}
 	c.ManaCost = 4
 	c.ManaRequirement = []string{civ.Darkness}
 
 	c.Use(fx.Creature, fx.When(fx.Summoned, fx.PutShieldIntoHand))
-
 }
