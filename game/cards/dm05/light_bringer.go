@@ -15,10 +15,8 @@ func LeQuistTheOracle(c *match.Card) {
 	c.ManaCost = 2
 	c.ManaRequirement = []string{civ.Light}
 
-	toTap := ""
-
-	filter := func(x *match.Card) bool { return x.Civ == civ.Fire || x.Civ == civ.Darkness }
-	ability := func(ctx *match.Context, blockers []*match.Card) (newblockers []*match.Card) {
+	c.Use(fx.Creature, fx.WheneverThisAttacks(func(c *match.Card, ctx *match.Context) {
+		filter := func(x *match.Card) bool { return x.Civ == civ.Fire || x.Civ == civ.Darkness }
 		cards := make(map[string][]*match.Card)
 		cards["Your creatures"] = fx.FindFilter(c.Player, match.BATTLEZONE, filter)
 		cards["Opponent's creatures"] = fx.FindFilter(ctx.Match.Opponent(c.Player), match.BATTLEZONE, filter)
@@ -32,65 +30,10 @@ func LeQuistTheOracle(c *match.Card) {
 			1,
 			true,
 		).Map(func(x *match.Card) {
-			toTap = x.ID
-		}).Or(func() {
-			toTap = ""
+			x.Tapped = true
+			fx.RemoveBlockerFromList(x, ctx)
 		})
 
-		b := []*match.Card{}
-
-		for _, x := range blockers {
-			if x.ID == toTap {
-				continue
-			}
-
-			b = append(b, x)
-		}
-
-		return b
-	}
-
-	c.Use(func(card *match.Card, ctx *match.Context) {
-		switch event := ctx.Event.(type) {
-
-		case *match.AttackPlayer:
-			if event.CardID != card.ID {
-				return
-			}
-
-			ctx.ScheduleAfter(func() {
-				event.Blockers = ability(ctx, event.Blockers)
-			})
-
-		case *match.AttackCreature:
-			if event.CardID != card.ID {
-				return
-			}
-
-			ctx.ScheduleAfter(func() {
-				event.Blockers = ability(ctx, event.Blockers)
-			})
-
-		case *match.AttackConfirmed:
-			if event.CardID != card.ID || toTap == "" {
-				return
-			}
-
-			fx.FindFilter(ctx.Match.Opponent(card.Player), match.BATTLEZONE, func(x *match.Card) bool {
-				return x.ID == toTap
-			}).Map(func(x *match.Card) {
-				x.Tapped = true
-			})
-
-			fx.FindFilter(card.Player, match.BATTLEZONE, func(x *match.Card) bool {
-				return x.ID == toTap
-			}).Map(func(x *match.Card) {
-				x.Tapped = true
-			})
-
-			toTap = ""
-
-		}
-	}, fx.Creature)
+	}))
 
 }
