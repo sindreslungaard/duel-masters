@@ -532,7 +532,7 @@ var DM07 = map[string]match.CardConstructor{
 	"44293c09-875b-4582-99cd-450b544c875d": nil,
 	"38504a0f-da4a-4855-9d93-08866f8b955d": nil,
 	"7e664555-207b-47d6-8078-f40c5885021d": nil,
-	"f603d464-3492-40ba-990d-85dc02814966": nil,
+	"f603d464-3492-40ba-990d-85dc02814966": dm07.GeoshineSpectralKnight,
 	"8501c2f8-7dd2-4c2f-aa80-8025c8998371": nil,
 	"3fc5db56-616c-49c4-8ddc-2d922e9c4a54": nil,
 	"a3569344-7a9a-476a-9afc-35e9c28ad209": nil,
