@@ -549,7 +549,7 @@ var DM07 = map[string]match.CardConstructor{
 	"10048aab-7f26-4c3f-862b-199f41f132aa": nil,
 	"a1ed67a1-2143-461e-b2ee-7d74ec6773e5": nil,
 	"cf6ee28e-ab9b-4313-9ea9-048767476308": nil,
-	"0106b420-f033-4f9e-b5a9-237f1d6ded0e": nil,
+	"0106b420-f033-4f9e-b5a9-237f1d6ded0e": dm07.TitaniumCluster,
 	"395bac96-1ce7-4681-99fe-59ed2f6dd156": nil,
 	"b79da1ed-4d54-4396-bc8b-38594979cab2": nil,
 	"2a5fe0d2-134c-4a4d-bf90-cfafaa795a84": nil,
