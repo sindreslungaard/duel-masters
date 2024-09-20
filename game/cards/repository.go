@@ -525,7 +525,7 @@ var DM07 = map[string]match.CardConstructor{
 	"a7179172-1a44-46af-abf9-59daf43e67d9": dm07.CosmicNebula,
 	"504c57d4-d27a-42ce-bfff-36708b814c21": nil,
 	"19bc25dc-2b35-4676-ab72-a8b13b1828e0": nil,
-	"d9be6090-077b-4f34-95cc-d33b2266e45c": nil,
+	"d9be6090-077b-4f34-95cc-d33b2266e45c": dm07.HeadlongGiant,
 	"d1fe4c40-637e-4e5c-a769-0d2fc8aa11ca": nil,
 	"c3c7ac05-c847-4842-9504-22e29fa24a2f": nil,
 	"b6863540-2985-4349-aa82-05f9dbe36993": nil,
