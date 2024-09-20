@@ -4,6 +4,7 @@ import (
 	"duel-masters/game/civ"
 	"duel-masters/game/cnd"
 	"duel-masters/game/match"
+	"fmt"
 )
 
 // Called for cards that use Whenever this attacks
@@ -34,5 +35,28 @@ func WheneverThisAttacksMayTapDorFCreature() match.HandlerFunc {
 			RemoveBlockerFromList(x, ctx)
 		})
 
+	})
+}
+
+// TODO: This is currently nerfed because we make shield selection to early in the attack.
+// In theory with this power they should make a more informed attack
+func WheneverThisAttacksMayLookAtOpShield() match.HandlerFunc {
+	return WheneverThisAttacks(func(card *match.Card, ctx *match.Context) {
+		SelectBackside(
+			card.Player,
+			ctx.Match,
+			ctx.Match.Opponent(card.Player),
+			match.SHIELDZONE,
+			fmt.Sprintf("%s: Select 1 of your opponent's shields that will be shown to you", card.Name),
+			1,
+			1,
+			true,
+		).Map(func(x *match.Card) {
+			ctx.Match.ShowCards(
+				card.Player,
+				"Your opponent's shield:",
+				[]string{x.ImageID},
+			)
+		})
 	})
 }
