@@ -3,6 +3,8 @@ package fx
 import (
 	"duel-masters/game/family"
 	"duel-masters/game/match"
+	"reflect"
+	"sort"
 )
 
 // CardCollection is a slice of cards with a mapping function
@@ -126,6 +128,45 @@ func BinaryQuestion(p *match.Player, m *match.Match, text string) bool {
 	action := <-p.Action
 
 	return !action.Cancel
+}
+
+func OrderCards(p *match.Player, m *match.Match, cards []*match.Card, text string) []string {
+	m.NewOrderAction(p, cards, text)
+	defer m.CloseAction(p)
+
+	if !m.IsPlayerTurn(p) {
+		m.Wait(m.Opponent(p), "Waiting for your opponent to make an action")
+		defer m.EndWait(m.Opponent(p))
+	}
+
+	var cardsIds []string
+	for _, c := range cards {
+		cardsIds = append(cardsIds, c.ID)
+	}
+
+	for {
+
+		action := <-p.Action
+
+		if len(action.Cards) < len(cards) {
+			m.ActionWarning(p, "You must arrange the cards in the desired order")
+			continue
+		}
+
+		respCopy := make([]string, len(action.Cards))
+		copy(respCopy, action.Cards)
+		sort.Strings(cardsIds)
+		sort.Strings(respCopy)
+
+		if !reflect.DeepEqual(cardsIds, respCopy) {
+			m.ActionWarning(p, "The cards don't meet the requirements")
+			continue
+		}
+
+		return action.Cards
+
+	}
+
 }
 
 // SelectFilterSelectablesOnly prompts the user to select n cards from the specified container that matches the given filter
