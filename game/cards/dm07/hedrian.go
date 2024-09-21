@@ -29,3 +29,16 @@ func BattleshipMutant(c *match.Card) {
 	c.Use(fx.Creature, fx.TapAbility)
 
 }
+
+func PropellerMutant(c *match.Card) {
+
+	c.Name = "Propeller Mutant"
+	c.Power = 1000
+	c.Civ = civ.Darkness
+	c.Family = []string{family.Hedrian}
+	c.ManaCost = 2
+	c.ManaRequirement = []string{civ.Darkness}
+
+	c.Use(fx.Creature, fx.When(fx.Destroyed, fx.OpponentDiscardsRandomCard))
+
+}
