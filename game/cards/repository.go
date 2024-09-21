@@ -528,7 +528,7 @@ var DM07 = map[string]match.CardConstructor{
 	"d9be6090-077b-4f34-95cc-d33b2266e45c": nil,
 	"d1fe4c40-637e-4e5c-a769-0d2fc8aa11ca": nil,
 	"c3c7ac05-c847-4842-9504-22e29fa24a2f": nil,
-	"b6863540-2985-4349-aa82-05f9dbe36993": nil,
+	"b6863540-2985-4349-aa82-05f9dbe36993": dm07.BattleshipMutant,
 	"44293c09-875b-4582-99cd-450b544c875d": nil,
 	"38504a0f-da4a-4855-9d93-08866f8b955d": nil,
 	"7e664555-207b-47d6-8078-f40c5885021d": nil,

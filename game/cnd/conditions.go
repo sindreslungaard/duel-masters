@@ -24,4 +24,5 @@ const (
 	Survivor            = "survivor"
 	EvolveIntoAnyFamily = "evolve_into_any_family"
 	TapAbility          = "tap_ability"
+	DestroyAfterBattle  = "destroy_after_battle"
 )

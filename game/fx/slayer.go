@@ -24,19 +24,7 @@ func ConditionalSlayer(condition SlayerCondition) func(card *match.Card, ctx *ma
 
 // Suicide destroys the card when it wins a battle
 func Suicide(card *match.Card, ctx *match.Context) {
-
-	if event, ok := ctx.Event.(*match.Battle); ok {
-		if event.Attacker == card || event.Defender == card {
-			ctx.ScheduleAfter(func() {
-				// Still in the battlezone so it won the battle
-				creature, err := card.Player.GetCard(card.ID, match.BATTLEZONE)
-				if err != nil {
-					return
-				}
-				ctx.Match.Destroy(creature, creature, match.DestroyedBySlayer)
-			})
-		}
-
+	if _, ok := ctx.Event.(*match.UntapStep); ok {
+		card.AddCondition(cnd.DestroyAfterBattle, nil, card.ID)
 	}
-
 }
