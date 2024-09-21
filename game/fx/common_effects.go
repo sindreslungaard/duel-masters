@@ -80,3 +80,13 @@ func ShuffleDeck(card *match.Card, ctx *match.Context, forOpponent bool) {
 	}
 
 }
+
+func GiveOwnCreatureCantBeBlocked(card *match.Card, ctx *match.Context) {
+	Select(card.Player, ctx.Match, card.Player, match.BATTLEZONE,
+		"Choose a card to receive 'Can't be blocked this turn'", 1, 1, false,
+	).Map(func(x *match.Card) {
+		x.AddCondition(cnd.CantBeBlocked, nil, card.ID)
+		ctx.Match.ReportActionInChat(card.Player,
+			fmt.Sprintf("%s tap effect: %s can't be blocked this turn", card.Name, x.Name))
+	})
+}

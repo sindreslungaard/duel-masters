@@ -31,3 +31,16 @@ func Garatyano(c *match.Card) {
 
 	c.Use(fx.Creature, fx.TapAbility)
 }
+
+func Biancus(c *match.Card) {
+
+	c.Name = "Biancus"
+	c.Power = 3000
+	c.Civ = civ.Water
+	c.Family = []string{family.SeaHacker}
+	c.ManaCost = 6
+	c.ManaRequirement = []string{civ.Water}
+	c.TapAbility = fx.GiveOwnCreatureCantBeBlocked
+
+	c.Use(fx.Creature, fx.Blocker, fx.TapAbility)
+}
