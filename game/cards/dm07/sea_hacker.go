@@ -44,3 +44,15 @@ func Biancus(c *match.Card) {
 
 	c.Use(fx.Creature, fx.Blocker, fx.TapAbility)
 }
+
+func Cetibols(c *match.Card) {
+
+	c.Name = "Cetibols"
+	c.Power = 2000
+	c.Civ = civ.Water
+	c.Family = []string{family.SeaHacker}
+	c.ManaCost = 3
+	c.ManaRequirement = []string{civ.Water}
+
+	c.Use(fx.Creature, fx.When(fx.Destroyed, fx.MayDraw1))
+}
