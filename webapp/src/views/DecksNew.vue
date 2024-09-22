@@ -2,13 +2,6 @@
   <div>
     <div v-show="warning" @click="closeOverlay()" class="overlay"></div>
 
-    <CardPreviewPopup 
-      :uid = previewCard?.uid
-      :event = previewCardEvent
-      :xPos = previewCardX
-      :side = "'left'"
-    />
-
     <div v-show="warning" class="error">
       <p class="text-block">{{ warning }}</p>
       <div @click="warning = ''" class="btn">Close</div>
@@ -41,97 +34,14 @@
     <Header></Header>
 
     <div class="main">
-      <div class="catalogue">
-        <div class="catalogue-top-bar">
-          <div class="catalogue-filters">
-            <input
-              v-model="filterCard"
-              class="catalogue-filter"
-              type="search"
-              placeholder="Type to search"
-            />
-            <div 
-              v-for="civ in ['light', 'darkness', 'nature', 'fire', 'water']" 
-              class="civ-filter"
-              :class="['civ-color-' + civ, filterCivilization[civ] ? 'civ-filter-selected' : '']"
-              @click="filterCivilization[civ] = !filterCivilization[civ]">
-            </div>
-            <div style="margin-left: 5px;">
-              <select 
-                class="catalogue-filter"
-                v-model="filterFamily">
-                <option
-                  class="family"
-                  v-for="(family, index) in families"
-                  :key="index"
-                  :value="family"
-                  >{{ family }}</option
-                >
-              </select>
-            </div>
-            <div 
-              v-for="manaNr in ['1', '2', '3', '4', '5', '6', '7+']" 
-              class="mana-filter"
-              :class="{'mana-filter-selected': filterMana[manaNr]}"
-              @click="filterMana[manaNr] = !filterMana[manaNr]"
-            >
-              {{manaNr}}
-            </div>
-            <select 
-              v-model="filterSet"
-              class="catalogue-filter"
-            >
-              <option
-                class="set"
-                v-for="(set, index) in sets"
-                :key="index"
-                :value="set"
-                >{{ set }}</option
-              >
-            </select>
-            <img
-              class="reset-icon"
-              src="/assets/images/reset-icon.svg"
-              v-tooltip="'Reset all filters'"
-              @click="resetFilters"
-            />
-          </div>
-          <div class="zoom-icons">
-            <img
-              class="zoom-icon"
-              @click="modifyCatalogueCardSize(10)"
-              src="/assets/images/zoom-in-icon.svg"
-              v-tooltip="'Increase card size'"
-            />
-            <img
-              @click="modifyCatalogueCardSize(-10)"
-              class="zoom-icon"
-              src="/assets/images/zoom-out-icon.svg"
-              v-tooltip="'Decrease card size'"
-            />
-          </div>
-        </div>
-        <div class="catalogue-cards-wrapper">
-          <div class="catalogue-cards">
-            <div
-              v-for="card in filteredAndSortedCards"
-              class="catalogue-card"
-              :style="{ 'height': cardSize + 'px' }"
-              @click="tryAddCard(card)"
-              >
-              <v-lazy-image
-                class="max-w-full rounded-2xl"
-                :src="`https://scans.shobu.io/${card.uid}.jpg`"
-                src-placeholder="https://scans.shobu.io/backside.jpg"
-                :alt="card.name"
-              />
-            </div>
-          </div>
-        </div>
-      </div>
+      <CardsCatalogue 
+        class="catalogue"
+        :unsortedCards="cards"
+        v-model:deck="selectedDeck.cards"
+      />
 
-      <div class="right" ref="rightSide">
-        <span class="deck-card-total" v-if="selectedDeck">({{selectedDeck.cards.length}})</span>
+      <div class="right">
+        <span class="deck-card-total" v-if="selectedDeck && selectedDeck.cards">({{selectedDeck.cards.length}})</span>
         <select v-model="selectedDeckUid" style="margin: 0;">
           <option
             v-for="(deck, index) in decks"
@@ -143,7 +53,7 @@
         <div class="deck-secondary-buttons">
           <img
             @click="showWizard = true"
-            class="fl edit-ico"
+            class="float-left edit-ico"
             width="25px"
             src="/assets/images/edit_icon.png"
             v-tooltip="'Edit deck info'"
@@ -155,7 +65,7 @@
             v-tooltip="'Share deck'"
           >
             <img
-              class="fl edit-ico share"
+              class="float-left edit-ico share"
               width="25px"
               src="/assets/images/share_icon.png"
             />
@@ -168,7 +78,7 @@
             v-tooltip="'Delete deck'"
           >
             <img
-              class="fl edit-ico share"
+              class="float-left edit-ico share"
               width="25px"
               src="/assets/images/delete_icon.png"
             />
@@ -181,7 +91,7 @@
             v-tooltip="'Copy deck list'"
           >
             <img
-              class="fl edit-ico share"
+              class="float-left edit-ico share"
               width="25px"
               src="/assets/images/list_icon.png"
             />
@@ -199,30 +109,10 @@
           </template>
         </div>
         <div v-if="selectedDeck" class="right-content">
-          <div
-            class="deck-card-slot"
-            v-for="(card, index) in getCardsForDeck(selectedDeck.cards)"
-            :key="index"
-            @mouseover="setPreviewCard($event, card)"
-            @mouseleave="previewCard = null"
-          >
-            <div class="deck-card-counter">
-              {{ card.count }}x
-            </div>
-            <div
-              class="deck-card-oval"
-              :class="'card-' + card.civilization.toLowerCase()"
-              :key="index"
-              @click="tryRemoveCard(card)"
-            >
-              <div class="deck-card-name">
-                {{ card.name }}                  
-              </div>
-              <div class="deck-card-mana">
-                {{ card.manaCost }}
-              </div>
-            </div>
-          </div>
+          <DeckList 
+            :cards="cards"
+            v-model:deck="selectedDeck.cards"
+          />
         </div>
       </div>
     </div>
@@ -232,55 +122,17 @@
 <script>
 import { call } from "../remote";
 import Header from "../components/Header.vue";
-import CardPreviewPopup from "../components/CardPreviewPopup.vue";
-import VLazyImage from "v-lazy-image";
-
-const ALL_FAMILIES = 'All Races';
-const ALL_SETS = 'All Sets'
-
-const permissions = () => {
-  let p = localStorage.getItem("permissions");
-  if (!p) {
-    return [];
-  }
-  return p;
-};
-
-function compareCards(card1, card2, sort) {
-  var cat1 = card1[sort.by], 
-      cat2 = card2[sort.by];
-  if (Array.isArray(cat1)) cat1 = cat1[0];
-  if (Array.isArray(cat2)) cat2 = cat2[0];
-  if (cat1 == null) cat1 = "";
-  if (cat2 == null) cat2 = "";
-
-  return cat1 === parseInt(cat1, 10) &&
-         cat2 === parseInt(cat2, 10)
-          ? sort.directionNum *
-            (cat1 < cat2
-              ? -1
-              : cat1 > cat2
-              ? 1
-              : 0)
-          : sort.directionNum *
-            cat1.localeCompare(cat2);
-}
-
-function playSound (sound) {
-  if(sound) {
-    var audio = new Audio(sound);
-    audio.volume = 0.2;
-    audio.play();
-  }
-}
+import CardsCatalogue from "../components/CardsCatalogue.vue";
+import { ref, reactive } from 'vue'
+import { getCardsForDeck } from "../helpers/utils";
+import DeckList from "../components/DeckList.vue";
 
 export default {
   name: "decks",
   components: {
+    CardsCatalogue,
+    DeckList,
     Header,
-    CardPreviewPopup,
-    VLazyImage,
-
   },
   computed: {
     username: () => localStorage.getItem("username")
@@ -290,123 +142,17 @@ export default {
       warning: "",
       showWizard: false,
 
-      filterCard: "",
-      filterFamily: ALL_FAMILIES,
-      filterSet: ALL_SETS,
-      families: [ALL_FAMILIES, "Spell"],
-      filterCivilization: {
-        "light": false,
-        "darkness": false,
-        "nature": false,
-        "fire": false,
-        "water": false,
-      },
-      filterMana: {
-        '1': false,
-        '2': false,
-        '3': false,
-        '4': false,
-        '5': false,
-        '6': false,
-        '7+': false,
-      },
-
-      sets: [],
       cards: [],
 
       decks: [],
-      selectedDeck: null,
+      selectedDeck: { cards: [] },
       selectedDeckUid: null,
       deckCopy: null,
-
-      previewCard: null,
-      previewCardX: 0,
-      previewCardEvent: null,
-
-      cardSize: 360,
     };
   },
   methods: {
-    setPreviewCard(event, card) {
-      this.previewCardEvent = event;
-      this.previewCardX = this.$refs.rightSide.getBoundingClientRect().x;
-      this.previewCard = card;
-    },
-
-    selectDeck(deck) {
-      this.selectedDeck = deck;
-      this.deckCopy = JSON.parse(JSON.stringify(deck));
-    },
-
-    cardInfo(uid) {
-      let card = this.cards.find(x => x.uid === uid);
-      return card;
-    },
-
-    resetFilters() {
-      Object.keys(this.filterCivilization).forEach(civ => this.filterCivilization[civ] = false);
-      Object.keys(this.filterMana).forEach(manaCost => this.filterMana[manaCost] = false);
-      this.filterFamily = ALL_FAMILIES;
-      this.filterSet = ALL_SETS;
-      this.filterCard = '';
-    },
-
-    getCardsForDeck(cardUids) {
-      let cards = [];
-      for (let uid of cardUids) {
-        let card = this.cards.find(x => x.uid === uid)
-        if (card === undefined) return [];
-        card = JSON.parse(JSON.stringify(card));
-
-        let existingCard = cards.find(x => x.uid === card.uid);
-        if (existingCard) {
-          existingCard.count += 1;
-        } else {
-          card.count = 1;
-          cards.push(card);
-        }
-      }
-
-      cards.sort((c1, c2) => compareCards(c1, c2, {
-        by: "manaCost",
-        directionNum: 1
-      }));
-
-      return cards;
-    },
-
-    tryAddCard(card) {
-      if (
-        this.selectedDeck.cards.filter(x => x == card.uid).length >= 4
-      ) {
-        if (!permissions().includes("admin")) {
-          playSound("/assets/sounds/card-limit.wav");
-          return;
-        }
-      }
-
-      this.selectedDeck.cards.push(card.uid);
-      playSound("/assets/sounds/card-added.mp3");
-    },
-
-    tryRemoveCard(card) {
-      let uid = card.uid;
-      let toSlice = this.selectedDeck.cards.indexOf(uid);
-      if (toSlice < 0) return;
-
-      playSound("/assets/sounds/card-removed.wav");
-      this.selectedDeck.cards.splice(toSlice, 1);
-      if (this.selectedDeck.cards.indexOf(uid) < 0 && this.previewCard.uid === uid ) {
-        this.previewCard = null 
-      }
-    },
-
-    modifyCatalogueCardSize(addition) {
-      this.cardSize += addition
-    },
-
     copyDeckList() {
-      const cards = this.getCardsForDeck(this.selectedDeck.cards);
+      const cards = getCardsForDeck(this.selectedDeck.cards, this.cards);
 
       const deckList = cards.map(card => `${card.count}x ${card.name}`);
       this.warning = `${deckList.join("\n")}\n\nTotal Cards: ${
@@ -504,10 +250,6 @@ export default {
       }
       return true;
     },
-
-    displayFamily(family) {
-      return family ? family.join(" / ") : "Spell"
-    },
   },
   async created() {
     try {
@@ -515,32 +257,7 @@ export default {
         call({ path: "/cards", method: "GET" }),
         call({ path: "/decks", method: "GET" })
       ]);
-      let sets = {};
-      let cardsCiv = {
-        "light": [],
-        "darkness": [],
-        "nature": [],
-        "fire": [],
-        "water": [],
-      };
-      for (let card of cards.data) {
-        cardsCiv[card.civilization.toLowerCase()].push(card);
-        if (!sets[card.set]) {
-          sets[card.set] = true;
-        }
-      }
-      this.sets = Object.keys(sets);
-      this.sets.push(ALL_SETS);
-      this.sets.sort();
-
-      let sortedCards = [];
-      Object.values(cardsCiv).forEach(
-        civSet => sortedCards.push(...civSet.sort((c1, c2) => 
-          compareCards(c1, c2, { by: "manaCost", directionNum: 1 })
-        ))
-      );
-
-      this.cards = sortedCards;
+      this.cards = cards.data;
       this.decks = decks.data;
 
       if (this.decks.length < 1) {
@@ -550,19 +267,6 @@ export default {
           public: false
         });
       }
-
-      let families = [];
-      for (let c of this.cards) {
-        if (c.family) {
-          for (let f of c.family) {
-            if (!families.includes(f)) {
-              families.push(f);
-            }
-          }
-        }
-      }
-      families.sort();
-      this.families.push(...families);
 
       this.selectedDeck = this.decks[0];
       this.deckCopy = JSON.parse(JSON.stringify(this.selectedDeck));
@@ -583,59 +287,10 @@ export default {
       this.deckCopy = JSON.parse(JSON.stringify(this.selectedDeck));
     }
   },
-  computed: {
-    filteredAndSortedCards() {
-      let cards = this.cards.filter(card =>
-        card.name.toLowerCase().includes(this.filterCard.toLowerCase()) ||
-          card.text.toLowerCase().includes(this.filterCard.toLowerCase())
-      );
-
-      if (this.filterSet !== ALL_SETS) {
-        cards = cards.filter(card => card.set === this.filterSet);
-      }
-
-      let filterCivilizationValues = Object.values(this.filterCivilization);
-      if (!(filterCivilizationValues.every(v => v === filterCivilizationValues[0]))) {
-        cards = cards.filter(
-          card => this.filterCivilization[card.civilization] 
-        );
-      }
-
-      if (this.filterFamily.toLowerCase() !== ALL_FAMILIES.toLowerCase()) {
-        cards = cards.filter(
-          card => 
-            (this.filterFamily.toLowerCase() === "spell" && !card.family) || 
-            (card.family && card.family.includes(this.filterFamily))
-        );
-      }
-
-      let filterManaValues = Object.values(this.filterMana);
-      if (!(filterManaValues.every(v => v === filterManaValues[0]))) {
-        cards = cards.filter(
-          card => {
-            if (card.manaCost > 6)
-              return this.filterMana['7+'];
-            else
-              return this.filterMana[card.manaCost.toString()];
-          } 
-        );
-      }
-
-      return cards;
-    },
-  }
 };
 </script>
 
 <style scoped lang="scss">
-
-$catalogue-main-color: #b8b7b7;
-$catalogue-secondary-color: #e0dede;
-$civ-nature-base-color: #118141;
-$civ-fire-base-color: #D12027;
-$civ-water-base-color: #47C6F2;
-$civ-light-base-color: #FAD241;
-$civ-darkness-base-color: #65696C;
 
 .helper {
   display: block !important;
@@ -663,87 +318,6 @@ $civ-darkness-base-color: #65696C;
 .edit-ico:hover {
   filter: invert(80%);
   cursor: pointer;
-}
-
-.fl {
-  float: left;
-}
-
-.zoom-icons {
-  display: inline-flex;
-  align-items: flex-end;
-  align-self: end;
-  padding: 5px 10px 5px 10px;
-  margin-right: 10px;
-  margin-left: 5px;
-  justify-content: space-between;
-  gap: 10px;
-  background-color: $catalogue-main-color;
-}
-
-.zoom-icon {
-  width: 25px;
-  cursor: pointer;
-}
-
-.reset-icon {
-  width: 35px;
-  margin-left: 20px;
-  background-color: lightsalmon;
-  cursor: pointer;
-}
-
-.civ-filter {
-  width: 30px;
-  height: 30px;
-  border-radius: 50%;
-  display: inline-block;
-  margin-left: 5px;
-  cursor: pointer;
-  border: 4px solid $catalogue-secondary-color;
-}
-
-.civ-filter-selected {
-  border: 4px solid black;
-}
-
-.civ-color-fire {
-  background-color: $civ-fire-base-color;
-}
-
-.civ-color-water {
-  background-color: $civ-water-base-color;
-}
-
-.civ-color-light {
-  background-color: $civ-light-base-color;
-}
-
-.civ-color-darkness {
-  background-color: $civ-darkness-base-color;
-}
-
-.civ-color-nature {
-  background-color: $civ-nature-base-color;
-}
-
-.mana-filter {
-  width: 30px;
-  height: 30px;
-  border-radius: 50%;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  margin-left: 5px;
-  cursor: pointer;
-  color: white  ;
-  background-color: black;
-  font-weight: 600;
-  border: 4px solid $catalogue-secondary-color;
-}
-
-.mana-filter-selected {
-  border: 4px solid orange;
 }
 
 .new {
@@ -781,25 +355,8 @@ $civ-darkness-base-color: #65696C;
 }
 
 .right-content {
-  height: calc(100% - 20px);
   margin-top: 10px;
   overflow-y: auto;
-}
-
-.card-preview {
-  width: 300px;
-  text-align: center;
-  border-radius: 4px;
-  height: 420px;
-  z-index: 2005;
-  position: absolute;
-  left: calc(50% - 150px);
-  top: calc(50vh - 240px);
-}
-
-.card-preview > img {
-  width: 300px;
-  border-radius: 15px;
 }
 
 .overlay {
@@ -843,18 +400,6 @@ select option {
   background: #111;
 }
 
-
-input:focus,
-textarea:focus,
-select:focus {
-  outline: none;
-}
-input:active,
-textarea:active,
-select:active {
-  outline: none;
-}
-
 .deck-crud-buttons {
   display: inline-flex;
   align-items: center;
@@ -870,88 +415,9 @@ select:active {
   color: black;
 }
 
-.deck-card-slot {
-  display: flex;
-  margin-bottom: 4px;
-  align-items: center;
-  width: 100%;
-}
-
-.deck-card-oval {
-  border-radius: 10px / 20px;
-  color: #000;
-  padding-left: 7px;
-  padding-right: 3px;
-  border: 3px solid;
-  flex-grow: 1;
-  display: inline-flex;
-  justify-content: space-between;
-  align-items: center;
-  cursor: pointer;
-  min-width: 0;
-}
-
-.deck-card-name {
-  text-overflow: ellipsis;
-  overflow: hidden;
-  white-space: nowrap;
-  font-size: 17px;
-  font-family: "Perceval Bold", "Roboto", sans-serif;
-}
-
-.deck-card-mana {
-  display: inline-block;
-  background-color: black;
-  color: white;
-  font-weight: 600;
-  border-radius: 50%;
-  padding-left: 7px;
-  padding-right: 7px;
-  margin-top: 2px;
-  margin-bottom: 2px;
-}
-
-.deck-card-counter {
-  border-radius: 10px / 20px;
-  color: black;
-  padding-left: 6px;
-  padding-right: 9px;
-  padding-top: 4px;
-  padding-bottom: 4px;
-  background: radial-gradient(40% 100% at right, transparent 50%, lightgray 51%);
-  display: inline-block;
-  flex-grow: 0;
-  margin-right: -3px;
-}
-
-.card-fire {
-  border-color: $civ-fire-base-color;
-  background: radial-gradient(#F0DDD5 0%, #E39E7F 80%, $civ-fire-base-color 100%);
-}
-
-.card-nature {
-  border-color: $civ-nature-base-color;
-  background: radial-gradient(#E1EBD0 0%, #84C188 80%, $civ-nature-base-color 100%);
-}
-
-.card-water {
-  border-color: $civ-water-base-color;
-  background: radial-gradient(#D4EDF8 0%, #93D4DE 80%, $civ-water-base-color 100%);
-}
-
-.card-darkness {
-  border-color: $civ-darkness-base-color;
-  background: radial-gradient(#CCD1D5 0%, #CACFD2 80%, $civ-darkness-base-color 100%);
-}
-
-.card-light {
-  border-color: $civ-light-base-color;
-  background: radial-gradient(#FCF7D0 0%, #FBF396 80%, $civ-light-base-color 100%);
-}
-
 .right {
   display: inline-block;
-  height: calc(100vh - 110px);
+  height: calc(100vh - 100px);
   overflow-y: auto;
   width: calc(20% - 10px);
   max-width: 380px;
@@ -959,55 +425,13 @@ select:active {
 }
 
 .catalogue {
-  display: inline-block;
-  height: calc(100vh - 115px);
+  display: inline-flex;
+  height: calc(100vh - 100px);
   min-width: calc(80% - 10px);
-  background-color: $catalogue-main-color;
   margin-right: 20px;
   flex-grow: 1;
 }
 
-.catalogue-cards-wrapper {
-  overflow-y: auto;
-  width: 100%;
-  height: 100%;
-  background-color: $catalogue-main-color;
-}
-
-.catalogue-cards {
-  width: calc(100% - 10px);
-  display: inline-flex;
-  flex-wrap:wrap;
-  gap: 5px;
-  justify-content: space-evenly;
-  
-  padding: 5px;
-}
-
-.catalogue-top-bar {
-  display: flex;
-  justify-content: space-between;
-  background-color: $catalogue-secondary-color;
-}
-
-.catalogue-filters {
-  margin-left: 10px;
-  flex-wrap: wrap;
-  display: inline-flex;
-  align-items: center;
-  padding: 3px 0;
-}
-
-.catalogue-filter {
-  background-color: black;
-  color: white;
-}
-
-.catalogue-card {
-  aspect-ratio: 264/367;
-  margin-bottom: 5px;
-  cursor: pointer;
-}
 
 .main {
   margin: 0 15px;

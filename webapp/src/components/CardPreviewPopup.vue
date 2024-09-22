@@ -34,8 +34,8 @@ watchEffect(() => {
   if (props.side == "left") {
     positionX -= 300
   }
-  if (positionY + 420 > window.innerHeight) {
-    positionY = window.innerHeight - 420;
+  if (positionY + 420 + 5 > window.innerHeight) {
+    positionY = window.innerHeight - 420 - 5;
   }
   if (positionY < 10) {
     positionY = 10;
