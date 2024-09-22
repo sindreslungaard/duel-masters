@@ -1,6 +1,7 @@
 package fx
 
 import (
+	"duel-masters/game/cnd"
 	"duel-masters/game/match"
 	"fmt"
 )
@@ -62,4 +63,14 @@ func ReturnToShield(card *match.Card, ctx *match.Context) {
 
 	}
 
+}
+
+func ReturnCreatureFromManazoneToHand(card *match.Card, ctx *match.Context) {
+	SelectFilter(card.Player, ctx.Match, card.Player, match.MANAZONE,
+		"Select 1 of your creatures from your mana zone that will be returned to your hand",
+		1, 1, false, func(x *match.Card) bool { return x.HasCondition(cnd.Creature) }, false,
+	).Map(func(x *match.Card) {
+		card.Player.MoveCard(x.ID, match.MANAZONE, match.HAND, card.ID)
+		ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s was moved to %s's hand from their mana zone", x.Name, ctx.Match.PlayerRef(card.Player).Socket.User.Username))
+	})
 }
