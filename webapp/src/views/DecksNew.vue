@@ -2,20 +2,12 @@
   <div>
     <div v-show="warning" @click="closeOverlay()" class="overlay"></div>
 
-    <span v-if="previewCard">
-      <div 
-        class="card-preview" 
-        :style="{
-          'top': previewCardTop + 'px', 
-          'left': previewCardLeft + 'px',
-        }" 
-      >
-        <img
-          :src="`https://scans.shobu.io/${previewCard.uid}.jpg`"
-          alt="Full card"
-        />
-      </div>
-    </span>
+    <CardPreviewPopup 
+      :uid = previewCard?.uid
+      :event = previewCardEvent
+      :xPos = previewCardX
+      :side = "'left'"
+    />
 
     <div v-show="warning" class="error">
       <p class="text-block">{{ warning }}</p>
@@ -240,6 +232,7 @@
 <script>
 import { call } from "../remote";
 import Header from "../components/Header.vue";
+import CardPreviewPopup from "../components/CardPreviewPopup.vue";
 import VLazyImage from "v-lazy-image";
 
 const ALL_FAMILIES = 'All Races';
@@ -285,6 +278,7 @@ export default {
   name: "decks",
   components: {
     Header,
+    CardPreviewPopup,
     VLazyImage,
 
   },
@@ -326,25 +320,16 @@ export default {
       deckCopy: null,
 
       previewCard: null,
-      previewCardTop: 0,
-      previewCardLeft: 0,
+      previewCardX: 0,
+      previewCardEvent: null,
 
       cardSize: 360,
     };
   },
   methods: {
     setPreviewCard(event, card) {
-      let positionY = event.clientY - 420/2;
-      console.log(this.$refs.rightSide);
-      let positionX = this.$refs.rightSide.getBoundingClientRect().x - 300;
-      if (positionY + 420 > window.innerHeight) {
-        positionY = window.innerHeight - 420;
-      }
-      if (positionY < 10) {
-        positionY = 10;
-      }
-      this.previewCardTop = positionY;
-      this.previewCardLeft = positionX;
+      this.previewCardEvent = event;
+      this.previewCardX = this.$refs.rightSide.getBoundingClientRect().x;
       this.previewCard = card;
     },
 
