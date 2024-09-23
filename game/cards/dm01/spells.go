@@ -144,21 +144,7 @@ func CrimsonHammer(c *match.Card) {
 	c.ManaCost = 2
 	c.ManaRequirement = []string{civ.Fire}
 
-	c.Use(fx.Spell, func(card *match.Card, ctx *match.Context) {
-
-		if match.AmICasted(card, ctx) {
-
-			creatures := match.Filter(card.Player, ctx.Match, ctx.Match.Opponent(card.Player), match.BATTLEZONE, "Select 1 of your opponent's creatures that will be tapped", 1, 1, false, func(x *match.Card) bool { return ctx.Match.GetPower(x, false) <= 2000 })
-
-			for _, creature := range creatures {
-
-				ctx.Match.Destroy(creature, card, match.DestroyedBySpell)
-
-			}
-
-		}
-
-	})
+	c.Use(fx.Spell, fx.When(fx.SpellCast, fx.DestroyBySpellOpCreature2000OrLess))
 
 }
 
