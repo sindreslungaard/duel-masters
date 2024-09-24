@@ -80,3 +80,49 @@ func ShuffleDeck(card *match.Card, ctx *match.Context, forOpponent bool) {
 	}
 
 }
+
+func RotateShields(card *match.Card, ctx *match.Context, max int) {
+
+	nrShields, err := card.Player.Container(match.SHIELDZONE)
+	if err != nil {
+		return
+	}
+
+	if len(nrShields) < 1 {
+		return
+	}
+
+	toShield := Select(
+		card.Player,
+		ctx.Match,
+		card.Player,
+		match.HAND,
+		fmt.Sprintf("%s: You may select up to %d card(s) from your hand and put it into the shield zone", card.Name, max),
+		0, max, true,
+	)
+
+	cardsMoved := len(toShield)
+	if cardsMoved < 1 {
+		return
+	}
+
+	for _, c := range toShield {
+		c.Player.MoveCard(c.ID, match.HAND, match.SHIELDZONE, card.ID)
+	}
+
+	toHand := SelectBackside(
+		card.Player,
+		ctx.Match,
+		card.Player,
+		match.SHIELDZONE,
+		fmt.Sprintf("%s: Select %d of your shields that will be moved to your hand", card.Name, cardsMoved),
+		cardsMoved,
+		cardsMoved,
+		false,
+	)
+
+	for _, c := range toHand {
+		c.Player.MoveCard(c.ID, match.SHIELDZONE, match.HAND, card.ID)
+	}
+
+}
