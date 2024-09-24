@@ -18,3 +18,16 @@ func AquaAgent(c *match.Card) {
 
 	c.Use(fx.Creature, fx.WaterStealth, fx.When(fx.WouldBeDestroyed, fx.MayReturnToHand))
 }
+
+func AquaFencer(c *match.Card) {
+
+	c.Name = "Aqua Fencer"
+	c.Power = 3000
+	c.Civ = civ.Water
+	c.Family = []string{family.LiquidPeople}
+	c.ManaCost = 7
+	c.ManaRequirement = []string{civ.Water}
+	c.TapAbility = fx.ReturnOpCardFromMZToHand
+
+	c.Use(fx.Creature, fx.TapAbility)
+}
