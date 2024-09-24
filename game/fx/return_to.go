@@ -74,3 +74,19 @@ func ReturnOpCardFromMZToHand(card *match.Card, ctx *match.Context) {
 		ctx.Match.ReportActionInChat(ctx.Match.Opponent(card.Player), fmt.Sprintf("%s got moved to %s hand from his mana zone by %s", x.Name, x.Player.Username(), card.Name))
 	})
 }
+
+func ReturnMyCardFromMZToHand(card *match.Card, ctx *match.Context) {
+	Select(
+		card.Player,
+		ctx.Match,
+		card.Player,
+		match.MANAZONE,
+		"Select 1 card from your mana zone that will be sent to your hand",
+		1,
+		1,
+		false,
+	).Map(func(c *match.Card) {
+		c.Player.MoveCard(c.ID, match.MANAZONE, match.HAND, card.ID)
+		ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s effect: %s returned %s from MZ to their hand", card.Name, c.Player.Username(), c.Name))
+	})
+}

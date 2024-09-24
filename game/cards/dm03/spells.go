@@ -96,25 +96,7 @@ func FloodValve(c *match.Card) {
 	c.ManaCost = 2
 	c.ManaRequirement = []string{civ.Water}
 
-	c.Use(fx.Spell, fx.ShieldTrigger, func(card *match.Card, ctx *match.Context) {
-
-		if match.AmICasted(card, ctx) {
-
-			fx.Select(
-				card.Player,
-				ctx.Match,
-				card.Player,
-				match.MANAZONE,
-				"Select 1 card from your mana zone that will be returned to your hand",
-				1,
-				1,
-				false,
-			).Map(func(x *match.Card) {
-				ctx.Match.MoveCard(x, match.HAND, card)
-			})
-
-		}
-	})
+	c.Use(fx.Spell, fx.ShieldTrigger, fx.When(fx.SpellCast, fx.ReturnMyCardFromMZToHand))
 }
 
 // LiquidScope ...

@@ -548,7 +548,7 @@ var DM07 = map[string]match.CardConstructor{
 	"44c6f9ec-1832-4d62-a73e-3dab72818591": nil,
 	"10048aab-7f26-4c3f-862b-199f41f132aa": nil,
 	"a1ed67a1-2143-461e-b2ee-7d74ec6773e5": nil,
-	"cf6ee28e-ab9b-4313-9ea9-048767476308": nil,
+	"cf6ee28e-ab9b-4313-9ea9-048767476308": dm07.SplashZebrafish,
 	"0106b420-f033-4f9e-b5a9-237f1d6ded0e": nil,
 	"395bac96-1ce7-4681-99fe-59ed2f6dd156": nil,
 	"b79da1ed-4d54-4396-bc8b-38594979cab2": nil,
