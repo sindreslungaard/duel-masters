@@ -19,6 +19,25 @@ func MayReturnToHand(card *match.Card, ctx *match.Context) {
 	}
 }
 
+func MayReturnToHandAndDiscardACard(card *match.Card, ctx *match.Context) {
+	if BinaryQuestion(card.Player, ctx.Match, fmt.Sprintf("%s was destroyed. Do you want to return it to hand? You will discard a card after", card.Name)) {
+		ReturnToHand(card, ctx)
+		Select(
+			card.Player,
+			ctx.Match,
+			card.Player,
+			match.HAND,
+			"Select a card to discard",
+			1,
+			1,
+			false,
+		).Map(func(x *match.Card) {
+			card.Player.MoveCard(x.ID, match.HAND, match.GRAVEYARD, card.ID)
+			ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s was discarded from %s's hand", x.Name, x.Player.Username()))
+		})
+	}
+}
+
 // ReturnToMana returns the card to the players manazone instead of the graveyard
 func ReturnToMana(card *match.Card, ctx *match.Context) {
 
