@@ -560,3 +560,14 @@ func MyDrawStep(card *match.Card, ctx *match.Context) bool {
 	}
 	return false
 }
+
+// This implementation is not fully correct as we currenly don't send an event when a creature is targeted for attack.
+// It only works as expected if a creature is attacked and the defender doesn't block with another creture.
+func Attacked(card *match.Card, ctx *match.Context) bool {
+	if event, ok := ctx.Event.(*match.Battle); ok {
+		if event.Defender == card && !event.Blocked {
+			return true
+		}
+	}
+	return false
+}
