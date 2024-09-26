@@ -128,6 +128,37 @@ func BinaryQuestion(p *match.Player, m *match.Match, text string) bool {
 	return !action.Cancel
 }
 
+// Send multiple strings as options, will return the index of the chosen option
+func MultipleChoiceQuestion(p *match.Player, m *match.Match, text string, options []string) int {
+	result := 0
+
+	m.NewMultipleChoiceQuestionAction(p, text, options)
+
+	defer m.CloseAction(p)
+
+	if !m.IsPlayerTurn(p) {
+		m.Wait(m.Opponent(p), "Waiting for your opponent to make an action")
+		defer m.EndWait(m.Opponent(p))
+	}
+
+	for {
+
+		action := <-p.Action
+
+		if action.Count >= len(options) || action.Count < 0 {
+			m.ActionWarning(p, "The option selected doesn't exist")
+			continue
+		}
+
+		result = action.Count
+
+		break
+
+	}
+
+	return result
+}
+
 // SelectFilterSelectablesOnly prompts the user to select n cards from the specified container that matches the given filter
 //
 // Deprecated: New cards should use `fx.SelectFilter`
