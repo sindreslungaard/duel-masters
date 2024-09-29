@@ -51,6 +51,9 @@ func init() {
 func main() {
 	for _, set := range cards.Sets {
 		for uid, ctor := range *set {
+			if ctor == nil {
+				continue
+			}
 			match.AddCard(uid, ctor)
 		}
 	}
