@@ -5,6 +5,18 @@
 - New card "Cosmic Nebula" (thanks @DanieloV)
 - New card "Crath Lade, Merciless King" (thanks @DanieloV)
 - New card "Gandar, Seeker of Explosions" (thanks @DanieloV)
+- New card "King Benthos" (thanks @DanieloV)
+- New card "Armored Transport Galiacruse" (thanks @DanieloV)
+- New card "Sky Crusher, the Agitator" (thanks @DanieloV)
+- New card "Siri, Glory Elemental" (thanks @DanieloV)
+- New card "Bex, the Oracle" (thanks @DanieloV)
+- New card "Cratersaur" (thanks @DanieloV)
+- New card "Gazarias Dragon" (thanks @DanieloV)
+- New card "Rodi Gale, Night Guardian" (thanks @DanieloV)
+- New card "Aqua Agent" (thanks @DanieloV)
+- New card "Gezary, Undercover Doll" (thanks @DanieloV)
+- New card "Phantasmal Horror Gigazabal" (thanks @DanieloV)
+- New card "Valkrowzer, Ultra Rock Beast" (thanks @DanieloV)
 
 ## 30/09/2024
 
