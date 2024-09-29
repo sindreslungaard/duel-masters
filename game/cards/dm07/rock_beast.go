@@ -8,6 +8,19 @@ import (
 	"duel-masters/game/match"
 )
 
+// BlazosaurQ ...
+func ValkrowzerUltraRockBeast(c *match.Card) {
+
+	c.Name = "Valkrowzer, Ultra Rock Beast"
+	c.Power = 9000
+	c.Civ = civ.Fire
+	c.Family = []string{family.RockBeast}
+	c.ManaCost = 6
+	c.ManaRequirement = []string{civ.Fire}
+
+	c.Use(fx.Creature, fx.Evolution, fx.WaterStealth, fx.Doublebreaker)
+}
+
 func Cratersaur(c *match.Card) {
 	c.Name = "Cratersaur"
 	c.Power = 2000
@@ -21,4 +34,5 @@ func Cratersaur(c *match.Card) {
 		condition2 := &match.Condition{ID: cnd.PowerAttacker, Val: 3000, Src: nil}
 		fx.HaveSelfConditionsWhenNoShields(card, ctx, []*match.Condition{condition1, condition2})
 	}))
+
 }
