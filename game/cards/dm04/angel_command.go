@@ -71,13 +71,7 @@ func AlcadeiasLordOfSpirits(c *match.Card) {
 			return
 		}
 
-		if event, ok := ctx.Event.(*match.ShieldTriggerEvent); ok {
-
-			if event.Card.Civ != civ.Light && event.Card.HasCondition(cnd.Spell) {
-				ctx.InterruptFlow()
-			}
-
-		}
+		fx.FilterShieldTriggers(ctx, func(x *match.Card) bool { return x.Civ == civ.Light || !x.HasCondition(cnd.Spell) })
 
 		if event, ok := ctx.Event.(*match.PlayCardEvent); ok {
 

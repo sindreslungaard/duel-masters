@@ -43,6 +43,16 @@ func GiveTapAbilityToAllies(card *match.Card, ctx *match.Context, alliesFilter f
 	})
 }
 
+func FilterShieldTriggers(ctx *match.Context, filter func(*match.Card) bool) {
+
+	if event, ok := ctx.Event.(*match.ShieldTriggerEvent); ok {
+		validCards, invalidCards := FilterCardList(event.Cards, filter)
+		event.Cards = validCards
+		event.UnplayableCards = append(event.UnplayableCards, invalidCards...)
+	}
+
+}
+
 func OpponentDiscardsRandomCard(card *match.Card, ctx *match.Context) {
 
 	hand, err := ctx.Match.Opponent(card.Player).Container(match.HAND)
