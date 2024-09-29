@@ -618,3 +618,10 @@ func IHaveShields(card *match.Card, ctx *match.Context) bool {
 	}
 	return len(shields) > 0
 }
+
+func Tapped(card *match.Card, ctx *match.Context) bool {
+	if card.Zone == match.BATTLEZONE && card.Tapped {
+		return true
+	}
+	return false
+}
