@@ -43,7 +43,13 @@ func ReceiveBlockerWhenOpponentPlaysCreatureOrSpell(card *match.Card, ctx *match
 	}
 
 	if fx.AnotherCreatureSummoned(card, ctx) {
-		ReceiveBlockerWhenOpponentPlaysCard(card, ctx, ctx.Event.(*match.CardMoved).MatchPlayerID)
+		// This check can be removed once the card in CardMoved is passed as pointer
+		// And MatchPlayerID is removed
+		event, ok := ctx.Event.(*match.CardMoved)
+		if !ok {
+			return
+		}
+		ReceiveBlockerWhenOpponentPlaysCard(card, ctx, event.MatchPlayerID)
 	}
 }
 

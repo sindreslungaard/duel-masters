@@ -277,7 +277,7 @@ func Creature(card *match.Card, ctx *match.Context) {
 							ctx.Match.End(card.Player, fmt.Sprintf("%s won the game", ctx.Match.PlayerRef(card.Player).Socket.User.Username))
 						} else {
 							// Break n shields
-							ctx.Match.BreakShields(shieldsAttacked, card.ID)
+							ctx.Match.BreakShields(shieldsAttacked, card)
 						}
 
 						break
@@ -317,7 +317,7 @@ func Creature(card *match.Card, ctx *match.Context) {
 					ctx.Match.End(card.Player, fmt.Sprintf("%s won the game", ctx.Match.PlayerRef(card.Player).Socket.User.Username))
 				} else {
 					// Break n shields
-					ctx.Match.BreakShields(shieldsAttacked, card.ID)
+					ctx.Match.BreakShields(shieldsAttacked, card)
 				}
 
 			}
@@ -562,6 +562,7 @@ func Creature(card *match.Card, ctx *match.Context) {
 			}
 
 			if f, ok := tapEffect.(func(card *match.Card, ctx *match.Context)); ok {
+				ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s activates tap effect", card.Name))
 				f(card, ctx)
 			}
 
@@ -578,36 +579,11 @@ func Creature(card *match.Card, ctx *match.Context) {
 
 		ctx.ScheduleAfter(func() {
 			card.Player.MoveCard(card.ID, match.BATTLEZONE, match.GRAVEYARD, card.ID)
-
-			// Slayer
-			if event.Context == match.DestroyedInBattle {
-				for _, condition := range card.Conditions() {
-					if condition.ID != cnd.Slayer {
-						continue
-					}
-
-					creature, err := ctx.Match.Opponent(card.Player).GetCard(event.Source.ID, match.BATTLEZONE)
-					if err != nil {
-						break
-					}
-
-					if f, ok := condition.Val.(SlayerCondition); ok {
-						// conditional slayer
-						if f(creature) {
-							ctx.Match.Destroy(creature, card, match.DestroyedBySlayer)
-						}
-					} else {
-						// regular slayer
-						ctx.Match.Destroy(creature, card, match.DestroyedBySlayer)
-					}
-				}
-			}
 		})
 	}
 
 	if event, ok := ctx.Event.(*match.Battle); ok && event.Attacker.ID == card.ID {
 		ctx.ScheduleAfter(func() {
-			m := ctx.Match
 			attacker := event.Attacker
 			attackerPower := event.AttackerPower
 			defender := event.Defender
@@ -615,18 +591,36 @@ func Creature(card *match.Card, ctx *match.Context) {
 			blocked := event.Blocked
 
 			if attackerPower > defenderPower {
-				m.HandleFx(match.NewContext(m, &match.CreatureDestroyed{Card: defender, Source: attacker, Blocked: blocked}))
-				m.ReportActionInChat(defender.Player, fmt.Sprintf("%s (%v) was destroyed by %s (%v)", defender.Name, defenderPower, attacker.Name, attackerPower))
+				handleBattle(ctx, attacker, attackerPower, defender, defenderPower, blocked)
 			} else if attackerPower == defenderPower {
-				m.HandleFx(match.NewContext(m, &match.CreatureDestroyed{Card: attacker, Source: defender, Blocked: blocked}))
-				m.ReportActionInChat(attacker.Player, fmt.Sprintf("%s (%v) was destroyed by %s (%v)", attacker.Name, attackerPower, defender.Name, defenderPower))
-				m.HandleFx(match.NewContext(m, &match.CreatureDestroyed{Card: defender, Source: attacker, Blocked: blocked}))
-				m.ReportActionInChat(defender.Player, fmt.Sprintf("%s (%v) was destroyed by %s (%v)", defender.Name, defenderPower, attacker.Name, attackerPower))
+				handleBattle(ctx, attacker, attackerPower, defender, defenderPower, blocked)
+				handleBattle(ctx, defender, defenderPower, attacker, attackerPower, blocked)
 			} else if attackerPower < defenderPower {
-				m.HandleFx(match.NewContext(m, &match.CreatureDestroyed{Card: attacker, Source: defender, Blocked: blocked}))
-				m.ReportActionInChat(attacker.Player, fmt.Sprintf("%s (%v) was destroyed by %s (%v)", attacker.Name, attackerPower, defender.Name, defenderPower))
+				handleBattle(ctx, defender, defenderPower, attacker, attackerPower, blocked)
 			}
 		})
 	}
 
+}
+
+func handleBattle(ctx *match.Context, winner *match.Card, winnerPower int, looser *match.Card, looserPower int, blocked bool) {
+	ctx.Match.ReportActionInChat(looser.Player, fmt.Sprintf("%s (%v) was destroyed by %s (%v)", looser.Name, looserPower, winner.Name, winnerPower))
+	ctx.Match.HandleFx(match.NewContext(ctx.Match, &match.CreatureDestroyed{Card: looser, Source: winner, Blocked: blocked}))
+
+	// Slayer
+	for _, condition := range looser.Conditions() {
+		if condition.ID != cnd.Slayer {
+			continue
+		}
+
+		if f, ok := condition.Val.(SlayerCondition); ok {
+			// conditional slayer
+			if f(winner) {
+				ctx.Match.Destroy(winner, looser, match.DestroyedBySlayer)
+			}
+		} else {
+			// regular slayer
+			ctx.Match.Destroy(winner, looser, match.DestroyedBySlayer)
+		}
+	}
 }
