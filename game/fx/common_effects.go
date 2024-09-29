@@ -115,3 +115,22 @@ func HaveSelfConditionsWhenNoShields(card *match.Card, ctx *match.Context, condi
 
 	})
 }
+
+func DestoryOpShield(card *match.Card, ctx *match.Context) {
+	opponent := ctx.Match.Opponent(card.Player)
+
+	ctx.Match.BreakShields(SelectBackside(
+		card.Player,
+		ctx.Match,
+		opponent,
+		match.SHIELDZONE,
+		fmt.Sprintf("%s effect: select shield to break", card.Name),
+		1,
+		1,
+		false,
+	), card)
+
+	ctx.Match.ReportActionInChat(ctx.Match.Opponent(card.Player),
+		fmt.Sprintf("%s effect broke one of %s's shields", card.Name, opponent.Username()))
+
+}

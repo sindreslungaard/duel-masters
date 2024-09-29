@@ -625,3 +625,10 @@ func Tapped(card *match.Card, ctx *match.Context) bool {
 	}
 	return false
 }
+
+func Blocked(card *match.Card, ctx *match.Context) bool {
+	if event, ok := ctx.Event.(*match.Battle); ok {
+		return event.Blocked && event.Attacker == card
+	}
+	return false
+}
