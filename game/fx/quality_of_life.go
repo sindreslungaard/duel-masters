@@ -526,6 +526,7 @@ func MySurvivorSummoned(card *match.Card, ctx *match.Context) bool {
 	}
 
 	creature, err := card.Player.GetCard(event.CardID, match.BATTLEZONE)
+
 	if err != nil {
 		return false
 	}
