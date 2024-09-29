@@ -17,46 +17,38 @@ func VampireSilphy(c *match.Card) {
 	c.ManaCost = 8
 	c.ManaRequirement = []string{civ.Darkness}
 
-	c.Use(fx.Creature, func(card *match.Card, ctx *match.Context) {
+	c.Use(fx.Creature, fx.When(fx.Summoned, func(card *match.Card, ctx *match.Context) {
 
-		if event, ok := ctx.Event.(*match.CardMoved); ok {
+		opponent := ctx.Match.Opponent(card.Player)
 
-			if event.CardID == card.ID && event.To == match.BATTLEZONE {
-
-				opponent := ctx.Match.Opponent(card.Player)
-
-				myCreatures, err := card.Player.Container(match.BATTLEZONE)
-				if err != nil {
-					return
-				}
-
-				opponentCreatures, err := opponent.Container(match.BATTLEZONE)
-				if err != nil {
-					return
-				}
-
-				toDestroy := make([]*match.Card, 0)
-
-				for _, creature := range myCreatures {
-					if ctx.Match.GetPower(creature, false) <= 3000 {
-						toDestroy = append(toDestroy, creature)
-					}
-				}
-
-				for _, creature := range opponentCreatures {
-					if ctx.Match.GetPower(creature, false) <= 3000 {
-						toDestroy = append(toDestroy, creature)
-					}
-				}
-
-				for _, creature := range toDestroy {
-					ctx.Match.Destroy(creature, card, match.DestroyedByMiscAbility)
-				}
-
-			}
-
+		myCreatures, err := card.Player.Container(match.BATTLEZONE)
+		if err != nil {
+			return
 		}
 
-	})
+		opponentCreatures, err := opponent.Container(match.BATTLEZONE)
+		if err != nil {
+			return
+		}
+
+		toDestroy := make([]*match.Card, 0)
+
+		for _, creature := range myCreatures {
+			if ctx.Match.GetPower(creature, false) <= 3000 {
+				toDestroy = append(toDestroy, creature)
+			}
+		}
+
+		for _, creature := range opponentCreatures {
+			if ctx.Match.GetPower(creature, false) <= 3000 {
+				toDestroy = append(toDestroy, creature)
+			}
+		}
+
+		for _, creature := range toDestroy {
+			ctx.Match.Destroy(creature, card, match.DestroyedByMiscAbility)
+		}
+
+	}))
 
 }

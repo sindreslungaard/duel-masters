@@ -46,7 +46,7 @@ func FighterDualFang(c *match.Card) {
 	c.ManaCost = 6
 	c.ManaRequirement = []string{civ.Nature}
 
-	c.Use(fx.Creature, fx.Evolution, fx.Doublebreaker, fx.DrawToMana, fx.DrawToMana)
+	c.Use(fx.Creature, fx.Evolution, fx.Doublebreaker, fx.When(fx.Summoned, fx.Draw2ToMana))
 
 }
 

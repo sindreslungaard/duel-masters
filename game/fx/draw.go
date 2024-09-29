@@ -5,70 +5,38 @@ import (
 	"fmt"
 )
 
-func draw(card *match.Card, ctx *match.Context, n int) {
-
-	if event, ok := ctx.Event.(*match.CardMoved); ok {
-
-		if event.CardID == card.ID && (event.To == match.BATTLEZONE || event.To == match.SPELLZONE) {
-
-			card.Player.DrawCards(n)
-
-		}
-
-	}
-
-}
-
-// Draw1 draws 1 card when the card is added to the battlezone or spellzone
+// Draw1 Convenience method with standard signature for drawing 1
 func Draw1(card *match.Card, ctx *match.Context) {
-	draw(card, ctx, 1)
+	card.Player.DrawCards(1)
 }
 
-// Draw2 draws 2 card when the card is added to the battlezone or spellzone
+// Draw2 Convenience method with standard signature for drawing 1
 func Draw2(card *match.Card, ctx *match.Context) {
-	draw(card, ctx, 2)
+	card.Player.DrawCards(2)
 }
 
-// Draw3 draws 3 card when the card is added to the battlezone or spellzone
-func Draw3(card *match.Card, ctx *match.Context) {
-	draw(card, ctx, 3)
-}
+// Draw1ToMana draws 1 card and puts it in the players manazone
+func Draw1ToMana(card *match.Card, ctx *match.Context) {
 
-// Draw4 draws 4 card when the card is added to the battlezone or spellzone
-func Draw4(card *match.Card, ctx *match.Context) {
-	draw(card, ctx, 4)
-}
+	cards := card.Player.PeekDeck(1)
 
-// Draw5 draws 5 card when the card is added to the battlezone or spellzone
-func Draw5(card *match.Card, ctx *match.Context) {
-	draw(card, ctx, 5)
-}
-
-// DrawToMana draws 1 card and puts it in the players manazone
-func DrawToMana(card *match.Card, ctx *match.Context) {
-
-	if event, ok := ctx.Event.(*match.CardMoved); ok {
-
-		if event.CardID == card.ID && (event.To == match.BATTLEZONE || event.To == match.SPELLZONE) {
-
-			cards := card.Player.PeekDeck(1)
-
-			if len(cards) < 1 {
-				return
-			}
-
-			c, err := card.Player.MoveCard(cards[0].ID, match.DECK, match.MANAZONE, card.ID)
-
-			if err != nil {
-				return
-			}
-
-			ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s was added to %s's manazone from the top of their deck", c.Name, ctx.Match.PlayerRef(card.Player).Socket.User.Username))
-
-		}
-
+	if len(cards) < 1 {
+		return
 	}
 
+	c, err := card.Player.MoveCard(cards[0].ID, match.DECK, match.MANAZONE, card.ID)
+
+	if err != nil {
+		return
+	}
+
+	ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s was added to %s's manazone from the top of their deck", c.Name, card.Player.Username()))
+
+}
+
+func Draw2ToMana(card *match.Card, ctx *match.Context) {
+	Draw1ToMana(card, ctx)
+	Draw1ToMana(card, ctx)
 }
 
 func MayDraw1(card *match.Card, ctx *match.Context) {

@@ -60,23 +60,15 @@ func MieleVizierOfLightning(c *match.Card) {
 	c.ManaCost = 3
 	c.ManaRequirement = []string{civ.Light}
 
-	c.Use(fx.Creature, func(card *match.Card, ctx *match.Context) {
+	c.Use(fx.Creature, fx.When(fx.Summoned, func(card *match.Card, ctx *match.Context) {
 
-		if event, ok := ctx.Event.(*match.CardMoved); ok {
+		creatures := match.Search(card.Player, ctx.Match, ctx.Match.Opponent(card.Player), match.BATTLEZONE, "Miele, Vizier of Lightning: Select 1 of your opponent's creature and tap it. Close to not tap any creatures.", 1, 1, true)
 
-			if event.CardID == card.ID && event.To == match.BATTLEZONE {
-
-				creatures := match.Search(card.Player, ctx.Match, ctx.Match.Opponent(card.Player), match.BATTLEZONE, "Miele, Vizier of Lightning: Select 1 of your opponent's creature and tap it. Close to not tap any creatures.", 1, 1, true)
-
-				for _, creature := range creatures {
-					creature.Tapped = true
-				}
-
-			}
-
+		for _, creature := range creatures {
+			creature.Tapped = true
 		}
 
-	})
+	}))
 
 }
 

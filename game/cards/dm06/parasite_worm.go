@@ -18,42 +18,24 @@ func GraveWormQ(c *match.Card) {
 	c.ManaCost = 5
 	c.ManaRequirement = []string{civ.Darkness}
 
-	c.Use(fx.Creature, fx.Survivor, func(card *match.Card, ctx *match.Context) {
+	c.Use(fx.Creature, fx.Survivor, fx.When(fx.MySurvivorSummoned, func(card *match.Card, ctx *match.Context) {
+		fx.SelectFilter(
+			card.Player,
+			ctx.Match,
+			card.Player,
+			match.GRAVEYARD,
+			"You may return a survivor from your graveyard to your hand",
+			1,
+			1,
+			true,
+			func(x *match.Card) bool { return x.HasFamily(family.Survivor) && x.HasCondition(cnd.Creature) },
+			true,
+		).Map(func(x *match.Card) {
+			card.Player.MoveCard(x.ID, match.GRAVEYARD, match.HAND, card.ID)
+			ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s was moved to %s's hand from their graveyard by Grave Worm Q's survivor ability", x.Name, card.Player.Username()))
+		})
 
-		if !ctx.Match.IsPlayerTurn(card.Player) || card.Zone != match.BATTLEZONE {
-			return
-		}
-
-		if event, ok := ctx.Event.(*match.CardMoved); ok {
-
-			creature, err := card.Player.GetCard(event.CardID, match.BATTLEZONE)
-
-			if err != nil {
-				return
-			}
-
-			if creature.HasFamily(family.Survivor) && event.To == match.BATTLEZONE {
-				fx.SelectFilterSelectablesOnly(
-					card.Player,
-					ctx.Match,
-					card.Player,
-					match.GRAVEYARD,
-					"You may return a survivor from your graveyard to your hand",
-					1,
-					1,
-					true,
-					func(x *match.Card) bool { return x.HasFamily(family.Survivor) && x.HasCondition(cnd.Creature) },
-				).Map(func(x *match.Card) {
-					card.Player.MoveCard(x.ID, match.GRAVEYARD, match.HAND, card.ID)
-					ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s was moved to %s's hand from their graveyard by Grave Worm Q's survivor ability", x.Name, card.Player.Username()))
-
-				})
-
-			}
-
-		}
-
-	})
+	}))
 
 }
 

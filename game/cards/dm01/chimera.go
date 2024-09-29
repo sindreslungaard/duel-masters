@@ -19,86 +19,78 @@ func Gigaberos(c *match.Card) {
 	c.ManaCost = 5
 	c.ManaRequirement = []string{civ.Darkness}
 
-	c.Use(fx.Creature, fx.Doublebreaker, func(card *match.Card, ctx *match.Context) {
+	c.Use(fx.Creature, fx.Doublebreaker, fx.When(fx.Summoned, func(card *match.Card, ctx *match.Context) {
 
-		if event, ok := ctx.Event.(*match.CardMoved); ok {
+		creatures, err := card.Player.Container(match.BATTLEZONE)
 
-			if event.CardID == card.ID && event.To == match.BATTLEZONE {
+		if err != nil {
+			return
+		}
 
-				creatures, err := card.Player.Container(match.BATTLEZONE)
+		otherCreatures := make([]*match.Card, 0)
+		for _, creature := range creatures {
+			if creature.ID != card.ID {
+				otherCreatures = append(otherCreatures, creature)
+			}
+		}
+		this := make([]*match.Card, 0)
+		this = append(this, card)
 
-				if err != nil {
-					return
+		options := make(map[string][]*match.Card)
+
+		options["This creature"] = this
+		options["Your other creatures"] = otherCreatures
+
+		ctx.Match.NewMultipartAction(card.Player, options, 1, 2, "Choose 2 of your other creatures in the battle zone that will be destroyed or destroy this creature", false)
+
+		defer ctx.Match.CloseAction(card.Player)
+
+		for {
+
+			action := <-card.Player.Action
+
+			if len(action.Cards) < 1 || len(action.Cards) > 2 {
+				ctx.Match.DefaultActionWarning(card.Player)
+				continue
+			}
+
+			// must be an attempt to destroy this creature
+			if len(action.Cards) == 1 {
+
+				if action.Cards[0] != card.ID {
+					ctx.Match.DefaultActionWarning(card.Player)
+					continue
 				}
 
-				otherCreatures := make([]*match.Card, 0)
-				for _, creature := range creatures {
-					if creature.ID != card.ID {
-						otherCreatures = append(otherCreatures, creature)
-					}
-				}
-				this := make([]*match.Card, 0)
-				this = append(this, card)
+				ctx.Match.Destroy(card, card, match.DestroyedByMiscAbility)
+				ctx.InterruptFlow()
 
-				options := make(map[string][]*match.Card)
-
-				options["This creature"] = this
-				options["Your other creatures"] = otherCreatures
-
-				ctx.Match.NewMultipartAction(card.Player, options, 1, 2, "Choose 2 of your other creatures in the battle zone that will be destroyed or destroy this creature", false)
-
-				defer ctx.Match.CloseAction(card.Player)
-
-				for {
-
-					action := <-card.Player.Action
-
-					if len(action.Cards) < 1 || len(action.Cards) > 2 {
-						ctx.Match.DefaultActionWarning(card.Player)
-						continue
-					}
-
-					// must be an attempt to destroy this creature
-					if len(action.Cards) == 1 {
-
-						if action.Cards[0] != card.ID {
-							ctx.Match.DefaultActionWarning(card.Player)
-							continue
-						}
-
-						ctx.Match.Destroy(card, card, match.DestroyedByMiscAbility)
-						ctx.InterruptFlow()
-
-						break
-
-					}
-
-					if !match.AssertCardsIn(creatures, action.Cards...) {
-						ctx.Match.DefaultActionWarning(card.Player)
-						continue
-					}
-
-					for _, id := range action.Cards {
-
-						creature, err := card.Player.GetCard(id, match.BATTLEZONE)
-
-						if err != nil {
-							continue
-						}
-
-						ctx.Match.Destroy(creature, card, match.DestroyedByMiscAbility)
-
-					}
-
-					break
-
-				}
+				break
 
 			}
 
+			if !match.AssertCardsIn(creatures, action.Cards...) {
+				ctx.Match.DefaultActionWarning(card.Player)
+				continue
+			}
+
+			for _, id := range action.Cards {
+
+				creature, err := card.Player.GetCard(id, match.BATTLEZONE)
+
+				if err != nil {
+					continue
+				}
+
+				ctx.Match.Destroy(creature, card, match.DestroyedByMiscAbility)
+
+			}
+
+			break
+
 		}
 
-	})
+	}))
 
 }
 
@@ -126,23 +118,15 @@ func Gigargon(c *match.Card) {
 	c.ManaCost = 8
 	c.ManaRequirement = []string{civ.Darkness}
 
-	c.Use(fx.Creature, func(card *match.Card, ctx *match.Context) {
+	c.Use(fx.Creature, fx.When(fx.Summoned, func(card *match.Card, ctx *match.Context) {
 
-		if event, ok := ctx.Event.(*match.CardMoved); ok {
+		creatures := match.SearchForCnd(card.Player, ctx.Match, card.Player, match.GRAVEYARD, cnd.Creature, "Gigargon: Select up to 2 cards from your graveyard that will be added to your hand", 1, 2, true)
 
-			if event.CardID == card.ID && event.To == match.BATTLEZONE {
-
-				creatures := match.SearchForCnd(card.Player, ctx.Match, card.Player, match.GRAVEYARD, cnd.Creature, "Gigargon: Select up to 2 cards from your graveyard that will be added to your hand", 1, 2, true)
-
-				for _, creature := range creatures {
-					card.Player.MoveCard(creature.ID, match.GRAVEYARD, match.HAND, card.ID)
-					ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s was returned to %s's hand from their graveyard", creature.Name, card.Player.Username()))
-				}
-
-			}
-
+		for _, creature := range creatures {
+			card.Player.MoveCard(creature.ID, match.GRAVEYARD, match.HAND, card.ID)
+			ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s was returned to %s's hand from their graveyard", creature.Name, card.Player.Username()))
 		}
 
-	})
+	}))
 
 }

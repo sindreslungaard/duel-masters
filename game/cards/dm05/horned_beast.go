@@ -18,7 +18,7 @@ func SmashHornQ(c *match.Card) {
 	c.ManaCost = 3
 	c.ManaRequirement = []string{civ.Nature}
 
-	c.Use(fx.Creature, fx.Survivor, fx.When(fx.Summoned, func(card *match.Card, ctx *match.Context) {
+	c.Use(fx.Creature, fx.Survivor, fx.When(fx.InTheBattlezone, func(card *match.Card, ctx *match.Context) {
 
 		ctx.Match.ApplyPersistentEffect(func(ctx2 *match.Context, exit func()) {
 

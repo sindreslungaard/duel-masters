@@ -42,31 +42,23 @@ func RothusTheTraveler(c *match.Card) {
 	c.ManaCost = 4
 	c.ManaRequirement = []string{civ.Fire}
 
-	c.Use(fx.Creature, func(card *match.Card, ctx *match.Context) {
+	c.Use(fx.Creature, fx.When(fx.Summoned, func(card *match.Card, ctx *match.Context) {
 
-		if event, ok := ctx.Event.(*match.CardMoved); ok {
+		creatures := match.Search(card.Player, ctx.Match, card.Player, match.BATTLEZONE, "Rothus, the Traveler: Select 1 creature from your battlezone that will be sent to your graveyard", 1, 1, false)
 
-			if event.CardID == card.ID && event.To == match.BATTLEZONE {
-
-				creatures := match.Search(card.Player, ctx.Match, card.Player, match.BATTLEZONE, "Rothus, the Traveler: Select 1 creature from your battlezone that will be sent to your graveyard", 1, 1, false)
-
-				for _, creature := range creatures {
-					ctx.Match.Destroy(creature, card, match.DestroyedByMiscAbility)
-				}
-
-				ctx.Match.Wait(card.Player, "Waiting for your opponent to make an action")
-				defer ctx.Match.EndWait(card.Player)
-
-				opponentCreatures := match.Search(ctx.Match.Opponent(card.Player), ctx.Match, ctx.Match.Opponent(card.Player), match.BATTLEZONE, "Rothus, the Traveler: Select 1 creature from your battlezone that will be sent to your graveyard", 1, 1, false)
-
-				for _, creature := range opponentCreatures {
-					ctx.Match.Destroy(creature, card, match.DestroyedByMiscAbility)
-				}
-
-			}
-
+		for _, creature := range creatures {
+			ctx.Match.Destroy(creature, card, match.DestroyedByMiscAbility)
 		}
 
-	})
+		ctx.Match.Wait(card.Player, "Waiting for your opponent to make an action")
+		defer ctx.Match.EndWait(card.Player)
+
+		opponentCreatures := match.Search(ctx.Match.Opponent(card.Player), ctx.Match, ctx.Match.Opponent(card.Player), match.BATTLEZONE, "Rothus, the Traveler: Select 1 creature from your battlezone that will be sent to your graveyard", 1, 1, false)
+
+		for _, creature := range opponentCreatures {
+			ctx.Match.Destroy(creature, card, match.DestroyedByMiscAbility)
+		}
+
+	}))
 
 }

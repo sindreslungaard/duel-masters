@@ -18,28 +18,25 @@ func DoboulgyserGiantRockBeast(c *match.Card) {
 	c.ManaCost = 6
 	c.ManaRequirement = []string{civ.Fire}
 
-	c.Use(fx.Creature, fx.Evolution, fx.Doublebreaker, func(card *match.Card, ctx *match.Context) {
+	c.Use(fx.Creature, fx.Evolution, fx.Doublebreaker, fx.When(fx.Summoned, func(card *match.Card, ctx *match.Context) {
 
-		if match.AmISummoned(card, ctx) {
+		fx.SelectFilterSelectablesOnly(
+			card.Player,
+			ctx.Match,
+			ctx.Match.Opponent(card.Player),
+			match.BATTLEZONE,
+			"Doboulgyser: You may select 1 opponent's creature with 3000 or less power and destroy it.",
+			0,
+			1,
+			true,
+			func(x *match.Card) bool { return ctx.Match.GetPower(x, false) <= 3000 },
+		).Map(func(x *match.Card) {
 
-			fx.SelectFilterSelectablesOnly(
-				card.Player,
-				ctx.Match,
-				ctx.Match.Opponent(card.Player),
-				match.BATTLEZONE,
-				"Doboulgyser: You may select 1 opponent's creature with 3000 or less power and destroy it.",
-				0,
-				1,
-				true,
-				func(x *match.Card) bool { return ctx.Match.GetPower(x, false) <= 3000 },
-			).Map(func(x *match.Card) {
+			ctx.Match.Destroy(x, card, match.DestroyedByMiscAbility)
+			ctx.Match.ReportActionInChat(ctx.Match.Opponent(card.Player), fmt.Sprintf("%s was destroyed by Doboulgyser", x.Name))
+		})
 
-				ctx.Match.Destroy(x, card, match.DestroyedByMiscAbility)
-				ctx.Match.ReportActionInChat(ctx.Match.Opponent(card.Player), fmt.Sprintf("%s was destroyed by Doboulgyser", x.Name))
-			})
-
-		}
-	})
+	}))
 
 }
 
@@ -53,33 +50,26 @@ func Magmarex(c *match.Card) {
 	c.ManaCost = 5
 	c.ManaRequirement = []string{civ.Fire}
 
-	c.Use(fx.Creature, fx.ShieldTrigger, func(card *match.Card, ctx *match.Context) {
+	c.Use(fx.Creature, fx.ShieldTrigger, fx.When(fx.Summoned, func(card *match.Card, ctx *match.Context) {
 
-		if event, ok := ctx.Event.(*match.CardMoved); ok {
+		fx.FindFilter(
+			card.Player,
+			match.BATTLEZONE,
+			func(x *match.Card) bool { return ctx.Match.GetPower(x, false) == 1000 },
+		).Map(func(x *match.Card) {
+			ctx.Match.Destroy(x, card, match.DestroyedByMiscAbility)
+			ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s was destroyed by Magmarex", x.Name))
+		})
 
-			if event.CardID != card.ID || event.To != match.BATTLEZONE {
-				return
-			}
+		fx.FindFilter(
+			ctx.Match.Opponent(card.Player),
+			match.BATTLEZONE,
+			func(x *match.Card) bool { return ctx.Match.GetPower(x, false) == 1000 },
+		).Map(func(x *match.Card) {
+			ctx.Match.Destroy(x, card, match.DestroyedByMiscAbility)
+			ctx.Match.ReportActionInChat(ctx.Match.Opponent(card.Player), fmt.Sprintf("%s was destroyed by Magmarex", x.Name))
+		})
 
-			fx.FindFilter(
-				card.Player,
-				match.BATTLEZONE,
-				func(x *match.Card) bool { return ctx.Match.GetPower(x, false) == 1000 },
-			).Map(func(x *match.Card) {
-				ctx.Match.Destroy(x, card, match.DestroyedByMiscAbility)
-				ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s was destroyed by Magmarex", x.Name))
-			})
-
-			fx.FindFilter(
-				ctx.Match.Opponent(card.Player),
-				match.BATTLEZONE,
-				func(x *match.Card) bool { return ctx.Match.GetPower(x, false) == 1000 },
-			).Map(func(x *match.Card) {
-				ctx.Match.Destroy(x, card, match.DestroyedByMiscAbility)
-				ctx.Match.ReportActionInChat(ctx.Match.Opponent(card.Player), fmt.Sprintf("%s was destroyed by Magmarex", x.Name))
-			})
-
-		}
-	})
+	}))
 
 }
