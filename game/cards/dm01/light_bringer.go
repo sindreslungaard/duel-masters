@@ -17,7 +17,7 @@ func ChiliasTheOracle(c *match.Card) {
 	c.ManaCost = 4
 	c.ManaRequirement = []string{civ.Light}
 
-	c.Use(fx.Creature, fx.ReturnToHand)
+	c.Use(fx.Creature, fx.When(fx.WouldBeDestroyed, fx.ReturnToHand))
 
 }
 

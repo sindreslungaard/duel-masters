@@ -77,6 +77,21 @@ func When(test func(*match.Card, *match.Context) bool, h func(*match.Card, *matc
 
 }
 
+// When performs the specified function if the test is successful
+func WhenAll(tests []func(*match.Card, *match.Context) bool, h func(*match.Card, *match.Context)) func(*match.Card, *match.Context) {
+
+	return func(card *match.Card, ctx *match.Context) {
+		for _, f := range tests {
+			if !f(card, ctx) {
+				return
+			}
+		}
+
+		h(card, ctx)
+	}
+
+}
+
 // Select prompts the user to select n cards from the specified container
 func Select(p *match.Player, m *match.Match, containerOwner *match.Player, containerName string, text string, min int, max int, cancellable bool) CardCollection {
 	return SelectFilterSelectablesOnly(p, m, containerOwner, containerName, text, min, max, cancellable, func(x *match.Card) bool { return true })
@@ -154,6 +169,11 @@ func SelectFilter(p *match.Player, m *match.Match, containerOwner *match.Player,
 
 	if len(filtered) < 1 {
 		return result
+	}
+
+	if !m.IsPlayerTurn(p) {
+		m.Wait(m.Opponent(p), "Waiting for your opponent to make an action")
+		defer m.EndWait(m.Opponent(p))
 	}
 
 	m.NewActionFullList(p, filtered, min, max, text, cancellable, unselectables)
@@ -433,6 +453,19 @@ func AttackingCreature(card *match.Card, ctx *match.Context) bool {
 
 }
 
+// WouldBeDestroyed returns true if the card is about to be destroyed
+func WouldBeDestroyed(card *match.Card, ctx *match.Context) bool {
+
+	if event, ok := ctx.Event.(*match.CreatureDestroyed); ok {
+		if event.Card == card {
+			return true
+		}
+	}
+
+	return false
+
+}
+
 // Destroyed returns true if the card was destroyed
 func Destroyed(card *match.Card, ctx *match.Context) bool {
 
@@ -459,17 +492,13 @@ func EndOfTurn(card *match.Card, ctx *match.Context) bool {
 
 // EndOfTurn returns true if the turn is ending, pre end of turn triggers
 func EndOfMyTurn(card *match.Card, ctx *match.Context) bool {
-	_, ok := ctx.Event.(*match.EndStep)
+	return EndOfTurn(card, ctx) && ctx.Match.IsPlayerTurn(card.Player)
+}
 
-	if !ok {
-		return false
-	}
-
-	if ctx.Match.IsPlayerTurn(card.Player) {
-		return true
-	}
-
-	return false
+// EndOfMyTurnWithCreatureInTheBZ returns true if the turn is ending,
+// pre end of turn triggers for creatures in the battlezone
+func EndOfMyTurnCreatureBZ(card *match.Card, ctx *match.Context) bool {
+	return EndOfMyTurn(card, ctx) && card.Zone == match.BATTLEZONE
 }
 
 // BreakShield returns true if a shield is about to be broken
@@ -572,4 +601,20 @@ func MyDrawStep(card *match.Card, ctx *match.Context) bool {
 		}
 	}
 	return false
+}
+
+func IDontHaveShields(card *match.Card, ctx *match.Context) bool {
+	shields, err := card.Player.Container(match.SHIELDZONE)
+	if err != nil {
+		return false
+	}
+	return len(shields) == 0
+}
+
+func IHaveShields(card *match.Card, ctx *match.Context) bool {
+	shields, err := card.Player.Container(match.SHIELDZONE)
+	if err != nil {
+		return false
+	}
+	return len(shields) > 0
 }

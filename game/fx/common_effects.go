@@ -85,3 +85,33 @@ func ShuffleDeck(card *match.Card, ctx *match.Context, forOpponent bool) {
 	}
 
 }
+
+func BlockerWhenNoShields(card *match.Card, ctx *match.Context) {
+	condition := &match.Condition{ID: cnd.Blocker, Val: true, Src: nil}
+	HaveSelfConditionsWhenNoShields(card, ctx, []*match.Condition{condition})
+}
+
+func HaveSelfConditionsWhenNoShields(card *match.Card, ctx *match.Context, conditions []*match.Condition) {
+
+	ctx.Match.ApplyPersistentEffect(func(ctx2 *match.Context, exit func()) {
+
+		notInTheBZ := card.Zone != match.BATTLEZONE
+		if notInTheBZ || IHaveShields(card, ctx2) {
+			for _, cond := range conditions {
+				card.RemoveSpecificConditionBySource(cond.ID, card.ID)
+			}
+		}
+
+		if notInTheBZ {
+			exit()
+			return
+		}
+
+		if IDontHaveShields(card, ctx2) {
+			for _, cond := range conditions {
+				card.AddUniqueSourceCondition(cond.ID, cond.Val, card.ID)
+			}
+		}
+
+	})
+}
