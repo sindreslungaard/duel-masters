@@ -42,8 +42,11 @@ func ReceiveBlockerWhenOpponentPlaysCreatureOrSpell(card *match.Card, ctx *match
 		ReceiveBlockerWhenOpponentPlaysCard(card, ctx, event.MatchPlayerID)
 	}
 
-	if event, ok := ctx.Event.(*match.CardMoved); ok {
-		if event.To != match.BATTLEZONE {
+	if fx.AnotherCreatureSummoned(card, ctx) {
+		// This check can be removed once the card in CardMoved is passed as pointer
+		// And MatchPlayerID is removed
+		event, ok := ctx.Event.(*match.CardMoved)
+		if !ok {
 			return
 		}
 		ReceiveBlockerWhenOpponentPlaysCard(card, ctx, event.MatchPlayerID)
@@ -84,7 +87,7 @@ func FortMegacluster(c *match.Card) {
 	c.TapAbility = fortMegaclusterTapAbility
 
 	c.Use(fx.Creature, fx.Evolution, fx.TapAbility,
-		fx.When(fx.Summoned, func(card *match.Card, ctx *match.Context) {
+		fx.When(fx.InTheBattlezone, func(card *match.Card, ctx *match.Context) {
 
 			fx.GiveTapAbilityToAllies(
 				card,

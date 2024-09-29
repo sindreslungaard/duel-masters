@@ -17,28 +17,7 @@ func ForbosSanctumGuardianQ(c *match.Card) {
 	c.ManaCost = 6
 	c.ManaRequirement = []string{civ.Light}
 
-	c.Use(fx.Creature, fx.Survivor, func(card *match.Card, ctx *match.Context) {
-
-		if !ctx.Match.IsPlayerTurn(card.Player) || card.Zone != match.BATTLEZONE {
-			return
-		}
-
-		if event, ok := ctx.Event.(*match.CardMoved); ok && event.To == match.BATTLEZONE {
-
-			creature, err := card.Player.GetCard(event.CardID, match.BATTLEZONE)
-
-			if err != nil {
-				return
-			}
-
-			if !creature.HasFamily(family.Survivor) {
-				return
-			}
-
-			fx.SearchDeckTake1Spell(card, ctx)
-
-		}
-	})
+	c.Use(fx.Creature, fx.Survivor, fx.When(fx.MySurvivorSummoned, fx.SearchDeckTake1Spell))
 }
 
 func LuGilaSilverRiftGuardian(c *match.Card) {
@@ -56,8 +35,9 @@ func LuGilaSilverRiftGuardian(c *match.Card) {
 			return
 		}
 
+		// Can have a full refactoring to fx.When after CardMoved uses card pointer
 		if event, ok := ctx.Event.(*match.CardMoved); ok {
-			if event.To != match.BATTLEZONE {
+			if event.To != match.BATTLEZONE || event.From == match.HIDDENZONE {
 				return
 			}
 
@@ -98,7 +78,7 @@ func ArcBinetheAstounding(c *match.Card) {
 	c.TapAbility = arcBinetheAstoundingSpecialAbility
 
 	c.Use(fx.Creature, fx.Evolution, fx.TapAbility,
-		fx.When(fx.Summoned, func(card *match.Card, ctx *match.Context) {
+		fx.When(fx.InTheBattlezone, func(card *match.Card, ctx *match.Context) {
 
 			fx.GiveTapAbilityToAllies(
 				card,

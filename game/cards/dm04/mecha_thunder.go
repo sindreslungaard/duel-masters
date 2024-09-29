@@ -39,7 +39,7 @@ func ReBilSeekerOfArchery(c *match.Card) {
 	c.ManaCost = 7
 	c.ManaRequirement = []string{civ.Light}
 
-	c.Use(fx.Creature, fx.Doublebreaker, fx.When(fx.Summoned, func(card *match.Card, ctx *match.Context) {
+	c.Use(fx.Creature, fx.Doublebreaker, fx.When(fx.InTheBattlezone, func(card *match.Card, ctx *match.Context) {
 
 		ctx.Match.ApplyPersistentEffect(func(ctx2 *match.Context, exit func()) {
 

@@ -51,7 +51,7 @@ func SpikestrikeIchthysQ(c *match.Card) {
 	c.ManaCost = 6
 	c.ManaRequirement = []string{civ.Water}
 
-	c.Use(fx.Creature, fx.Survivor, fx.When(fx.Summoned, func(card *match.Card, ctx *match.Context) {
+	c.Use(fx.Creature, fx.Survivor, fx.When(fx.InTheBattlezone, func(card *match.Card, ctx *match.Context) {
 
 		ctx.Match.ApplyPersistentEffect(func(ctx2 *match.Context, exit func()) {
 

@@ -42,35 +42,17 @@ func FactoryShellQ(c *match.Card) {
 	c.ManaCost = 6
 	c.ManaRequirement = []string{civ.Nature}
 
-	c.Use(fx.Creature, fx.Survivor, func(card *match.Card, ctx *match.Context) {
+	c.Use(fx.Creature, fx.Survivor, fx.When(fx.MySurvivorSummoned, func(card *match.Card, ctx *match.Context) {
 
-		if !ctx.Match.IsPlayerTurn(card.Player) || card.Zone != match.BATTLEZONE {
-			return
-		}
+		fx.SearchDeckTakeCards(
+			card,
+			ctx,
+			1,
+			func(x *match.Card) bool { return x.HasCondition(cnd.Survivor) },
+			"survivor",
+		)
 
-		if event, ok := ctx.Event.(*match.CardMoved); ok && event.To == match.BATTLEZONE {
-
-			creature, err := card.Player.GetCard(event.CardID, match.BATTLEZONE)
-
-			if err != nil {
-				return
-			}
-
-			if !creature.HasFamily(family.Survivor) {
-				return
-			}
-
-			fx.SearchDeckTakeCards(
-				card,
-				ctx,
-				1,
-				func(x *match.Card) bool { return x.HasCondition(cnd.Survivor) },
-				"survivor",
-			)
-
-		}
-
-	})
+	}))
 
 }
 
@@ -85,7 +67,7 @@ func LivingCitadelVosh(c *match.Card) {
 	c.TapAbility = livingCitadelVoshTapAbility
 
 	c.Use(fx.Creature, fx.Evolution, fx.TapAbility,
-		fx.When(fx.Summoned, func(card *match.Card, ctx *match.Context) {
+		fx.When(fx.InTheBattlezone, func(card *match.Card, ctx *match.Context) {
 
 			fx.GiveTapAbilityToAllies(
 				card,

@@ -28,30 +28,13 @@ func RippleLotusQ(c *match.Card) {
 	c.ManaCost = 6
 	c.ManaRequirement = []string{civ.Water}
 
-	c.Use(fx.Creature, fx.Survivor, func(card *match.Card, ctx *match.Context) {
+	c.Use(fx.Creature, fx.Survivor, fx.When(fx.MySurvivorSummoned, func(card *match.Card, ctx *match.Context) {
 
-		if !ctx.Match.IsPlayerTurn(card.Player) || card.Zone != match.BATTLEZONE {
-			return
+		creatures := fx.Select(card.Player, ctx.Match, ctx.Match.Opponent(card.Player), match.BATTLEZONE, "Select 1 of your opponent's creature and tap it. Close to not tap any creatures.", 1, 1, true)
+		for _, creature := range creatures {
+			creature.Tapped = true
 		}
 
-		if event, ok := ctx.Event.(*match.CardMoved); ok {
-
-			creature, err := card.Player.GetCard(event.CardID, match.BATTLEZONE)
-
-			if err != nil {
-				return
-			}
-
-			if creature.HasFamily(family.Survivor) && event.To == match.BATTLEZONE {
-				creatures := match.Search(card.Player, ctx.Match, ctx.Match.Opponent(card.Player), match.BATTLEZONE, "Select 1 of your opponent's creature and tap it. Close to not tap any creatures.", 1, 1, true)
-				for _, creature := range creatures {
-					creature.Tapped = true
-				}
-
-			}
-
-		}
-
-	})
+	}))
 
 }

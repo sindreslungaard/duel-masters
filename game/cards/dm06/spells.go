@@ -372,22 +372,7 @@ func FaerieLife(c *match.Card) {
 	c.ManaCost = 2
 	c.ManaRequirement = []string{civ.Nature}
 
-	c.Use(fx.Spell, fx.ShieldTrigger, func(card *match.Card, ctx *match.Context) {
-
-		if match.AmICasted(card, ctx) {
-
-			cards := card.Player.PeekDeck(1)
-
-			for _, toMove := range cards {
-
-				card.Player.MoveCard(toMove.ID, match.DECK, match.MANAZONE, card.ID)
-				ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s put %s into the manazone from the top of their deck", card.Player.Username(), toMove.Name))
-
-			}
-
-		}
-
-	})
+	c.Use(fx.Spell, fx.ShieldTrigger, fx.When(fx.SpellCast, fx.Draw1ToMana))
 }
 
 func BondsOfJustice(c *match.Card) {
