@@ -156,6 +156,11 @@ func SelectFilter(p *match.Player, m *match.Match, containerOwner *match.Player,
 		return result
 	}
 
+	if !m.IsPlayerTurn(p) {
+		m.Wait(m.Opponent(p), "Waiting for your opponent to make an action")
+		defer m.EndWait(m.Opponent(p))
+	}
+
 	m.NewActionFullList(p, filtered, min, max, text, cancellable, unselectables)
 
 	defer m.CloseAction(p)
