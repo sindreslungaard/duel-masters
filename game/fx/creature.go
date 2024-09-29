@@ -250,7 +250,7 @@ func Creature(card *match.Card, ctx *match.Context) {
 			ctx.Match.BroadcastState()
 
 			// Allow the opponent to block if they can
-			if len(event.Blockers) > 0 && !card.HasCondition(cnd.CantBeBlocked) {
+			if len(event.Blockers) > 0 && !card.HasCondition(cnd.CantBeBlocked) && !stealthActive(card, ctx) {
 
 				ctx.Match.Wait(card.Player, "Waiting for your opponent to make an action")
 
@@ -420,7 +420,7 @@ func Creature(card *match.Card, ctx *match.Context) {
 			card.Tapped = true
 
 			// Allow the opponent to block if they can
-			if len(event.Blockers) > 0 && !card.HasCondition(cnd.CantBeBlocked) {
+			if len(event.Blockers) > 0 && !card.HasCondition(cnd.CantBeBlocked) && !stealthActive(card, ctx) {
 
 				ctx.Match.Wait(card.Player, "Waiting for your opponent to make an action")
 
@@ -623,4 +623,25 @@ func handleBattle(ctx *match.Context, winner *match.Card, winnerPower int, loose
 			ctx.Match.Destroy(winner, looser, match.DestroyedBySlayer)
 		}
 	}
+}
+
+func stealthActive(card *match.Card, ctx *match.Context) bool {
+	if !card.HasCondition(cnd.Stealth) {
+		return false
+	}
+
+	for _, cond := range card.Conditions() {
+		if cond.ID != cnd.Stealth {
+			continue
+		}
+		if match.ContainerHas(
+			ctx.Match.Opponent(card.Player),
+			match.MANAZONE,
+			func(c *match.Card) bool { return c.Civ == cond.Val },
+		) {
+			return true
+		}
+	}
+
+	return false
 }
