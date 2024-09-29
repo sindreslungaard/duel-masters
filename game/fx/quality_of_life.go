@@ -456,6 +456,18 @@ func EndOfMyTurn(card *match.Card, ctx *match.Context) bool {
 	return false
 }
 
+// BreakShield returns true if a shield is about to be broken
+func BreakShield(card *match.Card, ctx *match.Context) bool {
+
+	if card.Zone != match.BATTLEZONE {
+		return false
+	}
+
+	_, ok := ctx.Event.(*match.BreakShieldEvent)
+	return ok
+
+}
+
 // ShieldBroken returns true if a shield has been broken
 func ShieldBroken(card *match.Card, ctx *match.Context) bool {
 
