@@ -25,6 +25,21 @@ func (c CardCollection) Or(h func()) {
 	h()
 }
 
+func FilterCardList(cards []*match.Card, filter func(*match.Card) bool) (CardCollection, CardCollection) {
+	accepted := make([]*match.Card, 0)
+	rejected := make([]*match.Card, 0)
+
+	for _, mCard := range cards {
+		if filter(mCard) {
+			accepted = append(accepted, mCard)
+		} else {
+			rejected = append(rejected, mCard)
+		}
+	}
+
+	return accepted, rejected
+}
+
 // FindFilter returns a CardCollection matching the filter
 func FindFilter(p *match.Player, collection string, h func(card *match.Card) bool) CardCollection {
 
@@ -132,15 +147,9 @@ func SelectFilter(p *match.Player, m *match.Match, containerOwner *match.Player,
 		return result
 	}
 
-	filtered := make([]*match.Card, 0)
-	unselectables := make([]*match.Card, 0)
-
-	for _, mCard := range cards {
-		if filter(mCard) {
-			filtered = append(filtered, mCard)
-		} else if showUnselectables {
-			unselectables = append(unselectables, mCard)
-		}
+	filtered, unselectables := FilterCardList(cards, filter)
+	if !showUnselectables {
+		unselectables = nil
 	}
 
 	if len(filtered) < 1 {
@@ -214,6 +223,11 @@ func selectMultipartBase(p *match.Player, m *match.Match, cards map[string][]*ma
 		m.NewMultipartActionBackside(p, cards, min, max, text, cancellable)
 	} else {
 		m.NewMultipartAction(p, cards, min, max, text, cancellable)
+	}
+
+	if !m.IsPlayerTurn(p) {
+		m.Wait(m.Opponent(p), "Waiting for your opponent to make an action")
+		defer m.EndWait(m.Opponent(p))
 	}
 
 	defer m.CloseAction(p)
@@ -323,7 +337,12 @@ func SelectBacksideFilter(p *match.Player, m *match.Match, containerOwner *match
 //
 // Does not activate if the card was under an Evolution card and becomes visible again.
 func Summoned(card *match.Card, ctx *match.Context) bool {
-	return CreatureSummoned(card, ctx) && ctx.Event.(*match.CardMoved).CardID == card.ID
+	event, ok := ctx.Event.(*match.CardMoved)
+	if !ok {
+		return false
+	}
+
+	return CreatureSummoned(card, ctx) && event.CardID == card.ID
 }
 
 // InTheBattlezone returns true if the card arrives in the battlezone.
@@ -453,6 +472,18 @@ func EndOfMyTurn(card *match.Card, ctx *match.Context) bool {
 	return false
 }
 
+// BreakShield returns true if a shield is about to be broken
+func BreakShield(card *match.Card, ctx *match.Context) bool {
+
+	if card.Zone != match.BATTLEZONE {
+		return false
+	}
+
+	_, ok := ctx.Event.(*match.BreakShieldEvent)
+	return ok
+
+}
+
 // ShieldBroken returns true if a shield has been broken
 func ShieldBroken(card *match.Card, ctx *match.Context) bool {
 
@@ -489,7 +520,13 @@ func MySurvivorSummoned(card *match.Card, ctx *match.Context) bool {
 		return false
 	}
 
-	creature, err := card.Player.GetCard(ctx.Event.(*match.CardMoved).CardID, match.BATTLEZONE)
+	event, ok := ctx.Event.(*match.CardMoved)
+	if !ok {
+		return false
+	}
+
+	creature, err := card.Player.GetCard(event.CardID, match.BATTLEZONE)
+
 	if err != nil {
 		return false
 	}
@@ -505,7 +542,12 @@ func MySurvivorSummoned(card *match.Card, ctx *match.Context) bool {
 // Does not activate if this current card is summoned.
 // Does not activate if a card that was under an Evolution card becomes visible again.
 func AnotherCreatureSummoned(card *match.Card, ctx *match.Context) bool {
-	return CreatureSummoned(card, ctx) && ctx.Event.(*match.CardMoved).CardID != card.ID
+	event, ok := ctx.Event.(*match.CardMoved)
+	if !ok {
+		return false
+	}
+
+	return CreatureSummoned(card, ctx) && event.CardID != card.ID
 }
 
 func AnotherCreatureDestroyed(card *match.Card, ctx *match.Context) bool {

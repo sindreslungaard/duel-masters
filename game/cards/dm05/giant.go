@@ -36,7 +36,7 @@ func AvalancheGiant(c *match.Card) {
 				1,
 				1,
 				false,
-			), card.ID)
+			), card)
 
 			ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("Avalanche Giant broke one of %s's shield", opponent.Username()))
 

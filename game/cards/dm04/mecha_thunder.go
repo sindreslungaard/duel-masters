@@ -24,13 +24,7 @@ func FuReilSeekerOfStorms(c *match.Card) {
 			return
 		}
 
-		if event, ok := ctx.Event.(*match.ShieldTriggerEvent); ok {
-
-			if event.Card.Civ == civ.Darkness {
-				ctx.InterruptFlow()
-			}
-
-		}
+		fx.FilterShieldTriggers(ctx, func(x *match.Card) bool { return x.Civ != civ.Darkness })
 	})
 
 }

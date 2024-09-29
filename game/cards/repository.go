@@ -518,16 +518,19 @@ var DM06 = map[string]match.CardConstructor{
 	"4121d282-d257-4b3b-8388-83fbb4829dd9": dm06.LavaWalkerExecuto,
 	"7fd21958-859f-4085-acab-c736de7667ef": dm06.FortMegacluster,
 	"569c34fc-614a-4aaf-a89b-d4e5dd49426c": dm06.PhantasmalHorrorGigazald,
+	"4387fa57-6ba9-4628-ad07-12bd02def4cb": dm06.Kyuroro,
 }
 
 var DM07 = map[string]match.CardConstructor{
 	"d45c3c6a-da43-42c8-bf9f-e72aa8c59a36": nil,
 	"a7179172-1a44-46af-abf9-59daf43e67d9": dm07.CosmicNebula,
-	"504c57d4-d27a-42ce-bfff-36708b814c21": nil,
+	"504c57d4-d27a-42ce-bfff-36708b814c21": dm07.CrathLadeMercilessKing,
 	"19bc25dc-2b35-4676-ab72-a8b13b1828e0": nil,
 	"d9be6090-077b-4f34-95cc-d33b2266e45c": nil,
 	"d1fe4c40-637e-4e5c-a769-0d2fc8aa11ca": nil,
 	"c3c7ac05-c847-4842-9504-22e29fa24a2f": dm07.KingBenthos,
+	"d1fe4c40-637e-4e5c-a769-0d2fc8aa11ca": dm07.GandarSeekerofExplosions,
+	"c3c7ac05-c847-4842-9504-22e29fa24a2f": nil,
 	"b6863540-2985-4349-aa82-05f9dbe36993": nil,
 	"44293c09-875b-4582-99cd-450b544c875d": nil,
 	"38504a0f-da4a-4855-9d93-08866f8b955d": nil,
