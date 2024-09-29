@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+- New card "Cosmic Nebula" (thanks @DanieloV)
+
 ## 30/09/2024
 
 - New card "Tank Mutant" (thanks @jyotiskaghosh)
