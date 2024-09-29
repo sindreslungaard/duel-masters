@@ -542,7 +542,7 @@ var DM07 = map[string]match.CardConstructor{
 	"ae65d4d1-78aa-4711-ba49-eafd98b358e9": dm07.RodiGaleNightGuardian,
 	"7148214f-dc9c-4fb4-835c-cd6064e247df": nil,
 	"e5bb03ac-0f09-44de-8fbe-b0c7f2748e84": nil,
-	"0d273a22-1cf9-4f99-8321-e2282e855b57": nil,
+	"0d273a22-1cf9-4f99-8321-e2282e855b57": dm07.AquaAgent,
 	"7e4cdeee-0b47-4260-8ba8-3f1cf0b9ab36": nil,
 	"0735c257-6554-4aeb-9aca-f3bed4022752": nil,
 	"5ce98713-900d-4291-8dc4-889de1d68461": nil,
