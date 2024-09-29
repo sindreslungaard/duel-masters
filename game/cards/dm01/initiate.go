@@ -18,7 +18,7 @@ func FreiVizierOfAir(c *match.Card) {
 	c.ManaCost = 4
 	c.ManaRequirement = []string{civ.Light}
 
-	c.Use(fx.Creature, fx.Untap)
+	c.Use(fx.Creature, fx.When(fx.EndOfMyTurnCreatureBZ, fx.MayUntapSelf))
 
 }
 
