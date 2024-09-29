@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+## 30/09/2024
+
 - New card "Tank Mutant" (thanks @jyotiskaghosh)
 - New card "Bazooka Mutant" (thanks @jyotiskaghosh)
 - Fix for "Snake Attack" not enforcing shield destruction (thanks @DanieloV)
