@@ -19,6 +19,7 @@ func ValkrowzerUltraRockBeast(c *match.Card) {
 	c.ManaRequirement = []string{civ.Fire}
 
 	c.Use(fx.Creature, fx.Evolution, fx.WaterStealth, fx.Doublebreaker)
+}
 
 func Cratersaur(c *match.Card) {
 	c.Name = "Cratersaur"
