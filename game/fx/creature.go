@@ -562,6 +562,7 @@ func Creature(card *match.Card, ctx *match.Context) {
 			}
 
 			if f, ok := tapEffect.(func(card *match.Card, ctx *match.Context)); ok {
+				ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s activates tap effect", card.Name))
 				f(card, ctx)
 			}
 
