@@ -563,3 +563,12 @@ func AnotherCreatureDestroyed(card *match.Card, ctx *match.Context) bool {
 
 	return false
 }
+
+func MyDrawStep(card *match.Card, ctx *match.Context) bool {
+	if _, ok := ctx.Event.(*match.DrawStep); ok {
+		if ctx.Match.IsPlayerTurn(card.Player) {
+			return true
+		}
+	}
+	return false
+}
