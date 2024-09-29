@@ -21,8 +21,8 @@ type ChargeManaEvent struct {
 
 // BreakShieldEvent is fired before the shield is broken
 type BreakShieldEvent struct {
-	CardID string
-	Source string // the card id that caused the shield to break
+	Cards  []*Card
+	Source *Card // the card id that caused the shield to break
 }
 
 // BrokenShieldEvent is fired right after a shield was broken

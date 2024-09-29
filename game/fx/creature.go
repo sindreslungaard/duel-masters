@@ -277,7 +277,7 @@ func Creature(card *match.Card, ctx *match.Context) {
 							ctx.Match.End(card.Player, fmt.Sprintf("%s won the game", ctx.Match.PlayerRef(card.Player).Socket.User.Username))
 						} else {
 							// Break n shields
-							ctx.Match.BreakShields(shieldsAttacked, card.ID)
+							ctx.Match.BreakShields(shieldsAttacked, card)
 						}
 
 						break
@@ -317,7 +317,7 @@ func Creature(card *match.Card, ctx *match.Context) {
 					ctx.Match.End(card.Player, fmt.Sprintf("%s won the game", ctx.Match.PlayerRef(card.Player).Socket.User.Username))
 				} else {
 					// Break n shields
-					ctx.Match.BreakShields(shieldsAttacked, card.ID)
+					ctx.Match.BreakShields(shieldsAttacked, card)
 				}
 
 			}
@@ -562,6 +562,7 @@ func Creature(card *match.Card, ctx *match.Context) {
 			}
 
 			if f, ok := tapEffect.(func(card *match.Card, ctx *match.Context)); ok {
+				ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s activates tap effect", card.Name))
 				f(card, ctx)
 			}
 

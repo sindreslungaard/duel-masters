@@ -2,6 +2,12 @@
 
 ## [Unreleased]
 
+- New card "Cosmic Nebula" (thanks @DanieloV)
+- New card "Crath Lade, Merciless King" (thanks @DanieloV)
+- New card "Gandar, Seeker of Explosions" (thanks @DanieloV)
+
+## 30/09/2024
+
 - New card "Tank Mutant" (thanks @jyotiskaghosh)
 - New card "Bazooka Mutant" (thanks @jyotiskaghosh)
 - Fix for "Snake Attack" not enforcing shield destruction (thanks @DanieloV)
