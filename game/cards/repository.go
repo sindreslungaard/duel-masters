@@ -583,3 +583,7 @@ var DM07 = map[string]match.CardConstructor{
 	"a5cba5aa-271f-43b0-8350-ca94c5cdfe9a": nil,
 	"ced03efd-90c8-4303-83b4-16d2d1198aaf": nil,
 }
+
+var DM07 = map[string]match.CardConstructor{
+	"350d2dde-2abf-48c0-a1da-63dff2d00bfa": dm07.HopelessVortex,
+}
