@@ -583,3 +583,9 @@ var DM07 = map[string]match.CardConstructor{
 	"a5cba5aa-271f-43b0-8350-ca94c5cdfe9a": nil,
 	"ced03efd-90c8-4303-83b4-16d2d1198aaf": nil,
 }
+
+var DM07 = map[string]match.CardConstructor{
+	"350d2dde-2abf-48c0-a1da-63dff2d00bfa": dm07.HopelessVortex,
+	"3fc5db56-616c-49c4-8ddc-2d922e9c4a54": dm07.KizarBasikuTheOutrageous,
+	"7148214f-dc9c-4fb4-835c-cd6064e247df": dm07.RomVizierOfTendrils,
+}
