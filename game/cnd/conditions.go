@@ -25,4 +25,5 @@ const (
 	EvolveIntoAnyFamily = "evolve_into_any_family"
 	TapAbility          = "tap_ability"
 	WheneverThisAttacks = "whenever_this_attacks"
+	Stealth             = "stealth"
 )

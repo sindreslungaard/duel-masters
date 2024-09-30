@@ -47,7 +47,7 @@ func SplinterclawWasp(c *match.Card) {
 				1,
 				1,
 				false,
-			), card.ID)
+			), card)
 
 			ctx.Match.ReportActionInChat(ctx.Match.Opponent(card.Player), fmt.Sprintf("Splinterclaw Wasp broke one of %s's shield", opponent.Username()))
 

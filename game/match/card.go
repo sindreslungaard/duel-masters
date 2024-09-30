@@ -159,6 +159,23 @@ func (c *Card) RemoveConditionBySource(src string) {
 
 }
 
+// RemoveConditionBySource removes all instances of conditions with given source
+func (c *Card) RemoveSpecificConditionBySource(cnd string, src string) {
+
+	tmp := make([]Condition, 0)
+
+	for _, condition := range c.conditions {
+
+		if condition.Src != src || condition.ID != cnd {
+			tmp = append(tmp, condition)
+		}
+
+	}
+
+	c.conditions = tmp
+
+}
+
 // ClearConditions removes all conditions from the card
 func (c *Card) ClearConditions() {
 

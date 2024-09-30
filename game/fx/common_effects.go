@@ -68,6 +68,11 @@ func OpponentDiscardsRandomCard(card *match.Card, ctx *match.Context) {
 
 }
 
+func OpponentDiscards2RandomCards(card *match.Card, ctx *match.Context) {
+	OpponentDiscardsRandomCard(card, ctx)
+	OpponentDiscardsRandomCard(card, ctx)
+}
+
 // To be used as part of a card effect, not for initial shuffle
 func ShuffleDeck(card *match.Card, ctx *match.Context, forOpponent bool) {
 	if !forOpponent {
@@ -117,4 +122,33 @@ func RemoveBlockerFromList(card *match.Card, ctx *match.Context) {
 		}
 	}
 	*blockersList = newBlockersList
+}
+func BlockerWhenNoShields(card *match.Card, ctx *match.Context) {
+	condition := &match.Condition{ID: cnd.Blocker, Val: true, Src: nil}
+	HaveSelfConditionsWhenNoShields(card, ctx, []*match.Condition{condition})
+}
+
+func HaveSelfConditionsWhenNoShields(card *match.Card, ctx *match.Context, conditions []*match.Condition) {
+
+	ctx.Match.ApplyPersistentEffect(func(ctx2 *match.Context, exit func()) {
+
+		notInTheBZ := card.Zone != match.BATTLEZONE
+		if notInTheBZ || IHaveShields(card, ctx2) {
+			for _, cond := range conditions {
+				card.RemoveSpecificConditionBySource(cond.ID, card.ID)
+			}
+		}
+
+		if notInTheBZ {
+			exit()
+			return
+		}
+
+		if IDontHaveShields(card, ctx2) {
+			for _, cond := range conditions {
+				card.AddUniqueSourceCondition(cond.ID, cond.Val, card.ID)
+			}
+		}
+
+	})
 }
