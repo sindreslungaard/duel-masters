@@ -16,7 +16,7 @@ func CrystalJouster(c *match.Card) {
 	c.ManaCost = 7
 	c.ManaRequirement = []string{civ.Water}
 
-	c.Use(fx.Creature, fx.Evolution, fx.Doublebreaker, fx.ReturnToHand)
+	c.Use(fx.Creature, fx.Evolution, fx.Doublebreaker, fx.When(fx.WouldBeDestroyed, fx.ReturnToHand))
 
 }
 

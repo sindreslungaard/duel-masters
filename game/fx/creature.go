@@ -245,12 +245,13 @@ func Creature(card *match.Card, ctx *match.Context) {
 			}
 
 			card.Tapped = true
+			handleWheneverThisAttacksEffects(card, ctx)
 
 			// Broadcast state so that opponent can see that this card is tapped if they get any shield triggers
 			ctx.Match.BroadcastState()
 
 			// Allow the opponent to block if they can
-			if len(event.Blockers) > 0 && !card.HasCondition(cnd.CantBeBlocked) {
+			if len(event.Blockers) > 0 && !card.HasCondition(cnd.CantBeBlocked) && !stealthActive(card, ctx) {
 
 				ctx.Match.Wait(card.Player, "Waiting for your opponent to make an action")
 
@@ -277,7 +278,7 @@ func Creature(card *match.Card, ctx *match.Context) {
 							ctx.Match.End(card.Player, fmt.Sprintf("%s won the game", ctx.Match.PlayerRef(card.Player).Socket.User.Username))
 						} else {
 							// Break n shields
-							ctx.Match.BreakShields(shieldsAttacked, card.ID)
+							ctx.Match.BreakShields(shieldsAttacked, card)
 						}
 
 						break
@@ -317,7 +318,7 @@ func Creature(card *match.Card, ctx *match.Context) {
 					ctx.Match.End(card.Player, fmt.Sprintf("%s won the game", ctx.Match.PlayerRef(card.Player).Socket.User.Username))
 				} else {
 					// Break n shields
-					ctx.Match.BreakShields(shieldsAttacked, card.ID)
+					ctx.Match.BreakShields(shieldsAttacked, card)
 				}
 
 			}
@@ -419,8 +420,19 @@ func Creature(card *match.Card, ctx *match.Context) {
 
 			card.Tapped = true
 
+			handleWheneverThisAttacksEffects(card, ctx)
+			// In case the creature was removed by a WheneverThisAttacksEffect
+			if c.Zone != match.BATTLEZONE {
+				return
+			}
+			// Creature being attacked should not be on the blockers list
+			RemoveBlockerFromList(c, ctx)
+			// TODO: An event should be added here instead. This is the place where the blockers list should
+			// be initally made to avoid any errors (caused by removal of creatures that give others blocker).
+			// Same for attack player
+
 			// Allow the opponent to block if they can
-			if len(event.Blockers) > 0 && !card.HasCondition(cnd.CantBeBlocked) {
+			if len(event.Blockers) > 0 && !card.HasCondition(cnd.CantBeBlocked) && !stealthActive(card, ctx) {
 
 				ctx.Match.Wait(card.Player, "Waiting for your opponent to make an action")
 
@@ -562,6 +574,7 @@ func Creature(card *match.Card, ctx *match.Context) {
 			}
 
 			if f, ok := tapEffect.(func(card *match.Card, ctx *match.Context)); ok {
+				ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s activates tap effect", card.Name))
 				f(card, ctx)
 			}
 
@@ -622,4 +635,37 @@ func handleBattle(ctx *match.Context, winner *match.Card, winnerPower int, loose
 			ctx.Match.Destroy(winner, looser, match.DestroyedBySlayer)
 		}
 	}
+}
+
+func handleWheneverThisAttacksEffects(card *match.Card, ctx *match.Context) {
+	for _, cond := range card.Conditions() {
+		if cond.ID != cnd.WheneverThisAttacks {
+			continue
+		}
+
+		if f, ok := cond.Val.(func(*match.Card, *match.Context)); ok {
+			f(card, ctx)
+		}
+	}
+}
+
+func stealthActive(card *match.Card, ctx *match.Context) bool {
+	if !card.HasCondition(cnd.Stealth) {
+		return false
+	}
+
+	for _, cond := range card.Conditions() {
+		if cond.ID != cnd.Stealth {
+			continue
+		}
+		if match.ContainerHas(
+			ctx.Match.Opponent(card.Player),
+			match.MANAZONE,
+			func(c *match.Card) bool { return c.Civ == cond.Val },
+		) {
+			return true
+		}
+	}
+
+	return false
 }

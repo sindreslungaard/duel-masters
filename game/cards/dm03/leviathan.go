@@ -19,7 +19,7 @@ func KingNeptas(c *match.Card) {
 	c.ManaCost = 6
 	c.ManaRequirement = []string{civ.Water}
 
-	c.Use(fx.When(fx.Attacking, func(card *match.Card, ctx *match.Context) {
+	c.Use(fx.WheneverThisAttacks(func(card *match.Card, ctx *match.Context) {
 
 		cards := make(map[string][]*match.Card)
 
@@ -42,43 +42,22 @@ func KingNeptas(c *match.Card) {
 		cards["Your creatures"] = myCards
 		cards["Opponent's creatures"] = opponentCards
 
-		ctx.Match.NewMultipartAction(card.Player, cards, 0, 1, "Choose up to 1 creatures in the battle zone and return it to its owner hand", true)
-
-		for {
-
-			action := <-card.Player.Action
-
-			if action.Cancel {
-				break
+		fx.SelectMultipart(
+			c.Player,
+			ctx.Match,
+			cards,
+			"Choose up to 1 creatures in the battle zone and return it to its owner hand",
+			0,
+			1,
+			true,
+		).Map(func(x *match.Card) {
+			_, err := x.Player.MoveCard(x.ID, match.BATTLEZONE, match.HAND, card.ID)
+			if err != nil {
+				return
 			}
-
-			if len(action.Cards) < 1 || len(action.Cards) > 1 {
-				break
-			}
-
-			for _, vid := range action.Cards {
-
-				ref, err := c.Player.MoveCard(vid, match.BATTLEZONE, match.HAND, card.ID)
-
-				if err != nil {
-
-					ref, err := ctx.Match.Opponent(c.Player).MoveCard(vid, match.BATTLEZONE, match.HAND, card.ID)
-
-					if err == nil {
-						ctx.Match.ReportActionInChat(ctx.Match.Opponent(card.Player), fmt.Sprintf("%s was moved to %s's hand", ref.Name, ctx.Match.PlayerRef(ref.Player).Socket.User.Username))
-					}
-
-				} else {
-					ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s was moved to %s's hand", ref.Name, ctx.Match.PlayerRef(ref.Player).Socket.User.Username))
-				}
-
-			}
-
-			break
-
-		}
-
-		ctx.Match.CloseAction(c.Player)
+			ctx.Match.ReportActionInChat(x.Player, fmt.Sprintf("%s was moved to %s's hand", x.Name, x.Player.Username()))
+			fx.RemoveBlockerFromList(x, ctx)
+		})
 
 	}), fx.Creature)
 
