@@ -86,6 +86,43 @@ func ShuffleDeck(card *match.Card, ctx *match.Context, forOpponent bool) {
 
 }
 
+func CantBeBlockedByPowerUpTo(card *match.Card, ctx *match.Context, power int) {
+	blockersList := BlockersList(ctx)
+	var newBlockersList []*match.Card
+	for _, blocker := range *blockersList {
+		if ctx.Match.GetPower(blocker, false) > power {
+			newBlockersList = append(newBlockersList, blocker)
+		}
+	}
+	*blockersList = newBlockersList
+}
+
+func CantBeBlockedByPowerUpTo4000(card *match.Card, ctx *match.Context) {
+	CantBeBlockedByPowerUpTo(card, ctx, 4000)
+}
+
+func CantBeBlockedByPowerUpTo5000(card *match.Card, ctx *match.Context) {
+	CantBeBlockedByPowerUpTo(card, ctx, 5000)
+}
+
+func CantBeBlockedByPowerUpTo8000(card *match.Card, ctx *match.Context) {
+	CantBeBlockedByPowerUpTo(card, ctx, 8000)
+}
+
+func CantBeBlockedByPowerUpTo3000(card *match.Card, ctx *match.Context) {
+	CantBeBlockedByPowerUpTo(card, ctx, 3000)
+}
+
+func RemoveBlockerFromList(card *match.Card, ctx *match.Context) {
+	blockersList := BlockersList(ctx)
+	var newBlockersList []*match.Card
+	for _, blocker := range *blockersList {
+		if blocker.ID != card.ID {
+			newBlockersList = append(newBlockersList, blocker)
+		}
+	}
+	*blockersList = newBlockersList
+}
 func BlockerWhenNoShields(card *match.Card, ctx *match.Context) {
 	condition := &match.Condition{ID: cnd.Blocker, Val: true, Src: nil}
 	HaveSelfConditionsWhenNoShields(card, ctx, []*match.Condition{condition})

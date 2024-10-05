@@ -18,25 +18,23 @@ func StainedGlass(c *match.Card) {
 	c.ManaCost = 3
 	c.ManaRequirement = []string{civ.Water}
 
-	c.Use(fx.Creature, fx.When(fx.Attacking, func(card *match.Card, ctx *match.Context) {
+	c.Use(fx.Creature, fx.WheneverThisAttacks(func(card *match.Card, ctx *match.Context) {
 
-		ctx.ScheduleAfter(func() {
-
-			fx.SelectFilterSelectablesOnly(
-				card.Player,
-				ctx.Match,
-				ctx.Match.Opponent(card.Player),
-				match.BATTLEZONE,
-				"Stained Glass: Select 1 of your opponent's fire or nature creatures that will be returned to their hand",
-				1,
-				1,
-				true,
-				func(x *match.Card) bool { return x.Civ == civ.Fire || x.Civ == civ.Nature },
-			).Map(func(x *match.Card) {
-				x.Player.MoveCard(x.ID, match.BATTLEZONE, match.HAND, card.ID)
-				ctx.Match.ReportActionInChat(ctx.Match.Opponent(card.Player), fmt.Sprintf("%s was sent to %s's hand from the battle zone by Stained Glass", x.Name, x.Player.Username()))
-			})
-
+		fx.SelectFilter(
+			card.Player,
+			ctx.Match,
+			ctx.Match.Opponent(card.Player),
+			match.BATTLEZONE,
+			"Stained Glass: Select 1 of your opponent's fire or nature creatures that will be returned to their hand",
+			1,
+			1,
+			true,
+			func(x *match.Card) bool { return x.Civ == civ.Fire || x.Civ == civ.Nature },
+			false,
+		).Map(func(x *match.Card) {
+			x.Player.MoveCard(x.ID, match.BATTLEZONE, match.HAND, card.ID)
+			ctx.Match.ReportActionInChat(ctx.Match.Opponent(card.Player), fmt.Sprintf("%s was sent to %s's hand from the battle zone by Stained Glass", x.Name, x.Player.Username()))
+			fx.RemoveBlockerFromList(x, ctx)
 		})
 
 	}))

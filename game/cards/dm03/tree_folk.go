@@ -22,49 +22,7 @@ func MaskedPomegranate(c *match.Card) {
 		return (getNatureCardsInYourBattleZone(c) - 1) * 1000 //-1 to exclude self
 	}
 
-	c.Use(func(card *match.Card, ctx *match.Context) {
-
-		if event, ok := ctx.Event.(*match.AttackPlayer); ok {
-
-			if event.CardID != card.ID {
-				return
-			}
-
-			ctx.ScheduleAfter(func() {
-				cards := make([]*match.Card, 0)
-
-				for _, blocker := range event.Blockers {
-
-					if ctx.Match.GetPower(blocker, false) > 4000 {
-						cards = append(cards, blocker)
-					}
-				}
-
-				event.Blockers = cards
-			})
-		}
-
-		if event, ok := ctx.Event.(*match.AttackPlayer); ok {
-
-			if event.CardID != card.ID {
-				return
-			}
-
-			ctx.ScheduleAfter(func() {
-				cards := make([]*match.Card, 0)
-
-				for _, blocker := range event.Blockers {
-
-					if ctx.Match.GetPower(blocker, false) > 4000 {
-						cards = append(cards, blocker)
-					}
-				}
-
-				event.Blockers = cards
-			})
-		}
-
-	}, fx.Creature)
+	c.Use(fx.Creature, fx.When(fx.Attacking, fx.CantBeBlockedByPowerUpTo4000))
 
 }
 
