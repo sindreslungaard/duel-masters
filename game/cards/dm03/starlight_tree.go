@@ -18,6 +18,8 @@ func SparkleFlower(c *match.Card) {
 	c.ManaCost = 4
 	c.ManaRequirement = []string{civ.Light}
 
+	// This card only checks for light cards at the untap step, when it should check every time your BZ get modified.
+	// TODO: minor bug - fix required
 	c.Use(fx.Creature, func(card *match.Card, ctx *match.Context) {
 
 		if _, ok := ctx.Event.(*match.UntapStep); ok {

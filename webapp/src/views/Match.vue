@@ -1834,7 +1834,7 @@ export default {
 }
 
 .wait {
-  z-index: 2000;
+  z-index: 500;
 }
 
 .overlay {
