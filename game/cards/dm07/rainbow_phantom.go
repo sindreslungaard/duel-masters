@@ -1,4 +1,4 @@
-package dm05
+package dm07
 
 import (
 	"duel-masters/game/civ"
@@ -7,12 +7,13 @@ import (
 	"duel-masters/game/match"
 )
 
-func LeQuistTheOracle(c *match.Card) {
-	c.Name = "Le Quist, the Oracle"
-	c.Power = 1500
+func GeoshineSpectralKnight(c *match.Card) {
+
+	c.Name = "Geoshine, Spectral Knight"
+	c.Power = 4000
 	c.Civ = civ.Light
-	c.Family = []string{family.LightBringer}
-	c.ManaCost = 2
+	c.Family = []string{family.RainbowPhantom}
+	c.ManaCost = 5
 	c.ManaRequirement = []string{civ.Light}
 
 	c.Use(fx.Creature, fx.WheneverThisAttacksMayTapDorFCreature())

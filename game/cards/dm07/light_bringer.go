@@ -1,4 +1,4 @@
-package dm05
+package dm07
 
 import (
 	"duel-masters/game/civ"
@@ -7,14 +7,14 @@ import (
 	"duel-masters/game/match"
 )
 
-func LeQuistTheOracle(c *match.Card) {
-	c.Name = "Le Quist, the Oracle"
-	c.Power = 1500
+func BexTheOracle(c *match.Card) {
+
+	c.Name = "Bex, the Oracle"
+	c.Power = 2500
 	c.Civ = civ.Light
 	c.Family = []string{family.LightBringer}
-	c.ManaCost = 2
+	c.ManaCost = 3
 	c.ManaRequirement = []string{civ.Light}
 
-	c.Use(fx.Creature, fx.WheneverThisAttacksMayTapDorFCreature())
-
+	c.Use(fx.Creature, fx.When(fx.InTheBattlezone, fx.BlockerWhenNoShields))
 }

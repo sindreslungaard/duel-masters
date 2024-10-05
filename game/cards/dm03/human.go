@@ -31,9 +31,9 @@ func MuramasaDukeOfBlades(c *match.Card) {
 	c.ManaCost = 6
 	c.ManaRequirement = []string{civ.Fire}
 
-	c.Use(fx.Creature, fx.When(fx.AttackingPlayer, func(card *match.Card, ctx *match.Context) {
+	c.Use(fx.Creature, fx.WheneverThisAttacks(func(card *match.Card, ctx *match.Context) {
 
-		creatures := match.Filter(
+		fx.SelectFilter(
 			card.Player,
 			ctx.Match,
 			ctx.Match.Opponent(card.Player),
@@ -43,11 +43,11 @@ func MuramasaDukeOfBlades(c *match.Card) {
 			1,
 			true,
 			func(x *match.Card) bool { return ctx.Match.GetPower(x, false) <= 2000 },
-		)
-
-		for _, creature := range creatures {
-			ctx.Match.Destroy(creature, card, match.DestroyedByMiscAbility)
-		}
+			false,
+		).Map(func(x *match.Card) {
+			ctx.Match.Destroy(x, card, match.DestroyedByMiscAbility)
+			fx.RemoveBlockerFromList(x, ctx)
+		})
 	}))
 
 }

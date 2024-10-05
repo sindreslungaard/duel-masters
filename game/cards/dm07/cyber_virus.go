@@ -19,3 +19,16 @@ func CosmicNebula(c *match.Card) {
 	c.Use(fx.Creature, fx.Evolution, fx.When(fx.MyDrawStep, fx.MayDraw1))
 
 }
+
+func CuriousEye(c *match.Card) {
+
+	c.Name = "Curious Eye"
+	c.Power = 1000
+	c.Civ = civ.Water
+	c.Family = []string{family.CyberVirus}
+	c.ManaCost = 3
+	c.ManaRequirement = []string{civ.Water}
+
+	c.Use(fx.Creature, fx.WheneverThisAttacksMayLookAtOpShield())
+
+}
