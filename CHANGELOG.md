@@ -35,6 +35,10 @@
 - New card "Garatyano" (thanks @DanieloV)
 - New card "Biancus" (thanks @DanieloV)
 - New card "Cetibols" (thanks @DanieloV)
+- New card "Brood Shell" (thanks @DanieloV)
+- New card "Launch Locust" (thanks @DanieloV)
+- New card "Popple, Flowerpetal Dancer" (thanks @DanieloV)
+- New card "Tangle Fist, the Weaver" (thanks @DanieloV)
 
 ## 30/09/2024
 
