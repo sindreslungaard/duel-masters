@@ -805,6 +805,24 @@ func (m *Match) NewQuestionAction(player *Player, text string) {
 
 }
 
+func (m *Match) NewOrderAction(player *Player, cards []*Card, text string) {
+
+	msg := &server.ActionMessage{
+		Header:     "action",
+		ActionType: "order",
+		Cards:      denormalizeCards(cards, false),
+		Text:       text,
+	}
+
+	player.ActionState = PlayerActionState{
+		resolved: false,
+		data:     msg,
+	}
+
+	m.PlayerRef(player).Socket.Send(msg)
+
+}
+
 // CloseAction closes the card selection popup for the given player
 func (m *Match) CloseAction(p *Player) {
 	p.ActionState.resolved = true

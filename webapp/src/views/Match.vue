@@ -106,6 +106,29 @@
           No
         </div>
       </template>
+      <template v-else-if="action.actionType == 'order'">
+        <div class="action-cards action-cards-order">
+          <div v-for="(card, index) in action.cards" :key="index" class="card">
+            <div class="order-number">
+              <span v-if="actionSelects.includes(card)">{{
+                actionSelects.indexOf(card) + 1 
+              }}</span>
+              <img
+                @contextmenu.prevent="showLarge(card)"
+                @dragstart.prevent=""
+                @mouseenter="actionSelectMouseEnter($event, card)"
+                @mousedown="actionSelect(card)"
+                :class="[
+                  'no-drag',
+                  actionSelects.includes(card) ? 'glow-' + card.civilization : ''
+                ]"
+                :src="`https://scans.shobu.io/${card.uid}.jpg`"
+              />
+            </div>
+          </div>
+        </div>
+        <div @click="chooseAction()" class="btn">Send Order</div>
+      </template>
       <template v-else>
         <span v-if="action.cards && action.maxSelections > 0">
           <i> Tip: click and drag to (de)select faster</i>
@@ -900,7 +923,7 @@ export default {
         return;
       }
 
-      if (this.actionSelects.length >= this.action.maxSelections) {
+      if (this.action.actionType != 'order' && this.actionSelects.length >= this.action.maxSelections) {
         return;
       }
 
@@ -1319,6 +1342,7 @@ export default {
                     data.cards instanceof Array
                       ? data.cards
                       : Object.keys(data.cards)[0],
+                  actionType: data.actionType,
                   text: data.text,
                   minSelection: data.minSelection,
                   maxSelections: data.maxSelections,
@@ -1514,6 +1538,9 @@ export default {
     .card {
       margin: 0 7px;
     }
+  }
+  .action-cards-order {
+    padding-bottom: 17px;
   }
 }
 
@@ -1942,6 +1969,19 @@ export default {
 
 .action-shield-number span {
   padding: 0;
+}
+
+.order-number {
+  position: relative;
+  span {
+    color: white;
+    position: absolute;
+    text-align: center;
+    width: 100%;
+    bottom: -15px;
+    padding: 0;
+    font-size: 17px;
+  }
 }
 
 .shieldzone {
