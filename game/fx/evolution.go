@@ -40,6 +40,10 @@ targeted/leaving the field, etc.
 // Evolution has default behaviour for evolution cards according to the rules commented above
 func Evolution(card *match.Card, ctx *match.Context) {
 
+	evolvableCreatureFilter := func(x *match.Card) bool {
+		return x.SharesAFamily(card.Family) || x.HasCondition(cnd.EvolveIntoAnyFamily)
+	}
+
 	if _, ok := ctx.Event.(*match.UntapStep); ok {
 
 		card.AddCondition(cnd.Evolution, true, card.ID)
@@ -48,6 +52,12 @@ func Evolution(card *match.Card, ctx *match.Context) {
 	if event, ok := ctx.Event.(*match.PlayCardEvent); ok {
 
 		if event.CardID != card.ID {
+			return
+		}
+
+		if !match.ContainerHas(card.Player, match.BATTLEZONE, evolvableCreatureFilter) {
+			ctx.InterruptFlow()
+			ctx.Match.WarnPlayer(card.Player, fmt.Sprintf("There are no cards for %s to evolve from in your battle zone", card.Name))
 			return
 		}
 
@@ -72,9 +82,7 @@ func Evolution(card *match.Card, ctx *match.Context) {
 			1,
 			1,
 			false,
-			func(x *match.Card) bool {
-				return x.SharesAFamily(card.Family) || x.HasCondition(cnd.EvolveIntoAnyFamily)
-			},
+			evolvableCreatureFilter,
 		)
 
 		if len(creatures) < 1 {

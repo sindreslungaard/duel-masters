@@ -32,7 +32,7 @@ func AquaKnight(c *match.Card) {
 	c.ManaCost = 5
 	c.ManaRequirement = []string{civ.Water}
 
-	c.Use(fx.Creature, fx.ReturnToHand)
+	c.Use(fx.Creature, fx.When(fx.WouldBeDestroyed, fx.ReturnToHand))
 
 }
 
@@ -121,7 +121,7 @@ func AquaSoldier(c *match.Card) {
 	c.ManaCost = 3
 	c.ManaRequirement = []string{civ.Water}
 
-	c.Use(fx.Creature, fx.ReturnToHand)
+	c.Use(fx.Creature, fx.When(fx.WouldBeDestroyed, fx.ReturnToHand))
 
 }
 
