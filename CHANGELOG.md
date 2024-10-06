@@ -47,6 +47,8 @@
 - New card "Dream Pirate, Shadow of Theft" (thanks @DanieloV)
 - New card "Scalpel Spider" (thanks @DanieloV)
 - New card "Justice Jamming" (thanks @DanieloV)
+- New card "Cryptic Totem" (thanks @DanieloV)
+- New card "Spinning Totem" (thanks @DanieloV)
 
 ## 30/09/2024
 
