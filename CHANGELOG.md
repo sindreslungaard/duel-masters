@@ -28,6 +28,8 @@
 - New card "Kooc Pollon" (thanks @DanieloV)
 - New card "Titanium Cluster" (thanks @DanieloV)
 - New card "Otherworldly Warrior Naglu" (thanks @DanieloV)
+- New card "Three-Faced Ashura Fang" (thanks @DanieloV)
+- New card "Gigabuster" (thanks @DanieloV)
 
 ## 30/09/2024
 
