@@ -58,3 +58,20 @@ func ReturnToShield(card *match.Card, ctx *match.Context) {
 	}
 
 }
+
+// PutShieldIntoHand Player picks an own shield and puts it into their hand
+func PutShieldIntoHand(card *match.Card, ctx *match.Context) {
+	SelectBackside(
+		card.Player,
+		ctx.Match,
+		card.Player,
+		match.SHIELDZONE,
+		fmt.Sprintf("%s: Move 1 of your shields into your hand.", card.Name),
+		1,
+		1,
+		false,
+	).Map(func(x *match.Card) {
+		ctx.Match.MoveCard(x, match.HAND, card)
+		ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s effect: shield moved to hand", card.Name))
+	})
+}
