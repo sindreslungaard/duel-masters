@@ -52,6 +52,7 @@
 - New card "Pulsar Tree" (thanks @DanieloV)
 - New card "Apocalypse Vise" (thanks @jyotiskaghosh)
 - Fixed an issue with "Explosive Fighter Ucarn"'s chat message formatting (thanks @jyotiskaghosh)
+- Set the new deckbuilder to be the default
 
 ## 30/09/2024
 
