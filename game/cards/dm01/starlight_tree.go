@@ -31,7 +31,7 @@ func RubyGrass(c *match.Card) {
 	c.ManaCost = 3
 	c.ManaRequirement = []string{civ.Light}
 
-	c.Use(fx.Creature, fx.Blocker, fx.CantAttackPlayers, fx.Untap)
+	c.Use(fx.Creature, fx.Blocker, fx.CantAttackPlayers, fx.When(fx.EndOfMyTurnCreatureBZ, fx.MayUntapSelf))
 
 }
 

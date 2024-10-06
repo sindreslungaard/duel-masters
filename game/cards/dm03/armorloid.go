@@ -18,46 +18,45 @@ func ArmoredWarriorQuelos(c *match.Card) {
 	c.ManaCost = 5
 	c.ManaRequirement = []string{civ.Fire}
 
-	c.Use(fx.Creature, fx.When(fx.Attacking, func(card *match.Card, ctx *match.Context) {
+	c.Use(fx.Creature, fx.WheneverThisAttacks(func(card *match.Card, ctx *match.Context) {
 
-		ctx.ScheduleAfter(func() {
-			creatures := match.Filter(
-				card.Player,
-				ctx.Match,
-				card.Player,
-				match.MANAZONE,
-				"Armored Warrior Quelos: Select 1 of your non-fire cards from mana zone and move it to graveyard.",
-				1,
-				1,
-				false,
-				func(x *match.Card) bool { return x.Civ != civ.Fire },
-			)
+		creatures := match.Filter(
+			card.Player,
+			ctx.Match,
+			card.Player,
+			match.MANAZONE,
+			"Armored Warrior Quelos: Select 1 of your non-fire cards from mana zone and move it to graveyard.",
+			1,
+			1,
+			false,
+			func(x *match.Card) bool { return x.Civ != civ.Fire },
+		)
 
-			for _, creature := range creatures {
-				card.Player.MoveCard(creature.ID, match.MANAZONE, match.GRAVEYARD, card.ID)
-				ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s was sent to graveyard from %s's mana zone", creature.Name, card.Player.Username()))
-			}
+		for _, creature := range creatures {
+			card.Player.MoveCard(creature.ID, match.MANAZONE, match.GRAVEYARD, card.ID)
+			ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s was sent to graveyard from %s's mana zone", creature.Name, card.Player.Username()))
+		}
 
-			ctx.Match.Wait(card.Player, "Waiting for your opponent to make an action")
-			defer ctx.Match.EndWait(card.Player)
+		ctx.Match.Wait(card.Player, "Waiting for your opponent to make an action")
+		defer ctx.Match.EndWait(card.Player)
 
-			opponentCreatures := match.Filter(
-				ctx.Match.Opponent(card.Player),
-				ctx.Match,
-				ctx.Match.Opponent(card.Player),
-				match.MANAZONE,
-				"Armored Warrior Quelos: Select 1 of your non-fire cards from mana zone and move it to graveyard.",
-				1,
-				1,
-				false,
-				func(x *match.Card) bool { return x.Civ != civ.Fire },
-			)
+		opponentCreatures := match.Filter(
+			ctx.Match.Opponent(card.Player),
+			ctx.Match,
+			ctx.Match.Opponent(card.Player),
+			match.MANAZONE,
+			"Armored Warrior Quelos: Select 1 of your non-fire cards from mana zone and move it to graveyard.",
+			1,
+			1,
+			false,
+			func(x *match.Card) bool { return x.Civ != civ.Fire },
+		)
 
-			for _, creature := range opponentCreatures {
-				ctx.Match.Opponent(card.Player).MoveCard(creature.ID, match.MANAZONE, match.GRAVEYARD, card.ID)
-				ctx.Match.ReportActionInChat(ctx.Match.Opponent(card.Player), fmt.Sprintf("%s was sent to graveyard from %s's mana zone", creature.Name, ctx.Match.Opponent(card.Player).Username()))
-			}
-		})
+		for _, creature := range opponentCreatures {
+			ctx.Match.Opponent(card.Player).MoveCard(creature.ID, match.MANAZONE, match.GRAVEYARD, card.ID)
+			ctx.Match.ReportActionInChat(ctx.Match.Opponent(card.Player), fmt.Sprintf("%s was sent to graveyard from %s's mana zone", creature.Name, ctx.Match.Opponent(card.Player).Username()))
+		}
+
 	}))
 
 }

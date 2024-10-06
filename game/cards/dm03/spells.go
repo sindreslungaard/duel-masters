@@ -96,25 +96,7 @@ func FloodValve(c *match.Card) {
 	c.ManaCost = 2
 	c.ManaRequirement = []string{civ.Water}
 
-	c.Use(fx.Spell, fx.ShieldTrigger, func(card *match.Card, ctx *match.Context) {
-
-		if match.AmICasted(card, ctx) {
-
-			fx.Select(
-				card.Player,
-				ctx.Match,
-				card.Player,
-				match.MANAZONE,
-				"Select 1 card from your mana zone that will be returned to your hand",
-				1,
-				1,
-				false,
-			).Map(func(x *match.Card) {
-				ctx.Match.MoveCard(x, match.HAND, card)
-			})
-
-		}
-	})
+	c.Use(fx.Spell, fx.ShieldTrigger, fx.When(fx.SpellCast, fx.ReturnMyCardFromMZToHand))
 }
 
 // LiquidScope ...
@@ -196,27 +178,20 @@ func EldritchPoison(c *match.Card) {
 	c.ManaCost = 1
 	c.ManaRequirement = []string{civ.Darkness}
 
-	c.Use(fx.Spell, fx.ShieldTrigger, func(card *match.Card, ctx *match.Context) {
+	c.Use(fx.Spell, fx.ShieldTrigger, fx.When(fx.SpellCast, func(card *match.Card, ctx *match.Context) {
 
-		if match.AmICasted(card, ctx) {
+		creatures := match.Filter(card.Player, ctx.Match, card.Player, match.BATTLEZONE, "Select 1 of your darkness creatures that will be destroyed", 0, 1, true, func(x *match.Card) bool { return x.Civ == civ.Darkness })
 
-			creatures := match.Filter(card.Player, ctx.Match, card.Player, match.BATTLEZONE, "Select 1 of your darkness creatures that will be destroyed", 0, 1, true, func(x *match.Card) bool { return x.Civ == civ.Darkness })
+		if len(creatures) > 0 {
 
-			if len(creatures) > 0 {
-
-				for _, creature := range creatures {
-					ctx.Match.Destroy(creature, card, match.DestroyedBySpell)
-				}
-
-				creatures = match.Filter(card.Player, ctx.Match, card.Player, match.MANAZONE, "Select 1 of your creatures from your mana zone that will be returned to your hand", 1, 1, false, func(x *match.Card) bool { return x.HasCondition(cnd.Creature) })
-
-				for _, creature := range creatures {
-					card.Player.MoveCard(creature.ID, match.MANAZONE, match.HAND, card.ID)
-					ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s was moved to %s's hand from their mana zone", creature.Name, ctx.Match.PlayerRef(card.Player).Socket.User.Username))
-				}
+			for _, creature := range creatures {
+				ctx.Match.Destroy(creature, card, match.DestroyedBySpell)
 			}
+
+			fx.ReturnCreatureFromManazoneToHand(card, ctx)
 		}
-	})
+
+	}))
 }
 
 // GhastlyDrain ...

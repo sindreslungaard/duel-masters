@@ -46,25 +46,6 @@ func WynTheOracle(c *match.Card) {
 	c.ManaCost = 2
 	c.ManaRequirement = []string{civ.Light}
 
-	c.Use(fx.Creature, fx.When(fx.AttackConfirmed, func(card *match.Card, ctx *match.Context) {
-
-		fx.SelectBackside(
-			card.Player,
-			ctx.Match,
-			ctx.Match.Opponent(card.Player),
-			match.SHIELDZONE,
-			"Wyn, the Oracle: Select 1 of your opponent's shields that will be shown to you",
-			1,
-			1,
-			true,
-		).Map(func(x *match.Card) {
-			ctx.Match.ShowCards(
-				card.Player,
-				"Your opponent's shield:",
-				[]string{x.ImageID},
-			)
-		})
-
-	}))
+	c.Use(fx.Creature, fx.WheneverThisAttacksMayLookAtOpShield())
 
 }

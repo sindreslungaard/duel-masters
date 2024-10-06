@@ -18,9 +18,8 @@ func MetalwingSkyterror(c *match.Card) {
 	c.ManaCost = 7
 	c.ManaRequirement = []string{civ.Fire}
 
-	c.Use(fx.Creature, fx.Doublebreaker, fx.When(fx.Attacking, func(card *match.Card, ctx *match.Context) {
-
-		fx.SelectFilterSelectablesOnly(
+	c.Use(fx.Creature, fx.Doublebreaker, fx.WheneverThisAttacks(func(card *match.Card, ctx *match.Context) {
+		fx.SelectFilter(
 			card.Player,
 			ctx.Match,
 			ctx.Match.Opponent(card.Player),
@@ -30,10 +29,11 @@ func MetalwingSkyterror(c *match.Card) {
 			1,
 			true,
 			func(x *match.Card) bool { return x.HasCondition(cnd.Blocker) },
+			false,
 		).Map(func(x *match.Card) {
 			ctx.Match.Destroy(x, card, match.DestroyedByMiscAbility)
+			fx.RemoveBlockerFromList(x, ctx)
 		})
-
 	}))
 
 }

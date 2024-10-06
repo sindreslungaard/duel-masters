@@ -35,23 +35,20 @@ func BolmeteusSteelDragon(c *match.Card) {
 	c.ManaCost = 7
 	c.ManaRequirement = []string{civ.Fire}
 
-	c.Use(fx.Creature, fx.Doublebreaker, func(card *match.Card, ctx *match.Context) {
+	c.Use(fx.Creature, fx.Doublebreaker, fx.When(fx.BreakShield, func(card *match.Card, ctx *match.Context) {
 
-		if card.Zone != match.BATTLEZONE {
+		event, _ := ctx.Event.(*match.BreakShieldEvent)
+		if event.Source != card {
 			return
 		}
 
-		if event, ok := ctx.Event.(*match.ShieldTriggerEvent); ok && event.Source == card.ID {
-			ctx.InterruptFlow()
-		}
-
-		if event, ok := ctx.Event.(*match.MoveCard); ok && event.From == match.SHIELDZONE && event.To == match.HAND && event.Source == card.ID {
-			moved, err := ctx.Match.Opponent(card.Player).MoveCard(event.CardID, match.SHIELDZONE, match.GRAVEYARD, card.ID)
+		ctx.InterruptFlow()
+		for _, shield := range event.Cards {
+			moved, err := ctx.Match.Opponent(card.Player).MoveCard(shield.ID, match.SHIELDZONE, match.GRAVEYARD, card.ID)
 			if err == nil {
 				ctx.Match.ReportActionInChat(ctx.Match.Opponent(card.Player), fmt.Sprintf("%s was moved to %s's graveyard instead of hand by %s", moved.Name, ctx.Match.Opponent(card.Player).Username(), card.Name))
 			}
-
-			ctx.InterruptFlow()
 		}
-	})
+
+	}))
 }
