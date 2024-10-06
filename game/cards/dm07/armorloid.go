@@ -31,3 +31,16 @@ func ArmoredTransportGaliacruse(c *match.Card) {
 	c.Use(fx.Creature, fx.TapAbility)
 
 }
+
+func OtherworldlyWarriorNaglu(c *match.Card) {
+
+	c.Name = "Otherworldly Warrior Naglu"
+	c.Power = 4000
+	c.Civ = civ.Fire
+	c.Family = []string{family.Armorloid}
+	c.ManaCost = 6
+	c.ManaRequirement = []string{civ.Fire}
+
+	c.Use(fx.Creature, fx.PowerAttacker3000, fx.Doublebreaker, fx.CantBeAttacked)
+
+}
