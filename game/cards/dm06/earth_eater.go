@@ -5,7 +5,6 @@ import (
 	"duel-masters/game/family"
 	"duel-masters/game/fx"
 	"duel-masters/game/match"
-	"fmt"
 )
 
 func HazardCrawler(c *match.Card) {
@@ -29,22 +28,7 @@ func MidnightCrawler(c *match.Card) {
 	c.ManaCost = 8
 	c.ManaRequirement = []string{civ.Water}
 
-	c.Use(fx.Creature, fx.Doublebreaker, fx.When(fx.Summoned, func(card *match.Card, ctx *match.Context) {
-
-		fx.Select(
-			card.Player,
-			ctx.Match,
-			ctx.Match.Opponent(card.Player),
-			match.MANAZONE,
-			"Midnight Crawler: Choose a card from your opponent's mana zone that will be returned to his hand.",
-			1,
-			1,
-			false,
-		).Map(func(x *match.Card) {
-			x.Player.MoveCard(x.ID, match.MANAZONE, match.HAND, card.ID)
-			ctx.Match.ReportActionInChat(ctx.Match.Opponent(card.Player), fmt.Sprintf("%s got moved to %s hand from his mana zone by Midnight Crawler", x.Name, x.Player.Username()))
-		})
-	}))
+	c.Use(fx.Creature, fx.Doublebreaker, fx.When(fx.Summoned, fx.ReturnOpCardFromMZToHand))
 }
 
 func ThrashCrawler(c *match.Card) {
@@ -56,20 +40,5 @@ func ThrashCrawler(c *match.Card) {
 	c.ManaCost = 4
 	c.ManaRequirement = []string{civ.Water}
 
-	c.Use(fx.Creature, fx.Blocker, fx.CantAttackCreatures, fx.CantAttackPlayers, fx.When(fx.Summoned, func(card *match.Card, ctx *match.Context) {
-
-		fx.Select(
-			card.Player,
-			ctx.Match,
-			card.Player,
-			match.MANAZONE,
-			"Thrash Crawler: Choose a card from your mana zone that will be returned to your hand.",
-			1,
-			1,
-			false,
-		).Map(func(x *match.Card) {
-			x.Player.MoveCard(x.ID, match.MANAZONE, match.HAND, card.ID)
-			ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s got moved to %s hand from his mana zone by Thrash Crawler", x.Name, x.Player.Username()))
-		})
-	}))
+	c.Use(fx.Creature, fx.Blocker, fx.CantAttackCreatures, fx.CantAttackPlayers, fx.When(fx.Summoned, fx.ReturnMyCardFromMZToHand))
 }

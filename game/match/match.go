@@ -263,11 +263,22 @@ func (m *Match) MoveCardToFront(card *Card, destination string, source *Card) {
 }
 
 // BreakShields breaks the given shields and handles shieldtriggers
-func (m *Match) BreakShields(shields []*Card, source string) {
+func (m *Match) BreakShields(attemptedShields []*Card, source *Card) {
 
-	if len(shields) < 1 {
+	if len(attemptedShields) < 1 {
 		return
 	}
+
+	event := &BreakShieldEvent{
+		Cards:  attemptedShields,
+		Source: source,
+	}
+	ctx := NewContext(m, event)
+	m.HandleFx(ctx)
+	if ctx.cancel {
+		return
+	}
+	shields := event.Cards
 
 	m.ReportActionInChat(shields[0].Player, fmt.Sprintf("%v of %v's shields were broken", len(shields), m.PlayerRef(shields[0].Player).Socket.User.Username))
 
@@ -275,13 +286,13 @@ func (m *Match) BreakShields(shields []*Card, source string) {
 
 	for _, shield := range shields {
 
-		card, err := shield.Player.MoveCard(shield.ID, SHIELDZONE, HAND, source)
+		card, err := shield.Player.MoveCard(shield.ID, SHIELDZONE, HAND, source.ID)
 
 		if err != nil {
 			continue
 		}
 
-		m.HandleFx(NewContext(m, &BrokenShieldEvent{CardID: card.ID, Source: source}))
+		m.HandleFx(NewContext(m, &BrokenShieldEvent{CardID: card.ID, Source: source.ID}))
 
 		// Handle shield triggers
 		if card.HasCondition(cnd.ShieldTrigger) {
@@ -298,7 +309,7 @@ func (m *Match) BreakShields(shields []*Card, source string) {
 
 		event := &ShieldTriggerEvent{
 			Cards:  shieldTriggers,
-			Source: source,
+			Source: source.ID,
 		}
 		ctx := NewContext(m, event)
 		m.HandleFx(ctx)
@@ -368,7 +379,7 @@ func (m *Match) BreakShields(shields []*Card, source string) {
 
 			m.HandleFx(NewContext(m, &ShieldTriggerPlayedEvent{
 				Card:   card,
-				Source: source,
+				Source: source.ID,
 			}))
 
 			m.CloseAction(card.Player)
@@ -782,6 +793,24 @@ func (m *Match) NewQuestionAction(player *Player, text string) {
 	msg := &server.ActionMessage{
 		Header:     "action",
 		ActionType: "question",
+		Text:       text,
+	}
+
+	player.ActionState = PlayerActionState{
+		resolved: false,
+		data:     msg,
+	}
+
+	m.PlayerRef(player).Socket.Send(msg)
+
+}
+
+func (m *Match) NewOrderAction(player *Player, cards []*Card, text string) {
+
+	msg := &server.ActionMessage{
+		Header:     "action",
+		ActionType: "order",
+		Cards:      denormalizeCards(cards, false),
 		Text:       text,
 	}
 
