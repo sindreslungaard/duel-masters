@@ -44,13 +44,6 @@ func JusticeJamming(c *match.Card) {
 	}))
 
 }
-package dm07
-
-import (
-	"duel-masters/game/civ"
-	"duel-masters/game/fx"
-	"duel-masters/game/match"
-)
 
 // ApocalypseVise ...
 func ApocalypseVise(c *match.Card) {
