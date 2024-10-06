@@ -3,8 +3,7 @@ package fx
 import (
 	"duel-masters/game/family"
 	"duel-masters/game/match"
-	"reflect"
-	"sort"
+	"slices"
 )
 
 // CardCollection is a slice of cards with a mapping function
@@ -148,17 +147,20 @@ func OrderCards(p *match.Player, m *match.Match, cards []*match.Card, text strin
 
 		action := <-p.Action
 
-		if len(action.Cards) < len(cards) {
+		if len(action.Cards) != len(cards) {
 			m.ActionWarning(p, "You must arrange the cards in the desired order")
 			continue
 		}
 
-		respCopy := make([]string, len(action.Cards))
-		copy(respCopy, action.Cards)
-		sort.Strings(cardsIds)
-		sort.Strings(respCopy)
+		// check if all the cards specified by the client are expected
+		ok := true
+		for _, cardId := range action.Cards {
+			if !slices.Contains(cardsIds, cardId) {
+				ok = false
+			}
+		}
 
-		if !reflect.DeepEqual(cardsIds, respCopy) {
+		if !ok {
 			m.ActionWarning(p, "The cards don't meet the requirements")
 			continue
 		}
