@@ -46,6 +46,7 @@
 - New card "Trenchdive Shark" (thanks @DanieloV)
 - New card "Dream Pirate, Shadow of Theft" (thanks @DanieloV)
 - New card "Scalpel Spider" (thanks @DanieloV)
+- New card "Justice Jamming" (thanks @DanieloV)
 
 ## 30/09/2024
 
