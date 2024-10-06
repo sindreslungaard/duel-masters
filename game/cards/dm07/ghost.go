@@ -1,4 +1,4 @@
-package dm02
+package dm07
 
 import (
 	"duel-masters/game/civ"
@@ -7,13 +7,12 @@ import (
 	"duel-masters/game/match"
 )
 
-// Gigastand ...
-func Gigastand(c *match.Card) {
+func DreamPirateShadowOfTheft(c *match.Card) {
 
-	c.Name = "Gigastand"
+	c.Name = "Dream Pirate, Shadow of Theft"
 	c.Power = 3000
 	c.Civ = civ.Darkness
-	c.Family = []string{family.Chimera}
+	c.Family = []string{family.Ghost}
 	c.ManaCost = 4
 	c.ManaRequirement = []string{civ.Darkness}
 

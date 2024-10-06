@@ -6,7 +6,6 @@ import (
 	"duel-masters/game/family"
 	"duel-masters/game/fx"
 	"duel-masters/game/match"
-	"fmt"
 )
 
 // SolidskinFish ...
@@ -19,25 +18,7 @@ func SolidskinFish(c *match.Card) {
 	c.ManaCost = 3
 	c.ManaRequirement = []string{civ.Water}
 
-	c.Use(fx.Creature, fx.When(fx.Summoned, func(card *match.Card, ctx *match.Context) {
-
-		fx.Select(
-			card.Player,
-			ctx.Match,
-			card.Player,
-			match.MANAZONE,
-			"Select 1 card from your mana zone that will be sent to your hand",
-			1,
-			1,
-			false,
-		).Map(func(c *match.Card) {
-
-			c.Player.MoveCard(c.ID, match.MANAZONE, match.HAND, card.ID)
-			ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s retrieved %s from the mana zone to their hand", c.Player.Username(), c.Name))
-
-		})
-
-	}))
+	c.Use(fx.Creature, fx.When(fx.Summoned, fx.ReturnMyCardFromMZToHand))
 
 }
 
