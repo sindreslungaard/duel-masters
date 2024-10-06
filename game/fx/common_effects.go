@@ -86,6 +86,53 @@ func ShuffleDeck(card *match.Card, ctx *match.Context, forOpponent bool) {
 
 }
 
+func CantBeBlockedByPowerUpTo(card *match.Card, ctx *match.Context, power int) {
+	blockersList := BlockersList(ctx)
+	var newBlockersList []*match.Card
+	for _, blocker := range *blockersList {
+		if ctx.Match.GetPower(blocker, false) > power {
+			newBlockersList = append(newBlockersList, blocker)
+		}
+	}
+	*blockersList = newBlockersList
+}
+
+func GiveOwnCreatureCantBeBlocked(card *match.Card, ctx *match.Context) {
+	Select(card.Player, ctx.Match, card.Player, match.BATTLEZONE,
+		"Choose a card to receive 'Can't be blocked this turn'", 1, 1, false,
+	).Map(func(x *match.Card) {
+		x.AddCondition(cnd.CantBeBlocked, nil, card.ID)
+		ctx.Match.ReportActionInChat(card.Player,
+			fmt.Sprintf("%s tap effect: %s can't be blocked this turn", card.Name, x.Name))
+	})
+}
+
+func CantBeBlockedByPowerUpTo4000(card *match.Card, ctx *match.Context) {
+	CantBeBlockedByPowerUpTo(card, ctx, 4000)
+}
+
+func CantBeBlockedByPowerUpTo5000(card *match.Card, ctx *match.Context) {
+	CantBeBlockedByPowerUpTo(card, ctx, 5000)
+}
+
+func CantBeBlockedByPowerUpTo8000(card *match.Card, ctx *match.Context) {
+	CantBeBlockedByPowerUpTo(card, ctx, 8000)
+}
+
+func CantBeBlockedByPowerUpTo3000(card *match.Card, ctx *match.Context) {
+	CantBeBlockedByPowerUpTo(card, ctx, 3000)
+}
+
+func RemoveBlockerFromList(card *match.Card, ctx *match.Context) {
+	blockersList := BlockersList(ctx)
+	var newBlockersList []*match.Card
+	for _, blocker := range *blockersList {
+		if blocker.ID != card.ID {
+			newBlockersList = append(newBlockersList, blocker)
+		}
+	}
+	*blockersList = newBlockersList
+}
 func BlockerWhenNoShields(card *match.Card, ctx *match.Context) {
 	condition := &match.Condition{ID: cnd.Blocker, Val: true, Src: nil}
 	HaveSelfConditionsWhenNoShields(card, ctx, []*match.Condition{condition})
@@ -114,6 +161,52 @@ func HaveSelfConditionsWhenNoShields(card *match.Card, ctx *match.Context, condi
 		}
 
 	})
+}
+
+func RotateShields(card *match.Card, ctx *match.Context, max int) {
+
+	nrShields, err := card.Player.Container(match.SHIELDZONE)
+	if err != nil {
+		return
+	}
+
+	if len(nrShields) < 1 {
+		return
+	}
+
+	toShield := Select(
+		card.Player,
+		ctx.Match,
+		card.Player,
+		match.HAND,
+		fmt.Sprintf("%s: You may select up to %d card(s) from your hand and put it into the shield zone", card.Name, max),
+		0, max, true,
+	)
+
+	cardsMoved := len(toShield)
+	if cardsMoved < 1 {
+		return
+	}
+
+	for _, c := range toShield {
+		c.Player.MoveCard(c.ID, match.HAND, match.SHIELDZONE, card.ID)
+	}
+
+	toHand := SelectBackside(
+		card.Player,
+		ctx.Match,
+		card.Player,
+		match.SHIELDZONE,
+		fmt.Sprintf("%s: Select %d of your shields that will be moved to your hand", card.Name, cardsMoved),
+		cardsMoved,
+		cardsMoved,
+		false,
+	)
+
+	for _, c := range toHand {
+		c.Player.MoveCard(c.ID, match.SHIELDZONE, match.HAND, card.ID)
+	}
+
 }
 
 func DestoryOpShield(card *match.Card, ctx *match.Context) {
