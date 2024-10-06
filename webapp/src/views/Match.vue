@@ -99,12 +99,19 @@
         <div @click="chooseDrawAction()" class="btn">Draw {{ actionCount }}</div>
       </template>
       <template v-else-if="action.actionType == 'question'">
-        <div @click="chooseAction()" class="btn">
-          Yes
-        </div>
-        <div @click="cancelAction()" class="btn">
-          No
-        </div>
+        <template v-if="action.choices">
+          <div v-for="(choice, i) in action.choices" @click="chooseMultipleChoiceAction(i)" class="btn">
+            {{ choice }}
+          </div>
+        </template>
+        <template v-else>
+          <div @click="chooseAction()" class="btn">
+            Yes
+          </div>
+          <div @click="cancelAction()" class="btn">
+            No
+          </div>
+        </template>
       </template>
       <template v-else-if="action.actionType == 'order'">
         <div class="action-cards action-cards-order">
@@ -963,6 +970,13 @@ export default {
       this.ws.send(JSON.stringify({ header: "action", count: this.actionCount, cancel: false }));
     },
 
+    chooseMultipleChoiceAction(option) {
+      if (!this.action) {
+        return;
+      }
+      this.ws.send(JSON.stringify({ header: "action", count: option, cancel: false }));
+    },
+
     modifyActionCount(modifier) {
       var newCount = this.actionCount + modifier
       if (newCount > this.action.maxSelections || newCount < this.action.minSelections) {
@@ -1326,11 +1340,23 @@ export default {
                 };
                 break
               case 'question':
-                this.action = {
-                  text: data.text,
-                  actionType: data.actionType,
-                  cancellable: true,
-                };
+                console.log(data)
+                console.log(data.choices)
+                if (data.choices) {
+                  this.action = {
+                    text: data.text,
+                    actionType: data.actionType,
+                    cancellable: false,
+                    choices: data.choices
+                  };
+                }
+                else {
+                  this.action = {
+                    text: data.text,
+                    actionType: data.actionType,
+                    cancellable: true,
+                  };
+                }
                 break
               default: 
                 if (!(data.cards instanceof Array)) {
