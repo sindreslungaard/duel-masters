@@ -41,6 +41,10 @@
 - New card "Tangle Fist, the Weaver" (thanks @DanieloV)
 - New card "Kipo's Contraption" (thanks @DanieloV)
 - New card "Astronaut Skyterror" (thanks @DanieloV)
+- New card "Aqua Fencer" (thanks @DanieloV)
+- New card "Splash Zebrafish" (thanks @DanieloV)
+- New card "Trenchdive Shark" (thanks @DanieloV)
+- New card "Dream Pirate, Shadow of Theft" (thanks @DanieloV)
 
 ## 30/09/2024
 
