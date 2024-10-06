@@ -5,7 +5,6 @@ import (
 	"duel-masters/game/family"
 	"duel-masters/game/fx"
 	"duel-masters/game/match"
-	"fmt"
 )
 
 func UltraMantisScourgeOfFate(c *match.Card) {
@@ -29,30 +28,7 @@ func SplinterclawWasp(c *match.Card) {
 	c.ManaCost = 7
 	c.ManaRequirement = []string{civ.Nature}
 
-	c.Use(fx.Creature, fx.Doublebreaker, fx.PowerAttacker3000, func(card *match.Card, ctx *match.Context) {
-
-		if event, ok := ctx.Event.(*match.Battle); ok {
-			if !event.Blocked || event.Attacker != card {
-				return
-			}
-
-			opponent := ctx.Match.Opponent(card.Player)
-
-			ctx.Match.BreakShields(fx.SelectBackside(
-				card.Player,
-				ctx.Match,
-				opponent,
-				match.SHIELDZONE,
-				"Splinterclaw Wasp: select shield to break",
-				1,
-				1,
-				false,
-			), card)
-
-			ctx.Match.ReportActionInChat(ctx.Match.Opponent(card.Player), fmt.Sprintf("Splinterclaw Wasp broke one of %s's shield", opponent.Username()))
-
-		}
-	})
+	c.Use(fx.Creature, fx.Doublebreaker, fx.PowerAttacker3000, fx.When(fx.Blocked, fx.DestoryOpShield))
 }
 
 func TrenchScarab(c *match.Card) {

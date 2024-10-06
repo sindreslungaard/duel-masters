@@ -387,6 +387,11 @@ func SelectBacksideFilter(p *match.Player, m *match.Match, containerOwner *match
 		return result
 	}
 
+	if !m.IsPlayerTurn(p) {
+		m.Wait(m.Opponent(p), "Waiting for your opponent to make an action")
+		defer m.EndWait(m.Opponent(p))
+	}
+
 	m.NewBacksideAction(p, filtered, min, max, text, cancellable)
 
 	defer m.CloseAction(p)
@@ -715,6 +720,21 @@ func Attacked(card *match.Card, ctx *match.Context) bool {
 		if event.Defender == card && !event.Blocked {
 			return true
 		}
+	}
+	return false
+}
+
+// IsTapped is always true as long as the card is tapped and does not trigger *when* the card becomes tapped
+func IsTapped(card *match.Card, ctx *match.Context) bool {
+	if card.Zone == match.BATTLEZONE && card.Tapped {
+		return true
+	}
+	return false
+}
+
+func Blocked(card *match.Card, ctx *match.Context) bool {
+	if event, ok := ctx.Event.(*match.Battle); ok {
+		return event.Blocked && event.Attacker == card
 	}
 	return false
 }
