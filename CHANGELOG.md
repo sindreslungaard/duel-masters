@@ -32,6 +32,9 @@
 - New card "Gigabuster" (thanks @DanieloV)
 - New card "Battleship Mutant" (thanks @DanieloV)
 - New card "Propeller Mutant" (thanks @DanieloV)
+- New card "Garatyano" (thanks @DanieloV)
+- New card "Biancus" (thanks @DanieloV)
+- New card "Cetibols" (thanks @DanieloV)
 
 ## 30/09/2024
 
