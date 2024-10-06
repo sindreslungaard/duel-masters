@@ -3,7 +3,7 @@
     <div v-show="warning" @click="closeOverlay()" class="overlay"></div>
 
     <div v-show="warning" class="error">
-      <p class="text-block">{{ warning }}</p>
+      <p class="whitespace-pre-wrap">{{ warning }}</p>
       <div @click="warning = ''" class="btn">Close</div>
     </div>
 
@@ -123,7 +123,6 @@
 import { call } from "../remote";
 import Header from "../components/Header.vue";
 import CardsCatalogue from "../components/CardsCatalogue.vue";
-import { ref, reactive } from 'vue'
 import { getCardsForDeck } from "../helpers/utils";
 import DeckList from "../components/DeckList.vue";
 
@@ -579,28 +578,8 @@ nav > ul > li.no-cursor:hover {
   left: 16px;
 }
 
-.psa {
-  margin: 16px;
-  background: #2b2c31;
-  padding: 5px;
-  min-height: 20px;
-  border-radius: 4px;
-  font-size: 14px;
-  color: #ccc;
-}
-
-.psa > span {
-  display: inline-block;
-  vertical-align: middle;
-  margin-left: 4px;
-}
-
 a {
   color: #7289da;
-}
-
-.text-block {
-  white-space: pre-wrap;
 }
 
 .btn {

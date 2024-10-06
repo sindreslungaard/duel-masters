@@ -2,7 +2,7 @@ package migrations
 
 import (
 	"context"
-	"duel-masters/game/match"
+	"duel-masters/services"
 	"fmt"
 	"strconv"
 
@@ -49,8 +49,8 @@ func Update_Decks_23_07_2023(db *mongo.Database) {
 
 		for _, c := range deck.Cards {
 
-			match.CreateIfNotExists(c)
-			id, ok := match.GetCardID(c)
+			services.CreateIfNotExists(c)
+			id, ok := services.GetCardID(c)
 
 			if !ok {
 				logrus.Fatal(fmt.Errorf("Unsuccessful migrate. Card image %s does not exist", c))

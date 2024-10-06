@@ -32,8 +32,12 @@
     </div>
     <div class="catalogue-cards-wrapper">
       <div class="catalogue-cards">
-        <div v-for="card in filteredAndSortedCards" class="catalogue-card" :style="{ 'height': cardSize + 'px' }"
-          @click="tryAddCard(card)">
+        <div v-for="card in filteredAndSortedCards" 
+          class="catalogue-card" 
+          :class="{'pt-3 flex flex-col content-center ': true}"
+          :style="{ 'height': cardSize + 'px' }"
+          @click="tryAddCard(card.uid)">
+          <span v-if="eventMode" class="text-black font-semibold text-center">{{ card.count }}</span>
           <v-lazy-image class="max-w-full rounded-2xl" :src="`https://scans.shobu.io/${card.uid}.jpg`"
             src-placeholder="https://scans.shobu.io/backside.jpg" :alt="card.name" />
         </div>
@@ -61,6 +65,10 @@ const permissions = () => {
 const deck = defineModel('deck')
 const props = defineProps({
   unsortedCards: Array,
+  eventMode: {
+    type: Boolean,
+    default: false,
+  }
 })
 
 const filterCard = ref("")
@@ -147,22 +155,41 @@ watch(
   { immediate: true, deep: true },
 )
 
-function tryAddCard(card) {
+function tryAddCard(carduid) {
+  let cardMax = allcards.value.find(x => x.uid == carduid).count
+  if (cardMax == undefined) {
+    cardMax = 4
+  }
   if (
-    props.deck.filter(x => x == card.uid).length >= 4
+    props.deck.filter(x => x == carduid).length >= cardMax
   ) {
-    if (!permissions().includes("admin")) {
-      playSound("/assets/sounds/card-limit.wav");
-      return;
-    }
+    playSound("/assets/sounds/card-limit.wav");
+    return;
+    
   }
 
-  deck.value.push(card.uid)
+  deck.value.push(carduid)
   playSound("/assets/sounds/card-added.mp3");
 }
 
 const filteredAndSortedCards = computed(() => {
-  let cards = allcards.value.filter(card =>
+
+  let cards = JSON.parse(JSON.stringify(allcards.value))
+
+  if (props.eventMode) {
+    props.deck.forEach(card => {
+      let index = cards.findIndex(x => x.uid == card)
+      if (!cards[index]) return
+      if (cards[index].count > 1) {
+        cards[index].count = cards[index].count - 1
+      } 
+      else {
+        cards.splice(index, 1)
+      }
+    })
+  }
+
+  cards = cards.filter(card =>
     card.name.toLowerCase().includes(filterCard.value.toLowerCase()) ||
     card.text.toLowerCase().includes(filterCard.value.toLowerCase())
   );

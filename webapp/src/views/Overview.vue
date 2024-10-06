@@ -21,7 +21,7 @@
         <div class="spacer">
           <span class="headline">Create a new duel</span>
           <br /><br />
-          <form @submit="handleSubmit()" v-on:submit.prevent="onSubmit">
+          <form>
             <input v-model="wizard.name" type="text" placeholder="Name" />
             <br /><br />
             <span class="helper">Visibility</span>
@@ -43,17 +43,96 @@
       </div>
     </div>
 
+    <div v-show="eventWizardVisible" class="new-duel">
+      <div class="wizard">
+        <div class="spacer">
+          <span class="headline">Create a new event</span>
+          <br /><br />
+          <form>
+            <input class="mb-3" v-model="eventWizard.name" type="text" placeholder="Name" />
+            <div class="mb-3">Format: Sealed</div>
+            <div class="mb-3">Packs: 8</div>
+            <multiselect 
+              v-model="eventWizard.sets" 
+              :options="sets"
+              :multiple="true" 
+              :close-on-select="false"
+              placeholder="Pick set(s)"
+              :max="2"
+              :preselect-first="true"
+            ></multiselect>
+
+            <span v-if="eventWizardError" class="errorMsg">{{ eventWizardError }}</span>
+
+            <div @click="createEvent()" class="btn">
+              Create
+            </div>
+            <div @click="toggleEventWizard()" class="btn cancel">
+              Cancel
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
     <main>
       <Header style="width: 100%"></Header>
 
       <div class="spaced">
         <div class="categories">
-          <h3 class="user-list">Online</h3>
-          <h3 class="chat">Chat</h3>
-          <h3 class="duels" style="position: relative;">
-            Duels<span @click="toggleWizard(true)" class="new-duel-btn"
-              >New Duel</span
+          <h3 class="user-list inline-block">Online</h3>
+          <h3 class="chat inline-block">Chat</h3>
+          <h3 class="duels inline-flex" style="position: relative;">
+            Duels
+            <span 
+              class="align-middle new-duel-btn bg-gray-50"
+              :class="{'disabled-btn': !canCreateNewDuel}"
+              v-tooltip="{
+                content: 'You need a valid deck to play',
+                disabled: canCreateNewDuel,
+              }"
+              @click="canCreateNewDuel && toggleWizard(true)"
             >
+              New Duel
+            </span>
+            <template v-if="isEvent">
+              <span 
+                v-if="selectedEvent.status"
+                class="align-middle new-duel-btn" 
+                @click="$router.push({ name: 'event_deck', params: { id: selectedEvent.UID } })"
+              >
+                Edit Deck
+              </span>
+              <span 
+                v-else
+                class="align-middle new-duel-btn" 
+                @click="joinEvent(selectedEvent.UID)"
+              >
+                Join Event
+              </span>
+            </template>
+            <!-- Make sure new event is hidden for most players -->
+            <div class="ml-auto">
+              <span
+                v-if="canCreateEvents"
+                @click="canCreateNewEvent && toggleEventWizard(true)" 
+                class="new-duel-btn event-button"
+                :class="{'disabled-btn': !canCreateNewEvent}"
+                v-tooltip="{
+                  content: 'You can only have one event going at a time',
+                  disabled: canCreateNewEvent,
+                }"
+              >
+                New Event
+              </span>
+              <span
+                v-if="selectedEvent.Organzier == uid"
+                @click="terminateEvent(selectedEvent.UID)" 
+                class="new-duel-btn event-button"
+              >
+                Terminate Event
+              </span>
+            </div>
           </h3>
         </div>
 
@@ -139,19 +218,31 @@
         <!-- Duels -->
         <div class="box duels">
           <div v-if="wsLoading" class="spaced">Loading{{ loadingDots }}</div>
+          
+          <div v-if="events.length > 1" class="flex flex-row items-center bg-gray-700 color">
+            <span class="mx-3">Event:   </span>
+            <select v-model="selectedEvent" class="format-selection">
+              <option
+                v-for="(event, index) in events"
+                :key="index"
+                :value="event"
+                >{{ formatEventDisplay(event) }}</option
+              >
+            </select> 
+          </div>
 
           <table>
             <!-- Loading -->
             <tr
               v-if="
-                !wsLoading && matches.length < 1 && matchRequests.length < 1
+                !wsLoading && matches.length < 1 && matchRequestsForEvent.length < 1
               "
             >
               <td>No matches to show, click the button above to create one.</td>
             </tr>
 
             <!-- Match requests -->
-            <tr v-for="(request, index) in matchRequests" :key="index">
+            <tr v-for="(request, index) in matchRequestsForEvent" :key="index">
               <td style="width: 30%">
                 <div class="match-players">
                   <Username :color="request.host_color">{{
@@ -236,7 +327,7 @@
             </tr>
 
             <!-- Matches -->
-            <tr v-for="(match, index) in matches" :key="index">
+            <tr v-for="(match, index) in matchesForEvent" :key="index">
               <td>
                 <div class="match-players">
                   <Username :color="match.p1color">{{ match.p1 }}</Username>
@@ -258,6 +349,8 @@
             </tr>
           </table>
         </div>
+
+
       </div>
     </main>
   </div>
@@ -268,10 +361,10 @@ import { call, ws_protocol, host } from "../remote";
 import Header from "../components/Header.vue";
 import Username from "../components/Username.vue";
 import { getSettings, didSeeMuteWarning } from "../helpers/settings";
+import Multiselect from 'vue-multiselect';
 import 'setimmediate';
 
 import {
-  format,
   fromUnixTime,
   formatDistanceToNowStrict,
   isBefore,
@@ -301,16 +394,70 @@ function sound(src) {
 let requestAcceptedSound = new sound("/assets/request_accepted.wav");
 let playerLeftSound = new sound("/assets/player_left.wav");
 
+const DEFAULT_EVENT = { Name: "Casual", Format: "Standard", UID: "" }
+
 export default {
   name: "overview",
   components: {
     Header,
-    Username
+    Username,
+    Multiselect,
   },
   computed: {
     uid: () => localStorage.getItem("uid"),
     username: () => localStorage.getItem("username"),
-    protocol: () => window.location.protocol
+    protocol: () => window.location.protocol,
+    isEvent() {
+      if (this.selectedEvent.Format == "Standard") {
+        return false
+      }
+      return true
+    },
+    canCreateNewDuel() {
+      if (this.selectedEvent.Format == "Standard") {
+        return true
+      }
+      
+      let status = this.selectedEvent.status
+      return status && status == "playable"
+    },
+    canCreateEvents() {
+      let permissions = localStorage.getItem("permissions")
+      if (
+        permissions.includes("admin") || 
+        permissions.includes("chat.role.contributor") || 
+        permissions.includes("chat.role.tournament organizer")
+      ) {
+        return true
+      }
+      return false
+    },
+    canCreateNewEvent() {
+      let e = this.events.find(e => e.Organzier == this.uid)
+      if (e == undefined)
+        return true
+      return false
+    },
+    matchRequestsForEvent() {
+      let reqs = this.matchRequests.filter(req => {
+        if (req.event == this.selectedEvent.UID) {
+          return true
+        }
+        return false
+      })
+      
+      return reqs
+    },
+    matchesForEvent() {
+      let matches = this.matches.filter(req => {
+        if (req.event == this.selectedEvent.UID) {
+          return true
+        }
+        return false
+      })
+      
+      return matches
+    }
   },
   data() {
     return {
@@ -337,6 +484,18 @@ export default {
       inviteCopyTask: null,
       host,
       linkCode: "",
+
+      sets: [],
+      eventWizardVisible: false,
+      eventWizardError: "",
+      eventWizard: {
+        name: "",
+        sets: null,
+        // description: "",
+      },
+
+      events: [DEFAULT_EVENT],
+      selectedEvent: DEFAULT_EVENT,
     };
   },
   methods: {
@@ -363,13 +522,19 @@ export default {
       };
       this.wizardVisible = state;
     },
+    toggleEventWizard(state) {
+      this.eventWizardError = "";
+      this.eventWizard = {
+        name: "",
+        description: "",
+        visibility: "public"
+      };
+      this.eventWizardVisible = state;
+    },
     closeOverlay() {
       this.toggleWizard();
       this.errorMessage = "";
       this.warning = "";
-    },
-    handleSubmit() {
-      this.createDuel();
     },
     async createDuel() {
       if (this.wizard.name != "" && this.wizard.name.length > 30) {
@@ -403,7 +568,8 @@ export default {
       this.ws.send(
         JSON.stringify({
           header: "create_match_request",
-          name: this.wizard.name
+          name: this.wizard.name,
+          event: this.selectedEvent.UID
         })
       );
       this.wizardVisible = false;
@@ -482,9 +648,54 @@ export default {
       this.inviteCopyTask = setTimeout(() => {
         this.inviteCopied = false;
       }, 2000);
+    },
+    async createEvent() {
+      try {
+        let res = await call({
+          path: "/events",
+          method: "POST",
+          body: this.eventWizard
+        });
+        this.toggleEventWizard()
+      } catch (e) {
+        this.warning =
+          "Make sure the event name is 1-40 characters and 1-2 sets.";
+      }
+    },
+    async joinEvent(id) {
+      try {
+        let res = await call({
+          path: `/event/${id}`,
+          method: "POST",
+        });
+        this.$router.push({ name: 'event_deck', params: { id: id } })
+      } catch (e) {
+        console.log(e)
+        this.warning =
+          "You already joined this event.";
+      }
+    },
+    formatEventDisplay(event) {
+      let display = `${event.Name} \[${event.Format}\]`
+      if (event.Sets != null) {
+        display += ` \[${event.Sets}\]`
+      }
+      return display
+    },
+    async terminateEvent(id) {
+      try {
+        let res = await call({
+          path: `/event/${id}`,
+          method: "DELETE",
+        });
+        location.reload();
+      } catch (e) {
+        this.warning =
+          "Action no allowed.";
+      }
     }
   },
-  created() {
+  async created() {
     if(this.$route.query.invite) {
       this.linkCode = this.$route.query.invite;
     }
@@ -676,6 +887,27 @@ export default {
     } catch (err) {
       this.errorMessage = "Connection lost";
     }
+
+    try {
+      let response = await call({ path: "/events", method: "GET" })
+      if (response.data.events != null) {
+        this.events = this.events.concat(response.data.events);
+      }
+
+    } catch (e) {
+      console.log(e)
+      alert("failed to fetch events");
+    }
+
+    if (this.canCreateEvents) {
+      try {
+        let response = await call({ path: "/sets", method: "GET" })
+        this.sets = response.data;
+      } catch (e) {
+        console.log(e)
+        alert("failed to fetch sets");
+      }
+    }
   },
   beforeUnmount() {
     removeEventListener("storage", this.onSettingsChanged);
@@ -684,26 +916,15 @@ export default {
 };
 </script>
 
+<style src="vue-multiselect/dist/vue-multiselect.min.css"></style>
+
+
 <style scoped lang="scss">
 .match-players {
   display: flex;
   div {
     margin: 0 3px;
   }
-}
-
-.disabled {
-  background: #7289da !important;
-  opacity: 0.5;
-}
-
-.disabled:hover {
-  cursor: not-allowed !important;
-  background: #7289da !important;
-}
-
-.disabled:active {
-  background: #7289da !important;
 }
 
 .new-duel .backdrop {
@@ -825,22 +1046,6 @@ nav > ul > li.no-cursor:hover {
   left: 16px;
 }
 
-.psa {
-  margin: 16px;
-  background: url(/assets/images/overlay_30.png);
-  padding: 5px;
-  min-height: 20px;
-  border-radius: 4px;
-  font-size: 14px;
-  color: #ccc;
-}
-
-.psa > span {
-  display: inline-block;
-  vertical-align: middle;
-  margin-left: 4px;
-}
-
 a {
   color: #7289da;
 }
@@ -922,7 +1127,6 @@ main {
 .categories > h3 {
   margin-top: 0;
   margin-bottom: 7px;
-  display: inline-block;
   color: #eee;
   font-weight: 400;
   font-size: 16px;
@@ -1099,13 +1303,28 @@ main {
   text-shadow: 1px 1px #0f2c1f;
   font-weight: 600;
   text-transform: uppercase;
-  position: absolute;
   top: -1px;
 }
 
 .new-duel-btn:hover {
   cursor: pointer;
   background: #35966a;
+}
+
+.event-button {
+  background: purple;
+  &:hover {
+    background: purple;
+  }
+  display: inline-block;
+}
+
+.disabled-btn {
+  background: gray;
+  &:hover {
+    background: gray;
+    cursor: not-allowed;
+  }
 }
 
 .pinned-messages {
@@ -1153,5 +1372,13 @@ main {
 
 .copied {
   color: #3ca374;
+}
+
+.format-selection {
+  width: 100%;
+  background: rgb(226 232 240);
+  color: black;
+  font-weight: 700;
+  font-size: 14px;
 }
 </style>

@@ -139,6 +139,7 @@ type MatchMessage struct {
 	Name        string `json:"name"`
 	Started     bool   `json:"spectate"`
 	Matchmaking bool   `json:"matchmaking"`
+	Event       string `json:"event"`
 }
 
 // MatchesListMessage is used to list open matches
@@ -158,6 +159,7 @@ type MatchRequestMessage struct {
 	GuestColor string `json:"guest_color"`
 	Format     string `json:"format"`
 	LinkCode   string `json:"link_code"`
+	EventUID   string `json:"event"`
 }
 
 type MatchReuestsListMessage struct {

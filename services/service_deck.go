@@ -1,4 +1,4 @@
-package match
+package services
 
 import (
 	"context"
@@ -90,33 +90,15 @@ func CreateIfNotExists(image string) {
 }
 
 func ConvertToLegacyDeck(deck db.Deck) (db.LegacyDeck, error) {
-	cards := []string{}
 
-	blocks := strings.Split(deck.Cards, ",")
-	for _, block := range blocks {
-		parts := strings.Split(block, "*")
+	cardsSlice, err := ConvertCardsStringToSlice(deck.Cards)
+	if err != nil {
+		return db.LegacyDeck{}, err
+	}
 
-		if len(parts) < 2 {
-			return db.LegacyDeck{}, fmt.Errorf("Invalid cards digest in deck: %s", deck.Cards)
-		}
-
-		cardId, err1 := strconv.Atoi(parts[0])
-		amount, err2 := strconv.Atoi(parts[1])
-
-		if err1 != nil || err2 != nil {
-			return db.LegacyDeck{}, fmt.Errorf("Invalid cards digest in deck: %s", deck.Cards)
-		}
-
-		image, ok := GetCardImage(cardId)
-		if !ok {
-			logrus.Error("Failed to get card image for deck")
-			continue
-		}
-
-		for i := 0; i < amount; i++ {
-			cards = append(cards, image)
-		}
-
+	cardPoolSlice, err := ConvertCardsStringToSlice(deck.Cardpool)
+	if err != nil {
+		return db.LegacyDeck{}, err
 	}
 
 	return db.LegacyDeck{
@@ -125,16 +107,36 @@ func ConvertToLegacyDeck(deck db.Deck) (db.LegacyDeck, error) {
 		Name:     deck.Name,
 		Public:   deck.Public,
 		Standard: deck.Standard,
-		Cards:    cards,
+		Cards:    cardsSlice,
+		Event:    deck.Event,
+		Cardpool: cardPoolSlice,
 	}, nil
 
 }
 
 func ConvertFromLegacyDeck(deck db.LegacyDeck) db.Deck {
 
+	return db.Deck{
+		UID:      deck.UID,
+		Owner:    deck.Owner,
+		Name:     deck.Name,
+		Public:   deck.Public,
+		Standard: deck.Standard,
+		Cards:    ConvertCardsSliceToString(deck.Cards),
+		Event:    deck.Event,
+		Cardpool: ConvertCardsSliceToString(deck.Cardpool),
+	}
+
+}
+
+func ConvertCardsSliceToString(cards []string) string {
+	if cards == nil {
+		return ""
+	}
+
 	cardsMap := map[int]int{}
 
-	for _, c := range deck.Cards {
+	for _, c := range cards {
 		id, ok := GetCardID(c)
 
 		if !ok {
@@ -162,13 +164,43 @@ func ConvertFromLegacyDeck(deck db.LegacyDeck) db.Deck {
 		}
 	}
 
-	return db.Deck{
-		UID:      deck.UID,
-		Owner:    deck.Owner,
-		Name:     deck.Name,
-		Public:   deck.Public,
-		Standard: deck.Standard,
-		Cards:    digest,
+	return digest
+
+}
+
+func ConvertCardsStringToSlice(cardsString string) ([]string, error) {
+	if cardsString == "" {
+		return []string{}, nil
 	}
 
+	cards := []string{}
+
+	blocks := strings.Split(cardsString, ",")
+	for _, block := range blocks {
+		parts := strings.Split(block, "*")
+
+		if len(parts) < 2 {
+			return nil, fmt.Errorf("Invalid cards digest in deck: %s", cardsString)
+		}
+
+		cardId, err1 := strconv.Atoi(parts[0])
+		amount, err2 := strconv.Atoi(parts[1])
+
+		if err1 != nil || err2 != nil {
+			return nil, fmt.Errorf("Invalid cards digest in deck: %s", cardsString)
+		}
+
+		image, ok := GetCardImage(cardId)
+		if !ok {
+			logrus.Error("Failed to get card image for deck")
+			continue
+		}
+
+		for i := 0; i < amount; i++ {
+			cards = append(cards, image)
+		}
+
+	}
+
+	return cards, nil
 }

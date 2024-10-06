@@ -7,6 +7,8 @@ type LegacyDeck struct {
 	Public   bool     `json:"public"`
 	Standard bool     `json:"standard"`
 	Cards    []string `json:"cards"`
+	Event    string   `json:"event"`
+	Cardpool []string `json:"cardpool"`
 }
 
 type Deck struct {
@@ -16,6 +18,8 @@ type Deck struct {
 	Public   bool   `json:"public"`
 	Standard bool   `json:"standard"`
 	Cards    string `json:"cards"`
+	Event    string `json:"event"`
+	Cardpool string `json:"cardpool"`
 }
 
 var Decks = conn().Collection("decks")

@@ -3,7 +3,7 @@ package api
 import (
 	"context"
 	"duel-masters/db"
-	"duel-masters/game/match"
+	"duel-masters/services"
 	"net/http"
 
 	"github.com/sirupsen/logrus"
@@ -19,6 +19,7 @@ func (api *API) getDecksHandler(w http.ResponseWriter, r *http.Request) {
 
 	cur, err := db.Decks.Find(r.Context(), bson.M{
 		"owner": user.UID,
+		"event": nil,
 	})
 
 	if err != nil {
@@ -46,7 +47,7 @@ func (api *API) getDecksHandler(w http.ResponseWriter, r *http.Request) {
 	legacyDecks := []db.LegacyDeck{}
 
 	for _, deck := range decks {
-		legacyDeck, err := match.ConvertToLegacyDeck(deck)
+		legacyDeck, err := services.ConvertToLegacyDeck(deck)
 		if err != nil {
 			continue
 		}

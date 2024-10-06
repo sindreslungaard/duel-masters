@@ -3,10 +3,13 @@ package api
 import (
 	"duel-masters/game/cards"
 	"duel-masters/game/match"
+	"duel-masters/services"
 	"encoding/json"
 	"fmt"
 	"io"
+	"math/rand"
 	"os"
+	"strings"
 	"sync"
 
 	"github.com/sirupsen/logrus"
@@ -26,6 +29,11 @@ type CardInfo struct {
 
 // Register holds all the card info
 var register = make([]CardInfo, 0)
+
+// Holds usable card structures on sets and rarity cardSetsWithRariry
+var cardSetsWithRariry = make(map[string]map[string][]string)
+var sets []string
+
 var mutex = &sync.Mutex{}
 
 // CreateCardCache loads all cards and creates a cache of the static data
@@ -62,25 +70,50 @@ func CreateCardCache() {
 
 			if _, ok := cardsFromJsonMap[card.Name]; ok {
 				entry.Text = cardsFromJsonMap[card.Name].Text
+				// We need this as some cards appear in multiple sets
+				for _, printing := range cardsFromJsonMap[card.Name].Printings {
+					set := strings.Fields(printing.Set)[0]
+					if set == "Promotional" {
+						continue
+					}
+					if cardSetsWithRariry[set] == nil {
+						cardSetsWithRariry[set] = make(map[string][]string)
+					}
+					cardSetsWithRariry[set][printing.Rarity] = append(cardSetsWithRariry[set][printing.Rarity], entry.UID)
+				}
 			} else {
 				logrus.Warnf("Card '%s' not found in json file", card.Name)
 			}
 
 			register = append(register, entry)
 
-			match.CreateIfNotExists(entry.UID)
+			services.CreateIfNotExists(entry.UID)
 
 		}
 
+		if len(*set) > 40 {
+			sets = append(sets, setID)
+		}
 	}
 
 	logrus.Infof("Loaded %v cards into the cache from %v sets", len(register), len(cards.Sets))
+
+	// for setWithRarity, rarityMap := range cardSetsWithRariry {
+	// 	logrus.Infof("Set %s has:", setWithRarity)
+	// 	for rarity, ids := range rarityMap {
+	// 		logrus.Infof("    %s: %d cards", rarity, len(ids))
+	// 	}
+	// }
 
 }
 
 // GetCache returns a copy of the cache
 func GetCache() []CardInfo {
 	return register
+}
+
+func GetSets() []string {
+	return sets
 }
 
 // CacheHas returns true if the specified uid exist in the cache
@@ -146,4 +179,31 @@ func readFromJson() map[string]CardFromJson {
 	}
 
 	return cardsMap
+}
+
+func GeneratePack(setNumber string) map[string][]string {
+	cardsToBeGenerated := map[string]int{"Common": 5, "Uncommon": 3, "Rare": 1, "Very Rare": 0, "Super Rare": 0}
+
+	switch rand.Intn(8) {
+	case 0:
+		cardsToBeGenerated["Super Rare"] += 1
+	case 1, 2:
+		cardsToBeGenerated["Very Rare"] += 1
+	default:
+		cardsToBeGenerated["Common"] += 1
+	}
+
+	set := cardSetsWithRariry[strings.ToUpper(setNumber)]
+
+	pack := make(map[string][]string)
+	for rarity, count := range cardsToBeGenerated {
+		rarityTotal := len(set[rarity])
+		for i := 0; i < count; i++ {
+			pick := rand.Intn(rarityTotal)
+			// Add duplicate removal in a pack if needed here
+			pack[rarity] = append(pack[rarity], set[rarity][pick])
+		}
+	}
+
+	return pack
 }

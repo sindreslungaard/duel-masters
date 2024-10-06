@@ -2,7 +2,7 @@ package api
 
 import (
 	"duel-masters/db"
-	"duel-masters/game/match"
+	"duel-masters/services"
 	"encoding/json"
 	"net/http"
 
@@ -54,7 +54,7 @@ func (api *API) createDeckHandler(w http.ResponseWriter, r *http.Request) {
 
 	if len(body.UID) < 1 {
 		// New deck
-		decksCount, err := db.Decks.CountDocuments(r.Context(), bson.M{"owner": user.UID})
+		decksCount, err := db.Decks.CountDocuments(r.Context(), bson.M{"owner": user.UID, "events": nil})
 
 		if err != nil {
 			logrus.Error(err)
@@ -76,7 +76,7 @@ func (api *API) createDeckHandler(w http.ResponseWriter, r *http.Request) {
 			Cards:    body.Cards,
 		}
 
-		_, err = db.Decks.InsertOne(r.Context(), match.ConvertFromLegacyDeck(deck))
+		_, err = db.Decks.InsertOne(r.Context(), services.ConvertFromLegacyDeck(deck))
 
 		if err != nil {
 			write(w, http.StatusInternalServerError, Json{"message": "Something went wrong"})
@@ -87,7 +87,7 @@ func (api *API) createDeckHandler(w http.ResponseWriter, r *http.Request) {
 
 		// Edit deck
 
-		deck := match.ConvertFromLegacyDeck(db.LegacyDeck{
+		deck := services.ConvertFromLegacyDeck(db.LegacyDeck{
 			UID:      body.UID,
 			Owner:    user.UID,
 			Name:     name,

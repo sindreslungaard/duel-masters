@@ -4,6 +4,7 @@ import (
 	"duel-masters/db"
 	"duel-masters/flags"
 	"duel-masters/game"
+	"duel-masters/services"
 	"encoding/json"
 	"math/rand"
 	"net/http"
@@ -14,6 +15,7 @@ import (
 type matchReqBody struct {
 	Name       string `json:"name" binding:"max=50"`
 	Visibility string `json:"visibility" binding:"required"`
+	EventUID   string `json:"eventUID"`
 }
 
 func (api *API) createMatchHandler(w http.ResponseWriter, r *http.Request) {
@@ -42,6 +44,11 @@ func (api *API) createMatchHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	allowed, err := services.CanPlayerPlayEvent(user.UID, body.EventUID)
+	if err != nil || !allowed {
+		write(w, http.StatusBadRequest, Json{"message": "Can not play in this event"})
+	}
+
 	visible := true
 	if body.Visibility == "private" {
 		visible = false
@@ -51,7 +58,7 @@ func (api *API) createMatchHandler(w http.ResponseWriter, r *http.Request) {
 		name = game.DefaultMatchNames[rand.Intn(len(game.DefaultMatchNames))]
 	}
 
-	m := api.matchSystem.NewMatch(name, user.UID, visible, false)
+	m := api.matchSystem.NewMatch(name, user.UID, visible, false, body.EventUID)
 
 	write(w, http.StatusOK, m)
 }

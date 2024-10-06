@@ -2,21 +2,23 @@
   <!-- CardPreviewPopup can be teleported if z-index becomes an issue -->
   <CardPreviewPopup :uid=previewCard?.uid :event=previewCardEvent :xPos=previewCardX :side="'left'" />
   <div ref="decklistref">
-    <div class="deck-card-slot" v-for="(card, index) in getCardsForDeck(deck, cards)" :key="index"
-      @mouseover="setPreviewCard($event, card)" @mouseleave="previewCard = null">
-      <div class="deck-card-counter">
-        {{ card.count }}x
-      </div>
-      <div class="deck-card-oval" :class="'card-' + card.civilization.toLowerCase()" :key="index"
-        @click="tryRemoveCard(card)">
-        <div class="deck-card-name">
-          {{ card.name }}
+    <!-- <template v-if="deck && deck.lenght > 0"> -->
+      <div class="deck-card-slot" v-for="(card, index) in getCardsForDeck(deck, cards)" :key="index"
+        @mouseover="setPreviewCard($event, card)" @mouseleave="previewCard = null">
+        <div class="deck-card-counter">
+          {{ card.count }}x
         </div>
-        <div class="deck-card-mana">
-          {{ card.manaCost }}
+        <div class="deck-card-oval" :class="'card-' + card.civilization.toLowerCase()" :key="index"
+          @click="tryRemoveCard(card)">
+          <div class="deck-card-name">
+            {{ card.name }}
+          </div>
+          <div class="deck-card-mana">
+            {{ card.manaCost }}
+          </div>
         </div>
       </div>
-    </div>
+    <!-- </template> -->
   </div>
 </template>
 
