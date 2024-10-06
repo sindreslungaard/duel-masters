@@ -19,42 +19,7 @@ func Emeral(c *match.Card) {
 	c.ManaRequirement = []string{civ.Water}
 
 	c.Use(fx.Creature, fx.When(fx.Summoned, func(card *match.Card, ctx *match.Context) {
-
-		nrShields, err := card.Player.Container(match.SHIELDZONE)
-
-		if err != nil {
-			return
-		}
-
-		if len(nrShields) < 1 {
-			return
-		}
-
-		toShield := match.Search(card.Player, ctx.Match, card.Player, match.HAND, "Emeral: You may select 1 card from your hand and put it into the shield zone", 0, 1, true)
-
-		if len(toShield) < 1 {
-			return
-		}
-
-		toHand := fx.SelectBackside(
-			card.Player,
-			ctx.Match,
-			card.Player,
-			match.SHIELDZONE,
-			"Emeral: Select 1 of your shields that will be moved to your hand",
-			1,
-			1,
-			false,
-		)
-
-		for _, card := range toShield {
-			card.Player.MoveCard(card.ID, match.HAND, match.SHIELDZONE, c.ID)
-		}
-
-		for _, card := range toHand {
-			card.Player.MoveCard(card.ID, match.SHIELDZONE, match.HAND, c.ID)
-		}
-
+		fx.RotateShields(card, ctx, 1)
 	}))
 
 }
