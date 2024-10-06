@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+- No unreleased changes
+
+## 06/10/2024
+
 - New card "Cosmic Nebula" (thanks @DanieloV)
 - New card "Crath Lade, Merciless King" (thanks @DanieloV)
 - New card "Gandar, Seeker of Explosions" (thanks @DanieloV)
