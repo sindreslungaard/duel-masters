@@ -718,3 +718,18 @@ func Attacked(card *match.Card, ctx *match.Context) bool {
 	}
 	return false
 }
+
+// IsTapped is always true as long as the card is tapped and does not trigger *when* the card becomes tapped
+func IsTapped(card *match.Card, ctx *match.Context) bool {
+	if card.Zone == match.BATTLEZONE && card.Tapped {
+		return true
+	}
+	return false
+}
+
+func Blocked(card *match.Card, ctx *match.Context) bool {
+	if event, ok := ctx.Event.(*match.Battle); ok {
+		return event.Blocked && event.Attacker == card
+	}
+	return false
+}
