@@ -39,6 +39,8 @@
 - New card "Launch Locust" (thanks @DanieloV)
 - New card "Popple, Flowerpetal Dancer" (thanks @DanieloV)
 - New card "Tangle Fist, the Weaver" (thanks @DanieloV)
+- New card "Kipo's Contraption" (thanks @DanieloV)
+- New card "Astronaut Skyterror" (thanks @DanieloV)
 
 ## 30/09/2024
 
