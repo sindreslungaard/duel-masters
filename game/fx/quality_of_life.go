@@ -387,6 +387,11 @@ func SelectBacksideFilter(p *match.Player, m *match.Match, containerOwner *match
 		return result
 	}
 
+	if !m.IsPlayerTurn(p) {
+		m.Wait(m.Opponent(p), "Waiting for your opponent to make an action")
+		defer m.EndWait(m.Opponent(p))
+	}
+
 	m.NewBacksideAction(p, filtered, min, max, text, cancellable)
 
 	defer m.CloseAction(p)
