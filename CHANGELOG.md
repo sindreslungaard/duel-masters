@@ -50,6 +50,8 @@
 - New card "Cryptic Totem" (thanks @DanieloV)
 - New card "Spinning Totem" (thanks @DanieloV)
 - New card "Pulsar Tree" (thanks @DanieloV)
+- New card "Apocalypse Vise" (thanks @jyotiskaghosh)
+- Fixed an issue with "Explosive Fighter Ucarn"'s chat message formatting (thanks @jyotiskaghosh)
 
 ## 30/09/2024
 
