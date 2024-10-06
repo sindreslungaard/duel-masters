@@ -49,6 +49,7 @@
 - New card "Justice Jamming" (thanks @DanieloV)
 - New card "Cryptic Totem" (thanks @DanieloV)
 - New card "Spinning Totem" (thanks @DanieloV)
+- New card "Pulsar Tree" (thanks @DanieloV)
 
 ## 30/09/2024
 
