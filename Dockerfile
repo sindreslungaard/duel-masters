@@ -12,6 +12,7 @@ RUN go get -d -v ./... \
     && go build -o app ./cmd/duel-masters/main.go \
     && mkdir ./build \
     && mv ./app ./build/app \
+    && mv ./DuelMastersCards.json ./build/DuelMastersCards.json \
     && mkdir ./build/webapp \
     && mv ./webapp/dist ./build/webapp
 

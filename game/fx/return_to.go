@@ -7,21 +7,16 @@ import (
 
 // ReturnToHand returns the card to the players hand instead of the graveyard
 func ReturnToHand(card *match.Card, ctx *match.Context) {
+	ctx.InterruptFlow()
 
-	// When destroyed
-	if event, ok := ctx.Event.(*match.CreatureDestroyed); ok {
+	card.Player.MoveCard(card.ID, match.BATTLEZONE, match.HAND, card.ID)
+	ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s was returned to the hand", card.Name))
+}
 
-		if event.Card == card {
-
-			ctx.InterruptFlow()
-
-			card.Player.MoveCard(card.ID, match.BATTLEZONE, match.HAND, card.ID)
-			ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s was destroyed by %s and returned to the hand", event.Card.Name, event.Source.Name))
-
-		}
-
+func MayReturnToHand(card *match.Card, ctx *match.Context) {
+	if BinaryQuestion(card.Player, ctx.Match, fmt.Sprintf("%s was destroyed. Do you want to return it to hand", card.Name)) {
+		ReturnToHand(card, ctx)
 	}
-
 }
 
 // ReturnToMana returns the card to the players manazone instead of the graveyard

@@ -31,6 +31,6 @@ func UrthPurifyingElemental(c *match.Card) {
 	c.ManaCost = 6
 	c.ManaRequirement = []string{civ.Light}
 
-	c.Use(fx.Creature, fx.Doublebreaker, fx.Untap)
+	c.Use(fx.Creature, fx.Doublebreaker, fx.When(fx.EndOfMyTurnCreatureBZ, fx.MayUntapSelf))
 
 }

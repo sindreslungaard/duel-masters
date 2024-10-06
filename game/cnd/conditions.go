@@ -24,4 +24,7 @@ const (
 	Survivor            = "survivor"
 	EvolveIntoAnyFamily = "evolve_into_any_family"
 	TapAbility          = "tap_ability"
+	CantBeAttacked      = "cant_be_attacked"
+	WheneverThisAttacks = "whenever_this_attacks"
+	Stealth             = "stealth"
 )

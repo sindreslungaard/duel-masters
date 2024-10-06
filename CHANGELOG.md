@@ -2,6 +2,37 @@
 
 ## [Unreleased]
 
+- New card "Cosmic Nebula" (thanks @DanieloV)
+- New card "Crath Lade, Merciless King" (thanks @DanieloV)
+- New card "Gandar, Seeker of Explosions" (thanks @DanieloV)
+- New card "King Benthos" (thanks @DanieloV)
+- New card "Armored Transport Galiacruse" (thanks @DanieloV)
+- New card "Sky Crusher, the Agitator" (thanks @DanieloV)
+- New card "Siri, Glory Elemental" (thanks @DanieloV)
+- New card "Bex, the Oracle" (thanks @DanieloV)
+- New card "Cratersaur" (thanks @DanieloV)
+- New card "Gazarias Dragon" (thanks @DanieloV)
+- New card "Rodi Gale, Night Guardian" (thanks @DanieloV)
+- New card "Aqua Agent" (thanks @DanieloV)
+- New card "Gezary, Undercover Doll" (thanks @DanieloV)
+- New card "Phantasmal Horror Gigazabal" (thanks @DanieloV)
+- New card "Valkrowzer, Ultra Rock Beast" (thanks @DanieloV)
+- New card "Headlong Giant" (thanks @DanieloV)
+- New card "Curious Eye" (thanks @DanieloV)
+- New card "Geoshine, Spectral Knight" (thanks @DanieloV)
+- New card "Wild Racer Chief Garan" (thanks @DanieloV)
+- New card "Stinger Horn, the Delver" (thanks @DanieloV)
+- New card "World Tree, Root of Life" (thanks @DanieloV)
+- New card "Kizar Basiku, the Outrageous" (thanks @DanieloV)
+- New card "Rondobil, the Explorer" (thanks @DanieloV)
+- New card "Kooc Pollon" (thanks @DanieloV)
+- New card "Titanium Cluster" (thanks @DanieloV)
+- New card "Otherworldly Warrior Naglu" (thanks @DanieloV)
+- New card "Three-Faced Ashura Fang" (thanks @DanieloV)
+- New card "Gigabuster" (thanks @DanieloV)
+
+## 30/09/2024
+
 - New card "Tank Mutant" (thanks @jyotiskaghosh)
 - New card "Bazooka Mutant" (thanks @jyotiskaghosh)
 - Fix for "Snake Attack" not enforcing shield destruction (thanks @DanieloV)
