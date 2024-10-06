@@ -3,6 +3,7 @@ package fx
 import (
 	"duel-masters/game/family"
 	"duel-masters/game/match"
+	"slices"
 )
 
 // CardCollection is a slice of cards with a mapping function
@@ -77,6 +78,21 @@ func When(test func(*match.Card, *match.Context) bool, h func(*match.Card, *matc
 
 }
 
+// When performs the specified function if the test is successful
+func WhenAll(tests []func(*match.Card, *match.Context) bool, h func(*match.Card, *match.Context)) func(*match.Card, *match.Context) {
+
+	return func(card *match.Card, ctx *match.Context) {
+		for _, f := range tests {
+			if !f(card, ctx) {
+				return
+			}
+		}
+
+		h(card, ctx)
+	}
+
+}
+
 // Select prompts the user to select n cards from the specified container
 func Select(p *match.Player, m *match.Match, containerOwner *match.Player, containerName string, text string, min int, max int, cancellable bool) CardCollection {
 	return SelectFilterSelectablesOnly(p, m, containerOwner, containerName, text, min, max, cancellable, func(x *match.Card) bool { return true })
@@ -128,6 +144,48 @@ func BinaryQuestion(p *match.Player, m *match.Match, text string) bool {
 	return !action.Cancel
 }
 
+func OrderCards(p *match.Player, m *match.Match, cards []*match.Card, text string) []string {
+	m.NewOrderAction(p, cards, text)
+	defer m.CloseAction(p)
+
+	if !m.IsPlayerTurn(p) {
+		m.Wait(m.Opponent(p), "Waiting for your opponent to make an action")
+		defer m.EndWait(m.Opponent(p))
+	}
+
+	var cardsIds []string
+	for _, c := range cards {
+		cardsIds = append(cardsIds, c.ID)
+	}
+
+	for {
+
+		action := <-p.Action
+
+		if len(action.Cards) != len(cards) {
+			m.ActionWarning(p, "You must arrange the cards in the desired order")
+			continue
+		}
+
+		// check if all the cards specified by the client are expected
+		ok := true
+		for _, cardId := range action.Cards {
+			if !slices.Contains(cardsIds, cardId) {
+				ok = false
+			}
+		}
+
+		if !ok {
+			m.ActionWarning(p, "The cards don't meet the requirements")
+			continue
+		}
+
+		return action.Cards
+
+	}
+
+}
+
 // SelectFilterSelectablesOnly prompts the user to select n cards from the specified container that matches the given filter
 //
 // Deprecated: New cards should use `fx.SelectFilter`
@@ -154,6 +212,11 @@ func SelectFilter(p *match.Player, m *match.Match, containerOwner *match.Player,
 
 	if len(filtered) < 1 {
 		return result
+	}
+
+	if !m.IsPlayerTurn(p) {
+		m.Wait(m.Opponent(p), "Waiting for your opponent to make an action")
+		defer m.EndWait(m.Opponent(p))
 	}
 
 	m.NewActionFullList(p, filtered, min, max, text, cancellable, unselectables)
@@ -330,6 +393,21 @@ func SelectBacksideFilter(p *match.Player, m *match.Match, containerOwner *match
 
 }
 
+// Convenience method to get blockers list for fx.Attacking regardless of the target
+func BlockersList(ctx *match.Context) *[]*match.Card {
+
+	if event, ok := ctx.Event.(*match.AttackCreature); ok {
+		return &event.Blockers
+	}
+
+	if event, ok := ctx.Event.(*match.AttackPlayer); ok {
+		return &event.Blockers
+	}
+
+	return nil
+
+}
+
 // Hooks below:
 // hooks are shorthands for checking if the context matches a certain condition
 
@@ -472,17 +550,25 @@ func EndOfTurn(card *match.Card, ctx *match.Context) bool {
 
 // EndOfTurn returns true if the turn is ending, pre end of turn triggers
 func EndOfMyTurn(card *match.Card, ctx *match.Context) bool {
-	_, ok := ctx.Event.(*match.EndStep)
+	return EndOfTurn(card, ctx) && ctx.Match.IsPlayerTurn(card.Player)
+}
 
-	if !ok {
+// EndOfMyTurnWithCreatureInTheBZ returns true if the turn is ending,
+// pre end of turn triggers for creatures in the battlezone
+func EndOfMyTurnCreatureBZ(card *match.Card, ctx *match.Context) bool {
+	return EndOfMyTurn(card, ctx) && card.Zone == match.BATTLEZONE
+}
+
+// BreakShield returns true if a shield is about to be broken
+func BreakShield(card *match.Card, ctx *match.Context) bool {
+
+	if card.Zone != match.BATTLEZONE {
 		return false
 	}
 
-	if ctx.Match.IsPlayerTurn(card.Player) {
-		return true
-	}
+	_, ok := ctx.Event.(*match.BreakShieldEvent)
+	return ok
 
-	return false
 }
 
 // ShieldBroken returns true if a shield has been broken
@@ -527,6 +613,7 @@ func MySurvivorSummoned(card *match.Card, ctx *match.Context) bool {
 	}
 
 	creature, err := card.Player.GetCard(event.CardID, match.BATTLEZONE)
+
 	if err != nil {
 		return false
 	}
@@ -572,4 +659,20 @@ func MyDrawStep(card *match.Card, ctx *match.Context) bool {
 		}
 	}
 	return false
+}
+
+func IDontHaveShields(card *match.Card, ctx *match.Context) bool {
+	shields, err := card.Player.Container(match.SHIELDZONE)
+	if err != nil {
+		return false
+	}
+	return len(shields) == 0
+}
+
+func IHaveShields(card *match.Card, ctx *match.Context) bool {
+	shields, err := card.Player.Container(match.SHIELDZONE)
+	if err != nil {
+		return false
+	}
+	return len(shields) > 0
 }
