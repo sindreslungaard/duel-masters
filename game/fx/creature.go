@@ -619,6 +619,15 @@ func handleBattle(ctx *match.Context, winner *match.Card, winnerPower int, loose
 	ctx.Match.ReportActionInChat(looser.Player, fmt.Sprintf("%s (%v) was destroyed by %s (%v)", looser.Name, looserPower, winner.Name, winnerPower))
 	ctx.Match.HandleFx(match.NewContext(ctx.Match, &match.CreatureDestroyed{Card: looser, Source: winner, Blocked: blocked}))
 
+	// Destry after battle
+	for _, condition := range winner.Conditions() {
+		if condition.ID != cnd.DestroyAfterBattle {
+			continue
+		}
+
+		ctx.Match.Destroy(winner, winner, match.DestroyedBySlayer)
+	}
+
 	// Slayer
 	for _, condition := range looser.Conditions() {
 		if condition.ID != cnd.Slayer {
