@@ -30,6 +30,8 @@
 - New card "Otherworldly Warrior Naglu" (thanks @DanieloV)
 - New card "Three-Faced Ashura Fang" (thanks @DanieloV)
 - New card "Gigabuster" (thanks @DanieloV)
+- New card "Battleship Mutant" (thanks @DanieloV)
+- New card "Propeller Mutant" (thanks @DanieloV)
 
 ## 30/09/2024
 
