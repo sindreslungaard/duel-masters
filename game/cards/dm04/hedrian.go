@@ -41,10 +41,7 @@ func MongrelMan(c *match.Card) {
 
 			}
 
-			if event, ok := ctx2.Event.(*match.CardMoved); ok &&
-				event.From == match.BATTLEZONE &&
-				event.To == match.GRAVEYARD &&
-				event.CardID != card.ID {
+			if fx.AnotherCreatureDestroyed(card, ctx2) {
 
 				fx.MayDraw1(card, ctx)
 
