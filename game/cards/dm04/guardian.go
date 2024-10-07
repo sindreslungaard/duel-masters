@@ -50,7 +50,7 @@ func MistRiasSonicGuardian(c *match.Card) {
 
 			if event, ok := ctx2.Event.(*match.CardMoved); ok && event.To == match.BATTLEZONE && event.CardID != card.ID {
 
-				card.Player.DrawCards(1)
+				fx.MayDraw1(card, ctx)
 
 			}
 

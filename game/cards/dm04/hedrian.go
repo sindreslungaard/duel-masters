@@ -46,7 +46,7 @@ func MongrelMan(c *match.Card) {
 				event.To == match.GRAVEYARD &&
 				event.CardID != card.ID {
 
-				card.Player.DrawCards(1)
+				fx.MayDraw1(card, ctx)
 
 			}
 
