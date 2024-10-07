@@ -6,6 +6,10 @@
 
 ## 06/10/2024
 
+- Fixed an issue where "Mongrel Man" and "Mist Rias" would not have their effect summoned when bounced
+
+## 06/10/2024
+
 - New card "Cosmic Nebula" (thanks @DanieloV)
 - New card "Crath Lade, Merciless King" (thanks @DanieloV)
 - New card "Gandar, Seeker of Explosions" (thanks @DanieloV)
@@ -54,6 +58,7 @@
 - New card "Cryptic Totem" (thanks @DanieloV)
 - New card "Spinning Totem" (thanks @DanieloV)
 - New card "Pulsar Tree" (thanks @DanieloV)
+- New card "Kyuroro" (thanks @DanieloV)
 - New card "Apocalypse Vise" (thanks @jyotiskaghosh)
 - Fixed an issue with "Explosive Fighter Ucarn"'s chat message formatting (thanks @jyotiskaghosh)
 - Set the new deckbuilder to be the default
