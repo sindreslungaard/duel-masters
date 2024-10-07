@@ -6,7 +6,7 @@
 
 ## 08/10/2024
 
-- Fixed an issue where Mongrel Man and Mist Rias would not have their effect summoned when bounced (thanks @jyotiskaghosh)
+- Fixed an issue where Mongrel Man and Mist Rias would not have their effect work when bounced (thanks @jyotiskaghosh)
 
 ## 06/10/2024
 
