@@ -34,7 +34,7 @@ export const getSettings = () =>
         muted: [],
         didMute: false,
         noUpsideDownCards: false,
-        newDeckBuilder: false,
+        legacyDeckBuilder: false,
       })
   );
 

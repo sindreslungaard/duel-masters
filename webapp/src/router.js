@@ -60,10 +60,10 @@ const router = createRouter({
       path: "/decks",
       name: "decks",
       component: () => {
-        if (getSettings().newDeckBuilder) {
-          return import("./views/DecksNew.vue")
+        if (getSettings().legacyDeckBuilder) {
+          return import("./views/Decks.vue")
         }  
-        return import("./views/Decks.vue")
+        return import("./views/DecksNew.vue")
       },
       meta: { auth: true }
     },

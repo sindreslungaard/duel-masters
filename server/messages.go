@@ -75,6 +75,7 @@ type ActionMessage struct {
 	MaxSelections     int         `json:"maxSelections"`
 	Cancellable       bool        `json:"cancellable"`
 	UnselectableCards []CardState `json:"unselectableCards"`
+	Choices           []string    `json:"choices"`
 }
 
 // MultipartActionMessage is used to prompt the user to make a selection of the specified cards

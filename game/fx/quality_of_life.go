@@ -3,6 +3,7 @@ package fx
 import (
 	"duel-masters/game/family"
 	"duel-masters/game/match"
+	"slices"
 )
 
 // CardCollection is a slice of cards with a mapping function
@@ -141,6 +142,79 @@ func BinaryQuestion(p *match.Player, m *match.Match, text string) bool {
 	action := <-p.Action
 
 	return !action.Cancel
+}
+
+func OrderCards(p *match.Player, m *match.Match, cards []*match.Card, text string) []string {
+	m.NewOrderAction(p, cards, text)
+	defer m.CloseAction(p)
+
+	if !m.IsPlayerTurn(p) {
+		m.Wait(m.Opponent(p), "Waiting for your opponent to make an action")
+		defer m.EndWait(m.Opponent(p))
+	}
+
+	var cardsIds []string
+	for _, c := range cards {
+		cardsIds = append(cardsIds, c.ID)
+	}
+
+	for {
+
+		action := <-p.Action
+
+		if len(action.Cards) != len(cards) {
+			m.ActionWarning(p, "You must arrange the cards in the desired order")
+			continue
+		}
+
+		// check if all the cards specified by the client are expected
+		ok := true
+		for _, cardId := range action.Cards {
+			if !slices.Contains(cardsIds, cardId) {
+				ok = false
+			}
+		}
+
+		if !ok {
+			m.ActionWarning(p, "The cards don't meet the requirements")
+			continue
+		}
+
+		return action.Cards
+
+	}
+
+}
+
+// Send multiple strings as options, will return the index of the chosen option
+func MultipleChoiceQuestion(p *match.Player, m *match.Match, text string, options []string) int {
+	result := 0
+
+	m.NewMultipleChoiceQuestionAction(p, text, options)
+
+	defer m.CloseAction(p)
+
+	if !m.IsPlayerTurn(p) {
+		m.Wait(m.Opponent(p), "Waiting for your opponent to make an action")
+		defer m.EndWait(m.Opponent(p))
+	}
+
+	for {
+
+		action := <-p.Action
+
+		if action.Count >= len(options) || action.Count < 0 {
+			m.ActionWarning(p, "The option selected doesn't exist")
+			continue
+		}
+
+		result = action.Count
+
+		break
+
+	}
+
+	return result
 }
 
 // SelectFilterSelectablesOnly prompts the user to select n cards from the specified container that matches the given filter
@@ -313,6 +387,11 @@ func SelectBacksideFilter(p *match.Player, m *match.Match, containerOwner *match
 		return result
 	}
 
+	if !m.IsPlayerTurn(p) {
+		m.Wait(m.Opponent(p), "Waiting for your opponent to make an action")
+		defer m.EndWait(m.Opponent(p))
+	}
+
 	m.NewBacksideAction(p, filtered, min, max, text, cancellable)
 
 	defer m.CloseAction(p)
@@ -347,6 +426,21 @@ func SelectBacksideFilter(p *match.Player, m *match.Match, containerOwner *match
 	}
 
 	return result
+
+}
+
+// Convenience method to get blockers list for fx.Attacking regardless of the target
+func BlockersList(ctx *match.Context) *[]*match.Card {
+
+	if event, ok := ctx.Event.(*match.AttackCreature); ok {
+		return &event.Blockers
+	}
+
+	if event, ok := ctx.Event.(*match.AttackPlayer); ok {
+		return &event.Blockers
+	}
+
+	return nil
 
 }
 
@@ -617,4 +711,30 @@ func IHaveShields(card *match.Card, ctx *match.Context) bool {
 		return false
 	}
 	return len(shields) > 0
+}
+
+// This implementation is not fully correct as we currenly don't send an event when a creature is targeted for attack.
+// It only works as expected if a creature is attacked and the defender doesn't block with another creture.
+func Attacked(card *match.Card, ctx *match.Context) bool {
+	if event, ok := ctx.Event.(*match.Battle); ok {
+		if event.Defender == card && !event.Blocked {
+			return true
+		}
+	}
+	return false
+}
+
+// IsTapped is always true as long as the card is tapped and does not trigger *when* the card becomes tapped
+func IsTapped(card *match.Card, ctx *match.Context) bool {
+	if card.Zone == match.BATTLEZONE && card.Tapped {
+		return true
+	}
+	return false
+}
+
+func Blocked(card *match.Card, ctx *match.Context) bool {
+	if event, ok := ctx.Event.(*match.Battle); ok {
+		return event.Blocked && event.Attacker == card
+	}
+	return false
 }

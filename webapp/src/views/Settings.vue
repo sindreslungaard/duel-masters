@@ -93,12 +93,12 @@
           <div class="checkbox-container">
             <input
               type="checkbox"
-              id="newDeckBuilder"
-              :checked="settings.newDeckBuilder"
-              @change="setNewDeckBuilder($event)"
+              id="legacyDeckBuilder"
+              :checked="settings.legacyDeckBuilder"
+              @change="setLegacyDeckBuilder($event)"
             />
-            <label for="newDeckBuilder">
-              Use catalogue style deck builder. (When loading it the first time it can be slow depending on your internet)
+            <label for="legacyDeckBuilder">
+              Use the legacy deck builder
             </label>
           </div>
         </div>
@@ -181,8 +181,8 @@ export default {
       patchSettings({ noUpsideDownCards: e.target.checked });
     },
 
-    setNewDeckBuilder(e) {
-      patchSettings({ newDeckBuilder: e.target.checked });
+    setLegacyDeckBuilder(e) {
+      patchSettings({ legacyDeckBuilder: e.target.checked });
       location.reload();
     },
 

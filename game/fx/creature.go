@@ -245,6 +245,7 @@ func Creature(card *match.Card, ctx *match.Context) {
 			}
 
 			card.Tapped = true
+			handleWheneverThisAttacksEffects(card, ctx)
 
 			// Broadcast state so that opponent can see that this card is tapped if they get any shield triggers
 			ctx.Match.BroadcastState()
@@ -365,7 +366,7 @@ func Creature(card *match.Card, ctx *match.Context) {
 
 		// Add attackable creatures
 		for _, c := range battlezone {
-			if c.Tapped || card.HasCondition(cnd.AttackUntapped) {
+			if !c.HasCondition(cnd.CantBeAttacked) && (c.Tapped || card.HasCondition(cnd.AttackUntapped)) {
 				event.AttackableCreatures = append(event.AttackableCreatures, c)
 			}
 		}
@@ -418,6 +419,17 @@ func Creature(card *match.Card, ctx *match.Context) {
 			c := attackedCreatures[0]
 
 			card.Tapped = true
+
+			handleWheneverThisAttacksEffects(card, ctx)
+			// In case the creature was removed by a WheneverThisAttacksEffect
+			if c.Zone != match.BATTLEZONE {
+				return
+			}
+			// Creature being attacked should not be on the blockers list
+			RemoveBlockerFromList(c, ctx)
+			// TODO: An event should be added here instead. This is the place where the blockers list should
+			// be initally made to avoid any errors (caused by removal of creatures that give others blocker).
+			// Same for attack player
 
 			// Allow the opponent to block if they can
 			if len(event.Blockers) > 0 && !card.HasCondition(cnd.CantBeBlocked) && !stealthActive(card, ctx) {
@@ -607,6 +619,15 @@ func handleBattle(ctx *match.Context, winner *match.Card, winnerPower int, loose
 	ctx.Match.ReportActionInChat(looser.Player, fmt.Sprintf("%s (%v) was destroyed by %s (%v)", looser.Name, looserPower, winner.Name, winnerPower))
 	ctx.Match.HandleFx(match.NewContext(ctx.Match, &match.CreatureDestroyed{Card: looser, Source: winner, Blocked: blocked}))
 
+	// Destry after battle
+	for _, condition := range winner.Conditions() {
+		if condition.ID != cnd.DestroyAfterBattle {
+			continue
+		}
+
+		ctx.Match.Destroy(winner, winner, match.DestroyedBySlayer)
+	}
+
 	// Slayer
 	for _, condition := range looser.Conditions() {
 		if condition.ID != cnd.Slayer {
@@ -621,6 +642,18 @@ func handleBattle(ctx *match.Context, winner *match.Card, winnerPower int, loose
 		} else {
 			// regular slayer
 			ctx.Match.Destroy(winner, looser, match.DestroyedBySlayer)
+		}
+	}
+}
+
+func handleWheneverThisAttacksEffects(card *match.Card, ctx *match.Context) {
+	for _, cond := range card.Conditions() {
+		if cond.ID != cnd.WheneverThisAttacks {
+			continue
+		}
+
+		if f, ok := cond.Val.(func(*match.Card, *match.Context)); ok {
+			f(card, ctx)
 		}
 	}
 }

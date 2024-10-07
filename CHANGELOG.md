@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+- No unreleased changes
+
+## 06/10/2024
+
 - New card "Cosmic Nebula" (thanks @DanieloV)
 - New card "Crath Lade, Merciless King" (thanks @DanieloV)
 - New card "Gandar, Seeker of Explosions" (thanks @DanieloV)
@@ -17,6 +21,42 @@
 - New card "Gezary, Undercover Doll" (thanks @DanieloV)
 - New card "Phantasmal Horror Gigazabal" (thanks @DanieloV)
 - New card "Valkrowzer, Ultra Rock Beast" (thanks @DanieloV)
+- New card "Headlong Giant" (thanks @DanieloV)
+- New card "Curious Eye" (thanks @DanieloV)
+- New card "Geoshine, Spectral Knight" (thanks @DanieloV)
+- New card "Wild Racer Chief Garan" (thanks @DanieloV)
+- New card "Stinger Horn, the Delver" (thanks @DanieloV)
+- New card "World Tree, Root of Life" (thanks @DanieloV)
+- New card "Kizar Basiku, the Outrageous" (thanks @DanieloV)
+- New card "Rondobil, the Explorer" (thanks @DanieloV)
+- New card "Kooc Pollon" (thanks @DanieloV)
+- New card "Titanium Cluster" (thanks @DanieloV)
+- New card "Otherworldly Warrior Naglu" (thanks @DanieloV)
+- New card "Three-Faced Ashura Fang" (thanks @DanieloV)
+- New card "Gigabuster" (thanks @DanieloV)
+- New card "Battleship Mutant" (thanks @DanieloV)
+- New card "Propeller Mutant" (thanks @DanieloV)
+- New card "Garatyano" (thanks @DanieloV)
+- New card "Biancus" (thanks @DanieloV)
+- New card "Cetibols" (thanks @DanieloV)
+- New card "Brood Shell" (thanks @DanieloV)
+- New card "Launch Locust" (thanks @DanieloV)
+- New card "Popple, Flowerpetal Dancer" (thanks @DanieloV)
+- New card "Tangle Fist, the Weaver" (thanks @DanieloV)
+- New card "Kipo's Contraption" (thanks @DanieloV)
+- New card "Astronaut Skyterror" (thanks @DanieloV)
+- New card "Aqua Fencer" (thanks @DanieloV)
+- New card "Splash Zebrafish" (thanks @DanieloV)
+- New card "Trenchdive Shark" (thanks @DanieloV)
+- New card "Dream Pirate, Shadow of Theft" (thanks @DanieloV)
+- New card "Scalpel Spider" (thanks @DanieloV)
+- New card "Justice Jamming" (thanks @DanieloV)
+- New card "Cryptic Totem" (thanks @DanieloV)
+- New card "Spinning Totem" (thanks @DanieloV)
+- New card "Pulsar Tree" (thanks @DanieloV)
+- New card "Apocalypse Vise" (thanks @jyotiskaghosh)
+- Fixed an issue with "Explosive Fighter Ucarn"'s chat message formatting (thanks @jyotiskaghosh)
+- Set the new deckbuilder to be the default
 
 ## 30/09/2024
 
