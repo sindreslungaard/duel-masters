@@ -38,5 +38,24 @@ func MistRiasSonicGuardian(c *match.Card) {
 	c.ManaCost = 5
 	c.ManaRequirement = []string{civ.Light}
 
-	c.Use(fx.Creature, fx.When(fx.AnotherCreatureSummoned, fx.MayDraw1))
+	c.Use(fx.Creature, fx.When(fx.Summoned, func(card *match.Card, ctx *match.Context) {
+
+		ctx.Match.ApplyPersistentEffect(func(ctx2 *match.Context, exit func()) {
+
+			if card.Zone != match.BATTLEZONE {
+
+				exit()
+				return
+			}
+
+			if event, ok := ctx2.Event.(*match.CardMoved); ok && event.To == match.BATTLEZONE && event.CardID != card.ID {
+
+				card.Player.DrawCards(1)
+
+			}
+
+		})
+
+	}))
+
 }
