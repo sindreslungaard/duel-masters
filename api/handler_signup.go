@@ -35,7 +35,7 @@ func (api *API) signupHandler(w http.ResponseWriter, r *http.Request) {
 	email, err3 := assert.Is(body.Email).NotEmpty().Email().String()
 
 	if err := assert.First(err1, err2, err3); err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
+		write(w, http.StatusBadRequest, Json{"message": "Username, email or password not valid"})
 		return
 	}
 
