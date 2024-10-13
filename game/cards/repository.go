@@ -595,4 +595,7 @@ var Promo = map[string]match.CardConstructor{
 	"5e42765f-432b-4e33-8fee-65fc9026d1cd": promo.Gigagrax,
 	"7cab8643-2cf5-483d-b7a1-8b8243a75737": promo.StarCryDragon,
 	"bf0eb592-fb6f-4604-8851-f41835cceab9": promo.LothRix,
+	"ff54e307-7097-4b12-9c35-e06307f61e74": promo.OlgateNightmareSamurai,
+	"5f6d4906-1f2b-455a-a620-992dfa6c3673": promo.AmnisHolyElemental,
+	"b02fb837-3b16-4480-9408-49c710c9217d": promo.GiliamTheTormentor,
 }
