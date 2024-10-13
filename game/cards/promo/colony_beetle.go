@@ -38,19 +38,17 @@ func BrigadeShellQ(c *match.Card) {
 		}
 
 		if creature.HasCondition(cnd.Survivor) {
-			cards := card.Player.PeekDeck(1)
-			if len(cards) < 1 {
-				return
-			}
 
-			c := cards[0]
+			topCard := card.Player.PeekDeck(1)
 
-			if c.HasFamily(family.Survivor) {
-				fx.Draw1(card, ctx)
-				ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s drew %s when %s attacked due to %s's survivor ability", card.Player.Username(), c.Name, creature.Name, card.Name))
-			} else {
-				c.Player.MoveCard(c.ID, match.DECK, match.GRAVEYARD, card.ID)
-				ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s put %s in graveyard from their deck when %s attacked due to %s's survivor ability", card.Player.Username(), c.Name, creature.Name, card.Name))
+			for _, c := range topCard {
+				if c.HasFamily(family.Survivor) {
+					fx.Draw1(card, ctx)
+					ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s drew %s when %s attacked due to %s's survivor ability", card.Player.Username(), c.Name, creature.Name, card.Name))
+				} else {
+					c.Player.MoveCard(c.ID, match.DECK, match.GRAVEYARD, card.ID)
+					ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s put %s in graveyard from their deck when %s attacked due to %s's survivor ability", card.Player.Username(), c.Name, creature.Name, card.Name))
+				}
 			}
 		}
 
