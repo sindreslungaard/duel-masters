@@ -41,4 +41,5 @@ func (api *API) deleteEventHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	write(w, http.StatusOK, Json{"message": "Event terminated"})
+	api.matchSystem.UpdateEventList()
 }

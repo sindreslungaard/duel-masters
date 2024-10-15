@@ -31,12 +31,12 @@ func GetEventDeck(userUID string, eventUID string) (db.Deck, error) {
 func CanPlayerPlayEvent(userUID string, eventUID string) (bool, error) {
 	_, err := ValidateEvent(eventUID)
 	if err != nil {
-		return false, err
+		return false, errors.New("invalid event")
 	}
 
 	deck, err := GetEventDeck(userUID, eventUID)
 	if err != nil {
-		return false, err
+		return false, errors.New("event not joined")
 	}
 
 	legacyDeck, err := ConvertToLegacyDeck(deck)

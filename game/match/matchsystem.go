@@ -105,6 +105,12 @@ func (s *MatchSystem) UpdateMatchList() {
 	s.LobbyBroadcast(MatchList(s.Matches.Iter()))
 }
 
+func (s *MatchSystem) UpdateEventList() {
+	s.LobbyBroadcast(server.Message{
+		Header: "update_events",
+	})
+}
+
 func MatchList(matches []*Match) server.MatchesListMessage {
 
 	matchesMessage := make([]server.MatchMessage, 0)

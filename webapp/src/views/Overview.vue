@@ -675,6 +675,22 @@ export default {
           "You already joined this event.";
       }
     },
+    async getEvents() {
+      try {
+        let response = await call({ path: "/events", method: "GET" })
+        this.events = [DEFAULT_EVENT]
+        if (response.data.events != null) {
+          this.events = this.events.concat(response.data.events);
+        }
+        if (this.events.find(e => e.UID == this.selectedEvent.UID) == undefined) {
+          alert("This event has finished")
+          this.selectedEvent = DEFAULT_EVENT
+        }
+      } catch (e) {
+        console.log(e)
+        alert("failed to fetch events");
+      }
+    },
     formatEventDisplay(event) {
       let display = `${event.Name} \[${event.Format}\]`
       if (event.Sets != null) {
@@ -836,6 +852,11 @@ export default {
             break;
           }
 
+          case "update_events": {
+            this.getEvents()
+            break;
+          }
+
           case "match_requests": {
             this.matchRequests = data.requests;
             if(this.linkCode != "") {
@@ -888,16 +909,7 @@ export default {
       this.errorMessage = "Connection lost";
     }
 
-    try {
-      let response = await call({ path: "/events", method: "GET" })
-      if (response.data.events != null) {
-        this.events = this.events.concat(response.data.events);
-      }
-
-    } catch (e) {
-      console.log(e)
-      alert("failed to fetch events");
-    }
+    this.getEvents()
 
     if (this.canCreateEvents) {
       try {

@@ -83,4 +83,5 @@ func (api *API) createEventHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	write(w, http.StatusOK, Json{"message": "Event created successfully"})
+	api.matchSystem.UpdateEventList()
 }
