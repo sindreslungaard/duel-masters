@@ -181,7 +181,7 @@ func Creature(card *match.Card, ctx *match.Context) {
 						// conditional Blocker
 						canBlock = canBlock || f(card)
 					} else {
-						canBlock = canBlock || true
+						canBlock = true
 					}
 				}
 
