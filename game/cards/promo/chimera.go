@@ -27,7 +27,7 @@ func Gigagrax(c *match.Card) {
 			"Destroy one of your opponent's creatures",
 			1,
 			1,
-			false).Map(func(x *match.Card) {
+			true).Map(func(x *match.Card) {
 			ctx.Match.Destroy(x, card, match.DestroyedByMiscAbility)
 		})
 
