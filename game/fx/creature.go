@@ -265,6 +265,11 @@ func Creature(card *match.Card, ctx *match.Context) {
 			card.Tapped = true
 			handleWheneverThisAttacksEffects(card, ctx)
 
+			// In case whenever this attack effect removes itself from the Battlezone
+			if card.Zone != match.BATTLEZONE {
+				return
+			}
+
 			// Broadcast state so that opponent can see that this card is tapped if they get any shield triggers
 			ctx.Match.BroadcastState()
 
@@ -439,8 +444,8 @@ func Creature(card *match.Card, ctx *match.Context) {
 			card.Tapped = true
 
 			handleWheneverThisAttacksEffects(card, ctx)
-			// In case the creature was removed by a WheneverThisAttacksEffect
-			if c.Zone != match.BATTLEZONE {
+			// In case the attacker or creature was removed by a WheneverThisAttacksEffect
+			if card.Zone != match.BATTLEZONE || c.Zone != match.BATTLEZONE {
 				return
 			}
 			// Creature being attacked should not be on the blockers list
@@ -647,6 +652,8 @@ func handleBattle(ctx *match.Context, winner *match.Card, winnerPower int, loose
 	}
 
 	// Slayer
+	hasSlayer := false
+
 	for _, condition := range looser.Conditions() {
 		if condition.ID != cnd.Slayer {
 			continue
@@ -654,13 +661,15 @@ func handleBattle(ctx *match.Context, winner *match.Card, winnerPower int, loose
 
 		if f, ok := condition.Val.(SlayerCondition); ok {
 			// conditional slayer
-			if f(winner) {
-				ctx.Match.Destroy(winner, looser, match.DestroyedBySlayer)
-			}
+			hasSlayer = hasSlayer || f(winner)
 		} else {
 			// regular slayer
-			ctx.Match.Destroy(winner, looser, match.DestroyedBySlayer)
+			hasSlayer = true
 		}
+	}
+
+	if hasSlayer {
+		ctx.Match.Destroy(winner, looser, match.DestroyedBySlayer)
 	}
 }
 
