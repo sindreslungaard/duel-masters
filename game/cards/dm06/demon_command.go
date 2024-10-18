@@ -45,13 +45,7 @@ func DaidalosGeneralOfFury(c *match.Card) {
 		creatures := fx.Select(card.Player, ctx.Match, card.Player, match.BATTLEZONE, "Daidalos, General Of Fury: Select 1 creature from your battlezone that will be sent to your graveyard", 1, 1, false)
 
 		for _, creature := range creatures {
-			if creature.ID == card.ID {
-				ctx.Match.Destroy(creature, card, match.DestroyedByMiscAbility)
-				ctx.InterruptFlow()
-			}
-			if creature.ID != card.ID {
-				ctx.Match.Destroy(creature, card, match.DestroyedByMiscAbility)
-			}
+			ctx.Match.Destroy(creature, card, match.DestroyedByMiscAbility)
 		}
 
 	}))

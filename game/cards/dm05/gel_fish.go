@@ -70,56 +70,8 @@ func LurkingEel(c *match.Card) {
 	c.ManaCost = 6
 	c.ManaRequirement = []string{civ.Water}
 
-	c.Use(func(card *match.Card, ctx *match.Context) {
-
-		if event, ok := ctx.Event.(*match.AttackPlayer); ok {
-
-			blockers := make([]*match.Card, 0)
-
-			attacker, err := ctx.Match.Opponent(c.Player).GetCard(event.CardID, match.BATTLEZONE)
-
-			if err != nil {
-				return
-			}
-
-			if attacker.Civ == civ.Fire || attacker.Civ == civ.Nature {
-				return
-			}
-
-			for _, b := range event.Blockers {
-				if b.ID != card.ID {
-					blockers = append(blockers, b)
-				}
-			}
-
-			event.Blockers = blockers
-
-		}
-
-		if event, ok := ctx.Event.(*match.AttackCreature); ok {
-
-			blockers := make([]*match.Card, 0)
-
-			attacker, err := ctx.Match.Opponent(c.Player).GetCard(event.CardID, match.BATTLEZONE)
-
-			if err != nil {
-				return
-			}
-
-			if attacker.Civ == civ.Fire || attacker.Civ == civ.Nature {
-				return
-			}
-
-			for _, b := range event.Blockers {
-				if b.ID != card.ID {
-					blockers = append(blockers, b)
-				}
-			}
-
-			event.Blockers = blockers
-
-		}
-
-	}, fx.Creature, fx.Blocker)
+	c.Use(fx.Creature, fx.ConditionalBlocker(func(target *match.Card) bool {
+		return target.Civ == civ.Fire || target.Civ == civ.Nature
+	}))
 
 }

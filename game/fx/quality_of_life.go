@@ -688,6 +688,32 @@ func AnotherCreatureDestroyed(card *match.Card, ctx *match.Context) bool {
 	return false
 }
 
+func AnotherOwnCreatureDestroyed(card *match.Card, ctx *match.Context) bool {
+
+	if card.Zone != match.BATTLEZONE {
+		return false
+	}
+
+	if event, ok := ctx.Event.(*match.CardMoved); ok &&
+		event.From == match.BATTLEZONE &&
+		event.To == match.GRAVEYARD {
+
+		// check if it was the card's player whose creature got destroyed
+		var p *match.Player
+		if event.MatchPlayerID == 1 {
+			p = ctx.Match.Player1.Player
+		} else {
+			p = ctx.Match.Player2.Player
+		}
+
+		return card.Player == p
+
+	}
+
+	return false
+
+}
+
 func MyDrawStep(card *match.Card, ctx *match.Context) bool {
 	if _, ok := ctx.Event.(*match.DrawStep); ok {
 		if ctx.Match.IsPlayerTurn(card.Player) {

@@ -79,3 +79,22 @@ func MayDrawAmount(card *match.Card, ctx *match.Context, amount int) {
 
 	card.Player.DrawCards(drawAmount)
 }
+
+// TopCardToShield puts top 1 card from deck to shielzone
+func TopCardToShield(card *match.Card, ctx *match.Context) {
+
+	cards := card.Player.PeekDeck(1)
+
+	if len(cards) < 1 {
+		return
+	}
+
+	_, err := card.Player.MoveCard(cards[0].ID, match.DECK, match.SHIELDZONE, card.ID)
+
+	if err != nil {
+		return
+	}
+
+	ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s put the top card of his deck into the shieldzone from %s's effect", card.Player.Username(), card.Name))
+
+}
