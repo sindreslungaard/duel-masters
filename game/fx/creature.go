@@ -376,7 +376,25 @@ func Creature(card *match.Card, ctx *match.Context) {
 		FindFilter(
 			opponent,
 			match.BATTLEZONE,
-			func(x *match.Card) bool { return x.HasCondition(cnd.Blocker) && !x.Tapped },
+			func(x *match.Card) bool {
+
+				canBlock := false
+
+				for _, condition := range x.Conditions() {
+					if condition.ID != cnd.Blocker {
+						continue
+					}
+
+					if f, ok := condition.Val.(BlockerCondition); ok {
+						// conditional Blocker
+						canBlock = canBlock || f(card)
+					} else {
+						canBlock = true
+					}
+				}
+
+				return canBlock && !x.Tapped
+			},
 		).Map(func(x *match.Card) {
 			event.Blockers = append(event.Blockers, x)
 		})
