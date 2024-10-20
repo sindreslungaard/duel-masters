@@ -246,6 +246,9 @@ func Creature(card *match.Card, ctx *match.Context) {
 
 			card.Tapped = true
 			handleWheneverThisAttacksEffects(card, ctx)
+			if ctx.Cancelled() {
+				return
+			}
 
 			// Broadcast state so that opponent can see that this card is tapped if they get any shield triggers
 			ctx.Match.BroadcastState()
@@ -421,7 +424,10 @@ func Creature(card *match.Card, ctx *match.Context) {
 			card.Tapped = true
 
 			handleWheneverThisAttacksEffects(card, ctx)
-			// In case the creature was removed by a WheneverThisAttacksEffect
+			if ctx.Cancelled() {
+				return
+			}
+			// In case the attacked creature was removed by a WheneverThisAttacksEffect
 			if c.Zone != match.BATTLEZONE {
 				return
 			}
