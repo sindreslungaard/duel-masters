@@ -194,72 +194,8 @@ func Creature(card *match.Card, ctx *match.Context) {
 		// Do this last in case any other cards want to interrupt the flow
 		ctx.ScheduleAfter(func() {
 
-			shieldzone, err := opponent.Container(match.SHIELDZONE)
-
-			if err != nil {
+			if !BinaryQuestion(card.Player, ctx.Match, "Are you sure you want to attack player?") {
 				return
-			}
-
-			shieldsAttacked := make([]*match.Card, 0)
-
-			if len(shieldzone) > 0 {
-
-				minmax := 1
-
-				if card.HasCondition(cnd.DoubleBreaker) {
-					minmax = 2
-				}
-
-				if card.HasCondition(cnd.TripleBreaker) {
-					minmax = 3
-				}
-
-				for _, condition := range card.Conditions() {
-					if condition.ID != cnd.ShieldBreakModifier {
-						continue
-					}
-
-					if val, ok := condition.Val.(int); ok {
-						minmax += val
-					}
-				}
-
-				if minmax > len(shieldzone) {
-					minmax = len(shieldzone)
-				}
-
-				ctx.Match.NewBacksideAction(card.Player, shieldzone, minmax, minmax, fmt.Sprintf("Select %v shield(s) to break", minmax), true)
-
-				for {
-
-					action := <-card.Player.Action
-
-					if action.Cancel {
-						ctx.InterruptFlow()
-						ctx.Match.CloseAction(card.Player)
-						return
-					}
-
-					if len(action.Cards) != minmax || !match.AssertCardsIn(shieldzone, action.Cards[0]) {
-						ctx.Match.ActionWarning(card.Player, "Your selection of cards does not fulfill the requirements")
-						continue
-					}
-
-					for _, cardID := range action.Cards {
-						shield, err := opponent.GetCard(cardID, match.SHIELDZONE)
-						if err != nil {
-							logrus.Debug("Could not find specified shield in shieldzone")
-							continue
-						}
-						shieldsAttacked = append(shieldsAttacked, shield)
-					}
-
-					ctx.Match.CloseAction(card.Player)
-
-					break
-
-				}
-
 			}
 
 			card.Tapped = true
@@ -268,6 +204,73 @@ func Creature(card *match.Card, ctx *match.Context) {
 			// In case whenever this attack effect removes itself from the Battlezone
 			if card.Zone != match.BATTLEZONE {
 				return
+			}
+
+			shieldzone, err := opponent.Container(match.SHIELDZONE)
+
+			if err != nil {
+				return
+			}
+
+			shieldsSelect := func() []*match.Card {
+
+				shieldsAttacked := make([]*match.Card, 0)
+
+				if len(shieldzone) > 0 {
+
+					minmax := 1
+
+					if card.HasCondition(cnd.DoubleBreaker) {
+						minmax = 2
+					}
+
+					if card.HasCondition(cnd.TripleBreaker) {
+						minmax = 3
+					}
+
+					for _, condition := range card.Conditions() {
+						if condition.ID != cnd.ShieldBreakModifier {
+							continue
+						}
+
+						if val, ok := condition.Val.(int); ok {
+							minmax += val
+						}
+					}
+
+					if minmax > len(shieldzone) {
+						minmax = len(shieldzone)
+					}
+
+					ctx.Match.NewBacksideAction(card.Player, shieldzone, minmax, minmax, fmt.Sprintf("Select %v shield(s) to break", minmax), false)
+
+					for {
+
+						action := <-card.Player.Action
+
+						if len(action.Cards) != minmax || !match.AssertCardsIn(shieldzone, action.Cards[0]) {
+							ctx.Match.ActionWarning(card.Player, "Your selection of cards does not fulfill the requirements")
+							continue
+						}
+
+						for _, cardID := range action.Cards {
+							shield, err := opponent.GetCard(cardID, match.SHIELDZONE)
+							if err != nil {
+								logrus.Debug("Could not find specified shield in shieldzone")
+								continue
+							}
+							shieldsAttacked = append(shieldsAttacked, shield)
+						}
+
+						ctx.Match.CloseAction(card.Player)
+
+						break
+
+					}
+				}
+
+				return shieldsAttacked
+
 			}
 
 			// Broadcast state so that opponent can see that this card is tapped if they get any shield triggers
@@ -279,10 +282,6 @@ func Creature(card *match.Card, ctx *match.Context) {
 				ctx.Match.Wait(card.Player, "Waiting for your opponent to make an action")
 
 				identifierStr := "you"
-
-				if len(shieldsAttacked) > 0 {
-					identifierStr = fmt.Sprintf("%v of your shields", len(shieldsAttacked))
-				}
 
 				ctx.Match.NewAction(opponent, event.Blockers, 1, 1, fmt.Sprintf("%s (%v) is attacking %s. Choose a creature to block the attack with or close to not block the attack.", card.Name, ctx.Match.GetPower(card, true), identifierStr), true)
 
@@ -301,7 +300,7 @@ func Creature(card *match.Card, ctx *match.Context) {
 							ctx.Match.End(card.Player, fmt.Sprintf("%s won the game", ctx.Match.PlayerRef(card.Player).Socket.User.Username))
 						} else {
 							// Break n shields
-							ctx.Match.BreakShields(shieldsAttacked, card)
+							ctx.Match.BreakShields(shieldsSelect(), card)
 						}
 
 						break
@@ -341,7 +340,7 @@ func Creature(card *match.Card, ctx *match.Context) {
 					ctx.Match.End(card.Player, fmt.Sprintf("%s won the game", ctx.Match.PlayerRef(card.Player).Socket.User.Username))
 				} else {
 					// Break n shields
-					ctx.Match.BreakShields(shieldsAttacked, card)
+					ctx.Match.BreakShields(shieldsSelect(), card)
 				}
 
 			}
