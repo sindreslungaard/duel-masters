@@ -91,3 +91,12 @@ func ApocalypseVise(c *match.Card) {
 	}))
 
 }
+
+func HopelessVortex(c *match.Card) {
+	c.Name = "Hopeless Vortex"
+	c.Civ = civ.Darkness
+	c.ManaCost = 5
+	c.ManaRequirement = []string{civ.Darkness}
+
+	c.Use(fx.Spell, fx.When(fx.SpellCast, fx.DestroyOpCreature))
+}

@@ -40,6 +40,19 @@ func EachPlayerDestroysMana(card *match.Card, ctx *match.Context, quantity int) 
 
 }
 
+func DestroyOpCreature(card *match.Card, ctx *match.Context) {
+	Select(
+		card.Player,
+		ctx.Match,
+		ctx.Match.Opponent(card.Player),
+		match.BATTLEZONE,
+		"Destroy one of your opponent's creatures",
+		1, 1, false,
+	).Map(func(x *match.Card) {
+		ctx.Match.Destroy(x, card, match.DestroyedBySpell)
+	})
+}
+
 func destroyOpCreature2000OrLess(card *match.Card, ctx *match.Context, destroyType match.CreatureDestroyedContext) {
 	SelectFilter(
 		card.Player, ctx.Match, ctx.Match.Opponent(card.Player), match.BATTLEZONE,

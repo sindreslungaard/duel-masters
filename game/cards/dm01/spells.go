@@ -618,22 +618,7 @@ func TerrorPit(c *match.Card) {
 	c.ManaCost = 6
 	c.ManaRequirement = []string{civ.Darkness}
 
-	c.Use(fx.Spell, fx.ShieldTrigger, func(card *match.Card, ctx *match.Context) {
-
-		if match.AmICasted(card, ctx) {
-
-			creatures := match.Search(card.Player, ctx.Match, ctx.Match.Opponent(card.Player), match.BATTLEZONE, "Destroy one of your opponent's creatures", 1, 1, false)
-
-			for _, creature := range creatures {
-
-				ctx.Match.Destroy(creature, card, match.DestroyedBySpell)
-
-			}
-
-		}
-
-	})
-
+	c.Use(fx.Spell, fx.ShieldTrigger, fx.When(fx.SpellCast, fx.DestroyOpCreature))
 }
 
 // TornadoFlame ...
