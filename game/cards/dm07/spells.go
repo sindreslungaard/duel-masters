@@ -100,3 +100,32 @@ func HopelessVortex(c *match.Card) {
 
 	c.Use(fx.Spell, fx.When(fx.SpellCast, fx.DestroyOpCreature))
 }
+
+func FreezingIcehammer(c *match.Card) {
+
+	c.Name = "Freezing Icehammer"
+	c.Civ = civ.Nature
+	c.ManaCost = 3
+	c.ManaRequirement = []string{civ.Nature}
+
+	c.Use(fx.Spell, fx.When(fx.SpellCast, func(card *match.Card, ctx *match.Context) {
+
+		fx.SelectFilter(
+			card.Player,
+			ctx.Match,
+			ctx.Match.Opponent(card.Player),
+			match.BATTLEZONE,
+			"Select 1 of your opponent's water or darkness creatures and put it in their manazone",
+			1,
+			1,
+			false,
+			func(x *match.Card) bool { return x.Civ == civ.Water || x.Civ == civ.Darkness },
+			false,
+		).Map(func(x *match.Card) {
+			x.Player.MoveCard(x.ID, match.BATTLEZONE, match.MANAZONE, card.ID)
+			ctx.Match.ReportActionInChat(ctx.Match.Opponent(card.Player), fmt.Sprintf("%s was moved to %s's manazone", x.Name, x.Player.Username()))
+		})
+
+	}))
+
+}
