@@ -155,3 +155,29 @@ func FruitOfEternity(c *match.Card) {
 		})
 	}))
 }
+
+func VacuumGel(c *match.Card) {
+
+	c.Name = "Vacuum Gel"
+	c.Civ = civ.Darkness
+	c.ManaCost = 4
+	c.ManaRequirement = []string{civ.Darkness}
+
+	c.Use(fx.Spell, fx.ShieldTrigger, fx.When(fx.SpellCast, func(card *match.Card, ctx *match.Context) {
+
+		fx.SelectFilter(
+			card.Player,
+			ctx.Match,
+			ctx.Match.Opponent(card.Player),
+			match.BATTLEZONE,
+			"Destroy one of your opponent's untapped light or untapped nature creatures",
+			1,
+			1,
+			false,
+			func(x *match.Card) bool { return !x.Tapped && x.Civ == civ.Light || x.Civ == civ.Nature },
+			false,
+		).Map(func(x *match.Card) {
+			ctx.Match.Destroy(x, card, match.DestroyedBySpell)
+		})
+	}))
+}
