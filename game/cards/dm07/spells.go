@@ -237,3 +237,20 @@ func VenomCharger(c *match.Card) {
 		})
 	}))
 }
+
+func EnergyCharger(c *match.Card) {
+	c.Name = "Energy Charger"
+	c.Civ = civ.Fire
+	c.ManaCost = 3
+	c.ManaRequirement = []string{civ.Fire}
+
+	c.Use(fx.Spell, fx.Charger, fx.When(fx.SpellCast, func(card *match.Card, ctx *match.Context) {
+
+		fx.Select(card.Player, ctx.Match, card.Player, match.BATTLEZONE,
+			"Select 1 creature from your battlezone that will gain +2000 power", 1, 1, false,
+		).Map(func(x *match.Card) {
+			x.AddCondition(cnd.PowerAmplifier, 2000, card.ID)
+			ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s was given +2000", x.Name))
+		})
+	}))
+}
