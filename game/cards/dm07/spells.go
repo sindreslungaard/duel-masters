@@ -220,3 +220,20 @@ func MiraclePortal(c *match.Card) {
 
 	}))
 }
+
+func VenomCharger(c *match.Card) {
+	c.Name = "Venom Charger"
+	c.Civ = civ.Darkness
+	c.ManaCost = 3
+	c.ManaRequirement = []string{civ.Darkness}
+
+	c.Use(fx.Spell, fx.Charger, fx.When(fx.SpellCast, func(card *match.Card, ctx *match.Context) {
+
+		fx.Select(card.Player, ctx.Match, card.Player, match.BATTLEZONE,
+			"Select 1 creature from your battlezone that will gain \"Slayer\"", 1, 1, false,
+		).Map(func(x *match.Card) {
+			x.AddCondition(cnd.Slayer, nil, card.ID)
+			ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s was given slayer", x.Name))
+		})
+	}))
+}
