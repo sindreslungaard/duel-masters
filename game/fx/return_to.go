@@ -137,3 +137,36 @@ func ReturnMyCardFromMZToHand(card *match.Card, ctx *match.Context) {
 		ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s effect: %s returned %s from MZ to their hand", card.Name, c.Player.Username(), c.Name))
 	})
 }
+
+func returnCreatureToOwnersHandWithOptin(card *match.Card, ctx *match.Context, optional bool) {
+	cards := make(map[string][]*match.Card)
+
+	cards["Your creatures"] = Find(card.Player, match.BATTLEZONE)
+	cards["Opponent's creatures"] = Find(ctx.Match.Opponent(card.Player), match.BATTLEZONE)
+
+	start_statement := "Choose"
+	if optional {
+		start_statement = "You may chooose"
+	}
+
+	SelectMultipart(
+		card.Player,
+		ctx.Match,
+		cards,
+		fmt.Sprintf("%s: %s 1 creature in the battlezone that will be sent to its owner's hand", card.Name, start_statement),
+		1,
+		1,
+		optional,
+	).Map(func(creature *match.Card) {
+		creature.Player.MoveCard(creature.ID, match.BATTLEZONE, match.HAND, card.ID)
+		ctx.Match.ReportActionInChat(creature.Player, fmt.Sprintf("%s was returned to %s's hand by %s", creature.Name, creature.Player.Username(), card.Name))
+	})
+}
+
+func ReturnCreatureToOwnersHand(card *match.Card, ctx *match.Context) {
+	returnCreatureToOwnersHandWithOptin(card, ctx, false)
+}
+
+func MayReturnCreatureToOwnersHand(card *match.Card, ctx *match.Context) {
+	returnCreatureToOwnersHandWithOptin(card, ctx, true)
+}

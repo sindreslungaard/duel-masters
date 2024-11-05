@@ -254,3 +254,12 @@ func EnergyCharger(c *match.Card) {
 		})
 	}))
 }
+
+func RiptideCharger(c *match.Card) {
+	c.Name = "Riptide Charger"
+	c.Civ = civ.Water
+	c.ManaCost = 5
+	c.ManaRequirement = []string{civ.Water}
+
+	c.Use(fx.Spell, fx.Charger, fx.When(fx.SpellCast, fx.ReturnCreatureToOwnersHand))
+}
