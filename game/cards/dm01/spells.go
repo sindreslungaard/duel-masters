@@ -403,24 +403,7 @@ func PangaeasSong(c *match.Card) {
 	c.ManaCost = 1
 	c.ManaRequirement = []string{civ.Nature}
 
-	c.Use(fx.Spell, func(card *match.Card, ctx *match.Context) {
-
-		if match.AmICasted(card, ctx) {
-
-			creatures := match.Search(card.Player, ctx.Match, card.Player, match.BATTLEZONE, "Select 1 of your creatures and put it in your manazone", 1, 1, false)
-
-			for _, creature := range creatures {
-
-				creature.Player.MoveCard(creature.ID, match.BATTLEZONE, match.MANAZONE, card.ID)
-				creature.Tapped = false
-				ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s was moved to %s's manazone", creature.Name, creature.Player.Username()))
-
-			}
-
-		}
-
-	})
-
+	c.Use(fx.Spell, fx.When(fx.SpellCast, fx.PutOwnCreatureFromBZToMZ))
 }
 
 // SolarRay ...

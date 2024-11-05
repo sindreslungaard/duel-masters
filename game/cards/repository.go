@@ -577,7 +577,7 @@ var DM07 = map[string]match.CardConstructor{
 	"dd842b81-e187-44e3-92f2-a36826718849": dm07.FreezingIcehammer,
 	"30272397-4b70-4b40-b7ee-8399ebe099d6": dm07.FruitOfEternity,
 	"e6c53caf-9923-4496-a817-2727ea17bead": dm07.LaunchLocust,
-	"8de000dc-4cd9-4a6b-bccc-acfae89211ef": nil,
+	"8de000dc-4cd9-4a6b-bccc-acfae89211ef": dm07.MulchCharger,
 	"bb3a50dd-049d-488d-b89c-779dcf29b82e": dm07.PoppleFlowerpetalDancer,
 	"a5cba5aa-271f-43b0-8350-ca94c5cdfe9a": dm07.TangleFistTheWeaver,
 	"3e3b883e-721c-42b9-8181-52e514695c7f": dm07.StingerHornTheDelver,

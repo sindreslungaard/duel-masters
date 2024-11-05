@@ -263,3 +263,12 @@ func RiptideCharger(c *match.Card) {
 
 	c.Use(fx.Spell, fx.Charger, fx.When(fx.SpellCast, fx.ReturnCreatureToOwnersHand))
 }
+
+func MulchCharger(c *match.Card) {
+	c.Name = "Mulch Charger"
+	c.Civ = civ.Nature
+	c.ManaCost = 3
+	c.ManaRequirement = []string{civ.Nature}
+
+	c.Use(fx.Spell, fx.Charger, fx.When(fx.SpellCast, fx.PutOwnCreatureFromBZToMZ))
+}

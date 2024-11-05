@@ -170,3 +170,13 @@ func ReturnCreatureToOwnersHand(card *match.Card, ctx *match.Context) {
 func MayReturnCreatureToOwnersHand(card *match.Card, ctx *match.Context) {
 	returnCreatureToOwnersHandWithOptin(card, ctx, true)
 }
+
+func PutOwnCreatureFromBZToMZ(card *match.Card, ctx *match.Context) {
+	Select(card.Player, ctx.Match, card.Player, match.BATTLEZONE,
+		"Select 1 of your creatures and put it in your manazone", 1, 1, false,
+	).Map(func(creature *match.Card) {
+		creature.Player.MoveCard(creature.ID, match.BATTLEZONE, match.MANAZONE, card.ID)
+		creature.Tapped = false
+		ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s was moved to manazone", creature.Name))
+	})
+}
