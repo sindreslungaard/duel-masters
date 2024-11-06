@@ -16,7 +16,11 @@ func CosmicNebula(c *match.Card) {
 	c.ManaCost = 5
 	c.ManaRequirement = []string{civ.Water}
 
-	c.Use(fx.Creature, fx.Evolution, fx.When(fx.MyDrawStep, fx.MayDraw1))
+	c.Use(fx.Creature, fx.Evolution, fx.When(fx.MyDrawStep, func(card *match.Card, ctx *match.Context) {
+		if card.Zone == match.BATTLEZONE {
+			fx.MayDraw1(card, ctx)
+		}
+	}))
 
 }
 
