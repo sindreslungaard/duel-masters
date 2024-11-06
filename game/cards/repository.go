@@ -540,7 +540,7 @@ var DM07 = map[string]match.CardConstructor{
 	"119afa07-1a17-4197-8df9-3ee4254f0a58": dm07.MiraclePortal,
 	"4507bcbd-17f6-4035-9da5-1a6d0b41601e": dm07.PulsarTree,
 	"ae65d4d1-78aa-4711-ba49-eafd98b358e9": dm07.RodiGaleNightGuardian,
-	"7148214f-dc9c-4fb4-835c-cd6064e247df": nil,
+	"7148214f-dc9c-4fb4-835c-cd6064e247df": dm07.RomVizierofTendrils,
 	"e5bb03ac-0f09-44de-8fbe-b0c7f2748e84": dm07.RondobilTheExplorer,
 	"0d273a22-1cf9-4f99-8321-e2282e855b57": dm07.AquaAgent,
 	"7e4cdeee-0b47-4260-8ba8-3f1cf0b9ab36": dm07.AquaFencer,
