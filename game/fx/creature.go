@@ -590,7 +590,7 @@ func Creature(card *match.Card, ctx *match.Context) {
 		}
 
 		ctx.ScheduleAfter(func() {
-			card.Player.MoveCard(card.ID, match.BATTLEZONE, match.GRAVEYARD, card.ID)
+			card.Player.MoveCard(card.ID, match.BATTLEZONE, match.GRAVEYARD, event.Source.ID)
 		})
 	}
 
