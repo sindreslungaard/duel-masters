@@ -43,25 +43,6 @@ func KingMazelan(c *match.Card) {
 	c.ManaCost = 8
 	c.ManaRequirement = []string{civ.Water}
 
-	c.Use(fx.Creature, fx.Doublebreaker, fx.When(fx.Summoned, func(card *match.Card, ctx *match.Context) {
-
-		cards := make(map[string][]*match.Card)
-
-		cards["Your creatures"] = fx.Find(card.Player, match.BATTLEZONE)
-		cards["Opponent's creatures"] = fx.Find(ctx.Match.Opponent(card.Player), match.BATTLEZONE)
-
-		fx.SelectMultipart(
-			card.Player,
-			ctx.Match,
-			cards,
-			fmt.Sprintf("%s: Choose 1 creature in the battlezone that will be sent to its owner's hand", card.Name),
-			1,
-			1,
-			true).Map(func(creature *match.Card) {
-			creature.Player.MoveCard(creature.ID, match.BATTLEZONE, match.HAND, card.ID)
-			ctx.Match.ReportActionInChat(creature.Player, fmt.Sprintf("%s was returned to %s's hand by %s", creature.Name, creature.Player.Username(), card.Name))
-		})
-
-	}))
+	c.Use(fx.Creature, fx.Doublebreaker, fx.When(fx.Summoned, fx.MayReturnCreatureToOwnersHand))
 
 }

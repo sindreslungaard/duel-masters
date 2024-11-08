@@ -220,3 +220,55 @@ func MiraclePortal(c *match.Card) {
 
 	}))
 }
+
+func VenomCharger(c *match.Card) {
+	c.Name = "Venom Charger"
+	c.Civ = civ.Darkness
+	c.ManaCost = 3
+	c.ManaRequirement = []string{civ.Darkness}
+
+	c.Use(fx.Spell, fx.Charger, fx.When(fx.SpellCast, func(card *match.Card, ctx *match.Context) {
+
+		fx.Select(card.Player, ctx.Match, card.Player, match.BATTLEZONE,
+			"Select 1 creature from your battlezone that will gain \"Slayer\"", 1, 1, false,
+		).Map(func(x *match.Card) {
+			x.AddCondition(cnd.Slayer, nil, card.ID)
+			ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s was given slayer", x.Name))
+		})
+	}))
+}
+
+func EnergyCharger(c *match.Card) {
+	c.Name = "Energy Charger"
+	c.Civ = civ.Fire
+	c.ManaCost = 3
+	c.ManaRequirement = []string{civ.Fire}
+
+	c.Use(fx.Spell, fx.Charger, fx.When(fx.SpellCast, func(card *match.Card, ctx *match.Context) {
+
+		fx.Select(card.Player, ctx.Match, card.Player, match.BATTLEZONE,
+			"Select 1 creature from your battlezone that will gain +2000 power", 1, 1, false,
+		).Map(func(x *match.Card) {
+			x.AddCondition(cnd.PowerAmplifier, 2000, card.ID)
+			ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s was given +2000", x.Name))
+		})
+	}))
+}
+
+func RiptideCharger(c *match.Card) {
+	c.Name = "Riptide Charger"
+	c.Civ = civ.Water
+	c.ManaCost = 5
+	c.ManaRequirement = []string{civ.Water}
+
+	c.Use(fx.Spell, fx.Charger, fx.When(fx.SpellCast, fx.ReturnCreatureToOwnersHand))
+}
+
+func MulchCharger(c *match.Card) {
+	c.Name = "Mulch Charger"
+	c.Civ = civ.Nature
+	c.ManaCost = 3
+	c.ManaRequirement = []string{civ.Nature}
+
+	c.Use(fx.Spell, fx.Charger, fx.When(fx.SpellCast, fx.PutOwnCreatureFromBZToMZ))
+}

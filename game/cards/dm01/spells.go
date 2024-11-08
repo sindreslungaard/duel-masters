@@ -403,24 +403,7 @@ func PangaeasSong(c *match.Card) {
 	c.ManaCost = 1
 	c.ManaRequirement = []string{civ.Nature}
 
-	c.Use(fx.Spell, func(card *match.Card, ctx *match.Context) {
-
-		if match.AmICasted(card, ctx) {
-
-			creatures := match.Search(card.Player, ctx.Match, card.Player, match.BATTLEZONE, "Select 1 of your creatures and put it in your manazone", 1, 1, false)
-
-			for _, creature := range creatures {
-
-				creature.Player.MoveCard(creature.ID, match.BATTLEZONE, match.MANAZONE, card.ID)
-				creature.Tapped = false
-				ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s was moved to %s's manazone", creature.Name, creature.Player.Username()))
-
-			}
-
-		}
-
-	})
-
+	c.Use(fx.Spell, fx.When(fx.SpellCast, fx.PutOwnCreatureFromBZToMZ))
 }
 
 // SolarRay ...
@@ -470,69 +453,7 @@ func SpiralGate(c *match.Card) {
 	c.ManaCost = 2
 	c.ManaRequirement = []string{civ.Water}
 
-	c.Use(fx.Spell, fx.ShieldTrigger, func(card *match.Card, ctx *match.Context) {
-
-		if match.AmICasted(card, ctx) {
-
-			cards := make(map[string][]*match.Card)
-
-			myCards, err := card.Player.Container(match.BATTLEZONE)
-
-			if err != nil {
-				return
-			}
-
-			opponentCards, err := ctx.Match.Opponent(card.Player).Container(match.BATTLEZONE)
-
-			if err != nil {
-				return
-			}
-
-			if len(myCards) < 1 && len(opponentCards) < 1 {
-				return
-			}
-
-			cards["Your creatures"] = myCards
-			cards["Opponent's creatures"] = opponentCards
-
-			ctx.Match.NewMultipartAction(card.Player, cards, 1, 1, "Spiral Gate: Select 1 creature in the battlezone and return it to its owner's hand", false)
-
-			for {
-
-				action := <-card.Player.Action
-
-				if len(action.Cards) != 1 {
-					ctx.Match.DefaultActionWarning(card.Player)
-					continue
-				}
-
-				for _, vid := range action.Cards {
-
-					ref, err := c.Player.MoveCard(vid, match.BATTLEZONE, match.HAND, card.ID)
-
-					if err != nil {
-
-						ref, err := ctx.Match.Opponent(c.Player).MoveCard(vid, match.BATTLEZONE, match.HAND, card.ID)
-
-						if err == nil {
-							ctx.Match.ReportActionInChat(ctx.Match.Opponent(card.Player), fmt.Sprintf("%s was moved to %s's hand", ref.Name, ctx.Match.PlayerRef(ref.Player).Socket.User.Username))
-						}
-
-					} else {
-						ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s was moved to %s's hand", ref.Name, ctx.Match.PlayerRef(ref.Player).Socket.User.Username))
-					}
-
-				}
-
-				break
-
-			}
-
-			ctx.Match.CloseAction(c.Player)
-
-		}
-
-	})
+	c.Use(fx.Spell, fx.ShieldTrigger, fx.When(fx.SpellCast, fx.ReturnCreatureToOwnersHand))
 
 }
 
