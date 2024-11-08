@@ -268,26 +268,12 @@ func DiamondCutter(c *match.Card) {
 				card.Player,
 				match.BATTLEZONE,
 			).Map(func(c *match.Card) {
-
 				if c.HasCondition(cnd.SummoningSickness) {
 					c.RemoveCondition(cnd.SummoningSickness)
 					c.AddCondition(cnd.CantAttackCreatures, nil, card.ID)
 				}
 
 				c.RemoveCondition(cnd.CantAttackPlayers)
-
-				if event, ok := ctx2.Event.(*match.AttackCreature); ok {
-
-					// Is this event for me or someone else?
-					if event.CardID != c.ID || !c.HasCondition(cnd.CantAttackCreatures) {
-						return
-					}
-
-					ctx2.Match.WarnPlayer(c.Player, fmt.Sprintf("%s can't attack creatures", c.Name))
-
-					ctx2.InterruptFlow()
-
-				}
 			})
 
 			// remove persistent effect when turn ends

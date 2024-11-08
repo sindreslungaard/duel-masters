@@ -2,6 +2,7 @@ package dm07
 
 import (
 	"duel-masters/game/civ"
+	"duel-masters/game/cnd"
 	"duel-masters/game/fx"
 	"duel-masters/game/match"
 	"fmt"
@@ -179,5 +180,43 @@ func VacuumGel(c *match.Card) {
 		).Map(func(x *match.Card) {
 			ctx.Match.Destroy(x, card, match.DestroyedBySpell)
 		})
+	}))
+}
+
+func MiraclePortal(c *match.Card) {
+
+	c.Name = "Miracle Portal"
+	c.Civ = civ.Light
+	c.ManaCost = 4
+	c.ManaRequirement = []string{civ.Light}
+
+	c.Use(fx.Spell, fx.When(fx.SpellCast, func(card *match.Card, ctx *match.Context) {
+
+		fx.Select(
+			card.Player,
+			ctx.Match,
+			card.Player,
+			match.BATTLEZONE,
+			"Choose one of your creatures in the battle zone. This turn, it can't be blocked and you ignore any effects that would prevent that creature from attacking your opponent.",
+			1,
+			1,
+			false,
+		).Map(func(c *match.Card) {
+			ctx.Match.ApplyPersistentEffect(func(ctx2 *match.Context, exit func()) {
+				if c.HasCondition(cnd.SummoningSickness) {
+					c.RemoveCondition(cnd.SummoningSickness)
+					c.AddCondition(cnd.CantAttackCreatures, nil, card.ID)
+				}
+				c.RemoveCondition(cnd.CantAttackPlayers)
+				c.AddCondition(cnd.CantBeBlocked, nil, card)
+
+				// remove persistent effect when turn ends
+				_, ok := ctx2.Event.(*match.EndStep)
+				if ok {
+					exit()
+				}
+			})
+		})
+
 	}))
 }
