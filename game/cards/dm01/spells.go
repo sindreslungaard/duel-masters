@@ -414,22 +414,7 @@ func SolarRay(c *match.Card) {
 	c.ManaCost = 2
 	c.ManaRequirement = []string{civ.Light}
 
-	c.Use(fx.Spell, fx.ShieldTrigger, func(card *match.Card, ctx *match.Context) {
-
-		if match.AmICasted(card, ctx) {
-
-			creatures := match.Search(card.Player, ctx.Match, ctx.Match.Opponent(card.Player), match.BATTLEZONE, "Select 1 of your opponents creatures that will be tapped", 1, 1, false)
-
-			for _, creature := range creatures {
-
-				creature.Tapped = true
-				ctx.Match.ReportActionInChat(ctx.Match.Opponent(card.Player), creature.Name+" was tapped")
-
-			}
-
-		}
-
-	})
+	c.Use(fx.Spell, fx.ShieldTrigger, fx.When(fx.SpellCast, fx.TapOpCreature))
 
 }
 
@@ -603,21 +588,6 @@ func VirtualTripwire(c *match.Card) {
 	c.ManaCost = 3
 	c.ManaRequirement = []string{civ.Water}
 
-	c.Use(fx.Spell, func(card *match.Card, ctx *match.Context) {
-
-		if match.AmICasted(card, ctx) {
-
-			creatures := match.Search(card.Player, ctx.Match, ctx.Match.Opponent(card.Player), match.BATTLEZONE, "Select 1 of your opponent's creatures that will be tapped", 1, 1, false)
-
-			for _, creature := range creatures {
-
-				creature.Tapped = true
-				ctx.Match.ReportActionInChat(ctx.Match.Opponent(card.Player), fmt.Sprintf("%s was tapped by %s", creature.Name, card.Name))
-
-			}
-
-		}
-
-	})
+	c.Use(fx.Spell, fx.When(fx.SpellCast, fx.TapOpCreature))
 
 }

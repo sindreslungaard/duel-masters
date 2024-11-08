@@ -34,7 +34,7 @@ func LuGilaSilverRiftGuardian(c *match.Card) {
 		if card.Zone != match.BATTLEZONE && card.Zone != match.HIDDENZONE {
 			return
 		}
-    
+
 		// Can have a full refactoring to fx.When after CardMoved uses card pointer
 		if event, ok := ctx.Event.(*match.CardMoved); ok {
 			if event.To != match.BATTLEZONE || event.From == match.HIDDENZONE {
@@ -75,7 +75,7 @@ func ArcBinetheAstounding(c *match.Card) {
 	c.Family = []string{family.Guardian}
 	c.ManaCost = 5
 	c.ManaRequirement = []string{civ.Light}
-	c.TapAbility = arcBinetheAstoundingSpecialAbility
+	c.TapAbility = fx.TapOpCreature
 
 	c.Use(fx.Creature, fx.Evolution, fx.TapAbility,
 		fx.When(fx.InTheBattlezone, func(card *match.Card, ctx *match.Context) {
@@ -84,26 +84,10 @@ func ArcBinetheAstounding(c *match.Card) {
 				card,
 				ctx,
 				func(x *match.Card) bool { return x.ID != card.ID && x.Civ == civ.Light },
-				arcBinetheAstoundingSpecialAbility,
+				fx.TapOpCreature,
 			)
 
 		}),
 	)
 
-}
-
-func arcBinetheAstoundingSpecialAbility(card *match.Card, ctx *match.Context) {
-	creatures := fx.Select(
-		card.Player,
-		ctx.Match,
-		ctx.Match.Opponent(card.Player),
-		match.BATTLEZONE,
-		"Select 1 of your opponent's creature and tap it.",
-		1,
-		1,
-		false)
-
-	for _, creature := range creatures {
-		creature.Tapped = true
-	}
 }

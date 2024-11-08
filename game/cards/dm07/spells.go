@@ -272,3 +272,12 @@ func MulchCharger(c *match.Card) {
 
 	c.Use(fx.Spell, fx.Charger, fx.When(fx.SpellCast, fx.PutOwnCreatureFromBZToMZ))
 }
+
+func LightningCharger(c *match.Card) {
+	c.Name = "Lightning Charger"
+	c.Civ = civ.Light
+	c.ManaCost = 4
+	c.ManaRequirement = []string{civ.Light}
+
+	c.Use(fx.Spell, fx.Charger, fx.When(fx.SpellCast, fx.TapOpCreature))
+}
