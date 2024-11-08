@@ -369,9 +369,11 @@ func (m *Match) BreakShields(attemptedShields []*Card, source *Card) {
 			}
 
 			// Elimnate all shield triggers from that list that are not in hand anymore for any reason.
+			// We need to also make sure to specifically eliminate the played card, for the cases where the card
+			// can return itself to the hand. e.g. a card with bounce that can bounce itself back to hand.
 			var stillValidShieldtriggers []*Card
 			for _, shieldTrigger := range shieldTriggers {
-				if shieldTrigger.Zone == HAND {
+				if shieldTrigger.Zone == HAND && shieldTrigger != card {
 					stillValidShieldtriggers = append(stillValidShieldtriggers, shieldTrigger)
 				}
 			}
