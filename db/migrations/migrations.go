@@ -20,6 +20,7 @@ func Migrate(conn *mongo.Database) {
 
 	migs := []migration{
 		{key: "23_07_2023_update_decks", fn: Update_Decks_23_07_2023},
+		{key: "update_user_stats", fn: UpdateUserStats},
 	}
 
 	for _, m := range migs {
