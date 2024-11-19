@@ -464,6 +464,51 @@ func (m *Match) SaveMatchHistory(winner *Player, wonByDisconnect bool) {
 	if err != nil {
 		logrus.Error("Failed to save duel result to db", err)
 	}
+
+	updateUserStats(m.Player1.UID, winner != nil && m.Player1.Player == winner)
+	updateUserStats(m.Player2.UID, winner != nil && m.Player2.Player == winner)
+}
+
+// Updates the user stats
+func updateUserStats(userID string, isWinner bool) {
+	ctx := context.Background()
+	filter := bson.M{"uid": userID}
+
+	update := bson.M{
+		"$inc": bson.M{
+			"total_games_played": 1,
+			"games_won":          0,
+			"games_lost":         0,
+		},
+	}
+
+	if isWinner {
+		update["$inc"].(bson.M)["games_won"] = 1
+	} else {
+		update["$inc"].(bson.M)["games_lost"] = 1
+	}
+
+	var user db.User
+	err := db.Users.FindOne(ctx, filter).Decode(&user)
+	if err != nil {
+		logrus.Error("Failed to fetch user stats:", err)
+		return
+	}
+
+	totalGamesPlayed := user.TotalGamesPlayed + 1
+	gamesWon := user.GamesWon
+	if isWinner {
+		gamesWon++
+	}
+
+	winRate := (float64(gamesWon) / float64(totalGamesPlayed)) * 100
+
+	update["$set"] = bson.M{"win_rate": winRate}
+
+	_, err = db.Users.UpdateOne(ctx, filter, update)
+	if err != nil {
+		logrus.Error("Failed to update user stats:", err)
+	}
 }
 
 // ColorChat sends a chat message with color
