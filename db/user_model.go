@@ -17,9 +17,9 @@ type User struct {
 	Sessions         []UserSession `json:"-"`
 	MutedUsers       []string      `json:"muted_users"`
 	Chatblocked      bool          `json:"-" bson:"chat_blocked"`
-	TotalGamesPlayed int           `json:"total_games_played" bson:"total_games_played"`
-	GamesWon         int           `json:"games_won" bson:"games_won"`
 	GamesLost        int           `json:"games_lost" bson:"games_lost"`
+	GamesWon         int           `json:"games_won" bson:"games_won"`
+	TotalGamesPlayed int           `json:"total_games_played" bson:"total_games_played"`
 	WinRate          float64       `json:"win_rate" bson:"win_rate"`
 }
 
