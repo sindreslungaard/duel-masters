@@ -5,6 +5,8 @@
       <ul>
         <li @click="$router.push('overview')" class="">Lobby</li>
         <li class="no-cursor">|</li>
+        <li @click="$router.push('stats')">Stats</li>
+        <li class="no-cursor">|</li>
         <li @click="$router.push('decks')">Decks</li>
         <li class="no-cursor">|</li>
         <li @click="$router.push('settings')">Settings</li>
@@ -102,14 +104,14 @@ export default {
     username: () => localStorage.getItem("username"),
     changelog() {
       return marked.parse(this.rawChangelog);
-    }
+    },
   },
   data() {
     return {
       changelogOpen: false,
       changelogLastClosed: 0,
       rawChangelog:
-        "Failed to load changelog.. Please refresh the site and try again"
+        "Failed to load changelog.. Please refresh the site and try again",
     };
   },
   created() {
@@ -117,7 +119,7 @@ export default {
       .get(
         "https://raw.githubusercontent.com/sindreslungaard/duel-masters/master/CHANGELOG.md"
       )
-      .then(res => {
+      .then((res) => {
         this.rawChangelog = res.data;
       });
   },
@@ -138,8 +140,8 @@ export default {
     closeChangelog() {
       this.changelogOpen = false;
       this.changelogLastClosed = Date.now();
-    }
-  }
+    },
+  },
 };
 </script>
 
@@ -335,7 +337,7 @@ a {
   right: 0;
   width: 400px;
   height: 500px;
-  background: #0A0A0D;
+  background: #0a0a0d;
   border-radius: 4px;
   text-align: left;
   cursor: default;
@@ -350,7 +352,7 @@ a {
   top: -3px;
   right: 10px;
   transform: rotate(45deg);
-  background: #0A0A0D;
+  background: #0a0a0d;
   position: absolute;
   z-index: 998;
 }
