@@ -31,18 +31,19 @@ func NecrodragonGalbazeek(c *match.Card) {
 	c.ManaCost = 6
 	c.ManaRequirement = []string{civ.Darkness}
 
-	c.Use(fx.Creature, fx.Doublebreaker, fx.When(fx.Attacking, func(card *match.Card, ctx *match.Context) {
+	c.Use(fx.Creature, fx.Doublebreaker, fx.WheneverThisAttacks(func(card *match.Card, ctx *match.Context) {
 
-		shields := fx.Find(
+		fx.SelectBackside(
 			card.Player,
+			ctx.Match, card.Player,
 			match.SHIELDZONE,
-		)
-
-		if len(shields) < 1 {
-			return
-		}
-
-		ctx.Match.MoveCard(shields[0], match.GRAVEYARD, card)
+			"Select one shield and send it to graveyard",
+			1,
+			1,
+			false,
+		).Map(func(x *match.Card) {
+			ctx.Match.MoveCard(x, match.GRAVEYARD, card)
+		})
 
 	}))
 

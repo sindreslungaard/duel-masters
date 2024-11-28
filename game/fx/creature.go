@@ -162,7 +162,7 @@ func Creature(card *match.Card, ctx *match.Context) {
 			return
 		}
 
-		if card.HasCondition(cnd.SummoningSickness) {
+		if hasSummoningSickness(card) {
 			ctx.Match.WarnPlayer(card.Player, fmt.Sprintf("%s cannot attack this turn as it has summoning sickness", card.Name))
 			ctx.InterruptFlow()
 			return
@@ -376,7 +376,7 @@ func Creature(card *match.Card, ctx *match.Context) {
 			return
 		}
 
-		if card.HasCondition(cnd.SummoningSickness) {
+		if hasSummoningSickness(card) {
 			ctx.Match.WarnPlayer(card.Player, fmt.Sprintf("%s cannot attack this turn as it has summoning sickness", card.Name))
 			ctx.InterruptFlow()
 			return
@@ -539,7 +539,7 @@ func Creature(card *match.Card, ctx *match.Context) {
 			return
 		}
 
-		if card.HasCondition(cnd.SummoningSickness) {
+		if hasSummoningSickness(card) {
 			ctx.Match.WarnPlayer(card.Player, fmt.Sprintf("%s can't use tap ability because it has summoning sickness", card.Name))
 			ctx.InterruptFlow()
 			return
@@ -734,4 +734,8 @@ func stealthActive(card *match.Card, ctx *match.Context) bool {
 	}
 
 	return false
+}
+
+func hasSummoningSickness(card *match.Card) bool {
+	return card.HasCondition(cnd.SummoningSickness) && !card.HasCondition(cnd.SpeedAttacker)
 }
