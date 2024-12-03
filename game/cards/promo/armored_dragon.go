@@ -23,7 +23,7 @@ func StarCryDragon(c *match.Card) {
 			return
 		}
 
-		if event, ok := ctx.Event.(*match.GetPowerEvent); ok && event.Card.ID != card.ID {
+		if event, ok := ctx.Event.(*match.GetPowerEvent); ok && event.Card.Player == card.Player && event.Card.ID != card.ID {
 
 			if event.Card.HasFamily(family.ArmoredDragon) {
 				event.Power += 3000
