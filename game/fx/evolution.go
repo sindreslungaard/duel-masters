@@ -122,10 +122,8 @@ func Evolution(card *match.Card, ctx *match.Context) {
 // DragonEvolution has behaviour for dragon evolution cards
 func DragonEvolution(card *match.Card, ctx *match.Context) {
 
-	dragonRaces := []string{family.ArmoredDragon, family.VolcanoDragon, family.EarthDragon, family.ZombieDragon}
-
 	evolvableCreatureFilter := func(x *match.Card) bool {
-		return x.SharesAFamily(dragonRaces) || x.HasCondition(cnd.EvolveIntoAnyFamily)
+		return x.SharesAFamily(family.Dragons) || x.HasCondition(cnd.EvolveIntoAnyFamily)
 	}
 
 	if _, ok := ctx.Event.(*match.UntapStep); ok {
