@@ -3,28 +3,13 @@ package fx
 import (
 	"duel-masters/game/cnd"
 	"duel-masters/game/match"
-	"fmt"
 )
 
 // CantAttackPlayers prevents a card from attacking players
 func CantAttackPlayers(card *match.Card, ctx *match.Context) {
 
 	if _, ok := ctx.Event.(*match.UntapStep); ok {
-
 		card.AddCondition(cnd.CantAttackPlayers, true, card.ID)
-	}
-
-	if event, ok := ctx.Event.(*match.AttackPlayer); ok {
-
-		// Is this event for me or someone else?
-		if event.CardID != card.ID || !card.HasCondition(cnd.CantAttackPlayers) {
-			return
-		}
-
-		ctx.Match.WarnPlayer(card.Player, fmt.Sprintf("%s can't attack players", card.Name))
-
-		ctx.InterruptFlow()
-
 	}
 
 }
@@ -33,21 +18,33 @@ func CantAttackPlayers(card *match.Card, ctx *match.Context) {
 func CantAttackCreatures(card *match.Card, ctx *match.Context) {
 
 	if _, ok := ctx.Event.(*match.UntapStep); ok {
-
 		card.AddCondition(cnd.CantAttackCreatures, true, card.ID)
 	}
 
-	if event, ok := ctx.Event.(*match.AttackCreature); ok {
+}
 
-		// Is this event for me or someone else?
-		if event.CardID != card.ID || !card.HasCondition(cnd.CantAttackCreatures) {
-			return
-		}
+func CantAttackIfOpHasNoShields(card *match.Card, ctx *match.Context) {
 
-		ctx.Match.WarnPlayer(card.Player, fmt.Sprintf("%s can't attack creatures", card.Name))
-
-		ctx.InterruptFlow()
-
+	if _, ok := ctx.Event.(*match.UntapStep); ok {
+		handleCantAttackIfOpHasNoShieldsConditions(card, ctx)
 	}
 
+	if event, ok := ctx.Event.(*match.CardMoved); ok {
+		if event.From == match.SHIELDZONE || event.To == match.SHIELDZONE {
+			handleCantAttackIfOpHasNoShieldsConditions(card, ctx)
+		}
+	}
+}
+
+func handleCantAttackIfOpHasNoShieldsConditions(card *match.Card, ctx *match.Context) {
+	opponentShields := Find(ctx.Match.Opponent(card.Player), match.SHIELDZONE)
+	n := len(opponentShields)
+
+	if n == 0 {
+		card.AddCondition(cnd.CantAttackPlayers, true, card.ID)
+		card.AddCondition(cnd.CantAttackCreatures, true, card.ID)
+	} else {
+		card.RemoveCondition(cnd.CantAttackPlayers)
+		card.RemoveCondition(cnd.CantAttackCreatures)
+	}
 }

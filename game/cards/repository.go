@@ -8,6 +8,7 @@ import (
 	"duel-masters/game/cards/dm05"
 	"duel-masters/game/cards/dm06"
 	"duel-masters/game/cards/dm07"
+	"duel-masters/game/cards/promo"
 	"duel-masters/game/match"
 )
 
@@ -20,6 +21,7 @@ var Sets = map[string]*map[string]match.CardConstructor{
 	"dm-05": &DM05,
 	"dm-06": &DM06,
 	"dm-07": &DM07,
+	"promo": &Promo,
 }
 
 // DM01 is a map with all the card id's in the game and corresponding CardConstructor for dm01
@@ -536,11 +538,11 @@ var DM07 = map[string]match.CardConstructor{
 	"7e664555-207b-47d6-8078-f40c5885021d": dm07.BexTheOracle,
 	"f603d464-3492-40ba-990d-85dc02814966": dm07.GeoshineSpectralKnight,
 	"3fc5db56-616c-49c4-8ddc-2d922e9c4a54": dm07.KizarBasikuTheOutrageous,
-	"a3569344-7a9a-476a-9afc-35e9c28ad209": nil,
-	"119afa07-1a17-4197-8df9-3ee4254f0a58": nil,
+	"a3569344-7a9a-476a-9afc-35e9c28ad209": dm07.LightningCharger,
+	"119afa07-1a17-4197-8df9-3ee4254f0a58": dm07.MiraclePortal,
 	"4507bcbd-17f6-4035-9da5-1a6d0b41601e": dm07.PulsarTree,
 	"ae65d4d1-78aa-4711-ba49-eafd98b358e9": dm07.RodiGaleNightGuardian,
-	"7148214f-dc9c-4fb4-835c-cd6064e247df": nil,
+	"7148214f-dc9c-4fb4-835c-cd6064e247df": dm07.RomVizierofTendrils,
 	"e5bb03ac-0f09-44de-8fbe-b0c7f2748e84": dm07.RondobilTheExplorer,
 	"0d273a22-1cf9-4f99-8321-e2282e855b57": dm07.AquaAgent,
 	"7e4cdeee-0b47-4260-8ba8-3f1cf0b9ab36": dm07.AquaFencer,
@@ -551,22 +553,22 @@ var DM07 = map[string]match.CardConstructor{
 	"5ce98713-900d-4291-8dc4-889de1d68461": dm07.Cetibols,
 	"10048aab-7f26-4c3f-862b-199f41f132aa": dm07.Garatyano,
 	"44c6f9ec-1832-4d62-a73e-3dab72818591": dm07.CuriousEye,
-	"a1ed67a1-2143-461e-b2ee-7d74ec6773e5": nil,
+	"a1ed67a1-2143-461e-b2ee-7d74ec6773e5": dm07.RiptideCharger,
 	"0106b420-f033-4f9e-b5a9-237f1d6ded0e": dm07.TitaniumCluster,
 	"2a5fe0d2-134c-4a4d-bf90-cfafaa795a84": dm07.GezaryUndercoverDoll,
 	"1532f8ae-1dc7-4609-a518-063f8de9c751": dm07.Gigabuster,
-	"350d2dde-2abf-48c0-a1da-63dff2d00bfa": nil,
+	"350d2dde-2abf-48c0-a1da-63dff2d00bfa": dm07.HopelessVortex,
 	"50cf8db2-11e6-44e2-ad50-89b8041ee670": dm07.ScalpelSpider,
 	"36a25a40-d952-4c07-9625-ee88745d6df7": dm07.PropellerMutant,
 	"dbf22912-afdd-49cf-ac0a-6417886d8407": dm07.PhantasmalHorrorGigazabal,
 	"b8303223-d073-42b9-8338-cc3b72e5ae69": dm07.ThreeFacedAshuraFang,
-	"dca76df6-bd90-46d2-b032-30560f71de4d": nil,
-	"25d36779-1263-4777-aaa1-6c2949addbbf": nil,
+	"dca76df6-bd90-46d2-b032-30560f71de4d": dm07.VacuumGel,
+	"25d36779-1263-4777-aaa1-6c2949addbbf": dm07.VenomCharger,
 	"e0558aef-d2d3-4111-aa79-965cdc604f57": dm07.ApocalypseVise,
 	"d8248eef-8cc6-498b-83c3-8fd4dd377893": dm07.AstronautSkyterror,
 	"aadea88f-bf0c-48ac-9ee7-ac6bdfcb819c": dm07.KiposContraption,
 	"66763699-8e81-458c-a298-20cd843ddd8d": dm07.Cratersaur,
-	"507077aa-7b0b-42c8-a38e-7ff28846c159": nil,
+	"507077aa-7b0b-42c8-a38e-7ff28846c159": dm07.EnergyCharger,
 	"fa4fc042-7238-495d-9706-2d7b733bcff7": dm07.GazariasDragon,
 	"fedcde11-394c-4af5-aa48-df0dc9d02647": dm07.BroodShell,
 	"f63d041c-e752-4f5c-a3ab-80f45241b249": dm07.KoocPollon,
@@ -574,12 +576,26 @@ var DM07 = map[string]match.CardConstructor{
 	"190cdfdd-c077-4521-91ed-7bc5d6853b75": dm07.WildRacerChiefGaran,
 	"1640acce-f082-4814-be15-b7851f65d21a": dm07.ValkrowzerUltraRockBeast,
 	"bb339fe8-3e63-4657-8c5d-d2386c22ff38": dm07.CrypticTotem,
-	"dd842b81-e187-44e3-92f2-a36826718849": nil,
-	"30272397-4b70-4b40-b7ee-8399ebe099d6": nil,
+	"dd842b81-e187-44e3-92f2-a36826718849": dm07.FreezingIcehammer,
+	"30272397-4b70-4b40-b7ee-8399ebe099d6": dm07.FruitOfEternity,
 	"e6c53caf-9923-4496-a817-2727ea17bead": dm07.LaunchLocust,
-	"8de000dc-4cd9-4a6b-bccc-acfae89211ef": nil,
+	"8de000dc-4cd9-4a6b-bccc-acfae89211ef": dm07.MulchCharger,
 	"bb3a50dd-049d-488d-b89c-779dcf29b82e": dm07.PoppleFlowerpetalDancer,
 	"a5cba5aa-271f-43b0-8350-ca94c5cdfe9a": dm07.TangleFistTheWeaver,
 	"3e3b883e-721c-42b9-8181-52e514695c7f": dm07.StingerHornTheDelver,
 	"ced03efd-90c8-4303-83b4-16d2d1198aaf": dm07.WorldTreeRootOfLife,
+}
+
+// Promo is a map with all the card id's in the game and corresponding CardConstructor for promotional exclusive cards
+var Promo = map[string]match.CardConstructor{
+	"04986395-67af-4e3e-9b46-1a19efc4e7e8": promo.AngryMaple,
+	"9db6b2d5-c3f3-4a00-b237-bc7504a9b7df": promo.TwisterFish,
+	"540a15e7-3751-4b30-97ed-8c737bd2c231": promo.ArmoredGroblav,
+	"80f04b78-bcd4-418f-8429-88dee42a522d": promo.BrigadeShellQ,
+	"5e42765f-432b-4e33-8fee-65fc9026d1cd": promo.Gigagrax,
+	"7cab8643-2cf5-483d-b7a1-8b8243a75737": promo.StarCryDragon,
+	"bf0eb592-fb6f-4604-8851-f41835cceab9": promo.LothRix,
+	"ff54e307-7097-4b12-9c35-e06307f61e74": promo.OlgateNightmareSamurai,
+	"5f6d4906-1f2b-455a-a620-992dfa6c3673": promo.AmnisHolyElemental,
+	"b02fb837-3b16-4480-9408-49c710c9217d": promo.GiliamTheTormentor,
 }
