@@ -2,7 +2,18 @@
 
 ## [Unreleased]
 
-- No unreleased changes
+- New card "Hopeless Vortex" (thanks @DanieloV)
+- New card "Freezing Icehammer" (thanks @DanieloV)
+- New card "Fruit of Eternity" (thanks @DanieloV)
+- New card "Vacuum Gel" (thanks @DanieloV)
+- New card "Miracle Portal" (thanks @DanieloV)
+- New card "Venom Charger" (thanks @DanieloV)
+- New card "Energy Charger" (thanks @DanieloV)
+- New card "Riptide Charger" (thanks @DanieloV)
+- New card "Mulch Charger" (thanks @DanieloV)
+- New card "Lightning Charger" (thanks @DanieloV)
+- New card "Rom, Vizier of Tendrils" (thanks @DanieloV)
+- Fixed an issue where "Propeller Mutant" could discard the spell that destroyed it (thanks @DanieloV)
 
 ## 08/10/2024
 
