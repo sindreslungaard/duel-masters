@@ -2,6 +2,7 @@ package fx
 
 import (
 	"duel-masters/game/cnd"
+	"duel-masters/game/family"
 	"duel-masters/game/match"
 	"fmt"
 )
@@ -98,6 +99,84 @@ func Evolution(card *match.Card, ctx *match.Context) {
 		card.Player.MoveCard(creature.ID, match.BATTLEZONE, match.HIDDENZONE, card.ID)
 		card.Attach(creature)
 		card.AddCondition(cnd.Evolution, true, card.ID)
+	}
+
+	// Card moved
+	if event, ok := ctx.Event.(*match.CardMoved); ok {
+
+		if event.CardID != card.ID || event.To == match.BATTLEZONE || event.To == match.HIDDENZONE {
+			return
+		}
+
+		for _, creature := range card.Attachments() {
+			card.Player.MoveCard(creature.ID, match.HIDDENZONE, event.To, card.ID)
+			ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s was sent to the %s together with %s", creature.Name, event.To, card.Name))
+		}
+
+		card.ClearAttachments()
+
+	}
+
+}
+
+// DragonEvolution has behaviour for dragon evolution cards
+func DragonEvolution(card *match.Card, ctx *match.Context) {
+
+	dragonRaces := []string{family.ArmoredDragon, family.VolcanoDragon, family.EarthDragon, family.ZombieDragon}
+
+	evolvableCreatureFilter := func(x *match.Card) bool {
+		return x.SharesAFamily(dragonRaces) || x.HasCondition(cnd.EvolveIntoAnyFamily)
+	}
+
+	if _, ok := ctx.Event.(*match.UntapStep); ok {
+
+		card.AddCondition(cnd.Evolution, true, card.ID)
+	}
+
+	if event, ok := ctx.Event.(*match.PlayCardEvent); ok {
+
+		if event.CardID != card.ID {
+			return
+		}
+
+		if !match.ContainerHas(card.Player, match.BATTLEZONE, evolvableCreatureFilter) {
+			ctx.InterruptFlow()
+			ctx.Match.WarnPlayer(card.Player, fmt.Sprintf("There are no cards for %s to evolve from in your battle zone", card.Name))
+			return
+		}
+
+		ctx.ScheduleAfter(func() {
+			card.RemoveCondition(cnd.SummoningSickness)
+		})
+
+	}
+
+	if event, ok := ctx.Event.(*match.CardPlayedEvent); ok {
+
+		if event.CardID != card.ID {
+			return
+		}
+
+		SelectFilterSelectablesOnly(
+			card.Player,
+			ctx.Match,
+			card.Player,
+			match.BATTLEZONE,
+			fmt.Sprintf("Choose 1 dragon to evolve %s from", card.Name),
+			1,
+			1,
+			false,
+			evolvableCreatureFilter,
+		).Map(func(creature *match.Card) {
+
+			card.ClearAttachments()
+			card.Tapped = creature.Tapped
+			card.Player.MoveCard(creature.ID, match.BATTLEZONE, match.HIDDENZONE, card.ID)
+			card.Attach(creature)
+			card.AddCondition(cnd.Evolution, true, card.ID)
+
+		})
+
 	}
 
 	// Card moved
