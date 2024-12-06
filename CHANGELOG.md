@@ -2,6 +2,7 @@
 
 ## [Unreleased]
 
+- Fixed an issue where error messages would not show up when registering a new user
 - New card "Hopeless Vortex" (thanks @DanieloV)
 - New card "Freezing Icehammer" (thanks @DanieloV)
 - New card "Fruit of Eternity" (thanks @DanieloV)
