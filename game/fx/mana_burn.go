@@ -13,7 +13,11 @@ func ManaBurnX(x int) func(*match.Card, *match.Context) {
 			ctx.Match,
 			ctx.Match.Opponent(card.Player),
 			match.MANAZONE,
+<<<<<<< HEAD
 			fmt.Sprintf("Select up to %d card(s) from your opponent's mana zone that will be sent to their graveyard", x),
+=======
+			fmt.Sprintf("Select upto %d card(s) from your opponent's mana zone that will be sent to their graveyard", x),
+>>>>>>> Implement Dragon Evolution. Add Bajula and Abzo Dolba.
 			1,
 			x,
 			false,

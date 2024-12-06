@@ -602,6 +602,7 @@ var DM08 = map[string]match.CardConstructor{
 	"d031c833-da73-42a0-af4a-cd2a8ce9af6d": dm08.VolcanoCharger,
 	"cf000f38-660c-4ce0-aa24-2ecbb1e4dee2": dm08.MagmadragonJagalzor,
 <<<<<<< HEAD
+<<<<<<< HEAD
 	"0abb1391-a69f-4839-aafa-222628d5dde8": dm08.SuperNecrodragonAbzoDolba,
 	"85e9d177-69b3-4239-8b2b-ec97f74d5577": dm08.UberdragonBajula,
 	"44cbf9fd-3906-4032-939c-f702ffda7415": dm08.SuperTerradragonBailasGale,
@@ -622,6 +623,10 @@ var DM08 = map[string]match.CardConstructor{
 	"d8ac2ab1-2d02-4877-9d79-35e0e003e8fa": dm08.KyrstronLairDelver,
 =======
 >>>>>>> Reimplement Speed Attacker as a Condition. Implement Turbo Rush. Add Jagalzor.
+=======
+	"0abb1391-a69f-4839-aafa-222628d5dde8": dm08.SuperNecrodragonAbzoDolba,
+	"85e9d177-69b3-4239-8b2b-ec97f74d5577": dm08.UberdragonBajula,
+>>>>>>> Implement Dragon Evolution. Add Bajula and Abzo Dolba.
 }
 
 // Promo is a map with all the card id's in the game and corresponding CardConstructor for promotional exclusive cards
