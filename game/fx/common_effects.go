@@ -227,3 +227,31 @@ func DestoryOpShield(card *match.Card, ctx *match.Context) {
 		fmt.Sprintf("%s effect broke one of %s's shields", card.Name, opponent.Username()))
 
 }
+
+func OpDiscardsXCards(x int) func(*match.Card, *match.Context) {
+	return func(card *match.Card, ctx *match.Context) {
+
+		min := 0
+		handCount := ctx.Match.Opponent(card.Player).Denormalized().HandCount
+
+		if x > handCount {
+			min = handCount
+		} else {
+			min = x
+		}
+
+		Select(
+			ctx.Match.Opponent(card.Player),
+			ctx.Match,
+			ctx.Match.Opponent(card.Player),
+			match.HAND,
+			fmt.Sprintf("%s: Select %d card(s) from your hand that will be sent to your graveyard", card.Name, x),
+			min,
+			x,
+			false,
+		).Map(func(x *match.Card) {
+			x.Player.MoveCard(x.ID, match.HAND, match.GRAVEYARD, card.ID)
+			ctx.Match.ReportActionInChat(ctx.Match.Opponent(card.Player), fmt.Sprintf("%s was moved from %s's hand to his graveyard by %s", x.Name, x.Player.Username(), card.Name))
+		})
+	}
+}
