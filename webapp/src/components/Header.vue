@@ -3,13 +3,13 @@
     <span class="title">Welcome, {{ username }}!</span>
     <nav>
       <ul>
-        <li @click="$router.push('overview')" class="">Lobby</li>
+        <li @click="$router.push({name: 'overview'})" class="">Lobby</li>
         <li class="no-cursor">|</li>
-        <li @click="$router.push('decks')">Decks</li>
+        <li @click="$router.push({name: 'decks'})">Decks</li>
         <li class="no-cursor">|</li>
-        <li @click="$router.push('settings')">Settings</li>
+        <li @click="$router.push({name: 'settings'})">Settings</li>
         <li class="no-cursor">|</li>
-        <li @click="$router.push('logout')">Logout</li>
+        <li @click="$router.push({name: 'logout'})">Logout</li>
         <li class="no-cursor">|</li>
         <li class="changelog">
           <svg

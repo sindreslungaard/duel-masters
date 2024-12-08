@@ -3,7 +3,7 @@ package api
 import (
 	"context"
 	"duel-masters/db"
-	"duel-masters/game/match"
+	"duel-masters/services"
 	"net/http"
 
 	"go.mongodb.org/mongo-driver/bson"
@@ -38,7 +38,7 @@ func (api *API) getDeckHandler(w http.ResponseWriter, r *http.Request) {
 
 	deck.Owner = user.Username
 
-	d, err := match.ConvertToLegacyDeck(deck)
+	d, err := services.ConvertToLegacyDeck(deck)
 
 	if err != nil {
 		write(w, 404, Json{"message": "The specified deck was not found or is not public"})
