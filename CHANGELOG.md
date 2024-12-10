@@ -19,6 +19,16 @@
 - New card "Lightning Charger" (thanks @DanieloV)
 - New card "Rom, Vizier of Tendrils" (thanks @DanieloV)
 - Fixed an issue where "Propeller Mutant" could discard the spell that destroyed it (thanks @DanieloV)
+- New card "Brigade Shell Q" (thanks @jyotiskaghosh)
+- New card "Twister Fish" (thanks @jyotiskaghosh)
+- New card "Armored Groblav" (thanks @jyotiskaghosh)
+- New card "Angry Maple" (thanks @jyotiskaghosh)
+- New card "Star-Cry Dragon" (thanks @jyotiskaghosh)
+- New card "Gigagrax" (thanks @jyotiskaghosh)
+- New card "Loth Rix, the Iridescent" (thanks @jyotiskaghosh)
+- New card "Amnis, Holy Elemental" (thanks @jyotiskaghosh)
+- New card "Olgate, Nightmare Samurai" (thanks @jyotiskaghosh)
+- New card "Giliam, the Tormentor" (thanks @jyotiskaghosh)
 
 ## 08/10/2024
 
