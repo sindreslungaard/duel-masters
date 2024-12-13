@@ -796,7 +796,18 @@ func IHaveCastASpell(card *match.Card, ctx *match.Context) bool {
 			(card.Player == ctx.Match.Player2.Player && event.MatchPlayerID == 2) {
 			return true
 		}
+	}
 
+	return false
+}
+
+func WheneverThisAttacksAndIsntBlocked(card *match.Card, ctx *match.Context) bool {
+	if event, ok := ctx.Event.(*match.Battle); ok {
+		return event.Attacker == card && !event.Blocked
+	}
+
+	if event, ok := ctx.Event.(*match.BreakShieldEvent); ok {
+		return event.Source == card
 	}
 
 	return false

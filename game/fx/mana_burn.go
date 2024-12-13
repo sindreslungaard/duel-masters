@@ -6,7 +6,7 @@ import (
 )
 
 // Player chooses and mana burns x opponent's cards
-func ManaBurnX(x int) func(*match.Card, *match.Context) {
+func ManaBurnX(x int) match.HandlerFunc {
 	return func(card *match.Card, ctx *match.Context) {
 		Select(
 			card.Player,

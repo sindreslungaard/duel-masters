@@ -607,6 +607,7 @@ var DM08 = map[string]match.CardConstructor{
 	"85e9d177-69b3-4239-8b2b-ec97f74d5577": dm08.UberdragonBajula,
 	"44cbf9fd-3906-4032-939c-f702ffda7415": dm08.SuperTerradragonBailasGale,
 	"2cf1ccb5-50d8-4a50-902e-85a8ee0a5a04": dm08.TottoPipicchi,
+<<<<<<< HEAD
 	"09243e57-0456-44d4-abca-8b9bbe045b4b": dm08.MishaChannelerOfSuns,
 	"89e8ff15-344c-4126-ada7-8ee2966b8a71": dm08.SashaChannelerOfSuns,
 	"a4018d92-aef5-4332-b274-016881d6871e": dm08.DracodanceTotem,
@@ -627,6 +628,14 @@ var DM08 = map[string]match.CardConstructor{
 	"0abb1391-a69f-4839-aafa-222628d5dde8": dm08.SuperNecrodragonAbzoDolba,
 	"85e9d177-69b3-4239-8b2b-ec97f74d5577": dm08.UberdragonBajula,
 >>>>>>> Implement Dragon Evolution. Add Bajula and Abzo Dolba.
+=======
+	"080a33aa-ef5a-4b42-beb3-898c9a71a219": dm08.MigaloVizierOfSpycraft,
+	"ed49889d-f2da-4589-8402-f97b1c09cfb3": dm08.SolarGrass,
+	"cfbaa44c-b949-45fc-8fe6-99bbab5dab93": dm08.MissileSoldierUltimo,
+	"b955dd9b-2774-42a6-a3d7-97b23116ff0f": dm08.SlaphappySoldierGalback,
+	"75457906-539f-4c89-b24a-a7e794595ecb": dm08.Gigaclaws,
+	"d17d0e8a-e3ef-4a94-9b7d-95455abb50cf": dm08.GachackMechanicalDoll,
+>>>>>>> Add light, darkness, and fire turbo rush cards.
 }
 
 // Promo is a map with all the card id's in the game and corresponding CardConstructor for promotional exclusive cards
