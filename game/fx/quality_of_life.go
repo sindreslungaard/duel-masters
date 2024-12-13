@@ -781,3 +781,15 @@ func Blocked(card *match.Card, ctx *match.Context) bool {
 	}
 	return false
 }
+
+func WheneverThisAttacksAndIsntBlocked(card *match.Card, ctx *match.Context) bool {
+	if event, ok := ctx.Event.(*match.Battle); ok {
+		return event.Attacker == card && !event.Blocked
+	}
+
+	if event, ok := ctx.Event.(*match.BreakShieldEvent); ok {
+		return event.Source == card
+	}
+
+	return false
+}

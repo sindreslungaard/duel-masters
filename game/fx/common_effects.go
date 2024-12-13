@@ -228,7 +228,7 @@ func DestoryOpShield(card *match.Card, ctx *match.Context) {
 
 }
 
-func OpDiscardsXCards(x int) func(*match.Card, *match.Context) {
+func OpDiscardsXCards(x int) match.HandlerFunc {
 	return func(card *match.Card, ctx *match.Context) {
 
 		min := 0
@@ -254,4 +254,45 @@ func OpDiscardsXCards(x int) func(*match.Card, *match.Context) {
 			ctx.Match.ReportActionInChat(ctx.Match.Opponent(card.Player), fmt.Sprintf("%s was moved from %s's hand to his graveyard by %s", x.Name, x.Player.Username(), card.Name))
 		})
 	}
+}
+
+// Look at opponent's x shields
+func ShowXShields(x int) match.HandlerFunc {
+	return func(card *match.Card, ctx *match.Context) {
+
+		shieldsID := []string{}
+
+		SelectBackside(
+			card.Player,
+			ctx.Match,
+			ctx.Match.Opponent(card.Player),
+			match.SHIELDZONE,
+			fmt.Sprintf("%s: Select %d of your opponent's shields that will be shown to you", card.Name, x),
+			1,
+			x,
+			true,
+		).Map(func(shields *match.Card) {
+			shieldsID = append(shieldsID, shields.ImageID)
+		})
+
+		ctx.Match.ShowCards(
+			card.Player,
+			"Your opponent's shield:",
+			shieldsID,
+		)
+	}
+
+}
+
+func OpponentDiscardsHand(card *match.Card, ctx *match.Context) {
+
+	Find(
+		ctx.Match.Opponent(card.Player),
+		match.HAND,
+	).Map(func(x *match.Card) {
+		ctx.Match.Opponent(card.Player).MoveCard(x.ID, match.HAND, match.GRAVEYARD, card.ID)
+	})
+
+	ctx.Match.ReportActionInChat(ctx.Match.Opponent(card.Player), fmt.Sprintf("%s's hand was discarded by %s", ctx.Match.Opponent(card.Player).Username(), card.Name))
+
 }
