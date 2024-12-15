@@ -72,3 +72,18 @@ func SearchDeckTake1Creature(card *match.Card, ctx *match.Context) {
 		"creature",
 	)
 }
+
+// Search deck for x cards
+func SearchDeckTakeXCards(x int) match.HandlerFunc {
+	return func(card *match.Card, ctx *match.Context) {
+		SearchDeckMoveCardsZone(
+			card,
+			ctx,
+			x,
+			func(c *match.Card) bool { return true },
+			fmt.Sprintf("You make take up to %d cards from your deck", x),
+			match.HAND,
+			card.Player.Username()+" retrieved %s from their deck to their hand",
+		)
+	}
+}

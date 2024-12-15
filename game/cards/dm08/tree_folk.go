@@ -8,28 +8,15 @@ import (
 	"duel-masters/game/match"
 )
 
-// ProwlingElephish ...
-func ProwlingElephish(c *match.Card) {
+// SeniaOrchardAvenger ...
+func SeniaOrchardAvenger(c *match.Card) {
 
-	c.Name = "Prowling Elephish"
-	c.Power = 2000
-	c.Civ = civ.Water
-	c.Family = []string{family.GelFish}
-	c.ManaCost = 4
-	c.ManaRequirement = []string{civ.Water}
-
-	c.Use(fx.Creature, fx.Blocker())
-}
-
-// IllusionFish ...
-func IllusionFish(c *match.Card) {
-
-	c.Name = "Illusion Fish"
+	c.Name = "Senia, Orchard Avenger"
 	c.Power = 3000
-	c.Civ = civ.Water
-	c.Family = []string{family.GelFish}
+	c.Civ = civ.Nature
+	c.Family = []string{family.TreeFolk}
 	c.ManaCost = 4
-	c.ManaRequirement = []string{civ.Water}
+	c.ManaRequirement = []string{civ.Nature}
 
 	turboRush := false
 
@@ -38,7 +25,8 @@ func IllusionFish(c *match.Card) {
 		fx.When(fx.TurboRushCondition, func(card *match.Card, ctx *match.Context) { turboRush = true }),
 		fx.When(fx.EndOfMyTurn, func(card *match.Card, ctx *match.Context) { turboRush = false }),
 		fx.When(func(c *match.Card, ctx *match.Context) bool { return turboRush }, func(card *match.Card, ctx *match.Context) {
-			c.AddUniqueSourceCondition(cnd.CantBeBlocked, nil, card.ID)
+			c.AddUniqueSourceCondition(cnd.PowerAmplifier, 5000, card.ID)
+			c.AddUniqueSourceCondition(cnd.DoubleBreaker, nil, card.ID)
 		}),
 	)
 

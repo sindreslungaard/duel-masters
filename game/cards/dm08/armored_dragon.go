@@ -11,7 +11,7 @@ import (
 // UberdragonBajula ...
 func UberdragonBajula(c *match.Card) {
 
-	c.Name = "\u00c3\u0153berdragon Bajula"
+	c.Name = "Überdragon Bajula"
 	c.Power = 13000
 	c.Civ = civ.Fire
 	c.Family = []string{family.ArmoredDragon}

@@ -635,7 +635,14 @@ var DM08 = map[string]match.CardConstructor{
 	"b955dd9b-2774-42a6-a3d7-97b23116ff0f": dm08.SlaphappySoldierGalback,
 	"75457906-539f-4c89-b24a-a7e794595ecb": dm08.Gigaclaws,
 	"d17d0e8a-e3ef-4a94-9b7d-95455abb50cf": dm08.GachackMechanicalDoll,
+<<<<<<< HEAD
 >>>>>>> Add light, darkness, and fire turbo rush cards.
+=======
+	"4ea04daa-fe50-486e-a14f-07bfcb16c8ee": dm08.IllusionFish,
+	"df92f858-a2e9-4f7e-a9fb-c909eeaeb482": dm08.Vikorakys,
+	"e69438a4-57fa-4028-8450-d855ab013f63": dm08.CarboniteScarab,
+	"3b7f7a73-3f12-46a6-a36c-509fed6177ee": dm08.SeniaOrchardAvenger,
+>>>>>>> Add water and nature turbo rush cards.
 }
 
 // Promo is a map with all the card id's in the game and corresponding CardConstructor for promotional exclusive cards
