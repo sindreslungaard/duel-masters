@@ -490,6 +490,15 @@ func SpellCast(card *match.Card, ctx *match.Context) bool {
 
 }
 
+// SpellCasted returns true if a spell was cast
+func SpellCasted(card *match.Card, ctx *match.Context) bool {
+
+	_, ok := ctx.Event.(*match.SpellCast)
+
+	return ok
+
+}
+
 // Attacking returns true if the card is attacking a player or creature
 func Attacking(card *match.Card, ctx *match.Context) bool {
 
