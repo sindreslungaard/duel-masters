@@ -4,6 +4,32 @@
 
 - No unreleased changes
 
+## 09/12/2024
+
+- Fixed an issue where error messages would not show up when registering a new user
+- New card "Hopeless Vortex" (thanks @DanieloV)
+- New card "Freezing Icehammer" (thanks @DanieloV)
+- New card "Fruit of Eternity" (thanks @DanieloV)
+- New card "Vacuum Gel" (thanks @DanieloV)
+- New card "Miracle Portal" (thanks @DanieloV)
+- New card "Venom Charger" (thanks @DanieloV)
+- New card "Energy Charger" (thanks @DanieloV)
+- New card "Riptide Charger" (thanks @DanieloV)
+- New card "Mulch Charger" (thanks @DanieloV)
+- New card "Lightning Charger" (thanks @DanieloV)
+- New card "Rom, Vizier of Tendrils" (thanks @DanieloV)
+- Fixed an issue where "Propeller Mutant" could discard the spell that destroyed it (thanks @DanieloV)
+- New card "Brigade Shell Q" (thanks @jyotiskaghosh)
+- New card "Twister Fish" (thanks @jyotiskaghosh)
+- New card "Armored Groblav" (thanks @jyotiskaghosh)
+- New card "Angry Maple" (thanks @jyotiskaghosh)
+- New card "Star-Cry Dragon" (thanks @jyotiskaghosh)
+- New card "Gigagrax" (thanks @jyotiskaghosh)
+- New card "Loth Rix, the Iridescent" (thanks @jyotiskaghosh)
+- New card "Amnis, Holy Elemental" (thanks @jyotiskaghosh)
+- New card "Olgate, Nightmare Samurai" (thanks @jyotiskaghosh)
+- New card "Giliam, the Tormentor" (thanks @jyotiskaghosh)
+
 ## 08/10/2024
 
 - Fixed an issue where Mongrel Man and Mist Rias would not have their effect work when bounced (thanks @jyotiskaghosh)
