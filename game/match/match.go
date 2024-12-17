@@ -1407,8 +1407,8 @@ func (m *Match) Parse(s *server.Socket, data []byte) {
 				return
 			}
 
-			m.handleMesseges(msg.Message)
-			m.handleAdminMesseges(msg.Message, s.User)
+			m.handleMessages(msg.Message)
+			m.handleAdminMessages(msg.Message, s.User)
 
 			if s.User.Chatblocked {
 				s.Send(&server.ChatMessage{
@@ -1920,7 +1920,7 @@ func (p *PlayerReference) Dispose() {
 	}
 }
 
-func (m *Match) handleAdminMesseges(message string, user db.User) {
+func (m *Match) handleAdminMessages(message string, user db.User) {
 
 	hasRights := false
 
@@ -2008,7 +2008,7 @@ func (m *Match) handleAdminMesseges(message string, user db.User) {
 	}
 }
 
-func (m *Match) handleMesseges(message string) {
+func (m *Match) handleMessages(message string) {
 
 	currentPlayer := m.CurrentPlayer().Player
 	msgParts := strings.Split(message, " ")
