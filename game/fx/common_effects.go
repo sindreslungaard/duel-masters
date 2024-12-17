@@ -227,3 +227,72 @@ func DestoryOpShield(card *match.Card, ctx *match.Context) {
 		fmt.Sprintf("%s effect broke one of %s's shields", card.Name, opponent.Username()))
 
 }
+
+func OpDiscardsXCards(x int) match.HandlerFunc {
+	return func(card *match.Card, ctx *match.Context) {
+
+		min := 0
+		handCount := ctx.Match.Opponent(card.Player).Denormalized().HandCount
+
+		if x > handCount {
+			min = handCount
+		} else {
+			min = x
+		}
+
+		Select(
+			ctx.Match.Opponent(card.Player),
+			ctx.Match,
+			ctx.Match.Opponent(card.Player),
+			match.HAND,
+			fmt.Sprintf("%s: Select %d card(s) from your hand that will be sent to your graveyard", card.Name, x),
+			min,
+			x,
+			false,
+		).Map(func(x *match.Card) {
+			x.Player.MoveCard(x.ID, match.HAND, match.GRAVEYARD, card.ID)
+			ctx.Match.ReportActionInChat(ctx.Match.Opponent(card.Player), fmt.Sprintf("%s was moved from %s's hand to his graveyard by %s", x.Name, x.Player.Username(), card.Name))
+		})
+	}
+}
+
+// Look at opponent's x shields
+func ShowXShields(x int) match.HandlerFunc {
+	return func(card *match.Card, ctx *match.Context) {
+
+		shieldsID := []string{}
+
+		SelectBackside(
+			card.Player,
+			ctx.Match,
+			ctx.Match.Opponent(card.Player),
+			match.SHIELDZONE,
+			fmt.Sprintf("%s: Select %d of your opponent's shields that will be shown to you", card.Name, x),
+			1,
+			x,
+			true,
+		).Map(func(shields *match.Card) {
+			shieldsID = append(shieldsID, shields.ImageID)
+		})
+
+		ctx.Match.ShowCards(
+			card.Player,
+			"Your opponent's shield:",
+			shieldsID,
+		)
+	}
+
+}
+
+func OpponentDiscardsHand(card *match.Card, ctx *match.Context) {
+
+	Find(
+		ctx.Match.Opponent(card.Player),
+		match.HAND,
+	).Map(func(x *match.Card) {
+		ctx.Match.Opponent(card.Player).MoveCard(x.ID, match.HAND, match.GRAVEYARD, card.ID)
+	})
+
+	ctx.Match.ReportActionInChat(ctx.Match.Opponent(card.Player), fmt.Sprintf("%s's hand was discarded by %s", ctx.Match.Opponent(card.Player).Username(), card.Name))
+
+}
