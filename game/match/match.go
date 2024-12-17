@@ -1407,6 +1407,7 @@ func (m *Match) Parse(s *server.Socket, data []byte) {
 				return
 			}
 
+			m.handleMesseges(msg.Message)
 			m.handleAdminMesseges(msg.Message, s.User)
 
 			if s.User.Chatblocked {
@@ -2003,6 +2004,21 @@ func (m *Match) handleAdminMesseges(message string, user db.User) {
 		currentPlayer.SpawnCard(msgParts[1], DECK)
 		m.BroadcastState()
 		return
+
+	}
+}
+
+func (m *Match) handleMesseges(message string) {
+
+	currentPlayer := m.CurrentPlayer().Player
+	msgParts := strings.Split(message, " ")
+	if len(msgParts) < 1 {
+		return
+	}
+
+	switch msgParts[0] {
+	case "/quit":
+		m.End(m.Opponent(currentPlayer), fmt.Sprintf("%s won by opponent resigning.", m.Opponent(currentPlayer).Username()))
 
 	}
 }
