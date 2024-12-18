@@ -80,6 +80,13 @@ func (api *API) Start(port string) {
 	api.HandleFunc("POST /api/decks", api.createDeckHandler)
 	api.HandleFunc("DELETE /api/deck/{id}", api.deleteDeckHandler)
 	api.HandleFunc("GET /invite/{id}", api.inviteHandler)
+	api.HandleFunc("GET /api/events", api.getEventsHandler)
+	api.HandleFunc("POST /api/events", api.createEventHandler)
+	api.HandleFunc("POST /api/event/{id}", api.joinEventHandler)
+	api.HandleFunc("DELETE /api/event/{id}", api.deleteEventHandler)
+	api.HandleFunc("GET /api/event/{id}/deck", api.getEventDeckHandler)
+	api.HandleFunc("PUT /api/event/{id}/deck", api.editEventDeckHandler)
+	api.HandleFunc("GET /api/sets", api.getSetsHandler)
 
 	dist := http.FileServer(http.Dir(path.Join(dir, "webapp", "dist")))
 	api.mux.Handle("GET /assets/{path...}", dist)

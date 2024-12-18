@@ -57,7 +57,7 @@ func ProcessMatch(m *Match) {
 }
 
 // New returns a new match object
-func (s *MatchSystem) NewMatch(matchName string, hostID string, visible bool, matchmaking bool) *Match {
+func (s *MatchSystem) NewMatch(matchName string, hostID string, visible bool, matchmaking bool, eventUID string) *Match {
 
 	id, err := shortid.Generate()
 
@@ -69,6 +69,7 @@ func (s *MatchSystem) NewMatch(matchName string, hostID string, visible bool, ma
 		ID:                id,
 		MatchName:         matchName,
 		HostID:            hostID,
+		EventUID:          eventUID,
 		spectators:        internal.NewConcurrentDictionary[Spectator](),
 		persistentEffects: make(map[int]PersistentEffect),
 		Turn:              1,
@@ -104,6 +105,12 @@ func (s *MatchSystem) UpdateMatchList() {
 	s.LobbyBroadcast(MatchList(s.Matches.Iter()))
 }
 
+func (s *MatchSystem) UpdateEventList() {
+	s.LobbyBroadcast(server.Message{
+		Header: "update_events",
+	})
+}
+
 func MatchList(matches []*Match) server.MatchesListMessage {
 
 	matchesMessage := make([]server.MatchMessage, 0)
@@ -137,6 +144,7 @@ func MatchList(matches []*Match) server.MatchesListMessage {
 			Name:        match.MatchName,
 			Started:     match.Started,
 			Matchmaking: match.Matchmaking,
+			Event:       match.EventUID,
 		}
 
 		if match.Player2 != nil {
