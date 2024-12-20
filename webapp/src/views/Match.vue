@@ -554,7 +554,7 @@
               @click="resign()"
               :class="['btn']"
             >
-              resign
+              Resign
             </div>
           </div>
           <p>Hand [{{ state.opponent.handCount }}]</p>
