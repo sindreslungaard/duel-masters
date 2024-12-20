@@ -544,6 +544,19 @@
 
       <div class="right-stage">
         <div class="right-stage-content">
+          <div
+            v-if="!state.spectator"
+            class="actionbox"
+            :style="playmat ? 'background: url(/assets/images/overlay_30.png)' : ''"
+            >
+
+            <div
+              @click="resign()"
+              :class="['btn']"
+            >
+              resign
+            </div>
+          </div>
           <p>Hand [{{ state.opponent.handCount }}]</p>
           <p>Graveyard [{{ state.opponent.graveyard.length }}]</p>
           <div class="card">
@@ -1015,6 +1028,9 @@ export default {
         return;
       }
       this.ws.send(JSON.stringify({ header: "end_turn" }));
+    },
+    resign() {
+      this.ws.send(JSON.stringify({ header: "resign" }));
     },
 
     showLarge(card) {

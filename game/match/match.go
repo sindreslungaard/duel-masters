@@ -1407,7 +1407,6 @@ func (m *Match) Parse(s *server.Socket, data []byte) {
 				return
 			}
 
-			m.handleMessages(msg.Message)
 			m.handleAdminMessages(msg.Message, s.User)
 
 			if s.User.Chatblocked {
@@ -1807,6 +1806,18 @@ func (m *Match) Parse(s *server.Socket, data []byte) {
 
 		}, SequentialEvent)
 
+	case "resign":
+		m.eventloop.schedule(func() {
+			p, err := m.PlayerForSocket(s)
+
+			if err != nil {
+				return
+			}
+
+			m.End(m.Opponent(p.Player), fmt.Sprintf("%s won by opponent resigning.", m.Opponent(p.Player).Username()))
+
+		}, SequentialEvent)
+
 	default:
 		logrus.Debugf("Received message in incorrect format: %v", string(data))
 
@@ -2004,21 +2015,6 @@ func (m *Match) handleAdminMessages(message string, user db.User) {
 		currentPlayer.SpawnCard(msgParts[1], DECK)
 		m.BroadcastState()
 		return
-
-	}
-}
-
-func (m *Match) handleMessages(message string) {
-
-	currentPlayer := m.CurrentPlayer().Player
-	msgParts := strings.Split(message, " ")
-	if len(msgParts) < 1 {
-		return
-	}
-
-	switch msgParts[0] {
-	case "/quit":
-		m.End(m.Opponent(currentPlayer), fmt.Sprintf("%s won by opponent resigning.", m.Opponent(currentPlayer).Username()))
 
 	}
 }
