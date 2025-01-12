@@ -53,16 +53,14 @@ func DrawUpTo3(card *match.Card, ctx *match.Context) {
 
 // This gives the player the choice to select a number of cards to draw between 2 provided limits
 func DrawBetween(card *match.Card, ctx *match.Context, min int, max int) {
-	count := max
-	if min != max {
-		count = SelectCount(
-			card.Player,
-			ctx.Match,
-			fmt.Sprintf("%s effect: Draw between %d and %d cards", card.Name, min, max),
-			min,
-			max)
+	for i := min; i < max; i++ {
+		if BinaryQuestion(card.Player, ctx.Match, fmt.Sprintf("Do you want to draw? (%s effect)", card.Name)) {
+			card.Player.DrawCards(1)
+			ctx.Match.BroadcastState()
+		} else {
+			return
+		}
 	}
-	card.Player.DrawCards(count)
 }
 
 // This lets the player choose if they want to draw the full amount or none
