@@ -1407,7 +1407,7 @@ func (m *Match) Parse(s *server.Socket, data []byte) {
 				return
 			}
 
-			m.handleAdminMesseges(msg.Message, s.User)
+			m.handleAdminMessages(msg.Message, s.User)
 
 			if s.User.Chatblocked {
 				s.Send(&server.ChatMessage{
@@ -1806,6 +1806,18 @@ func (m *Match) Parse(s *server.Socket, data []byte) {
 
 		}, SequentialEvent)
 
+	case "resign":
+		m.eventloop.schedule(func() {
+			p, err := m.PlayerForSocket(s)
+
+			if err != nil {
+				return
+			}
+
+			m.End(m.Opponent(p.Player), fmt.Sprintf("%s won by opponent resigning.", m.Opponent(p.Player).Username()))
+
+		}, SequentialEvent)
+
 	default:
 		logrus.Debugf("Received message in incorrect format: %v", string(data))
 
@@ -1919,7 +1931,7 @@ func (p *PlayerReference) Dispose() {
 	}
 }
 
-func (m *Match) handleAdminMesseges(message string, user db.User) {
+func (m *Match) handleAdminMessages(message string, user db.User) {
 
 	hasRights := false
 
