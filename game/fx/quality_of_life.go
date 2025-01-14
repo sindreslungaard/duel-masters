@@ -615,6 +615,23 @@ func ShieldBroken(card *match.Card, ctx *match.Context) bool {
 
 }
 
+// TurboRushCondition returns true if a shield has been broken by one of your other creatures
+func TurboRushCondition(card *match.Card, ctx *match.Context) bool {
+
+	if !ctx.Match.IsPlayerTurn(card.Player) {
+		return false
+	}
+
+	if event, ok := ctx.Event.(*match.BrokenShieldEvent); ok {
+		if creature, ok := card.Player.GetCard(event.Source, match.BATTLEZONE); ok == nil {
+			return creature != card
+		}
+	}
+
+	return false
+
+}
+
 // CreatureSummoned returns true if a card was summoned
 //
 // Does not activate if a card that was under an Evolution card becomes visible again.
