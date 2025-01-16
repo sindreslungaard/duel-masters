@@ -180,3 +180,23 @@ func PutOwnCreatureFromBZToMZ(card *match.Card, ctx *match.Context) {
 		ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s was moved to manazone", creature.Name))
 	})
 }
+
+func ReturnXCreaturesFromGraveToHand(x int) func(*match.Card, *match.Context) {
+	return func(card *match.Card, ctx *match.Context) {
+		SelectFilter(
+			card.Player,
+			ctx.Match,
+			card.Player,
+			match.GRAVEYARD,
+			fmt.Sprintf("%s: You may return %d creature(s) from your graveyard to your hand", card.Name, x),
+			1,
+			x,
+			false,
+			func(x *match.Card) bool { return x.HasCondition(cnd.Creature) },
+			true,
+		).Map(func(x *match.Card) {
+			card.Player.MoveCard(x.ID, match.GRAVEYARD, match.HAND, card.ID)
+			ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s was moved to %s's hand from their graveyard by %s", x.Name, card.Player.Username(), card.Name))
+		})
+	}
+}
