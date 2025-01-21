@@ -32,15 +32,11 @@ func LaByleSeekerOfTheWinds(c *match.Card) {
 	c.ManaRequirement = []string{civ.Light}
 
 	c.Use(fx.Creature, fx.Blocker, func(card *match.Card, ctx *match.Context) {
-
-		if event, ok := ctx.Event.(*match.CreatureDestroyed); ok {
-
-			if event.Source == card && event.Blocked {
+		if event, ok := ctx.Event.(*match.Battle); ok {
+			if event.Blocked && event.Defender == card {
 				card.Tapped = false
 			}
-
 		}
-
 	})
 
 }

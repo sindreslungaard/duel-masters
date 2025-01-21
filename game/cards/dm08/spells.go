@@ -3,6 +3,7 @@ package dm08
 import (
 	"duel-masters/game/civ"
 	"duel-masters/game/cnd"
+	"duel-masters/game/family"
 	"duel-masters/game/fx"
 	"duel-masters/game/match"
 	"fmt"
@@ -66,5 +67,26 @@ func MuscleCharger(c *match.Card) {
 				ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s was given +3000 power until the end of the turn", creature.Name))
 			})
 
+	}))
+}
+
+// FuriousOnslaught ...
+func FuriousOnslaught(c *match.Card) {
+	c.Name = "Furious Onslaught"
+	c.Civ = civ.Fire
+	c.ManaCost = 4
+	c.ManaRequirement = []string{civ.Fire}
+
+	c.Use(fx.Spell, fx.When(fx.SpellCast, func(card *match.Card, ctx *match.Context) {
+		fx.FindFilter(
+			card.Player,
+			match.BATTLEZONE,
+			func(creature *match.Card) bool { return creature.HasFamily(family.Dragonoid) },
+		).Map(func(creature *match.Card) {
+			creature.AddCondition(cnd.AddFamily, family.ArmoredDragon, card)
+			creature.AddCondition(cnd.PowerAmplifier, 4000, card.ID)
+			creature.AddCondition(cnd.DoubleBreaker, nil, card.ID)
+			ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s was given +4000 power, double breaker, and is now an Armored Dragon until the end of the turn", creature.Name))
+		})
 	}))
 }
