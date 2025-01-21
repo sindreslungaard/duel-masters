@@ -1,6 +1,8 @@
 package match
 
 import (
+	"duel-masters/game/cnd"
+
 	"github.com/sirupsen/logrus"
 	"github.com/ventu-io/go-shortid"
 )
@@ -219,7 +221,17 @@ func (c *Card) ClearAttachments() {
 
 // HasFamily returns true if the card has the input family, false otherwise
 func (c *Card) HasFamily(family string) bool {
-	for _, f := range c.Family {
+	families := c.Family
+
+	for _, condition := range c.conditions {
+		if condition.ID == cnd.AddFamily {
+			if f, ok := condition.Val.(string); ok {
+				families = append(families, f)
+			}
+		}
+	}
+
+	for _, f := range families {
 		if f == family {
 			return true
 		}
