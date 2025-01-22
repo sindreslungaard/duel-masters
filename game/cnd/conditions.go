@@ -22,6 +22,7 @@ const (
 	IncreasedCost       = "increased_cost"
 	Evolution           = "evolution"
 	Survivor            = "survivor"
+	SpeedAttacker       = "Speed Attacker"
 	EvolveIntoAnyFamily = "evolve_into_any_family"
 	TapAbility          = "tap_ability"
 	DestroyAfterBattle  = "destroy_after_battle"
