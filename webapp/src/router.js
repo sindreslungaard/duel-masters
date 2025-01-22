@@ -93,7 +93,14 @@ const router = createRouter({
       name: "duel_invite",
       component: () => import("./views/Match.vue"),
       meta: { auth: true }
-    }
+    },
+
+    {
+      path: "/event/:id",
+      name: "event_deck",
+      component: () => import("./views/CardpoolDeck.vue"),
+      meta: { auth: true }
+    },
   ]
 });
 
