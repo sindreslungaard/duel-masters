@@ -2,7 +2,7 @@
 
 ## [Unreleased]
 
-- No unreleased changes
+- Updated cards that prompts the user whether or not to draw a card to draw and ask the user sequentially rather than all at once (thanks @jyotiskaghosh)
 
 ## 09/12/2024
 
