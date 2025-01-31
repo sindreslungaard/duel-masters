@@ -55,13 +55,6 @@ func LuGilaSilverRiftGuardian(c *match.Card) {
 						return
 					}
 
-					// If Lu Gila is the card evolved, its evolution also becomes tapped according to duel master
-					// rulings (https://duelmasters.fandom.com/wiki/Lu_Gila,_Silver_Rift_Guardian/Rulings).
-					//at := playedCard.Attachments()
-					//if card.Zone == match.HIDDENZONE && (len(at) == 0 || at[len(at)-1] != card) {
-					//	return
-					//}
-
 					playedCard.Tapped = true
 				}
 			})
