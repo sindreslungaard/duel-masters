@@ -542,22 +542,25 @@
         </div>
       </div>
 
-      <div class="right-stage">
-        <div
-          v-if="!state.spectator"
-          class="actionbox"
-          :style="playmat ? 'background: url(/assets/images/overlay_30.png)' : ''"
+      <div class="right-stage flex flex-col">
+        <div v-if="!state.spectator" class="text-center flex-1">
+          <div
+          class="p-2 rounded-md mt-5 inline-block"
+          :style="'background: url(/assets/images/overlay_30.png)'"
           >
 
           <div
             @click="resign()"
-            :class="['red-btn', 'block']"
+            class="btn"
+            v-tooltip="'Forfeits the match and your opponent wins'"
           >
             Resign
           </div>
         
         </div>
-        <div class="right-stage-content">
+        </div>
+        
+        <div class="right-stage-content mb-10">
           <p>Hand [{{ state.opponent.handCount }}]</p>
           <p>Graveyard [{{ state.opponent.graveyard.length }}]</p>
           <div class="card">
@@ -599,7 +602,7 @@
             : 'border-top: 1px solid #555;'
         "
       >
-        <div class="right-stage-content">
+        <div class="right-stage-content mt-10">
           <p v-if="state.spectator">Hand [{{ state.me.handCount }}]</p>
           <p>Graveyard [{{ state.me.graveyard.length }}]</p>
           <div class="card">
