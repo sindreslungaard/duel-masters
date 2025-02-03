@@ -71,3 +71,35 @@ func DestroyBySpellOpCreature2000OrLess(card *match.Card, ctx *match.Context) {
 func DestroyByMiscOpCreature2000OrLess(card *match.Card, ctx *match.Context) {
 	destroyOpCreature2000OrLess(card, ctx, match.DestroyedByMiscAbility)
 }
+
+// Destroy creature less than equal to x
+func DestroyOpCreatureXPowerOrLess(x int, destroyType match.CreatureDestroyedContext) match.HandlerFunc {
+	return func(card *match.Card, ctx *match.Context) {
+		SelectFilter(
+			card.Player, ctx.Match, ctx.Match.Opponent(card.Player), match.BATTLEZONE,
+			fmt.Sprintf("%s: Select 1 of your opponent's creatures that will be destroyed", card.Name),
+			1, 1, false,
+			func(creature *match.Card) bool { return ctx.Match.GetPower(creature, false) <= x }, false,
+		).Map(func(x *match.Card) {
+			ctx.Match.Destroy(x, card, destroyType)
+		})
+	}
+}
+
+// Destroy opponent creature by provided cancellable option and CreatureDestroyedContext
+func DestroyOpponentCreature(cancellable bool, destroyType match.CreatureDestroyedContext) match.HandlerFunc {
+
+	return func(card *match.Card, ctx *match.Context) {
+		Select(
+			card.Player,
+			ctx.Match,
+			ctx.Match.Opponent(card.Player),
+			match.BATTLEZONE,
+			"Destroy one of your opponent's creatures",
+			1, 1, cancellable,
+		).Map(func(x *match.Card) {
+			ctx.Match.Destroy(x, card, destroyType)
+		})
+	}
+
+}
