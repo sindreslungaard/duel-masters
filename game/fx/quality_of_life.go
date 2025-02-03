@@ -490,6 +490,15 @@ func SpellCast(card *match.Card, ctx *match.Context) bool {
 
 }
 
+// SpellCasted returns true if a spell was cast
+func SpellCasted(card *match.Card, ctx *match.Context) bool {
+
+	_, ok := ctx.Event.(*match.SpellCast)
+
+	return ok
+
+}
+
 // Attacking returns true if the card is attacking a player or creature
 func Attacking(card *match.Card, ctx *match.Context) bool {
 
@@ -613,6 +622,31 @@ func ShieldBroken(card *match.Card, ctx *match.Context) bool {
 	_, ok := ctx.Event.(*match.BrokenShieldEvent)
 	return ok
 
+}
+
+// TurboRushCondition returns true if a shield has been broken by one of your other creatures
+func TurboRushCondition(card *match.Card, ctx *match.Context) bool {
+
+	if !ctx.Match.IsPlayerTurn(card.Player) {
+		return false
+	}
+
+	if event, ok := ctx.Event.(*match.BrokenShieldEvent); ok {
+		if creature, ok := card.Player.GetCard(event.Source, match.BATTLEZONE); ok == nil {
+			return creature != card
+		}
+	}
+
+	return false
+
+}
+
+// OpponentPlayedShieldTrigger returns true if the opponent has played a shield trigger and creature is in the Battlezone
+func OpponentPlayedShieldTrigger(card *match.Card, ctx *match.Context) bool {
+	if event, ok := ctx.Event.(*match.ShieldTriggerPlayedEvent); ok && card.Zone == match.BATTLEZONE && event.Card.Player != card.Player {
+		return true
+	}
+	return false
 }
 
 // CreatureSummoned returns true if a card was summoned
@@ -762,5 +796,17 @@ func Blocked(card *match.Card, ctx *match.Context) bool {
 	if event, ok := ctx.Event.(*match.Battle); ok {
 		return event.Blocked && event.Attacker == card
 	}
+	return false
+}
+
+func WheneverThisAttacksAndIsntBlocked(card *match.Card, ctx *match.Context) bool {
+	if event, ok := ctx.Event.(*match.Battle); ok {
+		return event.Attacker == card && !event.Blocked
+	}
+
+	if event, ok := ctx.Event.(*match.BreakShieldEvent); ok {
+		return event.Source == card
+	}
+
 	return false
 }
