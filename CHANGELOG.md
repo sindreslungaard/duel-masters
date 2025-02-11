@@ -8,6 +8,14 @@
 - New card "Quixotic Hero Swine Snout" (thanks @jyotiskaghosh)
 - New card "Corpse Charger" (thanks @jyotiskaghosh)
 - New card "Cranium Clamp" (thanks @jyotiskaghosh)
+- New card "Terradragon Regarion" (thanks @jyotiskaghosh)
+- New card "Aqua Ranger" (thanks @jyotiskaghosh)
+- New card "Volcano Charger" (thanks @jyotiskaghosh)
+- New card "Eureka Charger" (thanks @jyotiskaghosh)
+- New card "Muscle Charger" (thanks @jyotiskaghosh)
+- New card "Magmadragon Melgars" (thanks @jyotiskaghosh)
+- New card "Necrodragon Giland" (thanks @jyotiskaghosh)
+- New card "Necrodragon Galbazeek" (thanks @jyotiskaghosh)
 
 ## 09/12/2024
 
