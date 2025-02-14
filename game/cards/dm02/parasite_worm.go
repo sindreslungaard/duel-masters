@@ -60,7 +60,7 @@ func HorridWorm(c *match.Card) {
 	c.ManaCost = 3
 	c.ManaRequirement = []string{civ.Darkness}
 
-	c.Use(fx.Creature, fx.When(fx.AttackConfirmed, fx.OpponentDiscardsRandomCard))
+	c.Use(fx.Creature, fx.WheneverThisAttacks(fx.OpponentDiscardsRandomCard))
 
 }
 

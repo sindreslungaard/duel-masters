@@ -19,9 +19,9 @@ func BloodwingMantis(c *match.Card) {
 	c.ManaCost = 5
 	c.ManaRequirement = []string{civ.Nature}
 
-	c.Use(fx.Creature, fx.Doublebreaker, fx.When(fx.AttackConfirmed, func(card *match.Card, ctx *match.Context) {
+	c.Use(fx.Creature, fx.Doublebreaker, fx.WheneverThisAttacks(func(card *match.Card, ctx *match.Context) {
 
-		fx.SelectFilterSelectablesOnly(
+		fx.SelectFilter(
 			card.Player,
 			ctx.Match,
 			card.Player,
@@ -31,6 +31,7 @@ func BloodwingMantis(c *match.Card) {
 			2,
 			false,
 			func(c *match.Card) bool { return c.HasCondition(cnd.Creature) },
+			false,
 		).Map(func(c *match.Card) {
 			c.Player.MoveCard(c.ID, match.MANAZONE, match.HAND, card.ID)
 			ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s was returned to %s's hand from manazone", c.Name, c.Player.Username()))

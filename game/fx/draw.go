@@ -34,6 +34,13 @@ func Draw1ToMana(card *match.Card, ctx *match.Context) {
 
 }
 
+// MayDraw1ToMana lets the player choose if they want to draw 1 card and put it in the players manazone
+func MayDraw1ToMana(card *match.Card, ctx *match.Context) {
+	if BinaryQuestion(card.Player, ctx.Match, fmt.Sprintf("Do you want to put your top card of your deck into your mana zone? (%s effect)", card.Name)) {
+		Draw1ToMana(card, ctx)
+	}
+}
+
 func Draw2ToMana(card *match.Card, ctx *match.Context) {
 	Draw1ToMana(card, ctx)
 	Draw1ToMana(card, ctx)

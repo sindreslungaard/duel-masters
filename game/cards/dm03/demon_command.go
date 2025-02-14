@@ -33,16 +33,25 @@ func GamilKnightOfHatred(c *match.Card) {
 	c.ManaCost = 6
 	c.ManaRequirement = []string{civ.Darkness}
 
-	c.Use(fx.Creature, fx.When(fx.AttackConfirmed, func(card *match.Card, ctx *match.Context) {
+	c.Use(fx.Creature, fx.WheneverThisAttacks(func(card *match.Card, ctx *match.Context) {
 
-		ctx.ScheduleAfter(func() {
-			creatures := match.Filter(card.Player, ctx.Match, card.Player, match.GRAVEYARD, "Select 1 of your darkness creatures from the graveyard that will be returned to your hand", 0, 1, true, func(x *match.Card) bool { return x.HasCondition(cnd.Creature) && x.Civ == civ.Darkness })
+		creatures := fx.SelectFilter(
+			card.Player,
+			ctx.Match,
+			card.Player,
+			match.GRAVEYARD,
+			"Select 1 of your darkness creatures from your graveyard that will be returned to your hand",
+			0,
+			1,
+			true,
+			func(x *match.Card) bool { return x.HasCondition(cnd.Creature) && x.Civ == civ.Darkness },
+			false,
+		)
 
-			for _, creature := range creatures {
-				card.Player.MoveCard(creature.ID, match.GRAVEYARD, match.HAND, card.ID)
-				ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s was moved to %s's hand from their  graveyard", creature.Name, ctx.Match.PlayerRef(card.Player).Socket.User.Username))
-			}
-		})
+		for _, creature := range creatures {
+			card.Player.MoveCard(creature.ID, match.GRAVEYARD, match.HAND, card.ID)
+			ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s was moved to %s's hand from their graveyard", creature.Name, card.Player.Username()))
+		}
 	}))
 
 }

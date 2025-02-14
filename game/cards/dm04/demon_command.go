@@ -84,7 +84,7 @@ func PhotocideLordOfTheWastes(c *match.Card) {
 			ctx.Match.Opponent(card.Player),
 			match.BATTLEZONE,
 			func(x *match.Card) bool {
-				return x.Civ == civ.Light && x.Tapped == false
+				return x.Civ == civ.Light && !x.Tapped
 			},
 		).Map(func(x *match.Card) {
 			// don't add if already in the list of attackable creatures

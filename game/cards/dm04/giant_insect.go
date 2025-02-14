@@ -30,7 +30,7 @@ func ThreeEyedDragonfly(c *match.Card) {
 			// reset this before each attack attempt
 			selectedCard = ""
 
-			cards := fx.SelectFilterSelectablesOnly(
+			cards := fx.SelectFilter(
 				card.Player,
 				ctx.Match,
 				card.Player,
@@ -40,6 +40,7 @@ func ThreeEyedDragonfly(c *match.Card) {
 				1,
 				true,
 				func(c *match.Card) bool { return c.ID != card.ID },
+				false,
 			)
 
 			if len(cards) > 0 {
@@ -49,7 +50,7 @@ func ThreeEyedDragonfly(c *match.Card) {
 			}
 		}),
 
-		fx.When(fx.AttackConfirmed, func(card *match.Card, ctx *match.Context) {
+		fx.WheneverThisAttacks(func(card *match.Card, ctx *match.Context) {
 			if selectedCard == "" {
 				return
 			}
