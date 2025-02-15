@@ -33,7 +33,7 @@ func GamilKnightOfHatred(c *match.Card) {
 	c.ManaCost = 6
 	c.ManaRequirement = []string{civ.Darkness}
 
-	c.Use(fx.Creature, fx.WheneverThisAttacks(func(card *match.Card, ctx *match.Context) {
+	c.Use(fx.Creature, fx.When(fx.AttackConfirmed, func(card *match.Card, ctx *match.Context) {
 
 		creatures := fx.SelectFilter(
 			card.Player,
@@ -50,7 +50,7 @@ func GamilKnightOfHatred(c *match.Card) {
 
 		for _, creature := range creatures {
 			card.Player.MoveCard(creature.ID, match.GRAVEYARD, match.HAND, card.ID)
-			ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s was moved to %s's hand from their graveyard", creature.Name, card.Player.Username()))
+			ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s was sent to %s's hand from their graveyard by %s's effect", creature.Name, card.Player.Username(), card.Name))
 		}
 	}))
 

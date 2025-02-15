@@ -17,6 +17,6 @@ func DarkTitanMaginn(c *match.Card) {
 	c.ManaCost = 6
 	c.ManaRequirement = []string{civ.Darkness}
 
-	c.Use(fx.Creature, fx.WheneverThisAttacks(fx.OpponentDiscardsRandomCard))
+	c.Use(fx.Creature, fx.When(fx.AttackConfirmed, fx.OpponentDiscardsRandomCard))
 
 }

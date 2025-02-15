@@ -218,7 +218,6 @@ func (m *Match) Battle(attacker *Card, defender *Card, blocked bool) {
 	attackerPower := m.GetPower(attacker, true)
 	defenderPower := m.GetPower(defender, false)
 
-	m.HandleFx(NewContext(m, &AttackConfirmed{CardID: attacker.ID, Player: false, Creature: true}))
 	m.HandleFx(NewContext(m, &Battle{Attacker: attacker, AttackerPower: attackerPower, Defender: defender, DefenderPower: defenderPower, Blocked: blocked}))
 
 	m.BroadcastState()
@@ -1933,88 +1932,163 @@ func (p *PlayerReference) Dispose() {
 
 func (m *Match) handleAdminMessages(message string, user db.User) {
 
+	if !hasAdminRightsAndValidMsgFormat(message, user) {
+		return
+	}
+
+	handleAdminCommandCases(m, message)
+}
+
+func hasAdminRightsAndValidMsgFormat(message string, user db.User) bool {
+
 	hasRights := false
 
 	for _, permission := range user.Permissions {
 		if permission == "admin" {
 			hasRights = true
+			break
 		}
 	}
 
 	if !hasRights {
-		return
+		return false
 	}
 
+	msgParts := strings.Split(message, " ")
+
+	return len(msgParts) >= 2
+
+}
+
+func handleAdminCommandCases(m *Match, message string) {
+
+	var cardsToAdd []string
 	currentPlayer := m.CurrentPlayer().Player
 	msgParts := strings.Split(message, " ")
-	if len(msgParts) < 2 {
-		return
-	}
 
 	switch msgParts[0] {
+
+	// /add red 4 - add 4 fire cards to your hand
+	// /add n - add 1 nature card to your hand
+	// /add imageID 3 - add 3 copies of that specific card to your hand
+	// /add all 2 - add 2 cards from each civ to your hand
 	case "/add":
-		// Spawn card in hand
-		currentPlayer.SpawnCard(msgParts[1], HAND)
-		m.BroadcastState()
-		return
+
+		cardsToAdd = getCardsToAddFromGivenCommand(currentPlayer, msgParts[1])
+
+		spawnCardsToGivenZone(m, currentPlayer, cardsToAdd, HAND, msgParts)
 
 	// /mana hand - will add all the cards in your hand to the manazone
 	// /mana red 4 - add 4 fire mana
 	// /mana n - add 1 nature mana
 	// /mana imageID 3 - add 3 mana of that specific card
 	case "/mana":
-		var manaToAdd string
-		switch msgParts[1] {
-		case "hand":
-			for _, c := range currentPlayer.hand {
-				currentPlayer.MoveCard(c.ID, HAND, MANAZONE, "cmd /mana")
-				m.Chat("Server", fmt.Sprintf("%s was moved to %s's mana zone by an admin command", c.Name, user.Username))
-			}
-		case "fire", "f", "red":
-			manaToAdd = "af3bc221-1cc2-4f58-83ea-2673ac2c66c5"
-		case "water", "w", "blue":
-			manaToAdd = "9781089f-1aa9-4a75-b106-35e9d431e31d"
-		case "light", "l", "yellow":
-			manaToAdd = "7b58e8c2-0b1e-4ef5-812f-e667c2092c73"
-		case "darkness", "d", "black":
-			manaToAdd = "e2b992ee-91a3-49d3-8228-7be60a0b9ec5"
-		case "nature", "n", "green":
-			manaToAdd = "1d72eb3e-5185-449a-a16f-391bd2338343"
-		default:
-			manaToAdd = msgParts[1]
-		}
 
-		if manaToAdd != "" {
-			count := 1
-			if len(msgParts) > 2 {
-				number, err := strconv.Atoi(msgParts[2])
-				if err == nil && number >= 1 {
-					count = number
-				}
-			}
+		cardsToAdd = getCardsToAddFromGivenCommand(currentPlayer, msgParts[1])
 
-			for i := 0; i < count; i++ {
-				currentPlayer.SpawnCard(manaToAdd, MANAZONE)
-			}
-		}
-
-		m.BroadcastState()
+		spawnCardsToGivenZone(m, currentPlayer, cardsToAdd, MANAZONE, msgParts)
 
 		return
 
+	// /shield hand - will add all the cards in your hand to the shieldzone
+	// /shield red 4 - add 4 fire shields
+	// /shield n - add 1 nature shield
+	// /shield imageID 3 - add 3 shields of that specific card
 	case "/shield":
 
-		// Spawn shield
-		currentPlayer.SpawnCard(msgParts[1], SHIELDZONE)
-		m.BroadcastState()
+		cardsToAdd = getCardsToAddFromGivenCommand(currentPlayer, msgParts[1])
+
+		spawnCardsToGivenZone(m, currentPlayer, cardsToAdd, SHIELDZONE, msgParts)
+
 		return
 
+	// /deck hand - will add all the cards in your hand to the deck
+	// /deck red 4 - add 4 fire cards to the deck
+	// /deck n - add 1 nature card to the deck
+	// /deck imageID 3 - add 3 copies of that specific card to the deck
 	case "/deck":
 
-		// Spawn card in deck
-		currentPlayer.SpawnCard(msgParts[1], DECK)
-		m.BroadcastState()
+		cardsToAdd = getCardsToAddFromGivenCommand(currentPlayer, msgParts[1])
+
+		spawnCardsToGivenZone(m, currentPlayer, cardsToAdd, DECK, msgParts)
+
+		return
+
+	// /grave hand - will add all the cards in your hand to the graveyard
+	// /grave red 4 - add 4 fire cards to your graveyard
+	// /grave n - add 1 nature card to your graveyard
+	// /grave imageID 3 - add 3 copies of that specific card to your graveyard
+	case "/grave":
+
+		cardsToAdd = getCardsToAddFromGivenCommand(currentPlayer, msgParts[1])
+
+		spawnCardsToGivenZone(m, currentPlayer, cardsToAdd, SHIELDZONE, msgParts)
+
 		return
 
 	}
+
+}
+
+func getCardsToAddFromGivenCommand(crtPlayer *Player, command string) []string {
+
+	var cardsToAdd []string
+
+	switch command {
+
+	case "hand":
+		for _, c := range crtPlayer.hand {
+			cardsToAdd = append(cardsToAdd, c.ID)
+		}
+	case "fire", "f", "red":
+		cardsToAdd = []string{"af3bc221-1cc2-4f58-83ea-2673ac2c66c5"}
+	case "water", "w", "blue":
+		cardsToAdd = []string{"9781089f-1aa9-4a75-b106-35e9d431e31d"}
+	case "light", "l", "yellow":
+		cardsToAdd = []string{"7b58e8c2-0b1e-4ef5-812f-e667c2092c73"}
+	case "darkness", "d", "black":
+		cardsToAdd = []string{"e2b992ee-91a3-49d3-8228-7be60a0b9ec5"}
+	case "nature", "n", "green":
+		cardsToAdd = []string{"1d72eb3e-5185-449a-a16f-391bd2338343"}
+	case "all", "fromAll", "fromall":
+		cardsToAdd =
+			[]string{
+				"af3bc221-1cc2-4f58-83ea-2673ac2c66c5",
+				"9781089f-1aa9-4a75-b106-35e9d431e31d",
+				"7b58e8c2-0b1e-4ef5-812f-e667c2092c73",
+				"e2b992ee-91a3-49d3-8228-7be60a0b9ec5",
+				"1d72eb3e-5185-449a-a16f-391bd2338343",
+			}
+	default:
+		cardsToAdd = []string{command}
+	}
+
+	return cardsToAdd
+
+}
+
+func spawnCardsToGivenZone(m *Match,
+	player *Player,
+	cardsToSpawn []string,
+	zone string,
+	commands []string) {
+
+	if len(cardsToSpawn) > 0 {
+		count := 1
+		if len(commands) > 2 && commands[1] != "hand" {
+			number, err := strconv.Atoi(commands[2])
+			if err == nil && number >= 1 {
+				count = number
+			}
+		}
+
+		for i := 0; i < len(cardsToSpawn); i++ {
+			for j := 0; j < count; j++ {
+				player.SpawnCard(cardsToSpawn[i], zone)
+			}
+		}
+	}
+
+	m.BroadcastState()
+
 }

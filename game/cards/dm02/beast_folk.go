@@ -59,7 +59,7 @@ func SilverAxe(c *match.Card) {
 	c.ManaCost = 3
 	c.ManaRequirement = []string{civ.Nature}
 
-	c.Use(fx.Creature, fx.WheneverThisAttacks(fx.MayDraw1ToMana))
+	c.Use(fx.Creature, fx.When(fx.AttackConfirmed, fx.MayDraw1ToMana))
 
 }
 

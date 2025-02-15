@@ -19,7 +19,7 @@ func EarthstompGiant(c *match.Card) {
 	c.ManaCost = 5
 	c.ManaRequirement = []string{civ.Nature}
 
-	c.Use(fx.Creature, fx.Doublebreaker, fx.WheneverThisAttacks(func(card *match.Card, ctx *match.Context) {
+	c.Use(fx.Creature, fx.Doublebreaker, fx.When(fx.AttackConfirmed, func(card *match.Card, ctx *match.Context) {
 
 		manaZone, err := card.Player.Container(match.MANAZONE)
 
@@ -30,7 +30,7 @@ func EarthstompGiant(c *match.Card) {
 		for _, manaZoneCard := range manaZone {
 			if manaZoneCard.HasCondition(cnd.Creature) {
 				manaZoneCard.Player.MoveCard(manaZoneCard.ID, match.MANAZONE, match.HAND, card.ID)
-				ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s was sent from %s's manazone to their hand by %s", manaZoneCard.Name, manaZoneCard.Player.Username(), card.Name))
+				ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s was sent to %s's hand from manazone by %s's effect", manaZoneCard.Name, manaZoneCard.Player.Username(), card.Name))
 			}
 		}
 	}))

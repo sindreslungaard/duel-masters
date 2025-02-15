@@ -63,7 +63,7 @@ func SniperMosquito(c *match.Card) {
 	c.ManaCost = 1
 	c.ManaRequirement = []string{civ.Nature}
 
-	c.Use(fx.Creature, fx.WheneverThisAttacks(func(card *match.Card, ctx *match.Context) {
+	c.Use(fx.Creature, fx.When(fx.AttackConfirmed, func(card *match.Card, ctx *match.Context) {
 
 		fx.Select(
 			card.Player,
@@ -76,6 +76,7 @@ func SniperMosquito(c *match.Card) {
 			false,
 		).Map(func(x *match.Card) {
 			card.Player.MoveCard(x.ID, match.MANAZONE, match.HAND, card.ID)
+			ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s was sent to %s's hand from their manazone hand by %s's effect", x.Name, card.Player.Username(), card.Name))
 		})
 	}))
 }

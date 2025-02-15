@@ -279,6 +279,17 @@ func Creature(card *match.Card, ctx *match.Context) {
 			// Broadcast state so that opponent can see that this card is tapped if they get any shield triggers
 			ctx.Match.BroadcastState()
 
+			//TODO move this BEFORE the blocker interaction for the opponent
+			//TODO refactor blocker interaction because its duplicate code between
+			//     AttackingPlayer and AttackingCreature events
+			//TODO add this handleFx to AttackingCreature case also
+			ctx.Match.HandleFx(match.NewContext(ctx.Match, &match.AttackConfirmed{CardID: card.ID, Player: true, Creature: false}))
+
+			// In case AttackConfirmed effect removes itself from the Battlezone
+			if card.Zone != match.BATTLEZONE {
+				return
+			}
+
 			// Allow the opponent to block if they can
 			if len(event.Blockers) > 0 && !card.HasCondition(cnd.CantBeBlocked) && !stealthActive(card, ctx) {
 
@@ -299,8 +310,6 @@ func Creature(card *match.Card, ctx *match.Context) {
 					if action.Cancel {
 						ctx.Match.EndWait(card.Player)
 						ctx.Match.CloseAction(opponent)
-
-						ctx.Match.HandleFx(match.NewContext(ctx.Match, &match.AttackConfirmed{CardID: card.ID, Player: true, Creature: false}))
 
 						if len(shieldzone) < 1 {
 							// Win
@@ -339,8 +348,6 @@ func Creature(card *match.Card, ctx *match.Context) {
 			} else {
 
 				card.Tapped = true
-
-				ctx.Match.HandleFx(match.NewContext(ctx.Match, &match.AttackConfirmed{CardID: card.ID, Player: true, Creature: false}))
 
 				if len(shieldzone) < 1 {
 					// Win
@@ -474,15 +481,23 @@ func Creature(card *match.Card, ctx *match.Context) {
 			card.Tapped = true
 
 			handleWheneverThisAttacksEffects(card, ctx)
+
 			// In case the attacker or creature was removed by a WheneverThisAttacksEffect
 			if card.Zone != match.BATTLEZONE || c.Zone != match.BATTLEZONE {
 				return
 			}
+
 			// Creature being attacked should not be on the blockers list
 			RemoveBlockerFromList(c, ctx)
 			// TODO: An event should be added here instead. This is the place where the blockers list should
 			// be initally made to avoid any errors (caused by removal of creatures that give others blocker).
 			// Same for attack player
+
+			ctx.Match.HandleFx(match.NewContext(ctx.Match, &match.AttackConfirmed{CardID: card.ID, Player: false, Creature: true}))
+			// In case the attacker or creature was removed by a WheneverThisAttacksEffect
+			if card.Zone != match.BATTLEZONE || c.Zone != match.BATTLEZONE {
+				return
+			}
 
 			// Allow the opponent to block if they can
 			if len(event.Blockers) > 0 && !card.HasCondition(cnd.CantBeBlocked) && !stealthActive(card, ctx) {

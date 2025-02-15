@@ -246,9 +246,9 @@ func (p *Player) DestroyDeck() {
 	p.deck = nil
 }
 
-// SpawnCard creates a new card from an id and adds it to the players hand
+// SpawnCard creates a new card from an id and adds it to the players' given zone
 // used for debugging and development
-func (p *Player) SpawnCard(id string, area string) {
+func (p *Player) SpawnCard(id string, zone string) {
 
 	p.mutex.Lock()
 
@@ -261,9 +261,9 @@ func (p *Player) SpawnCard(id string, area string) {
 		return
 	}
 
-	c.Zone = area
+	c.Zone = zone
 
-	switch area {
+	switch zone {
 	case HAND:
 		p.hand = append(p.hand, c)
 	case MANAZONE:
@@ -275,7 +275,7 @@ func (p *Player) SpawnCard(id string, area string) {
 	case DECK:
 		p.deck = append(p.deck, c)
 	default:
-		logrus.Warnf("Failed to create card with id %s - invalid area", id)
+		logrus.Warnf("Failed to create card with id %s - invalid zone", id)
 		return
 	}
 }

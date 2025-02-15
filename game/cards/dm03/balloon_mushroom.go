@@ -18,14 +18,14 @@ func Psyshroom(c *match.Card) {
 	c.ManaCost = 4
 	c.ManaRequirement = []string{civ.Nature}
 
-	c.Use(fx.Creature, fx.WheneverThisAttacks(func(card *match.Card, ctx *match.Context) {
+	c.Use(fx.Creature, fx.When(fx.AttackConfirmed, func(card *match.Card, ctx *match.Context) {
 
 		fx.SelectFilter(
 			card.Player,
 			ctx.Match,
 			card.Player,
 			match.GRAVEYARD,
-			fmt.Sprintf(card.Name, "(%s): You may choose a nature card from your graveyard to put into your mana zone"),
+			fmt.Sprintf("%s's effect: You may choose a nature card from your graveyard to put into your mana zone", card.Name),
 			0,
 			1,
 			true,
@@ -33,6 +33,7 @@ func Psyshroom(c *match.Card) {
 			false,
 		).Map(func(x *match.Card) {
 			card.Player.MoveCard(x.ID, match.GRAVEYARD, match.MANAZONE, card.ID)
+			ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s was sent to %s's manazone from their graveyard by %s's effect.", x.Name, card.Player.Username(), card.Name))
 		})
 	}))
 
