@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+- No unreleased changes
+
+## 17/02/2024
+
 - Updated cards that prompts the user whether or not to draw a card to draw and ask the user sequentially rather than all at once (thanks @jyotiskaghosh)
 - Added the option to resign from a match (thanks @jyotiskaghosh)
 - Fixed an issue where Star-Cry Dragon's effect would apply to opponent's cards as well (thanks @jyotiskaghosh)
