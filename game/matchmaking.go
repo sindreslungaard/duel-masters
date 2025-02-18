@@ -5,6 +5,7 @@ import (
 	"duel-masters/game/match"
 	"duel-masters/internal"
 	"duel-masters/server"
+	"duel-masters/services"
 	"fmt"
 	"math/rand"
 	"sync"
@@ -42,6 +43,7 @@ type MatchRequest struct {
 	Format       match.Format
 	BlockedUsers internal.ConcurrentDictionary[bool]
 	LinkCode     string
+	EventUID     string
 }
 
 func (r *MatchRequest) Serialize() server.MatchRequestMessage {
@@ -53,6 +55,7 @@ func (r *MatchRequest) Serialize() server.MatchRequestMessage {
 		HostColor: r.Host.Color,
 		Format:    string(r.Format),
 		LinkCode:  r.LinkCode,
+		EventUID:  r.EventUID,
 	}
 
 	guest, ok := r.Guest.Unwrap()
@@ -80,7 +83,7 @@ func (m *Matchmaking) Initialize(f func(msg interface{}), sys *match.MatchSystem
 	m.matchSystem = sys
 }
 
-func (m *Matchmaking) NewRequest(s *server.Socket, name string, format match.Format) error {
+func (m *Matchmaking) NewRequest(s *server.Socket, name string, format match.Format, eventUID string) error {
 	if !flags.NewMatchesEnabled {
 		return fmt.Errorf("Match creation has been temporarily disabled")
 	}
@@ -112,6 +115,16 @@ func (m *Matchmaking) NewRequest(s *server.Socket, name string, format match.For
 		return fmt.Errorf("Failed to generate link code for match request")
 	}
 
+	if eventUID != "" {
+		allowed, err := services.CanPlayerPlayEvent(s.User.UID, eventUID)
+		if err != nil {
+			return fmt.Errorf(err.Error())
+		}
+		if !allowed {
+			return fmt.Errorf("Not allowed to play in this event")
+		}
+	}
+
 	r := &MatchRequest{
 		ID: s.User.UID,
 		Host: MatchUser{
@@ -125,6 +138,7 @@ func (m *Matchmaking) NewRequest(s *server.Socket, name string, format match.For
 		Format:       format,
 		BlockedUsers: internal.NewConcurrentDictionary[bool](),
 		LinkCode:     code,
+		EventUID:     eventUID,
 	}
 
 	m.requests.Add(s.User.UID, r)
@@ -166,6 +180,16 @@ func (m *Matchmaking) Join(s *server.Socket, id string) error {
 	_, ok = r.BlockedUsers.Find(s.User.UID)
 	if ok {
 		return fmt.Errorf("You have been blocked from joining this match")
+	}
+
+	if r.EventUID != "" {
+		allowed, err := services.CanPlayerPlayEvent(s.User.UID, r.EventUID)
+		if err != nil {
+			return fmt.Errorf(err.Error())
+		}
+		if !allowed {
+			return fmt.Errorf("Not allowed to play in this event")
+		}
 	}
 
 	r.Guest.Set(&MatchUser{
@@ -299,7 +323,7 @@ func (m *Matchmaking) Start(s *server.Socket, requestId string) {
 		return
 	}
 
-	match := m.matchSystem.NewMatch(r.Name, r.Host.ID, true, true)
+	match := m.matchSystem.NewMatch(r.Name, r.Host.ID, true, true, r.EventUID)
 
 	msg := server.MatchForwardMessage{
 		Header: "match_forward",
