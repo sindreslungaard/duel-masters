@@ -1968,25 +1968,34 @@ func handleAdminCommandCases(m *Match, message string) {
 
 	switch msgParts[0] {
 
+	// /init all 5 - initialize all zones (hand, shield, mana, deck, graveyard)
+	//					with 5 cards from each civ (25 in total) for each zone
+	case "/init":
+
+		cardsToAdd = getCardsToAddFromGivenCommand(currentPlayer, msgParts[1])
+
+		spawnCardsToGivenZones(m, currentPlayer, cardsToAdd, []string{HAND, DECK, SHIELDZONE, MANAZONE, GRAVEYARD}, msgParts)
+
 	// /add red 4 - add 4 fire cards to your hand
 	// /add n - add 1 nature card to your hand
 	// /add imageID 3 - add 3 copies of that specific card to your hand
-	// /add all 2 - add 2 cards from each civ to your hand
+	// /add all 5 - add 5 cards from each civ to your hand (25 in total)
 	case "/add":
 
 		cardsToAdd = getCardsToAddFromGivenCommand(currentPlayer, msgParts[1])
 
-		spawnCardsToGivenZone(m, currentPlayer, cardsToAdd, HAND, msgParts)
+		spawnCardsToGivenZones(m, currentPlayer, cardsToAdd, []string{HAND}, msgParts)
 
 	// /mana hand - will add all the cards in your hand to the manazone
 	// /mana red 4 - add 4 fire mana
 	// /mana n - add 1 nature mana
 	// /mana imageID 3 - add 3 mana of that specific card
+	// /mana all 5 - add 5 mana from each civ to your hand (25 in total)
 	case "/mana":
 
 		cardsToAdd = getCardsToAddFromGivenCommand(currentPlayer, msgParts[1])
 
-		spawnCardsToGivenZone(m, currentPlayer, cardsToAdd, MANAZONE, msgParts)
+		spawnCardsToGivenZones(m, currentPlayer, cardsToAdd, []string{MANAZONE}, msgParts)
 
 		return
 
@@ -1994,11 +2003,12 @@ func handleAdminCommandCases(m *Match, message string) {
 	// /shield red 4 - add 4 fire shields
 	// /shield n - add 1 nature shield
 	// /shield imageID 3 - add 3 shields of that specific card
+	// /shield all 5 - add 5 shields from each civ (25 in total)
 	case "/shield":
 
 		cardsToAdd = getCardsToAddFromGivenCommand(currentPlayer, msgParts[1])
 
-		spawnCardsToGivenZone(m, currentPlayer, cardsToAdd, SHIELDZONE, msgParts)
+		spawnCardsToGivenZones(m, currentPlayer, cardsToAdd, []string{SHIELDZONE}, msgParts)
 
 		return
 
@@ -2006,11 +2016,12 @@ func handleAdminCommandCases(m *Match, message string) {
 	// /deck red 4 - add 4 fire cards to the deck
 	// /deck n - add 1 nature card to the deck
 	// /deck imageID 3 - add 3 copies of that specific card to the deck
+	// /deck all 5 - add 5 cards from each civ to the deck (25 in total)
 	case "/deck":
 
 		cardsToAdd = getCardsToAddFromGivenCommand(currentPlayer, msgParts[1])
 
-		spawnCardsToGivenZone(m, currentPlayer, cardsToAdd, DECK, msgParts)
+		spawnCardsToGivenZones(m, currentPlayer, cardsToAdd, []string{DECK}, msgParts)
 
 		return
 
@@ -2018,11 +2029,12 @@ func handleAdminCommandCases(m *Match, message string) {
 	// /grave red 4 - add 4 fire cards to your graveyard
 	// /grave n - add 1 nature card to your graveyard
 	// /grave imageID 3 - add 3 copies of that specific card to your graveyard
+	// /grave all 5 - add 5 cards from each civ to your graveyard (25 in total)
 	case "/grave":
 
 		cardsToAdd = getCardsToAddFromGivenCommand(currentPlayer, msgParts[1])
 
-		spawnCardsToGivenZone(m, currentPlayer, cardsToAdd, SHIELDZONE, msgParts)
+		spawnCardsToGivenZones(m, currentPlayer, cardsToAdd, []string{GRAVEYARD}, msgParts)
 
 		return
 
@@ -2067,10 +2079,10 @@ func getCardsToAddFromGivenCommand(crtPlayer *Player, command string) []string {
 
 }
 
-func spawnCardsToGivenZone(m *Match,
+func spawnCardsToGivenZones(m *Match,
 	player *Player,
 	cardsToSpawn []string,
-	zone string,
+	zones []string,
 	commands []string) {
 
 	if len(cardsToSpawn) > 0 {
@@ -2082,9 +2094,11 @@ func spawnCardsToGivenZone(m *Match,
 			}
 		}
 
-		for i := 0; i < len(cardsToSpawn); i++ {
-			for j := 0; j < count; j++ {
-				player.SpawnCard(cardsToSpawn[i], zone)
+		for _, z := range zones {
+			for i := range cardsToSpawn {
+				for range count {
+					player.SpawnCard(cardsToSpawn[i], z)
+				}
 			}
 		}
 	}

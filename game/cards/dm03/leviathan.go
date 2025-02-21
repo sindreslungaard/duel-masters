@@ -19,7 +19,7 @@ func KingNeptas(c *match.Card) {
 	c.ManaCost = 6
 	c.ManaRequirement = []string{civ.Water}
 
-	c.Use(fx.WheneverThisAttacks(func(card *match.Card, ctx *match.Context) {
+	c.Use(fx.Creature, fx.When(fx.AttackConfirmed, func(card *match.Card, ctx *match.Context) {
 
 		cards := make(map[string][]*match.Card)
 
@@ -46,7 +46,7 @@ func KingNeptas(c *match.Card) {
 			c.Player,
 			ctx.Match,
 			cards,
-			"Choose up to 1 creatures in the battle zone and return it to its owner hand",
+			fmt.Sprintf("%s: Choose up to 1 creature in the battle zone and return it to its owner hand", card.Name),
 			0,
 			1,
 			true,
@@ -56,10 +56,9 @@ func KingNeptas(c *match.Card) {
 				return
 			}
 			ctx.Match.ReportActionInChat(x.Player, fmt.Sprintf("%s was moved to %s's hand", x.Name, x.Player.Username()))
-			fx.RemoveBlockerFromList(x, ctx)
 		})
 
-	}), fx.Creature)
+	}))
 
 }
 

@@ -16,7 +16,7 @@ func CantBeBlocked(card *match.Card, ctx *match.Context) {
 
 }
 
-// CantBeBlockedBy
+// CantBeBlockedIf
 func CantBeBlockedIf(test func(blocker *match.Card) bool) func(*match.Card, *match.Context) {
 
 	return func(card *match.Card, ctx *match.Context) {

@@ -22,7 +22,7 @@ func MaskedPomegranate(c *match.Card) {
 		return (getNatureCardsInYourBattleZone(c) - 1) * 1000 //-1 to exclude self
 	}
 
-	c.Use(fx.Creature, fx.When(fx.Attacking, fx.CantBeBlockedByPowerUpTo4000))
+	c.Use(fx.Creature, fx.When(fx.BlockerSelectionStep, fx.CantBeBlockedByPowerUpTo4000))
 
 }
 

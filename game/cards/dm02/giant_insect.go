@@ -17,6 +17,6 @@ func XenoMantis(c *match.Card) {
 	c.ManaCost = 7
 	c.ManaRequirement = []string{civ.Nature}
 
-	c.Use(fx.Creature, fx.Doublebreaker, fx.When(fx.Attacking, fx.CantBeBlockedByPowerUpTo5000))
+	c.Use(fx.Creature, fx.Doublebreaker, fx.When(fx.BlockerSelectionStep, fx.CantBeBlockedByPowerUpTo5000))
 
 }

@@ -123,16 +123,6 @@ func CantBeBlockedByPowerUpTo3000(card *match.Card, ctx *match.Context) {
 	CantBeBlockedByPowerUpTo(card, ctx, 3000)
 }
 
-func RemoveBlockerFromList(card *match.Card, ctx *match.Context) {
-	blockersList := BlockersList(ctx)
-	var newBlockersList []*match.Card
-	for _, blocker := range *blockersList {
-		if blocker.ID != card.ID {
-			newBlockersList = append(newBlockersList, blocker)
-		}
-	}
-	*blockersList = newBlockersList
-}
 func BlockerWhenNoShields(card *match.Card, ctx *match.Context) {
 	condition := &match.Condition{ID: cnd.Blocker, Val: true, Src: nil}
 	HaveSelfConditionsWhenNoShields(card, ctx, []*match.Condition{condition})
