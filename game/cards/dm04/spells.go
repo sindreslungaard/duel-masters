@@ -269,9 +269,7 @@ func ChainsOfSacrifice(c *match.Card) {
 			1,
 			false,
 		).Map(func(x *match.Card) {
-
 			ctx.Match.Destroy(x, card, match.DestroyedBySpell)
-			ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s's %s has been destroyed.", x.Player.Username(), x.Name))
 		})
 
 		fx.Select(
@@ -284,9 +282,7 @@ func ChainsOfSacrifice(c *match.Card) {
 			2,
 			false,
 		).Map(func(x *match.Card) {
-
 			ctx.Match.Destroy(x, card, match.DestroyedBySpell)
-			ctx.Match.ReportActionInChat(ctx.Match.Opponent(card.Player), fmt.Sprintf("%s's %s has been destroyed.", x.Player.Username(), x.Name))
 		})
 
 	}))

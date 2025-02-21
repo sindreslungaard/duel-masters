@@ -5,7 +5,6 @@ import (
 	"duel-masters/game/family"
 	"duel-masters/game/fx"
 	"duel-masters/game/match"
-	"fmt"
 )
 
 // BallomMasterOfDeath ...
@@ -26,7 +25,6 @@ func BallomMasterOfDeath(c *match.Card) {
 			func(x *match.Card) bool { return x.Civ != civ.Darkness },
 		).Map(func(x *match.Card) {
 			ctx.Match.Destroy(x, card, match.DestroyedByMiscAbility)
-			ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s was destroyed by Ballom, Master of Death", x.Name))
 		})
 
 		fx.FindFilter(
@@ -35,7 +33,6 @@ func BallomMasterOfDeath(c *match.Card) {
 			func(x *match.Card) bool { return x.Civ != civ.Darkness },
 		).Map(func(x *match.Card) {
 			ctx.Match.Destroy(x, card, match.DestroyedByMiscAbility)
-			ctx.Match.ReportActionInChat(ctx.Match.Opponent(card.Player), fmt.Sprintf("%s was destroyed by Ballom, Master of Death", x.Name))
 		})
 	}))
 

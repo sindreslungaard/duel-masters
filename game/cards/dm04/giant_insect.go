@@ -6,7 +6,6 @@ import (
 	"duel-masters/game/family"
 	"duel-masters/game/fx"
 	"duel-masters/game/match"
-	"fmt"
 )
 
 // ThreeEyedDragonfly ...
@@ -63,7 +62,6 @@ func ThreeEyedDragonfly(c *match.Card) {
 			}
 
 			ctx.Match.Destroy(x, card, match.DestroyedByMiscAbility)
-			ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s was destroyed by %s's effect", x.Name, card.Name))
 		}),
 	)
 

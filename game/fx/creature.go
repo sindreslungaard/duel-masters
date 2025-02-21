@@ -425,7 +425,7 @@ func Creature(card *match.Card, ctx *match.Context) {
 			// Broadcast state so that opponent can see that this card is tapped if they get any shield triggers
 			ctx.Match.BroadcastState()
 
-			// In case the attacker or creature was removed by a WheneverThisAttacksEffect
+			// In case the attacker or creature was removed by an AttackConfirmed effect
 			if card.Zone != match.BATTLEZONE || c.Zone != match.BATTLEZONE {
 				return
 			}
