@@ -126,6 +126,7 @@ const (
 	DestroyedBySpell
 	DestroyedBySlayer
 	DestroyedByMiscAbility
+	DestroyAfterBattle
 )
 
 // CreatureDestroyed is fired when a creature dies in battle or is destroyed from another source, such as a spell
