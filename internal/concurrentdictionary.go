@@ -1,6 +1,9 @@
 package internal
 
-import "sync"
+import (
+	"slices"
+	"sync"
+)
 
 type ConcurrentDictionary[T any] struct {
 	sync.RWMutex
@@ -65,7 +68,7 @@ func (d *ConcurrentDictionary[T]) Remove(key string) {
 		return
 	}
 
-	d.src = append(d.src[:toRemove], d.src[toRemove+1:]...)
+	d.src = slices.Delete(d.src, toRemove, toRemove+1)
 	delete(d.keyValStore, key)
 }
 

@@ -136,12 +136,12 @@ func (s *Socket) handlePing() {
 			return
 		}
 
-		select {
-		case <-ticker.C:
+		for range ticker.C {
 			s.mutex.Lock()
 			s.conn.SetWriteDeadline(time.Now().Add(writeWait))
 			err := s.conn.WriteMessage(websocket.PingMessage, nil)
 			s.mutex.Unlock()
+
 			if err != nil {
 				if !s.closed && !s.lost {
 					s.conn.Close()
@@ -154,7 +154,7 @@ func (s *Socket) handlePing() {
 }
 
 // Send sends a struct v to the client
-func (s *Socket) Send(v interface{}) {
+func (s *Socket) Send(v any) {
 
 	if s.closed || s.lost {
 		return
