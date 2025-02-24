@@ -5,7 +5,7 @@ import (
 	"duel-masters/game/match"
 )
 
-// CantBeBlocked allows the card to attack without being blocked
+// CantBeAttacked
 func CantBeAttacked(card *match.Card, ctx *match.Context) {
 
 	if _, ok := ctx.Event.(*match.UntapStep); ok {
@@ -33,7 +33,7 @@ func CantBeAttackedIf(test func(attacker *match.Card) bool) func(*match.Card, *m
 				}
 			}
 
-			if me != true {
+			if !me {
 				return
 			}
 

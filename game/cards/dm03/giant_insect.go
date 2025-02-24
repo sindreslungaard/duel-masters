@@ -75,7 +75,8 @@ func SniperMosquito(c *match.Card) {
 			1,
 			false,
 		).Map(func(x *match.Card) {
-			ctx.Match.MoveCard(x, match.HAND, card)
+			card.Player.MoveCard(x.ID, match.MANAZONE, match.HAND, card.ID)
+			ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s was sent to %s's hand from their manazone hand by %s's effect", x.Name, card.Player.Username(), card.Name))
 		})
 	}))
 }

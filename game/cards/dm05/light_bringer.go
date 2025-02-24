@@ -8,6 +8,7 @@ import (
 )
 
 func LeQuistTheOracle(c *match.Card) {
+
 	c.Name = "Le Quist, the Oracle"
 	c.Power = 1500
 	c.Civ = civ.Light

@@ -31,7 +31,7 @@ func StampedingLonghorn(c *match.Card) {
 	c.ManaCost = 5
 	c.ManaRequirement = []string{civ.Nature}
 
-	c.Use(fx.Creature, fx.When(fx.Attacking, fx.CantBeBlockedByPowerUpTo3000))
+	c.Use(fx.Creature, fx.When(fx.BlockerSelectionStep, fx.CantBeBlockedByPowerUpTo3000))
 
 }
 

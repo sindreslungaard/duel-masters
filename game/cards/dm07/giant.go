@@ -23,16 +23,16 @@ func HeadlongGiant(c *match.Card) {
 			if err != nil {
 				return
 			}
+
 			if len(hand) == 0 {
 				ctx.InterruptFlow()
 				ctx.Match.WarnPlayer(card.Player, fmt.Sprintf("%s can't attack if you don't have cards in hand", card.Name))
 			}
-
-			fx.CantBeBlockedByPowerUpTo4000(card, ctx)
 		}),
-		fx.WheneverThisAttacks(func(c *match.Card, ctx2 *match.Context) {
+		fx.When(fx.BlockerSelectionStep, fx.CantBeBlockedByPowerUpTo4000),
+		fx.When(fx.AttackConfirmed, func(c *match.Card, ctx2 *match.Context) {
 			fx.Select(c.Player, ctx2.Match, c.Player, match.HAND,
-				"Headlong Giant effect: select a card to discard", 1, 1, false,
+				fmt.Sprintf("%s: select a card to discard", c.Name), 1, 1, false,
 			).Map(func(x *match.Card) {
 				c.Player.MoveCard(x.ID, match.HAND, match.GRAVEYARD, c.ID)
 			})

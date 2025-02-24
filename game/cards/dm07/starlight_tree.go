@@ -52,7 +52,7 @@ func PulsarTree(c *match.Card) {
 					event.Cards = validShields
 				}
 
-				ctx.Match.ReportActionInChat(card.Player, "Pulsar tree destoryed to protect a shield.")
+				ctx.Match.ReportActionInChat(card.Player, "Pulsar tree destroyed to protect a shield.")
 				ctx.Match.Destroy(card, card, match.DestroyedByMiscAbility)
 			})
 		})

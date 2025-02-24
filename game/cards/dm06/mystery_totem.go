@@ -48,7 +48,7 @@ func ClobberTotem(c *match.Card) {
 	c.ManaCost = 6
 	c.ManaRequirement = []string{civ.Nature}
 
-	c.Use(fx.Creature, fx.PowerAttacker2000, fx.Doublebreaker, fx.When(fx.Attacking, fx.CantBeBlockedByPowerUpTo5000))
+	c.Use(fx.Creature, fx.PowerAttacker2000, fx.Doublebreaker, fx.When(fx.BlockerSelectionStep, fx.CantBeBlockedByPowerUpTo5000))
 }
 
 func ForbiddingTotem(c *match.Card) {

@@ -31,9 +31,7 @@ func ArmoredDecimatorValkaizer(c *match.Card) {
 			true,
 			func(x *match.Card) bool { return ctx.Match.GetPower(x, false) <= 4000 },
 		).Map(func(x *match.Card) {
-
 			ctx.Match.Destroy(x, card, match.DestroyedByMiscAbility)
-			ctx.Match.ReportActionInChat(ctx.Match.Opponent(card.Player), fmt.Sprintf("%s was destroyed by Armored Decimator Valkaizer", x.Name))
 		})
 
 	}))
