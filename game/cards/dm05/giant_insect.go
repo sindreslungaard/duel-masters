@@ -20,22 +20,30 @@ func BloodwingMantis(c *match.Card) {
 	c.ManaRequirement = []string{civ.Nature}
 
 	c.Use(fx.Creature, fx.Doublebreaker, fx.When(fx.AttackConfirmed, func(card *match.Card, ctx *match.Context) {
+		creaturesMZ := fx.FindFilter(card.Player, match.MANAZONE, func(c *match.Card) bool { return c.HasCondition(cnd.Creature) })
 
-		fx.SelectFilterSelectablesOnly(
-			card.Player,
-			ctx.Match,
-			card.Player,
-			match.MANAZONE,
-			"Select 2 creatures from your mana zone to be returned to your hand",
-			2,
-			2,
-			false,
-			func(c *match.Card) bool { return c.HasCondition(cnd.Creature) },
-		).Map(func(c *match.Card) {
-			c.Player.MoveCard(c.ID, match.MANAZONE, match.HAND, card.ID)
-			ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s was returned to %s's hand from manazone", c.Name, c.Player.Username()))
-		})
-
+		if len(creaturesMZ) <= 2 {
+			creaturesMZ.Map(func(c *match.Card) {
+				c.Player.MoveCard(c.ID, match.MANAZONE, match.HAND, card.ID)
+				ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s was returned to %s's hand from manazone", c.Name, c.Player.Username()))
+			})
+		} else {
+			fx.SelectFilter(
+				card.Player,
+				ctx.Match,
+				card.Player,
+				match.MANAZONE,
+				"Select 2 creatures from your mana zone to be returned to your hand",
+				2,
+				2,
+				false,
+				func(c *match.Card) bool { return c.HasCondition(cnd.Creature) },
+				true,
+			).Map(func(c *match.Card) {
+				c.Player.MoveCard(c.ID, match.MANAZONE, match.HAND, card.ID)
+				ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s was returned to %s's hand from manazone", c.Name, c.Player.Username()))
+			})
+		}
 	}))
 
 }
