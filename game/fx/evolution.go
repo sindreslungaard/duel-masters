@@ -155,7 +155,7 @@ func DragonEvolution(card *match.Card, ctx *match.Context) {
 			return
 		}
 
-		SelectFilterSelectablesOnly(
+		SelectFilter(
 			card.Player,
 			ctx.Match,
 			card.Player,
@@ -165,6 +165,7 @@ func DragonEvolution(card *match.Card, ctx *match.Context) {
 			1,
 			false,
 			evolvableCreatureFilter,
+			false,
 		).Map(func(creature *match.Card) {
 
 			card.ClearAttachments()
