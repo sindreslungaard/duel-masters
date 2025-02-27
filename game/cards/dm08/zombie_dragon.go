@@ -23,7 +23,6 @@ func NecrodragonGiland(c *match.Card) {
 
 // NecrodragonGalbazeek ...
 func NecrodragonGalbazeek(c *match.Card) {
-
 	c.Name = "Necrodragon Galbazeek"
 	c.Power = 9000
 	c.Civ = civ.Darkness
@@ -31,8 +30,7 @@ func NecrodragonGalbazeek(c *match.Card) {
 	c.ManaCost = 6
 	c.ManaRequirement = []string{civ.Darkness}
 
-	c.Use(fx.Creature, fx.Doublebreaker, fx.WheneverThisAttacks(func(card *match.Card, ctx *match.Context) {
-
+	c.Use(fx.Creature, fx.Doublebreaker, fx.When(fx.AttackConfirmed, func(card *match.Card, ctx *match.Context) {
 		fx.SelectBackside(
 			card.Player,
 			ctx.Match, card.Player,
@@ -44,7 +42,5 @@ func NecrodragonGalbazeek(c *match.Card) {
 		).Map(func(x *match.Card) {
 			ctx.Match.MoveCard(x, match.GRAVEYARD, card)
 		})
-
 	}))
-
 }
