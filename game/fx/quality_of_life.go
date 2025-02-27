@@ -608,7 +608,7 @@ func TurboRushCondition(card *match.Card, ctx *match.Context) bool {
 	}
 
 	if event, ok := ctx.Event.(*match.BrokenShieldEvent); ok {
-		if creature, ok := card.Player.GetCard(event.Source, match.BATTLEZONE); ok == nil {
+		if creature, err := card.Player.GetCard(event.Source, match.BATTLEZONE); err == nil {
 			return creature != card
 		}
 	}
