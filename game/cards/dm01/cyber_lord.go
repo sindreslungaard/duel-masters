@@ -19,7 +19,7 @@ func Tropico(c *match.Card) {
 
 	c.Use(func(card *match.Card, ctx *match.Context) {
 
-		if event, ok := ctx.Event.(*match.AttackPlayer); ok {
+		if event, ok := ctx.Event.(*match.BlockerSelectionStep); ok {
 
 			if event.CardID != card.ID {
 				return
@@ -36,29 +36,7 @@ func Tropico(c *match.Card) {
 			}
 
 			ctx.ScheduleAfter(func() {
-				event.Blockers = make([]*match.Card, 0)
-			})
-
-		}
-
-		if event, ok := ctx.Event.(*match.AttackCreature); ok {
-
-			if event.CardID != card.ID {
-				return
-			}
-
-			creatures, err := card.Player.Container(match.BATTLEZONE)
-
-			if err != nil {
-				return
-			}
-
-			if len(creatures) < 3 {
-				return
-			}
-
-			ctx.ScheduleAfter(func() {
-				event.Blockers = make([]*match.Card, 0)
+				*event.Blockers = make([]*match.Card, 0)
 			})
 
 		}

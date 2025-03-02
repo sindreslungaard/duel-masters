@@ -46,35 +46,24 @@ func StormShell(c *match.Card) {
 			return
 		}
 
-		ctx.Match.Wait(card.Player, "Waiting for your opponent to make an action")
+		selectedCards := fx.Select(
+			opponent,
+			ctx.Match,
+			opponent,
+			match.BATTLEZONE,
+			fmt.Sprintf("%s: Select 1 card from your battlezone that will be sent to your manazone", card.Name),
+			1,
+			1,
+			false,
+		)
 
-		ctx.Match.NewAction(opponent, battlezone, 1, 1, "Storm Shell: Select 1 card from your battlezone that will be sent to your manazone", false)
+		movedCard, err := opponent.MoveCard(selectedCards[0].ID, match.BATTLEZONE, match.MANAZONE, card.ID)
 
-		defer func() {
-			ctx.Match.EndWait(card.Player)
-			ctx.Match.CloseAction(opponent)
-		}()
-
-		for {
-
-			action := <-opponent.Action
-
-			if len(action.Cards) != 1 || !match.AssertCardsIn(battlezone, action.Cards...) {
-				ctx.Match.ActionWarning(opponent, "Your selection of cards does not fulfill the requirements")
-				continue
-			}
-
-			movedCard, err := opponent.MoveCard(action.Cards[0], match.BATTLEZONE, match.MANAZONE, card.ID)
-
-			if err != nil {
-				break
-			}
-
-			ctx.Match.ReportActionInChat(ctx.Match.Opponent(card.Player), fmt.Sprintf("%s was moved from %s's battlezone to their manazone", movedCard.Name, opponent.Username()))
-
-			break
-
+		if err != nil {
+			return
 		}
+
+		ctx.Match.ReportActionInChat(ctx.Match.Opponent(card.Player), fmt.Sprintf("%s was moved from %s's battlezone to their manazone", movedCard.Name, opponent.Username()))
 
 	}))
 

@@ -15,7 +15,7 @@ func Draw2(card *match.Card, ctx *match.Context) {
 	card.Player.DrawCards(2)
 }
 
-// Draw1ToMana draws 1 card and puts it in the players manazone
+// Draw1ToMana draws 1 card and puts it in the player's manazone
 func Draw1ToMana(card *match.Card, ctx *match.Context) {
 
 	cards := card.Player.PeekDeck(1)
