@@ -17,6 +17,6 @@ func UberdragonBajula(c *match.Card) {
 	c.ManaCost = 7
 	c.ManaRequirement = []string{civ.Fire}
 
-	c.Use(fx.Creature, fx.DragonEvolution, fx.Triplebreaker, fx.WheneverThisAttacks(fx.ManaBurnX(2)))
+	c.Use(fx.Creature, fx.DragonEvolution, fx.Triplebreaker, fx.When(fx.AttackConfirmed, fx.ManaBurnX(2)))
 
 }
