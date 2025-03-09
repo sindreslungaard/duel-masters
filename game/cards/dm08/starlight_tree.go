@@ -25,7 +25,7 @@ func SolarGrass(c *match.Card) {
 		fx.When(fx.TurboRushCondition, func(card *match.Card, ctx *match.Context) { turboRush = true }),
 		fx.When(fx.EndOfMyTurn, func(card *match.Card, ctx *match.Context) { turboRush = false }),
 		fx.When(func(c *match.Card, ctx *match.Context) bool { return turboRush },
-			fx.When(fx.WheneverThisAttacksAndIsntBlocked, func(card *match.Card, ctx *match.Context) {
+			fx.When(fx.WheneverThisAttacksPlayerAndIsntBlocked, func(card *match.Card, ctx *match.Context) {
 				fx.FindFilter(
 					card.Player,
 					match.BATTLEZONE,

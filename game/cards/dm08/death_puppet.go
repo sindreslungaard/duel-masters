@@ -24,7 +24,7 @@ func GachackMechanicalDoll(c *match.Card) {
 		fx.When(fx.TurboRushCondition, func(card *match.Card, ctx *match.Context) { turboRush = true }),
 		fx.When(fx.EndOfMyTurn, func(card *match.Card, ctx *match.Context) { turboRush = false }),
 		fx.When(func(c *match.Card, ctx *match.Context) bool { return turboRush },
-			fx.When(fx.WheneverThisAttacksAndIsntBlocked, fx.DestroyOpponentCreature(true, match.DestroyedByMiscAbility))),
+			fx.When(fx.WheneverThisAttacksPlayerAndIsntBlocked, fx.DestroyOpponentCreature(true, match.DestroyedByMiscAbility))),
 	)
 
 }
