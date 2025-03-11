@@ -32,17 +32,13 @@ func GiliamTheTormentor(c *match.Card) {
 	c.ManaRequirement = []string{civ.Darkness}
 
 	c.Use(fx.Creature,
-		fx.ConditionalBlocker(func(target *match.Card) bool {
-			return target.Civ == civ.Light
-		}),
+		fx.LightBlocker,
 		func(card *match.Card, ctx *match.Context) {
 
 			if event, ok := ctx.Event.(*match.CreatureDestroyed); ok && event.Card == card {
-
 				if event.Context == match.DestroyedInBattle && event.Source.Civ == civ.Light {
 					ctx.InterruptFlow()
 				}
-
 			}
 
 		})

@@ -45,7 +45,7 @@ func YulukTheOracle(c *match.Card) {
 			if event.CardID == card.ID {
 				if !spellcast {
 					ctx.InterruptFlow()
-					ctx.Match.WarnPlayer(card.Player, "You can summon this creature only if you have cast a spell this round")
+					ctx.Match.WarnPlayer(card.Player, "You can summon this creature only if you have cast a spell this turn")
 					return
 				}
 			}

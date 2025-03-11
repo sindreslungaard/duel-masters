@@ -16,7 +16,7 @@ func UltraMantisScourgeOfFate(c *match.Card) {
 	c.ManaCost = 6
 	c.ManaRequirement = []string{civ.Nature}
 
-	c.Use(fx.Creature, fx.Evolution, fx.Doublebreaker, fx.When(fx.BlockerSelectionStep, fx.CantBeBlockedByPowerUpTo8000))
+	c.Use(fx.Creature, fx.Evolution, fx.Doublebreaker, fx.CantBeBlockedByPowerUpTo8000)
 
 }
 func SplinterclawWasp(c *match.Card) {

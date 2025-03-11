@@ -19,9 +19,7 @@ func GulanRiasSpeedGuardian(c *match.Card) {
 
 	c.Use(
 		fx.Creature,
-		fx.CantBeBlockedIf(func(blocker *match.Card) bool {
-			return blocker.Civ == civ.Darkness
-		}),
+		fx.CantBeBlockedByDarkness,
 		fx.CantBeAttackedIf(func(attacker *match.Card) bool {
 			return attacker.Civ == civ.Darkness
 		}),

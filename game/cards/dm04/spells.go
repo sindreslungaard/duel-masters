@@ -16,30 +16,27 @@ func FullDefensor(c *match.Card) {
 	c.ManaCost = 2
 	c.ManaRequirement = []string{civ.Light}
 
-	c.Use(fx.Spell, fx.ShieldTrigger, func(card *match.Card, ctx *match.Context) {
+	c.Use(fx.Spell, fx.ShieldTrigger, fx.When(fx.SpellCast, func(card *match.Card, ctx *match.Context) {
 
-		if match.AmICasted(card, ctx) {
+		ctx.Match.ApplyPersistentEffect(func(ctx2 *match.Context, exit func()) {
 
-			ctx.Match.ApplyPersistentEffect(func(ctx2 *match.Context, exit func()) {
-
-				// on all events, add blocker to our creatures
-				fx.Find(
-					card.Player,
-					match.BATTLEZONE,
-				).Map(func(x *match.Card) {
-					x.AddUniqueSourceCondition(cnd.Blocker, true, card.ID)
-				})
-
-				// remove persistent effect on start of next turn
-				_, ok := ctx2.Event.(*match.StartOfTurnStep)
-				if ok && ctx2.Match.IsPlayerTurn(card.Player) {
-					exit()
-				}
-
+			// on all events, add blocker to our creatures
+			fx.Find(
+				card.Player,
+				match.BATTLEZONE,
+			).Map(func(x *match.Card) {
+				x.AddUniqueSourceCondition(cnd.Blocker, true, card.ID)
 			})
 
-		}
-	})
+			// remove persistent effect on start of next turn
+			_, ok := ctx2.Event.(*match.StartOfTurnStep)
+			if ok && ctx2.Match.IsPlayerTurn(card.Player) {
+				exit()
+			}
+
+		})
+
+	}))
 }
 
 // CloneFactory ...

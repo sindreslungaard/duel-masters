@@ -5,6 +5,7 @@ import (
 	"duel-masters/game/family"
 	"duel-masters/game/fx"
 	"duel-masters/game/match"
+	"fmt"
 )
 
 func KanesillTheExplorer(c *match.Card) {
@@ -44,7 +45,7 @@ func TelitolTheExplorer(c *match.Card) {
 
 		ctx.Match.ShowCards(
 			card.Player,
-			"Your shields:",
+			fmt.Sprintf("%s's effect: your shields:", card.Name),
 			ids,
 		)
 	}))

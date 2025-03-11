@@ -17,11 +17,12 @@ func Tropico(c *match.Card) {
 	c.ManaCost = 5
 	c.ManaRequirement = []string{civ.Water}
 
-	c.Use(func(card *match.Card, ctx *match.Context) {
+	c.Use(fx.Creature, func(card *match.Card, ctx *match.Context) {
 
-		if event, ok := ctx.Event.(*match.BlockerSelectionStep); ok {
+		if event, ok := ctx.Event.(*match.SelectBlockers); ok {
 
-			if event.CardID != card.ID {
+			if event.CardWhoAttacked != card ||
+				event.CardWhoAttacked.Zone != match.BATTLEZONE {
 				return
 			}
 
@@ -36,11 +37,11 @@ func Tropico(c *match.Card) {
 			}
 
 			ctx.ScheduleAfter(func() {
-				*event.Blockers = make([]*match.Card, 0)
+				event.Blockers = make([]*match.Card, 0)
 			})
 
 		}
 
-	}, fx.Creature)
+	})
 
 }

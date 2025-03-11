@@ -70,8 +70,6 @@ func LurkingEel(c *match.Card) {
 	c.ManaCost = 6
 	c.ManaRequirement = []string{civ.Water}
 
-	c.Use(fx.Creature, fx.ConditionalBlocker(func(target *match.Card) bool {
-		return target.Civ == civ.Fire || target.Civ == civ.Nature
-	}))
+	c.Use(fx.Creature, fx.FireAndNatureBlocker)
 
 }

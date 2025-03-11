@@ -41,7 +41,7 @@ func CrystalPaladin(c *match.Card) {
 			func(x *match.Card) bool { return x.HasCondition(cnd.Blocker) },
 		).Map(func(x *match.Card) {
 			x.Player.MoveCard(x.ID, match.BATTLEZONE, match.HAND, card.ID)
-			ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s was moved from %s battle zone to their hand by Crystal Paladin", x.Name, x.Player.Username()))
+			ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s was moved from %s battle zone to their hand by %s", x.Name, x.Player.Username(), card.Name))
 		})
 
 		fx.FindFilter(
@@ -50,7 +50,7 @@ func CrystalPaladin(c *match.Card) {
 			func(x *match.Card) bool { return x.HasCondition(cnd.Blocker) },
 		).Map(func(x *match.Card) {
 			x.Player.MoveCard(x.ID, match.BATTLEZONE, match.HAND, card.ID)
-			ctx.Match.ReportActionInChat(ctx.Match.Opponent(card.Player), fmt.Sprintf("%s was moved from %s battle zone to their hand by Crystal Paladin", x.Name, x.Player.Username()))
+			ctx.Match.ReportActionInChat(ctx.Match.Opponent(card.Player), fmt.Sprintf("%s was moved from %s battle zone to their hand by %s", x.Name, x.Player.Username(), card.Name))
 		})
 
 	}))

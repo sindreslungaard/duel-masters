@@ -18,17 +18,13 @@ func AmnisHolyElemental(c *match.Card) {
 	c.ManaRequirement = []string{civ.Light}
 
 	c.Use(fx.Creature,
-		fx.ConditionalBlocker(func(target *match.Card) bool {
-			return target.Civ == civ.Darkness
-		}),
+		fx.DarknessBlocker,
 		func(card *match.Card, ctx *match.Context) {
 
 			if event, ok := ctx.Event.(*match.CreatureDestroyed); ok && event.Card == card {
-
 				if event.Context == match.DestroyedInBattle && event.Source.Civ == civ.Darkness {
 					ctx.InterruptFlow()
 				}
-
 			}
 
 		})

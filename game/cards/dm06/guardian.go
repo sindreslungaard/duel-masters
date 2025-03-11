@@ -35,7 +35,7 @@ func LuGilaSilverRiftGuardian(c *match.Card) {
 			return
 		}
 
-		// Can have a full refactoring to fx.When after CardMoved uses card pointer
+		// TODO: Can have a full refactoring to fx.When after CardMoved uses card pointer
 		if event, ok := ctx.Event.(*match.CardMoved); ok {
 			if event.To != match.BATTLEZONE || event.From == match.HIDDENZONE {
 				return

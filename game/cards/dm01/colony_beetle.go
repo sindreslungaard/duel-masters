@@ -79,6 +79,6 @@ func TowerShell(c *match.Card) {
 	c.ManaCost = 6
 	c.ManaRequirement = []string{civ.Nature}
 
-	c.Use(fx.Creature, fx.When(fx.BlockerSelectionStep, fx.CantBeBlockedByPowerUpTo4000))
+	c.Use(fx.Creature, fx.CantBeBlockedByPowerUpTo4000)
 
 }

@@ -20,17 +20,37 @@ func SparkleFlower(c *match.Card) {
 
 	// This card only checks for light cards at the untap step, when it should check every time your BZ get modified.
 	// TODO: minor bug - fix required
-	c.Use(fx.Creature, func(card *match.Card, ctx *match.Context) {
+	// TODO: see if it can be fixed with persistent effect
+	c.Use(fx.Creature,
 
-		if _, ok := ctx.Event.(*match.UntapStep); ok {
+		// if _, ok := ctx.Event.(*match.UntapStep); ok {
 
-			if match.ContainerHas(card.Player, match.MANAZONE, func(x *match.Card) bool { return x.Civ != civ.Light }) {
-				card.RemoveCondition(cnd.Blocker)
-			} else {
-				card.AddCondition(cnd.Blocker, true, card.ID)
-			}
-		}
+		// 	if match.ContainerHas(card.Player, match.MANAZONE, func(x *match.Card) bool { return x.Civ != civ.Light }) {
+		// 		card.RemoveCondition(cnd.Blocker)
+		// 	} else {
+		// 		card.AddCondition(cnd.Blocker, true, card.ID)
+		// 	}
+		// }
 
-	})
+		fx.When(fx.InTheBattlezone, func(card *match.Card, ctx *match.Context) {
+
+			ctx.Match.ApplyPersistentEffect(func(ctx2 *match.Context, exit func()) {
+
+				if card.Zone != match.BATTLEZONE {
+					card.RemoveConditionBySource(card.ID)
+
+					exit()
+					return
+				}
+
+				if match.ContainerHas(card.Player, match.MANAZONE, func(x *match.Card) bool { return x.Civ != civ.Light }) {
+					card.RemoveConditionBySource(card.ID)
+				} else {
+					card.AddUniqueSourceCondition(cnd.Blocker, true, card.ID)
+				}
+
+			})
+
+		}))
 
 }

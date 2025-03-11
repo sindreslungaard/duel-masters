@@ -29,7 +29,7 @@ func HeadlongGiant(c *match.Card) {
 				ctx.Match.WarnPlayer(card.Player, fmt.Sprintf("%s can't attack if you don't have cards in hand", card.Name))
 			}
 		}),
-		fx.When(fx.BlockerSelectionStep, fx.CantBeBlockedByPowerUpTo4000),
+		fx.CantBeBlockedByPowerUpTo4000,
 		fx.When(fx.AttackConfirmed, func(c *match.Card, ctx2 *match.Context) {
 			fx.Select(c.Player, ctx2.Match, c.Player, match.HAND,
 				fmt.Sprintf("%s: select a card to discard", c.Name), 1, 1, false,

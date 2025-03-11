@@ -429,17 +429,6 @@ func SelectBacksideFilter(p *match.Player, m *match.Match, containerOwner *match
 
 }
 
-// Convenience method to get blockers list for fx.Attacking regardless of the target
-func BlockersList(ctx *match.Context) *[]*match.Card {
-
-	if event, ok := ctx.Event.(*match.BlockerSelectionStep); ok {
-		return event.Blockers
-	}
-
-	return nil
-
-}
-
 // Hooks below:
 // hooks are shorthands for checking if the context matches a certain condition
 
@@ -534,18 +523,6 @@ func AttackingPlayer(card *match.Card, ctx *match.Context) bool {
 func AttackingCreature(card *match.Card, ctx *match.Context) bool {
 
 	if event, ok := ctx.Event.(*match.AttackCreature); ok {
-		if event.CardID == card.ID {
-			return true
-		}
-	}
-
-	return false
-
-}
-
-func BlockerSelectionStep(card *match.Card, ctx *match.Context) bool {
-
-	if event, ok := ctx.Event.(*match.BlockerSelectionStep); ok {
 		if event.CardID == card.ID {
 			return true
 		}
