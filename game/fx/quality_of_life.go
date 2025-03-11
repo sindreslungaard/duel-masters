@@ -749,3 +749,17 @@ func Blocked(card *match.Card, ctx *match.Context) bool {
 	}
 	return false
 }
+
+func IHaveCastASpell(card *match.Card, ctx *match.Context) bool {
+	if event, ok := ctx.Event.(*match.SpellCast); ok {
+
+		// Check to see if I am the player who casted a spell
+		if (card.Player == ctx.Match.Player1.Player && event.MatchPlayerID == 1) ||
+			(card.Player == ctx.Match.Player2.Player && event.MatchPlayerID == 2) {
+			return true
+		}
+
+	}
+
+	return false
+}
