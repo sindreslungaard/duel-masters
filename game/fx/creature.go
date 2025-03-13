@@ -252,8 +252,9 @@ func Creature(card *match.Card, ctx *match.Context) {
 				return
 			}
 
-			ctx.Match.HandleFx(match.NewContext(ctx.Match, &match.SelectBlockers{Blockers: make([]*match.Card, 0), CardWhoAttacked: card, AttackedCard: nil, Shieldzone: shieldzone, ShieldsAttacked: shieldsAttacked}))
-
+			selectBlockersEvent := match.SelectBlockers{Blockers: make([]*match.Card, 0), CardWhoAttacked: card, AttackedCard: nil, Shieldzone: shieldzone, ShieldsAttacked: shieldsAttacked}
+			ctx.Match.HandleFx(match.NewContext(ctx.Match, &selectBlockersEvent))
+			ctx.Match.HandleFx(match.NewContext(ctx.Match, &match.BlockStep{Blockers: selectBlockersEvent.Blockers, CardWhoAttacked: selectBlockersEvent.CardWhoAttacked, AttackedCard: selectBlockersEvent.AttackedCard, Shieldzone: selectBlockersEvent.Shieldzone, ShieldsAttacked: selectBlockersEvent.ShieldsAttacked}))
 		})
 
 	}
@@ -358,13 +359,14 @@ func Creature(card *match.Card, ctx *match.Context) {
 				return
 			}
 
-			ctx.Match.HandleFx(match.NewContext(ctx.Match, &match.SelectBlockers{Blockers: make([]*match.Card, 0), CardWhoAttacked: card, AttackedCard: c, Shieldzone: nil, ShieldsAttacked: nil}))
-
+			selectBlockersEvent := match.SelectBlockers{Blockers: make([]*match.Card, 0), CardWhoAttacked: card, AttackedCard: c, Shieldzone: nil, ShieldsAttacked: nil}
+			ctx.Match.HandleFx(match.NewContext(ctx.Match, &selectBlockersEvent))
+			ctx.Match.HandleFx(match.NewContext(ctx.Match, &match.BlockStep{Blockers: selectBlockersEvent.Blockers, CardWhoAttacked: selectBlockersEvent.CardWhoAttacked, AttackedCard: selectBlockersEvent.AttackedCard, Shieldzone: selectBlockersEvent.Shieldzone, ShieldsAttacked: selectBlockersEvent.ShieldsAttacked}))
 		})
 
 	}
 
-	if event, ok := ctx.Event.(*match.SelectBlockers); ok {
+	if event, ok := ctx.Event.(*match.BlockStep); ok {
 
 		// Is this event for me or someone else?
 		if event.CardWhoAttacked != card ||
@@ -374,128 +376,126 @@ func Creature(card *match.Card, ctx *match.Context) {
 
 		opponent := ctx.Match.Opponent(card.Player)
 
-		ctx.ScheduleAfter(func() {
-			// Allow the opponent to block if they can (prompt opponent to block if they can) (Attack Player)
-			if event.AttackedCard == nil && event.ShieldsAttacked != nil && event.Shieldzone != nil {
-				if len(event.Blockers) > 0 && !card.HasCondition(cnd.CantBeBlocked) && !stealthActive(card, ctx) {
+		// Allow the opponent to block if they can (prompt opponent to block if they can) (Attack Player)
+		if event.AttackedCard == nil && event.ShieldsAttacked != nil && event.Shieldzone != nil {
+			if len(event.Blockers) > 0 && !card.HasCondition(cnd.CantBeBlocked) && !stealthActive(card, ctx) {
 
-					ctx.Match.Wait(card.Player, "Waiting for your opponent to make an action")
+				ctx.Match.Wait(card.Player, "Waiting for your opponent to make an action")
 
-					identifierStr := "you"
+				identifierStr := "you"
 
-					if len(event.ShieldsAttacked) > 0 {
-						identifierStr = fmt.Sprintf("%v of your shields", len(event.ShieldsAttacked))
-					}
+				if len(event.ShieldsAttacked) > 0 {
+					identifierStr = fmt.Sprintf("%v of your shields", len(event.ShieldsAttacked))
+				}
 
-					ctx.Match.NewAction(opponent, event.Blockers, 1, 1, fmt.Sprintf("%s (%v) is attacking %s. Choose a creature to block the attack with or close to not block the attack.", card.Name, ctx.Match.GetPower(card, true), identifierStr), true)
+				ctx.Match.NewAction(opponent, event.Blockers, 1, 1, fmt.Sprintf("%s (%v) is attacking %s. Choose a creature to block the attack with or close to not block the attack.", card.Name, ctx.Match.GetPower(card, true), identifierStr), true)
 
-					for {
+				for {
 
-						action := <-opponent.Action
+					action := <-opponent.Action
 
-						if action.Cancel {
-							ctx.Match.EndWait(card.Player)
-							ctx.Match.CloseAction(opponent)
-
-							if len(event.Shieldzone) < 1 {
-								// Win
-								ctx.Match.End(card.Player, fmt.Sprintf("%s won the game", ctx.Match.PlayerRef(card.Player).Socket.User.Username))
-							} else {
-								// Break n shields
-								ctx.Match.BreakShields(event.ShieldsAttacked, card)
-							}
-
-							break
-						}
-
-						if len(action.Cards) != 1 || !match.AssertCardsIn(event.Blockers, action.Cards[0]) {
-							ctx.Match.ActionWarning(opponent, "Your selection of cards does not fulfill the requirements")
-							continue
-						}
-
-						c, err := opponent.GetCard(action.Cards[0], match.BATTLEZONE)
-
-						if err != nil {
-							ctx.Match.ActionWarning(opponent, "The card you selected is not in the battlefield")
-							continue
-						}
-
-						c.Tapped = true
-
+					if action.Cancel {
 						ctx.Match.EndWait(card.Player)
 						ctx.Match.CloseAction(opponent)
 
-						ctx.Match.Battle(card, c, true)
+						if len(event.Shieldzone) < 1 {
+							// Win
+							ctx.Match.End(card.Player, fmt.Sprintf("%s won the game", ctx.Match.PlayerRef(card.Player).Socket.User.Username))
+						} else {
+							// Break n shields
+							ctx.Match.BreakShields(event.ShieldsAttacked, card)
+						}
 
 						break
-
 					}
 
-					return
-
-				} else {
-
-					card.Tapped = true
-
-					if len(event.Shieldzone) < 1 {
-						// Win
-						ctx.Match.End(card.Player, fmt.Sprintf("%s won the game", ctx.Match.PlayerRef(card.Player).Socket.User.Username))
-					} else {
-						// Break n shields
-						ctx.Match.BreakShields(event.ShieldsAttacked, card)
+					if len(action.Cards) != 1 || !match.AssertCardsIn(event.Blockers, action.Cards[0]) {
+						ctx.Match.ActionWarning(opponent, "Your selection of cards does not fulfill the requirements")
+						continue
 					}
 
-					return
+					c, err := opponent.GetCard(action.Cards[0], match.BATTLEZONE)
+
+					if err != nil {
+						ctx.Match.ActionWarning(opponent, "The card you selected is not in the battlefield")
+						continue
+					}
+
+					c.Tapped = true
+
+					ctx.Match.EndWait(card.Player)
+					ctx.Match.CloseAction(opponent)
+
+					ctx.Match.Battle(card, c, true)
+
+					break
 
 				}
+
+				return
+
+			} else {
+
+				card.Tapped = true
+
+				if len(event.Shieldzone) < 1 {
+					// Win
+					ctx.Match.End(card.Player, fmt.Sprintf("%s won the game", ctx.Match.PlayerRef(card.Player).Socket.User.Username))
+				} else {
+					// Break n shields
+					ctx.Match.BreakShields(event.ShieldsAttacked, card)
+				}
+
+				return
+
 			}
+		}
 
-			// Allow the opponent to block if they can (Attack Creature case)
-			if event.AttackedCard != nil && event.ShieldsAttacked == nil && event.Shieldzone == nil {
-				if len(event.Blockers) > 0 && !card.HasCondition(cnd.CantBeBlocked) && !stealthActive(card, ctx) {
+		// Allow the opponent to block if they can (Attack Creature case)
+		if event.AttackedCard != nil && event.ShieldsAttacked == nil && event.Shieldzone == nil {
+			if len(event.Blockers) > 0 && !card.HasCondition(cnd.CantBeBlocked) && !stealthActive(card, ctx) {
 
-					ctx.Match.Wait(card.Player, "Waiting for your opponent to make an action")
+				ctx.Match.Wait(card.Player, "Waiting for your opponent to make an action")
 
-					ctx.Match.NewAction(opponent, event.Blockers, 1, 1, fmt.Sprintf("%s (%v) is attacking %s (%v). Choose a creature to block the attack with or close to not block the attack.", card.Name, ctx.Match.GetPower(card, true), event.AttackedCard.Name, ctx.Match.GetPower(event.AttackedCard, false)), true)
+				ctx.Match.NewAction(opponent, event.Blockers, 1, 1, fmt.Sprintf("%s (%v) is attacking %s (%v). Choose a creature to block the attack with or close to not block the attack.", card.Name, ctx.Match.GetPower(card, true), event.AttackedCard.Name, ctx.Match.GetPower(event.AttackedCard, false)), true)
 
-					for {
+				for {
 
-						action := <-opponent.Action
+					action := <-opponent.Action
 
-						if action.Cancel {
-							ctx.Match.EndWait(card.Player)
-							ctx.Match.CloseAction(opponent)
-							break
-						}
-
-						if len(action.Cards) != 1 || !match.AssertCardsIn(event.Blockers, action.Cards[0]) {
-							ctx.Match.ActionWarning(opponent, "Your selection of cards does not fulfill the requirements")
-							continue
-						}
-
-						blocker, err := opponent.GetCard(action.Cards[0], match.BATTLEZONE)
-
-						if err != nil {
-							ctx.Match.ActionWarning(opponent, "The card you selected is not in the battlefield")
-							continue
-						}
-
-						blocker.Tapped = true
-
+					if action.Cancel {
 						ctx.Match.EndWait(card.Player)
 						ctx.Match.CloseAction(opponent)
-
-						ctx.Match.Battle(card, blocker, true)
-
-						return
-
+						break
 					}
+
+					if len(action.Cards) != 1 || !match.AssertCardsIn(event.Blockers, action.Cards[0]) {
+						ctx.Match.ActionWarning(opponent, "Your selection of cards does not fulfill the requirements")
+						continue
+					}
+
+					blocker, err := opponent.GetCard(action.Cards[0], match.BATTLEZONE)
+
+					if err != nil {
+						ctx.Match.ActionWarning(opponent, "The card you selected is not in the battlefield")
+						continue
+					}
+
+					blocker.Tapped = true
+
+					ctx.Match.EndWait(card.Player)
+					ctx.Match.CloseAction(opponent)
+
+					ctx.Match.Battle(card, blocker, true)
+
+					return
 
 				}
 
-				ctx.Match.Battle(card, event.AttackedCard, false)
 			}
-		})
+
+			ctx.Match.Battle(card, event.AttackedCard, false)
+		}
 
 	}
 

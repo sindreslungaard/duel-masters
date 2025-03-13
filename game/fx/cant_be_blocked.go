@@ -29,14 +29,14 @@ func GiveOwnCreatureCantBeBlocked(card *match.Card, ctx *match.Context) {
 }
 
 func CantBeBlockedByDarkness(card *match.Card, ctx *match.Context) {
-	cantBeBlockedIf(card, ctx, func(blocker *match.Card) bool {
-		return blocker.Civ == civ.Darkness
+	filterBlocker(card, ctx, func(blocker *match.Card) bool {
+		return blocker.Civ != civ.Darkness
 	})
 }
 
 func CantBeBlockedByLight(card *match.Card, ctx *match.Context) {
-	cantBeBlockedIf(card, ctx, func(blocker *match.Card) bool {
-		return blocker.Civ == civ.Light
+	filterBlocker(card, ctx, func(blocker *match.Card) bool {
+		return blocker.Civ != civ.Light
 	})
 }
 
@@ -61,25 +61,25 @@ func CantBeBlockedByPowerUpTo3000(card *match.Card, ctx *match.Context) {
 }
 
 func cantBeBlockedByPowerUpTo(card *match.Card, ctx *match.Context, power int) {
-	cantBeBlockedIf(card, ctx, func(blocker *match.Card) bool {
+	filterBlocker(card, ctx, func(blocker *match.Card) bool {
 		return ctx.Match.GetPower(blocker, false) > power
 	})
 }
 
 func cantBeBlockedByPowerXOrMore(card *match.Card, ctx *match.Context, power int) {
-	cantBeBlockedIf(card, ctx, func(blocker *match.Card) bool {
+	filterBlocker(card, ctx, func(blocker *match.Card) bool {
 		return ctx.Match.GetPower(blocker, false) < power
 	})
 }
 
-// CantBeBlockedIf
-func cantBeBlockedIf(card *match.Card, ctx *match.Context, test func(blocker *match.Card) bool) {
+// filterBlocker
+func filterBlocker(card *match.Card, ctx *match.Context, test func(blocker *match.Card) bool) {
 
 	filter := func(blockers []*match.Card) []*match.Card {
 		filtered := []*match.Card{}
 
 		for _, b := range blockers {
-			if !test(b) {
+			if test(b) {
 				filtered = append(filtered, b)
 			}
 		}

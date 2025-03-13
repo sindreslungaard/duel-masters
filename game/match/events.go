@@ -89,9 +89,19 @@ type AttackConfirmed struct {
 }
 
 // SelectBlockers is fired after the AttackConfirmed effects,
-// right before the blocker selection pop-up.
-// Here, cards that have conditional CantBeBlocked effects must handle them.
+// Here, blockers (both normal and conditional) are added into the blockers list
+// and cards that have conditional CantBeBlocked effects handles them.
 type SelectBlockers struct {
+	CardWhoAttacked *Card // Card that attacks
+	Blockers        []*Card
+	Shieldzone      []*Card
+	ShieldsAttacked []*Card
+	AttackedCard    *Card
+}
+
+// BlockStep is fired when the opponent is prompted to select the blockers
+// Props are passed from SelectBlockers event
+type BlockStep struct {
 	CardWhoAttacked *Card // Card that attacks
 	Blockers        []*Card
 	Shieldzone      []*Card
