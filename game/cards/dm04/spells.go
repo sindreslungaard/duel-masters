@@ -25,12 +25,19 @@ func FullDefensor(c *match.Card) {
 				card.Player,
 				match.BATTLEZONE,
 			).Map(func(x *match.Card) {
-				x.AddUniqueSourceCondition(cnd.Blocker, true, card.ID)
+				fx.ForceBlocker(x, ctx2, card.ID)
 			})
 
 			// remove persistent effect on start of next turn
 			_, ok := ctx2.Event.(*match.StartOfTurnStep)
 			if ok && ctx2.Match.IsPlayerTurn(card.Player) {
+				fx.Find(
+					card.Player,
+					match.BATTLEZONE,
+				).Map(func(x *match.Card) {
+					x.RemoveConditionBySource(card.ID)
+				})
+
 				exit()
 			}
 

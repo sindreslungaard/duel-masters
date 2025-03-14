@@ -69,7 +69,7 @@ func GalliaZohlIronGuardianQ(c *match.Card) {
 				match.BATTLEZONE,
 				func(x *match.Card) bool { return x.HasCondition(cnd.Survivor) },
 			).Map(func(x *match.Card) {
-				x.AddUniqueSourceCondition(cnd.Blocker, true, card.ID)
+				fx.ForceBlocker(x, ctx2, card.ID)
 			})
 
 		})

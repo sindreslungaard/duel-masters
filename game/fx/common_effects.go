@@ -87,7 +87,7 @@ func ShuffleDeck(card *match.Card, ctx *match.Context, forOpponent bool) {
 }
 
 func BlockerWhenNoShields(card *match.Card, ctx *match.Context) {
-	condition := &match.Condition{ID: cnd.Blocker, Val: true, Src: nil}
+	condition := &match.Condition{ID: cnd.Blocker, Val: true, Src: card.ID}
 	HaveSelfConditionsWhenNoShields(card, ctx, []*match.Condition{condition})
 }
 
@@ -109,7 +109,11 @@ func HaveSelfConditionsWhenNoShields(card *match.Card, ctx *match.Context, condi
 
 		if IDontHaveShields(card, ctx2) {
 			for _, cond := range conditions {
-				card.AddUniqueSourceCondition(cond.ID, cond.Val, card.ID)
+				if cond.ID == cnd.Blocker {
+					ForceBlocker(card, ctx2, card.ID)
+				} else {
+					card.AddUniqueSourceCondition(cond.ID, cond.Val, card.ID)
+				}
 			}
 		}
 
