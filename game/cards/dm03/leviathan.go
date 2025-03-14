@@ -96,37 +96,34 @@ func LegendaryBynor(c *match.Card) {
 
 	c.Use(fx.Creature, fx.Evolution, fx.Doublebreaker, func(card *match.Card, ctx *match.Context) {
 
-		if card.Zone != match.BATTLEZONE {
+		if card.Zone != match.BATTLEZONE || !ctx.Match.IsPlayerTurn(card.Player) {
 			return
 		}
 
-		if event, ok := ctx.Event.(*match.AttackCreature); ok {
-			legendaryBynorSpecial(card, ctx, event.CardID)
-		}
-
-		if event, ok := ctx.Event.(*match.AttackPlayer); ok {
-			legendaryBynorSpecial(card, ctx, event.CardID)
-		}
+		legendaryBynorSpecial(card, ctx)
 
 	})
 
 }
 
-func legendaryBynorSpecial(card *match.Card, ctx *match.Context, cardID string) {
+func legendaryBynorSpecial(card *match.Card, ctx *match.Context) {
 
 	p := ctx.Match.CurrentPlayer()
 
-	creature, err := p.Player.GetCard(cardID, match.BATTLEZONE)
+	if event, ok := ctx.Event.(*match.AttackConfirmed); ok {
 
-	if err != nil {
-		return
+		creature, err := p.Player.GetCard(event.CardID, match.BATTLEZONE)
+
+		if err != nil {
+			return
+		}
+
+		if creature.Civ != civ.Water || creature.ID == card.ID {
+			return
+		}
+
+		creature.AddUniqueSourceCondition(cnd.CantBeBlocked, true, card.ID)
+
 	}
 
-	if creature.Civ != civ.Water || creature.ID == card.ID {
-		return
-	}
-
-	if ctx.Match.IsPlayerTurn(card.Player) {
-		creature.AddCondition(cnd.CantBeBlocked, true, card.ID)
-	}
 }
