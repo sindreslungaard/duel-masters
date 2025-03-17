@@ -113,5 +113,5 @@ func FortMegacluster(c *match.Card) {
 
 func fortMegaclusterTapAbility(card *match.Card, ctx *match.Context) {
 	card.Player.DrawCards(1)
-	ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s activated %s's tap ability to draw 1 cards", card.Player.Username(), card.Name))
+	ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s activated %s's tap ability to draw 1 card", card.Player.Username(), card.Name))
 }

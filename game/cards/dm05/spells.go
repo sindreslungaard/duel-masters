@@ -137,6 +137,7 @@ func SlimeVeil(c *match.Card) {
 			// remove persistent effect on start of next turn
 			if _, ok := ctx2.Event.(*match.StartOfTurnStep); ok && ctx2.Match.IsPlayerTurn(card.Player) {
 				exit()
+				return
 			}
 
 			// on all events, add force attack to opponent's creatures

@@ -48,7 +48,7 @@ func MistRiasSonicGuardian(c *match.Card) {
 
 			if fx.AnotherCreatureSummoned(card, ctx2) {
 
-				fx.MayDraw1(card, ctx)
+				fx.MayDraw1(card, ctx2)
 
 			}
 

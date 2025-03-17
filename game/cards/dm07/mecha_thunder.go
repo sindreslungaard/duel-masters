@@ -26,7 +26,7 @@ func GandarSeekerofExplosions(c *match.Card) {
 				).Map(func(x *match.Card) {
 					if x.Tapped && x.Civ == civ.Light {
 						x.Tapped = false
-						ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s was untapped by %s's effect", x.Name, card.Name))
+						ctx2.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s was untapped by %s's effect", x.Name, card.Name))
 					}
 				})
 				exit()
