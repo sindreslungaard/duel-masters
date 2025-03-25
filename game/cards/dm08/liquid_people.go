@@ -20,3 +20,19 @@ func AquaRanger(c *match.Card) {
 	c.Use(fx.Creature, fx.CantBeBlocked, fx.When(fx.WouldBeDestroyed, fx.ReturnToHand))
 
 }
+
+// AquaGrappler ...
+func AquaGrappler(c *match.Card) {
+
+	c.Name = "Aqua Grappler"
+	c.Power = 3000
+	c.Civ = civ.Water
+	c.Family = []string{family.LiquidPeople}
+	c.ManaCost = 5
+	c.ManaRequirement = []string{civ.Water}
+
+	c.Use(fx.Creature, fx.When(fx.AttackConfirmed, func(c *match.Card, ctx *match.Context) {
+		//TODO draw a card for each other tapped creature you have in the BZ
+	}))
+
+}

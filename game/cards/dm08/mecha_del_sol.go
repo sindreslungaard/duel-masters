@@ -17,7 +17,7 @@ func MishaChannelerOfSuns(c *match.Card) {
 	c.ManaCost = 5
 	c.ManaRequirement = []string{civ.Light}
 
-	//TODO: hook into attacking event and remove this creature from attackable creatures array
-	// if the attacking creature has Dragon in its race
-	c.Use(fx.Creature)
+	c.Use(fx.Creature, fx.CantBeAttackedIf(func(attacker *match.Card) bool {
+		return attacker.SharesAFamily(family.Dragons)
+	}))
 }
