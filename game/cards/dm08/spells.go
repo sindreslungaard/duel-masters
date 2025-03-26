@@ -216,3 +216,81 @@ func LunarCharger(c *match.Card) {
 
 	}))
 }
+
+// MarineScramble ...
+func MarineScramble(c *match.Card) {
+
+	c.Name = "Marine Scramble"
+	c.Civ = civ.Water
+	c.ManaCost = 7
+	c.ManaRequirement = []string{civ.Water}
+
+	c.Use(fx.Spell, fx.When(fx.SpellCast, func(card *match.Card, ctx *match.Context) {
+
+		for _, currCard := range fx.Find(card.Player, match.BATTLEZONE) {
+			ctx.Match.ApplyPersistentEffect(func(ctx2 *match.Context, exit func()) {
+
+				if currCard.Zone != match.BATTLEZONE {
+					currCard.RemoveConditionBySource(card.ID)
+					exit()
+					return
+				}
+
+				if _, ok := ctx2.Event.(*match.EndStep); ok {
+					currCard.RemoveConditionBySource(card.ID)
+					exit()
+					return
+				}
+
+				currCard.AddUniqueSourceCondition(cnd.CantBeBlocked, true, card.ID)
+
+			})
+		}
+
+	}))
+}
+
+// WaveLance ...
+func WaveLance(c *match.Card) {
+
+	c.Name = "Wave Lance"
+	c.Civ = civ.Water
+	c.ManaCost = 3
+	c.ManaRequirement = []string{civ.Water}
+
+	c.Use(fx.Spell, fx.When(fx.SpellCast, func(card *match.Card, ctx *match.Context) {
+
+		cards := make(map[string][]*match.Card)
+
+		myCards := fx.Find(
+			card.Player,
+			match.BATTLEZONE,
+		)
+
+		opponentCards := fx.Find(
+			ctx.Match.Opponent(card.Player),
+			match.BATTLEZONE,
+		)
+
+		cards["Your creatures"] = myCards
+		cards["Opponent's creatures"] = opponentCards
+
+		selCards := fx.SelectMultipart(
+			card.Player,
+			ctx.Match,
+			cards,
+			fmt.Sprintf("%s: Choose a creature in the battlezone and return it to its owner's hand. If it has 'Dragon' in its race, you may draw a card.", card.Name),
+			1,
+			1,
+			false,
+		).Map(func(x *match.Card) {
+			ctx.Match.MoveCard(x, match.HAND, card)
+			ctx.Match.ReportActionInChat(x.Player, fmt.Sprintf("%s was moved to its owner's hand by %s", x.Name, card.Name))
+		})
+
+		if len(selCards) > 0 && selCards[0].SharesAFamily(family.Dragons) {
+			fx.MayDraw1(card, ctx)
+		}
+
+	}))
+}
