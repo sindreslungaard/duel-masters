@@ -31,8 +31,16 @@ func AquaGrappler(c *match.Card) {
 	c.ManaCost = 5
 	c.ManaRequirement = []string{civ.Water}
 
-	c.Use(fx.Creature, fx.When(fx.AttackConfirmed, func(c *match.Card, ctx *match.Context) {
-		//TODO draw a card for each other tapped creature you have in the BZ
+	c.Use(fx.Creature, fx.When(fx.AttackConfirmed, func(card *match.Card, ctx *match.Context) {
+		numberOfMyOtherTappedCreatures := len(fx.FindFilter(
+			card.Player,
+			match.BATTLEZONE,
+			func(card2 *match.Card) bool {
+				return card2.Tapped && card2.ID != card.ID
+			},
+		))
+
+		fx.DrawUpto(card, ctx, numberOfMyOtherTappedCreatures)
 	}))
 
 }

@@ -606,6 +606,7 @@ var DM08 = map[string]match.CardConstructor{
 	"b2254bd0-fc89-49ab-8a65-16a95f785753": dm08.LunarCharger,
 	"09243e57-0456-44d4-abca-8b9bbe045b4b": dm08.MishaChannelerOfSuns,
 	"38220cfa-531c-4aa1-9b4f-e3c1cc85b1fd": dm08.AquaGrappler,
+	"d03a8283-6c9b-4a0c-aec7-41d44a6f2fcf": dm08.GrapeGlobbo,
 }
 
 // Promo is a map with all the card id's in the game and corresponding CardConstructor for promotional exclusive cards
