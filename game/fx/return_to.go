@@ -96,6 +96,23 @@ func PutShieldIntoHand(card *match.Card, ctx *match.Context) {
 	})
 }
 
+// PutShieldIntoGraveyard Player picks an own shield and puts it into their graveyard
+func PutShieldIntoGraveyard(card *match.Card, ctx *match.Context) {
+	SelectBackside(
+		card.Player,
+		ctx.Match,
+		card.Player,
+		match.SHIELDZONE,
+		fmt.Sprintf("%s: Put 1 of your shields into your graveyard.", card.Name),
+		1,
+		1,
+		false,
+	).Map(func(x *match.Card) {
+		ctx.Match.MoveCard(x, match.GRAVEYARD, card)
+		ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s effect: shield was into graveyard", card.Name))
+	})
+}
+
 func ReturnCreatureFromManazoneToHand(card *match.Card, ctx *match.Context) {
 	SelectFilter(card.Player, ctx.Match, card.Player, match.MANAZONE,
 		"Select 1 of your creatures from your mana zone that will be returned to your hand",
