@@ -287,9 +287,8 @@ func SelectFilter(p *match.Player, m *match.Match, containerOwner *match.Player,
 
 }
 
-// SelectFromSource prompts the user to select n cards from the specified card collection given.
+// SelectFromCollection prompts the user to select n cards from the specified card collection given.
 // Specified card collection MUST be from specified container (battlezone, manazone etc)
-// Specified card collection can contain cards from either player
 func SelectFromCollection(p *match.Player, m *match.Match, sourceCollection CardCollection, sourceContainer string, text string, min int, max int, cancellable bool) CardCollection {
 
 	result := make([]*match.Card, 0)
@@ -749,6 +748,22 @@ func AnotherOwnCreatureSummoned(card *match.Card, ctx *match.Context) bool {
 	}
 
 	return CreatureSummoned(card, ctx) && event.CardID != card.ID && p == card.Player
+}
+
+func AnotherOwnDragonSummoned(card *match.Card, ctx *match.Context) bool {
+	return anotherOwnCreatureSummonedFilter(card, ctx, func(c *match.Card) bool {
+		return c.SharesAFamily(family.Dragons)
+	})
+}
+
+func AnotherOwnDragonoidOrDragonSummoned(card *match.Card, ctx *match.Context) bool {
+	return anotherOwnCreatureSummonedFilter(card, ctx, func(c *match.Card) bool {
+		return c.SharesAFamily(append(family.Dragons, family.Dragonoid))
+	})
+}
+
+func anotherOwnCreatureSummonedFilter(card *match.Card, ctx *match.Context, filter func(c *match.Card) bool) bool {
+	return AnotherOwnCreatureSummoned(card, ctx) && filter(card)
 }
 
 func AnotherCreatureDestroyed(card *match.Card, ctx *match.Context) bool {

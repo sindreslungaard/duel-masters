@@ -2,6 +2,7 @@ package fx
 
 import (
 	"duel-masters/game/cnd"
+	"duel-masters/game/family"
 	"duel-masters/game/match"
 	"fmt"
 )
@@ -110,6 +111,26 @@ func PutShieldIntoGraveyard(card *match.Card, ctx *match.Context) {
 	).Map(func(x *match.Card) {
 		ctx.Match.MoveCard(x, match.GRAVEYARD, card)
 		ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s effect: shield was into graveyard", card.Name))
+	})
+}
+
+func MayPutDragonFromHandIntoBZ(card *match.Card, ctx *match.Context) {
+	SelectFilter(
+		card.Player,
+		ctx.Match,
+		card.Player,
+		match.HAND,
+		fmt.Sprintf("%s: You may put 1 of your Dragons from your hand into the battlezone.", card.Name),
+		1,
+		1,
+		true,
+		func(c *match.Card) bool {
+			return c.SharesAFamily(family.Dragons)
+		},
+		false,
+	).Map(func(x *match.Card) {
+		ctx.Match.MoveCard(x, match.BATTLEZONE, card)
+		ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s's effect: %s was put into the battlezone", card.Name, x.Name))
 	})
 }
 

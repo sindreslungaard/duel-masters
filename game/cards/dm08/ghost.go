@@ -20,28 +20,20 @@ func ScreamSlicerShadowOfFear(c *match.Card) {
 	c.ManaRequirement = []string{civ.Darkness}
 
 	c.Use(fx.Creature,
-		fx.WhenAll([]func(*match.Card, *match.Context) bool{
-			fx.AnotherOwnCreatureSummoned,
-			func(card *match.Card, ctx *match.Context) bool {
-				event, ok := ctx.Event.(*match.CardMoved)
-				if !ok {
-					return false
-				}
-
-				summonedCard, _ := card.Player.GetCard(event.CardID, match.BATTLEZONE)
-
-				return summonedCard != nil && summonedCard.SharesAFamily(append(family.Dragons, family.Dragonoid))
-			},
-		},
+		fx.When(
+			fx.AnotherOwnDragonoidOrDragonSummoned,
 			func(card *match.Card, ctx *match.Context) {
-				creatures := make([]*match.Card, 0)
+				allCreatures := make([]*match.Card, 0)
 
-				creatures = append(creatures, fx.Find(card.Player, match.BATTLEZONE)...)
+				myCreatures := fx.Find(card.Player, match.BATTLEZONE)
 
-				creatures = append(creatures, fx.Find(ctx.Match.Opponent(card.Player), match.BATTLEZONE)...)
+				oppCreatures := fx.Find(ctx.Match.Opponent(card.Player), match.BATTLEZONE)
 
-				if len(creatures) > 0 {
-					slices.SortFunc(creatures, func(a *match.Card, b *match.Card) int {
+				allCreatures = append(allCreatures, myCreatures...)
+				allCreatures = append(allCreatures, oppCreatures...)
+
+				if len(allCreatures) > 0 {
+					slices.SortFunc(allCreatures, func(a *match.Card, b *match.Card) int {
 						if ctx.Match.GetPower(a, false) < ctx.Match.GetPower(b, false) {
 							return -1
 						} else if ctx.Match.GetPower(a, false) > ctx.Match.GetPower(b, false) {
@@ -50,24 +42,37 @@ func ScreamSlicerShadowOfFear(c *match.Card) {
 						return 0
 					})
 
-					minPower := ctx.Match.GetPower(creatures[0], false)
-					cardsWithMinPower := make([]*match.Card, 0)
+					minPower := ctx.Match.GetPower(allCreatures[0], false)
+					myCardsWithMinPower := make([]*match.Card, 0)
+					oppCardsWithMinPower := make([]*match.Card, 0)
 
-					for _, curr := range creatures {
+					for _, curr := range myCreatures {
 						if ctx.Match.GetPower(curr, false) == minPower {
-							cardsWithMinPower = append(cardsWithMinPower, curr)
+							myCardsWithMinPower = append(myCardsWithMinPower, curr)
 						}
 					}
 
-					if len(cardsWithMinPower) == 1 {
-						ctx.Match.Destroy(cardsWithMinPower[0], card, match.DestroyedByMiscAbility)
-					} else if len(cardsWithMinPower) > 1 {
-						// you choose among the tied creatures
-						creaturesToDestroy := fx.SelectFromCollection(
+					for _, curr := range oppCreatures {
+						if ctx.Match.GetPower(curr, false) == minPower {
+							oppCardsWithMinPower = append(oppCardsWithMinPower, curr)
+						}
+					}
+
+					if len(myCardsWithMinPower) == 1 && len(oppCardsWithMinPower) == 0 {
+						ctx.Match.Destroy(myCardsWithMinPower[0], card, match.DestroyedByMiscAbility)
+					} else if len(oppCardsWithMinPower) == 1 && len(myCardsWithMinPower) == 0 {
+						ctx.Match.Destroy(oppCardsWithMinPower[0], card, match.DestroyedByMiscAbility)
+					} else {
+
+						cardsMap := make(map[string][]*match.Card)
+
+						cardsMap["Your creatures"] = myCardsWithMinPower
+						cardsMap["Opponent's creatures"] = oppCardsWithMinPower
+
+						creaturesToDestroy := fx.SelectMultipart(
 							card.Player,
 							ctx.Match,
-							cardsWithMinPower,
-							match.BATTLEZONE,
+							cardsMap,
 							fmt.Sprintf("%s's effect: Choose 1 of the following creatures to destroy.", card.Name),
 							1,
 							1,

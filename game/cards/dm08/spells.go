@@ -217,6 +217,34 @@ func LunarCharger(c *match.Card) {
 	}))
 }
 
+// RootCharger ...
+func RootCharger(c *match.Card) {
+
+	c.Name = "Root Charger"
+	c.Civ = civ.Nature
+	c.ManaCost = 3
+	c.ManaRequirement = []string{civ.Nature}
+
+	c.Use(fx.Spell, fx.Charger, fx.When(fx.SpellCast, func(card *match.Card, ctx *match.Context) {
+		ctx.Match.ApplyPersistentEffect(func(ctx2 *match.Context, exit func()) {
+
+			if event, ok := ctx2.Event.(*match.CreatureDestroyed); ok {
+				if event.Card.Player == card.Player {
+					card.Player.MoveCard(event.Card.ID, match.BATTLEZONE, match.MANAZONE, card.ID)
+					ctx2.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s's effect: %s was moved to your manazone instead of being destroyed.", card.Name, event.Card.Name))
+				}
+			}
+
+			if _, ok := ctx2.Event.(*match.EndOfTurnStep); ok {
+				ctx2.ScheduleAfter(func() {
+					exit()
+				})
+			}
+
+		})
+	}))
+}
+
 // MarineScramble ...
 func MarineScramble(c *match.Card) {
 
