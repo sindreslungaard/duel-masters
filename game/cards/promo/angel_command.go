@@ -18,7 +18,7 @@ func AmnisHolyElemental(c *match.Card) {
 	c.ManaRequirement = []string{civ.Light}
 
 	c.Use(fx.Creature,
-		fx.DarknessBlocker,
+		fx.DarknessBlocker(),
 		func(card *match.Card, ctx *match.Context) {
 
 			if event, ok := ctx.Event.(*match.CreatureDestroyed); ok && event.Card == card {

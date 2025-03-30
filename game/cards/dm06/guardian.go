@@ -29,7 +29,7 @@ func LuGilaSilverRiftGuardian(c *match.Card) {
 	c.ManaCost = 5
 	c.ManaRequirement = []string{civ.Light}
 
-	c.Use(fx.Creature, fx.Blocker, fx.CantAttackPlayers, func(card *match.Card, ctx *match.Context) {
+	c.Use(fx.Creature, fx.Blocker(), fx.CantAttackPlayers, func(card *match.Card, ctx *match.Context) {
 
 		if card.Zone != match.BATTLEZONE && card.Zone != match.HIDDENZONE {
 			return

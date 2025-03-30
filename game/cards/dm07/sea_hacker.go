@@ -42,7 +42,7 @@ func Biancus(c *match.Card) {
 	c.ManaRequirement = []string{civ.Water}
 	c.TapAbility = fx.GiveOwnCreatureCantBeBlocked
 
-	c.Use(fx.Creature, fx.Blocker, fx.TapAbility)
+	c.Use(fx.Creature, fx.Blocker(), fx.TapAbility)
 }
 
 func Cetibols(c *match.Card) {

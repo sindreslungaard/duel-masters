@@ -716,7 +716,7 @@ func IDontHaveShields(card *match.Card, ctx *match.Context) bool {
 	return len(shields) == 0
 }
 
-func IHaveShields(card *match.Card, ctx *match.Context) bool {
+func IHaveShields(card *match.Card) bool {
 	shields, err := card.Player.Container(match.SHIELDZONE)
 	if err != nil {
 		return false

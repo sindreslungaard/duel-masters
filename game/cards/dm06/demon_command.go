@@ -17,7 +17,7 @@ func ZorvazTheBonecrusher(c *match.Card) {
 	c.ManaCost = 5
 	c.ManaRequirement = []string{civ.Darkness}
 
-	c.Use(fx.Creature, fx.Blocker, fx.CantAttackCreatures, fx.CantAttackPlayers, fx.Suicide)
+	c.Use(fx.Creature, fx.Blocker(), fx.CantAttackCreatures, fx.CantAttackPlayers, fx.Suicide)
 }
 
 func VileMulderWingOfTheVoid(c *match.Card) {

@@ -17,7 +17,7 @@ func AquaGuard(c *match.Card) {
 	c.ManaCost = 1
 	c.ManaRequirement = []string{civ.Water}
 
-	c.Use(fx.Creature, fx.Blocker, fx.CantAttackCreatures, fx.CantAttackPlayers)
+	c.Use(fx.Creature, fx.Blocker(), fx.CantAttackCreatures, fx.CantAttackPlayers)
 }
 
 // AquaJolter ...

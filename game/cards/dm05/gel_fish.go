@@ -19,7 +19,7 @@ func SeaSlug(c *match.Card) {
 	c.ManaCost = 8
 	c.ManaRequirement = []string{civ.Water}
 
-	c.Use(fx.Creature, fx.Blocker, fx.CantBeBlocked)
+	c.Use(fx.Creature, fx.Blocker(), fx.CantBeBlocked)
 
 }
 
@@ -70,6 +70,6 @@ func LurkingEel(c *match.Card) {
 	c.ManaCost = 6
 	c.ManaRequirement = []string{civ.Water}
 
-	c.Use(fx.Creature, fx.FireAndNatureBlocker)
+	c.Use(fx.Creature, fx.FireAndNatureBlocker())
 
 }

@@ -17,7 +17,7 @@ func KingCoral(c *match.Card) {
 	c.ManaCost = 3
 	c.ManaRequirement = []string{civ.Water}
 
-	c.Use(fx.Creature, fx.Blocker)
+	c.Use(fx.Creature, fx.Blocker())
 
 }
 

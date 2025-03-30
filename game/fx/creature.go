@@ -252,9 +252,9 @@ func Creature(card *match.Card, ctx *match.Context) {
 				return
 			}
 
-			selectBlockersEvent := match.SelectBlockers{Blockers: make([]*match.Card, 0), CardWhoAttacked: card, AttackedCard: nil, Shieldzone: shieldzone, ShieldsAttacked: shieldsAttacked}
+			selectBlockersEvent := match.SelectBlockers{Blockers: make([]*match.Card, 0), Attacker: card, AttackedCardID: ""}
 			ctx.Match.HandleFx(match.NewContext(ctx.Match, &selectBlockersEvent))
-			ctx.Match.HandleFx(match.NewContext(ctx.Match, &match.BlockStep{Blockers: selectBlockersEvent.Blockers, CardWhoAttacked: selectBlockersEvent.CardWhoAttacked, AttackedCard: selectBlockersEvent.AttackedCard, Shieldzone: selectBlockersEvent.Shieldzone, ShieldsAttacked: selectBlockersEvent.ShieldsAttacked}))
+			ctx.Match.HandleFx(match.NewContext(ctx.Match, &match.Block{Blockers: selectBlockersEvent.Blockers, Attacker: selectBlockersEvent.Attacker, AttackedCardID: selectBlockersEvent.AttackedCardID, ShieldsAttacked: shieldsAttacked}))
 		})
 
 	}
@@ -359,25 +359,28 @@ func Creature(card *match.Card, ctx *match.Context) {
 				return
 			}
 
-			selectBlockersEvent := match.SelectBlockers{Blockers: make([]*match.Card, 0), CardWhoAttacked: card, AttackedCard: c, Shieldzone: nil, ShieldsAttacked: nil}
+			selectBlockersEvent := match.SelectBlockers{Blockers: make([]*match.Card, 0), Attacker: card, AttackedCardID: c.ID}
 			ctx.Match.HandleFx(match.NewContext(ctx.Match, &selectBlockersEvent))
-			ctx.Match.HandleFx(match.NewContext(ctx.Match, &match.BlockStep{Blockers: selectBlockersEvent.Blockers, CardWhoAttacked: selectBlockersEvent.CardWhoAttacked, AttackedCard: selectBlockersEvent.AttackedCard, Shieldzone: selectBlockersEvent.Shieldzone, ShieldsAttacked: selectBlockersEvent.ShieldsAttacked}))
+			ctx.Match.HandleFx(match.NewContext(ctx.Match, &match.Block{Blockers: selectBlockersEvent.Blockers, Attacker: selectBlockersEvent.Attacker, AttackedCardID: selectBlockersEvent.AttackedCardID, ShieldsAttacked: make([]*match.Card, 0)}))
 		})
 
 	}
 
-	if event, ok := ctx.Event.(*match.BlockStep); ok {
+	if event, ok := ctx.Event.(*match.Block); ok {
 
 		// Is this event for me or someone else?
-		if event.CardWhoAttacked != card ||
-			event.CardWhoAttacked.Zone != match.BATTLEZONE {
+		if event.Attacker != card ||
+			event.Attacker.Zone != match.BATTLEZONE {
 			return
 		}
 
 		opponent := ctx.Match.Opponent(card.Player)
+		oppShieldZone, _ := opponent.Container(match.SHIELDZONE)
+		oppShieldsZoneLength := len(oppShieldZone)
 
 		// Allow the opponent to block if they can (prompt opponent to block if they can) (Attack Player)
-		if event.AttackedCard == nil && event.ShieldsAttacked != nil && event.Shieldzone != nil {
+		if event.AttackedCardID == "" {
+
 			if len(event.Blockers) > 0 && !card.HasCondition(cnd.CantBeBlocked) && !stealthActive(card, ctx) {
 
 				ctx.Match.Wait(card.Player, "Waiting for your opponent to make an action")
@@ -398,7 +401,7 @@ func Creature(card *match.Card, ctx *match.Context) {
 						ctx.Match.EndWait(card.Player)
 						ctx.Match.CloseAction(opponent)
 
-						if len(event.Shieldzone) < 1 {
+						if oppShieldsZoneLength < 1 {
 							// Win
 							ctx.Match.End(card.Player, fmt.Sprintf("%s won the game", ctx.Match.PlayerRef(card.Player).Socket.User.Username))
 						} else {
@@ -438,7 +441,7 @@ func Creature(card *match.Card, ctx *match.Context) {
 
 				card.Tapped = true
 
-				if len(event.Shieldzone) < 1 {
+				if oppShieldsZoneLength < 1 {
 					// Win
 					ctx.Match.End(card.Player, fmt.Sprintf("%s won the game", ctx.Match.PlayerRef(card.Player).Socket.User.Username))
 				} else {
@@ -449,15 +452,23 @@ func Creature(card *match.Card, ctx *match.Context) {
 				return
 
 			}
+
 		}
 
 		// Allow the opponent to block if they can (Attack Creature case)
-		if event.AttackedCard != nil && event.ShieldsAttacked == nil && event.Shieldzone == nil {
+		if event.AttackedCardID != "" && len(event.ShieldsAttacked) == 0 {
+
+			attackedCard, err := opponent.GetCard(event.AttackedCardID, match.BATTLEZONE)
+
+			if err != nil {
+				return
+			}
+
 			if len(event.Blockers) > 0 && !card.HasCondition(cnd.CantBeBlocked) && !stealthActive(card, ctx) {
 
 				ctx.Match.Wait(card.Player, "Waiting for your opponent to make an action")
 
-				ctx.Match.NewAction(opponent, event.Blockers, 1, 1, fmt.Sprintf("%s (%v) is attacking %s (%v). Choose a creature to block the attack with or close to not block the attack.", card.Name, ctx.Match.GetPower(card, true), event.AttackedCard.Name, ctx.Match.GetPower(event.AttackedCard, false)), true)
+				ctx.Match.NewAction(opponent, event.Blockers, 1, 1, fmt.Sprintf("%s (%v) is attacking %s (%v). Choose a creature to block the attack with or close to not block the attack.", card.Name, ctx.Match.GetPower(card, true), attackedCard.Name, ctx.Match.GetPower(attackedCard, false)), true)
 
 				for {
 
@@ -494,9 +505,9 @@ func Creature(card *match.Card, ctx *match.Context) {
 
 			}
 
-			ctx.Match.Battle(card, event.AttackedCard, false)
-		}
+			ctx.Match.Battle(card, attackedCard, false)
 
+		}
 	}
 
 	if event, ok := ctx.Event.(*match.TapAbility); ok {
@@ -642,7 +653,7 @@ func handleBattle(ctx *match.Context, winner *match.Card, winnerPower int, loose
 	// Destroy after battle
 	for _, condition := range winner.Conditions() {
 		if condition.ID == cnd.DestroyAfterBattle {
-			ctx.Match.Destroy(winner, winner, match.DestroyAfterBattle)
+			ctx.Match.Destroy(winner, winner, match.DestroyedInBattle)
 
 			break
 		}

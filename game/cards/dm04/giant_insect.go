@@ -28,6 +28,7 @@ func ThreeEyedDragonfly(c *match.Card) {
 
 			// reset this before each attack attempt
 			selectedCardId = ""
+			card.RemoveConditionBySource(card.ID)
 
 			cards := fx.SelectFilter(
 				card.Player,

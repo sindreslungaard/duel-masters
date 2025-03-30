@@ -21,8 +21,8 @@ func Tropico(c *match.Card) {
 
 		if event, ok := ctx.Event.(*match.SelectBlockers); ok {
 
-			if event.CardWhoAttacked != card ||
-				event.CardWhoAttacked.Zone != match.BATTLEZONE {
+			if event.Attacker != card ||
+				event.Attacker.Zone != match.BATTLEZONE {
 				return
 			}
 

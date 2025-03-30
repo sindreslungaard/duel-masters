@@ -43,5 +43,5 @@ func MadrillonFish(c *match.Card) {
 	c.ManaCost = 2
 	c.ManaRequirement = []string{civ.Water}
 
-	c.Use(fx.Creature, fx.Blocker, fx.CantAttackCreatures, fx.CantAttackPlayers)
+	c.Use(fx.Creature, fx.Blocker(), fx.CantAttackCreatures, fx.CantAttackPlayers)
 }

@@ -16,7 +16,7 @@ func VessTheOracle(c *match.Card) {
 	c.ManaCost = 1
 	c.ManaRequirement = []string{civ.Light}
 
-	c.Use(fx.Creature, fx.Blocker, fx.CantAttackPlayers)
+	c.Use(fx.Creature, fx.Blocker(), fx.CantAttackPlayers)
 }
 
 func YulukTheOracle(c *match.Card) {

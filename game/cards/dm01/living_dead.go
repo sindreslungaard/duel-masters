@@ -59,7 +59,7 @@ func WanderingBraineater(c *match.Card) {
 	c.ManaCost = 2
 	c.ManaRequirement = []string{civ.Darkness}
 
-	c.Use(fx.Creature, fx.Blocker, fx.CantAttackPlayers, fx.CantAttackCreatures)
+	c.Use(fx.Creature, fx.Blocker(), fx.CantAttackPlayers, fx.CantAttackCreatures)
 
 }
 

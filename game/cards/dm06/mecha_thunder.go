@@ -17,7 +17,7 @@ func LaveilSeekerOfCatastrophe(c *match.Card) {
 	c.ManaCost = 8
 	c.ManaRequirement = []string{civ.Light}
 
-	c.Use(fx.Creature, fx.Blocker, fx.Doublebreaker, fx.When(fx.EndOfMyTurnCreatureBZ, fx.MayUntapSelf))
+	c.Use(fx.Creature, fx.Blocker(), fx.Doublebreaker, fx.When(fx.EndOfMyTurnCreatureBZ, fx.MayUntapSelf))
 
 }
 

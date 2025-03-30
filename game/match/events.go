@@ -92,21 +92,18 @@ type AttackConfirmed struct {
 // Here, blockers (both normal and conditional) are added into the blockers list
 // and cards that have conditional CantBeBlocked effects handles them.
 type SelectBlockers struct {
-	CardWhoAttacked *Card // Card that attacks
-	Blockers        []*Card
-	Shieldzone      []*Card
-	ShieldsAttacked []*Card
-	AttackedCard    *Card
+	Attacker       *Card
+	Blockers       []*Card
+	AttackedCardID string // must be empty if the attack is on a player
 }
 
-// BlockStep is fired when the opponent is prompted to select the blockers
-// Props are passed from SelectBlockers event
-type BlockStep struct {
-	CardWhoAttacked *Card // Card that attacks
+// Block is fired when the opponent is prompted to select the blockers
+// Properties are passed from SelectBlockers event
+type Block struct {
+	Attacker        *Card
 	Blockers        []*Card
-	Shieldzone      []*Card
 	ShieldsAttacked []*Card
-	AttackedCard    *Card
+	AttackedCardID  string // must be empty if the attack is on a player
 }
 
 // Battle is fired when two creatures are fighting, i.e. from attacking a creature or blocking an attack
@@ -125,7 +122,6 @@ const (
 	DestroyedBySpell
 	DestroyedBySlayer
 	DestroyedByMiscAbility
-	DestroyAfterBattle
 )
 
 // CreatureDestroyed is fired when a creature dies in battle or is destroyed from another source, such as a spell

@@ -7,97 +7,95 @@ import (
 	"slices"
 )
 
-// Blocker adds the Blocker condition at the Untap step and
-// Adds the card to the blockers list at the SelectBlockers step if eligible
-func Blocker(card *match.Card, ctx *match.Context) {
+// Regular blocker and conditional blockers
+// For usages of adding Blocker inside ApplyPersistentEffects,
+// please use ForceBlocker
+func Blocker(conditions ...func(event *match.SelectBlockers) bool) func(*match.Card, *match.Context) {
+	return func(card *match.Card, ctx *match.Context) {
 
-	addDefaultBlockerCondition(card, ctx, false, nil)
-
-	addDefaultBlocker(card, ctx)
-
-}
-
-// ForceBlocker adds the Blocker condition, no matter the current handled event
-// And adds the card to the blockers list at the SelectBlockers step if eligible
-func ForceBlocker(card *match.Card, ctx *match.Context, src any) {
-
-	forceAddBlockerCondition(card, src)
-
-	addDefaultBlocker(card, ctx)
-}
-
-func FireAndNatureBlocker(card *match.Card, ctx *match.Context) {
-
-	addDefaultBlockerCondition(card, ctx, false, nil)
-
-	addConditionalBlocker(card, ctx, func(attacker *match.Card) bool {
-		return attacker.Civ == civ.Fire || attacker.Civ == civ.Nature
-	})
-
-}
-
-func DarknessBlocker(card *match.Card, ctx *match.Context) {
-
-	addDefaultBlockerCondition(card, ctx, false, nil)
-
-	addConditionalBlocker(card, ctx, func(attacker *match.Card) bool {
-		return attacker.Civ == civ.Darkness
-	})
-
-}
-
-func LightBlocker(card *match.Card, ctx *match.Context) {
-
-	addDefaultBlockerCondition(card, ctx, false, nil)
-
-	addConditionalBlocker(card, ctx, func(attacker *match.Card) bool {
-		return attacker.Civ == civ.Light
-	})
-
-}
-
-func addDefaultBlockerCondition(card *match.Card, ctx *match.Context, uniqueCond bool, src any) {
-
-	if _, ok := ctx.Event.(*match.UntapStep); ok {
-
-		if uniqueCond {
-			card.AddUniqueSourceCondition(cnd.Blocker, true, src)
-		} else {
-			card.AddCondition(cnd.Blocker, true, card.ID)
+		// Always add the blocker cnd during the untap step
+		if _, ok := ctx.Event.(*match.UntapStep); ok {
+			card.AddUniqueSourceCondition(cnd.Blocker, true, card.ID)
+			return
 		}
 
-	}
+		// Add itself to list of blockers if all conditions are met
+		addToBlockersListIfConditions(card, ctx, conditions...)
 
+	}
 }
 
-func forceAddBlockerCondition(card *match.Card, src any) {
+// To be used on ApplyPersistentEffects, passing "ctx2" context reference
+func ForceBlocker(card *match.Card, ctx *match.Context, src string, conditions ...func(event *match.SelectBlockers) bool) {
+	// Always add the blocker cnd, regardless of the current event
+	// To be used on ApplyPersistentEffects
 	card.AddUniqueSourceCondition(cnd.Blocker, true, src)
+
+	// Add itself to list of blockers if all conditions are met
+	addToBlockersListIfConditions(card, ctx, conditions...)
 }
 
-func addDefaultBlocker(card *match.Card, ctx *match.Context) {
-	addConditionalBlocker(card, ctx, nil)
+func DarknessBlocker() func(*match.Card, *match.Context) {
+	return Blocker(func(event *match.SelectBlockers) bool {
+		return event.Attacker.Civ == civ.Darkness
+	})
 }
 
-func addConditionalBlocker(card *match.Card, ctx *match.Context, attackerTest func(*match.Card) bool) {
+func LightBlocker() func(*match.Card, *match.Context) {
+	return Blocker(func(event *match.SelectBlockers) bool {
+		return event.Attacker.Civ == civ.Light
+	})
+}
 
-	// Check to see if I'm eligible to actually block the attack
-	// (I'm in the battlezone AND I'm untapped AND opponent doesn't attack me)
-	if event, ok := ctx.Event.(*match.SelectBlockers); ok &&
-		card.Zone == match.BATTLEZONE &&
-		(event.AttackedCard == nil || event.AttackedCard != card) &&
-		!card.Tapped &&
-		card.HasCondition(cnd.Blocker) {
+func FireAndNatureBlocker() func(*match.Card, *match.Context) {
+	return Blocker(func(event *match.SelectBlockers) bool {
+		return event.Attacker.Civ == civ.Fire ||
+			event.Attacker.Civ == civ.Nature
+	})
+}
 
-		// ONLY if the attacker card (event.CardWhoAttacked) passes the test function (if given)
-		// and is my opponent who attacks me
-		// add myself to the blockers list
-		if event.CardWhoAttacked.Zone == match.BATTLEZONE &&
-			card.Player != event.CardWhoAttacked.Player &&
-			(attackerTest == nil || attackerTest(event.CardWhoAttacked)) &&
-			!slices.Contains(event.Blockers, card) {
-			event.Blockers = append(event.Blockers, card)
-		}
+// Default helper function that adds the given card to the blockers list
+// If all conditions passed are met
+func addToBlockersListIfConditions(card *match.Card, ctx *match.Context, conditions ...func(event *match.SelectBlockers) bool) {
+	event, ok := ctx.Event.(*match.SelectBlockers)
 
+	if !ok {
+		return
 	}
 
+	if card.Zone != match.BATTLEZONE {
+		return
+	}
+
+	if event.AttackedCardID == card.ID {
+		return
+	}
+
+	if card.Tapped {
+		return
+	}
+
+	if !card.HasCondition(cnd.Blocker) {
+		return
+	}
+
+	if event.Attacker.Zone != match.BATTLEZONE {
+		return
+	}
+
+	if card.Player == event.Attacker.Player {
+		return
+	}
+
+	if slices.Contains(event.Blockers, card) {
+		return
+	}
+
+	for _, condition := range conditions {
+		if !condition(event) {
+			return
+		}
+	}
+
+	event.Blockers = append(event.Blockers, card)
 }

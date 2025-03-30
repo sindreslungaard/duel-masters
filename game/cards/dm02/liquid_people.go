@@ -67,7 +67,7 @@ func AquaBouncer(c *match.Card) {
 	c.ManaCost = 6
 	c.ManaRequirement = []string{civ.Water}
 
-	c.Use(fx.Creature, fx.Blocker, fx.When(fx.Summoned, fx.MayReturnCreatureToOwnersHand))
+	c.Use(fx.Creature, fx.Blocker(), fx.When(fx.Summoned, fx.MayReturnCreatureToOwnersHand))
 
 }
 
@@ -81,6 +81,6 @@ func AquaShooter(c *match.Card) {
 	c.ManaCost = 4
 	c.ManaRequirement = []string{civ.Water}
 
-	c.Use(fx.Creature, fx.Blocker)
+	c.Use(fx.Creature, fx.Blocker())
 
 }

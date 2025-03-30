@@ -18,7 +18,7 @@ func SnorkLaShrineGuardian(c *match.Card) {
 	c.ManaCost = 3
 	c.ManaRequirement = []string{civ.Light}
 
-	c.Use(fx.Creature, fx.Blocker, fx.CantAttackPlayers, func(card *match.Card, ctx *match.Context) {
+	c.Use(fx.Creature, fx.Blocker(), fx.CantAttackPlayers, func(card *match.Card, ctx *match.Context) {
 
 		if card.Zone != match.BATTLEZONE {
 			return

@@ -1,7 +1,6 @@
 package internal
 
 import (
-	"slices"
 	"sync"
 )
 
@@ -68,7 +67,7 @@ func (d *ConcurrentDictionary[T]) Remove(key string) {
 		return
 	}
 
-	d.src = slices.Delete(d.src, toRemove, toRemove+1)
+	d.src = append(d.src[:toRemove], d.src[toRemove+1:]...)
 	delete(d.keyValStore, key)
 }
 

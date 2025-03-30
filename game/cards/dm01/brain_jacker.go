@@ -17,7 +17,7 @@ func BloodySquito(c *match.Card) {
 	c.ManaCost = 2
 	c.ManaRequirement = []string{civ.Darkness}
 
-	c.Use(fx.Creature, fx.Blocker, fx.CantAttackPlayers, fx.CantAttackCreatures, fx.Suicide)
+	c.Use(fx.Creature, fx.Blocker(), fx.CantAttackPlayers, fx.CantAttackCreatures, fx.Suicide)
 
 }
 
@@ -31,6 +31,6 @@ func DarkClown(c *match.Card) {
 	c.ManaCost = 4
 	c.ManaRequirement = []string{civ.Darkness}
 
-	c.Use(fx.Creature, fx.Blocker, fx.CantAttackPlayers, fx.CantAttackCreatures, fx.Suicide)
+	c.Use(fx.Creature, fx.Blocker(), fx.CantAttackPlayers, fx.CantAttackCreatures, fx.Suicide)
 
 }

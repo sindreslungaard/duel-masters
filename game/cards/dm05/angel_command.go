@@ -19,7 +19,7 @@ func SyriusFirmamentElemental(c *match.Card) {
 	c.ManaCost = 11
 	c.ManaRequirement = []string{civ.Light}
 
-	c.Use(fx.Creature, fx.Blocker, fx.Triplebreaker)
+	c.Use(fx.Creature, fx.Blocker(), fx.Triplebreaker)
 
 }
 
@@ -33,7 +33,7 @@ func SyforceAuroraElemental(c *match.Card) {
 	c.ManaCost = 7
 	c.ManaRequirement = []string{civ.Light}
 
-	c.Use(fx.Creature, fx.Blocker, fx.Doublebreaker, fx.When(fx.Summoned, func(card *match.Card, ctx *match.Context) {
+	c.Use(fx.Creature, fx.Blocker(), fx.Doublebreaker, fx.When(fx.Summoned, func(card *match.Card, ctx *match.Context) {
 
 		fx.SelectFilter(
 			card.Player,

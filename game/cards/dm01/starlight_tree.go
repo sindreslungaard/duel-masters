@@ -17,7 +17,7 @@ func EmeraldGrass(c *match.Card) {
 	c.ManaCost = 2
 	c.ManaRequirement = []string{civ.Light}
 
-	c.Use(fx.Creature, fx.Blocker, fx.CantAttackPlayers)
+	c.Use(fx.Creature, fx.Blocker(), fx.CantAttackPlayers)
 
 }
 
@@ -31,7 +31,7 @@ func RubyGrass(c *match.Card) {
 	c.ManaCost = 3
 	c.ManaRequirement = []string{civ.Light}
 
-	c.Use(fx.Creature, fx.Blocker, fx.CantAttackPlayers, fx.When(fx.EndOfMyTurnCreatureBZ, fx.MayUntapSelf))
+	c.Use(fx.Creature, fx.Blocker(), fx.CantAttackPlayers, fx.When(fx.EndOfMyTurnCreatureBZ, fx.MayUntapSelf))
 
 }
 
@@ -45,6 +45,6 @@ func SenatineJadeTree(c *match.Card) {
 	c.ManaCost = 3
 	c.ManaRequirement = []string{civ.Light}
 
-	c.Use(fx.Creature, fx.Blocker, fx.CantAttackPlayers)
+	c.Use(fx.Creature, fx.Blocker(), fx.CantAttackPlayers)
 
 }

@@ -92,11 +92,10 @@ func BlockerWhenNoShields(card *match.Card, ctx *match.Context) {
 }
 
 func HaveSelfConditionsWhenNoShields(card *match.Card, ctx *match.Context, conditions []*match.Condition) {
-
 	ctx.Match.ApplyPersistentEffect(func(ctx2 *match.Context, exit func()) {
 
 		notInTheBZ := card.Zone != match.BATTLEZONE
-		if notInTheBZ || IHaveShields(card, ctx2) {
+		if notInTheBZ || IHaveShields(card) {
 			for _, cond := range conditions {
 				card.RemoveSpecificConditionBySource(cond.ID, card.ID)
 			}

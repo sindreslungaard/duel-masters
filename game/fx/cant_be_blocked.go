@@ -88,8 +88,8 @@ func filterBlocker(card *match.Card, ctx *match.Context, test func(blocker *matc
 	}
 
 	if event, ok := ctx.Event.(*match.SelectBlockers); ok &&
-		event.CardWhoAttacked == card &&
-		event.CardWhoAttacked.Zone == match.BATTLEZONE {
+		event.Attacker == card &&
+		event.Attacker.Zone == match.BATTLEZONE {
 
 		ctx.ScheduleAfter(func() {
 			event.Blockers = filter(event.Blockers)

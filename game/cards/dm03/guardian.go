@@ -17,5 +17,5 @@ func RazaVegaThunderGuardian(c *match.Card) {
 	c.ManaCost = 10
 	c.ManaRequirement = []string{civ.Light}
 
-	c.Use(fx.Creature, fx.Blocker, fx.ReturnToShield)
+	c.Use(fx.Creature, fx.Blocker(), fx.ReturnToShield)
 }

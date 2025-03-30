@@ -136,7 +136,8 @@ func (s *Socket) handlePing() {
 			return
 		}
 
-		for range ticker.C {
+		select {
+		case <-ticker.C:
 			s.mutex.Lock()
 			s.conn.SetWriteDeadline(time.Now().Add(writeWait))
 			err := s.conn.WriteMessage(websocket.PingMessage, nil)

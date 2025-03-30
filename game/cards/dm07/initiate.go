@@ -16,7 +16,7 @@ func KizarBasikuTheOutrageous(c *match.Card) {
 	c.ManaCost = 5
 	c.ManaRequirement = []string{civ.Light}
 
-	c.Use(fx.Creature, fx.Blocker, fx.Evolution, fx.FireStealth, fx.Doublebreaker)
+	c.Use(fx.Creature, fx.Blocker(), fx.Evolution, fx.FireStealth, fx.Doublebreaker)
 }
 
 func RomVizierofTendrils(c *match.Card) {
