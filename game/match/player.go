@@ -268,6 +268,8 @@ func (p *Player) SpawnCard(id string, area string) {
 		p.hand = append(p.hand, c)
 	case MANAZONE:
 		p.manazone = append(p.manazone, c)
+	case GRAVEYARD:
+		p.graveyard = append(p.graveyard, c)
 	case SHIELDZONE:
 		p.shieldzone = append(p.shieldzone, c)
 		p.ShieldCounter = p.ShieldCounter + 1

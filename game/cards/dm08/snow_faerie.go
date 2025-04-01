@@ -80,6 +80,7 @@ func kachuaKeeperOfTheIcegateTapAbility(card *match.Card, ctx *match.Context) {
 		}))
 
 		// and put into the Battlezone
+		// TODO bug with evolution cards !!
 		ctx.Match.MoveCard(selectedDragon, match.BATTLEZONE, card)
 
 		// then shuffle deck
