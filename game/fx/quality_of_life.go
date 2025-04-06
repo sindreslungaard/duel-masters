@@ -1,6 +1,7 @@
 package fx
 
 import (
+	"duel-masters/game/cnd"
 	"duel-masters/game/family"
 	"duel-masters/game/match"
 	"slices"
@@ -805,6 +806,19 @@ func AnotherOwnCreatureDestroyed(card *match.Card, ctx *match.Context) bool {
 
 	return false
 
+}
+
+func CanBeSummoned(player *match.Player, c *match.Card) bool {
+	return c.HasCondition(cnd.Creature) &&
+		(!c.HasCondition(cnd.Evolution) ||
+			c.HasCondition(cnd.EvolveIntoAnyFamily) ||
+			len(FindFilter(
+				player,
+				match.BATTLEZONE,
+				func(c2 *match.Card) bool {
+					return c2.SharesAFamily(c.Family)
+				},
+			)) > 0)
 }
 
 func MyDrawStep(card *match.Card, ctx *match.Context) bool {

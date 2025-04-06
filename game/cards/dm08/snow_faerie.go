@@ -6,6 +6,7 @@ import (
 	"duel-masters/game/family"
 	"duel-masters/game/fx"
 	"duel-masters/game/match"
+	"fmt"
 )
 
 // KachuaKeeperOfTheIcegate ...
@@ -29,7 +30,7 @@ func KachuaKeeperOfTheIcegate(c *match.Card) {
 func kachuaKeeperOfTheIcegateTapAbility(card *match.Card, ctx *match.Context) {
 
 	// Search your deck. You MAY take a Dragon from your deck
-	myDragons := fx.SelectFilter(
+	fx.SelectFilter(
 		card.Player,
 		ctx.Match,
 		card.Player,
@@ -40,26 +41,10 @@ func kachuaKeeperOfTheIcegateTapAbility(card *match.Card, ctx *match.Context) {
 		true,
 		func(c *match.Card) bool {
 			return c.SharesAFamily(family.Dragons) &&
-				(c.HasCondition(cnd.Creature) &&
-					((!c.HasCondition(cnd.Evolution) &&
-						!c.HasCondition(cnd.EvolveIntoAnyFamily)) ||
-						(c.HasCondition(cnd.EvolveIntoAnyFamily) ||
-							(c.HasCondition(cnd.Evolution) &&
-								len(fx.FindFilter(
-									card.Player,
-									match.BATTLEZONE,
-									func(c2 *match.Card) bool {
-										return c2.SharesAFamily(c.Family)
-									},
-								)) > 0))))
+				fx.CanBeSummoned(card.Player, c)
 		},
 		true,
-	)
-
-	if len(myDragons) > 0 {
-
-		selectedDragon := myDragons[0]
-
+	).Map(func(selectedDragon *match.Card) {
 		// that creature has "speed attacker" + at the end of the turn, destroy that creature
 		selectedDragon.Use(fx.When(fx.InTheBattlezone, func(selDragon *match.Card, ctx2 *match.Context) {
 			ctx2.Match.ApplyPersistentEffect(func(ctx3 *match.Context, exit func()) {
@@ -80,12 +65,24 @@ func kachuaKeeperOfTheIcegateTapAbility(card *match.Card, ctx *match.Context) {
 		}))
 
 		// and put into the Battlezone
-		// TODO bug with evolution cards !!
-		ctx.Match.MoveCard(selectedDragon, match.BATTLEZONE, card)
+		cardPlayedCtx := match.NewContext(ctx.Match, &match.CardPlayedEvent{
+			CardID: selectedDragon.ID,
+		})
+		ctx.Match.HandleFx(cardPlayedCtx)
+
+		if !cardPlayedCtx.Cancelled() {
+
+			if !selectedDragon.HasCondition(cnd.Evolution) {
+				selectedDragon.AddCondition(cnd.SummoningSickness, nil, nil)
+			}
+
+			card.Player.MoveCard(selectedDragon.ID, match.HAND, match.BATTLEZONE, selectedDragon.ID)
+			ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s was moved to the battle zone by %s's effect", selectedDragon.Name, card.Name))
+
+		}
 
 		// then shuffle deck
 		fx.ShuffleDeck(card, ctx, false)
-
-	}
+	})
 
 }
