@@ -115,7 +115,7 @@ func LaserWhip(c *match.Card) {
 
 	c.Use(fx.Spell, fx.When(fx.SpellCast, func(card *match.Card, ctx *match.Context) {
 
-		selectedCards := fx.Select(
+		fx.Select(
 			card.Player,
 			ctx.Match,
 			ctx.Match.Opponent(card.Player),
@@ -124,14 +124,12 @@ func LaserWhip(c *match.Card) {
 			1,
 			1,
 			false,
-		)
+		).Map(func(x *match.Card) {
+			x.Tapped = true
+			ctx.Match.BroadcastState()
+			ctx.Match.ReportActionInChat(ctx.Match.Opponent(card.Player), fmt.Sprintf("%s was tapped by %s", x.Name, card.Name))
 
-		if len(selectedCards) > 0 {
-
-			selectedCards[0].Tapped = true
-			ctx.Match.ReportActionInChat(ctx.Match.Opponent(card.Player), fmt.Sprintf("%s was tapped by %s", selectedCards[0].Name, card.Name))
-
-			selectedCards = fx.Select(
+			fx.Select(
 				card.Player,
 				ctx.Match,
 				card.Player,
@@ -140,29 +138,24 @@ func LaserWhip(c *match.Card) {
 				1,
 				1,
 				true,
-			)
+			).Map(func(y *match.Card) {
+				ctx.Match.ApplyPersistentEffect(func(ctx2 *match.Context, exit func()) {
+					if y.Zone != match.BATTLEZONE {
+						y.RemoveConditionBySource(y.ID)
+						exit()
+						return
+					}
 
-			if len(selectedCards) > 0 {
-				selectedCards[0].Use(func(card2 *match.Card, ctx *match.Context) {
-					ctx.Match.ApplyPersistentEffect(func(ctx2 *match.Context, exit func()) {
-						if selectedCards[0].Zone != match.BATTLEZONE {
-							selectedCards[0].RemoveConditionBySource(selectedCards[0].ID)
-							exit()
-							return
-						}
+					if _, ok := ctx2.Event.(*match.EndOfTurnStep); ok {
+						y.RemoveConditionBySource(y.ID)
+						exit()
+						return
+					}
 
-						selectedCards[0].AddUniqueSourceCondition(cnd.CantBeBlocked, true, selectedCards[0].ID)
-
-						if _, ok := ctx2.Event.(*match.EndStep); ok {
-							selectedCards[0].RemoveConditionBySource(selectedCards[0].ID)
-							exit()
-							return
-						}
-					})
+					y.AddUniqueSourceCondition(cnd.CantBeBlocked, true, y.ID)
 				})
-			}
-
-		}
+			})
+		})
 
 	}))
 }

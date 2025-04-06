@@ -76,7 +76,7 @@ func kachuaKeeperOfTheIcegateTapAbility(card *match.Card, ctx *match.Context) {
 				selectedDragon.AddCondition(cnd.SummoningSickness, nil, nil)
 			}
 
-			card.Player.MoveCard(selectedDragon.ID, match.HAND, match.BATTLEZONE, selectedDragon.ID)
+			card.Player.MoveCard(selectedDragon.ID, match.DECK, match.BATTLEZONE, selectedDragon.ID)
 			ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s was moved to the battle zone by %s's effect", selectedDragon.Name, card.Name))
 
 		}
