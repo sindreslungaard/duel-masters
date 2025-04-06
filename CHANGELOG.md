@@ -2,7 +2,7 @@
 
 ## [Unreleased]
 
-- No unreleased changes
+- Refactored how attacking and blocking works under the hood to be more accurate with rulings (thanks @DragosIonita23)
 
 ## 17/02/2024
 
