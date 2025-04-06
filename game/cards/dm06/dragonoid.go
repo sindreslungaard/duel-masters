@@ -78,7 +78,7 @@ func LavaWalkerExecuto(c *match.Card) {
 }
 
 func lavaWalkerExecutoTapAbility(card *match.Card, ctx *match.Context) {
-	creatures := fx.SelectFilterSelectablesOnly(
+	creatures := fx.SelectFilter(
 		card.Player,
 		ctx.Match,
 		card.Player,
@@ -88,6 +88,7 @@ func lavaWalkerExecutoTapAbility(card *match.Card, ctx *match.Context) {
 		1,
 		false,
 		func(x *match.Card) bool { return x.Civ == civ.Fire },
+		false,
 	)
 	for _, creature := range creatures {
 		creature.AddCondition(cnd.PowerAmplifier, 3000, card.ID)

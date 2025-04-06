@@ -24,36 +24,30 @@ func KingNautilus(c *match.Card) {
 			return
 		}
 
-		if event, ok := ctx.Event.(*match.AttackCreature); ok {
-			kingNautilusSpecial(card, ctx, event.CardID)
-		}
-
-		if event, ok := ctx.Event.(*match.AttackPlayer); ok {
-			kingNautilusSpecial(card, ctx, event.CardID)
-		}
+		kingNautilusSpecial(card, ctx)
 
 	})
 
 }
 
-func kingNautilusSpecial(card *match.Card, ctx *match.Context, cardID string) {
+func kingNautilusSpecial(card *match.Card, ctx *match.Context) {
 
-	p := ctx.Match.CurrentPlayer()
+	if event, ok := ctx.Event.(*match.AttackConfirmed); ok {
 
-	creature, err := p.Player.GetCard(cardID, match.BATTLEZONE)
+		p := ctx.Match.CurrentPlayer()
 
-	if err != nil {
-		return
+		creature, err := p.Player.GetCard(event.CardID, match.BATTLEZONE)
+
+		if err != nil {
+			return
+		}
+
+		if !creature.HasFamily(family.LiquidPeople) {
+			return
+		}
+
+		creature.AddUniqueSourceCondition(cnd.CantBeBlocked, true, card.ID)
+
 	}
-
-	if !creature.HasFamily(family.LiquidPeople) {
-		return
-	}
-
-	creature.AddCondition(cnd.CantBeBlocked, true, card.ID)
-
-	ctx.ScheduleAfter(func() {
-		creature.RemoveConditionBySource(card.ID)
-	})
 
 }

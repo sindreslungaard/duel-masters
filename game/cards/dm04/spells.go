@@ -16,30 +16,34 @@ func FullDefensor(c *match.Card) {
 	c.ManaCost = 2
 	c.ManaRequirement = []string{civ.Light}
 
-	c.Use(fx.Spell, fx.ShieldTrigger, func(card *match.Card, ctx *match.Context) {
+	c.Use(fx.Spell, fx.ShieldTrigger, fx.When(fx.SpellCast, func(card *match.Card, ctx *match.Context) {
 
-		if match.AmICasted(card, ctx) {
+		ctx.Match.ApplyPersistentEffect(func(ctx2 *match.Context, exit func()) {
 
-			ctx.Match.ApplyPersistentEffect(func(ctx2 *match.Context, exit func()) {
+			// on all events, add blocker to our creatures
+			fx.Find(
+				card.Player,
+				match.BATTLEZONE,
+			).Map(func(x *match.Card) {
+				fx.ForceBlocker(x, ctx2, card.ID)
+			})
 
-				// on all events, add blocker to our creatures
+			// remove persistent effect on start of next turn
+			_, ok := ctx2.Event.(*match.StartOfTurnStep)
+			if ok && ctx2.Match.IsPlayerTurn(card.Player) {
 				fx.Find(
 					card.Player,
 					match.BATTLEZONE,
 				).Map(func(x *match.Card) {
-					x.AddUniqueSourceCondition(cnd.Blocker, true, card.ID)
+					x.RemoveConditionBySource(card.ID)
 				})
 
-				// remove persistent effect on start of next turn
-				_, ok := ctx2.Event.(*match.StartOfTurnStep)
-				if ok && ctx2.Match.IsPlayerTurn(card.Player) {
-					exit()
-				}
+				exit()
+			}
 
-			})
+		})
 
-		}
-	})
+	}))
 }
 
 // CloneFactory ...
@@ -269,9 +273,7 @@ func ChainsOfSacrifice(c *match.Card) {
 			1,
 			false,
 		).Map(func(x *match.Card) {
-
 			ctx.Match.Destroy(x, card, match.DestroyedBySpell)
-			ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s's %s has been destroyed.", x.Player.Username(), x.Name))
 		})
 
 		fx.Select(
@@ -284,9 +286,7 @@ func ChainsOfSacrifice(c *match.Card) {
 			2,
 			false,
 		).Map(func(x *match.Card) {
-
 			ctx.Match.Destroy(x, card, match.DestroyedBySpell)
-			ctx.Match.ReportActionInChat(ctx.Match.Opponent(card.Player), fmt.Sprintf("%s's %s has been destroyed.", x.Player.Username(), x.Name))
 		})
 
 	}))

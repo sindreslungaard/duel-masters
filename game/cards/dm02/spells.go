@@ -101,16 +101,17 @@ func CriticalBlade(c *match.Card) {
 
 	c.Use(fx.Spell, fx.ShieldTrigger, fx.When(fx.SpellCast, func(card *match.Card, ctx *match.Context) {
 
-		fx.SelectFilterSelectablesOnly(
+		fx.SelectFilter(
 			card.Player,
 			ctx.Match,
 			ctx.Match.Opponent(card.Player),
 			match.BATTLEZONE,
-			"Critical Blade: Select 1 of your opponent's blockers that will be destroyed",
+			fmt.Sprintf("%s: Select 1 of your opponent's blockers that will be destroyed", card.Name),
 			1,
 			1,
 			false,
 			func(x *match.Card) bool { return x.HasCondition(cnd.Blocker) },
+			false,
 		).Map(func(x *match.Card) {
 			ctx.Match.Destroy(x, card, match.DestroyedBySpell)
 		})

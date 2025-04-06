@@ -45,6 +45,6 @@ func MarineFlower(c *match.Card) {
 	c.ManaCost = 1
 	c.ManaRequirement = []string{civ.Water}
 
-	c.Use(fx.Creature, fx.Blocker, fx.CantAttackPlayers, fx.CantAttackCreatures)
+	c.Use(fx.Creature, fx.Blocker(), fx.CantAttackPlayers, fx.CantAttackCreatures)
 
 }

@@ -5,6 +5,7 @@ import (
 	"duel-masters/game/family"
 	"duel-masters/game/fx"
 	"duel-masters/game/match"
+	"fmt"
 )
 
 func KanesillTheExplorer(c *match.Card) {
@@ -16,7 +17,7 @@ func KanesillTheExplorer(c *match.Card) {
 	c.ManaCost = 3
 	c.ManaRequirement = []string{civ.Light}
 
-	c.Use(fx.Creature, fx.Blocker, fx.CantAttackPlayers)
+	c.Use(fx.Creature, fx.Blocker(), fx.CantAttackPlayers)
 }
 
 func TelitolTheExplorer(c *match.Card) {
@@ -28,7 +29,7 @@ func TelitolTheExplorer(c *match.Card) {
 	c.ManaCost = 4
 	c.ManaRequirement = []string{civ.Light}
 
-	c.Use(fx.Creature, fx.Blocker, fx.CantAttackPlayers, fx.When(fx.Summoned, func(card *match.Card, ctx *match.Context) {
+	c.Use(fx.Creature, fx.Blocker(), fx.CantAttackPlayers, fx.When(fx.Summoned, func(card *match.Card, ctx *match.Context) {
 
 		shields, err := card.Player.Container(match.SHIELDZONE)
 
@@ -44,7 +45,7 @@ func TelitolTheExplorer(c *match.Card) {
 
 		ctx.Match.ShowCards(
 			card.Player,
-			"Your shields:",
+			fmt.Sprintf("%s's effect: your shields:", card.Name),
 			ids,
 		)
 	}))

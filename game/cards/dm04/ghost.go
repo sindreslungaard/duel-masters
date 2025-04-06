@@ -25,7 +25,7 @@ func ShadowMoonCursedShade(c *match.Card) {
 			if card.Zone != match.BATTLEZONE {
 
 				// remove cards with current buffs
-				getDarknessCreatures(card, ctx).Map(func(x *match.Card) {
+				getDarknessCreatures(card, ctx2).Map(func(x *match.Card) {
 					x.RemoveConditionBySource(card.ID)
 				})
 
@@ -34,7 +34,7 @@ func ShadowMoonCursedShade(c *match.Card) {
 
 			}
 
-			getDarknessCreatures(card, ctx).Map(func(x *match.Card) {
+			getDarknessCreatures(card, ctx2).Map(func(x *match.Card) {
 				x.AddUniqueSourceCondition(cnd.PowerAmplifier, 2000, card.ID)
 			})
 

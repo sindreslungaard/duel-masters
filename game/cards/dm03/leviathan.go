@@ -19,7 +19,7 @@ func KingNeptas(c *match.Card) {
 	c.ManaCost = 6
 	c.ManaRequirement = []string{civ.Water}
 
-	c.Use(fx.WheneverThisAttacks(func(card *match.Card, ctx *match.Context) {
+	c.Use(fx.Creature, fx.When(fx.AttackConfirmed, func(card *match.Card, ctx *match.Context) {
 
 		cards := make(map[string][]*match.Card)
 
@@ -46,7 +46,7 @@ func KingNeptas(c *match.Card) {
 			c.Player,
 			ctx.Match,
 			cards,
-			"Choose up to 1 creatures in the battle zone and return it to its owner hand",
+			fmt.Sprintf("%s: Choose up to 1 creature in the battle zone and return it to its owner hand", card.Name),
 			0,
 			1,
 			true,
@@ -56,10 +56,9 @@ func KingNeptas(c *match.Card) {
 				return
 			}
 			ctx.Match.ReportActionInChat(x.Player, fmt.Sprintf("%s was moved to %s's hand", x.Name, x.Player.Username()))
-			fx.RemoveBlockerFromList(x, ctx)
 		})
 
-	}), fx.Creature)
+	}))
 
 }
 
@@ -97,37 +96,34 @@ func LegendaryBynor(c *match.Card) {
 
 	c.Use(fx.Creature, fx.Evolution, fx.Doublebreaker, func(card *match.Card, ctx *match.Context) {
 
-		if card.Zone != match.BATTLEZONE {
+		if card.Zone != match.BATTLEZONE || !ctx.Match.IsPlayerTurn(card.Player) {
 			return
 		}
 
-		if event, ok := ctx.Event.(*match.AttackCreature); ok {
-			legendaryBynorSpecial(card, ctx, event.CardID)
-		}
-
-		if event, ok := ctx.Event.(*match.AttackPlayer); ok {
-			legendaryBynorSpecial(card, ctx, event.CardID)
-		}
+		legendaryBynorSpecial(card, ctx)
 
 	})
 
 }
 
-func legendaryBynorSpecial(card *match.Card, ctx *match.Context, cardID string) {
+func legendaryBynorSpecial(card *match.Card, ctx *match.Context) {
 
 	p := ctx.Match.CurrentPlayer()
 
-	creature, err := p.Player.GetCard(cardID, match.BATTLEZONE)
+	if event, ok := ctx.Event.(*match.AttackConfirmed); ok {
 
-	if err != nil {
-		return
+		creature, err := p.Player.GetCard(event.CardID, match.BATTLEZONE)
+
+		if err != nil {
+			return
+		}
+
+		if creature.Civ != civ.Water || creature.ID == card.ID {
+			return
+		}
+
+		creature.AddUniqueSourceCondition(cnd.CantBeBlocked, true, card.ID)
+
 	}
 
-	if creature.Civ != civ.Water || creature.ID == card.ID {
-		return
-	}
-
-	if ctx.Match.IsPlayerTurn(card.Player) {
-		creature.AddCondition(cnd.CantBeBlocked, true, card.ID)
-	}
 }
