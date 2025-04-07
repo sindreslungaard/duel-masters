@@ -218,7 +218,7 @@
     </div>
 
     <!-- Lobby -->
-    <div v-if="!started && decks.length < 1" class="lobby">
+    <div v-if="!started && decks.length < 1 && !tossBeingChosen && !turnBeingChosen" class="lobby">
       <h1>
         Waiting for your opponent to join<span class="dots">{{
           loadingDots
@@ -1360,8 +1360,6 @@ export default {
                 };
                 break
               case 'question':
-                console.log(data)
-                console.log(data.choices)
                 if (data.choices) {
                   this.action = {
                     text: data.text,

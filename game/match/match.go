@@ -6,6 +6,7 @@ import (
 	"duel-masters/game/cnd"
 	"duel-masters/internal"
 	"duel-masters/server"
+	"duel-masters/services"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -32,6 +33,7 @@ type Match struct {
 	Started           bool `json:"started"`
 	Visible           bool `json:"visible"`
 	Step              interface{}
+	EventUID          string
 
 	PlayerSelectingToss string
 	TossPrediction      int
@@ -1329,12 +1331,37 @@ func (m *Match) Parse(s *server.Socket, data []byte) {
 			// If both players have joined, prompt them to choose their decks
 			if m.Player1 != nil && m.Player2 != nil {
 
+				// If it's an event no need to select deck
+				if m.EventUID != "" {
+
+					deck, err := services.GetEventDeck(m.Player1.UID, m.EventUID)
+					if err != nil {
+						// handle error
+						return
+					}
+					m.assignDeckToPlayer(m.Player1, deck, false)
+
+					deck, err = services.GetEventDeck(m.Player2.UID, m.EventUID)
+					if err != nil {
+						// handle error
+						return
+					}
+					m.assignDeckToPlayer(m.Player2, deck, false)
+
+					if m.Player1.Player.Ready && m.Player2.Player.Ready {
+						m.CoinToss()
+					}
+
+					return
+				}
+
 				cur, err := db.Decks.Find(context.TODO(), bson.M{
 					"$or": []bson.M{
 						{"owner": m.Player1.Socket.User.UID},
 						{"owner": m.Player2.Socket.User.UID},
 						{"standard": true},
 					},
+					"event": nil,
 				})
 
 				if err != nil {
@@ -1358,7 +1385,7 @@ func (m *Match) Parse(s *server.Socket, data []byte) {
 						continue
 					}
 
-					legacyDeck, err := ConvertToLegacyDeck(deck)
+					legacyDeck, err := services.ConvertToLegacyDeck(deck)
 					if err != nil {
 						continue
 					}
@@ -1596,19 +1623,21 @@ func (m *Match) Parse(s *server.Socket, data []byte) {
 				return
 			}
 
-			p.DeckStr = deck.Cards
+			// p.DeckStr = deck.Cards
 
-			legacyDeck, err := ConvertToLegacyDeck(deck)
+			// legacyDeck, err := services.ConvertToLegacyDeck(deck)
 
-			if err != nil {
-				return
-			}
+			// if err != nil {
+			// 	return
+			// }
 
-			p.Player.CreateDeck(legacyDeck.Cards)
+			// p.Player.CreateDeck(legacyDeck.Cards)
 
-			m.Chat("Server", fmt.Sprintf("%s has chosen their deck", s.User.Username))
+			// m.Chat("Server", fmt.Sprintf("%s has chosen their deck", s.User.Username))
 
-			p.Player.Ready = true
+			// p.Player.Ready = true
+
+			m.assignDeckToPlayer(p, deck, true)
 
 			if m.Player1.Player.Ready && m.Player2.Player.Ready {
 				m.CoinToss()
@@ -2103,4 +2132,22 @@ func spawnCardsToGivenZones(m *Match,
 
 	m.BroadcastState()
 
+}
+
+func (m *Match) assignDeckToPlayer(p *PlayerReference, deck db.Deck, choosen bool) {
+	p.DeckStr = deck.Cards
+
+	legacyDeck, err := services.ConvertToLegacyDeck(deck)
+
+	if err != nil {
+		return
+	}
+
+	p.Player.CreateDeck(legacyDeck.Cards)
+
+	if choosen {
+		m.Chat("Server", fmt.Sprintf("%s has chosen their deck", p.Username))
+	}
+
+	p.Player.Ready = true
 }
