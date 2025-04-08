@@ -2,9 +2,13 @@
 
 ## [Unreleased]
 
+- No unreleased changes
+
+## 09/04/2025
+
 - Refactored how attacking and blocking works under the hood to be more accurate with rulings (thanks @DragosIonita23)
 
-## 17/02/2024
+## 17/02/2025
 
 - Updated cards that prompts the user whether or not to draw a card to draw and ask the user sequentially rather than all at once (thanks @jyotiskaghosh)
 - Added the option to resign from a match (thanks @jyotiskaghosh)
