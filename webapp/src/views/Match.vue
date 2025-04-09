@@ -1286,6 +1286,16 @@ export default {
           }
 
           case "choose_toss": {
+            // quick and dirty workaround for when the choose deck phase is skipped for matches with random deck format
+            if(!this.decks.length) {
+              this.decks.push("random")
+            }
+            if(!this.deck) {
+              this.deck = "random";
+            }
+
+            
+
             this.chooseToss = true;
             this.tossBeingChosen = true;
 
@@ -1293,6 +1303,16 @@ export default {
           }
 
           case "toss_being_chosen": {
+            // quick and dirty workaround for when the choose deck phase is skipped for matches with random deck format
+            if(!this.decks.length) {
+              this.decks.push("random")
+            }
+            if(!this.deck) {
+              this.deck = "random";
+            }
+
+            
+
             this.tossBeingChosen = true;
 
             break;
