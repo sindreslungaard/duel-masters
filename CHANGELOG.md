@@ -7,6 +7,7 @@
 ## 09/04/2025
 
 - Refactored how attacking and blocking works under the hood to be more accurate with rulings (thanks @DragosIonita23)
+- Option to choose between regular or random decks format when creating a match
 
 ## 17/02/2025
 
