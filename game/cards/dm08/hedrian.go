@@ -17,7 +17,7 @@ func MotorcycleMutant(c *match.Card) {
 	c.ManaCost = 4
 	c.ManaRequirement = []string{civ.Darkness}
 
-	c.Use(fx.Creature, fx.Blocker, fx.CantAttackCreatures, fx.CantAttackPlayers,
+	c.Use(fx.Creature, fx.Blocker(), fx.CantAttackCreatures, fx.CantAttackPlayers,
 		fx.When(fx.AnotherOwnCreatureSummoned, fx.DestroyYourself),
 	)
 }
