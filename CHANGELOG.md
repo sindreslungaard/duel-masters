@@ -2,7 +2,7 @@
 
 ## [Unreleased]
 
-- No unreleased changes
+- Fixed an issue where "Vacuum Gel" could destroy untapped creatures with its effect (thanks @DragosIonita23)
 
 ## 09/04/2025
 
