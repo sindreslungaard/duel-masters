@@ -17,7 +17,7 @@ func ProtectiveForce(c *match.Card) {
 
 	c.Use(fx.Spell, fx.ShieldTrigger, fx.When(fx.SpellCast, func(card *match.Card, ctx *match.Context) {
 
-		fx.SelectFilterSelectablesOnly(
+		fx.SelectFilter(
 			card.Player,
 			ctx.Match,
 			card.Player,
@@ -27,9 +27,10 @@ func ProtectiveForce(c *match.Card) {
 			1,
 			false,
 			func(x *match.Card) bool { return x.HasCondition(cnd.Blocker) },
+			false,
 		).Map(func(x *match.Card) {
 			x.AddCondition(cnd.PowerAmplifier, 4000, card.ID)
-			ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s was given +4000 power", x.Name))
+			ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s was given +4000 power by %s's effect", x.Name, card.Name))
 		})
 
 	}))
@@ -368,42 +369,39 @@ func BondsOfJustice(c *match.Card) {
 	c.ManaCost = 4
 	c.ManaRequirement = []string{civ.Light}
 
-	c.Use(fx.Spell, fx.ShieldTrigger, func(card *match.Card, ctx *match.Context) {
+	c.Use(fx.Spell, fx.ShieldTrigger, fx.When(fx.SpellCast, func(card *match.Card, ctx *match.Context) {
 
-		if match.AmICasted(card, ctx) {
+		notblockers := make([]*match.Card, 0)
 
-			notblockers := make([]*match.Card, 0)
+		opponentBattlezone, err := ctx.Match.Opponent(card.Player).Container(match.BATTLEZONE)
 
-			opponentBattlezone, err := ctx.Match.Opponent(card.Player).Container(match.BATTLEZONE)
+		if err != nil {
+			return
+		}
 
-			if err != nil {
-				return
-			}
+		myBattlezone, err := card.Player.Container(match.BATTLEZONE)
 
-			myBattlezone, err := card.Player.Container(match.BATTLEZONE)
+		if err != nil {
+			return
+		}
 
-			if err != nil {
-				return
-			}
-
-			for _, creature := range myBattlezone {
-				if !creature.HasCondition(cnd.Blocker) {
-					notblockers = append(notblockers, creature)
-				}
-			}
-
-			for _, creature := range opponentBattlezone {
-				if !creature.HasCondition(cnd.Blocker) {
-					notblockers = append(notblockers, creature)
-				}
-			}
-			for _, notblocker := range notblockers {
-				notblocker.Tapped = true
-				ctx.Match.ReportActionInChat(notblocker.Player, fmt.Sprintf("%s was tapped by Bonds of Justice", notblocker.Name))
+		for _, creature := range myBattlezone {
+			if !creature.HasCondition(cnd.Blocker) {
+				notblockers = append(notblockers, creature)
 			}
 		}
 
-	})
+		for _, creature := range opponentBattlezone {
+			if !creature.HasCondition(cnd.Blocker) {
+				notblockers = append(notblockers, creature)
+			}
+		}
+		for _, notblocker := range notblockers {
+			notblocker.Tapped = true
+			ctx.Match.ReportActionInChat(notblocker.Player, fmt.Sprintf("%s was tapped by %s", notblocker.Name, card.Name))
+		}
+
+	}))
 }
 
 func EnergyStream(c *match.Card) {
@@ -472,7 +470,7 @@ func CometMissile(c *match.Card) {
 
 	c.Use(fx.Spell, fx.ShieldTrigger, fx.When(fx.SpellCast, func(card *match.Card, ctx *match.Context) {
 
-		creatures := fx.SelectFilterSelectablesOnly(
+		creatures := fx.SelectFilter(
 			card.Player,
 			ctx.Match,
 			ctx.Match.Opponent(card.Player),
@@ -481,7 +479,9 @@ func CometMissile(c *match.Card) {
 			1,
 			1,
 			false,
-			func(x *match.Card) bool { return x.HasCondition(cnd.Blocker) && ctx.Match.GetPower(x, false) <= 6000 })
+			func(x *match.Card) bool { return x.HasCondition(cnd.Blocker) && ctx.Match.GetPower(x, false) <= 6000 },
+			false,
+		)
 
 		for _, creature := range creatures {
 

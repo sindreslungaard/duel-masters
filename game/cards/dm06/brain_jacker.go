@@ -16,6 +16,6 @@ func CursedPincher(c *match.Card) {
 	c.ManaCost = 4
 	c.ManaRequirement = []string{civ.Darkness}
 
-	c.Use(fx.Creature, fx.Blocker, fx.Slayer, fx.CantAttackPlayers, fx.CantAttackCreatures)
+	c.Use(fx.Creature, fx.Blocker(), fx.Slayer, fx.CantAttackPlayers, fx.CantAttackCreatures)
 
 }

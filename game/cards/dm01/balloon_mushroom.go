@@ -5,6 +5,7 @@ import (
 	"duel-masters/game/family"
 	"duel-masters/game/fx"
 	"duel-masters/game/match"
+	"fmt"
 )
 
 // PoisonousMushroom ...
@@ -19,33 +20,20 @@ func PoisonousMushroom(c *match.Card) {
 
 	c.Use(fx.Creature, fx.When(fx.Summoned, func(card *match.Card, ctx *match.Context) {
 
-		hand, err := card.Player.Container(match.HAND)
+		selectedCards := fx.Select(
+			card.Player,
+			ctx.Match,
+			card.Player,
+			match.HAND,
+			fmt.Sprintf("%s: You may select 1 card from your hand that will be sent to your manazone.", card.Name),
+			1,
+			1,
+			true,
+		)
 
-		if err != nil {
-			return
-		}
-
-		ctx.Match.NewAction(card.Player, hand, 1, 1, "Select 1 card from your hand that will be sent to your manazone. Choose close to cancel.", true)
-
-		defer ctx.Match.CloseAction(card.Player)
-
-		for {
-
-			action := <-card.Player.Action
-
-			if action.Cancel {
-				break
-			}
-
-			if len(action.Cards) != 1 || !match.AssertCardsIn(hand, action.Cards...) {
-				ctx.Match.DefaultActionWarning(card.Player)
-				continue
-			}
-
-			card.Player.MoveCard(action.Cards[0], match.HAND, match.MANAZONE, card.ID)
-
-			break
-
+		if len(selectedCards) > 0 {
+			card.Player.MoveCard(selectedCards[0].ID, match.HAND, match.MANAZONE, card.ID)
+			ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s was moved to the manazone from your hand by %s's effect.", selectedCards[0].Name, card.Name))
 		}
 
 	}))

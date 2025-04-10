@@ -29,7 +29,7 @@ func GregoriaPrincessOfWar(c *match.Card) {
 
 			demonCommands = append(demonCommands,
 				fx.FindFilter(
-					ctx.Match.Opponent(card.Player),
+					ctx2.Match.Opponent(card.Player),
 					match.BATTLEZONE,
 					func(x *match.Card) bool { return x.HasFamily(family.DemonCommand) },
 				)...,
@@ -46,7 +46,7 @@ func GregoriaPrincessOfWar(c *match.Card) {
 
 			demonCommands.Map(func(x *match.Card) {
 				x.AddUniqueSourceCondition(cnd.PowerAmplifier, 2000, card.ID)
-				x.AddUniqueSourceCondition(cnd.Blocker, true, card.ID)
+				fx.ForceBlocker(x, ctx2, card.ID)
 			})
 
 		})

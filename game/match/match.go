@@ -23,6 +23,7 @@ import (
 type Match struct {
 	ID                string                                   `json:"id"`
 	MatchName         string                                   `json:"name"`
+	Format            Format                                   `json:"format"`
 	HostID            string                                   `json:"-"`
 	Player1           *PlayerReference                         `json:"-"`
 	Player2           *PlayerReference                         `json:"-"`
@@ -218,7 +219,6 @@ func (m *Match) Battle(attacker *Card, defender *Card, blocked bool) {
 	attackerPower := m.GetPower(attacker, true)
 	defenderPower := m.GetPower(defender, false)
 
-	m.HandleFx(NewContext(m, &AttackConfirmed{CardID: attacker.ID, Player: false, Creature: true}))
 	m.HandleFx(NewContext(m, &Battle{Attacker: attacker, AttackerPower: attackerPower, Defender: defender, DefenderPower: defenderPower, Blocked: blocked}))
 
 	m.BroadcastState()
@@ -1108,8 +1108,7 @@ func (m *Match) AttackPlayer(p *PlayerReference, cardID string) {
 	}
 
 	ctx := NewContext(m, &AttackPlayer{
-		CardID:   cardID,
-		Blockers: make([]*Card, 0),
+		CardID: cardID,
 	})
 
 	m.HandleFx(ctx)
@@ -1138,7 +1137,6 @@ func (m *Match) AttackCreature(p *PlayerReference, cardID string) {
 
 	ctx := NewContext(m, &AttackCreature{
 		CardID:              cardID,
-		Blockers:            make([]*Card, 0),
 		AttackableCreatures: make([]*Card, 0),
 	})
 
@@ -1332,6 +1330,26 @@ func (m *Match) Parse(s *server.Socket, data []byte) {
 			// If both players have joined, prompt them to choose their decks
 			if m.Player1 != nil && m.Player2 != nil {
 
+				m.Chat("Server", fmt.Sprintf("%s started the game", m.Player1.Username))
+				m.Chat("Server", fmt.Sprintf("%s joined the game", m.Player2.Username))
+
+				// If the match format is RandomFormat, create random decks and go straight to coin toss
+				if m.Format == RandomFormat {
+
+					m.Player1.Player.CreateRandomDeck()
+					m.Player2.Player.CreateRandomDeck()
+
+					m.Chat("Server", fmt.Sprintf("%s has received a randomly generated deck", m.Player1.Username))
+					m.Chat("Server", fmt.Sprintf("%s has received a randomly generated deck", m.Player2.Username))
+
+					m.Player1.Player.Ready = true
+					m.Player2.Player.Ready = true
+
+					// Go straight to coin toss
+					m.CoinToss()
+					return
+				}
+
 				cur, err := db.Decks.Find(context.TODO(), bson.M{
 					"$or": []bson.M{
 						{"owner": m.Player1.Socket.User.UID},
@@ -1346,9 +1364,6 @@ func (m *Match) Parse(s *server.Socket, data []byte) {
 				}
 
 				defer cur.Close(context.TODO())
-
-				m.Chat("Server", fmt.Sprintf("%s started the game", m.Player1.Username))
-				m.Chat("Server", fmt.Sprintf("%s joined the game", m.Player2.Username))
 
 				player1decks := make([]db.LegacyDeck, 0)
 				player2decks := make([]db.LegacyDeck, 0)
@@ -1576,6 +1591,10 @@ func (m *Match) Parse(s *server.Socket, data []byte) {
 		m.eventloop.schedule(func() {
 
 			if m.Started {
+				return
+			}
+
+			if m.Format == RandomFormat {
 				return
 			}
 

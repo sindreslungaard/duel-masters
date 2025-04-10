@@ -15,7 +15,7 @@ func Draw2(card *match.Card, ctx *match.Context) {
 	card.Player.DrawCards(2)
 }
 
-// Draw1ToMana draws 1 card and puts it in the players manazone
+// Draw1ToMana draws 1 card and puts it in the player's manazone
 func Draw1ToMana(card *match.Card, ctx *match.Context) {
 
 	cards := card.Player.PeekDeck(1)
@@ -32,6 +32,13 @@ func Draw1ToMana(card *match.Card, ctx *match.Context) {
 
 	ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s was added to %s's manazone from the top of their deck", c.Name, card.Player.Username()))
 
+}
+
+// MayDraw1ToMana lets the player choose if they want to draw 1 card and put it in the players manazone
+func MayDraw1ToMana(card *match.Card, ctx *match.Context) {
+	if BinaryQuestion(card.Player, ctx.Match, fmt.Sprintf("Do you want to put your top card of your deck into your mana zone? (%s effect)", card.Name)) {
+		Draw1ToMana(card, ctx)
+	}
 }
 
 func Draw2ToMana(card *match.Card, ctx *match.Context) {

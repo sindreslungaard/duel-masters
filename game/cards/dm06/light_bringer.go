@@ -16,7 +16,7 @@ func VessTheOracle(c *match.Card) {
 	c.ManaCost = 1
 	c.ManaRequirement = []string{civ.Light}
 
-	c.Use(fx.Creature, fx.Blocker, fx.CantAttackPlayers)
+	c.Use(fx.Creature, fx.Blocker(), fx.CantAttackPlayers)
 }
 
 func YulukTheOracle(c *match.Card) {
@@ -30,28 +30,27 @@ func YulukTheOracle(c *match.Card) {
 
 	spellcast := false
 
-	c.Use(fx.Creature, func(card *match.Card, ctx *match.Context) {
+	c.Use(fx.Creature,
+		fx.When(fx.IHaveCastASpell, func(card *match.Card, ctx *match.Context) { spellcast = true }),
+		func(card *match.Card, ctx *match.Context) {
 
-		if _, ok := ctx.Event.(*match.SpellCast); ok {
-			spellcast = true
-		}
-
-		_, ok := ctx.Event.(*match.EndStep)
-		if ok {
-			spellcast = false
-		}
-
-		if event, ok := ctx.Event.(*match.PlayCardEvent); ok {
-			if event.CardID == card.ID {
-				if !spellcast {
-					ctx.InterruptFlow()
-					ctx.Match.WarnPlayer(card.Player, "You can summon this creature only if you have cast a spell this round")
-					return
-				}
+			// reset spellcast flag at the end of the turn
+			_, ok := ctx.Event.(*match.EndStep)
+			if ok {
+				spellcast = false
 			}
 
-		}
-	})
+			if event, ok := ctx.Event.(*match.PlayCardEvent); ok {
+				if event.CardID == card.ID {
+					if !spellcast {
+						ctx.InterruptFlow()
+						ctx.Match.WarnPlayer(card.Player, "You can summon this creature only if you have cast a spell this turn")
+						return
+					}
+				}
+
+			}
+		})
 }
 
 func AdomisTheOracle(c *match.Card) {

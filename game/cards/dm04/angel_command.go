@@ -113,7 +113,7 @@ func AerisFlightElemental(c *match.Card) {
 			ctx.Match.Opponent(card.Player),
 			match.BATTLEZONE,
 			func(x *match.Card) bool {
-				return x.Civ == civ.Darkness && x.Tapped == false
+				return x.Civ == civ.Darkness && !x.Tapped
 			},
 		).Map(func(x *match.Card) {
 			// don't add if already in the list of attackable creatures

@@ -1,6 +1,8 @@
 package internal
 
-import "sync"
+import (
+	"sync"
+)
 
 type ConcurrentDictionary[T any] struct {
 	sync.RWMutex

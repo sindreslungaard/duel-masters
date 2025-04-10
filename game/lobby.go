@@ -249,7 +249,8 @@ func (l *Lobby) Parse(s *server.Socket, data []byte) {
 	case "create_match_request":
 		{
 			var msg struct {
-				Name string `json:"name"`
+				Name   string `json:"name"`
+				Format string `json:"format"`
 			}
 
 			if err := json.Unmarshal(data, &msg); err != nil {
@@ -257,7 +258,9 @@ func (l *Lobby) Parse(s *server.Socket, data []byte) {
 				return
 			}
 
-			err := Matchmaker.NewRequest(s, msg.Name, match.RegularFormat)
+			format := match.FormatFromStr(msg.Format)
+
+			err := Matchmaker.NewRequest(s, msg.Name, format)
 
 			if err != nil {
 				s.Warn(err.Error())

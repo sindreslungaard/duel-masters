@@ -241,14 +241,63 @@ func (p *Player) CreateDeck(deck []string) {
 
 }
 
+func (p *Player) CreateRandomDeck() {
+	p.mutex.Lock()
+	defer p.mutex.Unlock()
+
+	cards := GetCardImages()
+	cardsAddedToDeck := make(map[string]int)
+
+	recursions := 0
+	var addRandomCardToDeck func()
+	addRandomCardToDeck = func() {
+		recursions++
+
+		// sanity check
+		if recursions > 1000 {
+			logrus.Error("Max recursions reached in CreateRandomDeck")
+			return
+		}
+
+		cardToAdd := cards[rand.Intn(len(cards))]
+
+		n, ok := cardsAddedToDeck[cardToAdd]
+
+		if !ok {
+			cardsAddedToDeck[cardToAdd] = 1
+		}
+
+		// max limit of this card reached
+		if n >= 4 {
+			addRandomCardToDeck()
+			return
+		}
+
+		cardsAddedToDeck[cardToAdd] = n + 1
+
+		c, err := NewCard(p, cardToAdd)
+
+		if err != nil {
+			logrus.Warnf("Failed to create card with id %s", cardToAdd)
+			return
+		}
+
+		p.deck = append(p.deck, c)
+	}
+
+	for i := 0; i < 40; i++ {
+		addRandomCardToDeck()
+	}
+}
+
 // Empties the players deck
 func (p *Player) DestroyDeck() {
 	p.deck = nil
 }
 
-// SpawnCard creates a new card from an id and adds it to the players hand
+// SpawnCard creates a new card from an id and adds it to the players' given zone
 // used for debugging and development
-func (p *Player) SpawnCard(id string, area string) {
+func (p *Player) SpawnCard(id string, zone string) {
 
 	p.mutex.Lock()
 
@@ -261,9 +310,9 @@ func (p *Player) SpawnCard(id string, area string) {
 		return
 	}
 
-	c.Zone = area
+	c.Zone = zone
 
-	switch area {
+	switch zone {
 	case HAND:
 		p.hand = append(p.hand, c)
 	case MANAZONE:
@@ -276,8 +325,10 @@ func (p *Player) SpawnCard(id string, area string) {
 		p.ShieldMap[c.ID] = p.ShieldCounter
 	case DECK:
 		p.deck = append(p.deck, c)
+	case GRAVEYARD:
+		p.graveyard = append(p.graveyard, c)
 	default:
-		logrus.Warnf("Failed to create card with id %s - invalid area", id)
+		logrus.Warnf("Failed to create card with id %s - invalid zone", id)
 		return
 	}
 }
@@ -550,17 +601,14 @@ func (p *Player) CanPlayCard(card *Card, mana []*Card) bool {
 	manaCost := card.ManaCost
 	for _, condition := range card.Conditions() {
 		if condition.ID == cnd.ReducedCost {
-			if condition.ID == cnd.ReducedCost {
-				manaCost -= condition.Val.(int)
-				if manaCost < 1 {
-					manaCost = 1
-				}
+			manaCost -= condition.Val.(int)
+			if manaCost < 1 {
+				manaCost = 1
 			}
+		}
 
-			if condition.ID == cnd.IncreasedCost {
-				manaCost += condition.Val.(int)
-			}
-
+		if condition.ID == cnd.IncreasedCost {
+			manaCost += condition.Val.(int)
 		}
 	}
 

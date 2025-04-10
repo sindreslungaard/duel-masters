@@ -16,5 +16,5 @@ func TitaniumCluster(c *match.Card) {
 	c.ManaCost = 4
 	c.ManaRequirement = []string{civ.Water}
 
-	c.Use(fx.Creature, fx.Blocker, fx.CantBeAttacked, fx.CantAttackCreatures, fx.CantAttackPlayers)
+	c.Use(fx.Creature, fx.Blocker(), fx.CantBeAttacked, fx.CantAttackCreatures, fx.CantAttackPlayers)
 }

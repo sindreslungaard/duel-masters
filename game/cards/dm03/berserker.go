@@ -22,7 +22,7 @@ func AlekSolidityEnforcer(c *match.Card) {
 		return (getLightCardsInYourBattleZone(c) - 1) * 1000 //-1 to exclude self
 	}
 
-	c.Use(fx.Creature, fx.Blocker)
+	c.Use(fx.Creature, fx.Blocker())
 }
 
 // Return the number of water creatures in your battle zone

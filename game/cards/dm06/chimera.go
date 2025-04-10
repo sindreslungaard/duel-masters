@@ -16,7 +16,7 @@ func Gigagriff(c *match.Card) {
 	c.ManaCost = 6
 	c.ManaRequirement = []string{civ.Darkness}
 
-	c.Use(fx.Creature, fx.Blocker, fx.Slayer, fx.CantAttackPlayers, fx.CantAttackCreatures)
+	c.Use(fx.Creature, fx.Blocker(), fx.Slayer, fx.CantAttackPlayers, fx.CantAttackCreatures)
 }
 
 func PhantasmalHorrorGigazald(c *match.Card) {

@@ -25,7 +25,7 @@ func FrostSpecterShadowOfAge(c *match.Card) {
 			if card.Zone != match.BATTLEZONE {
 
 				// remove cards with current buffs
-				getGhostCreatures(card, ctx).Map(func(x *match.Card) {
+				getGhostCreatures(card).Map(func(x *match.Card) {
 					x.RemoveConditionBySource(card.ID)
 				})
 
@@ -34,7 +34,7 @@ func FrostSpecterShadowOfAge(c *match.Card) {
 
 			}
 
-			getGhostCreatures(card, ctx).Map(func(x *match.Card) {
+			getGhostCreatures(card).Map(func(x *match.Card) {
 				x.AddUniqueSourceCondition(cnd.Slayer, true, card.ID)
 			})
 
@@ -44,7 +44,7 @@ func FrostSpecterShadowOfAge(c *match.Card) {
 
 }
 
-func getGhostCreatures(card *match.Card, ctx *match.Context) fx.CardCollection {
+func getGhostCreatures(card *match.Card) fx.CardCollection {
 
 	ghostCreatures := fx.FindFilter(
 		card.Player,

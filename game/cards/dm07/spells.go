@@ -140,16 +140,16 @@ func FruitOfEternity(c *match.Card) {
 
 	c.Use(fx.Spell, fx.ShieldTrigger, fx.When(fx.SpellCast, func(card *match.Card, ctx *match.Context) {
 
-		ctx.Match.ApplyPersistentEffect(func(ctx *match.Context, exit func()) {
+		ctx.Match.ApplyPersistentEffect(func(ctx2 *match.Context, exit func()) {
 
-			if event, ok := ctx.Event.(*match.CreatureDestroyed); ok && event.Card.Player == card.Player {
-				ctx.InterruptFlow()
+			if event, ok := ctx2.Event.(*match.CreatureDestroyed); ok && event.Card.Player == card.Player {
+				ctx2.InterruptFlow()
 				card.Player.MoveCard(event.Card.ID, match.BATTLEZONE, match.MANAZONE, card.ID)
-				ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s was destroyed but moved to manazone because of %s", event.Card.Name, card.Name))
+				ctx2.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s was destroyed but moved to manazone because of %s", event.Card.Name, card.Name))
 			}
 
 			// remove persistent effect when turn ends
-			_, ok := ctx.Event.(*match.EndStep)
+			_, ok := ctx2.Event.(*match.EndStep)
 			if ok {
 				exit()
 			}
