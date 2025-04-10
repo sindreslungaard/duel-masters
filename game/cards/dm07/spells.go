@@ -171,16 +171,17 @@ func VacuumGel(c *match.Card) {
 			ctx.Match,
 			ctx.Match.Opponent(card.Player),
 			match.BATTLEZONE,
-			"Destroy one of your opponent's untapped light or untapped nature creatures",
+			fmt.Sprintf("%s's effect: Destroy one of your opponent's untapped light or untapped nature creatures.", card.Name),
 			1,
 			1,
 			false,
-			func(x *match.Card) bool { return !x.Tapped && x.Civ == civ.Light || x.Civ == civ.Nature },
+			func(x *match.Card) bool { return !x.Tapped && (x.Civ == civ.Light || x.Civ == civ.Nature) },
 			false,
 		).Map(func(x *match.Card) {
 			ctx.Match.Destroy(x, card, match.DestroyedBySpell)
 		})
 	}))
+
 }
 
 func MiraclePortal(c *match.Card) {
