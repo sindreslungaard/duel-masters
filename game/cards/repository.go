@@ -608,6 +608,7 @@ var DM08 = map[string]match.CardConstructor{
 	"89e8ff15-344c-4126-ada7-8ee2966b8a71": dm08.SashaChannelerOfSuns,
 	"38220cfa-531c-4aa1-9b4f-e3c1cc85b1fd": dm08.AquaGrappler,
 	"d03a8283-6c9b-4a0c-aec7-41d44a6f2fcf": dm08.GrapeGlobbo,
+	"fd02460a-f9d8-456c-85da-5f37bb5ab84d": dm08.Lalicious,
 	"aea2d65b-f0c4-45ed-97ee-9d430cb64400": dm08.MarineScramble,
 	"6edd4023-afe2-4b53-a8b7-d29d851a63c4": dm08.ProwlingElephish,
 	"560eb5b5-9fdf-45f8-aecc-62048b269b23": dm08.WaveLance,

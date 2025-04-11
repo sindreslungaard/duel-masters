@@ -13,7 +13,7 @@ func Lalicious(c *match.Card) {
 	c.Name = "Lalicious"
 	c.Power = 4000
 	c.Civ = civ.Water
-	c.Family = []string{family.MechaDelSol}
+	c.Family = []string{family.SeaHacker}
 	c.ManaCost = 6
 	c.ManaRequirement = []string{civ.Water}
 
@@ -21,7 +21,7 @@ func Lalicious(c *match.Card) {
 
 		oppHandIds := make([]string, 0)
 
-		fx.Find(ctx.Match.Opponent(card.Player), match.BATTLEZONE).Map(func(x *match.Card) {
+		fx.Find(ctx.Match.Opponent(card.Player), match.HAND).Map(func(x *match.Card) {
 			oppHandIds = append(oppHandIds, x.ImageID)
 		})
 

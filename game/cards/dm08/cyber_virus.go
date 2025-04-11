@@ -13,7 +13,7 @@ func GrapeGlobbo(c *match.Card) {
 	c.Name = "Grape Globbo"
 	c.Power = 1000
 	c.Civ = civ.Water
-	c.Family = []string{family.MechaDelSol}
+	c.Family = []string{family.CyberVirus}
 	c.ManaCost = 2
 	c.ManaRequirement = []string{civ.Water}
 
@@ -21,7 +21,7 @@ func GrapeGlobbo(c *match.Card) {
 
 		opponentHandIds := make([]string, 0)
 
-		fx.Find(ctx.Match.Opponent(card.Player), match.BATTLEZONE).Map(func(x *match.Card) {
+		fx.Find(ctx.Match.Opponent(card.Player), match.HAND).Map(func(x *match.Card) {
 			opponentHandIds = append(opponentHandIds, x.ImageID)
 		})
 

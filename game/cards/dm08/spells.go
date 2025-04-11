@@ -170,42 +170,37 @@ func LunarCharger(c *match.Card) {
 
 	c.Use(fx.Spell, fx.Charger, fx.When(fx.SpellCast, func(card *match.Card, ctx *match.Context) {
 
-		selectedCards := fx.Select(
+		fx.Select(
 			card.Player,
 			ctx.Match,
 			card.Player,
 			match.BATTLEZONE,
-			"Choose up to 2 of your creatures in the battlezone. At the end of the turn, you may untap them.",
+			fmt.Sprintf("%s's effect: Choose up to 2 of your creatures in the battlezone. At the end of the turn, you may untap them.", card.Name),
 			1,
 			2,
 			true,
-		)
+		).Map(func(x *match.Card) {
+			ctx.Match.ApplyPersistentEffect(func(ctx2 *match.Context, exit func()) {
+				if x.Zone != match.BATTLEZONE {
+					exit()
+					return
+				}
 
-		for _, selCard := range selectedCards {
-
-			selCard.Use(func(card2 *match.Card, ctx *match.Context) {
-				ctx.Match.ApplyPersistentEffect(func(ctx2 *match.Context, exit func()) {
-					if card2.Zone != match.BATTLEZONE {
-						exit()
-						return
-					}
-
-					if _, ok := ctx.Event.(*match.EndOfTurnStep); ok {
-						ctx2.ScheduleAfter(func() {
-							if card2.Tapped {
-								// you may untap this creature
-								if fx.BinaryQuestion(card2.Player, ctx.Match, fmt.Sprintf("%s's effect: Do you want to untap %s?", card.Name, card2.Name)) {
-									card2.Tapped = false
-								}
+				if _, ok := ctx.Event.(*match.EndOfTurnStep); ok {
+					ctx2.ScheduleAfter(func() {
+						if x.Tapped {
+							// you may untap this creature
+							if fx.BinaryQuestion(x.Player, ctx.Match, fmt.Sprintf("%s's effect: Do you want to untap %s?", card.Name, x.Name)) {
+								x.Tapped = false
+								ctx2.Match.BroadcastState()
 							}
+						}
 
-							exit()
-						})
-					}
-				})
+						exit()
+					})
+				}
 			})
-
-		}
+		})
 
 	}))
 }
