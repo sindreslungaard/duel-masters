@@ -60,10 +60,14 @@ func DrawUpTo3(card *match.Card, ctx *match.Context) {
 
 // This gives the player the choice to select a number of cards to draw upto the provided limit
 func DrawUpto(card *match.Card, ctx *match.Context, max int) {
-	for i := 0; i < max; i++ {
+	for range max {
 		if BinaryQuestion(card.Player, ctx.Match, fmt.Sprintf("Do you want to draw? (%s effect)", card.Name)) {
-			card.Player.DrawCards(1)
+			drawnCards := card.Player.DrawCards(1)
 			ctx.Match.BroadcastState()
+
+			if len(drawnCards) == 1 {
+				ctx.Match.ShowCards(card.Player, fmt.Sprintf("%s's effect: You drew %s", card.Name, drawnCards[0].Name), []string{drawnCards[0].ImageID})
+			}
 		} else {
 			return
 		}
