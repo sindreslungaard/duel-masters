@@ -19,9 +19,7 @@ func GulanRiasSpeedGuardian(c *match.Card) {
 
 	c.Use(
 		fx.Creature,
-		fx.CantBeBlockedIf(func(blocker *match.Card) bool {
-			return blocker.Civ == civ.Darkness
-		}),
+		fx.CantBeBlockedByDarkness,
 		fx.CantBeAttackedIf(func(attacker *match.Card) bool {
 			return attacker.Civ == civ.Darkness
 		}),
@@ -50,7 +48,7 @@ func MistRiasSonicGuardian(c *match.Card) {
 
 			if fx.AnotherCreatureSummoned(card, ctx2) {
 
-				fx.MayDraw1(card, ctx)
+				fx.MayDraw1(card, ctx2)
 
 			}
 

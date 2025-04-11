@@ -22,7 +22,7 @@ func KingBenthos(c *match.Card) {
 			match.BATTLEZONE,
 			func(card *match.Card) bool { return card.Civ == civ.Water },
 		).Map(func(x *match.Card) {
-			x.AddCondition(cnd.CantBeBlocked, nil, card.ID)
+			x.AddUniqueSourceCondition(cnd.CantBeBlocked, nil, card.ID)
 		})
 	}
 

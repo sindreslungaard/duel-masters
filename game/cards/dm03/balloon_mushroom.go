@@ -5,6 +5,7 @@ import (
 	"duel-masters/game/family"
 	"duel-masters/game/fx"
 	"duel-masters/game/match"
+	"fmt"
 )
 
 // Psyshroom ...
@@ -19,18 +20,20 @@ func Psyshroom(c *match.Card) {
 
 	c.Use(fx.Creature, fx.When(fx.AttackConfirmed, func(card *match.Card, ctx *match.Context) {
 
-		fx.SelectFilterSelectablesOnly(
+		fx.SelectFilter(
 			card.Player,
 			ctx.Match,
 			card.Player,
 			match.GRAVEYARD,
-			"Psyshroom: You may choose a nature card from your graveyard to put into your mana zone",
+			fmt.Sprintf("%s's effect: You may choose a nature card from your graveyard to put into your mana zone", card.Name),
 			0,
 			1,
 			true,
 			func(x *match.Card) bool { return x.Civ == civ.Nature },
+			false,
 		).Map(func(x *match.Card) {
 			card.Player.MoveCard(x.ID, match.GRAVEYARD, match.MANAZONE, card.ID)
+			ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s was sent to %s's manazone from their graveyard by %s's effect.", x.Name, card.Player.Username(), card.Name))
 		})
 	}))
 

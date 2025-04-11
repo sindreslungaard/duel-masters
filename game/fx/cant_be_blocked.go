@@ -1,8 +1,10 @@
 package fx
 
 import (
+	"duel-masters/game/civ"
 	"duel-masters/game/cnd"
 	"duel-masters/game/match"
+	"fmt"
 )
 
 // CantBeBlocked allows the card to attack without being blocked
@@ -16,38 +18,82 @@ func CantBeBlocked(card *match.Card, ctx *match.Context) {
 
 }
 
-// CantBeBlockedBy
-func CantBeBlockedIf(test func(blocker *match.Card) bool) func(*match.Card, *match.Context) {
+func GiveOwnCreatureCantBeBlocked(card *match.Card, ctx *match.Context) {
+	Select(card.Player, ctx.Match, card.Player, match.BATTLEZONE,
+		"Choose a card to receive 'Can't be blocked this turn'", 1, 1, false,
+	).Map(func(x *match.Card) {
+		x.AddUniqueSourceCondition(cnd.CantBeBlocked, nil, card.ID)
+		ctx.Match.ReportActionInChat(card.Player,
+			fmt.Sprintf("%s tap effect: %s can't be blocked this turn", card.Name, x.Name))
+	})
+}
 
-	return func(card *match.Card, ctx *match.Context) {
+func CantBeBlockedByDarkness(card *match.Card, ctx *match.Context) {
+	filterBlocker(card, ctx, func(blocker *match.Card) bool {
+		return blocker.Civ != civ.Darkness
+	})
+}
 
-		filter := func(blockers []*match.Card) []*match.Card {
-			filtered := []*match.Card{}
+func CantBeBlockedByLight(card *match.Card, ctx *match.Context) {
+	filterBlocker(card, ctx, func(blocker *match.Card) bool {
+		return blocker.Civ != civ.Light
+	})
+}
 
-			for _, b := range blockers {
-				if !test(b) {
-					filtered = append(filtered, b)
-				}
+func CantBeBlockedByPower4000OrMore(card *match.Card, ctx *match.Context) {
+	cantBeBlockedByPowerXOrMore(card, ctx, 4000)
+}
+
+func CantBeBlockedByPowerUpTo4000(card *match.Card, ctx *match.Context) {
+	cantBeBlockedByPowerUpTo(card, ctx, 4000)
+}
+
+func CantBeBlockedByPowerUpTo5000(card *match.Card, ctx *match.Context) {
+	cantBeBlockedByPowerUpTo(card, ctx, 5000)
+}
+
+func CantBeBlockedByPowerUpTo8000(card *match.Card, ctx *match.Context) {
+	cantBeBlockedByPowerUpTo(card, ctx, 8000)
+}
+
+func CantBeBlockedByPowerUpTo3000(card *match.Card, ctx *match.Context) {
+	cantBeBlockedByPowerUpTo(card, ctx, 3000)
+}
+
+func cantBeBlockedByPowerUpTo(card *match.Card, ctx *match.Context, power int) {
+	filterBlocker(card, ctx, func(blocker *match.Card) bool {
+		return ctx.Match.GetPower(blocker, false) > power
+	})
+}
+
+func cantBeBlockedByPowerXOrMore(card *match.Card, ctx *match.Context, power int) {
+	filterBlocker(card, ctx, func(blocker *match.Card) bool {
+		return ctx.Match.GetPower(blocker, false) < power
+	})
+}
+
+// filterBlocker
+func filterBlocker(card *match.Card, ctx *match.Context, test func(blocker *match.Card) bool) {
+
+	filter := func(blockers []*match.Card) []*match.Card {
+		filtered := []*match.Card{}
+
+		for _, b := range blockers {
+			if test(b) {
+				filtered = append(filtered, b)
 			}
-
-			return filtered
 		}
 
-		switch event := ctx.Event.(type) {
+		return filtered
+	}
 
-		case *match.AttackCreature:
-			if event.CardID != card.ID {
-				return
-			}
+	if event, ok := ctx.Event.(*match.SelectBlockers); ok &&
+		event.Attacker == card &&
+		event.Attacker.Zone == match.BATTLEZONE {
+
+		ctx.ScheduleAfter(func() {
 			event.Blockers = filter(event.Blockers)
-		case *match.AttackPlayer:
-			if event.CardID != card.ID {
-				return
-			}
-			event.Blockers = filter(event.Blockers)
-		default:
-			return
-		}
+		})
 
 	}
 

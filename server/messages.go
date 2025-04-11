@@ -139,6 +139,7 @@ type MatchMessage struct {
 	Name        string `json:"name"`
 	Started     bool   `json:"spectate"`
 	Matchmaking bool   `json:"matchmaking"`
+	Format      string `json:"format"`
 }
 
 // MatchesListMessage is used to list open matches

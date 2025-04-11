@@ -19,28 +19,22 @@ func AmberPiercer(c *match.Card) {
 	c.ManaCost = 4
 	c.ManaRequirement = []string{civ.Darkness}
 
-	c.Use(fx.Creature, fx.When(fx.Attacking, func(card *match.Card, ctx *match.Context) {
+	c.Use(fx.Creature, fx.When(fx.AttackConfirmed, func(card *match.Card, ctx *match.Context) {
 
-		ctx.ScheduleAfter(func() {
-
-			fx.SelectFilterSelectablesOnly(
-				card.Player,
-				ctx.Match,
-				card.Player,
-				match.GRAVEYARD,
-				"Amber Piercer: Select a card to return from your graveyard to your hand.",
-				1,
-				1,
-				true,
-				func(x *match.Card) bool { return x.HasCondition(cnd.Creature) },
-			).Map(func(x *match.Card) {
-				if x.ID == card.ID {
-					return
-				}
-				card.Player.MoveCard(x.ID, match.GRAVEYARD, match.HAND, card.ID)
-				ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s was returned to %s's hand from their graveyard by Amber Piercer", x.Name, x.Player.Username()))
-			})
-
+		fx.SelectFilter(
+			card.Player,
+			ctx.Match,
+			card.Player,
+			match.GRAVEYARD,
+			"You may select a creature to return from your graveyard to your hand.",
+			1,
+			1,
+			true,
+			func(x *match.Card) bool { return x.HasCondition(cnd.Creature) },
+			false,
+		).Map(func(x *match.Card) {
+			card.Player.MoveCard(x.ID, match.GRAVEYARD, match.HAND, card.ID)
+			ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s was sent to %s's hand from their graveyard by %s's effect", x.Name, card.Player.Username(), card.Name))
 		})
 
 	}))

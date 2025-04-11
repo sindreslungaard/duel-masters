@@ -16,5 +16,19 @@ func KingTriumphant(c *match.Card) {
 	c.ManaCost = 8
 	c.ManaRequirement = []string{civ.Water}
 
-	c.Use(fx.Creature, fx.Doublebreaker, ReceiveBlockerWhenOpponentPlaysCreatureOrSpell)
+	isBlocker := false
+
+	c.Use(fx.Creature, fx.Doublebreaker,
+		fx.When(ReceiveBlockerWhenOpponentPlaysCreatureOrSpell,
+			func(c *match.Card, ctx *match.Context) { isBlocker = true }),
+		fx.When(fx.EndOfTurn,
+			func(c *match.Card, ctx *match.Context) {
+				isBlocker = false
+				c.RemoveConditionBySource(c.ID)
+			}),
+		fx.When(func(c *match.Card, ctx *match.Context) bool { return isBlocker },
+			func(c *match.Card, ctx *match.Context) {
+				fx.ForceBlocker(c, ctx, c.ID)
+			}),
+	)
 }

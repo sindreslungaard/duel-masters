@@ -172,3 +172,15 @@ func ConvertFromLegacyDeck(deck db.LegacyDeck) db.Deck {
 	}
 
 }
+
+func GetCardImages() []string {
+	lookupMutex.RLock()
+	defer lookupMutex.RUnlock()
+
+	s := make([]string, 0, len(imageLookup))
+	for img := range imageLookup {
+		s = append(s, img)
+	}
+
+	return s
+}

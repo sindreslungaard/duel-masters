@@ -42,7 +42,7 @@ func SpinningTotem(c *match.Card) {
 					return
 				}
 
-				fx.DestoryOpShield(card, ctx)
+				fx.DestoryOpShield(card, ctx2)
 			}
 
 			// remove persistent effect when turn ends

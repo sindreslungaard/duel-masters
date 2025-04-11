@@ -29,6 +29,12 @@
               <option value="public">Show in list of duels</option>
               <option value="private">Hide from list of duels</option>
             </select>
+            <br /><br />
+            <span class="helper">Format</span>
+            <select v-model="wizard.format">
+              <option value="regular">Regular</option>
+              <option value="random">Random decks</option>
+            </select>
 
             <span v-if="wizardError" class="errorMsg">{{ wizardError }}</span>
 
@@ -152,7 +158,7 @@
 
             <!-- Match requests -->
             <tr v-for="(request, index) in matchRequests" :key="index">
-              <td style="width: 30%">
+              <td class="w-1/4">
                 <div class="match-players">
                   <Username :color="request.host_color">{{
                     request.host_name
@@ -171,14 +177,17 @@
                   >
                 </div>
               </td>
-              <td style="width: 45%">
+              <td class="w-1/4">
                 {{
                   request.guest_id == uid
                     ? "Waiting for the host to start the match" + loadingDots
                     : request.name
                 }}
               </td>
-              <td style="width: 25%">
+              <td class="w-1/4">
+                <span class="text-[11px] uppercase font-bold text-gray-600">Format: {{ request.format}}</span>
+              </td>
+              <td class="w-1/4">
                 <div
                   @click="leaveMatch(request)"
                   v-show="request.host_id == uid && !request.guest_id"
@@ -237,7 +246,7 @@
 
             <!-- Matches -->
             <tr v-for="(match, index) in matches" :key="index">
-              <td>
+              <td class="w-1/4">
                 <div class="match-players">
                   <Username :color="match.p1color">{{ match.p1 }}</Username>
                   <div v-show="match.p2">vs</div>
@@ -246,8 +255,9 @@
                   }}</Username>
                 </div>
               </td>
-              <td>{{ match.name }}</td>
-              <td>
+              <td class="w-1/4">{{ match.name }}</td>
+              <td class="w-1/4"><span class="text-[11px] uppercase font-bold text-gray-600">Format: {{ match.format }}</span></td>
+              <td class="w-1/4">
                 <div
                   @click="$router.push('/duel/' + match.id)"
                   :class="'btn' + (match.spectate ? '' : ' save')"
@@ -320,7 +330,8 @@ export default {
       wizard: {
         name: "",
         description: "",
-        visibility: "public"
+        visibility: "public",
+        format: "regular",
       },
       chatMessage: "",
       chatMessages: [],
@@ -359,7 +370,8 @@ export default {
       this.wizard = {
         name: "",
         description: "",
-        visibility: "public"
+        visibility: "public",
+        format: "regular",
       };
       this.wizardVisible = state;
     },
@@ -403,14 +415,16 @@ export default {
       this.ws.send(
         JSON.stringify({
           header: "create_match_request",
-          name: this.wizard.name
+          name: this.wizard.name,
+          format: this.wizard.format
         })
       );
       this.wizardVisible = false;
       this.wizard = {
         name: "",
         description: "",
-        visibility: "public"
+        visibility: "public",
+        format: "regular"
       };
     },
     sendChat(message) {

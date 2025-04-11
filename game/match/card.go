@@ -159,7 +159,7 @@ func (c *Card) RemoveConditionBySource(src string) {
 
 }
 
-// RemoveConditionBySource removes all instances of conditions with given source
+// RemoveConditionBySource removes all instances of specific conditions with given source
 func (c *Card) RemoveSpecificConditionBySource(cnd string, src string) {
 
 	tmp := make([]Condition, 0)

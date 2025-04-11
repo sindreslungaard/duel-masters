@@ -5,6 +5,7 @@ import (
 	"duel-masters/game/family"
 	"duel-masters/game/fx"
 	"duel-masters/game/match"
+	"fmt"
 )
 
 // ArmoredWalkerUrherion ...
@@ -44,7 +45,16 @@ func RothusTheTraveler(c *match.Card) {
 
 	c.Use(fx.Creature, fx.When(fx.Summoned, func(card *match.Card, ctx *match.Context) {
 
-		creatures := match.Search(card.Player, ctx.Match, card.Player, match.BATTLEZONE, "Rothus, the Traveler: Select 1 creature from your battlezone that will be sent to your graveyard", 1, 1, false)
+		creatures := fx.Select(
+			card.Player,
+			ctx.Match,
+			card.Player,
+			match.BATTLEZONE,
+			fmt.Sprintf("%s: Select 1 creature from your battlezone that will be sent to your graveyard", card.Name),
+			1,
+			1,
+			false,
+		)
 
 		for _, creature := range creatures {
 			ctx.Match.Destroy(creature, card, match.DestroyedByMiscAbility)
@@ -53,7 +63,16 @@ func RothusTheTraveler(c *match.Card) {
 		ctx.Match.Wait(card.Player, "Waiting for your opponent to make an action")
 		defer ctx.Match.EndWait(card.Player)
 
-		opponentCreatures := match.Search(ctx.Match.Opponent(card.Player), ctx.Match, ctx.Match.Opponent(card.Player), match.BATTLEZONE, "Rothus, the Traveler: Select 1 creature from your battlezone that will be sent to your graveyard", 1, 1, false)
+		opponentCreatures := fx.Select(
+			ctx.Match.Opponent(card.Player),
+			ctx.Match,
+			ctx.Match.Opponent(card.Player),
+			match.BATTLEZONE,
+			fmt.Sprintf("%s: Select 1 creature from your battlezone that will be sent to your graveyard", card.Name),
+			1,
+			1,
+			false,
+		)
 
 		for _, creature := range opponentCreatures {
 			ctx.Match.Destroy(creature, card, match.DestroyedByMiscAbility)

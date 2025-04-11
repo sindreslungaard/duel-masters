@@ -17,7 +17,7 @@ func DarkRavenShadowOfGrief(c *match.Card) {
 	c.ManaCost = 4
 	c.ManaRequirement = []string{civ.Darkness}
 
-	c.Use(fx.Creature, fx.Blocker)
+	c.Use(fx.Creature, fx.Blocker())
 
 }
 
@@ -45,7 +45,7 @@ func NightMasterShadowOfDecay(c *match.Card) {
 	c.ManaCost = 6
 	c.ManaRequirement = []string{civ.Darkness}
 
-	c.Use(fx.Creature, fx.Blocker)
+	c.Use(fx.Creature, fx.Blocker())
 
 }
 

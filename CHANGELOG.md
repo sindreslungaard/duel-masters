@@ -2,7 +2,33 @@
 
 ## [Unreleased]
 
+- No unreleased changes
+
+## 11/04/2025
+- Fixed an issue where "Vacuum Gel" could destroy untapped creatures with its effect (thanks @DragosIonita23)
+- Added automated chat moderation
+
+## 09/04/2025
+
+- Refactored how attacking and blocking works under the hood to be more accurate with rulings (thanks @DragosIonita23)
+- Option to choose between regular or random decks format when creating a match
+
+## 17/02/2025
+
 - Updated cards that prompts the user whether or not to draw a card to draw and ask the user sequentially rather than all at once (thanks @jyotiskaghosh)
+- Added the option to resign from a match (thanks @jyotiskaghosh)
+- Fixed an issue where Star-Cry Dragon's effect would apply to opponent's cards as well (thanks @jyotiskaghosh)
+- New card "Quixotic Hero Swine Snout" (thanks @jyotiskaghosh)
+- New card "Corpse Charger" (thanks @jyotiskaghosh)
+- New card "Cranium Clamp" (thanks @jyotiskaghosh)
+- New card "Terradragon Regarion" (thanks @jyotiskaghosh)
+- New card "Aqua Ranger" (thanks @jyotiskaghosh)
+- New card "Volcano Charger" (thanks @jyotiskaghosh)
+- New card "Eureka Charger" (thanks @jyotiskaghosh)
+- New card "Muscle Charger" (thanks @jyotiskaghosh)
+- New card "Magmadragon Melgars" (thanks @jyotiskaghosh)
+- New card "Necrodragon Giland" (thanks @jyotiskaghosh)
+- New card "Necrodragon Galbazeek" (thanks @jyotiskaghosh)
 
 ## 09/12/2024
 

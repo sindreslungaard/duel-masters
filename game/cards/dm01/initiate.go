@@ -78,12 +78,12 @@ func ToelVizierOfHope(c *match.Card) {
 
 		if _, ok := ctx.Event.(*match.EndOfTurnStep); ok {
 
-			if !card.Player.HasCard(match.BATTLEZONE, card.ID) {
+			if !card.Player.HasCard(match.BATTLEZONE, card.ID) ||
+				!ctx.Match.IsPlayerTurn(card.Player) {
 				return
 			}
 
-			if ctx.Match.IsPlayerTurn(card.Player) {
-
+			if fx.BinaryQuestion(card.Player, ctx.Match, fmt.Sprintf("Do you want to untap all your creatures in the battlezone? (%s's effect)", card.Name)) {
 				creatures, err := card.Player.Container(match.BATTLEZONE)
 
 				if err != nil {
@@ -103,7 +103,6 @@ func ToelVizierOfHope(c *match.Card) {
 				if madeChanges {
 					ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s untapped all creatures in %s's battlezone", card.Name, card.Player.Username()))
 				}
-
 			}
 
 		}

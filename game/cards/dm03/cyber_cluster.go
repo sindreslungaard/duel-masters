@@ -26,7 +26,6 @@ func AnglerCluster(c *match.Card) {
 		return 3000
 	}
 
-
-	c.Use(fx.Creature, fx.Blocker, fx.CantAttackCreatures, fx.CantAttackPlayers)
+	c.Use(fx.Creature, fx.Blocker(), fx.CantAttackCreatures, fx.CantAttackPlayers)
 
 }

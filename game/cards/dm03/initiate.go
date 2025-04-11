@@ -64,7 +64,7 @@ func SiegBaliculaTheIntense(c *match.Card) {
 				match.BATTLEZONE,
 				func(x *match.Card) bool { return x.ID != card.ID && x.Civ == civ.Light },
 			).Map(func(x *match.Card) {
-				x.AddUniqueSourceCondition(cnd.Blocker, true, card.ID)
+				fx.ForceBlocker(x, ctx2, card.ID)
 			})
 
 		})

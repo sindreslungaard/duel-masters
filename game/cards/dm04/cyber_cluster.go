@@ -17,7 +17,6 @@ func HunterCluster(c *match.Card) {
 	c.ManaCost = 4
 	c.ManaRequirement = []string{civ.Water}
 
-
-	c.Use(fx.Creature, fx.Blocker, fx.ShieldTrigger)
+	c.Use(fx.Creature, fx.Blocker(), fx.ShieldTrigger)
 
 }

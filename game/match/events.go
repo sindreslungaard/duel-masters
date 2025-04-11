@@ -71,14 +71,12 @@ type SpellCast struct {
 
 // AttackPlayer is fired when the player attempts to use a creature to attack the player
 type AttackPlayer struct {
-	CardID   string
-	Blockers []*Card
+	CardID string
 }
 
 // AttackCreature is fired when the player attempts to use a creature to attack the player
 type AttackCreature struct {
 	CardID              string
-	Blockers            []*Card
 	AttackableCreatures []*Card // list of cards that can be attacked
 }
 
@@ -88,6 +86,24 @@ type AttackConfirmed struct {
 	CardID   string
 	Player   bool
 	Creature bool
+}
+
+// SelectBlockers is fired after the AttackConfirmed effects,
+// Here, blockers (both normal and conditional) are added into the blockers list
+// and cards that have conditional CantBeBlocked effects handles them.
+type SelectBlockers struct {
+	Attacker       *Card
+	Blockers       []*Card
+	AttackedCardID string // must be empty if the attack is on a player
+}
+
+// Block is fired when the opponent is prompted to select the blockers
+// Properties are passed from SelectBlockers event
+type Block struct {
+	Attacker        *Card
+	Blockers        []*Card
+	ShieldsAttacked []*Card
+	AttackedCardID  string // must be empty if the attack is on a player
 }
 
 // Battle is fired when two creatures are fighting, i.e. from attacking a creature or blocking an attack

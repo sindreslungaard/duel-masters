@@ -5,6 +5,7 @@ import (
 	"duel-masters/game/family"
 	"duel-masters/game/fx"
 	"duel-masters/game/match"
+	"fmt"
 )
 
 func ZorvazTheBonecrusher(c *match.Card) {
@@ -16,7 +17,7 @@ func ZorvazTheBonecrusher(c *match.Card) {
 	c.ManaCost = 5
 	c.ManaRequirement = []string{civ.Darkness}
 
-	c.Use(fx.Creature, fx.Blocker, fx.CantAttackCreatures, fx.CantAttackPlayers, fx.Suicide)
+	c.Use(fx.Creature, fx.Blocker(), fx.CantAttackCreatures, fx.CantAttackPlayers, fx.Suicide)
 }
 
 func VileMulderWingOfTheVoid(c *match.Card) {
@@ -40,9 +41,18 @@ func DaidalosGeneralOfFury(c *match.Card) {
 	c.ManaCost = 4
 	c.ManaRequirement = []string{civ.Darkness}
 
-	c.Use(fx.Creature, fx.Doublebreaker, fx.WheneverThisAttacks(func(card *match.Card, ctx *match.Context) {
+	c.Use(fx.Creature, fx.Doublebreaker, fx.When(fx.AttackConfirmed, func(card *match.Card, ctx *match.Context) {
 
-		creatures := fx.Select(card.Player, ctx.Match, card.Player, match.BATTLEZONE, "Daidalos, General Of Fury: Select 1 creature from your battlezone that will be sent to your graveyard", 1, 1, false)
+		creatures := fx.Select(
+			card.Player,
+			ctx.Match,
+			card.Player,
+			match.BATTLEZONE,
+			fmt.Sprintf("%s: Select 1 creature from your battlezone that will be sent to your graveyard", card.Name),
+			1,
+			1,
+			false,
+		)
 
 		for _, creature := range creatures {
 			ctx.Match.Destroy(creature, card, match.DestroyedByMiscAbility)
