@@ -4,6 +4,10 @@
 
 - No unreleased changes
 
+## 11/04/2025
+- Fixed an issue where "Vacuum Gel" could destroy untapped creatures with its effect (thanks @DragosIonita23)
+- Added automated chat moderation
+
 ## 09/04/2025
 
 - Refactored how attacking and blocking works under the hood to be more accurate with rulings (thanks @DragosIonita23)
