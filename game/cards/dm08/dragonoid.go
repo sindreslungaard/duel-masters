@@ -13,9 +13,9 @@ func KyrstronLairDelver(c *match.Card) {
 	c.Name = "Kyrstron, Lair Delver"
 	c.Power = 1000
 	c.Civ = civ.Fire
-	c.Family = []string{family.ArmoredDragon}
+	c.Family = []string{family.Dragonoid}
 	c.ManaCost = 5
 	c.ManaRequirement = []string{civ.Fire}
 
-	c.Use(fx.Creature, fx.When(fx.WouldBeDestroyed, fx.MayPutDragonFromHandIntoBZ))
+	c.Use(fx.Creature, fx.When(fx.Destroyed, fx.MayPutDragonFromHandIntoBZ))
 }
