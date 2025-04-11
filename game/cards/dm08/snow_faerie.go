@@ -53,7 +53,7 @@ func kachuaKeeperOfTheIcegateTapAbility(card *match.Card, ctx *match.Context) {
 					return
 				}
 
-				if _, ok := ctx3.Event.(*match.EndStep); ok {
+				if _, ok := ctx3.Event.(*match.EndOfTurnStep); ok {
 					ctx3.Match.Destroy(selDragon, selDragon, match.DestroyedByMiscAbility)
 					exit()
 					return

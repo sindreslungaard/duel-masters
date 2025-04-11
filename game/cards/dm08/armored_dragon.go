@@ -17,5 +17,5 @@ func BruiserDragon(c *match.Card) {
 	c.ManaCost = 5
 	c.ManaRequirement = []string{civ.Fire}
 
-	c.Use(fx.Creature, fx.When(fx.WouldBeDestroyed, fx.PutShieldIntoGraveyard))
+	c.Use(fx.Creature, fx.When(fx.Destroyed, fx.PutShieldIntoGraveyard))
 }

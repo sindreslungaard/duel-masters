@@ -35,8 +35,8 @@ func AquaGrappler(c *match.Card) {
 		numberOfMyOtherTappedCreatures := len(fx.FindFilter(
 			card.Player,
 			match.BATTLEZONE,
-			func(card2 *match.Card) bool {
-				return card2.Tapped && card2.ID != card.ID
+			func(x *match.Card) bool {
+				return x.Tapped && x.ID != card.ID
 			},
 		))
 
