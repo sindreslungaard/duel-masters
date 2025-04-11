@@ -11,7 +11,7 @@ func ForceAttack(card *match.Card, ctx *match.Context) {
 
 	if _, ok := ctx.Event.(*match.EndTurnEvent); ok && card.Zone == match.BATTLEZONE {
 
-		if ctx.Match.IsPlayerTurn(card.Player) && !card.HasCondition(cnd.SummoningSickness) && !card.Tapped {
+		if ctx.Match.IsPlayerTurn(card.Player) && !HasSummoningSickness(card) && !card.Tapped {
 
 			if card.HasCondition(cnd.CantAttackPlayers) {
 

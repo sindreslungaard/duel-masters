@@ -204,7 +204,7 @@ func MiraclePortal(c *match.Card) {
 			false,
 		).Map(func(c *match.Card) {
 			ctx.Match.ApplyPersistentEffect(func(ctx2 *match.Context, exit func()) {
-				if c.HasCondition(cnd.SummoningSickness) {
+				if fx.HasSummoningSickness(c) {
 					c.RemoveCondition(cnd.SummoningSickness)
 					c.AddCondition(cnd.CantAttackCreatures, nil, card.ID)
 				}

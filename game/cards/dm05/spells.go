@@ -148,7 +148,7 @@ func SlimeVeil(c *match.Card) {
 
 				if _, ok := ctx2.Event.(*match.EndTurnEvent); ok && c.Zone == match.BATTLEZONE {
 
-					if ctx2.Match.IsPlayerTurn(c.Player) && !c.HasCondition(cnd.SummoningSickness) && !c.Tapped {
+					if ctx2.Match.IsPlayerTurn(c.Player) && !fx.HasSummoningSickness(c) && !c.Tapped {
 
 						if c.HasCondition(cnd.CantAttackPlayers) {
 
