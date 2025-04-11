@@ -3,6 +3,7 @@ package fx
 import (
 	"duel-masters/game/civ"
 	"duel-masters/game/cnd"
+	"duel-masters/game/family"
 	"duel-masters/game/match"
 	"slices"
 )
@@ -33,6 +34,12 @@ func ForceBlocker(card *match.Card, ctx *match.Context, src string, conditions .
 
 	// Add itself to list of blockers if all conditions are met
 	addToBlockersListIfConditions(card, ctx, conditions...)
+}
+
+func DragonBlocker() func(*match.Card, *match.Context) {
+	return Blocker(func(event *match.SelectBlockers) bool {
+		return event.Attacker.SharesAFamily(family.Dragons)
+	})
 }
 
 func DarknessBlocker() func(*match.Card, *match.Context) {

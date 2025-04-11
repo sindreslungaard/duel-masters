@@ -53,4 +53,7 @@ const (
 	VolcanoDragon   = "Volcano Dragon"
 	EarthDragon     = "Earth Dragon"
 	ZombieDragon    = "Zombie Dragon"
+	MechaDelSol     = "Mecha del Sol"
 )
+
+var Dragons = []string{ArmoredDragon, VolcanoDragon, EarthDragon, ZombieDragon}

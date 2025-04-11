@@ -317,14 +317,14 @@ func (p *Player) SpawnCard(id string, zone string) {
 		p.hand = append(p.hand, c)
 	case MANAZONE:
 		p.manazone = append(p.manazone, c)
+	case GRAVEYARD:
+		p.graveyard = append(p.graveyard, c)
 	case SHIELDZONE:
 		p.shieldzone = append(p.shieldzone, c)
 		p.ShieldCounter = p.ShieldCounter + 1
 		p.ShieldMap[c.ID] = p.ShieldCounter
 	case DECK:
 		p.deck = append(p.deck, c)
-	case GRAVEYARD:
-		p.graveyard = append(p.graveyard, c)
 	default:
 		logrus.Warnf("Failed to create card with id %s - invalid zone", id)
 		return
