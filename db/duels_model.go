@@ -4,6 +4,7 @@ type DuelResolution string
 
 type Duel struct {
 	UID             string `bson:"uid"`
+	Format          string `bson:"fmt"`
 	Host            string `bson:"p1"`
 	HostDeck        string `bson:"p1deck"`
 	Guest           string `bson:"p2"`

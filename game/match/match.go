@@ -445,6 +445,7 @@ func (m *Match) SaveMatchHistory(winner *Player, wonByDisconnect bool) {
 
 	duel := db.Duel{
 		UID:             m.ID,
+		Format:          string(m.Format),
 		Host:            p1id,
 		HostDeck:        p1deck,
 		Guest:           p2id,
