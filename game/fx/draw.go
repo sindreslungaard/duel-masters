@@ -65,7 +65,7 @@ func DrawUpto(card *match.Card, ctx *match.Context, max int) {
 			drawnCards := card.Player.DrawCards(1)
 			ctx.Match.BroadcastState()
 
-			if len(drawnCards) == 1 {
+			if len(drawnCards) == 1 && max > 1 {
 				ctx.Match.ShowCards(card.Player, fmt.Sprintf("%s's effect: You drew %s", card.Name, drawnCards[0].Name), []string{drawnCards[0].ImageID})
 			}
 		} else {
