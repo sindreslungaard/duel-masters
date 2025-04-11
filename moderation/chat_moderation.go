@@ -210,7 +210,7 @@ func (svc *ChatModerationService) ResetFlags() {
 	defer svc.Unlock()
 
 	for k := range svc.flags {
-		delete(svc.content, k)
+		delete(svc.flags, k)
 	}
 }
 
