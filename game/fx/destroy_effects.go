@@ -53,6 +53,10 @@ func DestroyOpCreature(card *match.Card, ctx *match.Context) {
 	})
 }
 
+func DestroyYourself(card *match.Card, ctx *match.Context) {
+	ctx.Match.Destroy(card, card, match.DestroyedByMiscAbility)
+}
+
 func destroyOpCreature2000OrLess(card *match.Card, ctx *match.Context, destroyType match.CreatureDestroyedContext) {
 	SelectFilter(
 		card.Player, ctx.Match, ctx.Match.Opponent(card.Player), match.BATTLEZONE,
