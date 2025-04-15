@@ -601,6 +601,7 @@ var DM08 = map[string]match.CardConstructor{
 	"ea9dbf9c-d049-4213-a658-e47ab25867e6": dm08.TerradragonRegarion,
 	"d031c833-da73-42a0-af4a-cd2a8ce9af6d": dm08.VolcanoCharger,
 	"cf000f38-660c-4ce0-aa24-2ecbb1e4dee2": dm08.MagmadragonJagalzor,
+	"d766e9bf-bada-4e22-9d82-6e2f8e25132f": dm08.ScreamSlicerShadowOfFear,
 }
 
 // Promo is a map with all the card id's in the game and corresponding CardConstructor for promotional exclusive cards
