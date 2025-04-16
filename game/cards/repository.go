@@ -9,6 +9,7 @@ import (
 	"duel-masters/game/cards/dm06"
 	"duel-masters/game/cards/dm07"
 	"duel-masters/game/cards/dm08"
+	"duel-masters/game/cards/dm09"
 	"duel-masters/game/cards/promo"
 	"duel-masters/game/match"
 )
@@ -601,6 +602,14 @@ var DM08 = map[string]match.CardConstructor{
 	"ea9dbf9c-d049-4213-a658-e47ab25867e6": dm08.TerradragonRegarion,
 	"d031c833-da73-42a0-af4a-cd2a8ce9af6d": dm08.VolcanoCharger,
 	"cf000f38-660c-4ce0-aa24-2ecbb1e4dee2": dm08.MagmadragonJagalzor,
+}
+
+var DM09 = map[string]match.CardConstructor{
+	"ab6c7559-1714-4238-a063-393cfe8adc08": dm09.IceVaporShadowOfAnguish,
+	"a5f9ba06-7db8-453b-9cc6-45ac9789d4fb": dm09.WhipScorpion,
+	"77b12f4f-a063-40dd-8829-fb7c91ec4540": dm09.BetraleTheExplorer,
+	"3aa08e1b-b08d-4f53-b0ca-6f8917c2963d": dm09.SolidHorn,
+	"6e541459-a1de-4a65-be65-f363f38e7c3b": dm09.KaluteVizierOfEternity,
 }
 
 // Promo is a map with all the card id's in the game and corresponding CardConstructor for promotional exclusive cards

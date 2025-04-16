@@ -475,6 +475,19 @@ func SpellCast(card *match.Card, ctx *match.Context) bool {
 
 }
 
+// OppSpellCast returns true if the opponent casted a spell
+func OppSpellCast(card *match.Card, ctx *match.Context) bool {
+	if event, ok := ctx.Event.(*match.SpellCast); ok {
+		if event.MatchPlayerID == 1 {
+			return card.Player != ctx.Match.Player1.Player
+		} else if event.MatchPlayerID == 2 {
+			return card.Player == ctx.Match.Player1.Player
+		}
+	}
+
+	return false
+}
+
 // Attacking returns true if the card is attacking a player or creature
 func Attacking(card *match.Card, ctx *match.Context) bool {
 
