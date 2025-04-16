@@ -28,6 +28,17 @@ func WheneverThisAttacksMayTapDorFCreature() match.HandlerFunc {
 	})
 }
 
+func LookAtOppShields(card *match.Card, ctx *match.Context) {
+	ctx.Match.ShowCards(
+		card.Player,
+		"Your opponent's shield:",
+		Find(
+			ctx.Match.Opponent(card.Player),
+			match.SHIELDZONE,
+		).ProjectImageIDs(),
+	)
+}
+
 func WheneverThisAttacksMayLookAtOpShield() match.HandlerFunc {
 	return When(AttackConfirmed, func(card *match.Card, ctx *match.Context) {
 		SelectBackside(
