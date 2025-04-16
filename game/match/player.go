@@ -586,6 +586,68 @@ func (p *Player) MoveCardToFront(cardID string, from string, to string) (*Card, 
 
 }
 
+// ReorderCardsOnBottomDeck re-orders the given cards on the bottom of the deck
+// in the order given by the orderedIDs parameter
+// Returns a new []*Card slice with the cards ordered, or error
+func (p *Player) ReorderCardsOnBottomDeck(cards []*Card, orderedIDs []string) ([]*Card, error) {
+
+	deckRef, err := p.ContainerRef(DECK)
+
+	if err != nil {
+		return nil, err
+	}
+
+	for _, card := range cards {
+		if !p.HasCard(DECK, card.ID) {
+			return nil, errors.New("Card is not in the specified container")
+		}
+	}
+
+	for _, cardId := range orderedIDs {
+		if !p.HasCard(DECK, cardId) {
+			return nil, errors.New("Card is not in the specified container")
+		}
+	}
+
+	// 1. Remove cards from deck
+	p.mutex.Lock()
+
+	temp := make([]*Card, 0)
+
+	for _, deckCard := range *deckRef {
+		remove := false
+
+		for _, cardToRemove := range cards {
+			if deckCard.ID == cardToRemove.ID {
+				remove = true
+				continue
+			}
+		}
+
+		if !remove {
+			temp = append(temp, deckCard)
+		}
+	}
+
+	*deckRef = temp
+
+	// 2. Put them on the bottom of the deck, in the order
+	//    specified by the card IDs in orderedIDs slice parameter
+	for _, cardIDToAppend := range orderedIDs {
+		cardToAppend, err := p.GetCard(cardIDToAppend, DECK)
+
+		if err != nil {
+			p.mutex.Unlock()
+			return nil, err
+		}
+
+		*deckRef = append(*deckRef, cardToAppend)
+	}
+
+	return *deckRef, nil
+
+}
+
 // CanPlayCard returns true or false based on if the specified card can be played with the specified mana
 func (p *Player) CanPlayCard(card *Card, mana []*Card) bool {
 
