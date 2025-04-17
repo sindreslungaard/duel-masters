@@ -577,9 +577,10 @@ func (p *Player) MoveCardToFront(cardID string, from string, to string) (*Card, 
 	p.mutex.Unlock()
 
 	p.match.HandleFx(NewContext(p.match, &CardMoved{
-		CardID: ref.ID,
-		From:   from,
-		To:     to,
+		CardID:        ref.ID,
+		From:          from,
+		To:            to,
+		MatchPlayerID: p.match.getPlayerMatchId(ref.Player),
 	}))
 
 	return ref, nil
