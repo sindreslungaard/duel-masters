@@ -28,6 +28,14 @@ func GiveOwnCreatureCantBeBlocked(card *match.Card, ctx *match.Context) {
 	})
 }
 
+func CantBeBlockedWhileAttackingACreature(card *match.Card, ctx *match.Context) {
+	if event, ok := ctx.Event.(*match.AttackConfirmed); ok && event.CardID == card.ID {
+		if event.Creature {
+			card.AddUniqueSourceCondition(cnd.CantBeBlocked, nil, card.ID)
+		}
+	}
+}
+
 func CantBeBlockedByDarkness(card *match.Card, ctx *match.Context) {
 	filterBlocker(card, ctx, func(blocker *match.Card) bool {
 		return blocker.Civ != civ.Darkness
