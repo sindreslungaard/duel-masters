@@ -19,7 +19,7 @@ func LadiaBaleTheInspirational(c *match.Card) {
 	c.ManaCost = 6
 	c.ManaRequirement = []string{civ.Light}
 
-	c.Use(fx.Creature, fx.Blocker, fx.Evolution, fx.Doublebreaker)
+	c.Use(fx.Creature, fx.Blocker(), fx.Evolution, fx.Doublebreaker)
 
 }
 
@@ -35,16 +35,17 @@ func PhalEegaDawnGuardian(c *match.Card) {
 
 	c.Use(fx.Creature, fx.When(fx.Summoned, func(card *match.Card, ctx *match.Context) {
 
-		fx.SelectFilterSelectablesOnly(
+		fx.SelectFilter(
 			card.Player,
 			ctx.Match,
 			card.Player,
 			match.GRAVEYARD,
-			"Phal Eega, Dawn Guardian: Select a spell to return from your graveyard to your hand.",
+			fmt.Sprintf("%s: Select a spell to return from your graveyard to your hand.", card.Name),
 			1,
 			1,
 			true,
 			func(x *match.Card) bool { return x.HasCondition(cnd.Spell) },
+			false,
 		).Map(func(x *match.Card) {
 			if x.ID == card.ID {
 				return

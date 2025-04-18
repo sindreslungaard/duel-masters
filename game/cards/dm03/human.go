@@ -5,6 +5,7 @@ import (
 	"duel-masters/game/family"
 	"duel-masters/game/fx"
 	"duel-masters/game/match"
+	"fmt"
 )
 
 // ExplosiveDudeJoe ...
@@ -31,14 +32,14 @@ func MuramasaDukeOfBlades(c *match.Card) {
 	c.ManaCost = 6
 	c.ManaRequirement = []string{civ.Fire}
 
-	c.Use(fx.Creature, fx.WheneverThisAttacks(func(card *match.Card, ctx *match.Context) {
+	c.Use(fx.Creature, fx.When(fx.AttackConfirmed, func(card *match.Card, ctx *match.Context) {
 
 		fx.SelectFilter(
 			card.Player,
 			ctx.Match,
 			ctx.Match.Opponent(card.Player),
 			match.BATTLEZONE,
-			"Muramasa, Duke of Blades: Select 1 of your opponent's creatures with power 2000 or less and destroy it",
+			fmt.Sprintf("%s: You may select 1 of your opponent's creatures with power 2000 or less and destroy it", card.Name),
 			1,
 			1,
 			true,
@@ -46,7 +47,6 @@ func MuramasaDukeOfBlades(c *match.Card) {
 			false,
 		).Map(func(x *match.Card) {
 			ctx.Match.Destroy(x, card, match.DestroyedByMiscAbility)
-			fx.RemoveBlockerFromList(x, ctx)
 		})
 	}))
 

@@ -31,7 +31,7 @@ func IocantTheOracle(c *match.Card) {
 	c.ManaCost = 2
 	c.ManaRequirement = []string{civ.Light}
 
-	c.Use(fx.Creature, fx.Blocker, fx.CantAttackPlayers)
+	c.Use(fx.Creature, fx.Blocker(), fx.CantAttackPlayers)
 
 	c.PowerModifier = func(m *match.Match, attacking bool) int {
 

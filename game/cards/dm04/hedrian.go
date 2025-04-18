@@ -43,7 +43,7 @@ func MongrelMan(c *match.Card) {
 
 			if fx.AnotherCreatureDestroyed(card, ctx2) {
 
-				fx.MayDraw1(card, ctx)
+				fx.MayDraw1(card, ctx2)
 
 			}
 

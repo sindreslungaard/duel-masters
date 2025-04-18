@@ -4,6 +4,7 @@ import (
 	"duel-masters/db"
 	"duel-masters/flags"
 	"duel-masters/game"
+	"duel-masters/game/match"
 	"encoding/json"
 	"math/rand"
 	"net/http"
@@ -14,6 +15,7 @@ import (
 type matchReqBody struct {
 	Name       string `json:"name" binding:"max=50"`
 	Visibility string `json:"visibility" binding:"required"`
+	Format     string `json:"format"`
 }
 
 func (api *API) createMatchHandler(w http.ResponseWriter, r *http.Request) {
@@ -51,7 +53,9 @@ func (api *API) createMatchHandler(w http.ResponseWriter, r *http.Request) {
 		name = game.DefaultMatchNames[rand.Intn(len(game.DefaultMatchNames))]
 	}
 
-	m := api.matchSystem.NewMatch(name, user.UID, visible, false)
+	format := match.FormatFromStr(body.Format)
+
+	m := api.matchSystem.NewMatch(name, user.UID, visible, false, format)
 
 	write(w, http.StatusOK, m)
 }

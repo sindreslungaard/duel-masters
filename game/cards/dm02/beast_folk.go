@@ -5,7 +5,6 @@ import (
 	"duel-masters/game/family"
 	"duel-masters/game/fx"
 	"duel-masters/game/match"
-	"fmt"
 )
 
 // BarkwhipTheSmasher ...
@@ -60,23 +59,7 @@ func SilverAxe(c *match.Card) {
 	c.ManaCost = 3
 	c.ManaRequirement = []string{civ.Nature}
 
-	c.Use(fx.Creature, fx.When(fx.AttackConfirmed, func(card *match.Card, ctx *match.Context) {
-
-		cards := card.Player.PeekDeck(1)
-
-		if len(cards) < 1 {
-			return
-		}
-
-		c, err := card.Player.MoveCard(cards[0].ID, match.DECK, match.MANAZONE, card.ID)
-
-		if err != nil {
-			return
-		}
-
-		ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s was added to %s's manazone from the top of their deck", c.Name, ctx.Match.PlayerRef(card.Player).Socket.User.Username))
-
-	}))
+	c.Use(fx.Creature, fx.When(fx.AttackConfirmed, fx.MayDraw1ToMana))
 
 }
 

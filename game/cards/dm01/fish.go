@@ -17,7 +17,7 @@ func HunterFish(c *match.Card) {
 	c.ManaCost = 2
 	c.ManaRequirement = []string{civ.Water}
 
-	c.Use(fx.Creature, fx.Blocker, fx.CantAttackPlayers, fx.CantAttackCreatures)
+	c.Use(fx.Creature, fx.Blocker(), fx.CantAttackPlayers, fx.CantAttackCreatures)
 
 }
 
@@ -31,7 +31,7 @@ func Seamine(c *match.Card) {
 	c.ManaCost = 6
 	c.ManaRequirement = []string{civ.Water}
 
-	c.Use(fx.Creature, fx.Blocker)
+	c.Use(fx.Creature, fx.Blocker())
 
 }
 

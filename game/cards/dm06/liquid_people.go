@@ -29,5 +29,19 @@ func AquaRider(c *match.Card) {
 	c.ManaCost = 4
 	c.ManaRequirement = []string{civ.Water}
 
-	c.Use(fx.Creature, ReceiveBlockerWhenOpponentPlaysCreatureOrSpell)
+	isBlocker := false
+
+	c.Use(fx.Creature,
+		fx.When(ReceiveBlockerWhenOpponentPlaysCreatureOrSpell,
+			func(c *match.Card, ctx *match.Context) { isBlocker = true }),
+		fx.When(fx.EndOfTurn,
+			func(c *match.Card, ctx *match.Context) {
+				isBlocker = false
+				c.RemoveConditionBySource(c.ID)
+			}),
+		fx.When(func(c *match.Card, ctx *match.Context) bool { return isBlocker },
+			func(c *match.Card, ctx *match.Context) {
+				fx.ForceBlocker(c, ctx, c.ID)
+			}),
+	)
 }

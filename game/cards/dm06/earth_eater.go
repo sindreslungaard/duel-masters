@@ -16,7 +16,7 @@ func HazardCrawler(c *match.Card) {
 	c.ManaCost = 5
 	c.ManaRequirement = []string{civ.Water}
 
-	c.Use(fx.Creature, fx.Blocker, fx.CantAttackCreatures, fx.CantAttackPlayers)
+	c.Use(fx.Creature, fx.Blocker(), fx.CantAttackCreatures, fx.CantAttackPlayers)
 }
 
 func MidnightCrawler(c *match.Card) {
@@ -40,5 +40,5 @@ func ThrashCrawler(c *match.Card) {
 	c.ManaCost = 4
 	c.ManaRequirement = []string{civ.Water}
 
-	c.Use(fx.Creature, fx.Blocker, fx.CantAttackCreatures, fx.CantAttackPlayers, fx.When(fx.Summoned, fx.ReturnMyCardFromMZToHand))
+	c.Use(fx.Creature, fx.Blocker(), fx.CantAttackCreatures, fx.CantAttackPlayers, fx.When(fx.Summoned, fx.ReturnMyCardFromMZToHand))
 }

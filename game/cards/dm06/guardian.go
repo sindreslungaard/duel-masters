@@ -29,13 +29,13 @@ func LuGilaSilverRiftGuardian(c *match.Card) {
 	c.ManaCost = 5
 	c.ManaRequirement = []string{civ.Light}
 
-	c.Use(fx.Creature, fx.Blocker, fx.CantAttackPlayers, func(card *match.Card, ctx *match.Context) {
+	c.Use(fx.Creature, fx.Blocker(), fx.CantAttackPlayers, func(card *match.Card, ctx *match.Context) {
 
 		if card.Zone != match.BATTLEZONE && card.Zone != match.HIDDENZONE {
 			return
 		}
 
-		// Can have a full refactoring to fx.When after CardMoved uses card pointer
+		// TODO: Can have a full refactoring to fx.When after CardMoved uses card pointer
 		if event, ok := ctx.Event.(*match.CardMoved); ok {
 			if event.To != match.BATTLEZONE || event.From == match.HIDDENZONE {
 				return

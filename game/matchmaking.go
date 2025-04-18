@@ -299,7 +299,7 @@ func (m *Matchmaking) Start(s *server.Socket, requestId string) {
 		return
 	}
 
-	match := m.matchSystem.NewMatch(r.Name, r.Host.ID, true, true)
+	match := m.matchSystem.NewMatch(r.Name, r.Host.ID, true, true, r.Format)
 
 	msg := server.MatchForwardMessage{
 		Header: "match_forward",

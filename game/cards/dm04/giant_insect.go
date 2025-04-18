@@ -6,7 +6,6 @@ import (
 	"duel-masters/game/family"
 	"duel-masters/game/fx"
 	"duel-masters/game/match"
-	"fmt"
 )
 
 // ThreeEyedDragonfly ...
@@ -20,7 +19,7 @@ func ThreeEyedDragonfly(c *match.Card) {
 	c.ManaRequirement = []string{civ.Nature}
 
 	// id of the card to destroy that the user selects when attacking
-	selectedCard := ""
+	selectedCardId := ""
 
 	c.Use(
 		fx.Creature,
@@ -28,33 +27,35 @@ func ThreeEyedDragonfly(c *match.Card) {
 		fx.When(fx.Attacking, func(card *match.Card, ctx *match.Context) {
 
 			// reset this before each attack attempt
-			selectedCard = ""
+			selectedCardId = ""
+			card.RemoveConditionBySource(card.ID)
 
-			cards := fx.SelectFilterSelectablesOnly(
+			cards := fx.SelectFilter(
 				card.Player,
 				ctx.Match,
 				card.Player,
 				match.BATTLEZONE,
-				"Select one creature to destroy.",
+				"You may select one creature to destroy.",
 				0,
 				1,
 				true,
 				func(c *match.Card) bool { return c.ID != card.ID },
+				false,
 			)
 
 			if len(cards) > 0 {
-				selectedCard = cards[0].ID
+				selectedCardId = cards[0].ID
 				card.AddUniqueSourceCondition(cnd.DoubleBreaker, true, card.ID)
 				card.AddCondition(cnd.PowerAmplifier, 2000, card.ID)
 			}
 		}),
 
 		fx.When(fx.AttackConfirmed, func(card *match.Card, ctx *match.Context) {
-			if selectedCard == "" {
+			if selectedCardId == "" {
 				return
 			}
 
-			x, err := card.Player.GetCard(selectedCard, match.BATTLEZONE)
+			x, err := card.Player.GetCard(selectedCardId, match.BATTLEZONE)
 
 			if err != nil {
 				card.RemoveConditionBySource(card.ID)
@@ -62,7 +63,6 @@ func ThreeEyedDragonfly(c *match.Card) {
 			}
 
 			ctx.Match.Destroy(x, card, match.DestroyedByMiscAbility)
-			ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s was destroyed by Three-Eyed Dragonfly", x.Name))
 		}),
 	)
 

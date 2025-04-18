@@ -49,29 +49,27 @@ func MoontearSpectralKnight(c *match.Card) {
 
 	spellcast := false
 
-	c.Use(fx.Creature, func(card *match.Card, ctx *match.Context) {
+	c.Use(fx.Creature,
+		fx.When(fx.IHaveCastASpell, func(card *match.Card, ctx *match.Context) { spellcast = true }),
+		func(card *match.Card, ctx *match.Context) {
 
-		if _, ok := ctx.Event.(*match.SpellCast); ok {
-			spellcast = true
-		}
-
-		// remove persistent effect when turn ends
-		_, ok := ctx.Event.(*match.EndStep)
-		if ok {
-			spellcast = false
-		}
-
-		if event, ok := ctx.Event.(*match.PlayCardEvent); ok {
-			if event.CardID == card.ID {
-				if !spellcast {
-					ctx.InterruptFlow()
-					ctx.Match.WarnPlayer(card.Player, "You can summon this creature only if you have cast a spell this round")
-					return
-				}
+			// reset spellcast flag at the end of the turn
+			_, ok := ctx.Event.(*match.EndStep)
+			if ok {
+				spellcast = false
 			}
 
-		}
+			if event, ok := ctx.Event.(*match.PlayCardEvent); ok {
+				if event.CardID == card.ID {
+					if !spellcast {
+						ctx.InterruptFlow()
+						ctx.Match.WarnPlayer(card.Player, "You can summon this creature only if you have cast a spell this round")
+						return
+					}
+				}
 
-	})
+			}
+
+		})
 
 }

@@ -105,34 +105,30 @@ func CreepingPlague(c *match.Card) {
 	c.ManaCost = 1
 	c.ManaRequirement = []string{civ.Darkness}
 
-	c.Use(fx.Spell, func(card *match.Card, ctx *match.Context) {
+	c.Use(fx.Spell, fx.When(fx.SpellCast, func(card *match.Card, ctx *match.Context) {
 
-		if match.AmICasted(card, ctx) {
+		ctx.Match.ApplyPersistentEffect(func(ctx2 *match.Context, exit func()) {
 
-			ctx.Match.ApplyPersistentEffect(func(ctx2 *match.Context, exit func()) {
+			if event, ok := ctx2.Event.(*match.Battle); ok {
 
-				if event, ok := ctx2.Event.(*match.Battle); ok {
-
-					if !event.Blocked || event.Attacker.Player != card.Player {
-						return
-					}
-
-					event.Attacker.AddCondition(cnd.Slayer, nil, card.ID)
-					ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s was given \"Slayer\" by %s", event.Attacker.Name, card.Name))
-
+				if !event.Blocked || event.Attacker.Player != card.Player {
+					return
 				}
 
-				// remove persistent effect when turn ends
-				_, ok := ctx2.Event.(*match.EndStep)
-				if ok {
-					exit()
-				}
+				event.Attacker.AddCondition(cnd.Slayer, nil, card.ID)
+				ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s was given \"Slayer\" by %s", event.Attacker.Name, card.Name))
 
-			})
+			}
 
-		}
+			// remove persistent effect when turn ends
+			_, ok := ctx2.Event.(*match.EndStep)
+			if ok {
+				exit()
+			}
 
-	})
+		})
+
+	}))
 
 }
 
@@ -293,22 +289,26 @@ func LaserWing(c *match.Card) {
 	c.ManaCost = 5
 	c.ManaRequirement = []string{civ.Light}
 
-	c.Use(fx.Spell, func(card *match.Card, ctx *match.Context) {
+	c.Use(fx.Spell, fx.When(fx.SpellCast, func(card *match.Card, ctx *match.Context) {
 
-		if match.AmICasted(card, ctx) {
+		creatures := fx.Select(card.Player,
+			ctx.Match,
+			card.Player,
+			match.BATTLEZONE,
+			"Select up to 2 creatures that can't be blocked this turn",
+			1,
+			2,
+			false,
+		)
 
-			creatures := match.Search(card.Player, ctx.Match, card.Player, match.BATTLEZONE, "Select up to 2 creatures that can't be blocked this turn", 1, 2, false)
+		for _, creature := range creatures {
 
-			for _, creature := range creatures {
-
-				creature.AddCondition(cnd.CantBeBlocked, nil, card.ID)
-				ctx.Match.ReportActionInChat(card.Player, creature.Name+" can't be blocked this turn")
-
-			}
+			creature.AddCondition(cnd.CantBeBlocked, nil, card.ID)
+			ctx.Match.ReportActionInChat(card.Player, creature.Name+" can't be blocked this turn")
 
 		}
 
-	})
+	}))
 
 }
 

@@ -18,7 +18,7 @@ func SnorkLaShrineGuardian(c *match.Card) {
 	c.ManaCost = 3
 	c.ManaRequirement = []string{civ.Light}
 
-	c.Use(fx.Creature, fx.Blocker, fx.CantAttackPlayers, func(card *match.Card, ctx *match.Context) {
+	c.Use(fx.Creature, fx.Blocker(), fx.CantAttackPlayers, func(card *match.Card, ctx *match.Context) {
 
 		if card.Zone != match.BATTLEZONE {
 			return
@@ -69,7 +69,7 @@ func GalliaZohlIronGuardianQ(c *match.Card) {
 				match.BATTLEZONE,
 				func(x *match.Card) bool { return x.HasCondition(cnd.Survivor) },
 			).Map(func(x *match.Card) {
-				x.AddUniqueSourceCondition(cnd.Blocker, true, card.ID)
+				fx.ForceBlocker(x, ctx2, card.ID)
 			})
 
 		})

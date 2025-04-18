@@ -6,6 +6,7 @@ import (
 	"duel-masters/flags"
 	"duel-masters/game/match"
 	"duel-masters/internal"
+	"duel-masters/moderation"
 	"duel-masters/server"
 	"encoding/json"
 	"fmt"
@@ -197,7 +198,6 @@ func (l *Lobby) Parse(s *server.Socket, data []byte) {
 
 	case "chat":
 		{
-
 			var msg struct {
 				Message string `json:"message"`
 			}
@@ -218,6 +218,18 @@ func (l *Lobby) Parse(s *server.Socket, data []byte) {
 
 			l.messagesMutex.Lock()
 			defer l.messagesMutex.Unlock()
+
+			flags := moderation.ChatModeration.CheckFlags(s.User.Username)
+			if flags >= moderation.FlagsTolerance {
+				chat(s, "Several of your previous messages have been flagged by the automatic chat moderation system and you have therefore been blocked from sending chat messages until the next server restart")
+				for i, msg := range l.messages {
+					if msg.Username == s.User.Username {
+						l.messages[i].Removed = true
+					}
+				}
+				return
+			}
+			moderation.ChatModeration.Write(s.User.Username, msg.Message)
 
 			if len(l.messages) >= messageBufferSize {
 				_, l.messages = l.messages[0], l.messages[1:]
@@ -249,7 +261,8 @@ func (l *Lobby) Parse(s *server.Socket, data []byte) {
 	case "create_match_request":
 		{
 			var msg struct {
-				Name string `json:"name"`
+				Name   string `json:"name"`
+				Format string `json:"format"`
 			}
 
 			if err := json.Unmarshal(data, &msg); err != nil {
@@ -257,7 +270,9 @@ func (l *Lobby) Parse(s *server.Socket, data []byte) {
 				return
 			}
 
-			err := Matchmaker.NewRequest(s, msg.Name, match.RegularFormat)
+			format := match.FormatFromStr(msg.Format)
+
+			err := Matchmaker.NewRequest(s, msg.Name, format)
 
 			if err != nil {
 				s.Warn(err.Error())
@@ -552,6 +567,21 @@ func (l *Lobby) handleChatCommand(s *server.Socket, command string) {
 			chat(s, fmt.Sprintf("\tAll time = %v bytes", (m.TotalAlloc)))
 			chat(s, fmt.Sprintf("\tReserved = %v bytes", (m.Sys)))
 			chat(s, fmt.Sprintf("\tNumGC = %v\n", m.NumGC))
+		}
+
+	case "togglemoderation":
+		{
+			state := moderation.ChatModeration.Toggle()
+			chat(s, fmt.Sprintf("ChatModerationEnabled: %v", state))
+		}
+
+	case "moderationflags":
+		{
+			chat(s, "Chat moderation flags:")
+			flags := moderation.ChatModeration.Flags()
+			for k, v := range flags {
+				chat(s, fmt.Sprintf("%s: %v", k, v))
+			}
 		}
 
 	default:

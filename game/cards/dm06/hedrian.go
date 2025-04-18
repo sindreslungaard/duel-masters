@@ -6,6 +6,7 @@ import (
 	"duel-masters/game/family"
 	"duel-masters/game/fx"
 	"duel-masters/game/match"
+	"fmt"
 )
 
 func TankMutant(c *match.Card) {
@@ -26,7 +27,7 @@ func TankMutant(c *match.Card) {
 			ctx.Match,
 			ctx.Match.Opponent(card.Player),
 			match.BATTLEZONE,
-			"Tank Mutant: Select 1 creature from your battlezone that will be sent to your graveyard",
+			fmt.Sprintf("%s: Select 1 creature from your battlezone that will be sent to your graveyard", card.Name),
 			1,
 			1,
 			false,

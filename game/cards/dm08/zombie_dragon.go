@@ -30,12 +30,13 @@ func NecrodragonGalbazeek(c *match.Card) {
 	c.ManaCost = 6
 	c.ManaRequirement = []string{civ.Darkness}
 
-	c.Use(fx.Creature, fx.Doublebreaker, fx.WheneverThisAttacks(func(card *match.Card, ctx *match.Context) {
+	c.Use(fx.Creature, fx.Doublebreaker, fx.When(fx.AttackConfirmed, func(card *match.Card, ctx *match.Context) {
 		fx.SelectBackside(
 			card.Player,
-			ctx.Match, card.Player,
+			ctx.Match,
+			card.Player,
 			match.SHIELDZONE,
-			"Select one shield and send it to graveyard",
+			"Select one of your shields and put it into your graveyard",
 			1,
 			1,
 			false,

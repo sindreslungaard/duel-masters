@@ -28,5 +28,5 @@ func Gigabuster(c *match.Card) {
 	c.ManaCost = 5
 	c.ManaRequirement = []string{civ.Darkness}
 
-	c.Use(fx.Creature, fx.Blocker, fx.CantAttackPlayers, fx.CantAttackCreatures, fx.When(fx.Summoned, fx.PutShieldIntoHand))
+	c.Use(fx.Creature, fx.Blocker(), fx.CantAttackPlayers, fx.CantAttackCreatures, fx.When(fx.Summoned, fx.PutShieldIntoHand))
 }
