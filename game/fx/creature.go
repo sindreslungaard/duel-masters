@@ -182,14 +182,14 @@ func Creature(card *match.Card, ctx *match.Context) {
 
 			if len(shieldzone) > 0 {
 
-				minmax := 1
+				noOfShields := 1
 
 				if card.HasCondition(cnd.DoubleBreaker) {
-					minmax = 2
+					noOfShields = 2
 				}
 
 				if card.HasCondition(cnd.TripleBreaker) {
-					minmax = 3
+					noOfShields = 3
 				}
 
 				for _, condition := range card.Conditions() {
@@ -198,44 +198,37 @@ func Creature(card *match.Card, ctx *match.Context) {
 					}
 
 					if val, ok := condition.Val.(int); ok {
-						minmax += val
+						noOfShields += val
 					}
 				}
 
-				if minmax > len(shieldzone) {
-					minmax = len(shieldzone)
+				if noOfShields > len(shieldzone) {
+					noOfShields = len(shieldzone)
 				}
 
-				ctx.Match.NewBacksideAction(card.Player, shieldzone, minmax, minmax, fmt.Sprintf("Select %v shield(s) to break", minmax), true)
+				if card.HasCondition(cnd.HasShieldsSelectionEffect) {
+					// TODO
+					// the logic for the cancellable SelectAndReturnShields is to be
+					// implemented with ctx.ScheduleAfter on each card's handler of SelectShields event
+					// also, there will be the prompt for the cards that NEED the confirmation prompt
+					// TODO: move AttackConfirmed event BEFORE this SelectShields event
+					ctx.Match.HandleFx(match.NewContext(ctx.Match, &match.SelectShields{PlayerAttacked: ctx.Match.Opponent(card.Player), AttackingCard: card, Shieldzone: shieldzone, NoOfShields: noOfShields}))
 
-				for {
-
-					action := <-card.Player.Action
-
-					if action.Cancel {
-						ctx.InterruptFlow()
-						ctx.Match.CloseAction(card.Player)
-						return
-					}
-
-					if len(action.Cards) != minmax || !match.AssertCardsIn(shieldzone, action.Cards[0]) {
-						ctx.Match.ActionWarning(card.Player, "Your selection of cards does not fulfill the requirements")
-						continue
-					}
-
-					for _, cardID := range action.Cards {
-						shield, err := opponent.GetCard(cardID, match.SHIELDZONE)
-						if err != nil {
-							logrus.Debug("Could not find specified shield in shieldzone")
-							continue
-						}
-						shieldsAttacked = append(shieldsAttacked, shield)
-					}
-
-					ctx.Match.CloseAction(card.Player)
-
-					break
-
+					shieldsAttacked = SelectAndReturnShields(
+						card,
+						ctx,
+						shieldzone,
+						noOfShields,
+						false,
+					)
+				} else {
+					shieldsAttacked = SelectAndReturnShields(
+						card,
+						ctx,
+						shieldzone,
+						noOfShields,
+						true,
+					)
 				}
 
 			}
@@ -704,4 +697,41 @@ func stealthActive(card *match.Card, ctx *match.Context) bool {
 
 func HasSummoningSickness(card *match.Card) bool {
 	return card.HasCondition(cnd.SummoningSickness) && !card.HasCondition(cnd.SpeedAttacker)
+}
+
+func SelectAndReturnShields(card *match.Card, ctx *match.Context, shieldzone []*match.Card, minmax int, cancellable bool) []*match.Card {
+	opponent := ctx.Match.Opponent(card.Player)
+	shieldsAttacked := make([]*match.Card, 0)
+
+	ctx.Match.NewBacksideAction(card.Player, shieldzone, minmax, minmax, fmt.Sprintf("Select %v shield(s) to break", minmax), cancellable)
+
+	for {
+
+		action := <-card.Player.Action
+
+		if action.Cancel {
+			ctx.InterruptFlow()
+			ctx.Match.CloseAction(card.Player)
+			return []*match.Card{}
+		}
+
+		if len(action.Cards) != minmax || !match.AssertCardsIn(shieldzone, action.Cards[0]) {
+			ctx.Match.ActionWarning(card.Player, "Your selection of cards does not fulfill the requirements")
+			continue
+		}
+
+		for _, cardID := range action.Cards {
+			shield, err := opponent.GetCard(cardID, match.SHIELDZONE)
+			if err != nil {
+				logrus.Debug("Could not find specified shield in shieldzone")
+				continue
+			}
+			shieldsAttacked = append(shieldsAttacked, shield)
+		}
+
+		ctx.Match.CloseAction(card.Player)
+
+		return shieldsAttacked
+
+	}
 }
