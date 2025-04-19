@@ -3,6 +3,24 @@
 ## [Unreleased]
 
 - New card "Magmadragon Jagalzor" (thanks @jyotiskaghosh)
+- New card "Bruiser Dragon" (thanks @DragosIonita23)
+- New card "Rocketdive Skyterror" (thanks @DragosIonita23)
+- New card "Torpedo Skyterror" (thanks @DragosIonita23)
+- New card "Grape Globbo" (thanks @DragosIonita23)
+- New card "Kyrstron, Lair Delver" (thanks @DragosIonita23)
+- New card "Prowling Elephish" (thanks @DragosIonita23)
+- New card "Motorcycle Mutant" (thanks @DragosIonita23)
+- New card "Tyrant Worm" (thanks @DragosIonita23)
+- New card "Aqua Grappler" (thanks @DragosIonita23)
+- New card "Lalicious" (thanks @DragosIonita23)
+- New card "Misha, Channeler of Suns" (thanks @DragosIonita23)
+- New card "Sasha, Channeler of Suns" (thanks @DragosIonita23)
+- New card "Dracodance Totem" (thanks @DragosIonita23)
+- New card "Wave Lance" (thanks @DragosIonita23)
+- New card "Überdragon Bajula" (thanks @jyotiskaghosh)
+- New card "Super Terradragon Bailas Gale" (thanks @jyotiskaghosh)
+- New card "Totto Pipicchi" (thanks @jyotiskaghosh)
+- New card "Super Necrodragon Abzo Dolba" (thanks @jyotiskaghosh)
 
 ## 11/04/2025
 - Fixed an issue where "Vacuum Gel" could destroy untapped creatures with its effect (thanks @DragosIonita23)
