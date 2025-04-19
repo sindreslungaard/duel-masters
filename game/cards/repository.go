@@ -606,6 +606,11 @@ var DM08 = map[string]match.CardConstructor{
 	"6edd4023-afe2-4b53-a8b7-d29d851a63c4": dm08.ProwlingElephish,
 	"30298abb-4882-47ca-bf47-82af1df5f868": dm08.MotorcycleMutant,
 	"12fa044c-770e-4944-8fc3-e5c407812e35": dm08.TyrantWorm,
+	"6ed6f9e5-65b8-45b6-9792-b6b5428dac42": dm08.BruiserDragon,
+	"b469fd84-1fa5-42fa-b4e1-f1d186400e9d": dm08.RocketdiveSkyterror,
+	"224723b5-a3d5-4f8f-81f3-1a19a04b5e3d": dm08.TorpedoSkyterror,
+	"d03a8283-6c9b-4a0c-aec7-41d44a6f2fcf": dm08.GrapeGlobbo,
+	"d8ac2ab1-2d02-4877-9d79-35e0e003e8fa": dm08.KyrstronLairDelver,
 }
 
 // Promo is a map with all the card id's in the game and corresponding CardConstructor for promotional exclusive cards
