@@ -738,6 +738,14 @@ func AnotherOwnCreatureDestroyed(card *match.Card, ctx *match.Context) bool {
 
 }
 
+func OpponentUsedShieldTrigger(card *match.Card, ctx *match.Context) bool {
+	if event, ok := ctx.Event.(*match.ShieldTriggerPlayedEvent); ok {
+		return event.Card.Player != card.Player
+	}
+
+	return false
+}
+
 func MyDrawStep(card *match.Card, ctx *match.Context) bool {
 	if _, ok := ctx.Event.(*match.DrawStep); ok {
 		if ctx.Match.IsPlayerTurn(card.Player) {
