@@ -235,10 +235,10 @@ func Creature(card *match.Card, ctx *match.Context) {
 
 			card.Tapped = true
 
-			ctx.Match.HandleFx(match.NewContext(ctx.Match, &match.AttackConfirmed{CardID: card.ID, Player: true, Creature: false}))
-
 			// Broadcast state so that opponent can see that this card is tapped if they get any shield triggers
 			ctx.Match.BroadcastState()
+
+			ctx.Match.HandleFx(match.NewContext(ctx.Match, &match.AttackConfirmed{CardID: card.ID, Player: true, Creature: false}))
 
 			// In case AttackConfirmed effect removes itself from the Battlezone
 			if card.Zone != match.BATTLEZONE {
