@@ -17,6 +17,10 @@
 - New card "Sasha, Channeler of Suns" (thanks @DragosIonita23)
 - New card "Dracodance Totem" (thanks @DragosIonita23)
 - New card "Wave Lance" (thanks @DragosIonita23)
+- New card "Überdragon Bajula" (thanks @jyotiskaghosh)
+- New card "Super Terradragon Bailas Gale" (thanks @jyotiskaghosh)
+- New card "Totto Pipicchi" (thanks @jyotiskaghosh)
+- New card "Super Necrodragon Abzo Dolba" (thanks @jyotiskaghosh)
 
 ## 11/04/2025
 - Fixed an issue where "Vacuum Gel" could destroy untapped creatures with its effect (thanks @DragosIonita23)
