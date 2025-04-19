@@ -2,7 +2,6 @@ package dm08
 
 import (
 	"duel-masters/game/civ"
-	"duel-masters/game/cnd"
 	"duel-masters/game/family"
 	"duel-masters/game/fx"
 	"duel-masters/game/match"
@@ -31,21 +30,21 @@ func TorpedoSkyterror(c *match.Card) {
 	c.ManaCost = 5
 	c.ManaRequirement = []string{civ.Fire}
 
-	c.Use(fx.Creature, fx.When(fx.Attacking, func(card *match.Card, ctx *match.Context) {
+	c.PowerModifier = func(m *match.Match, attacking bool) int {
+		if !attacking {
+			return 0
+		}
 
-		card.RemoveConditionBySource(card.ID + "-custom")
+		return len(
+			fx.FindFilter(
+				c.Player,
+				match.BATTLEZONE,
+				func(x *match.Card) bool {
+					return x.Tapped && x.ID != c.ID
+				},
+			),
+		) * 2000
+	}
 
-		otherTapped := fx.FindFilter(
-			card.Player,
-			match.BATTLEZONE,
-			func(x *match.Card) bool {
-				return x.Tapped && x.ID != card.ID
-			},
-		)
-
-		power := len(otherTapped) * 2000
-
-		card.AddUniqueSourceCondition(cnd.PowerAttacker, power, card.ID+"-custom")
-
-	}))
+	c.Use(fx.Creature)
 }
