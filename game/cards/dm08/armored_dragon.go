@@ -19,7 +19,7 @@ func UberdragonBajula(c *match.Card) {
 	c.ManaRequirement = []string{civ.Fire}
 
 	c.Use(fx.Creature, fx.DragonEvolution, fx.Triplebreaker, fx.When(fx.AttackConfirmed, fx.ManaBurnX(2)))
-)
+}
 
 // BruiserDragon ...
 func BruiserDragon(c *match.Card) {
