@@ -28,10 +28,14 @@ func Lalicious(c *match.Card) {
 
 		ctx.Match.ShowCards(card.Player, "Your opponent's hand:", oppHandIds)
 
-		oppTopDeckIds := make([]string, 0)
-		oppTopDeckIds = append(oppTopDeckIds, opp.PeekDeck(1)[0].ImageID)
+		peekedCards := opp.PeekDeck(1)
 
-		ctx.Match.ShowCards(card.Player, "Your opponent's top card of his deck:", oppTopDeckIds)
+		if len(peekedCards) > 0 {
+			oppTopDeckIds := make([]string, 0)
+			oppTopDeckIds = append(oppTopDeckIds, peekedCards[0].ImageID)
+
+			ctx.Match.ShowCards(card.Player, "Your opponent's top card of his deck:", oppTopDeckIds)
+		}
 
 	}))
 }
