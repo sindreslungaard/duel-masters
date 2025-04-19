@@ -3,6 +3,7 @@ package fx
 import (
 	"duel-masters/game/family"
 	"duel-masters/game/match"
+	"fmt"
 	"slices"
 )
 
@@ -273,6 +274,62 @@ func SelectFilter(p *match.Player, m *match.Match, containerOwner *match.Player,
 
 			if err != nil {
 				continue
+			}
+
+			result = append(result, selectedCard)
+
+		}
+
+		break
+
+	}
+
+	return result
+
+}
+
+// SelectFromCollection prompts the user to select n cards from the specified card collection given.
+// Specified card collection MUST be from specified container (battlezone, manazone etc)
+func SelectFromCollection(p *match.Player, m *match.Match, sourceCollection CardCollection, sourceContainer string, text string, min int, max int, cancellable bool) CardCollection {
+
+	result := make([]*match.Card, 0)
+
+	if len(sourceCollection) < 1 {
+		return result
+	}
+
+	if !m.IsPlayerTurn(p) {
+		m.Wait(m.Opponent(p), "Waiting for your opponent to make an action")
+		defer m.EndWait(m.Opponent(p))
+	}
+
+	m.NewActionFullList(p, sourceCollection, min, max, text, false, []*match.Card{})
+
+	defer m.CloseAction(p)
+
+	for {
+
+		action := <-p.Action
+
+		if cancellable && action.Cancel {
+			break
+		}
+
+		if len(action.Cards) < min || len(action.Cards) > max || !match.AssertCardsIn(sourceCollection, action.Cards...) {
+			m.ActionWarning(p, "The cards you selected does not meet the requirements")
+			continue
+		}
+
+		for _, c := range action.Cards {
+
+			selectedCard, err := p.GetCard(c, sourceContainer)
+
+			if err != nil {
+				selectedCard, err = m.Opponent(p).GetCard(c, sourceContainer)
+
+				if err != nil {
+					continue
+				}
 			}
 
 			result = append(result, selectedCard)
@@ -779,4 +836,41 @@ func IHaveCastASpell(card *match.Card, ctx *match.Context) bool {
 	}
 
 	return false
+}
+
+func LookTop4Put1IntoHandReorderRestOnBottomDeck(card *match.Card, ctx *match.Context) {
+	top4CardsDeck := card.Player.PeekDeck(4)
+
+	SelectFromCollection(
+		card.Player,
+		ctx.Match,
+		top4CardsDeck,
+		match.DECK,
+		fmt.Sprintf("%s's effect: Look at the top 4 cards of your deck. Put one of them into your hand. You will put the rest of the cards on the bottom of your deck in any order.", card.Name),
+		1,
+		1,
+		false,
+	).Map(func(x *match.Card) {
+		card.Player.MoveCard(x.ID, match.DECK, match.HAND, card.ID)
+		ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s was put into %s's hand from his deck by %s's effect.", x.Name, card.Player.Username(), card.Name))
+
+		restOfCards := top4CardsDeck[:0]
+		for _, card := range top4CardsDeck {
+			if card.ID != x.ID {
+				restOfCards = append(restOfCards, card)
+			}
+		}
+
+		orderedCardIds := OrderCards(
+			card.Player,
+			ctx.Match,
+			restOfCards,
+			fmt.Sprintf("%s's effect: Order these cards that will be put on the bottom of your deck.", card.Name),
+		)
+
+		if len(orderedCardIds) == len(restOfCards) {
+			card.Player.ReorderCardsOnBottomDeck(restOfCards, orderedCardIds)
+		}
+
+	})
 }
