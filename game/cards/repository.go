@@ -605,6 +605,20 @@ var DM08 = map[string]match.CardConstructor{
 	"85e9d177-69b3-4239-8b2b-ec97f74d5577": dm08.UberdragonBajula,
 	"44cbf9fd-3906-4032-939c-f702ffda7415": dm08.SuperTerradragonBailasGale,
 	"2cf1ccb5-50d8-4a50-902e-85a8ee0a5a04": dm08.TottoPipicchi,
+	"09243e57-0456-44d4-abca-8b9bbe045b4b": dm08.MishaChannelerOfSuns,
+	"89e8ff15-344c-4126-ada7-8ee2966b8a71": dm08.SashaChannelerOfSuns,
+	"a4018d92-aef5-4332-b274-016881d6871e": dm08.DracodanceTotem,
+	"560eb5b5-9fdf-45f8-aecc-62048b269b23": dm08.WaveLance,
+	"38220cfa-531c-4aa1-9b4f-e3c1cc85b1fd": dm08.AquaGrappler,
+	"fd02460a-f9d8-456c-85da-5f37bb5ab84d": dm08.Lalicious,
+	"6edd4023-afe2-4b53-a8b7-d29d851a63c4": dm08.ProwlingElephish,
+	"30298abb-4882-47ca-bf47-82af1df5f868": dm08.MotorcycleMutant,
+	"12fa044c-770e-4944-8fc3-e5c407812e35": dm08.TyrantWorm,
+	"6ed6f9e5-65b8-45b6-9792-b6b5428dac42": dm08.BruiserDragon,
+	"b469fd84-1fa5-42fa-b4e1-f1d186400e9d": dm08.RocketdiveSkyterror,
+	"224723b5-a3d5-4f8f-81f3-1a19a04b5e3d": dm08.TorpedoSkyterror,
+	"d03a8283-6c9b-4a0c-aec7-41d44a6f2fcf": dm08.GrapeGlobbo,
+	"d8ac2ab1-2d02-4877-9d79-35e0e003e8fa": dm08.KyrstronLairDelver,
 }
 
 // Promo is a map with all the card id's in the game and corresponding CardConstructor for promotional exclusive cards
