@@ -170,69 +170,6 @@ func Creature(card *match.Card, ctx *match.Context) {
 
 		// Do this last in case any other cards want to interrupt the flow
 		ctx.ScheduleAfter(func() {
-
-			opponent := ctx.Match.Opponent(card.Player)
-			shieldzone, err := opponent.Container(match.SHIELDZONE)
-
-			if err != nil {
-				return
-			}
-
-			shieldsAttacked := make([]*match.Card, 0)
-
-			if len(shieldzone) > 0 {
-
-				noOfShields := 1
-
-				if card.HasCondition(cnd.DoubleBreaker) {
-					noOfShields = 2
-				}
-
-				if card.HasCondition(cnd.TripleBreaker) {
-					noOfShields = 3
-				}
-
-				for _, condition := range card.Conditions() {
-					if condition.ID != cnd.ShieldBreakModifier {
-						continue
-					}
-
-					if val, ok := condition.Val.(int); ok {
-						noOfShields += val
-					}
-				}
-
-				if noOfShields > len(shieldzone) {
-					noOfShields = len(shieldzone)
-				}
-
-				if card.HasCondition(cnd.HasShieldsSelectionEffect) {
-					// TODO
-					// the logic for the cancellable SelectAndReturnShields is to be
-					// implemented with ctx.ScheduleAfter on each card's handler of SelectShields event
-					// also, there will be the prompt for the cards that NEED the confirmation prompt
-					// TODO: move AttackConfirmed event BEFORE this SelectShields event
-					ctx.Match.HandleFx(match.NewContext(ctx.Match, &match.SelectShields{PlayerAttacked: ctx.Match.Opponent(card.Player), AttackingCard: card, Shieldzone: shieldzone, NoOfShields: noOfShields}))
-
-					shieldsAttacked = SelectAndReturnShields(
-						card,
-						ctx,
-						shieldzone,
-						noOfShields,
-						false,
-					)
-				} else {
-					shieldsAttacked = SelectAndReturnShields(
-						card,
-						ctx,
-						shieldzone,
-						noOfShields,
-						true,
-					)
-				}
-
-			}
-
 			card.Tapped = true
 
 			// Broadcast state so that opponent can see that this card is tapped if they get any shield triggers
@@ -247,7 +184,7 @@ func Creature(card *match.Card, ctx *match.Context) {
 
 			selectBlockersEvent := match.SelectBlockers{Blockers: make([]*match.Card, 0), Attacker: card, AttackedCardID: ""}
 			ctx.Match.HandleFx(match.NewContext(ctx.Match, &selectBlockersEvent))
-			ctx.Match.HandleFx(match.NewContext(ctx.Match, &match.Block{Blockers: selectBlockersEvent.Blockers, Attacker: selectBlockersEvent.Attacker, AttackedCardID: selectBlockersEvent.AttackedCardID, ShieldsAttacked: shieldsAttacked}))
+			ctx.Match.HandleFx(match.NewContext(ctx.Match, &match.Block{Blockers: selectBlockersEvent.Blockers, Attacker: selectBlockersEvent.Attacker, AttackedCardID: selectBlockersEvent.AttackedCardID}))
 		})
 
 	}
@@ -359,6 +296,22 @@ func Creature(card *match.Card, ctx *match.Context) {
 
 	}
 
+	if event, ok := ctx.Event.(*match.SelectShields); ok {
+
+		// Is this event for me or someone else?
+		if event.Attacker.ID != card.ID {
+			return
+		}
+
+		shieldsAttacked := SelectAndReturnShields(
+			card,
+			ctx,
+			event.Shieldzone,
+			event.NoOfShields,
+		)
+
+	}
+
 	if event, ok := ctx.Event.(*match.Block); ok {
 
 		// Is this event for me or someone else?
@@ -378,13 +331,7 @@ func Creature(card *match.Card, ctx *match.Context) {
 
 				ctx.Match.Wait(card.Player, "Waiting for your opponent to make an action")
 
-				identifierStr := "you"
-
-				if len(event.ShieldsAttacked) > 0 {
-					identifierStr = fmt.Sprintf("%v of your shields", len(event.ShieldsAttacked))
-				}
-
-				ctx.Match.NewAction(opponent, event.Blockers, 1, 1, fmt.Sprintf("%s (%v) is attacking %s. Choose a creature to block the attack with or close to not block the attack.", card.Name, ctx.Match.GetPower(card, true), identifierStr), true)
+				ctx.Match.NewAction(opponent, event.Blockers, 1, 1, fmt.Sprintf("%s (%v) is attacking you. Choose a creature to block the attack with or close to not block the attack.", card.Name, ctx.Match.GetPower(card, true)), true)
 
 				for {
 
@@ -399,6 +346,55 @@ func Creature(card *match.Card, ctx *match.Context) {
 							ctx.Match.End(card.Player, fmt.Sprintf("%s won the game", ctx.Match.PlayerRef(card.Player).Socket.User.Username))
 						} else {
 							// Break n shields
+							//TODO here handle the SelectShields event
+							opponent := ctx.Match.Opponent(card.Player)
+							shieldzone, err := opponent.Container(match.SHIELDZONE)
+
+							if err != nil {
+								return
+							}
+
+							shieldsAttacked := make([]*match.Card, 0)
+
+							if len(shieldzone) > 0 {
+
+								noOfShields := 1
+
+								if card.HasCondition(cnd.DoubleBreaker) {
+									noOfShields = 2
+								}
+
+								if card.HasCondition(cnd.TripleBreaker) {
+									noOfShields = 3
+								}
+
+								for _, condition := range card.Conditions() {
+									if condition.ID != cnd.ShieldBreakModifier {
+										continue
+									}
+
+									if val, ok := condition.Val.(int); ok {
+										noOfShields += val
+									}
+								}
+
+								if noOfShields > len(shieldzone) {
+									noOfShields = len(shieldzone)
+								}
+
+								if card.HasCondition(cnd.HasShieldsSelectionEffect) {
+									ctx.Match.HandleFx(match.NewContext(ctx.Match, &match.SelectShields{Attacker: card, Shieldzone: shieldzone, NoOfShields: noOfShields}))
+								} else {
+									shieldsAttacked = SelectAndReturnShields(
+										card,
+										ctx,
+										shieldzone,
+										noOfShields,
+									)
+								}
+
+							}
+							//end TODO
 							ctx.Match.BreakShields(event.ShieldsAttacked, card)
 						}
 
@@ -432,13 +428,60 @@ func Creature(card *match.Card, ctx *match.Context) {
 
 			} else {
 
-				card.Tapped = true
-
 				if oppShieldsZoneLength < 1 {
 					// Win
 					ctx.Match.End(card.Player, fmt.Sprintf("%s won the game", ctx.Match.PlayerRef(card.Player).Socket.User.Username))
 				} else {
 					// Break n shields
+					//TODO handle SelectShields event
+					opponent := ctx.Match.Opponent(card.Player)
+					shieldzone, err := opponent.Container(match.SHIELDZONE)
+
+					if err != nil {
+						return
+					}
+
+					shieldsAttacked := make([]*match.Card, 0)
+
+					if len(shieldzone) > 0 {
+
+						noOfShields := 1
+
+						if card.HasCondition(cnd.DoubleBreaker) {
+							noOfShields = 2
+						}
+
+						if card.HasCondition(cnd.TripleBreaker) {
+							noOfShields = 3
+						}
+
+						for _, condition := range card.Conditions() {
+							if condition.ID != cnd.ShieldBreakModifier {
+								continue
+							}
+
+							if val, ok := condition.Val.(int); ok {
+								noOfShields += val
+							}
+						}
+
+						if noOfShields > len(shieldzone) {
+							noOfShields = len(shieldzone)
+						}
+
+						if card.HasCondition(cnd.HasShieldsSelectionEffect) {
+							ctx.Match.HandleFx(match.NewContext(ctx.Match, &match.SelectShields{Attacker: card, Shieldzone: shieldzone, NoOfShields: noOfShields}))
+						} else {
+							shieldsAttacked = SelectAndReturnShields(
+								card,
+								ctx,
+								shieldzone,
+								noOfShields,
+							)
+						}
+
+					}
+					//end TODO
 					ctx.Match.BreakShields(event.ShieldsAttacked, card)
 				}
 
@@ -699,11 +742,11 @@ func HasSummoningSickness(card *match.Card) bool {
 	return card.HasCondition(cnd.SummoningSickness) && !card.HasCondition(cnd.SpeedAttacker)
 }
 
-func SelectAndReturnShields(card *match.Card, ctx *match.Context, shieldzone []*match.Card, minmax int, cancellable bool) []*match.Card {
+func SelectAndReturnShields(card *match.Card, ctx *match.Context, shieldzone []*match.Card, minmax int) []*match.Card {
 	opponent := ctx.Match.Opponent(card.Player)
 	shieldsAttacked := make([]*match.Card, 0)
 
-	ctx.Match.NewBacksideAction(card.Player, shieldzone, minmax, minmax, fmt.Sprintf("Select %v shield(s) to break", minmax), cancellable)
+	ctx.Match.NewBacksideAction(card.Player, shieldzone, minmax, minmax, fmt.Sprintf("Select %v shield(s) to break", minmax), true)
 
 	for {
 

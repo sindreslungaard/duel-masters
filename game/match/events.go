@@ -88,13 +88,12 @@ type AttackConfirmed struct {
 	Creature bool
 }
 
-// SelectShields is fired when the AttackignCard attacked the PlayerAttacked
-// Attacking player is prompted to select exactly NoOfShields from the PlayerAttacked's Shieldzone
+// SelectShields is fired after the Attacker confirmed the AttackPlayer sequence
+// The opponent is prompted to select exactly NoOfShields from their Shieldzone
 type SelectShields struct {
-	PlayerAttacked *Player
-	AttackingCard  *Card
-	Shieldzone     []*Card
-	NoOfShields    int
+	Attacker    *Card
+	Shieldzone  []*Card
+	NoOfShields int
 }
 
 // SelectBlockers is fired after the AttackConfirmed effects,
@@ -109,10 +108,9 @@ type SelectBlockers struct {
 // Block is fired when the opponent is prompted to select the blockers
 // Properties are passed from SelectBlockers event
 type Block struct {
-	Attacker        *Card
-	Blockers        []*Card
-	ShieldsAttacked []*Card
-	AttackedCardID  string // must be empty if the attack is on a player
+	Attacker       *Card
+	Blockers       []*Card
+	AttackedCardID string // must be empty if the attack is on a player
 }
 
 // Battle is fired when two creatures are fighting, i.e. from attacking a creature or blocking an attack
