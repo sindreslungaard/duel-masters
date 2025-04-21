@@ -2,6 +2,9 @@
 
 ## [Unreleased]
 
+- No unreleased changes
+
+## 24/04/2025
 - New card "Magmadragon Jagalzor" (thanks @jyotiskaghosh)
 - New card "Bruiser Dragon" (thanks @DragosIonita23)
 - New card "Rocketdive Skyterror" (thanks @DragosIonita23)
