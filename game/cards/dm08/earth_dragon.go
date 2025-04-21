@@ -46,7 +46,7 @@ func TerradragonGamiratar(c *match.Card) {
 			},
 			false,
 		).Map(func(x *match.Card) {
-			fx.ForcePutCreatureIntoBZ(ctx, x, card)
+			fx.ForcePutCreatureIntoBZ(ctx, x, match.HAND, card)
 		})
 	}))
 }

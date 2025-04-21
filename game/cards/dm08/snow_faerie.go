@@ -63,7 +63,7 @@ func kachuaKeeperOfTheIcegateTapAbility(card *match.Card, ctx *match.Context) {
 		})
 
 		// and put into the Battlezone
-		fx.ForcePutCreatureIntoBZ(ctx, selDragon, card)
+		fx.ForcePutCreatureIntoBZ(ctx, selDragon, match.DECK, card)
 
 		// then shuffle deck
 		fx.ShuffleDeck(card, ctx, false)

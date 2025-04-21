@@ -845,7 +845,7 @@ func CanBeSummoned(player *match.Player, c *match.Card) bool {
 			)) > 0)
 }
 
-func ForcePutCreatureIntoBZ(ctx *match.Context, creature *match.Card, source *match.Card) {
+func ForcePutCreatureIntoBZ(ctx *match.Context, creature *match.Card, from string, source *match.Card) {
 
 	cardPlayedCtx := match.NewContext(ctx.Match, &match.CardPlayedEvent{
 		CardID: creature.ID,
@@ -853,14 +853,14 @@ func ForcePutCreatureIntoBZ(ctx *match.Context, creature *match.Card, source *ma
 	ctx.Match.HandleFx(cardPlayedCtx)
 
 	if !cardPlayedCtx.Cancelled() {
+		_, err := creature.Player.MoveCard(creature.ID, from, match.BATTLEZONE, source.ID)
 
-		if !creature.HasCondition(cnd.Evolution) {
-			creature.AddCondition(cnd.SummoningSickness, nil, nil)
+		if err == nil {
+			if !creature.HasCondition(cnd.Evolution) {
+				creature.AddCondition(cnd.SummoningSickness, nil, source.ID)
+			}
+			ctx.Match.ReportActionInChat(creature.Player, fmt.Sprintf("%s was moved to the battle zone from %s by %s's effect", creature.Name, from, source.Name))
 		}
-
-		creature.Player.MoveCard(creature.ID, match.DECK, match.BATTLEZONE, source.ID)
-		ctx.Match.ReportActionInChat(creature.Player, fmt.Sprintf("%s was moved to the battle zone by %s's effect", creature.Name, source.Name))
-
 	}
 
 }
