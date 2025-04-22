@@ -294,21 +294,18 @@ func Creature(card *match.Card, ctx *match.Context) {
 
 			c := attackedCreatures[0]
 
-			card.Tapped = true
+			if !tapCardAndConfirmAttack(card, ctx, false) {
+				return
+			}
 
-			ctx.Match.HandleFx(match.NewContext(ctx.Match, &match.AttackConfirmed{CardID: card.ID, Player: false, Creature: true}))
-
-			// Broadcast state so that opponent can see that this card is tapped if they get any shield triggers
-			ctx.Match.BroadcastState()
-
-			// In case the attacker or creature was removed by an AttackConfirmed effect
-			if card.Zone != match.BATTLEZONE || c.Zone != match.BATTLEZONE {
+			// In case the creature was removed by an AttackConfirmed effect
+			if c.Zone != match.BATTLEZONE {
 				return
 			}
 
 			selectBlockersEvent := match.SelectBlockers{Blockers: make([]*match.Card, 0), Attacker: card, AttackedCardID: c.ID}
 			ctx.Match.HandleFx(match.NewContext(ctx.Match, &selectBlockersEvent))
-			ctx.Match.HandleFx(match.NewContext(ctx.Match, &match.Block{Blockers: selectBlockersEvent.Blockers, Attacker: selectBlockersEvent.Attacker, AttackedCardID: selectBlockersEvent.AttackedCardID, ShieldsAttacked: make([]*match.Card, 0)}))
+			ctx.Match.HandleFx(match.NewContext(ctx.Match, &match.Block{Blockers: selectBlockersEvent.Blockers, Attacker: selectBlockersEvent.Attacker, AttackedCardID: selectBlockersEvent.AttackedCardID}))
 		})
 
 	}
