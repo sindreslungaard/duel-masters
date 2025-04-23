@@ -675,27 +675,6 @@ func AnotherCreatureSummoned(card *match.Card, ctx *match.Context) bool {
 	return CreatureSummoned(card, ctx) && event.CardID != card.ID
 }
 
-// AnotherOwnCreatureSummoned returns true if you summoned another card
-//
-// Does not activate if this current card is summoned.
-// Does not activate if a card that was under an Evolution card becomes visible again.
-func AnotherOwnCreatureSummoned(card *match.Card, ctx *match.Context) bool {
-	event, ok := ctx.Event.(*match.CardMoved)
-	if !ok {
-		return false
-	}
-
-	// check if it was the card's player whose creature got summoned
-	var p *match.Player
-	if event.MatchPlayerID == 1 {
-		p = ctx.Match.Player1.Player
-	} else {
-		p = ctx.Match.Player2.Player
-	}
-
-	return CreatureSummoned(card, ctx) && event.CardID != card.ID && p == card.Player
-}
-
 func AnotherOwnDragonoidOrDragonSummoned(card *match.Card, ctx *match.Context) bool {
 	return anotherOwnCreatureSummonedFilter(card, ctx, func(c *match.Card) bool {
 		return c.SharesAFamily(append(family.Dragons, family.Dragonoid))
@@ -722,6 +701,26 @@ func anotherOwnCreatureSummonedFilter(card *match.Card, ctx *match.Context, filt
 	}
 
 	return false
+}
+
+// AnotherOwnCreatureSummoned returns true if you summoned another creature
+// Does not activate if this current card is summoned.
+// Does not activate if a card that was under an Evolution card becomes visible again.
+func AnotherOwnCreatureSummoned(card *match.Card, ctx *match.Context) bool {
+	event, ok := ctx.Event.(*match.CardMoved)
+	if !ok {
+		return false
+	}
+
+	// check if it was the card's player whose creature got summoned
+	var p *match.Player
+	if event.MatchPlayerID == 1 {
+		p = ctx.Match.Player1.Player
+	} else {
+		p = ctx.Match.Player2.Player
+	}
+
+	return CreatureSummoned(card, ctx) && event.CardID != card.ID && p == card.Player
 }
 
 func AnotherCreatureDestroyed(card *match.Card, ctx *match.Context) bool {
