@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"duel-masters/internal"
 	"encoding/json"
+	"fmt"
 	"io"
 	"net/http"
 	"os"
@@ -170,7 +171,12 @@ func (svc *ChatModerationService) flush() {
 
 		for i, result := range moderationResp.Results {
 			actor := actors[i]
+			msg := inputs[i]
 			points := 0
+
+			if result.Flagged {
+				logrus.Info(fmt.Sprintf("Chat moderation flagged user %s for message: %s", actor, msg))
+			}
 
 			if result.Categories.Hate {
 				points += Hate

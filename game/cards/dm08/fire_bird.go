@@ -1,4 +1,4 @@
-package dm06
+package dm08
 
 import (
 	"duel-masters/game/civ"
@@ -8,17 +8,20 @@ import (
 	"duel-masters/game/match"
 )
 
-func RumblesaurQ(c *match.Card) {
-	c.Name = "Rumblesaur Q"
-	c.Power = 3000
+// TottoPipicchi ...
+func TottoPipicchi(c *match.Card) {
+
+	c.Name = "Totto Pipicchi"
+	c.Power = 1000
 	c.Civ = civ.Fire
-	c.Family = []string{family.RockBeast, family.Survivor}
-	c.ManaCost = 6
+	c.Family = []string{family.FireBird}
+	c.ManaCost = 3
 	c.ManaRequirement = []string{civ.Fire}
 
-	c.Use(fx.Creature, fx.Survivor,
+	c.Use(fx.Creature,
 		fx.When(fx.InTheBattlezone, func(card *match.Card, ctx *match.Context) {
 			ctx.Match.ApplyPersistentEffect(func(ctx2 *match.Context, exit func()) {
+
 				if card.Zone != match.BATTLEZONE {
 					fx.Find(
 						card.Player,
@@ -34,9 +37,10 @@ func RumblesaurQ(c *match.Card) {
 				fx.FindFilter(
 					card.Player,
 					match.BATTLEZONE,
-					func(creature *match.Card) bool { return creature.HasFamily(family.Survivor) },
+					func(creature *match.Card) bool { return creature.SharesAFamily(family.Dragons) },
 				).Map(func(x *match.Card) { x.AddUniqueSourceCondition(cnd.SpeedAttacker, true, card.ID) })
 			})
 		}),
 	)
+
 }

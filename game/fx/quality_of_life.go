@@ -600,6 +600,23 @@ func ShieldBroken(card *match.Card, ctx *match.Context) bool {
 
 }
 
+// TurboRushCondition returns true if a shield has been broken by one of your other creatures
+func TurboRushCondition(card *match.Card, ctx *match.Context) bool {
+
+	if !ctx.Match.IsPlayerTurn(card.Player) {
+		return false
+	}
+
+	if event, ok := ctx.Event.(*match.BrokenShieldEvent); ok {
+		if creature, err := card.Player.GetCard(event.Source, match.BATTLEZONE); err == nil {
+			return creature != card
+		}
+	}
+
+	return false
+
+}
+
 // CreatureSummoned returns true if a card was summoned
 //
 // Does not activate if a card that was under an Evolution card becomes visible again.
@@ -656,6 +673,27 @@ func AnotherCreatureSummoned(card *match.Card, ctx *match.Context) bool {
 	}
 
 	return CreatureSummoned(card, ctx) && event.CardID != card.ID
+}
+
+// AnotherOwnCreatureSummoned returns true if you summoned another creature
+//
+// Does not activate if this current card is summoned.
+// Does not activate if a card that was under an Evolution card becomes visible again.
+func AnotherOwnCreatureSummoned(card *match.Card, ctx *match.Context) bool {
+	event, ok := ctx.Event.(*match.CardMoved)
+	if !ok {
+		return false
+	}
+
+	// check if it was the card's player whose creature got summoned
+	var p *match.Player
+	if event.MatchPlayerID == 1 {
+		p = ctx.Match.Player1.Player
+	} else {
+		p = ctx.Match.Player2.Player
+	}
+
+	return CreatureSummoned(card, ctx) && event.CardID != card.ID && p == card.Player
 }
 
 func AnotherCreatureDestroyed(card *match.Card, ctx *match.Context) bool {

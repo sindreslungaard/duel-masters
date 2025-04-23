@@ -20,10 +20,10 @@ func LegionnaireLizard(c *match.Card) {
 	c.TapAbility = func(card *match.Card, ctx *match.Context) {
 
 		ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s activated %s's tap ability to give creature  \"Speed Attacker this turn\"", card.Player.Username(), card.Name))
-		creatures := match.Filter(card.Player, ctx.Match, card.Player, match.BATTLEZONE, "Select 1 creature from your battlezone that will gain \"Speed attacker\"", 1, 1, false, func(x *match.Card) bool { return x.ID != card.ID })
+		creatures := fx.SelectFilter(card.Player, ctx.Match, card.Player, match.BATTLEZONE, "Select 1 creature from your battlezone that will gain \"Speed attacker\"", 1, 1, false, func(x *match.Card) bool { return x.ID != card.ID }, false)
 		for _, creature := range creatures {
 
-			creature.RemoveCondition(cnd.SummoningSickness)
+			creature.AddCondition(cnd.SpeedAttacker, true, card.ID)
 			ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s was given \"Speed Attacker by %s\"", creature.Name, card.Name))
 
 		}
