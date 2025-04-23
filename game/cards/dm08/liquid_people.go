@@ -20,3 +20,27 @@ func AquaRanger(c *match.Card) {
 	c.Use(fx.Creature, fx.CantBeBlocked, fx.When(fx.WouldBeDestroyed, fx.ReturnToHand))
 
 }
+
+// AquaGrappler ...
+func AquaGrappler(c *match.Card) {
+
+	c.Name = "Aqua Grappler"
+	c.Power = 3000
+	c.Civ = civ.Water
+	c.Family = []string{family.LiquidPeople}
+	c.ManaCost = 5
+	c.ManaRequirement = []string{civ.Water}
+
+	c.Use(fx.Creature, fx.When(fx.AttackConfirmed, func(card *match.Card, ctx *match.Context) {
+		numberOfMyOtherTappedCreatures := len(fx.FindFilter(
+			card.Player,
+			match.BATTLEZONE,
+			func(x *match.Card) bool {
+				return x.Tapped && x.ID != card.ID
+			},
+		))
+
+		fx.DrawUpto(card, ctx, numberOfMyOtherTappedCreatures)
+	}))
+
+}
