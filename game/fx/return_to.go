@@ -188,7 +188,7 @@ func ReturnXCreaturesFromGraveToHand(x int) func(*match.Card, *match.Context) {
 			ctx.Match,
 			card.Player,
 			match.GRAVEYARD,
-			fmt.Sprintf("%s: You may return %d creature(s) from your graveyard to your hand", card.Name, x),
+			fmt.Sprintf("%s: Return up to %d creature(s) from your graveyard to your hand", card.Name, x),
 			1,
 			x,
 			false,
