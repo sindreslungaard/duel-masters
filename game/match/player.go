@@ -377,9 +377,10 @@ func (p *Player) PeekDeck(n int) []*Card {
 }
 
 // DrawCards moves n cards from the players deck to their hand
-func (p *Player) DrawCards(n int) {
+// Returns a reference to the drawn cards array
+func (p *Player) DrawCards(n int) []*Card {
 
-	toMove := make([]string, 0)
+	toMove := make([]*Card, 0)
 
 	p.mutex.Lock()
 
@@ -387,14 +388,14 @@ func (p *Player) DrawCards(n int) {
 		n = len(p.deck)
 	}
 
-	for i := 0; i < n; i++ {
-		toMove = append(toMove, p.deck[i].ID)
+	for i := range n {
+		toMove = append(toMove, p.deck[i])
 	}
 
 	p.mutex.Unlock()
 
 	for _, card := range toMove {
-		p.MoveCard(card, DECK, HAND, "draw")
+		p.MoveCard(card.ID, DECK, HAND, "draw")
 	}
 
 	if n == 1 {
@@ -408,6 +409,7 @@ func (p *Player) DrawCards(n int) {
 		p.match.End(p.match.Opponent(p), fmt.Sprintf("%s won by deck out!", p.match.Opponent(p).Username()))
 	}
 
+	return toMove
 }
 
 // HasCard checks if a container has a card
