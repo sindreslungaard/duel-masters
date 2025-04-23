@@ -677,8 +677,7 @@ func AnotherCreatureSummoned(card *match.Card, ctx *match.Context) bool {
 	return CreatureSummoned(card, ctx) && event.CardID != card.ID
 }
 
-// AnotherOwnCreatureSummoned returns true if you summoned another card
-//
+// AnotherOwnCreatureSummoned returns true if you summoned another creature
 // Does not activate if this current card is summoned.
 // Does not activate if a card that was under an Evolution card becomes visible again.
 func AnotherOwnCreatureSummoned(card *match.Card, ctx *match.Context) bool {
