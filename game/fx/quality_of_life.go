@@ -95,7 +95,7 @@ func WhenAll(tests []func(*match.Card, *match.Context) bool, h func(*match.Card,
 
 // Select prompts the user to select n cards from the specified container
 func Select(p *match.Player, m *match.Match, containerOwner *match.Player, containerName string, text string, min int, max int, cancellable bool) CardCollection {
-	return SelectFilterSelectablesOnly(p, m, containerOwner, containerName, text, min, max, cancellable, func(x *match.Card) bool { return true })
+	return SelectFilter(p, m, containerOwner, containerName, text, min, max, cancellable, func(x *match.Card) bool { return true }, false)
 }
 
 // SelectCount prompts to user to select a number in an interval
@@ -215,13 +215,6 @@ func MultipleChoiceQuestion(p *match.Player, m *match.Match, text string, option
 	}
 
 	return result
-}
-
-// SelectFilterSelectablesOnly prompts the user to select n cards from the specified container that matches the given filter
-//
-// Deprecated: New cards should use `fx.SelectFilter`
-func SelectFilterSelectablesOnly(p *match.Player, m *match.Match, containerOwner *match.Player, containerName string, text string, min int, max int, cancellable bool, filter func(*match.Card) bool) CardCollection {
-	return SelectFilter(p, m, containerOwner, containerName, text, min, max, cancellable, filter, false)
 }
 
 // SelectFilter prompts the user to select n cards from the specified container that matches the given filter.

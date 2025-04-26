@@ -51,22 +51,21 @@ func BurningPower(c *match.Card) {
 	c.ManaCost = 1
 	c.ManaRequirement = []string{civ.Fire}
 
-	c.Use(fx.Spell, func(card *match.Card, ctx *match.Context) {
-
-		if match.AmICasted(card, ctx) {
-
-			creatures := match.Search(card.Player, ctx.Match, card.Player, match.BATTLEZONE, "Select 1 creature from your battlezone that will gain \"Power Attacker +2000\"", 1, 1, false)
-
-			for _, creature := range creatures {
-
-				creature.AddCondition(cnd.PowerAttacker, 2000, card.ID)
-				ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s was given power attacker +2000", creature.Name))
-
-			}
-
-		}
-
-	})
+	c.Use(fx.Spell, fx.When(fx.SpellCast, func(card *match.Card, ctx *match.Context) {
+		fx.Select(
+			card.Player,
+			ctx.Match,
+			card.Player,
+			match.BATTLEZONE,
+			fmt.Sprintf("%s: Select 1 creature from your battlezone that will gain \"Power Attacker +2000\"", card.Name),
+			1,
+			1,
+			false,
+		).Map(func(x *match.Card) {
+			x.AddCondition(cnd.PowerAttacker, 2000, card.ID)
+			ctx.Match.ReportActionInChat(x.Player, fmt.Sprintf("%s was given power attacker +2000", x.Name))
+		})
+	}))
 
 }
 
