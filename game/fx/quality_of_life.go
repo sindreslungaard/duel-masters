@@ -821,3 +821,11 @@ func WheneverThisAttacksAndIsntBlocked(card *match.Card, ctx *match.Context) boo
 
 	return false
 }
+
+func WheneverThisAttacksPlayerAndIsntBlocked(card *match.Card, ctx *match.Context) bool {
+	if event, ok := ctx.Event.(*match.BreakShieldEvent); ok {
+		return event.Source == card
+	}
+
+	return false
+}
