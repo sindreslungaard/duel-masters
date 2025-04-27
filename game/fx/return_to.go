@@ -181,7 +181,7 @@ func PutOwnCreatureFromBZToMZ(card *match.Card, ctx *match.Context) {
 	})
 }
 
-func ReturnXCreaturesFromGraveToHand(x int) func(*match.Card, *match.Context) {
+func ReturnXCreaturesFromGraveToHand(x int) match.HandlerFunc {
 	return func(card *match.Card, ctx *match.Context) {
 		SelectFilter(
 			card.Player,
