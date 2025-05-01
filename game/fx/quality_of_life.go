@@ -223,6 +223,10 @@ func SelectFilter(p *match.Player, m *match.Match, containerOwner *match.Player,
 
 	result := make([]*match.Card, 0)
 
+	if min <= 0 && max <= 0 {
+		return result
+	}
+
 	cards, err := containerOwner.Container(containerName)
 
 	if err != nil || len(cards) < 1 {
@@ -234,8 +238,16 @@ func SelectFilter(p *match.Player, m *match.Match, containerOwner *match.Player,
 		unselectables = nil
 	}
 
-	if len(filtered) < 1 {
+	filteredLength := len(filtered)
+	if filteredLength < 1 {
 		return result
+	}
+
+	if filteredLength < min {
+		min = filteredLength
+		max = filteredLength
+	} else if filteredLength < max {
+		max = filteredLength
 	}
 
 	if !m.IsPlayerTurn(p) {
@@ -294,16 +306,29 @@ func selectMultipartBase(p *match.Player, m *match.Match, cards map[string][]*ma
 
 	result := make([]*match.Card, 0)
 
+	if min <= 0 && max <= 0 {
+		return result
+	}
+
 	notEmpty := false
+	totalCardsLength := 0
 
 	for _, cardList := range cards {
 		if len(cardList) > 0 {
 			notEmpty = true
+			totalCardsLength += len(cardList)
 		}
 	}
 
 	if !notEmpty {
 		return result
+	}
+
+	if totalCardsLength < min {
+		min = totalCardsLength
+		max = totalCardsLength
+	} else if totalCardsLength < max {
+		max = totalCardsLength
 	}
 
 	if backsideOnly {
@@ -362,6 +387,10 @@ func SelectBacksideFilter(p *match.Player, m *match.Match, containerOwner *match
 
 	result := make([]*match.Card, 0)
 
+	if min <= 0 && max <= 0 {
+		return result
+	}
+
 	cards, err := containerOwner.Container(containerName)
 
 	if err != nil || len(cards) < 1 {
@@ -376,8 +405,16 @@ func SelectBacksideFilter(p *match.Player, m *match.Match, containerOwner *match
 		}
 	}
 
-	if len(filtered) < 1 {
+	filteredLength := len(filtered)
+	if filteredLength < 1 {
 		return result
+	}
+
+	if filteredLength < min {
+		min = filteredLength
+		max = filteredLength
+	} else if filteredLength < max {
+		max = filteredLength
 	}
 
 	if !m.IsPlayerTurn(p) {

@@ -86,31 +86,30 @@ func MegaDetonator(c *match.Card) {
 
 		handLen := len(fx.Find(card.Player, match.HAND)) - 1
 
-		n := 0
+		chosenNumber := 0
 
-		fx.SelectFilterSelectablesOnly(
+		fx.SelectFilter(
 			card.Player,
 			ctx.Match,
 			card.Player,
 			match.HAND,
-			"Mega Detonator: Choose which cards to discard.",
-			0,
+			fmt.Sprintf("%s: Choose any number of your cards from your hand to discard.", card.Name),
+			1,
 			handLen,
-			false,
+			true,
 			func(c *match.Card) bool { return c.ID != card.ID },
-		).Map(func(c *match.Card) {
+			false,
+		).Map(func(x *match.Card) {
+			x.Player.MoveCard(x.ID, match.HAND, match.GRAVEYARD, card.ID)
+			ctx.Match.ReportActionInChat(x.Player, fmt.Sprintf("%s was moved to %s's graveyard from their hand by %s", x.Name, card.Player.Username(), card.Name))
 
-			card.Player.MoveCard(c.ID, match.HAND, match.GRAVEYARD, card.ID)
-			ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s was moved to %s's graveyard from their hand by Mega Detonator", c.Name, card.Player.Username()))
-
-			n++
-
+			chosenNumber++
 		})
 
-		creatures := len(fx.Find(card.Player, match.BATTLEZONE))
+		creaturesLen := len(fx.Find(card.Player, match.BATTLEZONE))
 
-		if n > creatures {
-			n = creatures
+		if chosenNumber > creaturesLen {
+			chosenNumber = creaturesLen
 		}
 
 		fx.Select(
@@ -118,13 +117,13 @@ func MegaDetonator(c *match.Card) {
 			ctx.Match,
 			card.Player,
 			match.BATTLEZONE,
-			fmt.Sprintf("Mega Detonator: Choose %d creatures that will get double breaker.", n),
-			n,
-			n,
+			fmt.Sprintf("%s: Choose %d creatures that will get \"Double Breaker\"", card.Name, chosenNumber),
+			chosenNumber,
+			chosenNumber,
 			false,
 		).Map(func(x *match.Card) {
 			x.AddCondition(cnd.DoubleBreaker, true, card.ID)
-			ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s got double breaker from Mega Detonator", x.Name))
+			ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s was given \"Double Breaker\" by %s", x.Name, card.Name))
 		})
 
 	}))
@@ -262,13 +261,12 @@ func ChainsOfSacrifice(c *match.Card) {
 	c.ManaRequirement = []string{civ.Darkness}
 
 	c.Use(fx.Spell, fx.When(fx.SpellCast, func(card *match.Card, ctx *match.Context) {
-
 		fx.Select(
 			card.Player,
 			ctx.Match,
 			card.Player,
 			match.BATTLEZONE,
-			"Chains of Sacrifice: Select one of your creatures and destroy it.",
+			"%s: Select one of your creatures and destroy it.",
 			1,
 			1,
 			false,
@@ -281,15 +279,15 @@ func ChainsOfSacrifice(c *match.Card) {
 			ctx.Match,
 			ctx.Match.Opponent(card.Player),
 			match.BATTLEZONE,
-			"Chains of Sacrifice: Select up to 2 of your opponent's creatures and destroy them.",
-			0,
+			"%s: Select up to 2 of your opponent's creatures and destroy them.",
+			1,
 			2,
-			false,
+			true,
 		).Map(func(x *match.Card) {
 			ctx.Match.Destroy(x, card, match.DestroyedBySpell)
 		})
-
 	}))
+
 }
 
 // Darkpact ...
