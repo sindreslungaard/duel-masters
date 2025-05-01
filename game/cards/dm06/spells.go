@@ -152,25 +152,16 @@ func SphereOfWonder(c *match.Card) {
 	c.ManaCost = 4
 	c.ManaRequirement = []string{civ.Light}
 
-	c.Use(fx.Spell, func(card *match.Card, ctx *match.Context) {
+	c.Use(fx.Spell, fx.When(fx.SpellCast, func(card *match.Card, ctx *match.Context) {
+		if len(fx.Find(card.Player, match.SHIELDZONE)) < len(fx.Find(ctx.Match.Opponent(card.Player), match.SHIELDZONE)) {
+			cards := card.Player.PeekDeck(1)
 
-		if match.AmICasted(card, ctx) {
-
-			if len(fx.Find(card.Player, match.SHIELDZONE)) < len(fx.Find(ctx.Match.Opponent(card.Player), match.SHIELDZONE)) {
-
-				cards := card.Player.PeekDeck(1)
-
-				for _, toMove := range cards {
-
-					card.Player.MoveCard(toMove.ID, match.DECK, match.SHIELDZONE, card.ID)
-					ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s put a shield into the shieldzone from the top of their deck by Sphere of Wonder's ability", card.Player.Username()))
-
-				}
+			for _, toMove := range cards {
+				card.Player.MoveCard(toMove.ID, match.DECK, match.SHIELDZONE, card.ID)
+				ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s put a shield into the shieldzone from the top of their deck by %s's ability", card.Player.Username(), card.Name))
 			}
-
 		}
-
-	})
+	}))
 
 }
 
@@ -181,27 +172,22 @@ func MysticDreamscape(c *match.Card) {
 	c.ManaCost = 4
 	c.ManaRequirement = []string{civ.Water}
 
-	c.Use(fx.Spell, fx.ShieldTrigger, func(card *match.Card, ctx *match.Context) {
-
-		if match.AmICasted(card, ctx) {
-
-			fx.Select(
-				card.Player,
-				ctx.Match,
-				card.Player,
-				match.MANAZONE,
-				"Mystic Dreamscape: Return up to 3 cards from your mana zone to your hand",
-				1,
-				3,
-				true,
-			).Map(func(x *match.Card) {
-				x.Tapped = false
-				card.Player.MoveCard(x.ID, match.MANAZONE, match.HAND, card.ID)
-				ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s was moved to %s's hand from their manazone by Mystic Dreamscape", x.Name, card.Player.Username()))
-			})
-
-		}
-	})
+	c.Use(fx.Spell, fx.ShieldTrigger, fx.When(fx.SpellCast, func(card *match.Card, ctx *match.Context) {
+		fx.Select(
+			card.Player,
+			ctx.Match,
+			card.Player,
+			match.MANAZONE,
+			fmt.Sprintf("%s: Return up to 3 cards from your mana zone to your hand", card.Name),
+			1,
+			3,
+			true,
+		).Map(func(x *match.Card) {
+			x.Tapped = false
+			card.Player.MoveCard(x.ID, match.MANAZONE, match.HAND, card.ID)
+			ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s was moved to %s's hand from their manazone by %s", x.Name, card.Player.Username(), card.Name))
+		})
+	}))
 
 }
 
@@ -243,19 +229,21 @@ func ProclamationOfDeath(c *match.Card) {
 	c.ManaCost = 4
 	c.ManaRequirement = []string{civ.Darkness}
 
-	c.Use(fx.Spell, fx.ShieldTrigger, func(card *match.Card, ctx *match.Context) {
-		if match.AmICasted(card, ctx) {
+	c.Use(fx.Spell, fx.ShieldTrigger, fx.When(fx.SpellCast, func(card *match.Card, ctx *match.Context) {
+		fx.Select(
+			ctx.Match.Opponent(card.Player),
+			ctx.Match,
+			ctx.Match.Opponent(card.Player),
+			match.BATTLEZONE,
+			fmt.Sprintf("%s: Select 1 creature from your battlezone that will be sent to your graveyard", card.Name),
+			1,
+			1,
+			false,
+		).Map(func(x *match.Card) {
+			ctx.Match.Destroy(x, card, match.DestroyedByMiscAbility)
+		})
+	}))
 
-			ctx.Match.Wait(card.Player, "Waiting for your opponent to make an action")
-			defer ctx.Match.EndWait(card.Player)
-
-			creatures := fx.Select(ctx.Match.Opponent(card.Player), ctx.Match, ctx.Match.Opponent(card.Player), match.BATTLEZONE, "Proclamation of Death: Select 1 creature from your battlezone that will be sent to your graveyard", 1, 1, false)
-
-			for _, creature := range creatures {
-				ctx.Match.Destroy(creature, card, match.DestroyedByMiscAbility)
-			}
-		}
-	})
 }
 
 func PhantomDragonsFlame(c *match.Card) {
@@ -275,21 +263,22 @@ func SpasticMissile(c *match.Card) {
 	c.ManaCost = 3
 	c.ManaRequirement = []string{civ.Fire}
 
-	c.Use(fx.Spell, func(card *match.Card, ctx *match.Context) {
-
-		if match.AmICasted(card, ctx) {
-
-			creatures := match.Filter(card.Player, ctx.Match, ctx.Match.Opponent(card.Player), match.BATTLEZONE, "Select 1 of your opponent's creatures that will be destroyed", 1, 1, false, func(x *match.Card) bool { return ctx.Match.GetPower(x, false) <= 3000 })
-
-			for _, creature := range creatures {
-
-				ctx.Match.Destroy(creature, card, match.DestroyedBySpell)
-
-			}
-
-		}
-
-	})
+	c.Use(fx.Spell, fx.When(fx.SpellCast, func(card *match.Card, ctx *match.Context) {
+		fx.SelectFilter(
+			card.Player,
+			ctx.Match,
+			ctx.Match.Opponent(card.Player),
+			match.BATTLEZONE,
+			fmt.Sprintf("%s: Select 1 of your opponent's creatures that will be destroyed", card.Name),
+			1,
+			1,
+			false,
+			func(x *match.Card) bool { return ctx.Match.GetPower(x, false) <= 3000 },
+			false,
+		).Map(func(x *match.Card) {
+			ctx.Match.Destroy(x, card, match.DestroyedBySpell)
+		})
+	}))
 }
 
 func MysticTreasureChest(c *match.Card) {
@@ -319,37 +308,36 @@ func PangaeasWill(c *match.Card) {
 	c.ManaCost = 3
 	c.ManaRequirement = []string{civ.Nature}
 
-	c.Use(fx.Spell, fx.ShieldTrigger, func(card *match.Card, ctx *match.Context) {
+	c.Use(fx.Spell, fx.ShieldTrigger, fx.When(fx.SpellCast, func(card *match.Card, ctx *match.Context) {
+		fx.SelectFilter(
+			card.Player,
+			ctx.Match,
+			ctx.Match.Opponent(card.Player),
+			match.BATTLEZONE,
+			fmt.Sprintf("%s: You may select an evolution card from your opponent's battle zone and send the top card to their mana zone", card.Name),
+			1,
+			1,
+			true,
+			func(x *match.Card) bool { return x.HasCondition(cnd.Evolution) },
+			false,
+		).Map(func(x *match.Card) {
+			tapped := x.Tapped
 
-		if match.AmICasted(card, ctx) {
+			for _, baseCard := range x.Attachments() {
+				baseCard.Player.MoveCard(baseCard.ID, match.HIDDENZONE, match.BATTLEZONE, card.ID)
 
-			fx.SelectFilterSelectablesOnly(
-				card.Player,
-				ctx.Match,
-				ctx.Match.Opponent(card.Player),
-				match.BATTLEZONE,
-				"Pangaea's Will: Select an evolution card from your opponent's battle zone and send the top card to their mana zone",
-				0,
-				1,
-				true,
-				func(x *match.Card) bool { return x.HasCondition(cnd.Evolution) },
-			).Map(func(x *match.Card) {
-				tapped := x.Tapped
-
-				if len(x.Attachments()) > 0 {
-					baseCard := x.Attachments()[0]
-					baseCard.Player.MoveCard(baseCard.ID, match.HIDDENZONE, match.BATTLEZONE, card.ID)
-					if tapped && !baseCard.Tapped {
-						baseCard.Tapped = true
-					}
+				if tapped {
+					baseCard.Tapped = true
 				}
+			}
 
-				x.ClearAttachments()
-				ctx.Match.MoveCard(x, match.MANAZONE, card)
-			})
-		}
+			ctx.Match.BroadcastState()
+			x.ClearAttachments()
 
-	})
+			ctx.Match.MoveCard(x, match.MANAZONE, card)
+		})
+	}))
+
 }
 
 func FaerieLife(c *match.Card) {
@@ -411,14 +399,9 @@ func EnergyStream(c *match.Card) {
 	c.ManaCost = 3
 	c.ManaRequirement = []string{civ.Water}
 
-	c.Use(fx.Spell, func(card *match.Card, ctx *match.Context) {
-
-		if match.AmICasted(card, ctx) {
-
-			card.Player.DrawCards(2)
-
-		}
-	})
+	c.Use(fx.Spell, fx.When(fx.SpellCast, func(card *match.Card, ctx *match.Context) {
+		card.Player.DrawCards(2)
+	}))
 
 }
 

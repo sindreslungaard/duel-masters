@@ -19,15 +19,20 @@ func CrazeValkyrieTheDrastic(c *match.Card) {
 	c.ManaRequirement = []string{civ.Light}
 
 	c.Use(fx.Creature, fx.Evolution, fx.Doublebreaker, fx.When(fx.Summoned, func(card *match.Card, ctx *match.Context) {
-
-		creatures := match.Search(card.Player, ctx.Match, ctx.Match.Opponent(card.Player), match.BATTLEZONE, "Craze Valkyrie, the Drastic: Choose up to 2 of your opponent's creature and tap them. Close to not tap any creatures.", 1, 2, true)
-
-		for _, creature := range creatures {
-			creature.Tapped = true
-
-			ctx.Match.ReportActionInChat(ctx.Match.Opponent(card.Player), fmt.Sprintf("%s was tapped by %s's %s", creature.Name, card.Player.Username(), card.Name))
-		}
-
+		fx.Select(
+			card.Player,
+			ctx.Match,
+			ctx.Match.Opponent(card.Player),
+			match.BATTLEZONE,
+			fmt.Sprintf("%s: Choose up to 2 of your opponent's creature and tap them. Close to not tap any creatures.", card.Name),
+			1,
+			2,
+			true,
+		).Map(func(x *match.Card) {
+			x.Tapped = true
+			ctx.Match.BroadcastState()
+			ctx.Match.ReportActionInChat(x.Player, fmt.Sprintf("%s was tapped by %s's %s", x.Name, card.Player.Username(), card.Name))
+		})
 	}))
 
 }
