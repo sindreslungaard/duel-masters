@@ -64,17 +64,17 @@ func GrimSoulShadowOfReversal(c *match.Card) {
 	c.ManaCost = 5
 	c.ManaRequirement = []string{civ.Darkness}
 	c.TapAbility = func(card *match.Card, ctx *match.Context) {
-
-		fx.SelectFilterSelectablesOnly(
+		fx.SelectFilter(
 			card.Player,
 			ctx.Match,
 			card.Player,
 			match.GRAVEYARD,
-			"Grim Soul, Shadow of Reversal: You may return a darkness creature from your graveyard to your hand",
+			fmt.Sprintf("%s: You may return a darkness creature from your graveyard to your hand", card.Name),
 			1,
 			1,
 			true,
 			func(x *match.Card) bool { return x.Civ == civ.Darkness && x.HasCondition(cnd.Creature) },
+			false,
 		).Map(func(x *match.Card) {
 			card.Player.MoveCard(x.ID, match.GRAVEYARD, match.HAND, card.ID)
 			ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s was moved to %s's hand from their graveyard by Grim Soul, Shadow of Reversal", x.Name, card.Player.Username()))
@@ -82,6 +82,7 @@ func GrimSoulShadowOfReversal(c *match.Card) {
 	}
 
 	c.Use(fx.Creature, fx.TapAbility)
+
 }
 
 func LoneTearShadowOfSolitude(c *match.Card) {

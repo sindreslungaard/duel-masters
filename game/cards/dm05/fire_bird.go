@@ -19,7 +19,6 @@ func KipChippotto(c *match.Card) {
 	c.ManaRequirement = []string{civ.Fire}
 
 	c.Use(fx.Creature, func(card *match.Card, ctx *match.Context) {
-
 		if card.Zone != match.BATTLEZONE {
 			return
 		}
@@ -29,26 +28,24 @@ func KipChippotto(c *match.Card) {
 			event.Card.Player == card.Player &&
 			event.Card.HasFamily(family.ArmoredDragon) {
 
-			fx.SelectFilterSelectablesOnly(
+			fx.SelectFilter(
 				card.Player,
 				ctx.Match,
 				card.Player,
 				match.BATTLEZONE,
-				fmt.Sprintf("%s: You may destroy this creature instead.", card.Name),
+				fmt.Sprintf("%s: Whenever one of your Armored Dragons would be destroyed, you may destroy this creature instead.", card.Name),
 				1,
 				1,
 				true,
 				func(c *match.Card) bool { return card.ID == c.ID },
+				false,
 			).Map(func(_ *match.Card) {
-
 				ctx.InterruptFlow()
 
 				ctx.Match.Destroy(card, card, match.DestroyedByMiscAbility)
 				ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s was destroyed instead of %s", card.Name, event.Card.Name))
 			})
-
 		}
-
 	})
 
 }

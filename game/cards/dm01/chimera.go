@@ -119,14 +119,23 @@ func Gigargon(c *match.Card) {
 	c.ManaRequirement = []string{civ.Darkness}
 
 	c.Use(fx.Creature, fx.When(fx.Summoned, func(card *match.Card, ctx *match.Context) {
-
-		creatures := match.SearchForCnd(card.Player, ctx.Match, card.Player, match.GRAVEYARD, cnd.Creature, "Gigargon: Select up to 2 cards from your graveyard that will be added to your hand", 1, 2, true)
-
-		for _, creature := range creatures {
-			card.Player.MoveCard(creature.ID, match.GRAVEYARD, match.HAND, card.ID)
-			ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s was returned to %s's hand from their graveyard", creature.Name, card.Player.Username()))
-		}
-
+		fx.SelectFilter(
+			card.Player,
+			ctx.Match,
+			card.Player,
+			match.GRAVEYARD,
+			fmt.Sprintf("%s: Select up to 2 creatures from your graveyard that will be returned to your hand", card.Name),
+			1,
+			2,
+			true,
+			func(x *match.Card) bool {
+				return x.HasCondition(cnd.Creature)
+			},
+			false,
+		).Map(func(x *match.Card) {
+			x.Player.MoveCard(x.ID, match.GRAVEYARD, match.HAND, card.ID)
+			ctx.Match.ReportActionInChat(x.Player, fmt.Sprintf("%s was returned to %s's hand from their graveyard", x.Name, x.Player.Username()))
+		})
 	}))
 
 }

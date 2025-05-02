@@ -16,43 +16,37 @@ func BurstShot(c *match.Card) {
 	c.ManaCost = 6
 	c.ManaRequirement = []string{civ.Fire}
 
-	c.Use(fx.Spell, fx.ShieldTrigger, func(card *match.Card, ctx *match.Context) {
+	c.Use(fx.Spell, fx.ShieldTrigger, fx.When(fx.SpellCast, func(card *match.Card, ctx *match.Context) {
+		opponent := ctx.Match.Opponent(card.Player)
 
-		if match.AmICasted(card, ctx) {
-
-			opponent := ctx.Match.Opponent(card.Player)
-
-			myCreatures, err := card.Player.Container(match.BATTLEZONE)
-			if err != nil {
-				return
-			}
-
-			opponentCreatures, err := opponent.Container(match.BATTLEZONE)
-			if err != nil {
-				return
-			}
-
-			toDestroy := make([]*match.Card, 0)
-
-			for _, creature := range myCreatures {
-				if ctx.Match.GetPower(creature, false) <= 2000 {
-					toDestroy = append(toDestroy, creature)
-				}
-			}
-
-			for _, creature := range opponentCreatures {
-				if ctx.Match.GetPower(creature, false) <= 2000 {
-					toDestroy = append(toDestroy, creature)
-				}
-			}
-
-			for _, creature := range toDestroy {
-				ctx.Match.Destroy(creature, card, match.DestroyedBySpell)
-			}
-
+		myCreatures, err := card.Player.Container(match.BATTLEZONE)
+		if err != nil {
+			return
 		}
 
-	})
+		opponentCreatures, err := opponent.Container(match.BATTLEZONE)
+		if err != nil {
+			return
+		}
+
+		toDestroy := make([]*match.Card, 0)
+
+		for _, creature := range myCreatures {
+			if ctx.Match.GetPower(creature, false) <= 2000 {
+				toDestroy = append(toDestroy, creature)
+			}
+		}
+
+		for _, creature := range opponentCreatures {
+			if ctx.Match.GetPower(creature, false) <= 2000 {
+				toDestroy = append(toDestroy, creature)
+			}
+		}
+
+		for _, creature := range toDestroy {
+			ctx.Match.Destroy(creature, card, match.DestroyedBySpell)
+		}
+	}))
 
 }
 

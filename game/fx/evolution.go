@@ -74,7 +74,7 @@ func Evolution(card *match.Card, ctx *match.Context) {
 			return
 		}
 
-		creatures := match.Filter(
+		creatures := SelectFilter(
 			card.Player,
 			ctx.Match,
 			card.Player,
@@ -84,6 +84,7 @@ func Evolution(card *match.Card, ctx *match.Context) {
 			1,
 			false,
 			evolvableCreatureFilter,
+			false,
 		)
 
 		if len(creatures) < 1 {

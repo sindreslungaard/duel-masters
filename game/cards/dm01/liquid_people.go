@@ -69,7 +69,7 @@ func AquaSniper(c *match.Card) {
 		cards["Your creatures"] = myCards
 		cards["Opponent's creatures"] = opponentCards
 
-		ctx.Match.NewMultipartAction(card.Player, cards, 1, 2, "Choose up to 2 creatures in the battle zone and return them to their owners' hands", true)
+		ctx.Match.NewMultipartAction(card.Player, cards, 1, 2, fmt.Sprintf("%s: Choose up to 2 creatures in the battle zone and return them to their owners' hands", card.Name), true)
 
 		for {
 

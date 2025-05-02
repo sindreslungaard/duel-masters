@@ -17,8 +17,15 @@ func TangleFistTheWeaver(c *match.Card) {
 	c.ManaCost = 4
 	c.ManaRequirement = []string{civ.Nature}
 	c.TapAbility = func(card *match.Card, ctx *match.Context) {
-		fx.Select(card.Player, ctx.Match, card.Player, match.HAND,
-			"Select up to 3 cards to put into the manazone", 0, 3, false,
+		fx.Select(
+			card.Player,
+			ctx.Match,
+			card.Player,
+			match.HAND,
+			fmt.Sprintf("%s: Select up to 3 cards to put into the manazone", card.Name),
+			1,
+			3,
+			true,
 		).Map(func(x *match.Card) {
 			card.Player.MoveCard(x.ID, match.HAND, match.MANAZONE, card.ID)
 			ctx.Match.ReportActionInChat(
@@ -29,4 +36,5 @@ func TangleFistTheWeaver(c *match.Card) {
 	}
 
 	c.Use(fx.Creature, fx.TapAbility)
+
 }

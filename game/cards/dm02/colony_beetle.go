@@ -19,23 +19,19 @@ func FortressShell(c *match.Card) {
 	c.ManaRequirement = []string{civ.Nature}
 
 	c.Use(fx.Creature, fx.When(fx.Summoned, func(card *match.Card, ctx *match.Context) {
-
-		manaCards := match.Search(
+		fx.Select(
 			card.Player,
 			ctx.Match,
 			ctx.Match.Opponent(card.Player),
 			match.MANAZONE,
-			"Select up to 2 cards in your opponent's mana zone that will be sent to their graveyard",
+			fmt.Sprintf("%s: Select up to 2 cards in your opponent's mana zone that will be sent to their graveyard", card.Name),
 			1,
 			2,
 			true,
-		)
-
-		for _, mana := range manaCards {
-			ctx.Match.Opponent(card.Player).MoveCard(mana.ID, match.MANAZONE, match.GRAVEYARD, card.ID)
-			ctx.Match.ReportActionInChat(ctx.Match.Opponent(card.Player), fmt.Sprintf("%s was sent from %s's manazone to their graveyard by %s", mana.Name, mana.Player.Username(), card.Name))
-		}
-
+		).Map(func(x *match.Card) {
+			x.Player.MoveCard(x.ID, match.MANAZONE, match.GRAVEYARD, card.ID)
+			ctx.Match.ReportActionInChat(x.Player, fmt.Sprintf("%s was sent from %s's manazone to their graveyard by %s", x.Name, x.Player.Username(), card.Name))
+		})
 	}))
 
 }

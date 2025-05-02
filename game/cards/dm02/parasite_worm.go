@@ -5,6 +5,7 @@ import (
 	"duel-masters/game/family"
 	"duel-masters/game/fx"
 	"duel-masters/game/match"
+	"fmt"
 )
 
 // ChaosWorm ...
@@ -18,20 +19,18 @@ func ChaosWorm(c *match.Card) {
 	c.ManaRequirement = []string{civ.Darkness}
 
 	c.Use(fx.Creature, fx.Evolution, fx.When(fx.Summoned, func(card *match.Card, ctx *match.Context) {
-
 		fx.Select(
 			card.Player,
 			ctx.Match,
 			ctx.Match.Opponent(card.Player),
 			match.BATTLEZONE,
-			"Chaos Worm: Select a creature from the opponent's battle zone and destroy it",
+			fmt.Sprintf("%s: Select a creature from the opponent's battle zone and destroy it", card.Name),
 			1,
 			1,
 			true,
 		).Map(func(x *match.Card) {
 			ctx.Match.Destroy(x, card, match.DestroyedByMiscAbility)
 		})
-
 	}))
 
 }
@@ -75,21 +74,20 @@ func PoisonWorm(c *match.Card) {
 	c.ManaRequirement = []string{civ.Darkness}
 
 	c.Use(fx.Creature, fx.When(fx.Summoned, func(card *match.Card, ctx *match.Context) {
-
-		fx.SelectFilterSelectablesOnly(
+		fx.SelectFilter(
 			card.Player,
 			ctx.Match,
 			card.Player,
 			match.BATTLEZONE,
-			"Poison Worm: Destroy one of your creatures with power 3000 or less",
+			fmt.Sprintf("%s: Destroy one of your creatures with power 3000 or less", card.Name),
 			1,
 			1,
 			false,
 			func(x *match.Card) bool { return ctx.Match.GetPower(x, false) <= 3000 },
+			false,
 		).Map(func(x *match.Card) {
 			ctx.Match.Destroy(x, card, match.DestroyedByMiscAbility)
 		})
-
 	}))
 
 }

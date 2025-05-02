@@ -33,14 +33,19 @@ func ExplosiveFighterUcarn(c *match.Card) {
 	c.ManaRequirement = []string{civ.Fire}
 
 	c.Use(fx.Creature, fx.Doublebreaker, fx.When(fx.Summoned, func(card *match.Card, ctx *match.Context) {
-
-		cards := match.Search(card.Player, ctx.Match, card.Player, match.MANAZONE, "Explosive Fighter Ucarn: Select 2 cards from your manazone that will be sent to your graveyard", 2, 2, false)
-
-		for _, manaCard := range cards {
-			card.Player.MoveCard(manaCard.ID, match.MANAZONE, match.GRAVEYARD, card.ID)
-			ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s was sent from %s's manazone to their graveyard", manaCard.Name, card.Player.Username()))
-		}
-
+		fx.Select(
+			card.Player,
+			ctx.Match,
+			card.Player,
+			match.MANAZONE,
+			fmt.Sprintf("%s: Select 2 cards from your manazone that will be sent to your graveyard", card.Name),
+			2,
+			2,
+			false,
+		).Map(func(x *match.Card) {
+			x.Player.MoveCard(x.ID, match.MANAZONE, match.GRAVEYARD, card.ID)
+			ctx.Match.ReportActionInChat(x.Player, fmt.Sprintf("%s was sent from %s's manazone to their graveyard", x.Name, x.Player.Username()))
+		})
 	}))
 
 }
@@ -70,14 +75,19 @@ func OnslaughterTriceps(c *match.Card) {
 	c.ManaRequirement = []string{civ.Fire}
 
 	c.Use(fx.Creature, fx.When(fx.Summoned, func(card *match.Card, ctx *match.Context) {
-
-		cards := match.Search(card.Player, ctx.Match, card.Player, match.MANAZONE, "Onslaughter Triceps: Select 1 card from your manazone that will be sent to your graveyard", 1, 1, false)
-
-		for _, manaCard := range cards {
-			card.Player.MoveCard(manaCard.ID, match.MANAZONE, match.GRAVEYARD, card.ID)
-			ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s was sent from %s's manazone to their graveyard", manaCard.Name, card.Player.Username()))
-		}
-
+		fx.Select(
+			card.Player,
+			ctx.Match,
+			card.Player,
+			match.MANAZONE,
+			fmt.Sprintf("%s: Select 1 card from your manazone that will be sent to your graveyard", card.Name),
+			1,
+			1,
+			false,
+		).Map(func(x *match.Card) {
+			x.Player.MoveCard(x.ID, match.MANAZONE, match.GRAVEYARD, card.ID)
+			ctx.Match.ReportActionInChat(x.Player, fmt.Sprintf("%s was sent from %s's manazone to their graveyard", x.Name, card.Player.Username()))
+		})
 	}))
 
 }

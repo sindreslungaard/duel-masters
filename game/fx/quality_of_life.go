@@ -95,7 +95,7 @@ func WhenAll(tests []func(*match.Card, *match.Context) bool, h func(*match.Card,
 
 // Select prompts the user to select n cards from the specified container
 func Select(p *match.Player, m *match.Match, containerOwner *match.Player, containerName string, text string, min int, max int, cancellable bool) CardCollection {
-	return SelectFilterSelectablesOnly(p, m, containerOwner, containerName, text, min, max, cancellable, func(x *match.Card) bool { return true })
+	return SelectFilter(p, m, containerOwner, containerName, text, min, max, cancellable, func(x *match.Card) bool { return true }, false)
 }
 
 // SelectCount prompts to user to select a number in an interval
@@ -217,18 +217,15 @@ func MultipleChoiceQuestion(p *match.Player, m *match.Match, text string, option
 	return result
 }
 
-// SelectFilterSelectablesOnly prompts the user to select n cards from the specified container that matches the given filter
-//
-// Deprecated: New cards should use `fx.SelectFilter`
-func SelectFilterSelectablesOnly(p *match.Player, m *match.Match, containerOwner *match.Player, containerName string, text string, min int, max int, cancellable bool, filter func(*match.Card) bool) CardCollection {
-	return SelectFilter(p, m, containerOwner, containerName, text, min, max, cancellable, filter, false)
-}
-
 // SelectFilter prompts the user to select n cards from the specified container that matches the given filter.
 // It also allows to show all the other cards from the container that are unselectable
 func SelectFilter(p *match.Player, m *match.Match, containerOwner *match.Player, containerName string, text string, min int, max int, cancellable bool, filter func(*match.Card) bool, showUnselectables bool) CardCollection {
 
 	result := make([]*match.Card, 0)
+
+	if min <= 0 && max <= 0 {
+		return result
+	}
 
 	cards, err := containerOwner.Container(containerName)
 
@@ -241,8 +238,17 @@ func SelectFilter(p *match.Player, m *match.Match, containerOwner *match.Player,
 		unselectables = nil
 	}
 
-	if len(filtered) < 1 {
+	filteredLength := len(filtered)
+	if filteredLength < 1 {
 		return result
+	}
+
+	// Make sure the selection interval fits in the length of the remaining filtered cards slice
+	if filteredLength < min {
+		min = filteredLength
+		max = filteredLength
+	} else if filteredLength < max {
+		max = filteredLength
 	}
 
 	if !m.IsPlayerTurn(p) {
@@ -301,16 +307,29 @@ func selectMultipartBase(p *match.Player, m *match.Match, cards map[string][]*ma
 
 	result := make([]*match.Card, 0)
 
+	if min <= 0 && max <= 0 {
+		return result
+	}
+
 	notEmpty := false
+	totalCardsLength := 0
 
 	for _, cardList := range cards {
 		if len(cardList) > 0 {
 			notEmpty = true
+			totalCardsLength += len(cardList)
 		}
 	}
 
 	if !notEmpty {
 		return result
+	}
+
+	if totalCardsLength < min {
+		min = totalCardsLength
+		max = totalCardsLength
+	} else if totalCardsLength < max {
+		max = totalCardsLength
 	}
 
 	if backsideOnly {
@@ -369,6 +388,10 @@ func SelectBacksideFilter(p *match.Player, m *match.Match, containerOwner *match
 
 	result := make([]*match.Card, 0)
 
+	if min <= 0 && max <= 0 {
+		return result
+	}
+
 	cards, err := containerOwner.Container(containerName)
 
 	if err != nil || len(cards) < 1 {
@@ -383,8 +406,16 @@ func SelectBacksideFilter(p *match.Player, m *match.Match, containerOwner *match
 		}
 	}
 
-	if len(filtered) < 1 {
+	filteredLength := len(filtered)
+	if filteredLength < 1 {
 		return result
+	}
+
+	if filteredLength < min {
+		min = filteredLength
+		max = filteredLength
+	} else if filteredLength < max {
+		max = filteredLength
 	}
 
 	if !m.IsPlayerTurn(p) {

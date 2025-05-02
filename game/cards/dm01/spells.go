@@ -16,18 +16,15 @@ func AuraBlast(c *match.Card) {
 	c.ManaCost = 4
 	c.ManaRequirement = []string{civ.Nature}
 
-	c.Use(fx.Spell, func(card *match.Card, ctx *match.Context) {
-
-		if match.AmICasted(card, ctx) {
-
-			card.Player.MapContainer(match.BATTLEZONE, func(creature *match.Card) {
-				creature.AddCondition(cnd.PowerAttacker, 2000, card.ID)
-				ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s was given power attacker +2000", creature.Name))
-			})
-
-		}
-
-	})
+	c.Use(fx.Spell, fx.When(fx.SpellCast, func(card *match.Card, ctx *match.Context) {
+		fx.Find(
+			card.Player,
+			match.BATTLEZONE,
+		).Map(func(x *match.Card) {
+			x.AddCondition(cnd.PowerAttacker, 2000, card.ID)
+			ctx.Match.ReportActionInChat(x.Player, fmt.Sprintf("%s was given \"Power Attacker +2000\"", x.Name))
+		})
+	}))
 
 }
 
@@ -51,22 +48,21 @@ func BurningPower(c *match.Card) {
 	c.ManaCost = 1
 	c.ManaRequirement = []string{civ.Fire}
 
-	c.Use(fx.Spell, func(card *match.Card, ctx *match.Context) {
-
-		if match.AmICasted(card, ctx) {
-
-			creatures := match.Search(card.Player, ctx.Match, card.Player, match.BATTLEZONE, "Select 1 creature from your battlezone that will gain \"Power Attacker +2000\"", 1, 1, false)
-
-			for _, creature := range creatures {
-
-				creature.AddCondition(cnd.PowerAttacker, 2000, card.ID)
-				ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s was given power attacker +2000", creature.Name))
-
-			}
-
-		}
-
-	})
+	c.Use(fx.Spell, fx.When(fx.SpellCast, func(card *match.Card, ctx *match.Context) {
+		fx.Select(
+			card.Player,
+			ctx.Match,
+			card.Player,
+			match.BATTLEZONE,
+			fmt.Sprintf("%s: Select 1 creature from your battlezone that will gain \"Power Attacker +2000\"", card.Name),
+			1,
+			1,
+			false,
+		).Map(func(x *match.Card) {
+			x.AddCondition(cnd.PowerAttacker, 2000, card.ID)
+			ctx.Match.ReportActionInChat(x.Player, fmt.Sprintf("%s was given power attacker +2000", x.Name))
+		})
+	}))
 
 }
 
@@ -78,22 +74,21 @@ func ChaosStrike(c *match.Card) {
 	c.ManaCost = 2
 	c.ManaRequirement = []string{civ.Fire}
 
-	c.Use(fx.Spell, func(card *match.Card, ctx *match.Context) {
-
-		if match.AmICasted(card, ctx) {
-
-			creatures := match.Search(card.Player, ctx.Match, ctx.Match.Opponent(card.Player), match.BATTLEZONE, "Select 1 of your opponent's creatures that will be tapped", 1, 1, false)
-
-			for _, creature := range creatures {
-
-				creature.Tapped = true
-				ctx.Match.ReportActionInChat(ctx.Match.Opponent(card.Player), fmt.Sprintf("%s was tapped by %s", creature.Name, card.Name))
-
-			}
-
-		}
-
-	})
+	c.Use(fx.Spell, fx.When(fx.SpellCast, func(card *match.Card, ctx *match.Context) {
+		fx.Select(
+			card.Player,
+			ctx.Match,
+			ctx.Match.Opponent(card.Player),
+			match.BATTLEZONE,
+			fmt.Sprintf("%s: Select 1 of your opponent's creatures that will be tapped", card.Name),
+			1,
+			1,
+			false,
+		).Map(func(x *match.Card) {
+			x.Tapped = true
+			ctx.Match.ReportActionInChat(x.Player, fmt.Sprintf("%s was tapped by %s", x.Name, card.Name))
+		})
+	}))
 
 }
 
@@ -183,22 +178,23 @@ func DarkReversal(c *match.Card) {
 	c.ManaCost = 2
 	c.ManaRequirement = []string{civ.Darkness}
 
-	c.Use(fx.Spell, fx.ShieldTrigger, func(card *match.Card, ctx *match.Context) {
-
-		if match.AmICasted(card, ctx) {
-
-			creatures := match.Filter(card.Player, ctx.Match, card.Player, match.GRAVEYARD, "Select 1 creature from your graveyard that will be sent to your hand", 1, 1, false, func(x *match.Card) bool { return x.HasCondition(cnd.Creature) })
-
-			for _, creature := range creatures {
-
-				card.Player.MoveCard(creature.ID, match.GRAVEYARD, match.HAND, card.ID)
-				ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s retrieved %s from their graveyard", card.Player.Username(), creature.Name))
-
-			}
-
-		}
-
-	})
+	c.Use(fx.Spell, fx.ShieldTrigger, fx.When(fx.SpellCast, func(card *match.Card, ctx *match.Context) {
+		fx.SelectFilter(
+			card.Player,
+			ctx.Match,
+			card.Player,
+			match.GRAVEYARD,
+			fmt.Sprintf("%s: Select 1 creature from your graveyard that will be sent to your hand", card.Name),
+			1,
+			1,
+			false,
+			func(x *match.Card) bool { return x.HasCondition(cnd.Creature) },
+			false,
+		).Map(func(x *match.Card) {
+			x.Player.MoveCard(x.ID, match.GRAVEYARD, match.HAND, card.ID)
+			ctx.Match.ReportActionInChat(x.Player, fmt.Sprintf("%s retrieved %s from their graveyard", x.Player.Username(), x.Name))
+		})
+	}))
 
 }
 
@@ -210,21 +206,22 @@ func DeathSmoke(c *match.Card) {
 	c.ManaCost = 4
 	c.ManaRequirement = []string{civ.Darkness}
 
-	c.Use(fx.Spell, func(card *match.Card, ctx *match.Context) {
-
-		if match.AmICasted(card, ctx) {
-
-			creatures := match.Filter(card.Player, ctx.Match, ctx.Match.Opponent(card.Player), match.BATTLEZONE, "Destroy one of your opponent's untapped creatures", 1, 1, false, func(x *match.Card) bool { return x.Tapped == false })
-
-			for _, creature := range creatures {
-
-				ctx.Match.Destroy(creature, card, match.DestroyedBySpell)
-
-			}
-
-		}
-
-	})
+	c.Use(fx.Spell, fx.When(fx.SpellCast, func(card *match.Card, ctx *match.Context) {
+		fx.SelectFilter(
+			card.Player,
+			ctx.Match,
+			ctx.Match.Opponent(card.Player),
+			match.BATTLEZONE,
+			fmt.Sprintf("%s: Destroy one of your opponent's untapped creatures", card.Name),
+			1,
+			1,
+			false,
+			func(x *match.Card) bool { return x.Tapped == false },
+			false,
+		).Map(func(x *match.Card) {
+			ctx.Match.Destroy(x, card, match.DestroyedBySpell)
+		})
+	}))
 
 }
 
@@ -260,24 +257,15 @@ func HolyAwe(c *match.Card) {
 	c.ManaCost = 6
 	c.ManaRequirement = []string{civ.Light}
 
-	c.Use(fx.Spell, fx.ShieldTrigger, func(card *match.Card, ctx *match.Context) {
-
-		if match.AmICasted(card, ctx) {
-
-			creatures, err := ctx.Match.Opponent(card.Player).Container(match.BATTLEZONE)
-
-			if err != nil {
-				return
-			}
-
-			for _, creature := range creatures {
-				creature.Tapped = true
-				ctx.Match.ReportActionInChat(ctx.Match.Opponent(card.Player), fmt.Sprintf("%s was tapped by Holy Awe", creature.Name))
-			}
-
-		}
-
-	})
+	c.Use(fx.Spell, fx.ShieldTrigger, fx.When(fx.SpellCast, func(card *match.Card, ctx *match.Context) {
+		fx.Find(
+			ctx.Match.Opponent(card.Player),
+			match.BATTLEZONE,
+		).Map(func(x *match.Card) {
+			x.Tapped = true
+			ctx.Match.ReportActionInChat(x.Player, fmt.Sprintf("%s was tapped by Holy Awe", x.Name))
+		})
+	}))
 
 }
 
@@ -290,24 +278,19 @@ func LaserWing(c *match.Card) {
 	c.ManaRequirement = []string{civ.Light}
 
 	c.Use(fx.Spell, fx.When(fx.SpellCast, func(card *match.Card, ctx *match.Context) {
-
-		creatures := fx.Select(card.Player,
+		fx.Select(
+			card.Player,
 			ctx.Match,
 			card.Player,
 			match.BATTLEZONE,
-			"Select up to 2 creatures that can't be blocked this turn",
+			fmt.Sprintf("%s: Select up to 2 creatures that can't be blocked this turn", card.Name),
 			1,
 			2,
-			false,
-		)
-
-		for _, creature := range creatures {
-
-			creature.AddCondition(cnd.CantBeBlocked, nil, card.ID)
-			ctx.Match.ReportActionInChat(card.Player, creature.Name+" can't be blocked this turn")
-
-		}
-
+			true,
+		).Map(func(x *match.Card) {
+			x.AddCondition(cnd.CantBeBlocked, nil, card.ID)
+			ctx.Match.ReportActionInChat(x.Player, x.Name+" can't be blocked this turn")
+		})
 	}))
 
 }
@@ -320,23 +303,22 @@ func MagmaGazer(c *match.Card) {
 	c.ManaCost = 3
 	c.ManaRequirement = []string{civ.Fire}
 
-	c.Use(fx.Spell, func(card *match.Card, ctx *match.Context) {
-
-		if match.AmICasted(card, ctx) {
-
-			creatures := match.Search(card.Player, ctx.Match, card.Player, match.BATTLEZONE, "Select 1 creature from your battlezone that will gain \"Power Attacker +4000\" and \"Double breaker\"", 1, 1, false)
-
-			for _, creature := range creatures {
-
-				creature.AddCondition(cnd.PowerAttacker, 4000, card.ID)
-				creature.AddCondition(cnd.DoubleBreaker, nil, card.ID)
-				ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s was given power attacker +4000 and double breaker until the end of the turn", creature.Name))
-
-			}
-
-		}
-
-	})
+	c.Use(fx.Spell, fx.When(fx.SpellCast, func(card *match.Card, ctx *match.Context) {
+		fx.Select(
+			card.Player,
+			ctx.Match,
+			card.Player,
+			match.BATTLEZONE,
+			"Select 1 creature from your battlezone that will gain \"Power Attacker +4000\" and \"Double breaker\"",
+			1,
+			1,
+			false,
+		).Map(func(x *match.Card) {
+			x.AddCondition(cnd.PowerAttacker, 4000, card.ID)
+			x.AddCondition(cnd.DoubleBreaker, nil, card.ID)
+			ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s was given \"Power Attacker +4000\" and \"Double Breaker\" until the end of the turn", x.Name))
+		})
+	}))
 
 }
 
@@ -348,22 +330,21 @@ func MoonlightFlash(c *match.Card) {
 	c.ManaCost = 4
 	c.ManaRequirement = []string{civ.Light}
 
-	c.Use(fx.Spell, func(card *match.Card, ctx *match.Context) {
-
-		if match.AmICasted(card, ctx) {
-
-			creatures := match.Search(card.Player, ctx.Match, ctx.Match.Opponent(card.Player), match.BATTLEZONE, "Select up to 2 of your opponents creatures that will be tapped", 1, 2, false)
-
-			for _, creature := range creatures {
-
-				creature.Tapped = true
-				ctx.Match.ReportActionInChat(ctx.Match.Opponent(card.Player), creature.Name+" was tapped")
-
-			}
-
-		}
-
-	})
+	c.Use(fx.Spell, fx.When(fx.SpellCast, func(card *match.Card, ctx *match.Context) {
+		fx.Select(
+			card.Player,
+			ctx.Match,
+			ctx.Match.Opponent(card.Player),
+			match.BATTLEZONE,
+			fmt.Sprintf("%s: Select up to 2 of your opponents creatures that will be tapped", card.Name),
+			1,
+			2,
+			true,
+		).Map(func(x *match.Card) {
+			x.Tapped = true
+			ctx.Match.ReportActionInChat(x.Player, x.Name+" was tapped")
+		})
+	}))
 
 }
 
@@ -375,23 +356,22 @@ func NaturalSnare(c *match.Card) {
 	c.ManaCost = 6
 	c.ManaRequirement = []string{civ.Nature}
 
-	c.Use(fx.Spell, fx.ShieldTrigger, func(card *match.Card, ctx *match.Context) {
-
-		if match.AmICasted(card, ctx) {
-
-			creatures := match.Search(card.Player, ctx.Match, ctx.Match.Opponent(card.Player), match.BATTLEZONE, "Select 1 of your opponent's creatures and put it in their manazone", 1, 1, false)
-
-			for _, creature := range creatures {
-
-				creature.Player.MoveCard(creature.ID, match.BATTLEZONE, match.MANAZONE, card.ID)
-				creature.Tapped = false
-				ctx.Match.ReportActionInChat(ctx.Match.Opponent(card.Player), fmt.Sprintf("%s was moved to %s's manazone", creature.Name, creature.Player.Username()))
-
-			}
-
-		}
-
-	})
+	c.Use(fx.Spell, fx.ShieldTrigger, fx.When(fx.SpellCast, func(card *match.Card, ctx *match.Context) {
+		fx.Select(
+			card.Player,
+			ctx.Match,
+			ctx.Match.Opponent(card.Player),
+			match.BATTLEZONE,
+			fmt.Sprintf("%s: Select 1 of your opponent's creatures and put it in their manazone", card.Name),
+			1,
+			1,
+			false,
+		).Map(func(x *match.Card) {
+			x.Player.MoveCard(x.ID, match.BATTLEZONE, match.MANAZONE, card.ID)
+			x.Tapped = false
+			ctx.Match.ReportActionInChat(x.Player, fmt.Sprintf("%s was moved to %s's manazone", x.Name, x.Player.Username()))
+		})
+	}))
 
 }
 
@@ -450,69 +430,50 @@ func Teleportation(c *match.Card) {
 	c.ManaCost = 5
 	c.ManaRequirement = []string{civ.Water}
 
-	c.Use(fx.Spell, func(card *match.Card, ctx *match.Context) {
+	c.Use(fx.Spell, fx.When(fx.SpellCast, func(card *match.Card, ctx *match.Context) {
+		cards := make(map[string][]*match.Card)
 
-		if match.AmICasted(card, ctx) {
+		myCards, err := card.Player.Container(match.BATTLEZONE)
 
-			cards := make(map[string][]*match.Card)
-
-			myCards, err := card.Player.Container(match.BATTLEZONE)
-
-			if err != nil {
-				return
-			}
-
-			opponentCards, err := ctx.Match.Opponent(card.Player).Container(match.BATTLEZONE)
-
-			if err != nil {
-				return
-			}
-
-			if len(myCards) < 1 && len(opponentCards) < 1 {
-				return
-			}
-
-			cards["Your creatures"] = myCards
-			cards["Opponent's creatures"] = opponentCards
-
-			ctx.Match.NewMultipartAction(card.Player, cards, 1, 2, "Teleportation: Select up to 2 creatures in the battlezone and return it to its owner's hand", false)
-
-			for {
-
-				action := <-card.Player.Action
-
-				if len(action.Cards) < 1 || len(action.Cards) > 2 {
-					ctx.Match.DefaultActionWarning(card.Player)
-					continue
-				}
-
-				for _, vid := range action.Cards {
-
-					ref, err := c.Player.MoveCard(vid, match.BATTLEZONE, match.HAND, card.ID)
-
-					if err != nil {
-
-						ref, err := ctx.Match.Opponent(c.Player).MoveCard(vid, match.BATTLEZONE, match.HAND, card.ID)
-
-						if err == nil {
-							ctx.Match.ReportActionInChat(ctx.Match.Opponent(card.Player), fmt.Sprintf("%s was moved to %s's hand", ref.Name, ctx.Match.PlayerRef(ref.Player).Socket.User.Username))
-						}
-
-					} else {
-						ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s was moved to %s's hand", ref.Name, ctx.Match.PlayerRef(ref.Player).Socket.User.Username))
-					}
-
-				}
-
-				break
-
-			}
-
-			ctx.Match.CloseAction(c.Player)
-
+		if err != nil {
+			return
 		}
 
-	})
+		opponentCards, err := ctx.Match.Opponent(card.Player).Container(match.BATTLEZONE)
+
+		if err != nil {
+			return
+		}
+
+		if len(myCards) < 1 && len(opponentCards) < 1 {
+			return
+		}
+
+		cards["Your creatures"] = myCards
+		cards["Opponent's creatures"] = opponentCards
+
+		fx.SelectMultipart(
+			card.Player,
+			ctx.Match,
+			cards,
+			fmt.Sprintf("%s: Select up to 2 creatures in the battlezone and return it to its owner's hand", card.Name),
+			1,
+			2,
+			true,
+		).Map(func(x *match.Card) {
+			ref, err := c.Player.MoveCard(x.ID, match.BATTLEZONE, match.HAND, card.ID)
+
+			if err != nil {
+				ref, err := ctx.Match.Opponent(c.Player).MoveCard(x.ID, match.BATTLEZONE, match.HAND, card.ID)
+
+				if err == nil {
+					ctx.Match.ReportActionInChat(ctx.Match.Opponent(card.Player), fmt.Sprintf("%s was moved to %s's hand", ref.Name, ctx.Match.PlayerRef(ref.Player).Socket.User.Username))
+				}
+			} else {
+				ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s was moved to %s's hand", ref.Name, ctx.Match.PlayerRef(ref.Player).Socket.User.Username))
+			}
+		})
+	}))
 
 }
 
@@ -535,21 +496,22 @@ func TornadoFlame(c *match.Card) {
 	c.ManaCost = 5
 	c.ManaRequirement = []string{civ.Fire}
 
-	c.Use(fx.Spell, fx.ShieldTrigger, func(card *match.Card, ctx *match.Context) {
-
-		if match.AmICasted(card, ctx) {
-
-			creatures := match.Filter(card.Player, ctx.Match, ctx.Match.Opponent(card.Player), match.BATTLEZONE, "Destroy one of your opponent's creatures that has power 4000 or less", 1, 1, false, func(x *match.Card) bool { return ctx.Match.GetPower(x, false) <= 4000 })
-
-			for _, creature := range creatures {
-
-				ctx.Match.Destroy(creature, card, match.DestroyedBySpell)
-
-			}
-
-		}
-
-	})
+	c.Use(fx.Spell, fx.ShieldTrigger, fx.When(fx.SpellCast, func(card *match.Card, ctx *match.Context) {
+		fx.SelectFilter(
+			card.Player,
+			ctx.Match,
+			ctx.Match.Opponent(card.Player),
+			match.BATTLEZONE,
+			fmt.Sprintf("%s: Destroy one of your opponent's creatures that has power 4000 or less", card.Name),
+			1,
+			1,
+			false,
+			func(x *match.Card) bool { return ctx.Match.GetPower(x, false) <= 4000 },
+			false,
+		).Map(func(x *match.Card) {
+			ctx.Match.Destroy(x, card, match.DestroyedBySpell)
+		})
+	}))
 
 }
 
@@ -561,22 +523,7 @@ func UltimateForce(c *match.Card) {
 	c.ManaCost = 5
 	c.ManaRequirement = []string{civ.Nature}
 
-	c.Use(fx.Spell, func(card *match.Card, ctx *match.Context) {
-
-		if match.AmICasted(card, ctx) {
-
-			cards := card.Player.PeekDeck(2)
-
-			for _, toMove := range cards {
-
-				card.Player.MoveCard(toMove.ID, match.DECK, match.MANAZONE, card.ID)
-				ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s put %s into the manazone from the top of their deck", card.Player.Username(), toMove.Name))
-
-			}
-
-		}
-
-	})
+	c.Use(fx.Spell, fx.When(fx.SpellCast, fx.Draw2ToMana))
 
 }
 
