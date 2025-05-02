@@ -55,13 +55,12 @@ func CloneFactory(c *match.Card) {
 	c.ManaRequirement = []string{civ.Water}
 
 	c.Use(fx.Spell, fx.When(fx.SpellCast, func(card *match.Card, ctx *match.Context) {
-
 		fx.Select(
 			card.Player,
 			ctx.Match,
 			card.Player,
 			match.MANAZONE,
-			"Clone Factory: Return up to 2 cards from your mana zone to your hand",
+			fmt.Sprintf("%s: Return up to 2 cards from your mana zone to your hand", card.Name),
 			1,
 			2,
 			true,
@@ -70,8 +69,8 @@ func CloneFactory(c *match.Card) {
 			card.Player.MoveCard(x.ID, match.MANAZONE, match.HAND, card.ID)
 			ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s was moved to %s's hand from their manazone by Clone Factory", x.Name, card.Player.Username()))
 		})
-
 	}))
+
 }
 
 // MegaDetonator ...
@@ -176,10 +175,10 @@ func HydroHurricane(c *match.Card) {
 			ctx.Match,
 			ctx.Match.Opponent(card.Player),
 			match.MANAZONE,
-			fmt.Sprintf("Hydro Hurricane: Choose up to %d cards from your opponent's mana zone that will be returned to his hand.", nrLight),
-			0,
+			fmt.Sprintf("%s: Choose up to %d cards from your opponent's mana zone that will be returned to his hand.", card.Name, nrLight),
+			1,
 			nrLight,
-			false,
+			true,
 		).Map(func(x *match.Card) {
 			x.Player.MoveCard(x.ID, match.MANAZONE, match.HAND, card.ID)
 			ctx.Match.ReportActionInChat(ctx.Match.Opponent(card.Player), fmt.Sprintf("%s got moved to %s hand from his mana zone by Hydro Hurricane", x.Name, x.Player.Username()))
@@ -196,10 +195,10 @@ func HydroHurricane(c *match.Card) {
 			ctx.Match,
 			ctx.Match.Opponent(card.Player),
 			match.BATTLEZONE,
-			fmt.Sprintf("Hydro Hurricane: Choose up to %d cards from your opponent's battle zone that will be returned to his hand.", nrDark),
-			0,
+			fmt.Sprintf("%s: Choose up to %d cards from your opponent's battle zone that will be returned to his hand.", card.Name, nrDark),
+			1,
 			nrDark,
-			false,
+			true,
 		).Map(func(x *match.Card) {
 			x.Player.MoveCard(x.ID, match.BATTLEZONE, match.HAND, card.ID)
 			ctx.Match.ReportActionInChat(ctx.Match.Opponent(card.Player), fmt.Sprintf("%s got moved to %s hand from his battle zone by Hydro Hurricane", x.Name, x.Player.Username()))

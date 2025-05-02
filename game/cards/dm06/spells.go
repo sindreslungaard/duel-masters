@@ -103,21 +103,20 @@ func InvincibleCataclysm(c *match.Card) {
 	c.ManaRequirement = []string{civ.Fire}
 
 	c.Use(fx.Spell, fx.When(fx.SpellCast, func(card *match.Card, ctx *match.Context) {
-
 		fx.SelectBackside(
 			card.Player,
 			ctx.Match,
 			ctx.Match.Opponent(card.Player),
 			match.SHIELDZONE,
-			"Select up to 3 of your opponent's shields and send them to graveyard",
+			fmt.Sprintf("%s: Select up to 3 of your opponent's shields and send them to graveyard", card.Name),
 			1,
 			3,
-			false,
+			true,
 		).Map(func(x *match.Card) {
 			ctx.Match.MoveCard(x, match.GRAVEYARD, card)
 		})
-
 	}))
+
 }
 
 func InvincibleUnity(c *match.Card) {
@@ -207,7 +206,7 @@ func FutureSlash(c *match.Card) {
 			ctx.Match,
 			opponent,
 			match.DECK,
-			"Future Slash: Send up to 2 cards from your opponent's deck to his graveyard",
+			fmt.Sprintf("%s: Send up to 2 cards from your opponent's deck to his graveyard", card.Name),
 			1,
 			2,
 			true,

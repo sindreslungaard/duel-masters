@@ -278,24 +278,19 @@ func LaserWing(c *match.Card) {
 	c.ManaRequirement = []string{civ.Light}
 
 	c.Use(fx.Spell, fx.When(fx.SpellCast, func(card *match.Card, ctx *match.Context) {
-
-		creatures := fx.Select(card.Player,
+		fx.Select(
+			card.Player,
 			ctx.Match,
 			card.Player,
 			match.BATTLEZONE,
-			"Select up to 2 creatures that can't be blocked this turn",
+			fmt.Sprintf("%s: Select up to 2 creatures that can't be blocked this turn", card.Name),
 			1,
 			2,
-			false,
-		)
-
-		for _, creature := range creatures {
-
-			creature.AddCondition(cnd.CantBeBlocked, nil, card.ID)
-			ctx.Match.ReportActionInChat(card.Player, creature.Name+" can't be blocked this turn")
-
-		}
-
+			true,
+		).Map(func(x *match.Card) {
+			x.AddCondition(cnd.CantBeBlocked, nil, card.ID)
+			ctx.Match.ReportActionInChat(x.Player, x.Name+" can't be blocked this turn")
+		})
 	}))
 
 }
@@ -344,7 +339,7 @@ func MoonlightFlash(c *match.Card) {
 			fmt.Sprintf("%s: Select up to 2 of your opponents creatures that will be tapped", card.Name),
 			1,
 			2,
-			false,
+			true,
 		).Map(func(x *match.Card) {
 			x.Tapped = true
 			ctx.Match.ReportActionInChat(x.Player, x.Name+" was tapped")
@@ -464,7 +459,7 @@ func Teleportation(c *match.Card) {
 			fmt.Sprintf("%s: Select up to 2 creatures in the battlezone and return it to its owner's hand", card.Name),
 			1,
 			2,
-			false,
+			true,
 		).Map(func(x *match.Card) {
 			ref, err := c.Player.MoveCard(x.ID, match.BATTLEZONE, match.HAND, card.ID)
 
