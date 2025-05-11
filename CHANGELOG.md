@@ -23,6 +23,7 @@
 - New card "Solar Grass" (thanks @jyotiskaghosh)
 - New card "Senia, Orchard Avenger" (thanks @jyotiskaghosh)
 - New card "Coliseum Shell" (thanks @Hutwave)
+- Fixed an issue where "Kyrstron, Lair Delver"'s effect could summon an evolution card to the battlezone without a card to evolve from
 
 ## 24/04/2025
 - New card "Magmadragon Jagalzor" (thanks @jyotiskaghosh)
