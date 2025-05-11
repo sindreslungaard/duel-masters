@@ -25,6 +25,7 @@
 - New card "Coliseum Shell" (thanks @Hutwave)
 - Fixed an issue where "Kyrstron, Lair Delver"'s effect could summon an evolution card to the battlezone without a card to evolve from (thanks @DragosIonita23)
 - Fixed an issue where "Totto Pipicchi" would not apply speed attacker to opponent's creatures (thanks @DragosIonita23)
+- Updated the popup when drawing up to x cards to show the drawn cards in the background (thanks @DragosIonita23)
 
 ## 24/04/2025
 - New card "Magmadragon Jagalzor" (thanks @jyotiskaghosh)
