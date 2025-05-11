@@ -29,13 +29,12 @@ func KyrstronLairDelver(c *match.Card) {
 			1,
 			1,
 			true,
-			func(c *match.Card) bool {
-				return c.SharesAFamily(family.Dragons)
+			func(x *match.Card) bool {
+				return fx.CanBeSummoned(card.Player, x) && x.SharesAFamily(family.Dragons)
 			},
 			false,
 		).Map(func(x *match.Card) {
-			ctx.Match.MoveCard(x, match.BATTLEZONE, card)
-			ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s's effect: %s was put into the battlezone", card.Name, x.Name))
+			fx.ForcePutCreatureIntoBZ(ctx, x, match.HAND, card)
 		})
 	}))
 }
