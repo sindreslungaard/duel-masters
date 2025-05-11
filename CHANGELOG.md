@@ -23,7 +23,8 @@
 - New card "Solar Grass" (thanks @jyotiskaghosh)
 - New card "Senia, Orchard Avenger" (thanks @jyotiskaghosh)
 - New card "Coliseum Shell" (thanks @Hutwave)
-- Fixed an issue where "Kyrstron, Lair Delver"'s effect could summon an evolution card to the battlezone without a card to evolve from
+- Fixed an issue where "Kyrstron, Lair Delver"'s effect could summon an evolution card to the battlezone without a card to evolve from (thanks @DragosIonita23)
+- Fixed an issue where "Totto Pipicchi" would not apply speed attacker to opponent's creatures (thanks @DragosIonita23)
 
 ## 24/04/2025
 - New card "Magmadragon Jagalzor" (thanks @jyotiskaghosh)
