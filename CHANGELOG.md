@@ -11,6 +11,17 @@
 - New card "Terradragon Gamiratar" (thanks @DragosIonita23)
 - New card "Bakkra Horn, the Silent" (thanks @DragosIonita23)
 - New card "Kachua, Keeper of the Icegate" (thanks @DragosIonita23)
+- New card "Gigaclaws" (thanks @jyotiskaghosh)
+- New card "Gachack, Mechanical Doll" (thanks @jyotiskaghosh)
+- New card "Missile Soldier Ultimo" (thanks @jyotiskaghosh)
+- New card "Slaphappy Soldier Galback" (thanks @jyotiskaghosh)
+- New card "Illusion Fish" (thanks @jyotiskaghosh)
+- New card "Carbonite Scarab" (thanks @jyotiskaghosh)
+- New card "Sol Galla, Halo Guardian" (thanks @jyotiskaghosh)
+- New card "Migalo, Vizier of Spycraft" (thanks @jyotiskaghosh)
+- New card "Vikorakys" (thanks @jyotiskaghosh)
+- New card "Solar Grass" (thanks @jyotiskaghosh)
+- New card "Senia, Orchard Avenger" (thanks @jyotiskaghosh)
 
 ## 24/04/2025
 - New card "Magmadragon Jagalzor" (thanks @jyotiskaghosh)
