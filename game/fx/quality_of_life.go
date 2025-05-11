@@ -708,34 +708,6 @@ func AnotherCreatureSummoned(card *match.Card, ctx *match.Context) bool {
 	return CreatureSummoned(card, ctx) && event.CardID != card.ID
 }
 
-func AnotherOwnDragonoidOrDragonSummoned(card *match.Card, ctx *match.Context) bool {
-	return anotherOwnCreatureSummonedFilter(card, ctx, func(c *match.Card) bool {
-		return c.SharesAFamily(append(family.Dragons, family.Dragonoid))
-	})
-}
-
-func anotherOwnCreatureSummonedFilter(card *match.Card, ctx *match.Context, filters ...func(c *match.Card) bool) bool {
-	result := AnotherOwnCreatureSummoned(card, ctx)
-
-	if result {
-		if event, ok := ctx.Event.(*match.CardMoved); ok {
-			summonedCard, _ := card.Player.GetCard(event.CardID, match.BATTLEZONE)
-
-			if summonedCard != nil {
-				for _, f := range filters {
-					result = result && f(summonedCard)
-				}
-
-				return result
-			} else {
-				return false
-			}
-		}
-	}
-
-	return false
-}
-
 // AnotherOwnCreatureSummoned returns true if you summoned another creature
 // Does not activate if this current card is summoned.
 // Does not activate if a card that was under an Evolution card becomes visible again.
