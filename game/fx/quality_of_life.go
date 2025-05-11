@@ -862,17 +862,28 @@ func IHaveCastASpell(card *match.Card, ctx *match.Context) bool {
 	return false
 }
 
-func CanBeSummoned(player *match.Player, c *match.Card) bool {
-	return c.HasCondition(cnd.Creature) &&
-		(!c.HasCondition(cnd.Evolution) ||
-			c.HasCondition(cnd.EvolveIntoAnyFamily) ||
-			len(FindFilter(
-				player,
-				match.BATTLEZONE,
-				func(c2 *match.Card) bool {
-					return c2.SharesAFamily(c.Family)
-				},
-			)) > 0)
+func CanBeSummoned(player *match.Player, card *match.Card) bool {
+	if !card.HasCondition(cnd.Creature) {
+		return false
+	}
+
+	if card.HasCondition(cnd.Evolution) {
+		if card.HasCondition(cnd.EvolveIntoAnyFamily) {
+			return true
+		}
+
+		cardsToEvolveFrom := FindFilter(
+			player,
+			match.BATTLEZONE,
+			func(x *match.Card) bool {
+				return x.SharesAFamily(card.Family)
+			},
+		)
+
+		return len(cardsToEvolveFrom) > 0
+	}
+
+	return true
 }
 
 func ForcePutCreatureIntoBZ(ctx *match.Context, creature *match.Card, from string, source *match.Card) {
