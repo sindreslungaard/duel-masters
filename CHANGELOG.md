@@ -8,6 +8,9 @@
 - New card "Lunar Charger" (thanks @DragosIonita23)
 - New card "Root Charger" (thanks @DragosIonita23)
 - New card "Marine Scramble" (thanks @DragosIonita23)
+- New card "Terradragon Gamiratar" (thanks @DragosIonita23)
+- New card "Bakkra Horn, the Silent" (thanks @DragosIonita23)
+- New card "Kachua, Keeper of the Icegate" (thanks @DragosIonita23)
 
 ## 24/04/2025
 - New card "Magmadragon Jagalzor" (thanks @jyotiskaghosh)
