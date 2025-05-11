@@ -1,8 +1,10 @@
 package fx
 
 import (
+	"duel-masters/game/cnd"
 	"duel-masters/game/family"
 	"duel-masters/game/match"
+	"fmt"
 	"slices"
 )
 
@@ -707,7 +709,6 @@ func AnotherCreatureSummoned(card *match.Card, ctx *match.Context) bool {
 }
 
 // AnotherOwnCreatureSummoned returns true if you summoned another creature
-//
 // Does not activate if this current card is summoned.
 // Does not activate if a card that was under an Evolution card becomes visible again.
 func AnotherOwnCreatureSummoned(card *match.Card, ctx *match.Context) bool {
@@ -725,6 +726,34 @@ func AnotherOwnCreatureSummoned(card *match.Card, ctx *match.Context) bool {
 	}
 
 	return CreatureSummoned(card, ctx) && event.CardID != card.ID && p == card.Player
+}
+
+func AnotherOwnDragonoidOrDragonSummoned(card *match.Card, ctx *match.Context) bool {
+	return anotherOwnCreatureSummonedFilter(card, ctx, func(c *match.Card) bool {
+		return c.SharesAFamily(append(family.Dragons, family.Dragonoid))
+	})
+}
+
+func anotherOwnCreatureSummonedFilter(card *match.Card, ctx *match.Context, filters ...func(c *match.Card) bool) bool {
+	result := AnotherOwnCreatureSummoned(card, ctx)
+
+	if result {
+		if event, ok := ctx.Event.(*match.CardMoved); ok {
+			summonedCard, _ := card.Player.GetCard(event.CardID, match.BATTLEZONE)
+
+			if summonedCard != nil {
+				for _, f := range filters {
+					result = result && f(summonedCard)
+				}
+
+				return result
+			} else {
+				return false
+			}
+		}
+	}
+
+	return false
 }
 
 func AnotherCreatureDestroyed(card *match.Card, ctx *match.Context) bool {
@@ -831,4 +860,48 @@ func IHaveCastASpell(card *match.Card, ctx *match.Context) bool {
 	}
 
 	return false
+}
+
+func CanBeSummoned(player *match.Player, card *match.Card) bool {
+	if !card.HasCondition(cnd.Creature) {
+		return false
+	}
+
+	if card.HasCondition(cnd.Evolution) {
+		if card.HasCondition(cnd.EvolveIntoAnyFamily) {
+			return true
+		}
+
+		cardsToEvolveFrom := FindFilter(
+			player,
+			match.BATTLEZONE,
+			func(x *match.Card) bool {
+				return x.SharesAFamily(card.Family)
+			},
+		)
+
+		return len(cardsToEvolveFrom) > 0
+	}
+
+	return true
+}
+
+func ForcePutCreatureIntoBZ(ctx *match.Context, creature *match.Card, from string, source *match.Card) {
+
+	cardPlayedCtx := match.NewContext(ctx.Match, &match.CardPlayedEvent{
+		CardID: creature.ID,
+	})
+	ctx.Match.HandleFx(cardPlayedCtx)
+
+	if !cardPlayedCtx.Cancelled() {
+		_, err := creature.Player.MoveCard(creature.ID, from, match.BATTLEZONE, source.ID)
+
+		if err == nil {
+			if !creature.HasCondition(cnd.Evolution) {
+				creature.AddCondition(cnd.SummoningSickness, nil, source.ID)
+			}
+			ctx.Match.ReportActionInChat(creature.Player, fmt.Sprintf("%s was moved to the battle zone from %s by %s's effect", creature.Name, from, source.Name))
+		}
+	}
+
 }
