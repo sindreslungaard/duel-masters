@@ -19,24 +19,23 @@ func BlissTotemAvatarOfLuck(c *match.Card) {
 	c.ManaCost = 6
 	c.ManaRequirement = []string{civ.Nature}
 	c.TapAbility = func(card *match.Card, ctx *match.Context) {
-
 		fx.Select(
 			card.Player,
 			ctx.Match,
 			card.Player,
 			match.GRAVEYARD,
-			"Bliss Totem, Avatar of Luck: Select up to 3 cards from your graveyard and put it in your manazone",
-			0,
+			fmt.Sprintf("%s: Select up to 3 cards from your graveyard and put it in your manazone", card.Name),
+			1,
 			3,
 			true,
 		).Map(func(c *match.Card) {
 			card.Player.MoveCard(c.ID, match.GRAVEYARD, match.MANAZONE, card.ID)
 			ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s was moved to %s's manazone by %s", c.Name, c.Player.Username(), card.Name))
 		})
-
 	}
 
 	c.Use(fx.Creature, fx.TapAbility)
+
 }
 
 func ClobberTotem(c *match.Card) {
@@ -49,6 +48,7 @@ func ClobberTotem(c *match.Card) {
 	c.ManaRequirement = []string{civ.Nature}
 
 	c.Use(fx.Creature, fx.PowerAttacker2000, fx.Doublebreaker, fx.CantBeBlockedByPowerUpTo5000)
+
 }
 
 func ForbiddingTotem(c *match.Card) {
@@ -85,8 +85,8 @@ func ForbiddingTotem(c *match.Card) {
 			ctx.Match.WarnPlayer(ctx.Match.Opponent(card.Player), "Your creature must attack a Mystery Totem if it attacks.")
 			ctx.InterruptFlow()
 		}
-
 	})
+
 }
 
 func findAttackableMysteryTotems(player *match.Player, cardID string, ctx *match.Context) (fx.CardCollection, error) {

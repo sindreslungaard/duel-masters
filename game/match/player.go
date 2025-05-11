@@ -181,21 +181,6 @@ func (p *Player) Container(c string) ([]*Card, error) {
 
 }
 
-// MapContainer performs the given action on all cards in the specified container
-func (p *Player) MapContainer(containerName string, fnc func(*Card)) {
-
-	cards, err := p.Container(containerName)
-
-	if err != nil {
-		return
-	}
-
-	for _, card := range cards {
-		fnc(card)
-	}
-
-}
-
 func (p *Player) Cards() []*Card {
 	cards := []*Card{}
 

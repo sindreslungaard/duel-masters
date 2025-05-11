@@ -21,10 +21,16 @@ func TottoPipicchi(c *match.Card) {
 	c.Use(fx.Creature,
 		fx.When(fx.InTheBattlezone, func(card *match.Card, ctx *match.Context) {
 			ctx.Match.ApplyPersistentEffect(func(ctx2 *match.Context, exit func()) {
-
 				if card.Zone != match.BATTLEZONE {
 					fx.Find(
 						card.Player,
+						match.BATTLEZONE,
+					).Map(func(x *match.Card) {
+						x.RemoveConditionBySource(card.ID)
+					})
+
+					fx.Find(
+						ctx2.Match.Opponent(card.Player),
 						match.BATTLEZONE,
 					).Map(func(x *match.Card) {
 						x.RemoveConditionBySource(card.ID)
@@ -37,8 +43,22 @@ func TottoPipicchi(c *match.Card) {
 				fx.FindFilter(
 					card.Player,
 					match.BATTLEZONE,
-					func(creature *match.Card) bool { return creature.SharesAFamily(family.Dragons) },
-				).Map(func(x *match.Card) { x.AddUniqueSourceCondition(cnd.SpeedAttacker, true, card.ID) })
+					func(x *match.Card) bool {
+						return x.SharesAFamily(family.Dragons)
+					},
+				).Map(func(x *match.Card) {
+					x.AddUniqueSourceCondition(cnd.SpeedAttacker, true, card.ID)
+				})
+
+				fx.FindFilter(
+					ctx2.Match.Opponent(card.Player),
+					match.BATTLEZONE,
+					func(x *match.Card) bool {
+						return x.SharesAFamily(family.Dragons)
+					},
+				).Map(func(x *match.Card) {
+					x.AddUniqueSourceCondition(cnd.SpeedAttacker, true, card.ID)
+				})
 			})
 		}),
 	)

@@ -2,7 +2,29 @@
 
 ## [Unreleased]
 
-- No unreleased changes
+- Refactor old cards to use the recommended card selection popup (thanks @DragosIonita23)
+- New card "Dracobarrier" (thanks @DragosIonita23)
+- New card "Laser Whip" (thanks @DragosIonita23)
+- New card "Lunar Charger" (thanks @DragosIonita23)
+- New card "Root Charger" (thanks @DragosIonita23)
+- New card "Marine Scramble" (thanks @DragosIonita23)
+- New card "Terradragon Gamiratar" (thanks @DragosIonita23)
+- New card "Bakkra Horn, the Silent" (thanks @DragosIonita23)
+- New card "Kachua, Keeper of the Icegate" (thanks @DragosIonita23)
+- New card "Gigaclaws" (thanks @jyotiskaghosh)
+- New card "Gachack, Mechanical Doll" (thanks @jyotiskaghosh)
+- New card "Missile Soldier Ultimo" (thanks @jyotiskaghosh)
+- New card "Slaphappy Soldier Galback" (thanks @jyotiskaghosh)
+- New card "Illusion Fish" (thanks @jyotiskaghosh)
+- New card "Carbonite Scarab" (thanks @jyotiskaghosh)
+- New card "Sol Galla, Halo Guardian" (thanks @jyotiskaghosh)
+- New card "Migalo, Vizier of Spycraft" (thanks @jyotiskaghosh)
+- New card "Vikorakys" (thanks @jyotiskaghosh)
+- New card "Solar Grass" (thanks @jyotiskaghosh)
+- New card "Senia, Orchard Avenger" (thanks @jyotiskaghosh)
+- New card "Coliseum Shell" (thanks @Hutwave)
+- Fixed an issue where "Kyrstron, Lair Delver"'s effect could summon an evolution card to the battlezone without a card to evolve from (thanks @DragosIonita23)
+- Fixed an issue where "Totto Pipicchi" would not apply speed attacker to opponent's creatures (thanks @DragosIonita23)
 
 ## 24/04/2025
 - New card "Magmadragon Jagalzor" (thanks @jyotiskaghosh)

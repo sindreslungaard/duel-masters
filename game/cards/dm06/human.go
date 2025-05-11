@@ -19,21 +19,20 @@ func ArmoredDecimatorValkaizer(c *match.Card) {
 	c.ManaRequirement = []string{civ.Fire}
 
 	c.Use(fx.Creature, fx.Evolution, fx.When(fx.Summoned, func(card *match.Card, ctx *match.Context) {
-
-		fx.SelectFilterSelectablesOnly(
+		fx.SelectFilter(
 			card.Player,
 			ctx.Match,
 			ctx.Match.Opponent(card.Player),
 			match.BATTLEZONE,
-			"Armored Decimator Valkaizer: You may select 1 opponent's creature with 4000 or less power and destroy it.",
-			0,
+			fmt.Sprintf("%s: You may select 1 opponent's creature with 4000 or less power and destroy it", card.Name),
+			1,
 			1,
 			true,
 			func(x *match.Card) bool { return ctx.Match.GetPower(x, false) <= 4000 },
+			false,
 		).Map(func(x *match.Card) {
 			ctx.Match.Destroy(x, card, match.DestroyedByMiscAbility)
 		})
-
 	}))
 
 }
@@ -47,18 +46,26 @@ func MigasaAdeptOfChaos(c *match.Card) {
 	c.ManaCost = 3
 	c.ManaRequirement = []string{civ.Fire}
 	c.TapAbility = func(card *match.Card, ctx *match.Context) {
-
 		ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s activated %s's tap ability", card.Player.Username(), card.Name))
-		creatures := match.Filter(card.Player, ctx.Match, card.Player, match.BATTLEZONE, "Select 1 fire creature from your battlezone that will gain double breaker", 1, 1, false, func(x *match.Card) bool { return x.Civ == civ.Fire && x.ID != card.ID })
-		for _, creature := range creatures {
-			if creature.Civ == civ.Fire {
-				creature.AddCondition(cnd.DoubleBreaker, true, card.ID)
-				ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s was given double breaker power by %s until end of turn", creature.Name, card.Name))
-			}
-		}
+		fx.SelectFilter(
+			card.Player,
+			ctx.Match,
+			card.Player,
+			match.BATTLEZONE,
+			fmt.Sprintf("%s: Select 1 fire creature from your battlezone that will gain \"Double Breaker\"", card.Name),
+			1,
+			1,
+			false,
+			func(x *match.Card) bool { return x.Civ == civ.Fire },
+			false,
+		).Map(func(x *match.Card) {
+			x.AddCondition(cnd.DoubleBreaker, true, card.ID)
+			ctx.Match.ReportActionInChat(x.Player, fmt.Sprintf("%s was given \"Double Breaker\" power by %s until end of turn", x.Name, card.Name))
+		})
 	}
 
 	c.Use(fx.Creature, fx.TapAbility)
+
 }
 
 func ChoyaTheUnheeding(c *match.Card) {
