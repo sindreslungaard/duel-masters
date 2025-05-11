@@ -136,7 +136,9 @@ func RotateShields(card *match.Card, ctx *match.Context, max int) {
 		card.Player,
 		match.HAND,
 		fmt.Sprintf("%s: You may select up to %d card(s) from your hand and put it into the shield zone", card.Name, max),
-		0, max, true,
+		1,
+		max,
+		true,
 	)
 
 	cardsMoved := len(toShield)
