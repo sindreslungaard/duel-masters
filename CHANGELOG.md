@@ -22,6 +22,7 @@
 - New card "Vikorakys" (thanks @jyotiskaghosh)
 - New card "Solar Grass" (thanks @jyotiskaghosh)
 - New card "Senia, Orchard Avenger" (thanks @jyotiskaghosh)
+- New card "Coliseum Shell" (thanks @Hutwave)
 
 ## 24/04/2025
 - New card "Magmadragon Jagalzor" (thanks @jyotiskaghosh)

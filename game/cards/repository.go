@@ -638,6 +638,7 @@ var DM08 = map[string]match.CardConstructor{
 	"e69438a4-57fa-4028-8450-d855ab013f63": dm08.CarboniteScarab,
 	"3b7f7a73-3f12-46a6-a36c-509fed6177ee": dm08.SeniaOrchardAvenger,
 	"03001a9c-19f4-48e3-8812-4f5eb34c39cb": dm08.SolGallaHaloGuardian,
+	"fb8f0d54-97ee-430e-a1aa-b23296be8345": dm08.ColiseumShell,
 }
 
 // Promo is a map with all the card id's in the game and corresponding CardConstructor for promotional exclusive cards
