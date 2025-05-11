@@ -16,7 +16,7 @@ func ManaBurnX(x int) func(*match.Card, *match.Context) {
 			fmt.Sprintf("Select up to %d card(s) from your opponent's mana zone that will be sent to their graveyard", x),
 			1,
 			x,
-			false,
+			true,
 		).Map(func(mana *match.Card) {
 			mana.Player.MoveCard(mana.ID, match.MANAZONE, match.GRAVEYARD, card.ID)
 			ctx.Match.ReportActionInChat(ctx.Match.Opponent(card.Player), fmt.Sprintf("%s was sent from %s's manazone to their graveyard by %s", mana.Name, mana.Player.Username(), card.Name))

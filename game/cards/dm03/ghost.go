@@ -19,7 +19,6 @@ func JackViperShadowofDoom(c *match.Card) {
 	c.ManaRequirement = []string{civ.Darkness}
 
 	c.Use(fx.Creature, fx.Evolution, func(card *match.Card, ctx *match.Context) {
-
 		if card.Zone != match.BATTLEZONE {
 			return
 		}
@@ -29,7 +28,7 @@ func JackViperShadowofDoom(c *match.Card) {
 			event.Card.Player == card.Player &&
 			event.Card.Civ == civ.Darkness {
 
-			fx.SelectFilterSelectablesOnly(
+			fx.SelectFilter(
 				card.Player,
 				ctx.Match,
 				card.Player,
@@ -38,17 +37,15 @@ func JackViperShadowofDoom(c *match.Card) {
 				1,
 				1,
 				true,
-				func(c *match.Card) bool { return event.Card.ID == c.ID },
-			).Map(func(c *match.Card) {
-
+				func(x *match.Card) bool { return event.Card.ID == x.ID },
+				false,
+			).Map(func(x *match.Card) {
 				ctx.InterruptFlow()
 
-				c.Player.MoveCard(c.ID, match.BATTLEZONE, match.HAND, card.ID)
-				ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s was moved to %s's hand by %s", c.Name, c.Player.Username(), card.Name))
+				x.Player.MoveCard(x.ID, match.BATTLEZONE, match.HAND, card.ID)
+				ctx.Match.ReportActionInChat(x.Player, fmt.Sprintf("%s was moved to %s's hand by %s", x.Name, x.Player.Username(), card.Name))
 			})
-
 		}
-
 	})
 
 }
