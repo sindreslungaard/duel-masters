@@ -34,7 +34,7 @@ func kachuaKeeperOfTheIcegateTapAbility(card *match.Card, ctx *match.Context) {
 		ctx.Match,
 		card.Player,
 		match.DECK,
-		"You may take a Dragon from your deck and put it into the battlezone.",
+		"You may take a Dragon from your deck and put it into the battlezone, then shuffle your deck.",
 		1,
 		1,
 		true,
