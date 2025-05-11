@@ -3,6 +3,11 @@
 ## [Unreleased]
 
 - Refactor old cards to use the recommended card selection popup (thanks @DragosIonita23)
+- New card "Dracobarrier" (thanks @DragosIonita23)
+- New card "Laser Whip" (thanks @DragosIonita23)
+- New card "Lunar Charger" (thanks @DragosIonita23)
+- New card "Root Charger" (thanks @DragosIonita23)
+- New card "Marine Scramble" (thanks @DragosIonita23)
 
 ## 24/04/2025
 - New card "Magmadragon Jagalzor" (thanks @jyotiskaghosh)
