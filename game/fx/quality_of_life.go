@@ -476,7 +476,7 @@ func SpellCast(card *match.Card, ctx *match.Context) bool {
 }
 
 // SpellCasted returns true if a spell was cast
-func SpellCasted(card *match.Card, ctx *match.Context) bool {
+func AnySpellCast(card *match.Card, ctx *match.Context) bool {
 
 	_, ok := ctx.Event.(*match.SpellCast)
 

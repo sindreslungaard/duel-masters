@@ -22,7 +22,7 @@ func SolGallaHaloGuardian(c *match.Card) {
 	c.PowerModifier = func(m *match.Match, attacking bool) int { return powerBoost }
 
 	c.Use(fx.Creature, fx.Blocker(),
-		fx.When(fx.SpellCasted, func(card *match.Card, ctx *match.Context) { powerBoost += 3000 }),
+		fx.When(fx.AnySpellCast, func(card *match.Card, ctx *match.Context) { powerBoost += 3000 }),
 		fx.When(fx.EndOfTurn, func(card *match.Card, ctx *match.Context) { powerBoost = 0 }),
 	)
 }
