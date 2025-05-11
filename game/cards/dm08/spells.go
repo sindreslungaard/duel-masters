@@ -238,23 +238,20 @@ func MarineScramble(c *match.Card) {
 	c.ManaRequirement = []string{civ.Water}
 
 	c.Use(fx.Spell, fx.When(fx.SpellCast, func(card *match.Card, ctx *match.Context) {
-		fx.Find(card.Player, match.BATTLEZONE).Map(func(x *match.Card) {
-			ctx.Match.ApplyPersistentEffect(func(ctx2 *match.Context, exit func()) {
+		ctx.Match.ApplyPersistentEffect(func(ctx2 *match.Context, exit func()) {
 
-				if x.Zone != match.BATTLEZONE {
+			creatures := fx.Find(card.Player, match.BATTLEZONE)
+
+			if _, ok := ctx2.Event.(*match.EndOfTurnStep); ok {
+				creatures.Map(func(x *match.Card) {
 					x.RemoveConditionBySource(card.ID)
-					exit()
-					return
-				}
+				})
+				exit()
+				return
+			}
 
-				if _, ok := ctx2.Event.(*match.EndOfTurnStep); ok {
-					x.RemoveConditionBySource(card.ID)
-					exit()
-					return
-				}
-
+			creatures.Map(func(x *match.Card) {
 				x.AddUniqueSourceCondition(cnd.CantBeBlocked, true, card.ID)
-
 			})
 		})
 	}))
