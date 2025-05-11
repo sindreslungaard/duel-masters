@@ -191,7 +191,7 @@ func ReturnXCreaturesFromGraveToHand(x int) func(*match.Card, *match.Context) {
 			fmt.Sprintf("%s: Return up to %d creature(s) from your graveyard to your hand", card.Name, x),
 			1,
 			x,
-			false,
+			true,
 			func(x *match.Card) bool { return x.HasCondition(cnd.Creature) },
 			true,
 		).Map(func(x *match.Card) {
