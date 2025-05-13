@@ -609,6 +609,7 @@ var DM08 = map[string]match.CardConstructor{
 	"a156ed1e-b2b4-4ed3-b6a9-539ff04c98dd": dm08.KachuaKeeperOfTheIcegate,
 	"f4750fe9-35ce-4bca-b074-a939d18a971d": dm08.TerradragonGamiratar,
 	"2651ac84-cbbe-4e07-b5f7-0085675254cd": dm08.BakkraHornTheSilent,
+	"d766e9bf-bada-4e22-9d82-6e2f8e25132f": dm08.ScreamSlicerShadowOfFear,
 	"0abb1391-a69f-4839-aafa-222628d5dde8": dm08.SuperNecrodragonAbzoDolba,
 	"85e9d177-69b3-4239-8b2b-ec97f74d5577": dm08.UberdragonBajula,
 	"44cbf9fd-3906-4032-939c-f702ffda7415": dm08.SuperTerradragonBailasGale,
