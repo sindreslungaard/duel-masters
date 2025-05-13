@@ -33,27 +33,35 @@ func ScreamSlicerShadowOfFear(c *match.Card) {
 				allCreatures = append(allCreatures, oppCreatures...)
 
 				if len(allCreatures) > 0 {
-					slices.SortFunc(allCreatures, func(a *match.Card, b *match.Card) int {
-						if ctx.Match.GetPower(a, false) < ctx.Match.GetPower(b, false) {
+					// Cache power for each card to avoid repeated GetPower calls
+					cardPowerMap := make(map[*match.Card]int, len(allCreatures))
+					for _, c := range allCreatures {
+						cardPowerMap[c] = ctx.Match.GetPower(c, false)
+					}
+
+					// Sort based on cached power values
+					slices.SortFunc(allCreatures, func(a, b *match.Card) int {
+						if cardPowerMap[a] < cardPowerMap[b] {
 							return -1
-						} else if ctx.Match.GetPower(a, false) > ctx.Match.GetPower(b, false) {
+						} else if cardPowerMap[a] > cardPowerMap[b] {
 							return 1
 						}
 						return 0
 					})
 
-					minPower := ctx.Match.GetPower(allCreatures[0], false)
+					minPower := cardPowerMap[allCreatures[0]]
 					myCardsWithMinPower := make([]*match.Card, 0)
 					oppCardsWithMinPower := make([]*match.Card, 0)
 
+					// Use cached powers instead of recomputing
 					for _, curr := range myCreatures {
-						if ctx.Match.GetPower(curr, false) == minPower {
+						if cardPowerMap[curr] == minPower {
 							myCardsWithMinPower = append(myCardsWithMinPower, curr)
 						}
 					}
 
 					for _, curr := range oppCreatures {
-						if ctx.Match.GetPower(curr, false) == minPower {
+						if cardPowerMap[curr] == minPower {
 							oppCardsWithMinPower = append(oppCardsWithMinPower, curr)
 						}
 					}
