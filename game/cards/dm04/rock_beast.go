@@ -5,6 +5,7 @@ import (
 	"duel-masters/game/family"
 	"duel-masters/game/fx"
 	"duel-masters/game/match"
+	"fmt"
 )
 
 // DoboulgyserGiantRockBeast ...
@@ -18,21 +19,20 @@ func DoboulgyserGiantRockBeast(c *match.Card) {
 	c.ManaRequirement = []string{civ.Fire}
 
 	c.Use(fx.Creature, fx.Evolution, fx.Doublebreaker, fx.When(fx.Summoned, func(card *match.Card, ctx *match.Context) {
-
-		fx.SelectFilterSelectablesOnly(
+		fx.SelectFilter(
 			card.Player,
 			ctx.Match,
 			ctx.Match.Opponent(card.Player),
 			match.BATTLEZONE,
-			"Doboulgyser: You may select 1 opponent's creature with 3000 or less power and destroy it.",
-			0,
+			fmt.Sprintf("%s: You may select 1 opponent's creature with 3000 or less power and destroy it.", card.Name),
+			1,
 			1,
 			true,
 			func(x *match.Card) bool { return ctx.Match.GetPower(x, false) <= 3000 },
+			false,
 		).Map(func(x *match.Card) {
 			ctx.Match.Destroy(x, card, match.DestroyedByMiscAbility)
 		})
-
 	}))
 
 }
