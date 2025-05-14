@@ -5,13 +5,13 @@ import (
 	"duel-masters/game/family"
 	"duel-masters/game/fx"
 	"duel-masters/game/match"
-  "fmt"
+	"fmt"
 )
 
 // UberdragonBajula ...
 func UberdragonBajula(c *match.Card) {
 
-	c.Name = "\u00c3\u0153berdragon Bajula"
+	c.Name = "Überdragon Bajula"
 	c.Power = 13000
 	c.Civ = civ.Fire
 	c.Family = []string{family.ArmoredDragon}
@@ -46,5 +46,5 @@ func BruiserDragon(c *match.Card) {
 			ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s's effect: One of your shields was put into graveyard", card.Name))
 		})
 	}))
-  
+
 }
