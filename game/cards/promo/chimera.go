@@ -17,20 +17,6 @@ func Gigagrax(c *match.Card) {
 	c.ManaCost = 8
 	c.ManaRequirement = []string{civ.Darkness}
 
-	c.Use(fx.Creature, fx.When(fx.Destroyed, func(card *match.Card, ctx *match.Context) {
-
-		fx.Select(
-			card.Player,
-			ctx.Match,
-			ctx.Match.Opponent(card.Player),
-			match.BATTLEZONE,
-			"Destroy one of your opponent's creatures",
-			1,
-			1,
-			true).Map(func(x *match.Card) {
-			ctx.Match.Destroy(x, card, match.DestroyedByMiscAbility)
-		})
-
-	}))
+	c.Use(fx.Creature, fx.When(fx.Destroyed, fx.DestroyOpponentCreature(true, match.DestroyedByMiscAbility)))
 
 }
