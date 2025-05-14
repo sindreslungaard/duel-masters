@@ -16,19 +16,26 @@ func EnchantedSoil(c *match.Card) {
 	c.ManaCost = 4
 	c.ManaRequirement = []string{civ.Nature}
 
-	c.Use(fx.Spell, func(card *match.Card, ctx *match.Context) {
-
-		if match.AmICasted(card, ctx) {
-
-			fx.SelectFilterSelectablesOnly(card.Player, ctx.Match, card.Player, match.GRAVEYARD, "Enchanted Soil: Select 2 creatures from your graveyard and put it in your manazone", 0, 2, true, func(x *match.Card) bool {
+	c.Use(fx.Spell, fx.When(fx.SpellCast, func(card *match.Card, ctx *match.Context) {
+		fx.SelectFilter(
+			card.Player,
+			ctx.Match,
+			card.Player,
+			match.GRAVEYARD,
+			fmt.Sprintf("%s: Put up to 2 creatures from your graveyard into your manazone", card.Name),
+			1,
+			2,
+			true,
+			func(x *match.Card) bool {
 				return x.HasCondition(cnd.Creature)
-			}).Map(func(c *match.Card) {
-				card.Player.MoveCard(c.ID, match.GRAVEYARD, match.MANAZONE, card.ID)
-				ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s was moved to %s's manazone by %s", c.Name, c.Player.Username(), card.Name))
-			})
+			},
+			false,
+		).Map(func(x *match.Card) {
+			x.Player.MoveCard(x.ID, match.GRAVEYARD, match.MANAZONE, card.ID)
+			ctx.Match.ReportActionInChat(x.Player, fmt.Sprintf("%s was moved to %s's manazone by %s", x.Name, x.Player.Username(), card.Name))
+		})
+	}))
 
-		}
-	})
 }
 
 // SchemingHands ...
@@ -39,17 +46,22 @@ func SchemingHands(c *match.Card) {
 	c.ManaCost = 5
 	c.ManaRequirement = []string{civ.Darkness}
 
-	c.Use(fx.Spell, func(card *match.Card, ctx *match.Context) {
+	c.Use(fx.Spell, fx.When(fx.SpellCast, func(card *match.Card, ctx *match.Context) {
+		fx.Select(
+			card.Player,
+			ctx.Match,
+			ctx.Match.Opponent(card.Player),
+			match.HAND,
+			fmt.Sprintf("%s: Discard a card from your opponent's hand", card.Name),
+			1,
+			1,
+			false,
+		).Map(func(x *match.Card) {
+			x.Player.MoveCard(x.ID, match.HAND, match.GRAVEYARD, card.ID)
+			ctx.Match.ReportActionInChat(x.Player, fmt.Sprintf("%s was moved to %s's graveyard by %s", x.Name, x.Player.Username(), card.Name))
+		})
+	}))
 
-		if match.AmICasted(card, ctx) {
-
-			fx.Select(card.Player, ctx.Match, ctx.Match.Opponent(card.Player), match.HAND, "Scheming Hands: Discard a card from your opponent's hand", 0, 1, false).Map(func(c *match.Card) {
-				c.Player.MoveCard(c.ID, match.HAND, match.GRAVEYARD, card.ID)
-				ctx.Match.ReportActionInChat(ctx.Match.Opponent(card.Player), fmt.Sprintf("%s was moved to %s's graveyard by %s", c.Name, c.Player.Username(), card.Name))
-			})
-
-		}
-	})
 }
 
 // CyclonePanic ...
@@ -61,7 +73,6 @@ func CyclonePanic(c *match.Card) {
 	c.ManaRequirement = []string{civ.Fire}
 
 	c.Use(fx.Spell, fx.ShieldTrigger, fx.When(fx.SpellCast, func(card *match.Card, ctx *match.Context) {
-
 		// p1
 		cards1 := fx.Find(card.Player, match.HAND)
 		n1 := 0
@@ -88,8 +99,8 @@ func CyclonePanic(c *match.Card) {
 		ctx.Match.Opponent(card.Player).DrawCards(n2)
 
 		ctx.Match.ReportActionInChat(card.Player, "Cyclone Panic: Both players shuffled their deck and replaced the cards in their hand with new ones")
-
 	}))
+
 }
 
 // GlorySnow ...
@@ -100,25 +111,16 @@ func GlorySnow(c *match.Card) {
 	c.ManaCost = 4
 	c.ManaRequirement = []string{civ.Light}
 
-	c.Use(fx.Spell, fx.ShieldTrigger, func(card *match.Card, ctx *match.Context) {
+	c.Use(fx.Spell, fx.ShieldTrigger, fx.When(fx.SpellCast, func(card *match.Card, ctx *match.Context) {
+		if len(fx.Find(card.Player, match.MANAZONE)) < len(fx.Find(ctx.Match.Opponent(card.Player), match.MANAZONE)) {
+			cards := card.Player.PeekDeck(2)
 
-		if match.AmICasted(card, ctx) {
-
-			if len(fx.Find(card.Player, match.MANAZONE)) < len(fx.Find(ctx.Match.Opponent(card.Player), match.MANAZONE)) {
-
-				cards := card.Player.PeekDeck(2)
-
-				for _, toMove := range cards {
-
-					card.Player.MoveCard(toMove.ID, match.DECK, match.MANAZONE, card.ID)
-					ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s put %s into the manazone from the top of their deck", card.Player.Username(), toMove.Name))
-
-				}
+			for _, toMove := range cards {
+				card.Player.MoveCard(toMove.ID, match.DECK, match.MANAZONE, card.ID)
+				ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s put %s into the manazone from the top of their deck", card.Player.Username(), toMove.Name))
 			}
-
 		}
-
-	})
+	}))
 
 }
 
