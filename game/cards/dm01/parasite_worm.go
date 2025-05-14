@@ -5,6 +5,7 @@ import (
 	"duel-masters/game/family"
 	"duel-masters/game/fx"
 	"duel-masters/game/match"
+	"fmt"
 )
 
 // StingerWorm ...
@@ -18,13 +19,18 @@ func StingerWorm(c *match.Card) {
 	c.ManaRequirement = []string{civ.Darkness}
 
 	c.Use(fx.Creature, fx.When(fx.Summoned, func(card *match.Card, ctx *match.Context) {
-
-		creatures := match.Search(card.Player, ctx.Match, card.Player, match.BATTLEZONE, "Stinger Worm: Select 1 creature from your battlezone that will be sent to your graveyard", 1, 1, false)
-
-		for _, creature := range creatures {
-			ctx.Match.Destroy(creature, card, match.DestroyedByMiscAbility)
-		}
-
+		fx.Select(
+			card.Player,
+			ctx.Match,
+			card.Player,
+			match.BATTLEZONE,
+			fmt.Sprintf("%s: Select 1 creature from your battlezone that will be sent to your graveyard", card.Name),
+			1,
+			1,
+			false,
+		).Map(func(x *match.Card) {
+			ctx.Match.Destroy(x, card, match.DestroyedByMiscAbility)
+		})
 	}))
 
 }
@@ -40,16 +46,18 @@ func SwampWorm(c *match.Card) {
 	c.ManaRequirement = []string{civ.Darkness}
 
 	c.Use(fx.Creature, fx.When(fx.Summoned, func(card *match.Card, ctx *match.Context) {
-
-		ctx.Match.Wait(card.Player, "Waiting for your opponent to make an action")
-		defer ctx.Match.EndWait(card.Player)
-
-		creatures := match.Search(ctx.Match.Opponent(card.Player), ctx.Match, ctx.Match.Opponent(card.Player), match.BATTLEZONE, "Swamp Worm: Select 1 creature from your battlezone that will be sent to your graveyard", 1, 1, false)
-
-		for _, creature := range creatures {
-			ctx.Match.Destroy(creature, card, match.DestroyedByMiscAbility)
-		}
-
+		fx.Select(
+			ctx.Match.Opponent(card.Player),
+			ctx.Match,
+			ctx.Match.Opponent(card.Player),
+			match.BATTLEZONE,
+			fmt.Sprintf("%s: Select 1 creature from your battlezone that will be sent to your graveyard", card.Name),
+			1,
+			1,
+			false,
+		).Map(func(x *match.Card) {
+			ctx.Match.Destroy(x, card, match.DestroyedByMiscAbility)
+		})
 	}))
 
 }
