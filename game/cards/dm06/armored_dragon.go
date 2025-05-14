@@ -21,8 +21,10 @@ func BazagazealDragon(c *match.Card) {
 			return
 		}
 
-		card.Player.MoveCard(card.ID, match.BATTLEZONE, match.HAND, card.ID)
-		ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s was returned to the %s's hand", c.Name, c.Player.Username()))
+		ctx.ScheduleAfter(func() {
+			card.Player.MoveCard(card.ID, match.BATTLEZONE, match.HAND, card.ID)
+			ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s was returned to the %s's hand", c.Name, c.Player.Username()))
+		})
 	}))
 
 }
