@@ -56,19 +56,21 @@
       <div @click="dismissLarge()" class="btn">Close</div>
     </div>
 
-    <div v-if="previewCards" class="cards-preview" @click="dismissLarge()">
+    <!-- TODO here -- send another prop from backend -->
+    <div v-if="previewCards" class="action noselect">
       <h1>{{ previewCardsText }}</h1>
       <img
         @contextmenu.prevent="
           dismissLarge();
           showLarge(card);
         "
+
         v-for="(card, index) in previewCards"
         :key="index"
         :src="`https://scans.shobu.io/${card.uid}.jpg`"
       />
       <br /><br />
-      <div @click="dismissLarge()" class="btn">
+      <div @click="closePreviewCards()" class="btn">
         Close
       </div>
     </div>
@@ -923,6 +925,9 @@ export default {
       }
     },
 
+    // THIS IS THE REASON that previewCards overlay is cancelling !!
+    // We should use other property, NOT previewCard / previewCards
+    // when implementing correct ShowShields for attacking sequence cards
     handleOverlayClick() {
       if (this.previewCard || this.previewCards) {
         this.dismissLarge();
@@ -1043,6 +1048,9 @@ export default {
 
     dismissLarge() {
       this.previewCard = null;
+    },
+
+    closePreviewCards() {
       this.previewCards = null;
       this.previewCardsText = null;
     },
@@ -1447,6 +1455,9 @@ export default {
             break;
           }
 
+          // TODO here implement another key,
+          // and dont use previewCards and previewCardsText
+          // use other field (ex. disableHandleOverlay = true)
           case "show_cards": {
             this.previewCardsText = data.message;
             this.previewCards = data.cards.map((card) => ({ uid: card }));

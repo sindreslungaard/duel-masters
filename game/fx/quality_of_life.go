@@ -250,6 +250,7 @@ func SelectFilter(p *match.Player, m *match.Match, containerOwner *match.Player,
 		defer m.EndWait(m.Opponent(p))
 	}
 
+	// You should use the same for { ... } + defer CloseAction etc for ShowCards
 	m.NewActionFullList(p, filtered, min, max, text, cancellable, unselectables)
 
 	defer m.CloseAction(p)
