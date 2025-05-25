@@ -29,4 +29,5 @@ const (
 	CantBeAttacked      = "cant_be_attacked"
 	WheneverThisAttacks = "whenever_this_attacks"
 	Stealth             = "stealth"
+	CantBeSelectedByOpp = "cant_be_selected_by_opp"
 )

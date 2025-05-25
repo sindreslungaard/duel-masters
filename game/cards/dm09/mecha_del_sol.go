@@ -2,6 +2,7 @@ package dm09
 
 import (
 	"duel-masters/game/civ"
+	"duel-masters/game/cnd"
 	"duel-masters/game/family"
 	"duel-masters/game/fx"
 	"duel-masters/game/match"
@@ -18,17 +19,65 @@ func PetrovaChannelerOfSuns(c *match.Card) {
 	c.ManaCost = 5
 	c.ManaRequirement = []string{civ.Light}
 
-	c.Use(fx.Creature, fx.CantBeSelectedByOpp,
+	c.Use(fx.Creature, fx.CantBeSelectedByOpp, //TODO implement filter in Select fxs
 		fx.When(fx.InTheBattlezone, func(card *match.Card, ctx *match.Context) {
-			ctx.Match.ApplyPersistentEffect(func(ctx2 *match.Context, exit func()) {
-				if card.Zone != match.BATTLEZONE {
-					exit()
-				}
+			chosenFamily := fx.ChooseAFamilyFilter(
+				card,
+				ctx,
+				fmt.Sprintf("%s's effect: Choose a race other than Mecha del Sol. Each creature of that race gets +4000 Power.", card.Name),
+				func(x string) bool {
+					return x != family.MechaDelSol
+				},
+			)
 
-				//TODO choose a race other than Mecha del Sol
-				// each creature of that race has +4000 power (STATIC ABILITY)
-				// with unique source condition with card.ID
-			})
+			if chosenFamily != "" {
+				ctx.Match.ApplyPersistentEffect(func(ctx2 *match.Context, exit func()) {
+					if card.Zone != match.BATTLEZONE {
+						fx.FindFilter(
+							card.Player,
+							match.BATTLEZONE,
+							func(x *match.Card) bool {
+								return x.HasFamily(chosenFamily)
+							},
+						).Map(func(x *match.Card) {
+							x.RemoveConditionBySource(card.ID)
+						})
+
+						fx.FindFilter(
+							ctx.Match.Opponent(card.Player),
+							match.BATTLEZONE,
+							func(x *match.Card) bool {
+								return x.HasFamily(chosenFamily)
+							},
+						).Map(func(x *match.Card) {
+							x.RemoveConditionBySource(card.ID)
+						})
+
+						exit()
+						return
+					}
+
+					fx.FindFilter(
+						card.Player,
+						match.BATTLEZONE,
+						func(x *match.Card) bool {
+							return x.HasFamily(chosenFamily)
+						},
+					).Map(func(x *match.Card) {
+						x.AddUniqueSourceCondition(cnd.PowerAmplifier, 4000, card.ID)
+					})
+
+					fx.FindFilter(
+						ctx.Match.Opponent(card.Player),
+						match.BATTLEZONE,
+						func(x *match.Card) bool {
+							return x.HasFamily(chosenFamily)
+						},
+					).Map(func(x *match.Card) {
+						x.AddUniqueSourceCondition(cnd.PowerAmplifier, 4000, card.ID)
+					})
+				})
+			}
 		}),
 	)
 
