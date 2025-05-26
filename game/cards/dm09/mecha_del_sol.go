@@ -19,7 +19,7 @@ func PetrovaChannelerOfSuns(c *match.Card) {
 	c.ManaCost = 5
 	c.ManaRequirement = []string{civ.Light}
 
-	c.Use(fx.Creature, fx.CantBeSelectedByOpp, //TODO implement filter in Select fxs
+	c.Use(fx.Creature, fx.CantBeSelectedByOpp,
 		fx.When(fx.InTheBattlezone, func(card *match.Card, ctx *match.Context) {
 			chosenFamily := fx.ChooseAFamilyFilter(
 				card,

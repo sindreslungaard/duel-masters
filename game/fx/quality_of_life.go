@@ -256,6 +256,18 @@ func SelectFilter(p *match.Player, m *match.Match, containerOwner *match.Player,
 		return result
 	}
 
+	newCards := make([]*match.Card, 0)
+
+	for _, card := range filtered {
+		if !(card.Zone == match.BATTLEZONE &&
+			card.HasCondition(cnd.CantBeSelectedByOpp) &&
+			p != card.Player) {
+			newCards = append(newCards, card)
+		}
+	}
+
+	filtered = newCards
+
 	// Make sure the selection interval fits in the length of the remaining filtered cards slice
 	if filteredLength < min {
 		min = filteredLength
@@ -324,8 +336,27 @@ func selectMultipartBase(p *match.Player, m *match.Match, cards map[string][]*ma
 		return result
 	}
 
+	// filter out cards that have CantBeSelectedByOpp (Petrova, Channeler of Suns)
+	newCardsMap := make(map[string][]*match.Card, 0)
+
+	for key, cardList := range cards {
+		newCards := make([]*match.Card, 0)
+
+		for _, card := range cardList {
+			if !(card.Zone == match.BATTLEZONE &&
+				card.HasCondition(cnd.CantBeSelectedByOpp) &&
+				p != card.Player) {
+				newCards = append(newCards, card)
+			}
+		}
+
+		newCardsMap[key] = newCards
+	}
+
 	notEmpty := false
 	totalCardsLength := 0
+
+	cards = newCardsMap
 
 	for _, cardList := range cards {
 		if len(cardList) > 0 {
