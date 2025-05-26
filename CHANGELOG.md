@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+- No unreleased changes
+
+## 26/05/2025
+
 - Refactor old cards to use the recommended card selection popup (thanks @DragosIonita23)
 - New card "Dracobarrier" (thanks @DragosIonita23)
 - New card "Laser Whip" (thanks @DragosIonita23)
