@@ -88,6 +88,14 @@ type AttackConfirmed struct {
 	Creature bool
 }
 
+// SelectShields is fired after the Attacker confirmed the AttackPlayer sequence
+// The opponent is prompted to select exactly NoOfShields from their Shieldzone
+type SelectShields struct {
+	Attacker        *Card
+	Cancellable     bool
+	ShieldsAttacked []*Card // Will be populated AFTER the Event is handled (player prompted to choose shields)
+}
+
 // SelectBlockers is fired after the AttackConfirmed effects,
 // Here, blockers (both normal and conditional) are added into the blockers list
 // and cards that have conditional CantBeBlocked effects handles them.

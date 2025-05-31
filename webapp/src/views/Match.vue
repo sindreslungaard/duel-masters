@@ -53,23 +53,27 @@
 
     <div v-if="previewCard" class="card-preview">
       <img :src="`https://scans.shobu.io/${previewCard.uid}.jpg`" />
-      <div @click="dismissLarge()" class="btn">Close</div>
+      <div @click="handleClosePreviewCard()" class="btn">Close</div>
     </div>
 
-    <div v-if="previewCards" class="cards-preview" @click="dismissLarge()">
+    <div v-if="previewCards" class="cards-preview" @click="!previewNonDismissible && dismissLarge()">
       <h1>{{ previewCardsText }}</h1>
       <img
         @contextmenu.prevent="
-          dismissLarge();
-          showLarge(card);
+          handleContextMenuPrevent(card);
         "
         v-for="(card, index) in previewCards"
         :key="index"
         :src="`https://scans.shobu.io/${card.uid}.jpg`"
       />
       <br /><br />
-      <div @click="dismissLarge()" class="btn">
-        Close
+      <div>
+        <div v-if="previewNonDismissible" @click="closePreviewCards()" class="btn">
+          Close
+        </div>
+        <div v-else @click="dismissLarge()" class="btn">
+          Close
+        </div>
       </div>
     </div>
 
@@ -843,6 +847,7 @@ export default {
       previewCard: null,
       previewCards: null,
       previewCardsText: null,
+      previewNonDismissible: false,
       settings: getSettings(),
 
       TAPPED_FLAG: 1,
@@ -924,7 +929,7 @@ export default {
     },
 
     handleOverlayClick() {
-      if (this.previewCard || this.previewCards) {
+      if ((this.previewCard || this.previewCards) && !this.previewNonDismissible) {
         this.dismissLarge();
       }
     },
@@ -1045,6 +1050,36 @@ export default {
       this.previewCard = null;
       this.previewCards = null;
       this.previewCardsText = null;
+    },
+
+    dismissPreviewCard() {
+      this.previewCard = null;
+    },
+
+    closePreviewCards() {
+      this.previewCard = null;
+      this.previewCards = null;
+      this.previewCardsText = null;
+      this.previewNonDismissible = false;
+
+      this.ws.send(JSON.stringify({ header: "action", cancel: true }));
+    },
+
+    handleContextMenuPrevent(card) {
+      if (!this.previewNonDismissible) {
+        this.dismissLarge();
+      } else {
+        this.dismissPreviewCard();
+      }
+      this.showLarge(card);
+    },
+
+    handleClosePreviewCard() {
+      if (!this.previewNonDismissible) {
+        this.dismissLarge();
+      } else {
+        this.dismissPreviewCard();
+      }
     },
 
     onPlayzoneClicked(card) {
@@ -1450,6 +1485,12 @@ export default {
           case "show_cards": {
             this.previewCardsText = data.message;
             this.previewCards = data.cards.map((card) => ({ uid: card }));
+          }
+
+          case "show_cards_non_dismissible": {
+            this.previewCardsText = data.message;
+            this.previewCards = data.cards.map((card) => ({ uid: card }));
+            this.previewNonDismissible = true;
           }
         }
       };
