@@ -17,3 +17,16 @@ jobs:
         run: go build -v ./cmd/duel-masters
       - name: Test with the Go CLI
         run: go test ./tests
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Setup Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: '1.22.x'
+      - name: Install dependencies
+        run: go get ./...
+      - name: Test with the Go CLI
+        run: go test ./tests
