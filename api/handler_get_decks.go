@@ -17,7 +17,7 @@ func (api *API) getDecksHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	cur, err := db.Decks.Find(r.Context(), bson.M{
+	cur, err := db.Decks().Find(r.Context(), bson.M{
 		"owner": user.UID,
 	})
 

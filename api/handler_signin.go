@@ -37,7 +37,7 @@ func (api *API) signinHandler(w http.ResponseWriter, r *http.Request) {
 
 	var user db.User
 
-	if err := db.Users.FindOne(r.Context(), bson.M{"username": primitive.Regex{Pattern: "^" + username + "$", Options: "i"}}).Decode(&user); err != nil {
+	if err := db.Users().FindOne(r.Context(), bson.M{"username": primitive.Regex{Pattern: "^" + username + "$", Options: "i"}}).Decode(&user); err != nil {
 		write(w, http.StatusNotFound, Json{"message": "User not found"})
 		return
 	}
@@ -50,7 +50,7 @@ func (api *API) signinHandler(w http.ResponseWriter, r *http.Request) {
 	// Check for IP ban
 	ip := getIP(r)
 
-	bans, err := db.Users.CountDocuments(r.Context(), bson.M{
+	bans, err := db.Users().CountDocuments(r.Context(), bson.M{
 		"$or": []bson.M{
 			{"type": db.UserBan, "value": user.UID},
 			{"type": db.IPBan, "value": ip},
@@ -81,7 +81,7 @@ func (api *API) signinHandler(w http.ResponseWriter, r *http.Request) {
 		Expires: int(time.Now().Add(time.Second * 2592000).Unix()),
 	}
 
-	db.Users.UpdateOne(r.Context(), bson.M{"uid": user.UID}, bson.M{"$push": bson.M{"sessions": session}})
+	db.Users().UpdateOne(r.Context(), bson.M{"uid": user.UID}, bson.M{"$push": bson.M{"sessions": session}})
 
 	write(w, http.StatusOK, Json{
 		"user":  user,

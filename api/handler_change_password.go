@@ -49,7 +49,7 @@ func (api *API) changePasswordHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	db.Users.UpdateOne(r.Context(), bson.M{"uid": user.UID}, bson.M{"$set": bson.M{"password": hash}})
+	db.Users().UpdateOne(r.Context(), bson.M{"uid": user.UID}, bson.M{"$set": bson.M{"password": hash}})
 
 	write(w, http.StatusOK, Json{"message": "Successfully changed your password"})
 }
