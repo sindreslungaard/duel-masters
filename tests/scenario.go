@@ -10,11 +10,14 @@ type TestScenarioOptions struct{}
 
 func NewTestScenario(options TestScenarioOptions) *TestScenario {
 	matchSystem := match.NewSystem(func(msg interface{}) {})
-	match := matchSystem.NewMatch("test-scenario", "test-host", true, true, match.RegularFormat)
+	m := matchSystem.NewMatch("test-scenario", "test-host", true, true, match.RegularFormat)
 
-	match.Start()
+	p1 := match.NewPlayer(m, 1)
+	m.Player1 = match.NewPlayerReference(p1, s)
+
+	m.Start()
 
 	return &TestScenario{
-		match,
+		match: m,
 	}
 }
