@@ -22,10 +22,21 @@ const (
 
 var Sockets = internal.NewConcurrentDictionary[Socket]()
 
+type Connection interface {
+	SetReadLimit(int64)
+	SetReadDeadline(t time.Time) error
+	SetPongHandler(func(string) error)
+	ReadMessage() (messageType int, p []byte, err error)
+	SetWriteDeadline(t time.Time) error
+	WriteMessage(messageType int, data []byte) error
+	WriteJSON(v interface{}) error
+	Close() error
+}
+
 // Socket links a ws connection to a user id and handles safe reading and writing of data
 type Socket struct {
 	UID    string
-	conn   *websocket.Conn
+	conn   Connection
 	User   db.User
 	hub    Hub
 	ready  bool
@@ -46,7 +57,7 @@ func FindByUserUID(uid string) (*Socket, bool) {
 }
 
 // NewSocket creates and returns a new Socket instance
-func NewSocket(c *websocket.Conn, hub Hub) *Socket {
+func NewSocket(c Connection, hub Hub) *Socket {
 
 	id, err := shortid.Generate()
 
