@@ -188,6 +188,10 @@ func (s *Socket) Send(v any) {
 
 }
 
+func (s *Socket) SetReady(value bool) {
+	s.ready = value
+}
+
 // Close closes the client connection
 func (s *Socket) Close() {
 

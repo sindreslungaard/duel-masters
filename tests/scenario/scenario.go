@@ -7,7 +7,9 @@ import (
 )
 
 type TestScenario struct {
-	Match *match.Match
+	Match   *match.Match
+	Client1 *MockClient
+	Client2 *MockClient
 }
 
 type Options struct{}
@@ -26,10 +28,16 @@ func New(options Options) *TestScenario {
 	m := matchSystem.NewMatch("test-scenario", "test-host", true, true, match.RegularFormat)
 
 	p1 := match.NewPlayer(m, 1)
-	m.Player1 = match.NewPlayerReference(p1, server.NewSocket(NewMockConnection(), m))
+	s1 := server.NewSocket(NewMockConnection(), m)
+	c1 := NewMockClient(s1, m)
+	s1.SetReady(true)
+	m.Player1 = match.NewPlayerReference(p1, s1)
 
 	p2 := match.NewPlayer(m, 2)
-	m.Player2 = match.NewPlayerReference(p2, server.NewSocket(NewMockConnection(), m))
+	s2 := server.NewSocket(NewMockConnection(), m)
+	c2 := NewMockClient(s2, m)
+	s2.SetReady(true)
+	m.Player2 = match.NewPlayerReference(p2, s2)
 
 	deck := []string{}
 	for range 40 {
@@ -42,9 +50,12 @@ func New(options Options) *TestScenario {
 	p1.Ready = true
 	p2.Ready = true
 
+	m.Turn = 2 // so that player1 starts
 	m.Start()
 
 	return &TestScenario{
-		Match: m,
+		Match:   m,
+		Client1: c1,
+		Client2: c2,
 	}
 }

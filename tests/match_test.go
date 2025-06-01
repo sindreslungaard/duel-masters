@@ -41,4 +41,12 @@ func TestMatchInitialization(t *testing.T) {
 		assert.Empty(t, p2mana)
 	})
 
+	t.Run("turn can be ended", func(t *testing.T) {
+		println(scenario.Match.Turn)
+		assert.Equal(t, scenario.Match.Turn, uint8(1))
+		scenario.Client1.SendEndTurnMsg()
+		println(scenario.Match.Turn)
+		assert.Equal(t, scenario.Match.Turn, uint8(2))
+	})
+
 }

@@ -282,7 +282,7 @@ func (p *Player) DestroyDeck() {
 
 // SpawnCard creates a new card from an id and adds it to the players' given zone
 // used for debugging and development
-func (p *Player) SpawnCard(id string, zone string) {
+func (p *Player) SpawnCard(id string, zone string) (*Card, error) {
 
 	p.mutex.Lock()
 
@@ -292,7 +292,7 @@ func (p *Player) SpawnCard(id string, zone string) {
 
 	if err != nil {
 		logrus.Warnf("Failed to create card with id %s", id)
-		return
+		return nil, err
 	}
 
 	c.Zone = zone
@@ -310,10 +310,14 @@ func (p *Player) SpawnCard(id string, zone string) {
 		p.deck = append(p.deck, c)
 	case GRAVEYARD:
 		p.graveyard = append(p.graveyard, c)
+	case BATTLEZONE:
+		p.battlezone = append(p.battlezone, c)
 	default:
 		logrus.Warnf("Failed to create card with id %s - invalid zone", id)
-		return
+		return nil, errors.New("invalid zone")
 	}
+
+	return c, nil
 }
 
 // ShuffleDeck randomizes the order of cards in the players deck
