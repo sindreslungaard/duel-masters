@@ -641,6 +641,13 @@ var DM08 = map[string]match.CardConstructor{
 	"03001a9c-19f4-48e3-8812-4f5eb34c39cb": dm08.SolGallaHaloGuardian,
 	"fb8f0d54-97ee-430e-a1aa-b23296be8345": dm08.ColiseumShell,
 	"ffdf164b-7abe-4a33-b8c6-e584e731b740": dm08.EmperorQuazla,
+	"8d0a4919-3d84-423e-982c-0920755a6eed": dm08.NastashaChannelerOfSuns,
+	"2161ef41-da4a-456f-89a6-9aa77ebe896b": dm08.KuukaiFinderOfKarma,
+	"7cb87086-debc-4108-8ada-2e3053211b16": dm08.MegariaEmpressOfDread,
+	"b28b82be-4901-49c7-b8a6-0894302fcd41": dm08.NarielTheOracle,
+	"a8fd4083-4cae-46d1-9e02-0880a1f3c014": dm08.ThrumissZephyrGuardian,
+	"006d63ab-f038-455d-ae0b-254778f51813": dm08.FuriousOnslaught,
+	"e74f8316-eb76-41e0-aa44-f716c2e9ce8c": dm08.DimensionSplitter,
 }
 
 // Promo is a map with all the card id's in the game and corresponding CardConstructor for promotional exclusive cards
