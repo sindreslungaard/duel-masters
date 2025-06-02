@@ -303,3 +303,50 @@ func WaveLance(c *match.Card) {
 	}))
 
 }
+
+// FuriousOnslaught ...
+func FuriousOnslaught(c *match.Card) {
+
+	c.Name = "Furious Onslaught"
+	c.Civ = civ.Fire
+	c.ManaCost = 4
+	c.ManaRequirement = []string{civ.Fire}
+
+	c.Use(fx.Spell, fx.When(fx.SpellCast, func(card *match.Card, ctx *match.Context) {
+		fx.FindFilter(
+			card.Player,
+			match.BATTLEZONE,
+			func(creature *match.Card) bool { return creature.HasFamily(family.Dragonoid) },
+		).Map(func(creature *match.Card) {
+			creature.AddCondition(cnd.AddFamily, family.ArmoredDragon, card)
+			creature.AddCondition(cnd.PowerAmplifier, 4000, card.ID)
+			creature.AddCondition(cnd.DoubleBreaker, nil, card.ID)
+			ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s was given +4000 power, double breaker, and is now an Armored Dragon until the end of the turn", creature.Name))
+		})
+	}))
+
+}
+
+// DimensionSplitter ...
+func DimensionSplitter(c *match.Card) {
+
+	c.Name = "Dimension Splitter"
+	c.Power = 1000
+	c.Civ = civ.Darkness
+	c.Family = []string{family.BrainJacker}
+	c.ManaCost = 3
+	c.ManaRequirement = []string{civ.Darkness}
+
+	c.Use(fx.Creature,
+		fx.When(fx.Summoned, func(card *match.Card, ctx *match.Context) {
+			fx.FindFilter(
+				card.Player,
+				match.GRAVEYARD,
+				func(x *match.Card) bool { return x.SharesAFamily(family.Dragons) },
+			).Map(func(x *match.Card) {
+				x.Player.MoveCard(x.ID, match.GRAVEYARD, match.HAND, card.ID)
+				ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s was moved to %s's hand from their graveyard by %s", x.Name, card.Player.Username(), card.Name))
+			})
+		}))
+
+}

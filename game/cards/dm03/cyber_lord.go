@@ -35,19 +35,18 @@ func Shtra(c *match.Card) {
 	c.ManaRequirement = []string{civ.Water}
 
 	c.Use(fx.Creature, fx.When(fx.Summoned, func(card *match.Card, ctx *match.Context) {
-
 		fx.Select(
 			card.Player,
 			ctx.Match,
 			card.Player,
 			match.MANAZONE,
-			"Shtra: Select 1 card from your manazone that will be sent to your hand",
+			fmt.Sprintf("%s: Select 1 card from your manazone that will be sent to your hand", card.Name),
 			1,
 			1,
 			false,
 		).Map(func(c *match.Card) {
 			c.Player.MoveCard(c.ID, match.MANAZONE, match.HAND, card.ID)
-			ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s was moved to %s's hand from their manazone by Shtra", c.Name, c.Player.Username()))
+			ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s was moved to %s's hand from their manazone by %s", c.Name, c.Player.Username(), card.Name))
 		})
 
 		ctx.Match.Wait(card.Player, "Waiting for your opponent to make an action")
@@ -58,15 +57,14 @@ func Shtra(c *match.Card) {
 			ctx.Match,
 			ctx.Match.Opponent(card.Player),
 			match.MANAZONE,
-			"Shtra: Select 1 card from your manazone that will be sent to your hand",
+			fmt.Sprintf("%s: Select 1 card from your manazone that will be sent to your hand", card.Name),
 			1,
 			1,
 			false,
 		).Map(func(c *match.Card) {
 			c.Player.MoveCard(c.ID, match.MANAZONE, match.HAND, card.ID)
-			ctx.Match.ReportActionInChat(ctx.Match.Opponent(card.Player), fmt.Sprintf("%s was moved to %s's hand from their manazone by Shtra", c.Name, c.Player.Username()))
+			ctx.Match.ReportActionInChat(ctx.Match.Opponent(card.Player), fmt.Sprintf("%s was moved to %s's hand from their manazone by %s", c.Name, c.Player.Username(), card.Name))
 		})
-
 	}))
 
 }
