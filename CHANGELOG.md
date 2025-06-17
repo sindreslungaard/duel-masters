@@ -2,7 +2,16 @@
 
 ## [Unreleased]
 
-- No unreleased changes
+- Fixed an issue where "Sol Galla, Halo Guardian" received its power bonus too early (thanks @DragosIonita23)
+- New card "Emperor Quazla" (thanks @jyotiskaghosh, @DragosIoni)
+- New card "Nastasha, Channeler of Suns" (thanks @jyotiskaghosh, @DragosIoni)
+- New card "Kuukai, Finder of Karma" (thanks @jyotiskaghosh, @DragosIoni)
+- New card "Megaria, Empress of Dread" (thanks @jyotiskaghosh, @DragosIoni)
+- New card "Nariel, the Oracle" (thanks @jyotiskaghosh, @DragosIoni)
+- New card "Thrumiss, Zephyr Guardian" (thanks @jyotiskaghosh, @DragosIoni)
+- New card "Furious Onslaught" (thanks @jyotiskaghosh, @DragosIoni)
+- New card "Dimension Splitter" (thanks @jyotiskaghosh, @DragosIoni)
+- New card "Candy Cluster" (thanks @jyotiskaghosh, @DragosIoni)
 
 ## 26/05/2025
 
