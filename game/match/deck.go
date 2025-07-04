@@ -17,14 +17,14 @@ var imageLookup map[string]int
 var lookupMutex sync.RWMutex
 var nextId = 1
 
-func init() {
+func InitDecks() {
 	numericLookup = map[int]string{}
 	imageLookup = map[string]int{}
 
 	lookupMutex.Lock()
 	defer lookupMutex.Unlock()
 
-	cur, err := db.Cards.Find(context.TODO(), bson.M{})
+	cur, err := db.Cards().Find(context.TODO(), bson.M{})
 
 	if err != nil {
 		logrus.Fatal(err)
@@ -74,7 +74,7 @@ func CreateIfNotExists(image string) {
 		return
 	}
 
-	_, err := db.Cards.InsertOne(context.Background(), &db.Card{
+	_, err := db.Cards().InsertOne(context.Background(), &db.Card{
 		ImageID:   image,
 		NumericID: nextId,
 	})

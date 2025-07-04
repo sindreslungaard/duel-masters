@@ -461,7 +461,7 @@ func (m *Match) SaveMatchHistory(winner *Player, wonByDisconnect bool) {
 		duel.Winner = m.Player2.UID
 	}
 
-	_, err := db.Duels.InsertOne(context.Background(), duel)
+	_, err := db.Duels().InsertOne(context.Background(), duel)
 
 	if err != nil {
 		logrus.Error("Failed to save duel result to db", err)
@@ -1380,7 +1380,7 @@ func (m *Match) Parse(s *server.Socket, data []byte) {
 					return
 				}
 
-				cur, err := db.Decks.Find(context.TODO(), bson.M{
+				cur, err := db.Decks().Find(context.TODO(), bson.M{
 					"$or": []bson.M{
 						{"owner": m.Player1.Socket.User.UID},
 						{"owner": m.Player2.Socket.User.UID},
@@ -1657,7 +1657,7 @@ func (m *Match) Parse(s *server.Socket, data []byte) {
 
 			var deck db.Deck
 
-			if err := db.Decks.FindOne(context.TODO(), bson.M{"uid": msg.UID}).Decode(&deck); err != nil {
+			if err := db.Decks().FindOne(context.TODO(), bson.M{"uid": msg.UID}).Decode(&deck); err != nil {
 				return
 			}
 

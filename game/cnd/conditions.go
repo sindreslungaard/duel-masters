@@ -27,7 +27,7 @@ const (
 	TapAbility                = "tap_ability"
 	DestroyAfterBattle        = "destroy_after_battle"
 	CantBeAttacked            = "cant_be_attacked"
-	WheneverThisAttacks       = "whenever_this_attacks"
 	Stealth                   = "stealth"
+	AddFamily                 = "add_family"
 	HasShieldsSelectionEffect = "Has_shields_selection_effect"
 )

@@ -2,6 +2,20 @@
 
 ## [Unreleased]
 
+- Fixed an issue where "Sol Galla, Halo Guardian" received its power bonus too early (thanks @DragosIonita23)
+- New card "Emperor Quazla" (thanks @jyotiskaghosh, @DragosIonita23)
+- New card "Nastasha, Channeler of Suns" (thanks @jyotiskaghosh, @DragosIonita23)
+- New card "Kuukai, Finder of Karma" (thanks @jyotiskaghosh, @DragosIonita23)
+- New card "Megaria, Empress of Dread" (thanks @jyotiskaghosh, @DragosIonita23)
+- New card "Nariel, the Oracle" (thanks @jyotiskaghosh, @DragosIonita23)
+- New card "Thrumiss, Zephyr Guardian" (thanks @jyotiskaghosh, @DragosIonita23)
+- New card "Furious Onslaught" (thanks @jyotiskaghosh, @DragosIonita23)
+- New card "Dimension Splitter" (thanks @jyotiskaghosh, @DragosIonita23)
+- New card "Candy Cluster" (thanks @jyotiskaghosh, @DragosIonita23)
+- Fixed an issue where "La Byle, Seeker of the Winds" would become untapped after a battle where it did not block (thanks @DragosIonita23)
+
+## 26/05/2025
+
 - Refactor old cards to use the recommended card selection popup (thanks @DragosIonita23)
 - New card "Dracobarrier" (thanks @DragosIonita23)
 - New card "Laser Whip" (thanks @DragosIonita23)
