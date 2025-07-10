@@ -2,7 +2,7 @@
 
 ## [Unreleased]
 
-- No unreleased changes
+- Fixed an issue that prevented the player from correctly cancelling the event when trying to attack a shield (thanks @DragosIonita23)
 
 ## 10/07/2025
 
