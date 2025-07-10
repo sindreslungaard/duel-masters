@@ -2,9 +2,13 @@
 
 ## [Unreleased]
 
-- Fixed an issue that prevented the player from correctly cancelling the event when trying to attack a shield (thanks @DragosIonita23)
+- No unreleased changes
 
 ## 10/07/2025
+
+- Fixed an issue that prevented the player from correctly cancelling the event when trying to attack a shield (thanks @DragosIonita23)
+
+## 09/07/2025
 
 - Fixed an issue where "Sol Galla, Halo Guardian" received its power bonus too early (thanks @DragosIonita23)
 - New card "Emperor Quazla" (thanks @jyotiskaghosh, @DragosIonita23)
