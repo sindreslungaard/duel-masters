@@ -2,16 +2,21 @@
 
 ## [Unreleased]
 
+- Fixed an issue that prevented the player from correctly cancelling the event when trying to attack a shield (thanks @DragosIonita23)
+
+## 10/07/2025
+
 - Fixed an issue where "Sol Galla, Halo Guardian" received its power bonus too early (thanks @DragosIonita23)
-- New card "Emperor Quazla" (thanks @jyotiskaghosh, @DragosIoni)
-- New card "Nastasha, Channeler of Suns" (thanks @jyotiskaghosh, @DragosIoni)
-- New card "Kuukai, Finder of Karma" (thanks @jyotiskaghosh, @DragosIoni)
-- New card "Megaria, Empress of Dread" (thanks @jyotiskaghosh, @DragosIoni)
-- New card "Nariel, the Oracle" (thanks @jyotiskaghosh, @DragosIoni)
-- New card "Thrumiss, Zephyr Guardian" (thanks @jyotiskaghosh, @DragosIoni)
-- New card "Furious Onslaught" (thanks @jyotiskaghosh, @DragosIoni)
-- New card "Dimension Splitter" (thanks @jyotiskaghosh, @DragosIoni)
-- New card "Candy Cluster" (thanks @jyotiskaghosh, @DragosIoni)
+- New card "Emperor Quazla" (thanks @jyotiskaghosh, @DragosIonita23)
+- New card "Nastasha, Channeler of Suns" (thanks @jyotiskaghosh, @DragosIonita23)
+- New card "Kuukai, Finder of Karma" (thanks @jyotiskaghosh, @DragosIonita23)
+- New card "Megaria, Empress of Dread" (thanks @jyotiskaghosh, @DragosIonita23)
+- New card "Nariel, the Oracle" (thanks @jyotiskaghosh, @DragosIonita23)
+- New card "Thrumiss, Zephyr Guardian" (thanks @jyotiskaghosh, @DragosIonita23)
+- New card "Furious Onslaught" (thanks @jyotiskaghosh, @DragosIonita23)
+- New card "Dimension Splitter" (thanks @jyotiskaghosh, @DragosIonita23)
+- New card "Candy Cluster" (thanks @jyotiskaghosh, @DragosIonita23)
+- Fixed an issue where "La Byle, Seeker of the Winds" would become untapped after a battle where it did not block (thanks @DragosIonita23)
 
 ## 26/05/2025
 

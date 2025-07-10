@@ -878,6 +878,34 @@ func (m *Match) ShowCards(p *Player, message string, cards []string) {
 	})
 }
 
+// ShowCardsNonDismissible shows the specified cards to the player with a message of why it is being shown
+// The difference is that the cards preview pop-up is not dismissible by clicking outside of it,
+// Because is part of an Attacking Player sequence of events and it must be only cancelled by clicking on the 'Close' button
+func (m *Match) ShowCardsNonDismissible(p *Player, message string, cards []string) {
+	msg := &server.ShowCardsMessage{
+		Header:  "show_cards_non_dismissible",
+		Message: message,
+		Cards:   cards,
+	}
+
+	p.ActionState = PlayerActionState{
+		resolved: false,
+		data:     msg,
+	}
+
+	m.PlayerRef(p).Socket.Send(msg)
+
+	defer m.CloseAction(p)
+
+	for {
+		action := <-p.Action
+
+		if action.Cancel {
+			break
+		}
+	}
+}
+
 // Coin toss to decide who starts the game
 func (m *Match) CoinToss() {
 	var PlayerToChooseToss *PlayerReference
