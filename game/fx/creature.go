@@ -192,9 +192,10 @@ func Creature(card *match.Card, ctx *match.Context) {
 				}
 			} else {
 				selectShieldsEvent := match.SelectShields{Attacker: card, Cancellable: true}
-				ctx.Match.HandleFx(match.NewContext(ctx.Match, &selectShieldsEvent))
+				selectShieldsCtx := match.NewContext(ctx.Match, &selectShieldsEvent)
+				ctx.Match.HandleFx(selectShieldsCtx)
 
-				if !tapCardAndConfirmAttack(card, ctx, true) {
+				if !tapCardAndConfirmAttack(card, selectShieldsCtx, true) {
 					return
 				}
 
@@ -673,6 +674,10 @@ func stealthActive(card *match.Card, ctx *match.Context) bool {
 }
 
 func tapCardAndConfirmAttack(card *match.Card, ctx *match.Context, attackPlayer bool) bool {
+	if ctx.Cancelled() {
+		return false
+	}
+
 	card.Tapped = true
 
 	// Broadcast state so that opponent can see that this card is tapped if they get any shield triggers
@@ -680,7 +685,7 @@ func tapCardAndConfirmAttack(card *match.Card, ctx *match.Context, attackPlayer 
 
 	ctx.Match.HandleFx(match.NewContext(ctx.Match, &match.AttackConfirmed{CardID: card.ID, Player: attackPlayer, Creature: !attackPlayer}))
 
-	// In case AttackConfirmed effect removes itself from the Battlezone
+	// In case AttackConfirmed effect removes itself (current attacking card) from the Battlezone
 	if card.Zone != match.BATTLEZONE {
 		return false
 	}
@@ -696,7 +701,7 @@ func SelectAndReturnShields(card *match.Card, ctx *match.Context, cancellable bo
 	opponent := ctx.Match.Opponent(card.Player)
 	shieldzone, err := opponent.Container(match.SHIELDZONE)
 
-	if err != nil {
+	if err != nil || len(shieldzone) == 0 {
 		return []*match.Card{}
 	}
 
