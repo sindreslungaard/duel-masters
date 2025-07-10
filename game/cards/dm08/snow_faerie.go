@@ -6,6 +6,7 @@ import (
 	"duel-masters/game/family"
 	"duel-masters/game/fx"
 	"duel-masters/game/match"
+	"fmt"
 )
 
 // KachuaKeeperOfTheIcegate ...
@@ -20,6 +21,7 @@ func KachuaKeeperOfTheIcegate(c *match.Card) {
 	c.TapAbility = kachuaKeeperOfTheIcegateTapAbility
 
 	c.Use(fx.Creature, fx.TapAbility)
+
 }
 
 // Currently this is bugged:
@@ -34,7 +36,7 @@ func kachuaKeeperOfTheIcegateTapAbility(card *match.Card, ctx *match.Context) {
 		ctx.Match,
 		card.Player,
 		match.DECK,
-		"You may take a Dragon from your deck and put it into the battlezone, then shuffle your deck.",
+		fmt.Sprintf("%s: You may take a Dragon from your deck and put it into the battlezone, then shuffle your deck.", card.Name),
 		1,
 		1,
 		true,
