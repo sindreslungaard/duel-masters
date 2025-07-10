@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+- No unreleased changes
+
+## 10/07/2025
+
 - Fixed an issue where "Sol Galla, Halo Guardian" received its power bonus too early (thanks @DragosIonita23)
 - New card "Emperor Quazla" (thanks @jyotiskaghosh, @DragosIonita23)
 - New card "Nastasha, Channeler of Suns" (thanks @jyotiskaghosh, @DragosIonita23)
