@@ -40,12 +40,15 @@ func kachuaKeeperOfTheIcegateTapAbility(card *match.Card, ctx *match.Context) {
 		1,
 		1,
 		true,
-		func(c *match.Card) bool {
-			return c.SharesAFamily(family.Dragons) &&
-				fx.CanBeSummoned(card.Player, c)
+		func(x *match.Card) bool {
+			return x.SharesAFamily(family.Dragons) &&
+				fx.CanBeSummoned(card.Player, x)
 		},
 		true,
 	).Map(func(selDragon *match.Card) {
+		// put into the Battlezone
+		fx.ForcePutCreatureIntoBZ(ctx, selDragon, match.DECK, card)
+
 		// that creature has "speed attacker" + at the end of the turn, destroy that creature
 		ctx.Match.ApplyPersistentEffect(func(ctx2 *match.Context, exit func()) {
 			if selDragon.Zone != match.BATTLEZONE {
@@ -63,9 +66,6 @@ func kachuaKeeperOfTheIcegateTapAbility(card *match.Card, ctx *match.Context) {
 
 			selDragon.AddUniqueSourceCondition(cnd.SpeedAttacker, true, card.ID)
 		})
-
-		// and put into the Battlezone
-		fx.ForcePutCreatureIntoBZ(ctx, selDragon, match.DECK, card)
 
 		// then shuffle deck
 		fx.ShuffleDeck(card, ctx, false)
