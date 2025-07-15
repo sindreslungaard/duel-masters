@@ -2,6 +2,7 @@ package match
 
 import (
 	"duel-masters/game/cnd"
+	"errors"
 
 	"github.com/sirupsen/logrus"
 	"github.com/ventu-io/go-shortid"
@@ -124,6 +125,19 @@ func (c *Card) HasCondition(cnd string) bool {
 	}
 
 	return false
+
+}
+
+// GetCondition returns the first condition with the ID given from the card's conditions
+func (c *Card) GetCondition(cnd string) (Condition, error) {
+
+	for _, condition := range c.conditions {
+		if condition.ID == cnd {
+			return condition, nil
+		}
+	}
+
+	return Condition{}, errors.New("Condition was not found")
 
 }
 
