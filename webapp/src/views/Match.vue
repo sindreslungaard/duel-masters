@@ -517,6 +517,7 @@
               <span :class="!settings.noUpsideDownCards ? ' flipped' : ''">{{
                 state.opponent.shieldMap[card]
               }}</span>
+              <div>{{ card }}</div>
               <img src="https://scans.shobu.io/backside.jpg" />
             </div>
           </div>
@@ -852,7 +853,8 @@ export default {
 
       TAPPED_FLAG: 1,
       PLAYABLE_FLAG: 2,
-      TAP_ABILITY_FLAG: 4
+      TAP_ABILITY_FLAG: 4,
+      SHIELD_FACE_UP_FLAG: 8
     };
   },
   computed: {

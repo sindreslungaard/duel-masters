@@ -18,18 +18,20 @@ type Condition struct {
 type CardFlags uint8
 
 const (
-	TappedFlag     CardFlags = 1 << iota // 1
-	PlayableFlag                         // 2
-	TapAbilityFlag                       // 4
+	TappedFlag       CardFlags = 1 << iota // 1
+	PlayableFlag                           // 2
+	TapAbilityFlag                         // 4
+	ShieldFaceUpFlag                       // 8
 )
 
 // Card holds information about a specific card
 type Card struct {
-	ID      string
-	ImageID string
-	Player  *Player
-	Tapped  bool
-	Zone    string
+	ID           string
+	ImageID      string
+	Player       *Player
+	Tapped       bool
+	ShieldFaceUp bool
+	Zone         string
 
 	Name            string
 	Power           int
@@ -62,6 +64,7 @@ func NewCard(p *Player, image string) (*Card, error) {
 		ImageID:         image,
 		Player:          p,
 		Tapped:          false,
+		ShieldFaceUp:    false,
 		Zone:            DECK,
 		Name:            "undefined_card",
 		Power:           0,
