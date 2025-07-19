@@ -268,6 +268,11 @@ func SelectFilter(p *match.Player, m *match.Match, containerOwner *match.Player,
 
 	filtered = newCards
 
+	filteredLength = len(filtered)
+	if filteredLength < 1 {
+		return result
+	}
+
 	// Make sure the selection interval fits in the length of the remaining filtered cards slice
 	if filteredLength < min {
 		min = filteredLength
