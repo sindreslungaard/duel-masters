@@ -40,11 +40,19 @@ func WheneverThisAttacksMayLookAtOpShield() match.HandlerFunc {
 			1,
 			true,
 		).Map(func(x *match.Card) {
-			ctx.Match.ShowCards(
-				card.Player,
-				"Your opponent's shield:",
-				[]string{x.ImageID},
-			)
+			if ev, ok := ctx.Event.(*match.AttackConfirmed); ok && ev.Player {
+				ctx.Match.ShowCardsNonDismissible(
+					card.Player,
+					"Your opponent's shield:",
+					[]string{x.ImageID},
+				)
+			} else {
+				ctx.Match.ShowCards(
+					card.Player,
+					"Your opponent's shield:",
+					[]string{x.ImageID},
+				)
+			}
 		})
 	})
 }

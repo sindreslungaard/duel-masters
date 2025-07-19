@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"net"
 	"net/http"
+	"net/http/pprof"
 	"os"
 	"path"
 	"strings"
@@ -64,6 +65,15 @@ func (api *API) Start(port string) {
 	api.Use(loggingMiddleware)
 	api.Use(corsMiddleware)
 
+	// profiling
+	api.mux.Handle("GET /debug/pprof/", adminMiddleware(http.HandlerFunc(pprof.Index)))
+	api.mux.Handle("GET /debug/pprof/cmdline", adminMiddleware(http.HandlerFunc(pprof.Cmdline)))
+	api.mux.Handle("GET /debug/pprof/profile", adminMiddleware(http.HandlerFunc(pprof.Profile)))
+	api.mux.Handle("GET /debug/pprof/symbol", adminMiddleware(http.HandlerFunc(pprof.Symbol)))
+	api.mux.Handle("GET /debug/pprof/trace", adminMiddleware(http.HandlerFunc(pprof.Trace)))
+	api.mux.Handle("GET /debug/pprof/goroutine", adminMiddleware(pprof.Handler("goroutine")))
+
+	// api
 	api.HandleFunc("GET /ws/{hub}", api.websocketHandler)
 	api.HandleFunc("POST /api/auth/signin", api.signinHandler)
 	api.HandleFunc("POST /api/auth/signup", api.signupHandler)
@@ -81,6 +91,7 @@ func (api *API) Start(port string) {
 	api.HandleFunc("DELETE /api/deck/{id}", api.deleteDeckHandler)
 	api.HandleFunc("GET /invite/{id}", api.inviteHandler)
 
+	// webapp
 	dist := http.FileServer(http.Dir(path.Join(dir, "webapp", "dist")))
 	api.mux.Handle("GET /assets/{path...}", dist)
 	api.mux.Handle("GET /css/{path...}", dist)

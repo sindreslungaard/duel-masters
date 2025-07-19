@@ -610,6 +610,7 @@ var DM08 = map[string]match.CardConstructor{
 	"a156ed1e-b2b4-4ed3-b6a9-539ff04c98dd": dm08.KachuaKeeperOfTheIcegate,
 	"f4750fe9-35ce-4bca-b074-a939d18a971d": dm08.TerradragonGamiratar,
 	"2651ac84-cbbe-4e07-b5f7-0085675254cd": dm08.BakkraHornTheSilent,
+	"d766e9bf-bada-4e22-9d82-6e2f8e25132f": dm08.ScreamSlicerShadowOfFear,
 	"0abb1391-a69f-4839-aafa-222628d5dde8": dm08.SuperNecrodragonAbzoDolba,
 	"85e9d177-69b3-4239-8b2b-ec97f74d5577": dm08.UberdragonBajula,
 	"44cbf9fd-3906-4032-939c-f702ffda7415": dm08.SuperTerradragonBailasGale,
@@ -640,6 +641,15 @@ var DM08 = map[string]match.CardConstructor{
 	"3b7f7a73-3f12-46a6-a36c-509fed6177ee": dm08.SeniaOrchardAvenger,
 	"03001a9c-19f4-48e3-8812-4f5eb34c39cb": dm08.SolGallaHaloGuardian,
 	"fb8f0d54-97ee-430e-a1aa-b23296be8345": dm08.ColiseumShell,
+	"ffdf164b-7abe-4a33-b8c6-e584e731b740": dm08.EmperorQuazla,
+	"8d0a4919-3d84-423e-982c-0920755a6eed": dm08.NastashaChannelerOfSuns,
+	"2161ef41-da4a-456f-89a6-9aa77ebe896b": dm08.KuukaiFinderOfKarma,
+	"7cb87086-debc-4108-8ada-2e3053211b16": dm08.MegariaEmpressOfDread,
+	"b28b82be-4901-49c7-b8a6-0894302fcd41": dm08.NarielTheOracle,
+	"a8fd4083-4cae-46d1-9e02-0880a1f3c014": dm08.ThrumissZephyrGuardian,
+	"006d63ab-f038-455d-ae0b-254778f51813": dm08.FuriousOnslaught,
+	"e74f8316-eb76-41e0-aa44-f716c2e9ce8c": dm08.DimensionSplitter,
+	"5d4da0a8-3c88-4975-abb6-f3f14c16f512": dm08.CandyCluster,
 }
 
 var DM09 = map[string]match.CardConstructor{
