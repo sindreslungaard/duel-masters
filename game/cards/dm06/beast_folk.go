@@ -24,11 +24,20 @@ func MightyBanditAceOfThieves(c *match.Card) {
 
 func MightyBanditAceOfThievesTapAbility(card *match.Card, ctx *match.Context) {
 	ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s activated %s's tap ability", card.Player.Username(), card.Name))
-	creatures := match.Search(card.Player, ctx.Match, card.Player, match.BATTLEZONE, "Select 1 creature from your battlezone that will gain +5000 Power", 1, 1, false)
-	for _, creature := range creatures {
-		creature.AddCondition(cnd.PowerAmplifier, 5000, card.ID)
-		ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s was given +5000 power by %s until end of turn", creature.Name, card.Name))
-	}
+	fx.Select(
+		card.Player,
+		ctx.Match,
+		card.Player,
+		match.BATTLEZONE,
+		fmt.Sprintf("%s: Select 1 creature from your battlezone that will gain +5000 power", card.Name),
+		1,
+		1,
+		false,
+	).Map(func(x *match.Card) {
+		x.AddCondition(cnd.PowerAmplifier, 5000, card.ID)
+		ctx.Match.ReportActionInChat(x.Player, fmt.Sprintf("%s was given +5000 power by %s until end of turn", x.Name, card.Name))
+	})
+
 }
 
 func InnocentHunterBladeOfAll(c *match.Card) {

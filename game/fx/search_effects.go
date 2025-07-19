@@ -7,7 +7,6 @@ import (
 )
 
 func SearchDeckMoveCardsZone(card *match.Card, ctx *match.Context, quantity int, filter func(*match.Card) bool, playerText string, newZone string, resultText string) {
-
 	SelectFilter(card.Player,
 		ctx.Match,
 		card.Player,
@@ -24,21 +23,18 @@ func SearchDeckMoveCardsZone(card *match.Card, ctx *match.Context, quantity int,
 	})
 
 	ShuffleDeck(card, ctx, false)
-
 }
 
 func SearchDeckPutIntoManazone(card *match.Card, ctx *match.Context, quantity int, filter func(*match.Card) bool, filterDescription string) {
-
 	SearchDeckMoveCardsZone(
 		card,
 		ctx,
 		quantity,
 		filter,
-		fmt.Sprintf("You make move up to %d %s from your deck to your manazone", quantity, filterDescription),
+		fmt.Sprintf("You may move up to %d %s from your deck to your manazone", quantity, filterDescription),
 		match.MANAZONE,
 		card.Player.Username()+" put %s from their deck to their manazone",
 	)
-
 }
 
 func SearchDeckTakeCards(card *match.Card, ctx *match.Context, quantity int, filter func(*match.Card) bool, filterDescription string) {
@@ -47,7 +43,7 @@ func SearchDeckTakeCards(card *match.Card, ctx *match.Context, quantity int, fil
 		ctx,
 		quantity,
 		filter,
-		fmt.Sprintf("You make take up to %d %s from your deck (Will be shown to your opponent)", quantity, filterDescription),
+		fmt.Sprintf("You may take up to %d %s from your deck (Will be shown to your opponent)", quantity, filterDescription),
 		match.HAND,
 		card.Player.Username()+" retrieved %s from their deck to their hand",
 	)
@@ -71,4 +67,19 @@ func SearchDeckTake1Creature(card *match.Card, ctx *match.Context) {
 		func(x *match.Card) bool { return x.HasCondition(cnd.Creature) },
 		"creature",
 	)
+}
+
+// Search deck for x cards
+func SearchDeckTakeXCards(x int) match.HandlerFunc {
+	return func(card *match.Card, ctx *match.Context) {
+		SearchDeckMoveCardsZone(
+			card,
+			ctx,
+			x,
+			func(c *match.Card) bool { return true },
+			fmt.Sprintf("You make take up to %d cards from your deck", x),
+			match.HAND,
+			card.Player.Username()+" retrieved %s from their deck to their hand",
+		)
+	}
 }

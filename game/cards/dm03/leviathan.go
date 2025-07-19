@@ -47,7 +47,7 @@ func KingNeptas(c *match.Card) {
 			ctx.Match,
 			cards,
 			fmt.Sprintf("%s: Choose up to 1 creature in the battle zone and return it to its owner hand", card.Name),
-			0,
+			1,
 			1,
 			true,
 		).Map(func(x *match.Card) {

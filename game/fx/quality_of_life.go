@@ -4,6 +4,7 @@ import (
 	"duel-masters/game/cnd"
 	"duel-masters/game/family"
 	"duel-masters/game/match"
+	"fmt"
 	"slices"
 )
 
@@ -107,7 +108,7 @@ func WhenAll(tests []func(*match.Card, *match.Context) bool, h func(*match.Card,
 
 // Select prompts the user to select n cards from the specified container
 func Select(p *match.Player, m *match.Match, containerOwner *match.Player, containerName string, text string, min int, max int, cancellable bool) CardCollection {
-	return SelectFilterSelectablesOnly(p, m, containerOwner, containerName, text, min, max, cancellable, func(x *match.Card) bool { return true })
+	return SelectFilter(p, m, containerOwner, containerName, text, min, max, cancellable, func(x *match.Card) bool { return true }, false)
 }
 
 // SelectCount prompts to user to select a number in an interval
@@ -229,18 +230,15 @@ func MultipleChoiceQuestion(p *match.Player, m *match.Match, text string, option
 	return result
 }
 
-// SelectFilterSelectablesOnly prompts the user to select n cards from the specified container that matches the given filter
-//
-// Deprecated: New cards should use `fx.SelectFilter`
-func SelectFilterSelectablesOnly(p *match.Player, m *match.Match, containerOwner *match.Player, containerName string, text string, min int, max int, cancellable bool, filter func(*match.Card) bool) CardCollection {
-	return SelectFilter(p, m, containerOwner, containerName, text, min, max, cancellable, filter, false)
-}
-
 // SelectFilter prompts the user to select n cards from the specified container that matches the given filter.
 // It also allows to show all the other cards from the container that are unselectable
 func SelectFilter(p *match.Player, m *match.Match, containerOwner *match.Player, containerName string, text string, min int, max int, cancellable bool, filter func(*match.Card) bool, showUnselectables bool) CardCollection {
 
 	result := make([]*match.Card, 0)
+
+	if min <= 0 && max <= 0 {
+		return result
+	}
 
 	cards, err := containerOwner.Container(containerName)
 
@@ -253,8 +251,17 @@ func SelectFilter(p *match.Player, m *match.Match, containerOwner *match.Player,
 		unselectables = nil
 	}
 
-	if len(filtered) < 1 {
+	filteredLength := len(filtered)
+	if filteredLength < 1 {
 		return result
+	}
+
+	// Make sure the selection interval fits in the length of the remaining filtered cards slice
+	if filteredLength < min {
+		min = filteredLength
+		max = filteredLength
+	} else if filteredLength < max {
+		max = filteredLength
 	}
 
 	if !m.IsPlayerTurn(p) {
@@ -313,16 +320,29 @@ func selectMultipartBase(p *match.Player, m *match.Match, cards map[string][]*ma
 
 	result := make([]*match.Card, 0)
 
+	if min <= 0 && max <= 0 {
+		return result
+	}
+
 	notEmpty := false
+	totalCardsLength := 0
 
 	for _, cardList := range cards {
 		if len(cardList) > 0 {
 			notEmpty = true
+			totalCardsLength += len(cardList)
 		}
 	}
 
 	if !notEmpty {
 		return result
+	}
+
+	if totalCardsLength < min {
+		min = totalCardsLength
+		max = totalCardsLength
+	} else if totalCardsLength < max {
+		max = totalCardsLength
 	}
 
 	if backsideOnly {
@@ -381,6 +401,10 @@ func SelectBacksideFilter(p *match.Player, m *match.Match, containerOwner *match
 
 	result := make([]*match.Card, 0)
 
+	if min <= 0 && max <= 0 {
+		return result
+	}
+
 	cards, err := containerOwner.Container(containerName)
 
 	if err != nil || len(cards) < 1 {
@@ -395,8 +419,16 @@ func SelectBacksideFilter(p *match.Player, m *match.Match, containerOwner *match
 		}
 	}
 
-	if len(filtered) < 1 {
+	filteredLength := len(filtered)
+	if filteredLength < 1 {
 		return result
+	}
+
+	if filteredLength < min {
+		min = filteredLength
+		max = filteredLength
+	} else if filteredLength < max {
+		max = filteredLength
 	}
 
 	if !m.IsPlayerTurn(p) {
@@ -484,6 +516,15 @@ func SpellCast(card *match.Card, ctx *match.Context) bool {
 	}
 
 	return false
+
+}
+
+// SpellCasted returns true if a spell was cast
+func AnySpellCast(card *match.Card, ctx *match.Context) bool {
+
+	_, ok := ctx.Event.(*match.SpellCast)
+
+	return ok
 
 }
 
@@ -629,6 +670,14 @@ func TurboRushCondition(card *match.Card, ctx *match.Context) bool {
 
 }
 
+// OpponentPlayedShieldTrigger returns true if the opponent has played a shield trigger and creature is in the Battlezone
+func OpponentPlayedShieldTrigger(card *match.Card, ctx *match.Context) bool {
+	if event, ok := ctx.Event.(*match.ShieldTriggerPlayedEvent); ok && card.Zone == match.BATTLEZONE && event.Card.Player != card.Player {
+		return true
+	}
+	return false
+}
+
 // CreatureSummoned returns true if a card was summoned
 //
 // Does not activate if a card that was under an Evolution card becomes visible again.
@@ -685,6 +734,54 @@ func AnotherCreatureSummoned(card *match.Card, ctx *match.Context) bool {
 	}
 
 	return CreatureSummoned(card, ctx) && event.CardID != card.ID
+}
+
+// AnotherOwnCreatureSummoned returns true if you summoned another creature
+// Does not activate if this current card is summoned.
+// Does not activate if a card that was under an Evolution card becomes visible again.
+func AnotherOwnCreatureSummoned(card *match.Card, ctx *match.Context) bool {
+	event, ok := ctx.Event.(*match.CardMoved)
+	if !ok {
+		return false
+	}
+
+	// check if it was the card's player whose creature got summoned
+	var p *match.Player
+	if event.MatchPlayerID == 1 {
+		p = ctx.Match.Player1.Player
+	} else {
+		p = ctx.Match.Player2.Player
+	}
+
+	return CreatureSummoned(card, ctx) && event.CardID != card.ID && p == card.Player
+}
+
+func AnotherOwnDragonoidOrDragonSummoned(card *match.Card, ctx *match.Context) bool {
+	return anotherOwnCreatureSummonedFilter(card, ctx, func(c *match.Card) bool {
+		return c.SharesAFamily(append(family.Dragons, family.Dragonoid))
+	})
+}
+
+func anotherOwnCreatureSummonedFilter(card *match.Card, ctx *match.Context, filters ...func(c *match.Card) bool) bool {
+	result := AnotherOwnCreatureSummoned(card, ctx)
+
+	if result {
+		if event, ok := ctx.Event.(*match.CardMoved); ok {
+			summonedCard, _ := card.Player.GetCard(event.CardID, match.BATTLEZONE)
+
+			if summonedCard != nil {
+				for _, f := range filters {
+					result = result && f(summonedCard)
+				}
+
+				return result
+			} else {
+				return false
+			}
+		}
+	}
+
+	return false
 }
 
 func AnotherCreatureDestroyed(card *match.Card, ctx *match.Context) bool {
@@ -787,7 +884,6 @@ func IHaveCastASpell(card *match.Card, ctx *match.Context) bool {
 			(card.Player == ctx.Match.Player2.Player && event.MatchPlayerID == 2) {
 			return true
 		}
-
 	}
 
 	return false
@@ -911,4 +1007,72 @@ func distinctStrings(slice []string) []string {
 		}
 	}
 	return result
+}
+
+func WheneverThisAttacksAndIsntBlocked(card *match.Card, ctx *match.Context) bool {
+	if event, ok := ctx.Event.(*match.Battle); ok {
+		return event.Attacker == card && !event.Blocked
+	}
+
+	if event, ok := ctx.Event.(*match.BreakShieldEvent); ok {
+		return event.Source == card
+	}
+
+	return false
+}
+
+func WheneverThisAttacksPlayerAndIsntBlocked(card *match.Card, ctx *match.Context) bool {
+	if event, ok := ctx.Event.(*match.BreakShieldEvent); ok {
+		return event.Source == card
+	}
+
+	return false
+}
+
+func CanBeSummoned(player *match.Player, card *match.Card) bool {
+	if !card.HasCondition(cnd.Creature) {
+		return false
+	}
+
+	if card.HasCondition(cnd.Evolution) {
+		condition, err := card.GetCondition(cnd.Evolution)
+
+		if err == nil {
+			if evolutionFamiles, ok := condition.Val.([]string); ok {
+				cardsToEvolveFrom := FindFilter(
+					player,
+					match.BATTLEZONE,
+					func(x *match.Card) bool {
+						return x.HasCondition(cnd.EvolveIntoAnyFamily) ||
+							x.SharesAFamily(evolutionFamiles)
+					},
+				)
+
+				return len(cardsToEvolveFrom) > 0
+			}
+		}
+
+		return false
+	}
+
+	return true
+}
+
+func ForcePutCreatureIntoBZ(ctx *match.Context, creature *match.Card, from string, source *match.Card) {
+
+	cardPlayedCtx := match.NewContext(ctx.Match, &match.CardPlayedEvent{
+		CardID: creature.ID,
+	})
+	ctx.Match.HandleFx(cardPlayedCtx)
+
+	if !cardPlayedCtx.Cancelled() {
+		_, err := creature.Player.MoveCard(creature.ID, from, match.BATTLEZONE, source.ID)
+
+		if err == nil {
+			if !creature.HasCondition(cnd.Evolution) {
+				creature.AddCondition(cnd.SummoningSickness, nil, source.ID)
+			}
+			ctx.Match.ReportActionInChat(creature.Player, fmt.Sprintf("%s was moved to the battle zone from %s by %s's effect", creature.Name, from, source.Name))
+		}
+	}
 }

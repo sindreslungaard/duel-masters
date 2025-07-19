@@ -5,6 +5,7 @@ import (
 	"duel-masters/game/family"
 	"duel-masters/game/fx"
 	"duel-masters/game/match"
+	"fmt"
 	"sort"
 )
 
@@ -18,7 +19,7 @@ func HypersquidWalter(c *match.Card) {
 	c.ManaCost = 3
 	c.ManaRequirement = []string{civ.Water}
 
-	c.Use(fx.Creature, fx.When(fx.Attacking, fx.MayDraw1))
+	c.Use(fx.Creature, fx.When(fx.AttackConfirmed, fx.MayDraw1))
 
 }
 
@@ -74,12 +75,12 @@ func Corile(c *match.Card) {
 
 			ctx.Match.Wait(card.Player, "Waiting for your opponent to make an action...")
 
-			fx.SelectFilterSelectablesOnly(
+			fx.SelectFilter(
 				ctx.Match.Opponent(card.Player),
 				ctx.Match,
 				ctx.Match.Opponent(card.Player),
 				match.HIDDENZONE,
-				"Corile: These cards will be moved to the top of your deck. Select which one you want to be at the very top.",
+				fmt.Sprintf("%s: These cards will be moved to the top of your deck. Select which one you want to be at the very top.", card.Name),
 				1,
 				1,
 				false,
@@ -91,6 +92,7 @@ func Corile(c *match.Card) {
 					}
 					return false
 				},
+				false,
 			).Map(func(x *match.Card) {
 				// sort toMove so that this card is added to the very top of the deck
 				sort.SliceStable(toMove, func(i, j int) bool {

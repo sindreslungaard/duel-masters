@@ -6,6 +6,7 @@ import (
 	"duel-masters/game/family"
 	"duel-masters/game/fx"
 	"duel-masters/game/match"
+	"fmt"
 )
 
 // PouchShell ...
@@ -20,25 +21,32 @@ func PouchShell(c *match.Card) {
 
 	c.Use(fx.Creature, fx.When(fx.Summoned, func(card *match.Card, ctx *match.Context) {
 
-		fx.SelectFilterSelectablesOnly(
+		fx.SelectFilter(
 			card.Player,
 			ctx.Match,
 			ctx.Match.Opponent(card.Player),
 			match.BATTLEZONE,
-			"Pouch Shell: Select an evolution card from your opponent's battle zone and send the top card to their graveyard",
+			fmt.Sprintf("%s: Select an evolution card from your opponent's battle zone and send the top card to their graveyard", card.Name),
 			0,
 			1,
 			true,
 			func(x *match.Card) bool { return x.HasCondition(cnd.Evolution) },
+			false,
 		).Map(func(x *match.Card) {
 			tapped := x.Tapped
-			baseCard := x.Attachments()[0]
+			baseCards := x.Attachments()
 			x.ClearAttachments()
+
 			ctx.Match.Destroy(x, card, match.DestroyedByMiscAbility)
-			baseCard.Player.MoveCard(baseCard.ID, match.HIDDENZONE, match.BATTLEZONE, card.ID)
-			if tapped && !baseCard.Tapped {
-				baseCard.Tapped = true
+
+			for _, baseCard := range baseCards {
+				baseCard.Player.MoveCard(baseCard.ID, match.HIDDENZONE, match.BATTLEZONE, card.ID)
+				if tapped {
+					baseCard.Tapped = true
+				}
 			}
+
+			ctx.Match.BroadcastState()
 		})
 
 	}))

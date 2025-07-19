@@ -2,7 +2,74 @@
 
 ## [Unreleased]
 
+- No unreleased changes
+
+## 10/07/2025
+
+- Fixed an issue that prevented the player from correctly cancelling the event when trying to attack a shield (thanks @DragosIonita23)
+
+## 09/07/2025
+
+- Fixed an issue where "Sol Galla, Halo Guardian" received its power bonus too early (thanks @DragosIonita23)
+- New card "Emperor Quazla" (thanks @jyotiskaghosh, @DragosIonita23)
+- New card "Nastasha, Channeler of Suns" (thanks @jyotiskaghosh, @DragosIonita23)
+- New card "Kuukai, Finder of Karma" (thanks @jyotiskaghosh, @DragosIonita23)
+- New card "Megaria, Empress of Dread" (thanks @jyotiskaghosh, @DragosIonita23)
+- New card "Nariel, the Oracle" (thanks @jyotiskaghosh, @DragosIonita23)
+- New card "Thrumiss, Zephyr Guardian" (thanks @jyotiskaghosh, @DragosIonita23)
+- New card "Furious Onslaught" (thanks @jyotiskaghosh, @DragosIonita23)
+- New card "Dimension Splitter" (thanks @jyotiskaghosh, @DragosIonita23)
+- New card "Candy Cluster" (thanks @jyotiskaghosh, @DragosIonita23)
+- Fixed an issue where "La Byle, Seeker of the Winds" would become untapped after a battle where it did not block (thanks @DragosIonita23)
+
+## 26/05/2025
+
+- Refactor old cards to use the recommended card selection popup (thanks @DragosIonita23)
+- New card "Dracobarrier" (thanks @DragosIonita23)
+- New card "Laser Whip" (thanks @DragosIonita23)
+- New card "Lunar Charger" (thanks @DragosIonita23)
+- New card "Root Charger" (thanks @DragosIonita23)
+- New card "Marine Scramble" (thanks @DragosIonita23)
+- New card "Terradragon Gamiratar" (thanks @DragosIonita23)
+- New card "Bakkra Horn, the Silent" (thanks @DragosIonita23)
+- New card "Kachua, Keeper of the Icegate" (thanks @DragosIonita23)
+- New card "Gigaclaws" (thanks @jyotiskaghosh)
+- New card "Gachack, Mechanical Doll" (thanks @jyotiskaghosh)
+- New card "Missile Soldier Ultimo" (thanks @jyotiskaghosh)
+- New card "Slaphappy Soldier Galback" (thanks @jyotiskaghosh)
+- New card "Illusion Fish" (thanks @jyotiskaghosh)
+- New card "Carbonite Scarab" (thanks @jyotiskaghosh)
+- New card "Sol Galla, Halo Guardian" (thanks @jyotiskaghosh)
+- New card "Migalo, Vizier of Spycraft" (thanks @jyotiskaghosh)
+- New card "Vikorakys" (thanks @jyotiskaghosh)
+- New card "Solar Grass" (thanks @jyotiskaghosh)
+- New card "Senia, Orchard Avenger" (thanks @jyotiskaghosh)
+- New card "Coliseum Shell" (thanks @Hutwave)
+- Fixed an issue where "Kyrstron, Lair Delver"'s effect could summon an evolution card to the battlezone without a card to evolve from (thanks @DragosIonita23)
+- Fixed an issue where "Totto Pipicchi" would not apply speed attacker to opponent's creatures (thanks @DragosIonita23)
+- Updated the popup when drawing up to x cards to show the drawn cards in the background (thanks @DragosIonita23)
+- New card "Scream Slicer, Shadow of Fear" (thanks @DragosIonita23)
+
+## 24/04/2025
 - New card "Magmadragon Jagalzor" (thanks @jyotiskaghosh)
+- New card "Bruiser Dragon" (thanks @DragosIonita23)
+- New card "Rocketdive Skyterror" (thanks @DragosIonita23)
+- New card "Torpedo Skyterror" (thanks @DragosIonita23)
+- New card "Grape Globbo" (thanks @DragosIonita23)
+- New card "Kyrstron, Lair Delver" (thanks @DragosIonita23)
+- New card "Prowling Elephish" (thanks @DragosIonita23)
+- New card "Motorcycle Mutant" (thanks @DragosIonita23)
+- New card "Tyrant Worm" (thanks @DragosIonita23)
+- New card "Aqua Grappler" (thanks @DragosIonita23)
+- New card "Lalicious" (thanks @DragosIonita23)
+- New card "Misha, Channeler of Suns" (thanks @DragosIonita23)
+- New card "Sasha, Channeler of Suns" (thanks @DragosIonita23)
+- New card "Dracodance Totem" (thanks @DragosIonita23)
+- New card "Wave Lance" (thanks @DragosIonita23)
+- New card "Überdragon Bajula" (thanks @jyotiskaghosh)
+- New card "Super Terradragon Bailas Gale" (thanks @jyotiskaghosh)
+- New card "Totto Pipicchi" (thanks @jyotiskaghosh)
+- New card "Super Necrodragon Abzo Dolba" (thanks @jyotiskaghosh)
 
 ## 11/04/2025
 - Fixed an issue where "Vacuum Gel" could destroy untapped creatures with its effect (thanks @DragosIonita23)
