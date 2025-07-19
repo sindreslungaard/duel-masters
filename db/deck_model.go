@@ -1,5 +1,7 @@
 package db
 
+import "go.mongodb.org/mongo-driver/mongo"
+
 type LegacyDeck struct {
 	UID      string   `json:"uid"`
 	Owner    string   `json:"owner"`
@@ -18,4 +20,6 @@ type Deck struct {
 	Cards    string `json:"cards"`
 }
 
-var Decks = conn().Collection("decks")
+func Decks() *mongo.Collection {
+	return conn().Collection("decks")
+}

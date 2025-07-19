@@ -42,7 +42,7 @@ func (api *API) signupHandler(w http.ResponseWriter, r *http.Request) {
 	// Check for IP ban
 	ip := getIP(r)
 
-	bans, err := db.Bans.CountDocuments(r.Context(), bson.M{"type": db.IPBan, "value": ip})
+	bans, err := db.Bans().CountDocuments(r.Context(), bson.M{"type": db.IPBan, "value": ip})
 
 	if err != nil {
 		logrus.Error(err)
@@ -61,12 +61,12 @@ func (api *API) signupHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err := db.Users.FindOne(r.Context(), bson.M{"username": primitive.Regex{Pattern: "^" + username + "$", Options: "i"}}).Decode(&db.User{}); err == nil {
+	if err := db.Users().FindOne(r.Context(), bson.M{"username": primitive.Regex{Pattern: "^" + username + "$", Options: "i"}}).Decode(&db.User{}); err == nil {
 		write(w, http.StatusBadRequest, Json{"message": "Username has already been taken"})
 		return
 	}
 
-	if err := db.Users.FindOne(r.Context(), bson.M{"email": primitive.Regex{Pattern: "^" + email + "$", Options: "i"}}).Decode(&db.User{}); err == nil {
+	if err := db.Users().FindOne(r.Context(), bson.M{"email": primitive.Regex{Pattern: "^" + email + "$", Options: "i"}}).Decode(&db.User{}); err == nil {
 		write(w, http.StatusBadRequest, Json{"message": "Email has already been taken"})
 		return
 	}
@@ -101,7 +101,7 @@ func (api *API) signupHandler(w http.ResponseWriter, r *http.Request) {
 		},
 	}
 
-	_, err = db.Users.InsertOne(r.Context(), user)
+	_, err = db.Users().InsertOne(r.Context(), user)
 
 	if err != nil {
 		write(w, http.StatusInternalServerError, Json{"message": err.Error()})
