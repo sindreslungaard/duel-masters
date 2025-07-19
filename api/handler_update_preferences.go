@@ -32,7 +32,7 @@ func (api *API) updatePreferencesHandler(w http.ResponseWriter, r *http.Request)
 		return
 	}
 
-	db.Users.UpdateOne(r.Context(), bson.M{
+	db.Users().UpdateOne(r.Context(), bson.M{
 		"uid": user.UID,
 	}, bson.M{"$set": bson.M{
 		"playmat": body.Playmat,

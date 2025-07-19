@@ -1,5 +1,7 @@
 package db
 
+import "go.mongodb.org/mongo-driver/mongo"
+
 type UserSession struct {
 	Token   string `json:"token"`
 	IP      string `json:"ip"`
@@ -19,4 +21,6 @@ type User struct {
 	Chatblocked bool          `json:"-" bson:"chat_blocked"`
 }
 
-var Users = conn().Collection("users")
+func Users() *mongo.Collection {
+	return conn().Collection("users")
+}

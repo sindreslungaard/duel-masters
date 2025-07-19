@@ -49,6 +49,8 @@ func init() {
 }
 
 func main() {
+	match.InitDecks()
+
 	for _, set := range cards.Sets {
 		for uid, ctor := range *set {
 			if ctor == nil {
