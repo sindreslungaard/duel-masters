@@ -19,7 +19,7 @@ func HypersquidWalter(c *match.Card) {
 	c.ManaCost = 3
 	c.ManaRequirement = []string{civ.Water}
 
-	c.Use(fx.Creature, fx.When(fx.Attacking, fx.MayDraw1))
+	c.Use(fx.Creature, fx.When(fx.AttackConfirmed, fx.MayDraw1))
 
 }
 
