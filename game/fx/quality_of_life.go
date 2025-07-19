@@ -672,6 +672,14 @@ func TurboRushCondition(card *match.Card, ctx *match.Context) bool {
 
 }
 
+// OpponentPlayedShieldTrigger returns true if the opponent has played a shield trigger and creature is in the Battlezone
+func OpponentPlayedShieldTrigger(card *match.Card, ctx *match.Context) bool {
+	if event, ok := ctx.Event.(*match.ShieldTriggerPlayedEvent); ok && card.Zone == match.BATTLEZONE && event.Card.Player != card.Player {
+		return true
+	}
+	return false
+}
+
 // CreatureSummoned returns true if a card was summoned
 //
 // Does not activate if a card that was under an Evolution card becomes visible again.
@@ -909,19 +917,24 @@ func CanBeSummoned(player *match.Player, card *match.Card) bool {
 	}
 
 	if card.HasCondition(cnd.Evolution) {
-		if card.HasCondition(cnd.EvolveIntoAnyFamily) {
-			return true
+		condition, err := card.GetCondition(cnd.Evolution)
+
+		if err == nil {
+			if evolutionFamiles, ok := condition.Val.([]string); ok {
+				cardsToEvolveFrom := FindFilter(
+					player,
+					match.BATTLEZONE,
+					func(x *match.Card) bool {
+						return x.HasCondition(cnd.EvolveIntoAnyFamily) ||
+							x.SharesAFamily(evolutionFamiles)
+					},
+				)
+
+				return len(cardsToEvolveFrom) > 0
+			}
 		}
 
-		cardsToEvolveFrom := FindFilter(
-			player,
-			match.BATTLEZONE,
-			func(x *match.Card) bool {
-				return x.SharesAFamily(card.Family)
-			},
-		)
-
-		return len(cardsToEvolveFrom) > 0
+		return false
 	}
 
 	return true
