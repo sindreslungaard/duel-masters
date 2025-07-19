@@ -8,6 +8,7 @@ import (
 	"duel-masters/game/match"
 )
 
+// ForbosSanctumGuardianQ ...
 func ForbosSanctumGuardianQ(c *match.Card) {
 
 	c.Name = "Forbos, Sanctum Guardian Q"
@@ -20,6 +21,7 @@ func ForbosSanctumGuardianQ(c *match.Card) {
 	c.Use(fx.Creature, fx.Survivor, fx.When(fx.MySurvivorSummoned, fx.SearchDeckTake1Spell))
 }
 
+// LuGilaSilverRiftGuardian ...
 func LuGilaSilverRiftGuardian(c *match.Card) {
 
 	c.Name = "Lu Gila, Silver Rift Guardian"
@@ -29,42 +31,37 @@ func LuGilaSilverRiftGuardian(c *match.Card) {
 	c.ManaCost = 5
 	c.ManaRequirement = []string{civ.Light}
 
-	c.Use(fx.Creature, fx.Blocker(), fx.CantAttackPlayers, func(card *match.Card, ctx *match.Context) {
-
-		if card.Zone != match.BATTLEZONE && card.Zone != match.HIDDENZONE {
-			return
-		}
-
-		// TODO: Can have a full refactoring to fx.When after CardMoved uses card pointer
-		if event, ok := ctx.Event.(*match.CardMoved); ok {
-			if event.To != match.BATTLEZONE || event.From == match.HIDDENZONE {
-				return
-			}
-
-			playedCard, err := ctx.Match.Player1.Player.GetCard(event.CardID, match.BATTLEZONE)
-			if err != nil {
-				playedCard, err = ctx.Match.Player2.Player.GetCard(event.CardID, match.BATTLEZONE)
-				if err != nil {
+	c.Use(fx.Creature, fx.Blocker(), fx.CantAttackPlayers,
+		fx.When(fx.InTheBattlezone, func(card *match.Card, ctx *match.Context) {
+			ctx.Match.ApplyPersistentEffect(func(ctx2 *match.Context, exit func()) {
+				if card.Zone != match.BATTLEZONE {
+					exit()
 					return
 				}
-			}
 
-			if !playedCard.HasCondition(cnd.Evolution) {
-				return
-			}
+				// Can have a full refactoring to fx.When after CardMoved uses card pointer
+				if event, ok := ctx2.Event.(*match.CardMoved); ok {
+					if event.To != match.BATTLEZONE || event.From == match.HIDDENZONE {
+						return
+					}
 
-			// If Lu Gila is the card evolved, its evolution also becomes tapped according to duel master
-			// rulings (https://duelmasters.fandom.com/wiki/Lu_Gila,_Silver_Rift_Guardian/Rulings).
-			at := playedCard.Attachments()
-			if card.Zone == match.HIDDENZONE && (len(at) == 0 || at[len(at)-1] != card) {
-				return
-			}
+					playedCard, err := ctx2.Match.Player1.Player.GetCard(event.CardID, match.BATTLEZONE)
+					if err != nil {
+						playedCard, err = ctx2.Match.Player2.Player.GetCard(event.CardID, match.BATTLEZONE)
+						if err != nil {
+							return
+						}
+					}
 
-			playedCard.Tapped = true
-		}
+					if !playedCard.HasCondition(cnd.Evolution) {
+						return
+					}
 
-	})
-
+					playedCard.Tapped = true
+				}
+			})
+		}),
+	)
 }
 
 func ArcBinetheAstounding(c *match.Card) {

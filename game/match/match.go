@@ -461,7 +461,7 @@ func (m *Match) SaveMatchHistory(winner *Player, wonByDisconnect bool) {
 		duel.Winner = m.Player2.UID
 	}
 
-	_, err := db.Duels.InsertOne(context.Background(), duel)
+	_, err := db.Duels().InsertOne(context.Background(), duel)
 
 	if err != nil {
 		logrus.Error("Failed to save duel result to db", err)
@@ -876,6 +876,34 @@ func (m *Match) ShowCards(p *Player, message string, cards []string) {
 		Message: message,
 		Cards:   cards,
 	})
+}
+
+// ShowCardsNonDismissible shows the specified cards to the player with a message of why it is being shown
+// The difference is that the cards preview pop-up is not dismissible by clicking outside of it,
+// Because is part of an Attacking Player sequence of events and it must be only cancelled by clicking on the 'Close' button
+func (m *Match) ShowCardsNonDismissible(p *Player, message string, cards []string) {
+	msg := &server.ShowCardsMessage{
+		Header:  "show_cards_non_dismissible",
+		Message: message,
+		Cards:   cards,
+	}
+
+	p.ActionState = PlayerActionState{
+		resolved: false,
+		data:     msg,
+	}
+
+	m.PlayerRef(p).Socket.Send(msg)
+
+	defer m.CloseAction(p)
+
+	for {
+		action := <-p.Action
+
+		if action.Cancel {
+			break
+		}
+	}
 }
 
 // Coin toss to decide who starts the game
@@ -1352,7 +1380,7 @@ func (m *Match) Parse(s *server.Socket, data []byte) {
 					return
 				}
 
-				cur, err := db.Decks.Find(context.TODO(), bson.M{
+				cur, err := db.Decks().Find(context.TODO(), bson.M{
 					"$or": []bson.M{
 						{"owner": m.Player1.Socket.User.UID},
 						{"owner": m.Player2.Socket.User.UID},
@@ -1629,7 +1657,7 @@ func (m *Match) Parse(s *server.Socket, data []byte) {
 
 			var deck db.Deck
 
-			if err := db.Decks.FindOne(context.TODO(), bson.M{"uid": msg.UID}).Decode(&deck); err != nil {
+			if err := db.Decks().FindOne(context.TODO(), bson.M{"uid": msg.UID}).Decode(&deck); err != nil {
 				return
 			}
 

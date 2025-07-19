@@ -23,7 +23,7 @@ func Migrate(conn *mongo.Database) {
 	}
 
 	for _, m := range migs {
-		count, err := db.Migrations.CountDocuments(context.Background(), bson.M{"key": m.key})
+		count, err := db.Migrations().CountDocuments(context.Background(), bson.M{"key": m.key})
 
 		if err != nil {
 			logrus.Error(err)
@@ -35,7 +35,7 @@ func Migrate(conn *mongo.Database) {
 
 		m.fn(conn)
 
-		_, err = db.Migrations.InsertOne(context.Background(), &db.Migration{
+		_, err = db.Migrations().InsertOne(context.Background(), &db.Migration{
 			Key:        m.key,
 			ExecutedAt: int(time.Now().Unix()),
 		})

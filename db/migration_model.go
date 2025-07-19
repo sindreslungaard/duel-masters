@@ -1,8 +1,12 @@
 package db
 
+import "go.mongodb.org/mongo-driver/mongo"
+
 type Migration struct {
 	Key        string
 	ExecutedAt int `bson:"executed_at"`
 }
 
-var Migrations = conn().Collection("migrations")
+func Migrations() *mongo.Collection {
+	return conn().Collection("migrations")
+}

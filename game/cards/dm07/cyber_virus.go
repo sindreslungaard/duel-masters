@@ -33,6 +33,6 @@ func CuriousEye(c *match.Card) {
 	c.ManaCost = 3
 	c.ManaRequirement = []string{civ.Water}
 
-	c.Use(fx.Creature, fx.WheneverThisAttacksMayLookAtOpShield())
+	c.Use(fx.Creature, fx.ShieldsSelectionEffect, fx.WheneverThisAttacksMayLookAtOpShield())
 
 }

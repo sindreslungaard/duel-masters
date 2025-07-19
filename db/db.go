@@ -54,7 +54,7 @@ func GetUserForToken(token string) (User, error) {
 
 	var user User
 
-	if err := Users.FindOne(context.TODO(), bson.M{"sessions": bson.M{"$elemMatch": bson.M{"token": token}}}).Decode(&user); err != nil {
+	if err := Users().FindOne(context.TODO(), bson.M{"sessions": bson.M{"$elemMatch": bson.M{"token": token}}}).Decode(&user); err != nil {
 		return User{}, err
 	}
 
