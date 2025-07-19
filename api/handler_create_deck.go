@@ -54,7 +54,7 @@ func (api *API) createDeckHandler(w http.ResponseWriter, r *http.Request) {
 
 	if len(body.UID) < 1 {
 		// New deck
-		decksCount, err := db.Decks.CountDocuments(r.Context(), bson.M{"owner": user.UID})
+		decksCount, err := db.Decks().CountDocuments(r.Context(), bson.M{"owner": user.UID})
 
 		if err != nil {
 			logrus.Error(err)
@@ -76,7 +76,7 @@ func (api *API) createDeckHandler(w http.ResponseWriter, r *http.Request) {
 			Cards:    body.Cards,
 		}
 
-		_, err = db.Decks.InsertOne(r.Context(), match.ConvertFromLegacyDeck(deck))
+		_, err = db.Decks().InsertOne(r.Context(), match.ConvertFromLegacyDeck(deck))
 
 		if err != nil {
 			write(w, http.StatusInternalServerError, Json{"message": "Something went wrong"})
@@ -96,7 +96,7 @@ func (api *API) createDeckHandler(w http.ResponseWriter, r *http.Request) {
 			Cards:    body.Cards,
 		})
 
-		_, err := db.Decks.UpdateOne(
+		_, err := db.Decks().UpdateOne(
 			r.Context(),
 			bson.M{"uid": body.UID, "owner": user.UID},
 			bson.M{"$set": bson.M{"name": name, "public": body.Public, "cards": deck.Cards}},
