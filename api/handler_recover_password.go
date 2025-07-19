@@ -44,7 +44,7 @@ func (api *API) recoverPasswordHandler(w http.ResponseWriter, r *http.Request) {
 
 	var user db.User
 
-	if err := db.Users.FindOne(context.TODO(), bson.M{"email": primitive.Regex{Pattern: "^" + email + "$", Options: "i"}}).Decode(&user); err != nil {
+	if err := db.Users().FindOne(context.TODO(), bson.M{"email": primitive.Regex{Pattern: "^" + email + "$", Options: "i"}}).Decode(&user); err != nil {
 		logrus.Debug("Attempt at recovering password with email that does not belong to any users ", email)
 		write(w, http.StatusOK, Json{"message": genericResponse})
 		return
@@ -59,7 +59,7 @@ func (api *API) recoverPasswordHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	db.Users.UpdateOne(context.Background(), bson.M{
+	db.Users().UpdateOne(context.Background(), bson.M{
 		"uid": user.UID,
 	}, bson.M{"$set": bson.M{
 		"recoverycode": code,

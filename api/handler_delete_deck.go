@@ -16,7 +16,7 @@ func (api *API) deleteDeckHandler(w http.ResponseWriter, r *http.Request) {
 
 	deckUID := r.PathValue("id")
 
-	result, err := db.Decks.DeleteOne(
+	result, err := db.Decks().DeleteOne(
 		r.Context(),
 		bson.M{"uid": deckUID, "owner": user.UID},
 	)

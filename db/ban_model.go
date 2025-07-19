@@ -1,5 +1,7 @@
 package db
 
+import "go.mongodb.org/mongo-driver/mongo"
+
 type BanType string
 
 const (
@@ -12,4 +14,6 @@ type Ban struct {
 	Value string  `json:"value"`
 }
 
-var Bans = conn().Collection("bans")
+func Bans() *mongo.Collection {
+	return conn().Collection("bans")
+}

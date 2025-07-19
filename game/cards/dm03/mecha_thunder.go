@@ -19,17 +19,21 @@ func RaVuSeekerOfLightning(c *match.Card) {
 	c.ManaCost = 6
 	c.ManaRequirement = []string{civ.Light}
 
-	c.Use(fx.Creature, fx.When(fx.Attacking, func(card *match.Card, ctx *match.Context) {
-
-		ctx.ScheduleAfter(func() {
-			spells := match.Filter(card.Player, ctx.Match, card.Player, match.GRAVEYARD, "You may select 1 spell from your graveyard that will be sent to your hand", 0, 1, false, func(x *match.Card) bool { return x.HasCondition(cnd.Spell) })
-
-			for _, spell := range spells {
-
-				card.Player.MoveCard(spell.ID, match.GRAVEYARD, match.HAND, card.ID)
-				ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s retrieved %s from the graveyard to their hand", spell.Player.Username(), spell.Name))
-
-			}
+	c.Use(fx.Creature, fx.When(fx.AttackConfirmed, func(card *match.Card, ctx *match.Context) {
+		fx.SelectFilter(
+			card.Player,
+			ctx.Match,
+			card.Player,
+			match.GRAVEYARD,
+			fmt.Sprintf("%s: You may return 1 spell from your graveyard to your hand", card.Name),
+			1,
+			1,
+			true,
+			func(x *match.Card) bool { return x.HasCondition(cnd.Spell) },
+			false,
+		).Map(func(x *match.Card) {
+			x.Player.MoveCard(x.ID, match.GRAVEYARD, match.HAND, card.ID)
+			ctx.Match.ReportActionInChat(x.Player, fmt.Sprintf("%s retrieved %s from the graveyard to their hand", x.Player.Username(), x.Name))
 		})
 	}))
 

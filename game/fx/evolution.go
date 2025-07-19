@@ -2,6 +2,7 @@ package fx
 
 import (
 	"duel-masters/game/cnd"
+	"duel-masters/game/family"
 	"duel-masters/game/match"
 	"fmt"
 )
@@ -45,9 +46,29 @@ func Evolution(card *match.Card, ctx *match.Context) {
 	}
 
 	if _, ok := ctx.Event.(*match.UntapStep); ok {
-
-		card.AddCondition(cnd.Evolution, true, card.ID)
+		card.AddCondition(cnd.Evolution, card.Family, card.ID)
 	}
+
+	handleEvolutionEvents(card, ctx, evolvableCreatureFilter, card.Family)
+
+}
+
+// DragonEvolution has behaviour for dragon evolution cards
+func DragonEvolution(card *match.Card, ctx *match.Context) {
+
+	evolvableCreatureFilter := func(x *match.Card) bool {
+		return x.SharesAFamily(family.Dragons) || x.HasCondition(cnd.EvolveIntoAnyFamily)
+	}
+
+	if _, ok := ctx.Event.(*match.UntapStep); ok {
+		card.AddCondition(cnd.Evolution, family.Dragons, card.ID)
+	}
+
+	handleEvolutionEvents(card, ctx, evolvableCreatureFilter, family.Dragons)
+
+}
+
+func handleEvolutionEvents(card *match.Card, ctx *match.Context, evolvableCreatureFilter func(x *match.Card) bool, cardFamilies []string) {
 
 	if event, ok := ctx.Event.(*match.PlayCardEvent); ok {
 
@@ -73,16 +94,17 @@ func Evolution(card *match.Card, ctx *match.Context) {
 			return
 		}
 
-		creatures := match.Filter(
+		creatures := SelectFilter(
 			card.Player,
 			ctx.Match,
 			card.Player,
 			match.BATTLEZONE,
-			fmt.Sprintf("Choose 1 %s to evolve %s from", card.Family, card.Name),
+			fmt.Sprintf("Choose one %s to evolve %s from", cardFamilies, card.Name),
 			1,
 			1,
 			false,
 			evolvableCreatureFilter,
+			false,
 		)
 
 		if len(creatures) < 1 {
@@ -97,7 +119,6 @@ func Evolution(card *match.Card, ctx *match.Context) {
 		card.Tapped = creature.Tapped
 		card.Player.MoveCard(creature.ID, match.BATTLEZONE, match.HIDDENZONE, card.ID)
 		card.Attach(creature)
-		card.AddCondition(cnd.Evolution, true, card.ID)
 	}
 
 	// Card moved
