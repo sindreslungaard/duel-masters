@@ -904,19 +904,24 @@ func CanBeSummoned(player *match.Player, card *match.Card) bool {
 	}
 
 	if card.HasCondition(cnd.Evolution) {
-		if card.HasCondition(cnd.EvolveIntoAnyFamily) {
-			return true
+		condition, err := card.GetCondition(cnd.Evolution)
+
+		if err == nil {
+			if evolutionFamiles, ok := condition.Val.([]string); ok {
+				cardsToEvolveFrom := FindFilter(
+					player,
+					match.BATTLEZONE,
+					func(x *match.Card) bool {
+						return x.HasCondition(cnd.EvolveIntoAnyFamily) ||
+							x.SharesAFamily(evolutionFamiles)
+					},
+				)
+
+				return len(cardsToEvolveFrom) > 0
+			}
 		}
 
-		cardsToEvolveFrom := FindFilter(
-			player,
-			match.BATTLEZONE,
-			func(x *match.Card) bool {
-				return x.SharesAFamily(card.Family)
-			},
-		)
-
-		return len(cardsToEvolveFrom) > 0
+		return false
 	}
 
 	return true
