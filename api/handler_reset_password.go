@@ -45,7 +45,7 @@ func (api *API) resetPasswordHandler(w http.ResponseWriter, r *http.Request) {
 
 	var user db.User
 
-	if err := db.Users.FindOne(r.Context(), bson.M{"recoverycode": code}).Decode(&user); err != nil {
+	if err := db.Users().FindOne(r.Context(), bson.M{"recoverycode": code}).Decode(&user); err != nil {
 		write(w, http.StatusBadRequest, Json{"message": "Invalid or expired code"})
 		return
 	}
@@ -71,7 +71,7 @@ func (api *API) resetPasswordHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	db.Users.UpdateOne(context.Background(), bson.M{
+	db.Users().UpdateOne(context.Background(), bson.M{
 		"uid": user.UID,
 	}, bson.M{
 		"$set": bson.M{

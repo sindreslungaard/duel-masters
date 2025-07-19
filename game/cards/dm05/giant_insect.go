@@ -25,15 +25,15 @@ func BloodwingMantis(c *match.Card) {
 			ctx.Match,
 			card.Player,
 			match.MANAZONE,
-			fmt.Sprintf("%s: Select 2 creatures from your mana zone to be returned to your hand", card.Name),
+			"Select 2 creatures from your mana zone to be returned to your hand",
 			2,
 			2,
 			false,
-			func(x *match.Card) bool { return x.HasCondition(cnd.Creature) },
-			false,
-		).Map(func(x *match.Card) {
-			x.Player.MoveCard(x.ID, match.MANAZONE, match.HAND, card.ID)
-			ctx.Match.ReportActionInChat(x.Player, fmt.Sprintf("%s was sent to %s's hand from their manazone by %s's effect", x.Name, x.Player.Username(), card.Name))
+			func(c *match.Card) bool { return c.HasCondition(cnd.Creature) },
+			true,
+		).Map(func(c *match.Card) {
+			c.Player.MoveCard(c.ID, match.MANAZONE, match.HAND, card.ID)
+			ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s was returned to %s's hand from manazone", c.Name, c.Player.Username()))
 		})
 	}))
 

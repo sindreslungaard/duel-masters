@@ -14,7 +14,7 @@ func (api *API) getDeckHandler(w http.ResponseWriter, r *http.Request) {
 
 	var deck db.Deck
 
-	err := db.Decks.FindOne(
+	err := db.Decks().FindOne(
 		r.Context(),
 		bson.M{"uid": deckUID, "public": true},
 	).Decode(&deck)
@@ -26,7 +26,7 @@ func (api *API) getDeckHandler(w http.ResponseWriter, r *http.Request) {
 
 	var user db.User
 
-	err = db.Users.FindOne(
+	err = db.Users().FindOne(
 		context.Background(),
 		bson.M{"uid": deck.Owner},
 	).Decode(&user)

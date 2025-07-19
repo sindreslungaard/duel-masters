@@ -2,6 +2,28 @@
 
 ## [Unreleased]
 
+- No unreleased changes
+
+## 10/07/2025
+
+- Fixed an issue that prevented the player from correctly cancelling the event when trying to attack a shield (thanks @DragosIonita23)
+
+## 09/07/2025
+
+- Fixed an issue where "Sol Galla, Halo Guardian" received its power bonus too early (thanks @DragosIonita23)
+- New card "Emperor Quazla" (thanks @jyotiskaghosh, @DragosIonita23)
+- New card "Nastasha, Channeler of Suns" (thanks @jyotiskaghosh, @DragosIonita23)
+- New card "Kuukai, Finder of Karma" (thanks @jyotiskaghosh, @DragosIonita23)
+- New card "Megaria, Empress of Dread" (thanks @jyotiskaghosh, @DragosIonita23)
+- New card "Nariel, the Oracle" (thanks @jyotiskaghosh, @DragosIonita23)
+- New card "Thrumiss, Zephyr Guardian" (thanks @jyotiskaghosh, @DragosIonita23)
+- New card "Furious Onslaught" (thanks @jyotiskaghosh, @DragosIonita23)
+- New card "Dimension Splitter" (thanks @jyotiskaghosh, @DragosIonita23)
+- New card "Candy Cluster" (thanks @jyotiskaghosh, @DragosIonita23)
+- Fixed an issue where "La Byle, Seeker of the Winds" would become untapped after a battle where it did not block (thanks @DragosIonita23)
+
+## 26/05/2025
+
 - Refactor old cards to use the recommended card selection popup (thanks @DragosIonita23)
 - New card "Dracobarrier" (thanks @DragosIonita23)
 - New card "Laser Whip" (thanks @DragosIonita23)
@@ -26,6 +48,7 @@
 - Fixed an issue where "Kyrstron, Lair Delver"'s effect could summon an evolution card to the battlezone without a card to evolve from (thanks @DragosIonita23)
 - Fixed an issue where "Totto Pipicchi" would not apply speed attacker to opponent's creatures (thanks @DragosIonita23)
 - Updated the popup when drawing up to x cards to show the drawn cards in the background (thanks @DragosIonita23)
+- New card "Scream Slicer, Shadow of Fear" (thanks @DragosIonita23)
 
 ## 24/04/2025
 - New card "Magmadragon Jagalzor" (thanks @jyotiskaghosh)
