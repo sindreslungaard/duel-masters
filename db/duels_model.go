@@ -1,5 +1,7 @@
 package db
 
+import "go.mongodb.org/mongo-driver/mongo"
+
 type DuelResolution string
 
 type Duel struct {
@@ -15,4 +17,6 @@ type Duel struct {
 	WonByDisconnect bool   `bson:"dc"`
 }
 
-var Duels = conn().Collection("duels")
+func Duels() *mongo.Collection {
+	return conn().Collection("duels")
+}

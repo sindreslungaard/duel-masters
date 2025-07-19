@@ -1,6 +1,9 @@
 package match
 
 import (
+	"duel-masters/game/cnd"
+	"errors"
+
 	"github.com/sirupsen/logrus"
 	"github.com/ventu-io/go-shortid"
 )
@@ -125,6 +128,19 @@ func (c *Card) HasCondition(cnd string) bool {
 
 }
 
+// GetCondition returns the first condition with the ID given from the card's conditions
+func (c *Card) GetCondition(cnd string) (Condition, error) {
+
+	for _, condition := range c.conditions {
+		if condition.ID == cnd {
+			return condition, nil
+		}
+	}
+
+	return Condition{}, errors.New("Condition was not found")
+
+}
+
 // RemoveCondition removes all instances of the given string from the cards conditions
 func (c *Card) RemoveCondition(cnd string) {
 
@@ -219,13 +235,25 @@ func (c *Card) ClearAttachments() {
 
 // HasFamily returns true if the card has the input family, false otherwise
 func (c *Card) HasFamily(family string) bool {
-	for _, f := range c.Family {
+
+	families := c.Family
+
+	for _, condition := range c.conditions {
+		if condition.ID == cnd.AddFamily {
+			if f, ok := condition.Val.(string); ok {
+				families = append(families, f)
+			}
+		}
+	}
+
+	for _, f := range families {
 		if f == family {
 			return true
 		}
 	}
 
 	return false
+
 }
 
 // SharesAFamily returns true if the card has at least one of the input families, false otherwise
