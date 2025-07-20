@@ -891,8 +891,14 @@ func WheneverThisAttacksAndIsntBlocked(card *match.Card, ctx *match.Context) boo
 }
 
 func WheneverThisAttacksPlayerAndIsntBlocked(card *match.Card, ctx *match.Context) bool {
-	if event, ok := ctx.Event.(*match.BreakShieldEvent); ok {
-		return event.Source == card
+	if card.HasCondition(cnd.HasShieldsSelectionEffect) {
+		if event, ok := ctx.Event.(*match.SelectShields); ok {
+			return event.Attacker == card
+		}
+	} else {
+		if event, ok := ctx.Event.(*match.BreakShieldEvent); ok {
+			return event.Source == card
+		}
 	}
 
 	return false

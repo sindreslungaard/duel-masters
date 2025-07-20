@@ -667,7 +667,7 @@ func denormalizeCards(cards []*Card, partial bool) []server.CardState {
 			Flags:   uint8(flags),
 		}
 
-		if partial {
+		if partial && !card.ShieldFaceUp {
 			cs.ImageID = "backside"
 			cs.Name = ""
 			cs.Civ = "water" // blue highlight color when selected in actions

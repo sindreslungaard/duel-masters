@@ -507,6 +507,7 @@
             <img src="https://scans.shobu.io/backside.jpg" />
           </div>
           <div
+            @contextmenu.prevent="hasFlag(card, SHIELD_FACE_UP_FLAG) ? showLarge(card) : {}"
             v-for="(card, index) in state.opponent.shieldzone"
             :key="index"
             :class="
@@ -515,10 +516,9 @@
           >
             <div class="shield-number">
               <span :class="!settings.noUpsideDownCards ? ' flipped' : ''">{{
-                state.opponent.shieldMap[card]
+                state.opponent.shieldMap[card.virtualId]
               }}</span>
-              <div>{{ card }}</div>
-              <img src="https://scans.shobu.io/backside.jpg" />
+              <img :src="hasFlag(card, SHIELD_FACE_UP_FLAG) ? `https://scans.shobu.io/${card.uid}.jpg` : `https://scans.shobu.io/backside.jpg`"  />
             </div>
           </div>
         </div>
@@ -688,7 +688,7 @@
             class="card shield"
           >
             <div class="shield-number">
-              <span>{{ state.me.shieldMap[card] }}</span>
+              <span>{{ state.me.shieldMap[card.virtualId] }}</span>
               <img src="https://scans.shobu.io/backside.jpg" />
             </div>
           </div>
