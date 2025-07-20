@@ -31,6 +31,8 @@ func PetrovaChannelerOfSuns(c *match.Card) {
 			)
 
 			if chosenFamily != "" {
+				ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("All creatures in the battlezone of race %s were given +4000 power by %s", chosenFamily, card.Name))
+
 				ctx.Match.ApplyPersistentEffect(func(ctx2 *match.Context, exit func()) {
 					if card.Zone != match.BATTLEZONE {
 						fx.FindFilter(
@@ -52,6 +54,8 @@ func PetrovaChannelerOfSuns(c *match.Card) {
 						).Map(func(x *match.Card) {
 							x.RemoveConditionBySource(card.ID)
 						})
+
+						ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("All creatures in the battlezone of race %s NO more have +4000 power", chosenFamily))
 
 						exit()
 						return
