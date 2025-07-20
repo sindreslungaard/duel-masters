@@ -44,7 +44,7 @@ type PlayerState struct {
 	Deck       int            `json:"deck"`
 	HandCount  int            `json:"handCount"`
 	Hand       []CardState    `json:"hand"`
-	Shieldzone []ShieldState  `json:"shieldzone"` //TODO in FrontEnd -->> references are not strings anymore
+	Shieldzone []ShieldState  `json:"shieldzone"`
 	ShieldMap  map[string]int `json:"shieldMap"`
 	Manazone   []CardState    `json:"manazone"`
 	Graveyard  []CardState    `json:"graveyard"`
