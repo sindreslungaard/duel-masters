@@ -26,4 +26,5 @@ func StallobTheLifequasher(c *match.Card) {
 			ctx.Match.Destroy(x, card, match.DestroyedByMiscAbility)
 		})
 	}))
+
 }

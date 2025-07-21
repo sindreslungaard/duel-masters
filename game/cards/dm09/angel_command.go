@@ -26,4 +26,5 @@ func MihailCelestialElemental(c *match.Card) {
 			}
 		}
 	})
+
 }

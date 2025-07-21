@@ -33,7 +33,7 @@ func CantBeBlockedWhileAttackingACreature(card *match.Card, ctx *match.Context) 
 		if event.Creature {
 			card.AddUniqueSourceCondition(cnd.CantBeBlocked, nil, card.ID)
 		} else {
-			card.RemoveConditionBySource(card.ID)
+			card.RemoveSpecificConditionBySource(cnd.CantBeBlocked, card.ID)
 		}
 	}
 }
