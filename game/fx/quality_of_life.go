@@ -781,10 +781,14 @@ func AnotherCreatureSummoned(card *match.Card, ctx *match.Context) bool {
 	return CreatureSummoned(card, ctx) && event.CardID != card.ID
 }
 
-// AnotherOwnCreatureSummoned returns true if you summoned another creature
-// Does not activate if this current card is summoned.
-// Does not activate if a card that was under an Evolution card becomes visible again.
 func AnotherOwnCreatureSummoned(card *match.Card, ctx *match.Context) bool {
+	return AnotherOwnCreatureSummonedFilter(card, ctx, func(c *match.Card) bool { return true })
+}
+
+// AnotherOwnCreatureSummonedFilter returns true if you summoned another filtered creature
+// Does not activate if this current card is summoned.
+// Does not activate if the filtered card that was under an Evolution card becomes visible again.
+func AnotherOwnCreatureSummonedFilter(card *match.Card, ctx *match.Context, filter func(c *match.Card) bool) bool {
 	event, ok := ctx.Event.(*match.CardMoved)
 	if !ok {
 		return false
@@ -798,27 +802,35 @@ func AnotherOwnCreatureSummoned(card *match.Card, ctx *match.Context) bool {
 		p = ctx.Match.Player2.Player
 	}
 
-	return CreatureSummoned(card, ctx) && event.CardID != card.ID && p == card.Player
-}
+	creatureSummoned := CreatureSummoned(card, ctx) && event.CardID != card.ID && p == card.Player
 
-func anotherOwnCreatureSummonedFilter(card *match.Card, ctx *match.Context, filter func(c *match.Card) bool) bool {
-	return AnotherOwnCreatureSummoned(card, ctx) && filter(card)
+	if filter != nil {
+		movedCard, err := p.GetCard(event.CardID, event.To)
+
+		if err != nil {
+			return false
+		}
+
+		creatureSummoned = creatureSummoned && filter(movedCard)
+	}
+
+	return creatureSummoned
 }
 
 func AnotherOwnGhostSummoned(card *match.Card, ctx *match.Context) bool {
-	return anotherOwnCreatureSummonedFilter(card, ctx, func(c *match.Card) bool {
+	return AnotherOwnCreatureSummonedFilter(card, ctx, func(c *match.Card) bool {
 		return c.HasFamily(family.Ghost)
 	})
 }
 
 func AnotherOwnCyberSummoned(card *match.Card, ctx *match.Context) bool {
-	return anotherOwnCreatureSummonedFilter(card, ctx, func(c *match.Card) bool {
+	return AnotherOwnCreatureSummonedFilter(card, ctx, func(c *match.Card) bool {
 		return c.SharesAFamily(family.Cybers)
 	})
 }
 
 func AnotherOwnDragonoidOrDragonSummoned(card *match.Card, ctx *match.Context) bool {
-	return anotherOwnCreatureSummonedFilter(card, ctx, func(c *match.Card) bool {
+	return AnotherOwnCreatureSummonedFilter(card, ctx, func(c *match.Card) bool {
 		return c.SharesAFamily(append(family.Dragons, family.Dragonoid))
 	})
 }

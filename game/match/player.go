@@ -617,6 +617,7 @@ func (p *Player) ReorderCardsOnBottomDeck(cards []*Card, orderedIDs []string) ([
 	}
 
 	*deckRef = temp
+	p.mutex.Unlock()
 
 	// 2. Put them on the bottom of the deck, in the order
 	//    specified by the card IDs in orderedIDs slice parameter
@@ -624,11 +625,12 @@ func (p *Player) ReorderCardsOnBottomDeck(cards []*Card, orderedIDs []string) ([
 		cardToAppend, err := p.GetCard(cardIDToAppend, DECK)
 
 		if err != nil {
-			p.mutex.Unlock()
 			return nil, err
 		}
 
+		p.mutex.Lock()
 		*deckRef = append(*deckRef, cardToAppend)
+		p.mutex.Unlock()
 	}
 
 	return *deckRef, nil
