@@ -295,6 +295,62 @@ func SelectFilter(p *match.Player, m *match.Match, containerOwner *match.Player,
 
 }
 
+// SelectFromCollection prompts the user to select n cards from the specified card collection given.
+// Specified card collection MUST be from specified container (battlezone, manazone etc)
+func SelectFromCollection(p *match.Player, m *match.Match, sourceCollection CardCollection, sourceContainer string, text string, min int, max int, cancellable bool) CardCollection {
+
+	result := make([]*match.Card, 0)
+
+	if len(sourceCollection) < 1 {
+		return result
+	}
+
+	if !m.IsPlayerTurn(p) {
+		m.Wait(m.Opponent(p), "Waiting for your opponent to make an action")
+		defer m.EndWait(m.Opponent(p))
+	}
+
+	m.NewActionFullList(p, sourceCollection, min, max, text, false, []*match.Card{})
+
+	defer m.CloseAction(p)
+
+	for {
+
+		action := <-p.Action
+
+		if cancellable && action.Cancel {
+			break
+		}
+
+		if len(action.Cards) < min || len(action.Cards) > max || !match.AssertCardsIn(sourceCollection, action.Cards...) {
+			m.ActionWarning(p, "The cards you selected does not meet the requirements")
+			continue
+		}
+
+		for _, c := range action.Cards {
+
+			selectedCard, err := p.GetCard(c, sourceContainer)
+
+			if err != nil {
+				selectedCard, err = m.Opponent(p).GetCard(c, sourceContainer)
+
+				if err != nil {
+					continue
+				}
+			}
+
+			result = append(result, selectedCard)
+
+		}
+
+		break
+
+	}
+
+	return result
+
+}
+
 // SelectMultipart prompts the user to select n cards from the specified list of cards
 func SelectMultipart(p *match.Player, m *match.Match, cards map[string][]*match.Card, text string, min int, max int, cancellable bool) CardCollection {
 	return selectMultipartBase(p, m, cards, text, min, max, cancellable, false)
@@ -725,10 +781,14 @@ func AnotherCreatureSummoned(card *match.Card, ctx *match.Context) bool {
 	return CreatureSummoned(card, ctx) && event.CardID != card.ID
 }
 
-// AnotherOwnCreatureSummoned returns true if you summoned another creature
-// Does not activate if this current card is summoned.
-// Does not activate if a card that was under an Evolution card becomes visible again.
 func AnotherOwnCreatureSummoned(card *match.Card, ctx *match.Context) bool {
+	return AnotherOwnCreatureSummonedFilter(card, ctx, func(c *match.Card) bool { return true })
+}
+
+// AnotherOwnCreatureSummonedFilter returns true if you summoned another filtered creature
+// Does not activate if this current card is summoned.
+// Does not activate if the filtered card that was under an Evolution card becomes visible again.
+func AnotherOwnCreatureSummonedFilter(card *match.Card, ctx *match.Context, filter func(c *match.Card) bool) bool {
 	event, ok := ctx.Event.(*match.CardMoved)
 	if !ok {
 		return false
@@ -742,35 +802,37 @@ func AnotherOwnCreatureSummoned(card *match.Card, ctx *match.Context) bool {
 		p = ctx.Match.Player2.Player
 	}
 
-	return CreatureSummoned(card, ctx) && event.CardID != card.ID && p == card.Player
+	creatureSummoned := CreatureSummoned(card, ctx) && event.CardID != card.ID && p == card.Player
+
+	if filter != nil {
+		movedCard, err := p.GetCard(event.CardID, event.To)
+
+		if err != nil {
+			return false
+		}
+
+		creatureSummoned = creatureSummoned && filter(movedCard)
+	}
+
+	return creatureSummoned
 }
 
-func AnotherOwnDragonoidOrDragonSummoned(card *match.Card, ctx *match.Context) bool {
-	return anotherOwnCreatureSummonedFilter(card, ctx, func(c *match.Card) bool {
-		return c.SharesAFamily(append(family.Dragons, family.Dragonoid))
+func AnotherOwnGhostSummoned(card *match.Card, ctx *match.Context) bool {
+	return AnotherOwnCreatureSummonedFilter(card, ctx, func(c *match.Card) bool {
+		return c.HasFamily(family.Ghost)
 	})
 }
 
-func anotherOwnCreatureSummonedFilter(card *match.Card, ctx *match.Context, filters ...func(c *match.Card) bool) bool {
-	result := AnotherOwnCreatureSummoned(card, ctx)
+func AnotherOwnCyberSummoned(card *match.Card, ctx *match.Context) bool {
+	return AnotherOwnCreatureSummonedFilter(card, ctx, func(c *match.Card) bool {
+		return c.SharesAFamily(family.Cybers)
+	})
+}
 
-	if result {
-		if event, ok := ctx.Event.(*match.CardMoved); ok {
-			summonedCard, _ := card.Player.GetCard(event.CardID, match.BATTLEZONE)
-
-			if summonedCard != nil {
-				for _, f := range filters {
-					result = result && f(summonedCard)
-				}
-
-				return result
-			} else {
-				return false
-			}
-		}
-	}
-
-	return false
+func AnotherOwnDragonoidOrDragonSummoned(card *match.Card, ctx *match.Context) bool {
+	return AnotherOwnCreatureSummonedFilter(card, ctx, func(c *match.Card) bool {
+		return c.SharesAFamily(append(family.Dragons, family.Dragonoid))
+	})
 }
 
 func AnotherCreatureDestroyed(card *match.Card, ctx *match.Context) bool {
@@ -889,7 +951,6 @@ func WheneverThisAttacksAndIsntBlocked(card *match.Card, ctx *match.Context) boo
 
 	return false
 }
-
 func WheneverThisAttacksPlayerAndIsntBlocked(card *match.Card, ctx *match.Context) bool {
 	if event, ok := ctx.Event.(*match.BreakShieldEvent); ok {
 		return event.Source == card
@@ -945,4 +1006,41 @@ func ForcePutCreatureIntoBZ(ctx *match.Context, creature *match.Card, from strin
 		}
 	}
 
+}
+
+func LookTop4Put1IntoHandReorderRestOnBottomDeck(card *match.Card, ctx *match.Context) {
+	top4CardsDeck := card.Player.PeekDeck(4)
+
+	SelectFromCollection(
+		card.Player,
+		ctx.Match,
+		top4CardsDeck,
+		match.DECK,
+		fmt.Sprintf("%s's effect: Look at the top 4 cards of your deck. Put 1 of them into your hand. You will put the rest of the cards on the bottom of your deck in any order.", card.Name),
+		1,
+		1,
+		false,
+	).Map(func(x *match.Card) {
+		card.Player.MoveCard(x.ID, match.DECK, match.HAND, card.ID)
+		ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s was put into %s's hand from his deck by %s's effect.", x.Name, card.Player.Username(), card.Name))
+
+		restOfCards := top4CardsDeck[:0]
+		for _, card := range top4CardsDeck {
+			if card.ID != x.ID {
+				restOfCards = append(restOfCards, card)
+			}
+		}
+
+		orderedCardIds := OrderCards(
+			card.Player,
+			ctx.Match,
+			restOfCards,
+			fmt.Sprintf("%s's effect: Order these cards that will be put on the bottom of your deck.", card.Name),
+		)
+
+		if len(orderedCardIds) == len(restOfCards) {
+			card.Player.ReorderCardsOnBottomDeck(restOfCards, orderedCardIds)
+		}
+
+	})
 }

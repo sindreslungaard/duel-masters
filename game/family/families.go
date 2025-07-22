@@ -56,4 +56,5 @@ const (
 	MechaDelSol     = "Mecha del Sol"
 )
 
+var Cybers = []string{CyberCluster, CyberLord, CyberVirus}
 var Dragons = []string{ArmoredDragon, VolcanoDragon, EarthDragon, ZombieDragon}
