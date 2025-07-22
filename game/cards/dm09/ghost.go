@@ -20,32 +20,43 @@ func IceVaporShadowOfAnguish(c *match.Card) {
 
 	c.Use(fx.Creature, fx.When(fx.OppSpellCast, func(card *match.Card, ctx *match.Context) {
 
-		fx.Select(
-			ctx.Match.Opponent(card.Player),
-			ctx.Match,
-			ctx.Match.Opponent(card.Player),
-			match.HAND,
-			fmt.Sprintf("%s's effect: Choose a card from your hand and discard it.", card.Name),
-			1,
-			1,
-			false,
-		).Map(func(x *match.Card) {
-			ctx.Match.Opponent(card.Player).MoveCard(x.ID, match.HAND, match.GRAVEYARD, card.ID)
-			ctx.Match.ReportActionInChat(ctx.Match.Opponent(card.Player), fmt.Sprintf("%s was discarded from %s's hand by %s's effect.", x.Name, ctx.Match.Opponent(card.Player).Username(), card.Name))
-		})
+		if card.Zone != match.BATTLEZONE {
+			return
+		}
 
-		fx.Select(
-			ctx.Match.Opponent(card.Player),
-			ctx.Match,
-			ctx.Match.Opponent(card.Player),
-			match.MANAZONE,
-			fmt.Sprintf("%s's effect: Choose a card from your mana zone and put it into your graveyard.", card.Name),
-			1,
-			1,
-			false,
-		).Map(func(x *match.Card) {
-			ctx.Match.Opponent(card.Player).MoveCard(x.ID, match.MANAZONE, match.GRAVEYARD, card.ID)
-			ctx.Match.ReportActionInChat(ctx.Match.Opponent(card.Player), fmt.Sprintf("%s was put into the graveyard from %s's mana zone by %s's effect.", x.Name, ctx.Match.Opponent(card.Player).Username(), card.Name))
+		//TODO see if another event must be fired, so we know when the actual spell effect
+		// has been resolved (something like AFTER OppSpellCast) !!
+		// in SpellCast handler
+		ctx.ScheduleAfter(func() {
+			fx.Select(
+				ctx.Match.Opponent(card.Player),
+				ctx.Match,
+				ctx.Match.Opponent(card.Player),
+				match.HAND,
+				fmt.Sprintf("%s's effect: Choose a card from your hand and discard it.", card.Name),
+				1,
+				1,
+				false,
+			).Map(func(x *match.Card) {
+				ctx.Match.Opponent(card.Player).MoveCard(x.ID, match.HAND, match.GRAVEYARD, card.ID)
+				ctx.Match.BroadcastState()
+				ctx.Match.ReportActionInChat(ctx.Match.Opponent(card.Player), fmt.Sprintf("%s was discarded from %s's hand by %s's effect.", x.Name, ctx.Match.Opponent(card.Player).Username(), card.Name))
+			})
+
+			fx.Select(
+				ctx.Match.Opponent(card.Player),
+				ctx.Match,
+				ctx.Match.Opponent(card.Player),
+				match.MANAZONE,
+				fmt.Sprintf("%s's effect: Choose a card from your mana zone and put it into your graveyard.", card.Name),
+				1,
+				1,
+				false,
+			).Map(func(x *match.Card) {
+				ctx.Match.Opponent(card.Player).MoveCard(x.ID, match.MANAZONE, match.GRAVEYARD, card.ID)
+				ctx.Match.BroadcastState()
+				ctx.Match.ReportActionInChat(ctx.Match.Opponent(card.Player), fmt.Sprintf("%s was put into the graveyard from %s's mana zone by %s's effect.", x.Name, ctx.Match.Opponent(card.Player).Username(), card.Name))
+			})
 		})
 
 	}))

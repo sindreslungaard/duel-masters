@@ -133,6 +133,7 @@ func Spell(card *match.Card, ctx *match.Context) {
 
 		ctx.ScheduleAfter(func() {
 			card.Player.MoveCard(card.ID, match.HAND, match.GRAVEYARD, card.ID)
+			//TODO fire an event here, to be handled in Ice Vapor card
 		})
 
 	}
