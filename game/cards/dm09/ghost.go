@@ -24,7 +24,7 @@ func IceVaporShadowOfAnguish(c *match.Card) {
 			return
 		}
 
-		//TODO see if another event must be fired, so we know when the actual spell effect
+		//@TODO see if another event must be fired, so we know when the actual spell effect
 		// has been resolved (something like AFTER OppSpellCast) !!
 		// in SpellCast handler
 		ctx.ScheduleAfter(func() {

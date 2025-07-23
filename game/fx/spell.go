@@ -129,11 +129,29 @@ func Spell(card *match.Card, ctx *match.Context) {
 			return
 		}
 
-		ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s played the spell %s", card.Player.Username(), card.Name))
+		ctx.ScheduleAfter(func() {
+			e := &match.SpellResolved{
+				CardID:        event.CardID,
+				FromShield:    event.FromShield,
+				MatchPlayerID: event.MatchPlayerID,
+			}
+
+			ctx.Match.HandleFx(match.NewContext(ctx.Match, e))
+		})
+
+	}
+
+	// On spell resolved
+	if event, ok := ctx.Event.(*match.SpellResolved); ok {
+
+		// Is this event for me or someone else?
+		if event.CardID != card.ID {
+			return
+		}
 
 		ctx.ScheduleAfter(func() {
 			card.Player.MoveCard(card.ID, match.HAND, match.GRAVEYARD, card.ID)
-			//TODO fire an event here, to be handled in Ice Vapor card
+			ctx.Match.BroadcastState()
 		})
 
 	}
