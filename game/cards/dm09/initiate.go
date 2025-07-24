@@ -22,13 +22,13 @@ func KaluteVizierOfEternity(c *match.Card) {
 		func(card *match.Card, ctx *match.Context) {
 			if event, ok := ctx.Event.(*match.CreatureDestroyed); ok {
 				if event.Card.ID == card.ID {
-					if len(fx.FindFilter(
+					fx.FindFilter(
 						card.Player,
 						match.BATTLEZONE,
 						func(x *match.Card) bool {
 							return x.Name == card.Name && x.ID != card.ID
 						},
-					)) > 0 {
+					).Map(func(x *match.Card) {
 						ctx.InterruptFlow()
 
 						_, err := card.Player.MoveCard(card.ID, match.BATTLEZONE, match.HAND, card.ID)
@@ -36,7 +36,7 @@ func KaluteVizierOfEternity(c *match.Card) {
 						if err != nil {
 							ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s was moved to hand instead of being destroyed.", card.Name))
 						}
-					}
+					})
 				}
 			}
 		})
