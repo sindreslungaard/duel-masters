@@ -64,7 +64,7 @@ func SuperTerradragonBailasGale(c *match.Card) {
 
 	c.Use(fx.Creature, fx.DragonEvolution, fx.Doublebreaker, func(card *match.Card, ctx *match.Context) {
 
-		if event, ok := ctx.Event.(*match.SpellCast); ok && c.Zone == match.BATTLEZONE && event.FromShield {
+		if event, ok := ctx.Event.(*match.SpellResolved); ok && c.Zone == match.BATTLEZONE && event.FromShield {
 
 			// check which player played the spell
 			var p *match.Player
@@ -83,10 +83,8 @@ func SuperTerradragonBailasGale(c *match.Card) {
 
 				// prevents card from being sent to grave
 				// uses the fact that cards in the battlezone are handled before ones in hand
-				ctx.ScheduleAfter(func() {
-					ctx.InterruptFlow()
-					ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s was returned to the hand by %s", spell.Name, c.Name))
-				})
+				ctx.InterruptFlow()
+				ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s was returned to the hand instead of graveyard by %s", spell.Name, c.Name))
 
 			}
 
