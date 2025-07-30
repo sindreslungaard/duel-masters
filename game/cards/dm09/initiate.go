@@ -39,5 +39,7 @@ func KaluteVizierOfEternity(c *match.Card) {
 					})
 				}
 			}
-		})
+		},
+	)
+
 }
