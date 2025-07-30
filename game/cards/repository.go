@@ -9,6 +9,7 @@ import (
 	"duel-masters/game/cards/dm06"
 	"duel-masters/game/cards/dm07"
 	"duel-masters/game/cards/dm08"
+	"duel-masters/game/cards/dm09"
 	"duel-masters/game/cards/promo"
 	"duel-masters/game/match"
 )
@@ -23,6 +24,7 @@ var Sets = map[string]*map[string]match.CardConstructor{
 	"dm-06": &DM06,
 	"dm-07": &DM07,
 	"dm-08": &DM08,
+	"dm-09": &DM09,
 	"promo": &Promo,
 }
 
@@ -649,6 +651,14 @@ var DM08 = map[string]match.CardConstructor{
 	"006d63ab-f038-455d-ae0b-254778f51813": dm08.FuriousOnslaught,
 	"e74f8316-eb76-41e0-aa44-f716c2e9ce8c": dm08.DimensionSplitter,
 	"5d4da0a8-3c88-4975-abb6-f3f14c16f512": dm08.CandyCluster,
+}
+
+var DM09 = map[string]match.CardConstructor{
+	"da37e2f2-95cf-48b0-a1a2-8e44aea6d884": dm09.MicuteTheOracle,
+	"313e725b-e8fc-4fc5-988c-f14cc45adff1": dm09.VreemahFreakyMojoTotem,
+	"7104edf5-edb3-4ce3-81f6-ef08b414d11b": dm09.WhisperingTotem,
+	"750f39b7-c3d3-4fd4-bf07-a45712195c42": dm09.VenomWorm,
+	"e855fefa-623c-4558-b523-185f6c0bc4fe": dm09.Tekorax,
 }
 
 // Promo is a map with all the card id's in the game and corresponding CardConstructor for promotional exclusive cards
