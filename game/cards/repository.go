@@ -24,6 +24,7 @@ var Sets = map[string]*map[string]match.CardConstructor{
 	"dm-06": &DM06,
 	"dm-07": &DM07,
 	"dm-08": &DM08,
+	"dm-09": &DM09,
 	"promo": &Promo,
 }
 
