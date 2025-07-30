@@ -17,6 +17,6 @@ func Tekorax(c *match.Card) {
 	c.ManaCost = 5
 	c.ManaRequirement = []string{civ.Water}
 
-	c.Use(fx.Creature, fx.Blocker(), fx.When(fx.Summoned, fx.LookAtOppShields))
+	c.Use(fx.Creature, fx.When(fx.Summoned, fx.LookAtOppShields))
 
 }
