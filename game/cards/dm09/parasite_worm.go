@@ -43,6 +43,7 @@ func venomWormTapAbility(card *match.Card, ctx *match.Context) {
 
 	allCreatures.Map(func(x *match.Card) {
 		x.AddUniqueSourceCondition(cnd.Slayer, true, card.ID)
-		ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("Every creature in the battlezone of %s race was given 'Slayer' until the end of the turn due to %s's effect.", family, card.Name))
 	})
+
+	ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("Every creature in the battlezone of %s race was given 'Slayer' until the end of the turn due to %s's effect.", family, card.Name))
 }
