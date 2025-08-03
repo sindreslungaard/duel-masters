@@ -4,6 +4,7 @@
 
 - Fixed an issue where "Nariel, the Oracle"'s ability did not work correctly (thanks @DragosIonita23)
 - New card "Petrova, Channeler of Suns" (thanks @DragosIonita23)
+- New card "Aqua Master" (thanks @DragosIonita23)
 - New card "Simian Warrior Grash" (thanks @jyotiskaghosh)
 - New card "Cavern Raider" (thanks @jyotiskaghosh)
 - New card "Tentacle Cluster" (thanks @jyotiskaghosh)
