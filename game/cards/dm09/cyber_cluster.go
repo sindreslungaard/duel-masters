@@ -8,6 +8,20 @@ import (
 	"fmt"
 )
 
+// TentacleCluster ...
+func TentacleCluster(c *match.Card) {
+
+	c.Name = "Tentacle Cluster"
+	c.Power = 2000
+	c.Civ = civ.Water
+	c.Family = []string{family.CyberCluster}
+	c.ManaCost = 5
+	c.ManaRequirement = []string{civ.Water}
+
+	c.Use(fx.Creature, fx.When(fx.WheneverThisAttacksPlayerAndIsntBlocked, fx.ReturnCreatureToOwnersHand))
+
+}
+
 // ScoutCluster ...
 func ScoutCluster(c *match.Card) {
 
