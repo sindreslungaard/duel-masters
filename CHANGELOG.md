@@ -11,6 +11,11 @@
 - New card "Trixo, Wicked Doll" (thanks @jyotiskaghosh)
 - New card "Cyclolink, Spectral Knight" (thanks @jyotiskaghosh)
 - New card "Quakesaur" (thanks @jyotiskaghosh)
+- New card "Mihail, Celestial Elemental" (thanks @DragosIonita23)
+- New card "Scout Cluster" (thanks @DragosIonita23)
+- New card "Stallob the Lifequasher" (thanks @DragosIonita23)
+- New card "Acid Reflux the Fleshboiler" (thanks @DragosIonita23)
+- New card "Snaptongue Lizard" (thanks @DragosIonita23)
 
 ## 10/07/2025
 
