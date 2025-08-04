@@ -41,18 +41,25 @@ func BaleskBajTheTimeburner(c *match.Card) {
 			}
 
 			ctx.ScheduleAfter(func() {
-				card.Player.MoveCard(card.ID, match.BATTLEZONE, match.HAND, card.ID)
-				ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s was returned to the %s's hand", c.Name, c.Player.Username()))
+				_, err := card.Player.MoveCard(card.ID, match.BATTLEZONE, match.HAND, card.ID)
+
+				if err == nil {
+					ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s was returned to the %s's hand", card.Name, card.Player.Username()))
+				} else {
+					attacked = false
+				}
 			})
 		}),
 		func(card *match.Card, ctx *match.Context) {
 			if _, ok := ctx.Event.(*match.EndOfTurnStep); ok {
-				if attacked {
-					attacked = false
-					ctx.InterruptFlow()
-					ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s's effect: You will take an extra turn after this one.", card.Name))
-					ctx.Match.BeginNewTurn(true)
-				}
+				ctx.ScheduleAfter(func() {
+					if attacked {
+						attacked = false
+						ctx.InterruptFlow()
+						ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s's effect: You will take an extra turn after this one.", card.Name))
+						ctx.Match.BeginNewTurn(true)
+					}
+				})
 			}
 		},
 	)
