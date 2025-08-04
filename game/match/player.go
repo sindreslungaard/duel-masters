@@ -584,21 +584,40 @@ func (p *Player) ReorderCardsOnBottomDeck(cards []*Card, orderedIDs []string) ([
 		return nil, err
 	}
 
+	// Lock the mutex at the beginning and defer unlock to ensure thread safety
+	// throughout the entire operation
+	p.mutex.Lock()
+	defer p.mutex.Unlock()
+
+	// Check that all cards are in the deck while holding the lock
+	// We can't use HasCard here because it would cause a deadlock (HasCard also tries to acquire the mutex)
 	for _, card := range cards {
-		if !p.HasCard(DECK, card.ID) {
+		found := false
+		for _, deckCard := range p.deck {
+			if deckCard.ID == card.ID {
+				found = true
+				break
+			}
+		}
+		if !found {
 			return nil, errors.New("Card is not in the specified container")
 		}
 	}
 
 	for _, cardId := range orderedIDs {
-		if !p.HasCard(DECK, cardId) {
+		found := false
+		for _, deckCard := range p.deck {
+			if deckCard.ID == cardId {
+				found = true
+				break
+			}
+		}
+		if !found {
 			return nil, errors.New("Card is not in the specified container")
 		}
 	}
 
 	// 1. Remove cards from deck
-	p.mutex.Lock()
-
 	temp := make([]*Card, 0)
 
 	for _, deckCard := range *deckRef {
@@ -607,7 +626,7 @@ func (p *Player) ReorderCardsOnBottomDeck(cards []*Card, orderedIDs []string) ([
 		for _, cardToRemove := range cards {
 			if deckCard.ID == cardToRemove.ID {
 				remove = true
-				continue
+				break
 			}
 		}
 
@@ -617,20 +636,25 @@ func (p *Player) ReorderCardsOnBottomDeck(cards []*Card, orderedIDs []string) ([
 	}
 
 	*deckRef = temp
-	p.mutex.Unlock()
 
 	// 2. Put them on the bottom of the deck, in the order
 	//    specified by the card IDs in orderedIDs slice parameter
 	for _, cardIDToAppend := range orderedIDs {
-		cardToAppend, err := p.GetCard(cardIDToAppend, DECK)
+		var cardToAppend *Card
 
-		if err != nil {
-			return nil, err
+		// Find the card in the cards slice (since it's no longer in the deck)
+		for _, card := range cards {
+			if card.ID == cardIDToAppend {
+				cardToAppend = card
+				break
+			}
 		}
 
-		p.mutex.Lock()
+		if cardToAppend == nil {
+			return nil, errors.New("Card not found in provided cards slice")
+		}
+
 		*deckRef = append(*deckRef, cardToAppend)
-		p.mutex.Unlock()
 	}
 
 	return *deckRef, nil
