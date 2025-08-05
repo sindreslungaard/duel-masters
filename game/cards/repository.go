@@ -24,6 +24,7 @@ var Sets = map[string]*map[string]match.CardConstructor{
 	"dm-06": &DM06,
 	"dm-07": &DM07,
 	"dm-08": &DM08,
+	"dm-09": &DM09,
 	"promo": &Promo,
 }
 
@@ -653,9 +654,21 @@ var DM08 = map[string]match.CardConstructor{
 }
 
 var DM09 = map[string]match.CardConstructor{
-	"fb6614a6-644d-4fde-9958-225cf2295d47": dm09.SimianWarriorGrash,
 	"206b19fb-b389-44f3-9a45-06a7df6dc0f0": dm09.SteamRumblerKain,
 	"c23b0bbb-6a76-4b92-a224-832ed12544ff": dm09.AerodactylKooza,
+	"2b33507e-0154-43f7-a190-e84178ea81c9": dm09.AquaMaster,
+	"fc2021fa-453b-4774-8127-82bc94cdc6a1": dm09.PetrovaChannelerOfSuns,
+	"6c7b55dc-065b-4d8b-8b17-0350e6157c48": dm09.TentacleCluster,
+	"5703585a-5a92-41c8-b8fc-4775d71429c2": dm09.TrixoWickedDoll,
+	"5680ad34-e725-45a3-a53a-9b3c7f24feae": dm09.Quakesaur,
+	"fb6614a6-644d-4fde-9958-225cf2295d47": dm09.SimianWarriorGrash,
+	"6c075256-a127-4419-943d-400c9df1e9b7": dm09.CyclolinkSpectralKnight,
+	"ea7ebbe2-59ce-4257-a5b6-8b074c4ed75d": dm09.CavernRaider,
+	"136670b4-7c19-49a0-bc89-c920c34be0cc": dm09.MihailCelestialElemental,
+	"8733dbde-24a8-4015-863a-3684657c4dd6": dm09.ScoutCluster,
+	"e8701278-6d71-4cd6-bc92-23690b8de9d2": dm09.StallobTheLifequasher,
+	"ec6a2833-e4ef-401e-a025-28deef02a46d": dm09.AcidRefluxTheFleshboiler,
+	"24ee2a43-3ec4-44d0-82a6-ba80e58e5255": dm09.SnaptongueLizard,
 }
 
 // Promo is a map with all the card id's in the game and corresponding CardConstructor for promotional exclusive cards

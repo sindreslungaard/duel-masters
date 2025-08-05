@@ -619,17 +619,11 @@ func (p *Player) Denormalized() *server.PlayerState {
 
 	p.mutex.Lock()
 
-	shields := make([]string, 0)
-
-	for _, card := range p.shieldzone {
-		shields = append(shields, card.ID)
-	}
-
 	state := &server.PlayerState{
 		Deck:       len(p.deck),
 		HandCount:  len(p.hand),
 		Hand:       denormalizeCards(p.hand, false),
-		Shieldzone: shields,
+		Shieldzone: denormalizeShields(p.shieldzone),
 		ShieldMap:  p.ShieldMap,
 		Manazone:   denormalizeCards(p.manazone, false),
 		Graveyard:  denormalizeCards(p.graveyard, false),
@@ -674,7 +668,7 @@ func denormalizeCards(cards []*Card, partial bool) []server.CardState {
 			Flags:   uint8(flags),
 		}
 
-		if partial {
+		if partial && !card.ShieldFaceUp {
 			cs.ImageID = "backside"
 			cs.Name = ""
 			cs.Civ = "water" // blue highlight color when selected in actions
@@ -684,6 +678,32 @@ func denormalizeCards(cards []*Card, partial bool) []server.CardState {
 		}
 
 		arr = append(arr, cs)
+	}
+
+	return arr
+
+}
+
+// denormalizeShields takes an array of *Card and returns an array of server.ShieldState
+func denormalizeShields(cards []*Card) []server.ShieldState {
+
+	arr := make([]server.ShieldState, 0)
+
+	for _, card := range cards {
+
+		var flags CardFlags
+
+		if card.ShieldFaceUp {
+			flags |= ShieldFaceUpFlag
+		}
+
+		ss := server.ShieldState{
+			CardID:  card.ID,
+			ImageID: card.ImageID,
+			Flags:   uint8(flags),
+		}
+
+		arr = append(arr, ss)
 	}
 
 	return arr
