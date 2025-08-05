@@ -24,6 +24,8 @@ func UnifiedResistance(c *match.Card) {
 		)
 
 		if family != "" {
+			ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("Until the start of your next turn, each of your '%s' creatures in the battlezone gets 'Blocker'", family))
+
 			ctx.Match.ApplyPersistentEffect(func(ctx2 *match.Context, exit func()) {
 				fx.FindFilter(
 					card.Player,

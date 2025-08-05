@@ -31,6 +31,8 @@ func hokiraTapAbility(card *match.Card, ctx *match.Context) {
 	)
 
 	if family != "" {
+		ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("Whenever one of your '%s' creatures would be destroyed this turn, return it to your hand instead.", family))
+
 		ctx.Match.ApplyPersistentEffect(func(ctx2 *match.Context, exit func()) {
 			// Because at the end of the turn, creatures might still be destroyed
 			// by some effects

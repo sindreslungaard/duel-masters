@@ -27,6 +27,8 @@ func SilvermoonTrailblazer(c *match.Card) {
 func silvermoonTrailblazerTapAbility(card *match.Card, ctx *match.Context) {
 	family := fx.ChooseAFamily(card, ctx, fmt.Sprintf("%s's effect: Choose a race. Creatures of that race can't be blocked by creatures that have power 3000 or less this turn.", card.Name))
 
+	ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("Creatures of '%s' can't be blocked by creatures that have power 3000 or less this turn.", family))
+
 	fx.FindFilter(
 		card.Player,
 		match.BATTLEZONE,

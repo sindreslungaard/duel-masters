@@ -31,6 +31,8 @@ func traRionPenumbraGuardianTapAbility(card *match.Card, ctx *match.Context) {
 	)
 
 	if family != "" {
+		ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("At the end of this turn, untap all '%s' creatures in the battlezone.", family))
+
 		ctx.Match.ApplyPersistentEffect(func(ctx2 *match.Context, exit func()) {
 			if _, ok := ctx2.Event.(*match.EndOfTurnStep); ok {
 				ctx2.ScheduleAfter(func() {
