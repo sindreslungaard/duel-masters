@@ -1109,7 +1109,7 @@ func GetAllFamiliesFilter(card *match.Card, ctx *match.Context, filter func(x st
 	families = append(families, oppManaFamilies...)
 	families = append(families, oppGraveFamilies...)
 
-	return distinctStringsFilter(families, func(x string) bool { return true })
+	return distinctStringsFilter(families, filter)
 }
 
 func distinctStringsFilter(slice []string, filter func(x string) bool) []string {
@@ -1118,11 +1118,9 @@ func distinctStringsFilter(slice []string, filter func(x string) bool) []string 
 
 	for _, str := range slice {
 		if !seen[str] && filter(str) { // If the element hasn't been seen before
-
 			seen[str] = true             // Mark it as seen
 			result = append(result, str) // Append to result, maintaining order
 		}
 	}
-
 	return result
 }
