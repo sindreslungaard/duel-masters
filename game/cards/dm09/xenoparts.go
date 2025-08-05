@@ -26,22 +26,26 @@ func GigiosHammer(c *match.Card) {
 func gigiosHammerTapAbility(card *match.Card, ctx *match.Context) {
 	family := fx.ChooseAFamily(card, ctx, fmt.Sprintf("%s's effect: Choose a race. Each creature of that race attacks this turn if able and gets 'Power attacker +4000'.", card.Name))
 
-	fx.FindFilter(
-		card.Player,
-		match.BATTLEZONE,
-		func(x *match.Card) bool {
-			return x.HasFamily(family) && x.HasCondition(cnd.Creature)
-		},
-	).Map(func(x *match.Card) {
-		ctx.Match.ApplyPersistentEffect(func(ctx2 *match.Context, exit func()) {
-			if _, ok := ctx2.Event.(*match.EndOfTurnStep); ok {
-				x.RemoveConditionBySource(card.ID)
-				exit()
-				return
-			}
+	if family != "" {
+		ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("This turn, each '%s' creature attacks if able and gets 'Power attacker +4000'.", family))
 
-			x.AddUniqueSourceCondition(cnd.PowerAttacker, 4000, card.ID)
-			fx.ForceAttack(x, ctx2)
+		ctx.Match.ApplyPersistentEffect(func(ctx2 *match.Context, exit func()) {
+			fx.FindFilter(
+				card.Player,
+				match.BATTLEZONE,
+				func(x *match.Card) bool {
+					return x.HasFamily(family) && x.HasCondition(cnd.Creature)
+				},
+			).Map(func(x *match.Card) {
+				if _, ok := ctx2.Event.(*match.EndOfTurnStep); ok {
+					x.RemoveConditionBySource(card.ID)
+					exit()
+					return
+				}
+
+				x.AddUniqueSourceCondition(cnd.PowerAttacker, 4000, card.ID)
+				fx.ForceAttack(x, ctx2)
+			})
 		})
-	})
+	}
 }
