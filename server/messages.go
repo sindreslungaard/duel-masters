@@ -30,6 +30,13 @@ type CardState struct {
 	Flags   uint8  `json:"flags"`
 }
 
+// ShieldState stores information about the state of a shield
+type ShieldState struct {
+	CardID  string `json:"virtualId"`
+	ImageID string `json:"uid"`
+	Flags   uint8  `json:"flags"`
+}
+
 // PlayerState stores information about the state of the current player
 type PlayerState struct {
 	Username   string         `json:"username"`
@@ -37,7 +44,7 @@ type PlayerState struct {
 	Deck       int            `json:"deck"`
 	HandCount  int            `json:"handCount"`
 	Hand       []CardState    `json:"hand"`
-	Shieldzone []string       `json:"shieldzone"`
+	Shieldzone []ShieldState  `json:"shieldzone"`
 	ShieldMap  map[string]int `json:"shieldMap"`
 	Manazone   []CardState    `json:"manazone"`
 	Graveyard  []CardState    `json:"graveyard"`
