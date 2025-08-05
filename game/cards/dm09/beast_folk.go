@@ -35,11 +35,6 @@ func silvermoonTrailblazerTapAbility(card *match.Card, ctx *match.Context) {
 		},
 	).Map(func(x *match.Card) {
 		ctx.Match.ApplyPersistentEffect(func(ctx2 *match.Context, exit func()) {
-			if x.Zone != match.BATTLEZONE {
-				exit()
-				return
-			}
-
 			if _, ok := ctx2.Event.(*match.EndOfTurnStep); ok {
 				exit()
 				return
@@ -77,7 +72,7 @@ func StormWranglerTheFurious(c *match.Card) {
 
 				if event, ok := ctx2.Event.(*match.Battle); ok && event.Attacker == card && event.Blocked {
 					event.AttackerPower += 3000                                      // for the current battle
-					card.AddUniqueSourceCondition(cnd.PowerAmplifier, 3000, card.ID) // for the next battles in this turn
+					card.AddUniqueSourceCondition(cnd.PowerAmplifier, 3000, card.ID) // for the next potential battles in this turn
 				}
 			})
 		}),

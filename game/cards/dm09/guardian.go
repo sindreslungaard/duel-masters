@@ -32,41 +32,29 @@ func traRionPenumbraGuardianTapAbility(card *match.Card, ctx *match.Context) {
 
 	if family != "" {
 		ctx.Match.ApplyPersistentEffect(func(ctx2 *match.Context, exit func()) {
-			affectedCreatures := fx.FindFilter(
-				card.Player,
-				match.BATTLEZONE,
-				func(x *match.Card) bool {
-					return x.HasFamily(family) && !x.HasCondition(card.ID+"-custom")
-				},
-			)
-
-			affectedCreatures = append(affectedCreatures, fx.FindFilter(
-				ctx2.Match.Opponent(card.Player),
-				match.BATTLEZONE,
-				func(x *match.Card) bool {
-					return x.HasFamily(family) && !x.HasCondition(card.ID+"-custom")
-				},
-			)...).Map(func(x *match.Card) {
-				ctx2.Match.ApplyPersistentEffect(func(ctx3 *match.Context, exit2 func()) {
-					x.AddUniqueSourceCondition(card.ID+"-custom", true, card.ID)
-
-					if _, ok := ctx3.Event.(*match.EndOfTurnStep); ok {
-						x.RemoveConditionBySource(card.ID)
-
-						x.Tapped = false
-
-						exit2()
-						return
-					}
-				})
-			})
-
 			if _, ok := ctx2.Event.(*match.EndOfTurnStep); ok {
-				affectedCreatures.Map(func(x *match.Card) {
-					x.RemoveConditionBySource(card.ID)
+				ctx2.ScheduleAfter(func() {
+					affectedCreatures := fx.FindFilter(
+						card.Player,
+						match.BATTLEZONE,
+						func(x *match.Card) bool {
+							return x.HasFamily(family)
+						},
+					)
+
+					append(affectedCreatures, fx.FindFilter(
+						ctx2.Match.Opponent(card.Player),
+						match.BATTLEZONE,
+						func(x *match.Card) bool {
+							return x.HasFamily(family)
+						},
+					)...).Map(func(x *match.Card) {
+						x.Tapped = false
+						ctx2.Match.BroadcastState()
+					})
+
+					exit()
 				})
-				exit()
-				return
 			}
 		})
 	}

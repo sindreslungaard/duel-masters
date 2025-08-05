@@ -34,37 +34,23 @@ func hokiraTapAbility(card *match.Card, ctx *match.Context) {
 		ctx.Match.ApplyPersistentEffect(func(ctx2 *match.Context, exit func()) {
 			// Because at the end of the turn, creatures might still be destroyed
 			// by some effects
-			if _, ok := ctx2.Event.(*match.BeginTurnStep); ok {
-				exit()
-				return
+			if _, ok := ctx2.Event.(*match.EndOfTurnStep); ok {
+				ctx2.ScheduleAfter(func() {
+					exit()
+				})
 			}
 
 			fx.FindFilter(
 				card.Player,
 				match.BATTLEZONE,
 				func(x *match.Card) bool {
-					return x.HasFamily(family) && !x.HasCondition(card.ID+"-custom")
+					return x.HasFamily(family)
 				},
 			).Map(func(x *match.Card) {
-				ctx2.Match.ApplyPersistentEffect(func(ctx3 *match.Context, exit2 func()) {
-
-					if _, ok := ctx3.Event.(*match.BeginTurnStep); ok {
-						x.RemoveConditionBySource(card.ID)
-						exit2()
-						return
-					}
-
-					x.AddUniqueSourceCondition(card.ID+"-custom", true, card.ID)
-
-					if fx.WouldBeDestroyed(x, ctx3) {
-						ctx3.InterruptFlow()
-						x.RemoveConditionBySource(card.ID)
-						x.Player.MoveCard(x.ID, match.BATTLEZONE, match.HAND, card.ID)
-						ctx3.Match.ReportActionInChat(x.Player, fmt.Sprintf("%s was returned to hand instead of being destroyed due to %s's effect.", x.Name, card.Name))
-						exit2()
-					}
-
-				})
+				if fx.WouldBeDestroyed(x, ctx2) {
+					x.Player.MoveCard(x.ID, match.BATTLEZONE, match.HAND, card.ID)
+					ctx2.Match.ReportActionInChat(x.Player, fmt.Sprintf("%s was returned to hand instead of being destroyed due to %s's effect.", x.Name, card.Name))
+				}
 			})
 		})
 	}
