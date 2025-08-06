@@ -55,6 +55,8 @@ func JilWarkaTimeGuardian(c *match.Card) {
 				x.Tapped = true
 				ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s was tapped by %s's effect.", x.Name, card.Name))
 			})
+
+			ctx.Match.BroadcastState()
 		}))
 
 }
