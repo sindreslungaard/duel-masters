@@ -20,6 +20,7 @@ func GlenaVueleTheHypnotic(c *match.Card) {
 
 	c.Use(fx.Creature, fx.Evolution, fx.Doublebreaker,
 		fx.When(fx.OpponentUsedShieldTrigger, func(card *match.Card, ctx *match.Context) {
+			// TODO -- 2 triggers + spiral gate !!
 			if fx.BinaryQuestion(
 				card.Player,
 				ctx.Match,
@@ -50,7 +51,7 @@ func JilWarkaTimeGuardian(c *match.Card) {
 				fmt.Sprintf("%s's effect: Choose up to 2 of your opponent's creatures in the battlezone and tap them.", card.Name),
 				1,
 				2,
-				false,
+				true,
 			).Map(func(x *match.Card) {
 				x.Tapped = true
 				ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s was tapped by %s's effect.", x.Name, card.Name))
