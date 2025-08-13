@@ -20,6 +20,17 @@ func (c CardCollection) Map(h func(x *match.Card)) CardCollection {
 	return c
 }
 
+// Project iterates through cards in the collection and selects the family field
+func (c CardCollection) ProjectFamilies() []string {
+	var families []string
+
+	for _, card := range c {
+		families = append(families, card.Family...)
+	}
+
+	return families
+}
+
 func (c CardCollection) Or(h func()) {
 	if len(c) > 0 {
 		return
@@ -245,6 +256,23 @@ func SelectFilter(p *match.Player, m *match.Match, containerOwner *match.Player,
 		return result
 	}
 
+	newCards := make([]*match.Card, 0)
+
+	for _, card := range filtered {
+		if !(card.Zone == match.BATTLEZONE &&
+			card.HasCondition(cnd.CantBeSelectedByOpp) &&
+			p != card.Player) {
+			newCards = append(newCards, card)
+		}
+	}
+
+	filtered = newCards
+
+	filteredLength = len(filtered)
+	if filteredLength < 1 {
+		return result
+	}
+
 	// Make sure the selection interval fits in the length of the remaining filtered cards slice
 	if filteredLength < min {
 		min = filteredLength
@@ -313,8 +341,27 @@ func selectMultipartBase(p *match.Player, m *match.Match, cards map[string][]*ma
 		return result
 	}
 
+	// filter out cards that have CantBeSelectedByOpp (Petrova, Channeler of Suns)
+	newCardsMap := make(map[string][]*match.Card, 0)
+
+	for key, cardList := range cards {
+		newCards := make([]*match.Card, 0)
+
+		for _, card := range cardList {
+			if !(card.Zone == match.BATTLEZONE &&
+				card.HasCondition(cnd.CantBeSelectedByOpp) &&
+				p != card.Player) {
+				newCards = append(newCards, card)
+			}
+		}
+
+		newCardsMap[key] = newCards
+	}
+
 	notEmpty := false
 	totalCardsLength := 0
+
+	cards = newCardsMap
 
 	for _, cardList := range cards {
 		if len(cardList) > 0 {
@@ -884,20 +931,15 @@ func IHaveCastASpell(card *match.Card, ctx *match.Context) bool {
 	return false
 }
 
-func WheneverThisAttacksAndIsntBlocked(card *match.Card, ctx *match.Context) bool {
-	if event, ok := ctx.Event.(*match.Battle); ok {
-		return event.Attacker == card && !event.Blocked
-	}
-
-	if event, ok := ctx.Event.(*match.BreakShieldEvent); ok {
-		return event.Source == card
-	}
-
-	return false
-}
 func WheneverThisAttacksPlayerAndIsntBlocked(card *match.Card, ctx *match.Context) bool {
-	if event, ok := ctx.Event.(*match.BreakShieldEvent); ok {
-		return event.Source == card
+	if card.HasCondition(cnd.HasShieldsSelectionEffect) {
+		if event, ok := ctx.Event.(*match.SelectShields); ok {
+			return event.Attacker == card
+		}
+	} else {
+		if event, ok := ctx.Event.(*match.BreakShieldEvent); ok {
+			return event.Source == card
+		}
 	}
 
 	return false
@@ -950,6 +992,143 @@ func ForcePutCreatureIntoBZ(ctx *match.Context, creature *match.Card, from strin
 		}
 	}
 
+}
+
+func ChooseAFamily(card *match.Card, ctx *match.Context, text string) string {
+	allFamilies := GetAllFamiliesFilter(card, ctx, func(x string) bool { return true })
+
+	chosenIndex := MultipleChoiceQuestion(
+		card.Player,
+		ctx.Match,
+		text,
+		allFamilies,
+	)
+
+	if chosenIndex >= 0 && chosenIndex < len(allFamilies) {
+		return allFamilies[chosenIndex]
+	} else {
+		return ""
+	}
+}
+
+func ChooseAFamilyFilter(card *match.Card, ctx *match.Context, text string, filter func(x string) bool) string {
+	filteredFamilies := GetAllFamiliesFilter(card, ctx, filter)
+
+	chosenIndex := MultipleChoiceQuestion(
+		card.Player,
+		ctx.Match,
+		text,
+		filteredFamilies,
+	)
+
+	if chosenIndex >= 0 && chosenIndex < len(filteredFamilies) {
+		return filteredFamilies[chosenIndex]
+	} else {
+		return ""
+	}
+}
+
+// Returns a list of all families currently implemented in the game
+// The relative order of the returned list is as follows:
+//  1. Your creatures from the battle zone
+//  2. Your creatures in your hand
+//  3. Your creatures in your mana zone
+//  4. Your creatures in your graveyard
+//  5. Opponent creatures from the battle zone
+//  6. Opponent creatures in his hand
+//  7. Opponent creatures in his mana zone
+//  8. Opponent creatures in his graveyard
+//  9. Rest of families in the game
+func GetAllFamiliesFilter(card *match.Card, ctx *match.Context, filter func(x string) bool) []string {
+	families := make([]string, 0)
+
+	myBZFamilies := FindFilter(
+		card.Player,
+		match.BATTLEZONE,
+		func(x *match.Card) bool {
+			return !x.HasCondition(cnd.Spell) && len(x.Family) > 0
+		},
+	).ProjectFamilies()
+
+	myHandFamilies := FindFilter(
+		card.Player,
+		match.HAND,
+		func(x *match.Card) bool {
+			return !x.HasCondition(cnd.Spell) && len(x.Family) > 0
+		},
+	).ProjectFamilies()
+
+	myManaFamilies := FindFilter(
+		card.Player,
+		match.MANAZONE,
+		func(x *match.Card) bool {
+			return !x.HasCondition(cnd.Spell) && len(x.Family) > 0
+		},
+	).ProjectFamilies()
+
+	myGraveFamilies := FindFilter(
+		card.Player,
+		match.GRAVEYARD,
+		func(x *match.Card) bool {
+			return !x.HasCondition(cnd.Spell) && len(x.Family) > 0
+		},
+	).ProjectFamilies()
+
+	oppBZFamilies := FindFilter(
+		ctx.Match.Opponent(card.Player),
+		match.BATTLEZONE,
+		func(x *match.Card) bool {
+			return !x.HasCondition(cnd.Spell) && len(x.Family) > 0
+		},
+	).ProjectFamilies()
+
+	oppHandFamilies := FindFilter(
+		ctx.Match.Opponent(card.Player),
+		match.HAND,
+		func(x *match.Card) bool {
+			return !x.HasCondition(cnd.Spell) && len(x.Family) > 0
+		},
+	).ProjectFamilies()
+
+	oppManaFamilies := FindFilter(
+		ctx.Match.Opponent(card.Player),
+		match.MANAZONE,
+		func(x *match.Card) bool {
+			return !x.HasCondition(cnd.Spell) && len(x.Family) > 0
+		},
+	).ProjectFamilies()
+
+	oppGraveFamilies := FindFilter(
+		ctx.Match.Opponent(card.Player),
+		match.GRAVEYARD,
+		func(x *match.Card) bool {
+			return !x.HasCondition(cnd.Spell) && len(x.Family) > 0
+		},
+	).ProjectFamilies()
+
+	families = append(families, myBZFamilies...)
+	families = append(families, myHandFamilies...)
+	families = append(families, myManaFamilies...)
+	families = append(families, myGraveFamilies...)
+	families = append(families, oppBZFamilies...)
+	families = append(families, oppHandFamilies...)
+	families = append(families, oppManaFamilies...)
+	families = append(families, oppGraveFamilies...)
+
+	return distinctStringsFilter(families, filter)
+}
+
+func distinctStringsFilter(slice []string, filter func(x string) bool) []string {
+	seen := make(map[string]bool) // Map to track seen elements
+	var result []string
+
+	for _, str := range slice {
+		if !seen[str] && filter(str) { // If the element hasn't been seen before
+			seen[str] = true             // Mark it as seen
+			result = append(result, str) // Append to result, maintaining order
+		}
+	}
+	return result
 }
 
 func LookTop4Put1IntoHandReorderRestOnBottomDeck(card *match.Card, ctx *match.Context) {

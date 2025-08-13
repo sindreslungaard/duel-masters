@@ -30,4 +30,5 @@ const (
 	Stealth                   = "stealth"
 	AddFamily                 = "add_family"
 	HasShieldsSelectionEffect = "Has_shields_selection_effect"
+	CantBeSelectedByOpp       = "cant_be_selected_by_opp"
 )

@@ -960,14 +960,16 @@ func (m *Match) Start() {
 }
 
 // BeginNewTurn starts a new turn
-func (m *Match) BeginNewTurn() {
+func (m *Match) BeginNewTurn(repeatTurn ...bool) {
 
 	m.Step = &BeginTurnStep{}
 
-	if m.Turn == 1 {
-		m.Turn = 2
-	} else {
-		m.Turn = 1
+	if len(repeatTurn) == 0 || !repeatTurn[0] {
+		if m.Turn == 1 {
+			m.Turn = 2
+		} else {
+			m.Turn = 1
+		}
 	}
 
 	ctx := NewContext(m, m.Step)
@@ -1068,7 +1070,10 @@ func (m *Match) EndOfTurnTriggers() {
 	m.isFirstTurn = false
 	ctx := NewContext(m, m.Step)
 	m.HandleFx(ctx)
-	m.BeginNewTurn()
+
+	if !ctx.Cancelled() {
+		m.BeginNewTurn()
+	}
 }
 
 // EndTurn is called when the player attempts to end their turn
