@@ -668,6 +668,11 @@ var DM09 = map[string]match.CardConstructor{
 	"ec6a2833-e4ef-401e-a025-28deef02a46d": dm09.AcidRefluxTheFleshboiler,
 	"24ee2a43-3ec4-44d0-82a6-ba80e58e5255": dm09.SnaptongueLizard,
 	"4dbc114f-b53e-45f5-baa5-5ca33a5a3337": dm09.BaleskBajTheTimeburner,
+	"39eba063-d49c-4c65-af0f-4a410db6ad86": dm09.ZeppelinCrawler,
+	"c58d4c7e-2569-4c9b-a1b0-93c00187c788": dm09.MarchingMotherboard,
+	"cf96ecd5-481a-4a63-b8f1-61731525d956": dm09.KelpCandle,
+	"83ac5a3a-1b3d-43f9-a08e-4415e5f478ff": dm09.AzaghastTyrantOfShadows,
+	"da93d9d0-b569-408d-af93-b4a4286fc91f": dm09.BatDoctorShadowOfUndeath,
 }
 
 // Promo is a map with all the card id's in the game and corresponding CardConstructor for promotional exclusive cards
