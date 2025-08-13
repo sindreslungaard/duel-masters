@@ -17,6 +17,11 @@
 - New card "Acid Reflux the Fleshboiler" (thanks @DragosIonita23)
 - New card "Snaptongue Lizard" (thanks @DragosIonita23)
 - New card "Balesk Baj, the Timeburner" (thanks @DragosIonita23)
+- New card "Marching Motherboard" (thanks @DragosIonita23)
+- New card "Kelp Candle" (thanks @DragosIonita23)
+- New card "Azaghast, Tyrant of Shadows" (thanks @DragosIonita23)
+- New card "Zeppelin Crawler" (thanks @DragosIonita23)
+- New card "Bat Doctor, Shadow of Undeath" (thanks @DragosIonita23)
 
 ## 10/07/2025
 
