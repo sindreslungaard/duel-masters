@@ -16,6 +16,7 @@
 - New card "Stallob the Lifequasher" (thanks @DragosIonita23)
 - New card "Acid Reflux the Fleshboiler" (thanks @DragosIonita23)
 - New card "Snaptongue Lizard" (thanks @DragosIonita23)
+- New card "Balesk Baj, the Timeburner" (thanks @DragosIonita23)
 
 ## 10/07/2025
 
