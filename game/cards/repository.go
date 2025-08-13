@@ -667,6 +667,7 @@ var DM09 = map[string]match.CardConstructor{
 	"e8701278-6d71-4cd6-bc92-23690b8de9d2": dm09.StallobTheLifequasher,
 	"ec6a2833-e4ef-401e-a025-28deef02a46d": dm09.AcidRefluxTheFleshboiler,
 	"24ee2a43-3ec4-44d0-82a6-ba80e58e5255": dm09.SnaptongueLizard,
+	"4dbc114f-b53e-45f5-baa5-5ca33a5a3337": dm09.BaleskBajTheTimeburner,
 }
 
 // Promo is a map with all the card id's in the game and corresponding CardConstructor for promotional exclusive cards
