@@ -686,11 +686,7 @@ func tapCardAndConfirmAttack(card *match.Card, ctx *match.Context, attackPlayer 
 	ctx.Match.HandleFx(match.NewContext(ctx.Match, &match.AttackConfirmed{CardID: card.ID, Player: attackPlayer, Creature: !attackPlayer}))
 
 	// In case AttackConfirmed effect removes itself (current attacking card) from the Battlezone
-	if card.Zone != match.BATTLEZONE {
-		return false
-	}
-
-	return true
+	return card.Zone == match.BATTLEZONE
 }
 
 func HasSummoningSickness(card *match.Card) bool {
