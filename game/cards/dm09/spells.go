@@ -24,38 +24,27 @@ func UnifiedResistance(c *match.Card) {
 		)
 
 		if family != "" {
-			ctx.Match.ApplyPersistentEffect(func(ctx2 *match.Context, exit func()) {
+			ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("Until the start of your next turn, each of your '%s' creatures in the battlezone gets 'Blocker'", family))
 
+			ctx.Match.ApplyPersistentEffect(func(ctx2 *match.Context, exit func()) {
 				fx.FindFilter(
 					card.Player,
 					match.BATTLEZONE,
 					func(x *match.Card) bool {
-						return x.HasFamily(family) && !x.HasCondition(card.ID+"-custom")
+						return x.HasFamily(family)
 					},
 				).Map(func(x *match.Card) {
-					ctx2.Match.ApplyPersistentEffect(func(ctx3 *match.Context, exit2 func()) {
-						x.AddUniqueSourceCondition(card.ID+"-custom", true, card.ID)
+					_, ok := ctx2.Event.(*match.StartOfTurnStep)
+					if ok && ctx2.Match.IsPlayerTurn(card.Player) {
+						x.RemoveConditionBySource(card.ID)
+						exit()
+						return
+					}
 
-						_, ok := ctx3.Event.(*match.StartOfTurnStep)
-						if ok && ctx3.Match.IsPlayerTurn(card.Player) {
-							x.RemoveConditionBySource(card.ID)
-							exit2()
-							return
-						}
-
-						fx.ForceBlocker(x, ctx3, card.ID)
-					})
+					fx.ForceBlocker(x, ctx2, card.ID)
 				})
-
-				_, ok := ctx2.Event.(*match.StartOfTurnStep)
-				if ok && ctx2.Match.IsPlayerTurn(card.Player) {
-					exit()
-					return
-				}
-
 			})
 		}
-
 	}))
 
 }
