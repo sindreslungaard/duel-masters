@@ -2,7 +2,26 @@
 
 ## [Unreleased]
 
-- No unreleased changes
+- Fixed an issue where "Nariel, the Oracle"'s ability did not work correctly (thanks @DragosIonita23)
+- New card "Petrova, Channeler of Suns" (thanks @DragosIonita23)
+- New card "Aqua Master" (thanks @DragosIonita23)
+- New card "Simian Warrior Grash" (thanks @jyotiskaghosh)
+- New card "Cavern Raider" (thanks @jyotiskaghosh)
+- New card "Tentacle Cluster" (thanks @jyotiskaghosh)
+- New card "Trixo, Wicked Doll" (thanks @jyotiskaghosh)
+- New card "Cyclolink, Spectral Knight" (thanks @jyotiskaghosh)
+- New card "Quakesaur" (thanks @jyotiskaghosh)
+- New card "Mihail, Celestial Elemental" (thanks @DragosIonita23)
+- New card "Scout Cluster" (thanks @DragosIonita23)
+- New card "Stallob the Lifequasher" (thanks @DragosIonita23)
+- New card "Acid Reflux the Fleshboiler" (thanks @DragosIonita23)
+- New card "Snaptongue Lizard" (thanks @DragosIonita23)
+- New card "Balesk Baj, the Timeburner" (thanks @DragosIonita23)
+- New card "Marching Motherboard" (thanks @DragosIonita23)
+- New card "Kelp Candle" (thanks @DragosIonita23)
+- New card "Azaghast, Tyrant of Shadows" (thanks @DragosIonita23)
+- New card "Zeppelin Crawler" (thanks @DragosIonita23)
+- New card "Bat Doctor, Shadow of Undeath" (thanks @DragosIonita23)
 
 ## 10/07/2025
 
