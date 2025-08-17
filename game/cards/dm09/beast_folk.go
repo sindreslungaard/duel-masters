@@ -139,5 +139,18 @@ func StormWranglerTheFurious(c *match.Card) {
 				})
 			})
 		}))
+}
+
+// CavernRaider ...
+func CavernRaider(c *match.Card) {
+
+	c.Name = "Cavern Raider"
+	c.Power = 2000
+	c.Civ = civ.Nature
+	c.Family = []string{family.BeastFolk}
+	c.ManaCost = 3
+	c.ManaRequirement = []string{civ.Nature}
+
+	c.Use(fx.Creature, fx.When(fx.WheneverThisAttacksPlayerAndIsntBlocked, fx.SearchDeckTake1Creature))
 
 }
