@@ -25,35 +25,26 @@ func ImpossibleTunnel(c *match.Card) {
 		)
 
 		if family != "" {
-			ctx.Match.ApplyPersistentEffect(func(ctx2 *match.Context, exit func()) {
+			ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("'%s' creatures can't be blocked this turn.", family))
 
+			ctx.Match.ApplyPersistentEffect(func(ctx2 *match.Context, exit func()) {
 				fx.FindFilter(
 					card.Player,
 					match.BATTLEZONE,
 					func(x *match.Card) bool {
-						return x.HasFamily(family) && !x.HasCondition(card.ID+"-custom")
+						return x.HasFamily(family)
 					},
 				).Map(func(x *match.Card) {
-					ctx2.Match.ApplyPersistentEffect(func(ctx3 *match.Context, exit2 func()) {
-						x.AddUniqueSourceCondition(card.ID+"-custom", true, card.ID)
-						x.AddUniqueSourceCondition(cnd.CantBeBlocked, true, card.ID)
+					x.AddUniqueSourceCondition(cnd.CantBeBlocked, true, card.ID)
 
-						_, ok := ctx3.Event.(*match.EndOfTurnStep)
-						if ok && ctx3.Match.IsPlayerTurn(card.Player) {
-							x.RemoveConditionBySource(card.ID)
-							exit2()
-						}
-					})
+					_, ok := ctx2.Event.(*match.EndOfTurnStep)
+					if ok && ctx2.Match.IsPlayerTurn(card.Player) {
+						x.RemoveConditionBySource(card.ID)
+						exit()
+					}
 				})
-
-				_, ok := ctx2.Event.(*match.EndOfTurnStep)
-				if ok && ctx2.Match.IsPlayerTurn(card.Player) {
-					exit()
-				}
-
 			})
 		}
-
 	}))
 
 }
@@ -67,7 +58,6 @@ func ZombieCarnival(c *match.Card) {
 	c.ManaRequirement = []string{civ.Darkness}
 
 	c.Use(fx.Spell, fx.ShieldTrigger, fx.When(fx.SpellCast, func(card *match.Card, ctx *match.Context) {
-
 		family := fx.ChooseAFamily(card, ctx, fmt.Sprintf("%s's effect: Choose a race. Return up to 3 creatures of that race from your graveyard to your hand.", card.Name))
 
 		fx.SelectFilter(
@@ -87,7 +77,6 @@ func ZombieCarnival(c *match.Card) {
 			card.Player.MoveCard(x.ID, match.GRAVEYARD, match.HAND, card.ID)
 			ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s was return to your hand from your graveyard by %s's effect.", x.Name, card.Name))
 		})
-
 	}))
 
 }
@@ -111,7 +100,7 @@ func DanceOfTheSproutlings(c *match.Card) {
 			},
 		))
 
-		fx.Select(
+		fx.SelectFilter(
 			card.Player,
 			ctx.Match,
 			card.Player,
@@ -120,6 +109,10 @@ func DanceOfTheSproutlings(c *match.Card) {
 			1,
 			max,
 			true,
+			func(x *match.Card) bool {
+				return x.HasFamily(family) && x.HasCondition(cnd.Creature)
+			},
+			false,
 		).Map(func(x *match.Card) {
 			card.Player.MoveCard(x.ID, match.HAND, match.MANAZONE, card.ID)
 			ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s was put into %s's manazone from his hand due to %s's effect.", x.Name, card.Player.Username(), card.Name))
@@ -139,37 +132,28 @@ func RelentlessBlitz(c *match.Card) {
 	c.Use(fx.Spell, fx.When(fx.SpellCast, func(card *match.Card, ctx *match.Context) {
 		family := fx.ChooseAFamily(card, ctx, fmt.Sprintf("%s's effect: Choose a race. This turn, each creature of that race can attack untapped creatures and can't be blocked while attacking a creature.", card.Name))
 
-		fx.SelectFilter(
-			card.Player,
-			ctx.Match,
-			card.Player,
-			match.BATTLEZONE,
-			fmt.Sprintf("%s's effect: This turn, each '%s' creature can attack untapped creatures and can't be blocked while attacking a creature.", card.Name, family),
-			1,
-			1,
-			false,
-			func(x *match.Card) bool {
-				return x.HasFamily(family) && x.HasCondition(cnd.Creature)
-			},
-			false,
-		).Map(func(x *match.Card) {
+		if family != "" {
+			ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("This turn, '%s' creatures can attack untapped creatures and can't be blocked while attacking a creature.", family))
+
 			ctx.Match.ApplyPersistentEffect(func(ctx2 *match.Context, exit func()) {
-				if x.Zone != match.BATTLEZONE {
-					x.RemoveConditionBySource(card.ID)
-					exit()
-					return
-				}
+				fx.FindFilter(
+					card.Player,
+					match.BATTLEZONE,
+					func(x *match.Card) bool {
+						return x.HasFamily(family) && x.HasCondition(cnd.Creature)
+					},
+				).Map(func(x *match.Card) {
+					if _, ok := ctx2.Event.(*match.EndOfTurnStep); ok {
+						x.RemoveConditionBySource(card.ID)
+						exit()
+						return
+					}
 
-				if _, ok := ctx2.Event.(*match.EndOfTurnStep); ok {
-					x.RemoveConditionBySource(card.ID)
-					exit()
-					return
-				}
-
-				x.AddUniqueSourceCondition(cnd.AttackUntapped, true, card.ID)
-				fx.CantBeBlockedWhileAttackingACreature(x, ctx2)
+					x.AddUniqueSourceCondition(cnd.AttackUntapped, true, card.ID)
+					fx.CantBeBlockedWhileAttackingACreature(x, ctx2)
+				})
 			})
-		})
+		}
 	}))
 
 }
