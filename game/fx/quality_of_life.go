@@ -647,37 +647,6 @@ func Destroyed(card *match.Card, ctx *match.Context) bool {
 
 }
 
-// YourArmorloidDestroyed returns true if one of your armorloids was destroyed
-func YourArmorloidDestroyed(card *match.Card, ctx *match.Context) bool {
-
-	if card.Zone != match.BATTLEZONE {
-		return false
-	}
-
-	if event, ok := ctx.Event.(*match.CardMoved); ok && event.From == match.BATTLEZONE && event.To == match.GRAVEYARD {
-		if event.MatchPlayerID == 1 {
-			if card.Player == ctx.Match.Player1.Player {
-				if deadCard, _ := card.Player.GetCard(event.CardID, match.GRAVEYARD); deadCard != nil {
-					if deadCard.HasFamily(family.Armorloid) {
-						return true
-					}
-				}
-			}
-		} else if event.MatchPlayerID == 2 {
-			if card.Player == ctx.Match.Player2.Player {
-				if deadCard, _ := card.Player.GetCard(event.CardID, match.GRAVEYARD); deadCard != nil {
-					if deadCard.HasFamily(family.Armorloid) {
-						return true
-					}
-				}
-			}
-		}
-	}
-
-	return false
-
-}
-
 // EndOfTurn returns true if the turn is ending, pre end of turn triggers
 func EndOfTurn(card *match.Card, ctx *match.Context) bool {
 	_, ok := ctx.Event.(*match.EndStep)

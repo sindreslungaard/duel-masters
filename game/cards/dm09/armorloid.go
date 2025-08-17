@@ -23,10 +23,8 @@ func SimianWarriorGrash(c *match.Card) {
 		ctx.Match.ApplyPersistentEffect(func(ctx2 *match.Context, exit func()) {
 
 			if card.Zone != match.BATTLEZONE {
-
 				exit()
 				return
-
 			}
 
 			if event, ok := ctx2.Event.(*match.CreatureDestroyed); ok && event.Card.Player == c.Player && event.Card.HasFamily(family.Armorloid) {
