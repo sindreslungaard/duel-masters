@@ -18,20 +18,23 @@ func SimianWarriorGrash(c *match.Card) {
 	c.ManaCost = 4
 	c.ManaRequirement = []string{civ.Fire}
 
-	c.Use(fx.Creature, fx.When(fx.YourArmorloidDestroyed, func(card *match.Card, ctx *match.Context) {
-		fx.Select(
-			ctx.Match.Opponent(card.Player),
-			ctx.Match,
-			ctx.Match.Opponent(card.Player),
-			match.MANAZONE,
-			fmt.Sprintf("%s's effect: Choose a card from your mana zone and put it into your graveyard.", card.Name),
-			1,
-			1,
-			false,
-		).Map(func(x *match.Card) {
-			ctx.Match.Opponent(card.Player).MoveCard(x.ID, match.MANAZONE, match.GRAVEYARD, card.ID)
-			ctx.Match.ReportActionInChat(ctx.Match.Opponent(card.Player), fmt.Sprintf("%s was put into %s's graveyard from his mana zone by %s's effect.", x.Name, ctx.Match.Opponent(card.Player).Username(), card.Name))
+	c.Use(fx.Creature, fx.When(fx.InTheBattlezone, func(card *match.Card, ctx *match.Context) {
+
+		ctx.Match.ApplyPersistentEffect(func(ctx2 *match.Context, exit func()) {
+
+			if card.Zone != match.BATTLEZONE {
+
+				exit()
+				return
+
+			}
+
+			if event, ok := ctx2.Event.(*match.CreatureDestroyed); ok && event.Card.Player == c.Player && event.Card.HasFamily(family.Armorloid) {
+				fx.OpponentChoosesManaBurn(card, ctx2)
+			}
+
 		})
+
 	}))
 
 }
