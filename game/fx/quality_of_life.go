@@ -787,6 +787,18 @@ func AnotherOwnCreatureSummoned(card *match.Card, ctx *match.Context) bool {
 	return AnotherOwnCreatureSummonedFilter(card, ctx, func(c *match.Card) bool { return true })
 }
 
+func AnotherOwnDragonoidOrDragonSummoned(card *match.Card, ctx *match.Context) bool {
+	return AnotherOwnCreatureSummonedFilter(card, ctx, func(c *match.Card) bool {
+		return c.SharesAFamily(append(family.Dragons, family.Dragonoid))
+	})
+}
+
+func AnotherOwnGuardianSummoned(card *match.Card, ctx *match.Context) bool {
+	return AnotherOwnCreatureSummonedFilter(card, ctx, func(c *match.Card) bool {
+		return c.HasFamily(family.Guardian)
+	})
+}
+
 // AnotherOwnCreatureSummonedFilter returns true if you summoned another filtered creature
 // Does not activate if this current card is summoned.
 // Does not activate if the filtered card that was under an Evolution card becomes visible again.
@@ -825,21 +837,9 @@ func AnotherOwnGhostSummoned(card *match.Card, ctx *match.Context) bool {
 	})
 }
 
-func AnotherOwnGuardianSummoned(card *match.Card, ctx *match.Context) bool {
-	return AnotherOwnCreatureSummonedFilter(card, ctx, func(c *match.Card) bool {
-		return c.HasFamily(family.Guardian)
-	})
-}
-
 func AnotherOwnCyberSummoned(card *match.Card, ctx *match.Context) bool {
 	return AnotherOwnCreatureSummonedFilter(card, ctx, func(c *match.Card) bool {
 		return c.SharesAFamily(family.Cybers)
-	})
-}
-
-func AnotherOwnDragonoidOrDragonSummoned(card *match.Card, ctx *match.Context) bool {
-	return AnotherOwnCreatureSummonedFilter(card, ctx, func(c *match.Card) bool {
-		return c.SharesAFamily(append(family.Dragons, family.Dragonoid))
 	})
 }
 

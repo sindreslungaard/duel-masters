@@ -25,7 +25,7 @@ func VreemahFreakyMojoTotem(c *match.Card) {
 				card.Player,
 				match.BATTLEZONE,
 				func(x *match.Card) bool {
-					return x.HasFamily(family.BeastFolk) && !x.HasCondition(card.ID)
+					return x.HasFamily(family.BeastFolk)
 				},
 			)
 
@@ -33,9 +33,14 @@ func VreemahFreakyMojoTotem(c *match.Card) {
 				ctx.Match.Opponent(card.Player),
 				match.BATTLEZONE,
 				func(x *match.Card) bool {
-					return x.HasFamily(family.BeastFolk) && !x.HasCondition(card.ID)
+					return x.HasFamily(family.BeastFolk)
 				},
 			)...)
+
+			beastFolks.Map(func(x *match.Card) {
+				x.AddCondition(cnd.PowerAmplifier, 2000, card.ID)
+				x.AddUniqueSourceCondition(cnd.DoubleBreaker, true, card.ID)
+			})
 
 			beastFolks.Map(func(x *match.Card) {
 				ctx.Match.ApplyPersistentEffect(func(ctx2 *match.Context, exit func()) {
@@ -50,10 +55,6 @@ func VreemahFreakyMojoTotem(c *match.Card) {
 						exit()
 						return
 					}
-
-					x.AddUniqueSourceCondition(card.ID, nil, card.ID)
-					x.AddUniqueSourceCondition(cnd.PowerAmplifier, 2000, card.ID)
-					x.AddUniqueSourceCondition(cnd.DoubleBreaker, true, card.ID)
 				})
 			})
 		}))
