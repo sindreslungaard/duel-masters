@@ -39,6 +39,17 @@ func (c CardCollection) Or(h func()) {
 	h()
 }
 
+// Project iterates through cards in the collection and selects the ImageID field
+func (c CardCollection) ProjectImageIDs() []string {
+	var imageIDs []string
+
+	for _, card := range c {
+		imageIDs = append(imageIDs, card.ImageID)
+	}
+
+	return imageIDs
+}
+
 func FilterCardList(cards []*match.Card, filter func(*match.Card) bool) (CardCollection, CardCollection) {
 	accepted := make([]*match.Card, 0)
 	rejected := make([]*match.Card, 0)
@@ -776,6 +787,18 @@ func AnotherOwnCreatureSummoned(card *match.Card, ctx *match.Context) bool {
 	return AnotherOwnCreatureSummonedFilter(card, ctx, func(c *match.Card) bool { return true })
 }
 
+func AnotherOwnDragonoidOrDragonSummoned(card *match.Card, ctx *match.Context) bool {
+	return AnotherOwnCreatureSummonedFilter(card, ctx, func(c *match.Card) bool {
+		return c.SharesAFamily(append(family.Dragons, family.Dragonoid))
+	})
+}
+
+func AnotherOwnGuardianSummoned(card *match.Card, ctx *match.Context) bool {
+	return AnotherOwnCreatureSummonedFilter(card, ctx, func(c *match.Card) bool {
+		return c.HasFamily(family.Guardian)
+	})
+}
+
 // AnotherOwnCreatureSummonedFilter returns true if you summoned another filtered creature
 // Does not activate if this current card is summoned.
 // Does not activate if the filtered card that was under an Evolution card becomes visible again.
@@ -817,12 +840,6 @@ func AnotherOwnGhostSummoned(card *match.Card, ctx *match.Context) bool {
 func AnotherOwnCyberSummoned(card *match.Card, ctx *match.Context) bool {
 	return AnotherOwnCreatureSummonedFilter(card, ctx, func(c *match.Card) bool {
 		return c.SharesAFamily(family.Cybers)
-	})
-}
-
-func AnotherOwnDragonoidOrDragonSummoned(card *match.Card, ctx *match.Context) bool {
-	return AnotherOwnCreatureSummonedFilter(card, ctx, func(c *match.Card) bool {
-		return c.SharesAFamily(append(family.Dragons, family.Dragonoid))
 	})
 }
 
@@ -993,7 +1010,6 @@ func ForcePutCreatureIntoBZ(ctx *match.Context, creature *match.Card, from strin
 	}
 
 }
-
 func ChooseAFamily(card *match.Card, ctx *match.Context, text string) string {
 	allFamilies := GetAllFamiliesFilter(card, ctx, func(x string) bool { return true })
 
