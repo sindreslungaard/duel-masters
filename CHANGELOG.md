@@ -22,6 +22,10 @@
 - New card "Azaghast, Tyrant of Shadows" (thanks @DragosIonita23)
 - New card "Zeppelin Crawler" (thanks @DragosIonita23)
 - New card "Bat Doctor, Shadow of Undeath" (thanks @DragosIonita23)
+- New card "Whip Scorpion" (thanks @DragosIonita23)
+- New card "Betrale, the Explorer" (thanks @DragosIonita23)
+- New card "Solid Horn" (thanks @DragosIonita23)
+- New card "Kalute, Vizier of Eternity" (thanks @DragosIonita23)
 
 ## 10/07/2025
 
