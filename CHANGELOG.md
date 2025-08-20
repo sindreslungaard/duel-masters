@@ -26,6 +26,11 @@
 - New card "Betrale, the Explorer" (thanks @DragosIonita23)
 - New card "Solid Horn" (thanks @DragosIonita23)
 - New card "Kalute, Vizier of Eternity" (thanks @DragosIonita23)
+- New card "Micute, the Oracle" (thanks @DragosIonita23)
+- New card "Vreemah, Freaky Mojo Totem" (thanks @DragosIonita23)
+- New card "Whispering Totem" (thanks @DragosIonita23)
+- New card "Venom Worm" (thanks @DragosIonita23)
+- New card "Tekorax" (thanks @DragosIonita23)
 
 ## 10/07/2025
 
