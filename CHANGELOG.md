@@ -31,6 +31,8 @@
 - New card "Whispering Totem" (thanks @DragosIonita23)
 - New card "Venom Worm" (thanks @DragosIonita23)
 - New card "Tekorax" (thanks @DragosIonita23)
+- Fixed an issue where "Bazooka Mutant's" pop-up message was wrongfully displayed to the opponent instead of the attacking player (thanks @DragosIonita23)
+- Fixed an issue where "Ra Vu, Seeker of Lightning" would let you retrieve non-light spells from your graveyard (thanks @DragosIonita23)
 
 ## 10/07/2025
 
