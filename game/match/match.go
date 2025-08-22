@@ -5,7 +5,6 @@ import (
 	"duel-masters/db"
 	"duel-masters/game/cnd"
 	"duel-masters/internal"
-	"duel-masters/moderation"
 	"duel-masters/server"
 	"encoding/json"
 	"errors"
@@ -1458,19 +1457,6 @@ func (m *Match) Parse(s *server.Socket, data []byte) {
 			}
 
 			m.handleAdminMessages(msg.Message, s.User)
-
-			flags := moderation.ChatModeration.CheckFlags(s.User.Username)
-			if flags >= moderation.FlagsTolerance {
-				s.Send(&server.ChatMessage{
-					Header:  "chat",
-					Message: "Several of your previous messages have been flagged by the automatic chat moderation system and you have therefore been blocked from sending chat messages until the next server restart",
-					Sender:  "[Server -> you]",
-					Color:   s.User.Color,
-				})
-
-				return
-			}
-			moderation.ChatModeration.Write(s.User.Username, msg.Message)
 
 			if s.User.Chatblocked {
 				s.Send(&server.ChatMessage{
