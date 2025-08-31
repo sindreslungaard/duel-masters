@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+No unreleased changes
+
+## 31/08/2025
+
 - Fixed an issue where "Nariel, the Oracle"'s ability did not work correctly (thanks @DragosIonita23)
 - New card "Petrova, Channeler of Suns" (thanks @DragosIonita23)
 - New card "Aqua Master" (thanks @DragosIonita23)
