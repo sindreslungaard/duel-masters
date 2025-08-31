@@ -263,7 +263,7 @@ func SelectFilter(p *match.Player, m *match.Match, containerOwner *match.Player,
 	}
 
 	filteredLength := len(filtered)
-	if filteredLength < 1 {
+	if !showUnselectables && filteredLength < 1 {
 		return result
 	}
 
@@ -280,7 +280,7 @@ func SelectFilter(p *match.Player, m *match.Match, containerOwner *match.Player,
 	filtered = newCards
 
 	filteredLength = len(filtered)
-	if filteredLength < 1 {
+	if !showUnselectables && filteredLength < 1 {
 		return result
 	}
 

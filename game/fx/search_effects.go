@@ -6,27 +6,32 @@ import (
 	"fmt"
 )
 
-func SearchDeckMoveCardsZone(card *match.Card, ctx *match.Context, quantity int, filter func(*match.Card) bool, playerText string, newZone string, resultText string) {
-	SelectFilter(card.Player,
+func searchDeckMoveCardsZone(card *match.Card, ctx *match.Context, quantity int, filter func(*match.Card) bool, playerText string, newZone string, resultText string, showRetrievedCard bool) {
+	SelectFilter(
+		card.Player,
 		ctx.Match,
 		card.Player,
 		match.DECK,
 		fmt.Sprintf("%s effect: %s", card.Name, playerText),
-		1,
+		0,
 		quantity,
 		true,
 		filter,
 		true,
 	).Map(func(x *match.Card) {
-		x.Player.MoveCard(x.ID, match.DECK, newZone, card.ID)
-		ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf(resultText, x.Name))
+		card.Player.MoveCard(x.ID, match.DECK, newZone, card.ID)
+		if showRetrievedCard {
+			ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf(resultText, x.Name))
+		} else {
+			ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s retrieved a card from their deck to their hand", card.Player.Username()))
+		}
 	})
 
 	ShuffleDeck(card, ctx, false)
 }
 
 func SearchDeckPutIntoManazone(card *match.Card, ctx *match.Context, quantity int, filter func(*match.Card) bool, filterDescription string) {
-	SearchDeckMoveCardsZone(
+	searchDeckMoveCardsZone(
 		card,
 		ctx,
 		quantity,
@@ -34,11 +39,12 @@ func SearchDeckPutIntoManazone(card *match.Card, ctx *match.Context, quantity in
 		fmt.Sprintf("You may move up to %d %s from your deck to your manazone", quantity, filterDescription),
 		match.MANAZONE,
 		card.Player.Username()+" put %s from their deck to their manazone",
+		true,
 	)
 }
 
 func SearchDeckTakeCards(card *match.Card, ctx *match.Context, quantity int, filter func(*match.Card) bool, filterDescription string) {
-	SearchDeckMoveCardsZone(
+	searchDeckMoveCardsZone(
 		card,
 		ctx,
 		quantity,
@@ -46,6 +52,7 @@ func SearchDeckTakeCards(card *match.Card, ctx *match.Context, quantity int, fil
 		fmt.Sprintf("You may take up to %d %s from your deck (Will be shown to your opponent)", quantity, filterDescription),
 		match.HAND,
 		card.Player.Username()+" retrieved %s from their deck to their hand",
+		true,
 	)
 }
 
@@ -70,16 +77,17 @@ func SearchDeckTake1Creature(card *match.Card, ctx *match.Context) {
 }
 
 // Search deck for x cards
-func SearchDeckTakeXCards(x int) match.HandlerFunc {
+func SearchDeckTakeXCardsWithoutShowing(x int) match.HandlerFunc {
 	return func(card *match.Card, ctx *match.Context) {
-		SearchDeckMoveCardsZone(
+		searchDeckMoveCardsZone(
 			card,
 			ctx,
 			x,
 			func(c *match.Card) bool { return true },
 			fmt.Sprintf("You make take up to %d cards from your deck", x),
 			match.HAND,
-			card.Player.Username()+" retrieved %s from their deck to their hand",
+			"",
+			false,
 		)
 	}
 }
