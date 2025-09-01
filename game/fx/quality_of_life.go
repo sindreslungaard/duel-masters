@@ -5,6 +5,7 @@ import (
 	"duel-masters/game/family"
 	"duel-masters/game/match"
 	"fmt"
+	"math/rand"
 	"slices"
 )
 
@@ -1057,6 +1058,7 @@ func ChooseAFamilyFilter(card *match.Card, ctx *match.Context, text string, filt
 //  9. Rest of families in the game
 func GetAllFamiliesFilter(card *match.Card, ctx *match.Context, filter func(x string) bool) []string {
 	families := make([]string, 0)
+	unseenFamilies := make([]string, 0)
 
 	myBZFamilies := FindFilter(
 		card.Player,
@@ -1085,6 +1087,22 @@ func GetAllFamiliesFilter(card *match.Card, ctx *match.Context, filter func(x st
 	myGraveFamilies := FindFilter(
 		card.Player,
 		match.GRAVEYARD,
+		func(x *match.Card) bool {
+			return !x.HasCondition(cnd.Spell) && len(x.Family) > 0
+		},
+	).ProjectFamilies()
+
+	myDeckFamilies := FindFilter(
+		card.Player,
+		match.DECK,
+		func(x *match.Card) bool {
+			return !x.HasCondition(cnd.Spell) && len(x.Family) > 0
+		},
+	).ProjectFamilies()
+
+	myShieldFamilies := FindFilter(
+		card.Player,
+		match.SHIELDZONE,
 		func(x *match.Card) bool {
 			return !x.HasCondition(cnd.Spell) && len(x.Family) > 0
 		},
@@ -1122,14 +1140,43 @@ func GetAllFamiliesFilter(card *match.Card, ctx *match.Context, filter func(x st
 		},
 	).ProjectFamilies()
 
+	oppDeckFamilies := FindFilter(
+		ctx.Match.Opponent(card.Player),
+		match.DECK,
+		func(x *match.Card) bool {
+			return !x.HasCondition(cnd.Spell) && len(x.Family) > 0
+		},
+	).ProjectFamilies()
+
+	oppShieldFamilies := FindFilter(
+		ctx.Match.Opponent(card.Player),
+		match.SHIELDZONE,
+		func(x *match.Card) bool {
+			return !x.HasCondition(cnd.Spell) && len(x.Family) > 0
+		},
+	).ProjectFamilies()
+
 	families = append(families, myBZFamilies...)
 	families = append(families, myHandFamilies...)
 	families = append(families, myManaFamilies...)
 	families = append(families, myGraveFamilies...)
 	families = append(families, oppBZFamilies...)
-	families = append(families, oppHandFamilies...)
 	families = append(families, oppManaFamilies...)
 	families = append(families, oppGraveFamilies...)
+
+	unseenFamilies = append(unseenFamilies, myDeckFamilies...)
+	unseenFamilies = append(unseenFamilies, myShieldFamilies...)
+	unseenFamilies = append(unseenFamilies, oppHandFamilies...)
+	unseenFamilies = append(unseenFamilies, oppDeckFamilies...)
+	unseenFamilies = append(unseenFamilies, oppShieldFamilies...)
+
+	// Shuffles the "unseen" families,
+	// not to give the choosing player an unfair advantage
+	// of knowing the relative order of the families in his shields and/or battlezone,
+	// or in the opponent's zones
+	rand.Shuffle(len(unseenFamilies), func(i, j int) { unseenFamilies[i], unseenFamilies[j] = unseenFamilies[j], unseenFamilies[i] })
+
+	families = append(families, unseenFamilies...)
 
 	return distinctStringsFilter(families, filter)
 }
