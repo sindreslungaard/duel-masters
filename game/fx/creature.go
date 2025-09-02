@@ -679,6 +679,8 @@ func tapCardAndConfirmAttack(card *match.Card, ctx *match.Context, attackPlayer 
 	}
 
 	card.Tapped = true
+	card.Player.CanChargeMana = false
+	ctx.Match.Step = &match.AttackStep{}
 
 	// Broadcast state so that opponent can see that this card is tapped if they get any shield triggers
 	ctx.Match.BroadcastState()

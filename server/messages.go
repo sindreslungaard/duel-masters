@@ -53,11 +53,13 @@ type PlayerState struct {
 
 // MatchState stores information about the current state of the match in the eyes of a given player
 type MatchState struct {
-	MyTurn       bool        `json:"myTurn"`
-	HasAddedMana bool        `json:"hasAddedManaThisRound"`
-	Me           PlayerState `json:"me"`
-	Opponent     PlayerState `json:"opponent"`
-	Spectator    bool        `json:"spectator"`
+	MyTurn        bool        `json:"myTurn"`
+	HasAddedMana  bool        `json:"hasAddedManaThisRound"`
+	HasAttacked   bool        `json:"hasAttackedThisRound"`
+	CanChargeMana bool        `json:"canChargeManaThisRound"`
+	Me            PlayerState `json:"me"`
+	Opponent      PlayerState `json:"opponent"`
+	Spectator     bool        `json:"spectator"`
 }
 
 // MatchStateMessage is the message that should be sent to the client for state updates

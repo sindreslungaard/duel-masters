@@ -25,7 +25,7 @@ func CarboniteScarab(c *match.Card) {
 		fx.Creature,
 		fx.When(fx.TurboRushCondition, func(card *match.Card, ctx *match.Context) { turboRush = true }),
 		func(card *match.Card, ctx *match.Context) {
-			// NOTE: currently bugged as attack can be cancelled
+			// NOTE: @TODO currently bugged as attack can be cancelled
 			// need to refactor Battle so that AttackConfirmed can tell if a creature was blocked while attacking a player
 			if event, ok := ctx.Event.(*match.AttackPlayer); ok && event.CardID == c.ID {
 				attackingOpponent = true

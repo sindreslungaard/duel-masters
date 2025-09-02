@@ -523,34 +523,42 @@ func (m *Match) BroadcastState() {
 	player2.Username = m.Player2.Username
 	player2.Color = m.Player2.Color
 
+	_, isAttackStep := m.Step.(*AttackStep)
+
 	p1state := &server.MatchStateMessage{
 		Header: "state_update",
 		State: server.MatchState{
-			MyTurn:       m.Turn == 1,
-			HasAddedMana: m.Player1.Player.HasChargedMana,
-			Me:           player1,
-			Opponent:     player2,
+			MyTurn:        m.Turn == 1,
+			HasAddedMana:  m.Player1.Player.HasChargedMana,
+			HasAttacked:   m.Turn == 1 && isAttackStep,
+			CanChargeMana: m.Player1.Player.CanChargeMana,
+			Me:            player1,
+			Opponent:      player2,
 		},
 	}
 
 	p2state := &server.MatchStateMessage{
 		Header: "state_update",
 		State: server.MatchState{
-			MyTurn:       m.Turn == 2,
-			HasAddedMana: m.Player2.Player.HasChargedMana,
-			Me:           player2,
-			Opponent:     player1,
+			MyTurn:        m.Turn == 2,
+			HasAddedMana:  m.Player2.Player.HasChargedMana,
+			HasAttacked:   m.Turn == 2 && isAttackStep,
+			CanChargeMana: m.Player2.Player.CanChargeMana,
+			Me:            player2,
+			Opponent:      player1,
 		},
 	}
 
 	spectatorState := &server.MatchStateMessage{
 		Header: "state_update",
 		State: server.MatchState{
-			MyTurn:       false,
-			HasAddedMana: false,
-			Me:           player1,
-			Opponent:     player2,
-			Spectator:    true,
+			MyTurn:        false,
+			HasAddedMana:  false,
+			HasAttacked:   false,
+			CanChargeMana: false,
+			Me:            player1,
+			Opponent:      player2,
+			Spectator:     true,
 		},
 	}
 
@@ -1147,14 +1155,6 @@ func (m *Match) AttackPlayer(p *PlayerReference, cardID string) {
 
 	m.HandleFx(ctx)
 
-	if !ctx.Cancelled() {
-		if _, ok := m.Step.(*AttackStep); !ok {
-			m.Step = &AttackStep{}
-		}
-
-		p.Player.CanChargeMana = false
-	}
-
 	m.BroadcastState()
 
 }
@@ -1175,14 +1175,6 @@ func (m *Match) AttackCreature(p *PlayerReference, cardID string) {
 	})
 
 	m.HandleFx(ctx)
-
-	if !ctx.Cancelled() {
-		if _, ok := m.Step.(*AttackStep); !ok {
-			m.Step = &AttackStep{}
-		}
-
-		p.Player.CanChargeMana = false
-	}
 
 	m.BroadcastState()
 
