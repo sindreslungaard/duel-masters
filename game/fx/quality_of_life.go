@@ -292,6 +292,12 @@ func SelectFilter(p *match.Player, m *match.Match, containerOwner *match.Player,
 		max = filteredLength
 	}
 
+	// Bypass the selection pop-up if action is NOT cancellable and the selection is unambiguous, i.e. filtered cards length == min == max
+	// i.e. user doesn't have a choice
+	if !cancellable && min == max && filteredLength == min {
+		return filtered
+	}
+
 	if !m.IsPlayerTurn(p) {
 		m.Wait(m.Opponent(p), "Waiting for your opponent to make an action")
 		defer m.EndWait(m.Opponent(p))
