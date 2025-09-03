@@ -170,6 +170,7 @@ func BinaryQuestion(p *match.Player, m *match.Match, text string) bool {
 
 func OrderCards(p *match.Player, m *match.Match, cards []*match.Card, text string) []string {
 	var cardsIds []string
+	cardsIds = make([]string, 0)
 
 	if len(cards) < 2 {
 		for _, c := range cards {
