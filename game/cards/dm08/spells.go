@@ -182,11 +182,11 @@ func LunarCharger(c *match.Card) {
 					return
 				}
 
-				if _, ok := ctx.Event.(*match.EndOfTurnStep); ok {
+				if _, ok := ctx2.Event.(*match.EndOfTurnStep); ok {
 					ctx2.ScheduleAfter(func() {
 						if x.Tapped {
 							// you may untap this creature
-							if fx.BinaryQuestion(x.Player, ctx.Match, fmt.Sprintf("%s's effect: Do you want to untap %s?", card.Name, x.Name)) {
+							if fx.BinaryQuestion(x.Player, ctx2.Match, fmt.Sprintf("%s's effect: Do you want to untap %s?", card.Name, x.Name)) {
 								x.Tapped = false
 								ctx2.Match.BroadcastState()
 							}
