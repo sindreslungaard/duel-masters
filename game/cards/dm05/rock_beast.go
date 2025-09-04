@@ -19,11 +19,8 @@ func BlazosaurQ(c *match.Card) {
 	c.ManaRequirement = []string{civ.Fire}
 
 	c.Use(fx.Creature, fx.Survivor, fx.When(fx.InTheBattlezone, func(card *match.Card, ctx *match.Context) {
-
 		ctx.Match.ApplyPersistentEffect(func(ctx2 *match.Context, exit func()) {
-
 			if card.Zone != match.BATTLEZONE {
-
 				fx.FindFilter(
 					card.Player,
 					match.BATTLEZONE,
@@ -34,7 +31,6 @@ func BlazosaurQ(c *match.Card) {
 
 				exit()
 				return
-
 			}
 
 			fx.FindFilter(
@@ -44,9 +40,7 @@ func BlazosaurQ(c *match.Card) {
 			).Map(func(x *match.Card) {
 				x.AddUniqueSourceCondition(cnd.PowerAttacker, 1000, card.ID)
 			})
-
 		})
-
 	}))
 
 }

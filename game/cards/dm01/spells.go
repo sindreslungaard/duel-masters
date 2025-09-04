@@ -111,7 +111,7 @@ func CreepingPlague(c *match.Card) {
 				}
 
 				event.Attacker.AddCondition(cnd.Slayer, nil, card.ID)
-				ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s was given \"Slayer\" by %s", event.Attacker.Name, card.Name))
+				ctx2.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s was given \"Slayer\" by %s", event.Attacker.Name, card.Name))
 
 			}
 
