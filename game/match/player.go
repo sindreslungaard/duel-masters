@@ -573,6 +573,94 @@ func (p *Player) MoveCardToFront(cardID string, from string, to string) (*Card, 
 
 }
 
+// ReorderCardsOnBottomDeck re-orders the given cards on the bottom of the deck
+// in the order given by the orderedIDs parameter
+// Returns a new []*Card slice with the cards ordered, or error
+func (p *Player) ReorderCardsOnBottomDeck(cards []*Card, orderedIDs []string) ([]*Card, error) {
+
+	deckRef, err := p.ContainerRef(DECK)
+
+	if err != nil {
+		return nil, err
+	}
+
+	// Lock the mutex at the beginning and defer unlock to ensure thread safety
+	// throughout the entire operation
+	p.mutex.Lock()
+	defer p.mutex.Unlock()
+
+	// Check that all cards are in the deck while holding the lock
+	// We can't use HasCard here because it would cause a deadlock (HasCard also tries to acquire the mutex)
+	for _, card := range cards {
+		found := false
+		for _, deckCard := range p.deck {
+			if deckCard.ID == card.ID {
+				found = true
+				break
+			}
+		}
+		if !found {
+			return nil, errors.New("Card is not in the specified container")
+		}
+	}
+
+	for _, cardId := range orderedIDs {
+		found := false
+		for _, deckCard := range p.deck {
+			if deckCard.ID == cardId {
+				found = true
+				break
+			}
+		}
+		if !found {
+			return nil, errors.New("Card is not in the specified container")
+		}
+	}
+
+	// 1. Remove cards from deck
+	temp := make([]*Card, 0)
+
+	for _, deckCard := range *deckRef {
+		remove := false
+
+		for _, cardToRemove := range cards {
+			if deckCard.ID == cardToRemove.ID {
+				remove = true
+				break
+			}
+		}
+
+		if !remove {
+			temp = append(temp, deckCard)
+		}
+	}
+
+	*deckRef = temp
+
+	// 2. Put them on the bottom of the deck, in the order
+	//    specified by the card IDs in orderedIDs slice parameter
+	for _, cardIDToAppend := range orderedIDs {
+		var cardToAppend *Card
+
+		// Find the card in the cards slice (since it's no longer in the deck)
+		for _, card := range cards {
+			if card.ID == cardIDToAppend {
+				cardToAppend = card
+				break
+			}
+		}
+
+		if cardToAppend == nil {
+			return nil, errors.New("Card not found in provided cards slice")
+		}
+
+		*deckRef = append(*deckRef, cardToAppend)
+	}
+
+	return *deckRef, nil
+
+}
+
 // CanPlayCard returns true or false based on if the specified card can be played with the specified mana
 func (p *Player) CanPlayCard(card *Card, mana []*Card) bool {
 

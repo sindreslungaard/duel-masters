@@ -68,7 +68,7 @@ func BazookaMutant(c *match.Card) {
 			)
 
 			if len(attackableBlockers) == 0 {
-				ctx.Match.WarnPlayer(ctx.Match.Opponent(card.Player), "No blockers to attack.")
+				ctx.Match.WarnPlayer(card.Player, fmt.Sprintf("%s has no blockers to attack this turn.", card.Name))
 				ctx.InterruptFlow()
 			}
 

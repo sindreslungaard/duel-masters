@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+No unreleased changes
+
+## 31/08/2025
+
 - Fixed an issue where "Nariel, the Oracle"'s ability did not work correctly (thanks @DragosIonita23)
 - New card "Petrova, Channeler of Suns" (thanks @DragosIonita23)
 - New card "Aqua Master" (thanks @DragosIonita23)
@@ -16,6 +20,23 @@
 - New card "Stallob the Lifequasher" (thanks @DragosIonita23)
 - New card "Acid Reflux the Fleshboiler" (thanks @DragosIonita23)
 - New card "Snaptongue Lizard" (thanks @DragosIonita23)
+- New card "Balesk Baj, the Timeburner" (thanks @DragosIonita23)
+- New card "Marching Motherboard" (thanks @DragosIonita23)
+- New card "Kelp Candle" (thanks @DragosIonita23)
+- New card "Azaghast, Tyrant of Shadows" (thanks @DragosIonita23)
+- New card "Zeppelin Crawler" (thanks @DragosIonita23)
+- New card "Bat Doctor, Shadow of Undeath" (thanks @DragosIonita23)
+- New card "Whip Scorpion" (thanks @DragosIonita23)
+- New card "Betrale, the Explorer" (thanks @DragosIonita23)
+- New card "Solid Horn" (thanks @DragosIonita23)
+- New card "Kalute, Vizier of Eternity" (thanks @DragosIonita23)
+- New card "Micute, the Oracle" (thanks @DragosIonita23)
+- New card "Vreemah, Freaky Mojo Totem" (thanks @DragosIonita23)
+- New card "Whispering Totem" (thanks @DragosIonita23)
+- New card "Venom Worm" (thanks @DragosIonita23)
+- New card "Tekorax" (thanks @DragosIonita23)
+- Fixed an issue where "Bazooka Mutant's" pop-up message was wrongfully displayed to the opponent instead of the attacking player (thanks @DragosIonita23)
+- Fixed an issue where "Ra Vu, Seeker of Lightning" would let you retrieve non-light spells from your graveyard (thanks @DragosIonita23)
 
 ## 10/07/2025
 
