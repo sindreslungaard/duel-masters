@@ -12,7 +12,7 @@ import (
 func TerradragonAnristVhal(c *match.Card) {
 
 	c.Name = "Terradragon Anrist Vhal"
-	c.Power = 0000
+	c.Power = 0
 	c.Civ = civ.Nature
 	c.Family = []string{family.EarthDragon}
 	c.ManaCost = 6
@@ -22,9 +22,9 @@ func TerradragonAnristVhal(c *match.Card) {
 
 	c.Use(fx.Creature, fx.When(fx.InTheBattlezone, func(card *match.Card, ctx *match.Context) {
 		ctx.Match.ApplyPersistentEffect(func(ctx2 *match.Context, exit func()) {
-
+			addPower = 0
 			c.Power = 0
-			c.RemoveConditionBySource(card.ID)
+			card.RemoveConditionBySource(card.ID)
 
 			if card.Zone != match.BATTLEZONE {
 				exit()
@@ -39,6 +39,7 @@ func TerradragonAnristVhal(c *match.Card) {
 				})) * 2000
 
 			if addPower == 0 {
+				card.RemoveConditionBySource(card.ID)
 				ctx2.Match.Destroy(card, card, match.DestroyedByMiscAbility)
 				exit()
 				return
@@ -47,9 +48,8 @@ func TerradragonAnristVhal(c *match.Card) {
 			c.Power += addPower
 
 			if c.Power >= 6000 {
-				c.AddUniqueSourceCondition(cnd.DoubleBreaker, true, card.ID)
+				card.AddUniqueSourceCondition(cnd.DoubleBreaker, true, card.ID)
 			}
-
 		})
 	}))
 
