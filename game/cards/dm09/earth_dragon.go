@@ -40,8 +40,8 @@ func TerradragonAnristVhal(c *match.Card) {
 
 			if addPower == 0 {
 				card.RemoveConditionBySource(card.ID)
-				ctx2.Match.Destroy(card, card, match.DestroyedByMiscAbility)
 				exit()
+				ctx2.Match.Destroy(card, card, match.DestroyedByMiscAbility)
 				return
 			}
 
