@@ -1000,7 +1000,6 @@ func CanBeSummoned(player *match.Player, card *match.Card) bool {
 }
 
 func ForcePutCreatureIntoBZ(ctx *match.Context, creature *match.Card, from string, source *match.Card) {
-
 	cardPlayedCtx := match.NewContext(ctx.Match, &match.CardPlayedEvent{
 		CardID: creature.ID,
 	})
@@ -1017,6 +1016,7 @@ func ForcePutCreatureIntoBZ(ctx *match.Context, creature *match.Card, from strin
 		}
 	}
 }
+
 func ChooseAFamily(card *match.Card, ctx *match.Context, text string) string {
 	allFamilies := GetAllFamiliesFilter(card, ctx, func(x string) bool { return true })
 

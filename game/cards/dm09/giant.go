@@ -2,18 +2,16 @@ package dm09
 
 import (
 	"duel-masters/game/civ"
-	"duel-masters/game/cnd"
 	"duel-masters/game/family"
 	"duel-masters/game/fx"
 	"duel-masters/game/match"
-	"fmt"
 )
 
 // StratosphereGiant ...
 func StratosphereGiant(c *match.Card) {
 
 	c.Name = "Stratosphere Giant"
-	c.Power = 6000
+	c.Power = 13000
 	c.Civ = civ.Nature
 	c.Family = []string{family.Giant}
 	c.ManaCost = 8
@@ -29,26 +27,12 @@ func StratosphereGiant(c *match.Card) {
 			1,
 			2,
 			true,
-			func(c *match.Card) bool {
-				return fx.CanBeSummoned(ctx.Match.Opponent(card.Player), c)
+			func(x *match.Card) bool {
+				return fx.CanBeSummoned(ctx.Match.Opponent(card.Player), x)
 			},
 			false,
 		).Map(func(x *match.Card) {
-			cardPlayedCtx := match.NewContext(ctx.Match, &match.CardPlayedEvent{
-				CardID: x.ID,
-			})
-			ctx.Match.HandleFx(cardPlayedCtx)
-
-			if !cardPlayedCtx.Cancelled() {
-
-				if !x.HasCondition(cnd.Evolution) {
-					x.AddCondition(cnd.SummoningSickness, nil, nil)
-				}
-
-				ctx.Match.Opponent(card.Player).MoveCard(x.ID, match.HAND, match.BATTLEZONE, x.ID)
-				ctx.Match.ReportActionInChat(ctx.Match.Opponent(card.Player), fmt.Sprintf("%s was moved to the battle zone by %s's effect", x.Name, card.Name))
-
-			}
+			fx.ForcePutCreatureIntoBZ(ctx, x, match.HAND, card)
 		})
 	}))
 }
