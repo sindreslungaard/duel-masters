@@ -19,8 +19,8 @@ func GlenaVueleTheHypnotic(c *match.Card) {
 	c.ManaRequirement = []string{civ.Light}
 
 	c.Use(fx.Creature, fx.Evolution, fx.Doublebreaker,
-		fx.When(fx.OpponentUsedShieldTrigger, func(card *match.Card, ctx *match.Context) {
-			// TODO -- 2 triggers + spiral gate !!
+		fx.When(fx.OpponentPlayedShieldTrigger, func(card *match.Card, ctx *match.Context) {
+			//@TODO -- 2 triggers + spiral gate !!
 			if fx.BinaryQuestion(
 				card.Player,
 				ctx.Match,
