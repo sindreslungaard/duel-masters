@@ -252,7 +252,7 @@ func (m *Match) MoveCard(card *Card, destination string, source *Card) {
 // MoveCardToFront moves a card and sends a chat message about what source moved it
 func (m *Match) MoveCardToFront(card *Card, destination string, source *Card) {
 
-	_, err := card.Player.MoveCardToFront(card.ID, card.Zone, destination)
+	_, err := card.Player.MoveCardToFront(card.ID, card.Zone, destination, source.ID)
 
 	if err != nil {
 		return
