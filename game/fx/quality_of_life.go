@@ -962,7 +962,7 @@ func WheneverThisAttacksPlayerAndIsntBlocked(card *match.Card, ctx *match.Contex
 	return false
 }
 
-func WheneverThisAttackPlayerAndBecomesBlocked(card *match.Card, ctx *match.Context) bool {
+func WheneverThisAttacksPlayerAndBecomesBlocked(card *match.Card, ctx *match.Context) bool {
 	if event, ok := ctx.Event.(*match.Battle); ok &&
 		event.FromAttackPlayer &&
 		event.Attacker == card &&
