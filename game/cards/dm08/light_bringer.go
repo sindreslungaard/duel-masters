@@ -46,6 +46,18 @@ func NarielTheOracle(c *match.Card) {
 				ctx.InterruptFlow()
 			}
 		}
+
+		if event, ok := ctx.Event.(*match.TapAbility); ok {
+			creature, err := ctx.Match.CurrentPlayer().Player.GetCard(event.CardID, match.BATTLEZONE)
+			if err != nil {
+				return
+			}
+
+			if ctx.Match.GetPower(creature, false) >= 3000 {
+				ctx.Match.WarnPlayer(creature.Player, fmt.Sprintf("%s can't use tap ability due to %s's effect.", creature.Name, card.Name))
+				ctx.InterruptFlow()
+			}
+		}
 	})
 
 }
