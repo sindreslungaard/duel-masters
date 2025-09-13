@@ -75,18 +75,23 @@ func ChaosStrike(c *match.Card) {
 	c.ManaRequirement = []string{civ.Fire}
 
 	c.Use(fx.Spell, fx.When(fx.SpellCast, func(card *match.Card, ctx *match.Context) {
-		fx.Select(
+		fx.SelectFilter(
 			card.Player,
 			ctx.Match,
 			ctx.Match.Opponent(card.Player),
 			match.BATTLEZONE,
-			fmt.Sprintf("%s: Select 1 of your opponent's creatures that will be tapped", card.Name),
+			fmt.Sprintf("%s: Select 1 of your opponent's untapped creatures in the battle zone. Your creatures can attack it this turn as though it were tapped.", card.Name),
 			1,
 			1,
 			false,
+			func(x *match.Card) bool {
+				return !x.Tapped
+			},
+			false,
 		).Map(func(x *match.Card) {
-			x.Tapped = true
-			ctx.Match.ReportActionInChat(x.Player, fmt.Sprintf("%s was tapped by %s", x.Name, card.Name))
+			x.AddUniqueSourceCondition(cnd.TreatedAsTapped, nil, card.ID)
+			ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s was given \"Treated as Tapped\" condition by %s. Now your creatures can attack it as it were tapped during this turn.", x.Name, card.Name))
+			ctx.Match.ReportActionInChat(x.Player, fmt.Sprintf("%s will be attackable by your opponent as it were tapped during this turn", x.Name))
 		})
 	}))
 
