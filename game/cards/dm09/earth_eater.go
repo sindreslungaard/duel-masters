@@ -18,6 +18,6 @@ func ZeppelinCrawler(c *match.Card) {
 	c.ManaRequirement = []string{civ.Water}
 
 	c.Use(fx.Creature, fx.Blocker(), fx.CantAttackCreatures, fx.CantAttackPlayers,
-		fx.LookTop4Put1IntoHandReorderRestOnBottomDeck)
+		fx.When(fx.Blocks, fx.LookTop4Put1IntoHandReorderRestOnBottomDeck))
 
 }

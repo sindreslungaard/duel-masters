@@ -133,9 +133,7 @@ func SlimeVeil(c *match.Card) {
 	c.ManaRequirement = []string{civ.Darkness}
 
 	c.Use(fx.Spell, fx.When(fx.SpellCast, func(card *match.Card, ctx *match.Context) {
-
 		ctx.Match.ApplyPersistentEffect(func(ctx2 *match.Context, exit func()) {
-
 			// remove persistent effect on start of next turn
 			if _, ok := ctx2.Event.(*match.StartOfTurnStep); ok && ctx2.Match.IsPlayerTurn(card.Player) {
 				exit()
@@ -147,13 +145,9 @@ func SlimeVeil(c *match.Card) {
 				ctx2.Match.Opponent(card.Player),
 				match.BATTLEZONE,
 			).Map(func(c *match.Card) {
-
 				if _, ok := ctx2.Event.(*match.EndTurnEvent); ok && c.Zone == match.BATTLEZONE {
-
 					if ctx2.Match.IsPlayerTurn(c.Player) && !fx.HasSummoningSickness(c) && !c.Tapped {
-
 						if c.HasCondition(cnd.CantAttackPlayers) {
-
 							if c.HasCondition(cnd.CantAttackCreatures) {
 								return
 							}
@@ -166,20 +160,14 @@ func SlimeVeil(c *match.Card) {
 							if len(attackableCreatures) == 0 {
 								return
 							}
-
 						}
 
 						ctx2.Match.WarnPlayer(c.Player, fmt.Sprintf("%s must attack before you can end your turn", c.Name))
 						ctx2.InterruptFlow()
-
 					}
-
 				}
-
 			})
-
 		})
-
 	}))
 }
 

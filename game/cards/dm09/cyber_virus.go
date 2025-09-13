@@ -34,15 +34,5 @@ func KelpCandle(c *match.Card) {
 	c.ManaRequirement = []string{civ.Water}
 
 	c.Use(fx.Creature, fx.Blocker(), fx.CantAttackCreatures, fx.CantAttackPlayers,
-		func(card *match.Card, ctx *match.Context) {
-			if event, ok := ctx.Event.(*match.Battle); ok {
-				if !event.Blocked || event.Defender != card {
-					return
-				}
-
-				ctx.ScheduleAfter(func() {
-					fx.LookTop4Put1IntoHandReorderRestOnBottomDeck(card, ctx)
-				})
-			}
-		})
+		fx.When(fx.Blocks, fx.LookTop4Put1IntoHandReorderRestOnBottomDeck))
 }
