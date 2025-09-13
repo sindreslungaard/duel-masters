@@ -158,7 +158,7 @@ func BinaryQuestion(p *match.Player, m *match.Match, text string) bool {
 
 	defer m.CloseAction(p)
 
-	if !m.IsPlayerTurn(p) {
+	if !m.IsPlayerTurn(p) { //TODO see here why shield trigger pop-up remains open after GlenaVuele interaction
 		m.Wait(m.Opponent(p), "Waiting for your opponent to make an action")
 		defer m.EndWait(m.Opponent(p))
 	}
@@ -575,6 +575,26 @@ func AnySpellCast(card *match.Card, ctx *match.Context) bool {
 
 }
 
+// SpellCast returns true if any spell was cast by the opponent from shield trigger
+func OppShieldTriggerCast(card *match.Card, ctx *match.Context) bool {
+
+	if event, ok := ctx.Event.(*match.SpellCast); ok && event.FromShield {
+
+		crtPlayerId := byte(1)
+		if card.Player == ctx.Match.Player2.Player {
+			crtPlayerId = 2
+		}
+
+		if event.MatchPlayerID != crtPlayerId {
+			return true
+		}
+
+	}
+
+	return false
+
+}
+
 // Attacking returns true if the card is attacking a player or creature
 func Attacking(card *match.Card, ctx *match.Context) bool {
 
@@ -717,9 +737,9 @@ func TurboRushCondition(card *match.Card, ctx *match.Context) bool {
 
 }
 
-// OpponentPlayedShieldTrigger returns true if the opponent has played a shield trigger and creature is in the Battlezone
+// OpponentPlayedShieldTrigger returns true only after the opponent has played a shield trigger
 func OpponentPlayedShieldTrigger(card *match.Card, ctx *match.Context) bool {
-	if event, ok := ctx.Event.(*match.ShieldTriggerPlayedEvent); ok && card.Zone == match.BATTLEZONE && event.Card.Player != card.Player {
+	if event, ok := ctx.Event.(*match.ShieldTriggerPlayedEvent); ok && event.Card.Player != card.Player {
 		return true
 	}
 	return false

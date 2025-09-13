@@ -18,16 +18,30 @@ func GlenaVueleTheHypnotic(c *match.Card) {
 	c.ManaCost = 5
 	c.ManaRequirement = []string{civ.Light}
 
+	oppShieldTriggerCast := false
+
 	c.Use(fx.Creature, fx.Evolution, fx.Doublebreaker,
-		fx.When(fx.OpponentPlayedShieldTrigger, func(card *match.Card, ctx *match.Context) {
-			//@TODO -- 2 triggers + spiral gate !!
-			if fx.BinaryQuestion(
-				card.Player,
-				ctx.Match,
-				fmt.Sprintf("%s's effect: do you want to add the top card of your deck to your shields?", card.Name)) {
-				fx.TopCardToShield(card, ctx)
+		func(card *match.Card, ctx *match.Context) {
+			if _, ok := ctx.Event.(*match.UntapStep); ok {
+				oppShieldTriggerCast = false
 			}
-		}))
+		},
+		fx.When(fx.OppShieldTriggerCast, func(card *match.Card, ctx *match.Context) { oppShieldTriggerCast = true }),
+		fx.WhenAll([]func(*match.Card, *match.Context) bool{fx.OpponentPlayedShieldTrigger, func(card *match.Card, ctx *match.Context) bool { return oppShieldTriggerCast }}, func(card *match.Card, ctx *match.Context) {
+			ctx.ScheduleAfter(func() {
+				//TODO see binary question interaction with shield trigger pop-up
+				// consider adding m.Wait(opponent) without an if check for current player turn
+				oppShieldTriggerCast = false
+
+				if fx.BinaryQuestion(
+					card.Player,
+					ctx.Match,
+					fmt.Sprintf("%s's effect: do you want to add the top card of your deck to your shields?", card.Name)) {
+					fx.TopCardToShield(card, ctx)
+				}
+			})
+		}),
+	)
 
 }
 
