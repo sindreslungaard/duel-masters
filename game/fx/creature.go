@@ -243,7 +243,7 @@ func Creature(card *match.Card, ctx *match.Context) {
 
 		// Add attackable creatures
 		for _, c := range battlezone {
-			if !c.HasCondition(cnd.CantBeAttacked) && (c.Tapped || card.HasCondition(cnd.AttackUntapped)) {
+			if c.HasCondition(cnd.TreatedAsTapped) || (!c.HasCondition(cnd.CantBeAttacked) && (c.Tapped || card.HasCondition(cnd.AttackUntapped))) {
 				event.AttackableCreatures = append(event.AttackableCreatures, c)
 			}
 		}
@@ -377,7 +377,7 @@ func Creature(card *match.Card, ctx *match.Context) {
 					ctx.Match.EndWait(card.Player)
 					ctx.Match.CloseAction(opponent)
 
-					ctx.Match.Battle(card, c, true)
+					ctx.Match.Battle(card, c, true, true)
 
 					break
 
@@ -449,7 +449,7 @@ func Creature(card *match.Card, ctx *match.Context) {
 					ctx.Match.EndWait(card.Player)
 					ctx.Match.CloseAction(opponent)
 
-					ctx.Match.Battle(card, blocker, true)
+					ctx.Match.Battle(card, blocker, true, false)
 
 					return
 
@@ -457,7 +457,7 @@ func Creature(card *match.Card, ctx *match.Context) {
 
 			}
 
-			ctx.Match.Battle(card, attackedCard, false)
+			ctx.Match.Battle(card, attackedCard, false, false)
 
 		}
 	}
@@ -686,11 +686,7 @@ func tapCardAndConfirmAttack(card *match.Card, ctx *match.Context, attackPlayer 
 	ctx.Match.HandleFx(match.NewContext(ctx.Match, &match.AttackConfirmed{CardID: card.ID, Player: attackPlayer, Creature: !attackPlayer}))
 
 	// In case AttackConfirmed effect removes itself (current attacking card) from the Battlezone
-	if card.Zone != match.BATTLEZONE {
-		return false
-	}
-
-	return true
+	return card.Zone == match.BATTLEZONE
 }
 
 func HasSummoningSickness(card *match.Card) bool {

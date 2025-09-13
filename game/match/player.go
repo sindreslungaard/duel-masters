@@ -521,7 +521,26 @@ func (p *Player) MoveCard(cardID string, from string, to string, source string) 
 }
 
 // MoveCard tries to move a card from container a to the front of container b
-func (p *Player) MoveCardToFront(cardID string, from string, to string) (*Card, error) {
+func (p *Player) MoveCardToFront(cardID string, from string, to string, source string) (*Card, error) {
+
+	c, err := p.GetCard(cardID, from)
+
+	if err != nil {
+		return nil, err
+	}
+
+	ctx := NewContext(p.match, &MoveCard{
+		CardID: cardID,
+		From:   from,
+		To:     to,
+		Source: source,
+	})
+
+	p.match.HandleFx(ctx)
+
+	if ctx.Cancelled() {
+		return c, nil
+	}
 
 	cFrom, err := p.ContainerRef(from)
 
@@ -564,12 +583,102 @@ func (p *Player) MoveCardToFront(cardID string, from string, to string) (*Card, 
 	p.mutex.Unlock()
 
 	p.match.HandleFx(NewContext(p.match, &CardMoved{
-		CardID: ref.ID,
-		From:   from,
-		To:     to,
+		CardID:        ref.ID,
+		From:          from,
+		To:            to,
+		Source:        source,
+		MatchPlayerID: p.match.getPlayerMatchId(ref.Player),
 	}))
 
 	return ref, nil
+
+}
+
+// ReorderCardsOnBottomDeck re-orders the given cards on the bottom of the deck
+// in the order given by the orderedIDs parameter
+// Returns a new []*Card slice with the cards ordered, or error
+func (p *Player) ReorderCardsOnBottomDeck(cards []*Card, orderedIDs []string) ([]*Card, error) {
+
+	deckRef, err := p.ContainerRef(DECK)
+
+	if err != nil {
+		return nil, err
+	}
+
+	// Lock the mutex at the beginning and defer unlock to ensure thread safety
+	// throughout the entire operation
+	p.mutex.Lock()
+	defer p.mutex.Unlock()
+
+	// Check that all cards are in the deck while holding the lock
+	// We can't use HasCard here because it would cause a deadlock (HasCard also tries to acquire the mutex)
+	for _, card := range cards {
+		found := false
+		for _, deckCard := range p.deck {
+			if deckCard.ID == card.ID {
+				found = true
+				break
+			}
+		}
+		if !found {
+			return nil, errors.New("Card is not in the specified container")
+		}
+	}
+
+	for _, cardId := range orderedIDs {
+		found := false
+		for _, deckCard := range p.deck {
+			if deckCard.ID == cardId {
+				found = true
+				break
+			}
+		}
+		if !found {
+			return nil, errors.New("Card is not in the specified container")
+		}
+	}
+
+	// 1. Remove cards from deck
+	temp := make([]*Card, 0)
+
+	for _, deckCard := range *deckRef {
+		remove := false
+
+		for _, cardToRemove := range cards {
+			if deckCard.ID == cardToRemove.ID {
+				remove = true
+				break
+			}
+		}
+
+		if !remove {
+			temp = append(temp, deckCard)
+		}
+	}
+
+	*deckRef = temp
+
+	// 2. Put them on the bottom of the deck, in the order
+	//    specified by the card IDs in orderedIDs slice parameter
+	for _, cardIDToAppend := range orderedIDs {
+		var cardToAppend *Card
+
+		// Find the card in the cards slice (since it's no longer in the deck)
+		for _, card := range cards {
+			if card.ID == cardIDToAppend {
+				cardToAppend = card
+				break
+			}
+		}
+
+		if cardToAppend == nil {
+			return nil, errors.New("Card not found in provided cards slice")
+		}
+
+		*deckRef = append(*deckRef, cardToAppend)
+	}
+
+	return *deckRef, nil
 
 }
 
@@ -618,17 +727,11 @@ func (p *Player) Denormalized() *server.PlayerState {
 
 	p.mutex.Lock()
 
-	shields := make([]string, 0)
-
-	for _, card := range p.shieldzone {
-		shields = append(shields, card.ID)
-	}
-
 	state := &server.PlayerState{
 		Deck:       len(p.deck),
 		HandCount:  len(p.hand),
 		Hand:       denormalizeCards(p.hand, false),
-		Shieldzone: shields,
+		Shieldzone: denormalizeShields(p.shieldzone),
 		ShieldMap:  p.ShieldMap,
 		Manazone:   denormalizeCards(p.manazone, false),
 		Graveyard:  denormalizeCards(p.graveyard, false),
@@ -673,7 +776,7 @@ func denormalizeCards(cards []*Card, partial bool) []server.CardState {
 			Flags:   uint8(flags),
 		}
 
-		if partial {
+		if partial && !card.ShieldFaceUp {
 			cs.ImageID = "backside"
 			cs.Name = ""
 			cs.Civ = "water" // blue highlight color when selected in actions
@@ -683,6 +786,32 @@ func denormalizeCards(cards []*Card, partial bool) []server.CardState {
 		}
 
 		arr = append(arr, cs)
+	}
+
+	return arr
+
+}
+
+// denormalizeShields takes an array of *Card and returns an array of server.ShieldState
+func denormalizeShields(cards []*Card) []server.ShieldState {
+
+	arr := make([]server.ShieldState, 0)
+
+	for _, card := range cards {
+
+		var flags CardFlags
+
+		if card.ShieldFaceUp {
+			flags |= ShieldFaceUpFlag
+		}
+
+		ss := server.ShieldState{
+			CardID:  card.ID,
+			ImageID: card.ImageID,
+			Flags:   uint8(flags),
+		}
+
+		arr = append(arr, ss)
 	}
 
 	return arr

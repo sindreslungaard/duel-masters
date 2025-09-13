@@ -5,7 +5,6 @@ import (
 	"duel-masters/db"
 	"duel-masters/game/cnd"
 	"duel-masters/internal"
-	"duel-masters/moderation"
 	"duel-masters/server"
 	"encoding/json"
 	"errors"
@@ -215,12 +214,12 @@ func (m *Match) getPlayerMatchId(player *Player) byte {
 }
 
 // Battle handles a battle between two creatures
-func (m *Match) Battle(attacker *Card, defender *Card, blocked bool) {
+func (m *Match) Battle(attacker *Card, defender *Card, blocked bool, fromAttackPlayer bool) {
 
 	attackerPower := m.GetPower(attacker, true)
 	defenderPower := m.GetPower(defender, false)
 
-	m.HandleFx(NewContext(m, &Battle{Attacker: attacker, AttackerPower: attackerPower, Defender: defender, DefenderPower: defenderPower, Blocked: blocked}))
+	m.HandleFx(NewContext(m, &Battle{Attacker: attacker, AttackerPower: attackerPower, Defender: defender, DefenderPower: defenderPower, Blocked: blocked, FromAttackPlayer: fromAttackPlayer}))
 
 	m.BroadcastState()
 
@@ -253,7 +252,7 @@ func (m *Match) MoveCard(card *Card, destination string, source *Card) {
 // MoveCardToFront moves a card and sends a chat message about what source moved it
 func (m *Match) MoveCardToFront(card *Card, destination string, source *Card) {
 
-	_, err := card.Player.MoveCardToFront(card.ID, card.Zone, destination)
+	_, err := card.Player.MoveCardToFront(card.ID, card.Zone, destination, source.ID)
 
 	if err != nil {
 		return
@@ -960,14 +959,16 @@ func (m *Match) Start() {
 }
 
 // BeginNewTurn starts a new turn
-func (m *Match) BeginNewTurn() {
+func (m *Match) BeginNewTurn(repeatTurn ...bool) {
 
 	m.Step = &BeginTurnStep{}
 
-	if m.Turn == 1 {
-		m.Turn = 2
-	} else {
-		m.Turn = 1
+	if len(repeatTurn) == 0 || !repeatTurn[0] {
+		if m.Turn == 1 {
+			m.Turn = 2
+		} else {
+			m.Turn = 1
+		}
 	}
 
 	ctx := NewContext(m, m.Step)
@@ -1068,7 +1069,10 @@ func (m *Match) EndOfTurnTriggers() {
 	m.isFirstTurn = false
 	ctx := NewContext(m, m.Step)
 	m.HandleFx(ctx)
-	m.BeginNewTurn()
+
+	if !ctx.Cancelled() {
+		m.BeginNewTurn()
+	}
 }
 
 // EndTurn is called when the player attempts to end their turn
@@ -1453,19 +1457,6 @@ func (m *Match) Parse(s *server.Socket, data []byte) {
 			}
 
 			m.handleAdminMessages(msg.Message, s.User)
-
-			flags := moderation.ChatModeration.CheckFlags(s.User.Username)
-			if flags >= moderation.FlagsTolerance {
-				s.Send(&server.ChatMessage{
-					Header:  "chat",
-					Message: "Several of your previous messages have been flagged by the automatic chat moderation system and you have therefore been blocked from sending chat messages until the next server restart",
-					Sender:  "[Server -> you]",
-					Color:   s.User.Color,
-				})
-
-				return
-			}
-			moderation.ChatModeration.Write(s.User.Username, msg.Message)
 
 			if s.User.Chatblocked {
 				s.Send(&server.ChatMessage{

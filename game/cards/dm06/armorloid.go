@@ -44,7 +44,6 @@ func ArmoredScoutGestuchar(c *match.Card) {
 	c.ManaRequirement = []string{civ.Fire}
 
 	c.Use(fx.Creature, fx.When(fx.InTheBattlezone, func(card *match.Card, ctx *match.Context) {
-
 		ctx.Match.ApplyPersistentEffect(func(ctx2 *match.Context, exit func()) {
 			// Remove the conditions and exit the persistent effect when the card is no longer in the battle zone
 			if card.Zone != match.BATTLEZONE {

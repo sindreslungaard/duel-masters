@@ -124,11 +124,12 @@ type Block struct {
 
 // Battle is fired when two creatures are fighting, i.e. from attacking a creature or blocking an attack
 type Battle struct {
-	Attacker      *Card
-	AttackerPower int
-	Defender      *Card
-	DefenderPower int
-	Blocked       bool
+	Attacker         *Card
+	AttackerPower    int
+	Defender         *Card
+	DefenderPower    int
+	Blocked          bool
+	FromAttackPlayer bool
 }
 
 type CreatureDestroyedContext int
