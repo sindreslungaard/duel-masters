@@ -1106,7 +1106,7 @@ func (m *Match) ChargeMana(p *PlayerReference, cardID string) {
 	}
 
 	if !p.Player.CanChargeMana {
-		Warn(p, "You can't charge mana after playing or attacking with creatures/spells")
+		Warn(p, "You can't charge mana after playing or attacking with creatures/spells or using tap ability.")
 		return
 	}
 
@@ -1193,16 +1193,6 @@ func (m *Match) TapAbility(p *PlayerReference, cardID string) {
 	})
 
 	m.HandleFx(ctx)
-
-	if !ctx.Cancelled() {
-		// Tap abilities can only be used during attack step
-		// https://duelmasters.fandom.com/wiki/Step#Step_7_(Attack_step)
-		if _, ok := m.Step.(*AttackStep); !ok {
-			m.Step = &AttackStep{}
-		}
-
-		p.Player.CanChargeMana = false
-	}
 
 	m.BroadcastState()
 }

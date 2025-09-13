@@ -37,7 +37,7 @@ func Creature(card *match.Card, ctx *match.Context) {
 
 		// make sure we haven't attacked yet
 		if _, ok := ctx.Match.Step.(*match.AttackStep); ok {
-			ctx.Match.WarnPlayer(card.Player, "You can't summon creatures after attacking")
+			ctx.Match.WarnPlayer(card.Player, "You can't summon creatures after attacking or using tap ability.")
 			ctx.InterruptFlow()
 			return
 		}
@@ -311,6 +311,19 @@ func Creature(card *match.Card, ctx *match.Context) {
 
 	}
 
+	if event, ok := ctx.Event.(*match.AttackConfirmed); ok {
+		if event.CardID != card.ID || card.Zone != match.BATTLEZONE {
+			return
+		}
+
+		// To prevent the AttackStep to be incorrectly set whenever
+		// someone would cancel the AttackCreature / AttackPlayer sequence
+		if !ctx.Cancelled() {
+			ctx.Match.Step = &match.AttackStep{}
+			card.Player.CanChargeMana = false
+		}
+	}
+
 	if event, ok := ctx.Event.(*match.Block); ok {
 
 		// Is this event for me or someone else?
@@ -576,6 +589,9 @@ func Creature(card *match.Card, ctx *match.Context) {
 			}
 
 			if f, ok := tapEffect.(func(card *match.Card, ctx *match.Context)); ok {
+				ctx.Match.HandleFx(match.NewContext(ctx.Match, &match.ActivatesTapAbility{
+					CardID: card.ID,
+				}))
 				ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s activates tap effect", card.Name))
 				f(card, ctx)
 			}
@@ -583,6 +599,22 @@ func Creature(card *match.Card, ctx *match.Context) {
 			card.Tapped = true
 		})
 
+	}
+
+	if event, ok := ctx.Event.(*match.ActivatesTapAbility); ok {
+		if event.CardID != card.ID || card.Zone != match.BATTLEZONE {
+			return
+		}
+
+		// Same as in AttackConfirmed event,
+		// To prevent the AttackStep to be incorrectly set whenever
+		// someone would cancel the TapAbility selection (in case a creature has multiple tap abilities)
+		if !ctx.Cancelled() {
+			// Tap abilities can only be used during attack step
+			// https://duelmasters.fandom.com/wiki/Step#Step_7_(Attack_step)
+			ctx.Match.Step = &match.AttackStep{}
+			card.Player.CanChargeMana = false
+		}
 	}
 
 	// When destroyed
@@ -679,8 +711,6 @@ func tapCardAndConfirmAttack(card *match.Card, ctx *match.Context, attackPlayer 
 	}
 
 	card.Tapped = true
-	card.Player.CanChargeMana = false
-	ctx.Match.Step = &match.AttackStep{}
 
 	// Broadcast state so that opponent can see that this card is tapped if they get any shield triggers
 	ctx.Match.BroadcastState()
