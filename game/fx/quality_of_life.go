@@ -158,7 +158,7 @@ func BinaryQuestion(p *match.Player, m *match.Match, text string) bool {
 
 	defer m.CloseAction(p)
 
-	if !m.IsPlayerTurn(p) { //TODO see here why shield trigger pop-up remains open after GlenaVuele interaction
+	if !m.IsPlayerTurn(p) { //@TODO see here why shield trigger pop-up remains open after GlenaVuele interaction
 		m.Wait(m.Opponent(p), "Waiting for your opponent to make an action")
 		defer m.EndWait(m.Opponent(p))
 	}

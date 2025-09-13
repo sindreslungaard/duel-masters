@@ -28,8 +28,8 @@ func GlenaVueleTheHypnotic(c *match.Card) {
 		},
 		fx.When(fx.OppShieldTriggerCast, func(card *match.Card, ctx *match.Context) { oppShieldTriggerCast = true }),
 		fx.WhenAll([]func(*match.Card, *match.Context) bool{fx.OpponentPlayedShieldTrigger, func(card *match.Card, ctx *match.Context) bool { return oppShieldTriggerCast }}, func(card *match.Card, ctx *match.Context) {
-			ctx.ScheduleAfter(func() {
-				//TODO see binary question interaction with shield trigger pop-up
+			ctx.ScheduleAfter(func() { //@TODO try without ScheduleAfter
+				//@TODO see binary question interaction with shield trigger pop-up
 				// consider adding m.Wait(opponent) without an if check for current player turn
 				oppShieldTriggerCast = false
 
