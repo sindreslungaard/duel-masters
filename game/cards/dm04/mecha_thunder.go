@@ -40,9 +40,7 @@ func ReBilSeekerOfArchery(c *match.Card) {
 	c.ManaRequirement = []string{civ.Light}
 
 	c.Use(fx.Creature, fx.Doublebreaker, fx.When(fx.InTheBattlezone, func(card *match.Card, ctx *match.Context) {
-
 		ctx.Match.ApplyPersistentEffect(func(ctx2 *match.Context, exit func()) {
-
 			getLightCreatures(card, ctx2).Map(func(x *match.Card) {
 				x.AddUniqueSourceCondition(cnd.PowerAmplifier, 2000, card.ID)
 			})
@@ -53,7 +51,6 @@ func ReBilSeekerOfArchery(c *match.Card) {
 				})
 				exit()
 			}
-
 		})
 	}))
 }

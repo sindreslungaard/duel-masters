@@ -2,6 +2,7 @@ package dm09
 
 import (
 	"duel-masters/game/civ"
+	"duel-masters/game/cnd"
 	"duel-masters/game/family"
 	"duel-masters/game/fx"
 	"duel-masters/game/match"
@@ -30,7 +31,7 @@ func BatDoctorShadowOfUndeath(c *match.Card) {
 				1,
 				true,
 				func(x *match.Card) bool {
-					return x.ID != card.ID
+					return x.ID != card.ID && x.HasCondition(cnd.Creature)
 				},
 				false,
 			).Map(func(x *match.Card) {

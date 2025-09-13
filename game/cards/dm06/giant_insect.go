@@ -28,7 +28,7 @@ func SplinterclawWasp(c *match.Card) {
 	c.ManaCost = 7
 	c.ManaRequirement = []string{civ.Nature}
 
-	c.Use(fx.Creature, fx.Doublebreaker, fx.PowerAttacker3000, fx.When(fx.Blocked, fx.DestoryOpShield))
+	c.Use(fx.Creature, fx.Doublebreaker, fx.PowerAttacker3000, fx.When(fx.Blocked, fx.DestroyOpShield))
 }
 
 func TrenchScarab(c *match.Card) {

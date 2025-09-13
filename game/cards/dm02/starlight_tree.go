@@ -18,15 +18,16 @@ func SpiralGrass(c *match.Card) {
 	c.ManaRequirement = []string{civ.Light}
 
 	c.Use(fx.Creature, fx.Blocker(), func(card *match.Card, ctx *match.Context) {
-
-		if event, ok := ctx.Event.(*match.CreatureDestroyed); ok {
-
-			if event.Source == card && event.Blocked {
-				card.Tapped = false
+		if event, ok := ctx.Event.(*match.Battle); ok {
+			if event.Defender == card && event.Blocked {
+				ctx.ScheduleAfter(func() {
+					if card.Zone == match.BATTLEZONE {
+						card.Tapped = false
+						ctx.Match.BroadcastState()
+					}
+				})
 			}
-
 		}
-
 	})
 
 }

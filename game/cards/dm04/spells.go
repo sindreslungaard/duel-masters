@@ -17,9 +17,7 @@ func FullDefensor(c *match.Card) {
 	c.ManaRequirement = []string{civ.Light}
 
 	c.Use(fx.Spell, fx.ShieldTrigger, fx.When(fx.SpellCast, func(card *match.Card, ctx *match.Context) {
-
 		ctx.Match.ApplyPersistentEffect(func(ctx2 *match.Context, exit func()) {
-
 			// on all events, add blocker to our creatures
 			fx.Find(
 				card.Player,
@@ -40,9 +38,7 @@ func FullDefensor(c *match.Card) {
 
 				exit()
 			}
-
 		})
-
 	}))
 }
 
@@ -384,7 +380,6 @@ func WhiskingWhirlwind(c *match.Card) {
 	c.Use(fx.Spell, fx.When(fx.SpellCast, func(card *match.Card, ctx *match.Context) {
 
 		ctx.Match.ApplyPersistentEffect(func(ctx2 *match.Context, exit func()) {
-
 			if _, ok := ctx2.Event.(*match.EndOfTurnStep); ok {
 				fx.Find(
 					card.Player,
@@ -392,12 +387,11 @@ func WhiskingWhirlwind(c *match.Card) {
 				).Map(func(x *match.Card) {
 					if x.Tapped {
 						x.Tapped = false
-						ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s was untapped by %s's effect", x.Name, card.Name))
+						ctx2.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s was untapped by %s's effect", x.Name, card.Name))
 					}
 				})
 				exit()
 			}
-
 		})
 	}))
 }
