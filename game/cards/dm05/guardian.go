@@ -6,6 +6,7 @@ import (
 	"duel-masters/game/family"
 	"duel-masters/game/fx"
 	"duel-masters/game/match"
+	"fmt"
 )
 
 // SnorkLaShrineGuardian ...
@@ -24,11 +25,26 @@ func SnorkLaShrineGuardian(c *match.Card) {
 			return
 		}
 
-		if event, ok := ctx.Event.(*match.CardMoved); ok && event.From == match.MANAZONE && event.To == match.GRAVEYARD {
+		if event, ok := ctx.Event.(*match.CardMoved); ok && event.From == match.MANAZONE && event.To == match.GRAVEYARD && event.Source != "" {
 
-			card.Player.MoveCard(event.CardID, match.GRAVEYARD, match.MANAZONE, card.ID)
-			ctx.Match.ReportActionInChat(card.Player, "Snork La, Shrine Guardian prevented card from being discarded from the manazone")
+			opp := ctx.Match.Opponent(card.Player)
 
+			sourceCard1, _ := opp.GetCard(event.Source, match.BATTLEZONE)
+			sourceCard2, _ := opp.GetCard(event.Source, match.MANAZONE)
+			sourceCard3, _ := opp.GetCard(event.Source, match.GRAVEYARD)
+			sourceCard4, _ := opp.GetCard(event.Source, match.SHIELDZONE)
+			sourceCard5, _ := opp.GetCard(event.Source, match.HAND)
+
+			if sourceCard1 == nil && sourceCard2 == nil && sourceCard3 == nil && sourceCard4 == nil && sourceCard5 == nil {
+				return
+			}
+
+			manaBurned, _ := card.Player.GetCard(event.CardID, match.GRAVEYARD)
+
+			if manaBurned != nil && fx.BinaryQuestion(card.Player, ctx.Match, fmt.Sprintf("%s's effect: Do you want to return %s to your mana zone?", card.Name, manaBurned.Name)) {
+				card.Player.MoveCard(event.CardID, match.GRAVEYARD, match.MANAZONE, card.ID)
+				ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s prevented %s from being discarded from the manazone", card.Name, manaBurned.Name))
+			}
 		}
 
 	})
