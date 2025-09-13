@@ -31,5 +31,5 @@ const (
 	AddFamily                 = "add_family"
 	HasShieldsSelectionEffect = "Has_shields_selection_effect"
 	CantBeSelectedByOpp       = "cant_be_selected_by_opp"
-	AffectedByDiamondCutter   = "affected_by_diamond_cutter"
+	IgnoreCantAttack          = "ignore_cant_attack"
 )

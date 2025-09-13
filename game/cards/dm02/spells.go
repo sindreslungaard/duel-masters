@@ -269,7 +269,7 @@ func DiamondCutter(c *match.Card) {
 				}
 
 				x.RemoveCondition(cnd.CantAttackPlayers)
-				x.AddUniqueSourceCondition(cnd.AffectedByDiamondCutter, nil, card.ID)
+				x.AddUniqueSourceCondition(cnd.IgnoreCantAttack, nil, card.ID)
 			})
 
 			// remove persistent effect when turn ends
