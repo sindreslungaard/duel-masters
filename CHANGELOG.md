@@ -2,7 +2,12 @@
 
 ## [Unreleased]
 
-No unreleased changes
+- Fixed an issue where "Balesk Baj, the Timeburner" did not have doublebreaker (thanks @DragosIonita23)
+- Fixed an issue where "Zeppelin Crawler" and "Kelp Candle"'s effect would trigger not only when blocking (thanks @DragosIonita23)
+- Updated card selection popup to not be opened if the user does not have more than one unique outcome to select (thanks @DragosIonita23)
+- Fixed an issue where "Spiral Grass"'s untap effect could wrongly interfere with cards like Mighty Shouter (thanks @DragosIonita23)
+- Fixed an issue where "Bat Doctor Shadow of Undeath"'s effect would be able to retrieve non-creatures from the graveyard (thanks @DragosIonita23)
+- Fixed an issue where "Aqua Sniper" could bypass "Petrova, Channeler of Suns"'s effect (thanks @DragosIonita23)
 
 ## 31/08/2025
 

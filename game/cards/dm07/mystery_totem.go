@@ -31,9 +31,7 @@ func SpinningTotem(c *match.Card) {
 	c.ManaRequirement = []string{civ.Nature}
 	c.TapAbility = func(card *match.Card, ctx *match.Context) {
 		ctx.Match.ApplyPersistentEffect(func(ctx2 *match.Context, exit func()) {
-
 			if event, ok := ctx2.Event.(*match.Battle); ok {
-
 				if !event.Blocked || event.Attacker.Player != card.Player {
 					return
 				}
@@ -42,7 +40,7 @@ func SpinningTotem(c *match.Card) {
 					return
 				}
 
-				fx.DestoryOpShield(card, ctx2)
+				fx.DestroyOpShield(card, ctx2)
 			}
 
 			// remove persistent effect when turn ends
@@ -50,7 +48,6 @@ func SpinningTotem(c *match.Card) {
 			if ok {
 				exit()
 			}
-
 		})
 	}
 

@@ -139,9 +139,7 @@ func FruitOfEternity(c *match.Card) {
 	c.ManaRequirement = []string{civ.Nature}
 
 	c.Use(fx.Spell, fx.ShieldTrigger, fx.When(fx.SpellCast, func(card *match.Card, ctx *match.Context) {
-
 		ctx.Match.ApplyPersistentEffect(func(ctx2 *match.Context, exit func()) {
-
 			if event, ok := ctx2.Event.(*match.CreatureDestroyed); ok && event.Card.Player == card.Player {
 				ctx2.InterruptFlow()
 				card.Player.MoveCard(event.Card.ID, match.BATTLEZONE, match.MANAZONE, card.ID)
@@ -155,6 +153,7 @@ func FruitOfEternity(c *match.Card) {
 			}
 		})
 	}))
+
 }
 
 func VacuumGel(c *match.Card) {
@@ -192,7 +191,6 @@ func MiraclePortal(c *match.Card) {
 	c.ManaRequirement = []string{civ.Light}
 
 	c.Use(fx.Spell, fx.When(fx.SpellCast, func(card *match.Card, ctx *match.Context) {
-
 		fx.Select(
 			card.Player,
 			ctx.Match,
@@ -218,8 +216,8 @@ func MiraclePortal(c *match.Card) {
 				}
 			})
 		})
-
 	}))
+
 }
 
 func VenomCharger(c *match.Card) {
