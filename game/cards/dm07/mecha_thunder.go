@@ -18,7 +18,6 @@ func GandarSeekerofExplosions(c *match.Card) {
 	c.ManaRequirement = []string{civ.Light}
 	c.TapAbility = func(card *match.Card, ctx *match.Context) {
 		ctx.Match.ApplyPersistentEffect(func(ctx2 *match.Context, exit func()) {
-
 			if _, ok := ctx2.Event.(*match.EndOfTurnStep); ok {
 				fx.Find(
 					card.Player,
@@ -31,7 +30,6 @@ func GandarSeekerofExplosions(c *match.Card) {
 				})
 				exit()
 			}
-
 		})
 	}
 
