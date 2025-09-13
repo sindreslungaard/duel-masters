@@ -65,9 +65,7 @@ func GigalingQ(c *match.Card) {
 			).Map(func(x *match.Card) {
 				x.AddUniqueSourceCondition(cnd.Slayer, true, card.ID)
 			})
-
 		})
-
 	}))
 
 }

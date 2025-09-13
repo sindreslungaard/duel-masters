@@ -110,7 +110,6 @@ func LaserWhip(c *match.Card) {
 	c.ManaRequirement = []string{civ.Light}
 
 	c.Use(fx.Spell, fx.When(fx.SpellCast, func(card *match.Card, ctx *match.Context) {
-
 		fx.Select(
 			card.Player,
 			ctx.Match,
@@ -152,8 +151,8 @@ func LaserWhip(c *match.Card) {
 				})
 			})
 		})
-
 	}))
+
 }
 
 // LunarCharger ...
@@ -165,7 +164,6 @@ func LunarCharger(c *match.Card) {
 	c.ManaRequirement = []string{civ.Light}
 
 	c.Use(fx.Spell, fx.Charger, fx.When(fx.SpellCast, func(card *match.Card, ctx *match.Context) {
-
 		fx.Select(
 			card.Player,
 			ctx.Match,
@@ -182,11 +180,11 @@ func LunarCharger(c *match.Card) {
 					return
 				}
 
-				if _, ok := ctx.Event.(*match.EndOfTurnStep); ok {
+				if _, ok := ctx2.Event.(*match.EndOfTurnStep); ok {
 					ctx2.ScheduleAfter(func() {
 						if x.Tapped {
 							// you may untap this creature
-							if fx.BinaryQuestion(x.Player, ctx.Match, fmt.Sprintf("%s's effect: Do you want to untap %s?", card.Name, x.Name)) {
+							if fx.BinaryQuestion(x.Player, ctx2.Match, fmt.Sprintf("%s's effect: Do you want to untap %s?", card.Name, x.Name)) {
 								x.Tapped = false
 								ctx2.Match.BroadcastState()
 							}
@@ -197,8 +195,8 @@ func LunarCharger(c *match.Card) {
 				}
 			})
 		})
-
 	}))
+
 }
 
 // RootCharger ...
@@ -211,7 +209,6 @@ func RootCharger(c *match.Card) {
 
 	c.Use(fx.Spell, fx.Charger, fx.When(fx.SpellCast, func(card *match.Card, ctx *match.Context) {
 		ctx.Match.ApplyPersistentEffect(func(ctx2 *match.Context, exit func()) {
-
 			if event, ok := ctx2.Event.(*match.CreatureDestroyed); ok {
 				if event.Card.Player == card.Player {
 					card.Player.MoveCard(event.Card.ID, match.BATTLEZONE, match.MANAZONE, card.ID)
@@ -224,9 +221,9 @@ func RootCharger(c *match.Card) {
 					exit()
 				})
 			}
-
 		})
 	}))
+
 }
 
 // MarineScramble ...
@@ -239,7 +236,6 @@ func MarineScramble(c *match.Card) {
 
 	c.Use(fx.Spell, fx.When(fx.SpellCast, func(card *match.Card, ctx *match.Context) {
 		ctx.Match.ApplyPersistentEffect(func(ctx2 *match.Context, exit func()) {
-
 			creatures := fx.Find(card.Player, match.BATTLEZONE)
 
 			if _, ok := ctx2.Event.(*match.EndOfTurnStep); ok {
