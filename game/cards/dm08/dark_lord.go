@@ -29,7 +29,7 @@ func MegariaEmpressOfDread(c *match.Card) {
 				})
 
 				fx.Find(
-					ctx.Match.Opponent(card.Player),
+					ctx2.Match.Opponent(card.Player),
 					match.BATTLEZONE,
 				).Map(func(x *match.Card) {
 					x.RemoveConditionBySource(card.ID)
@@ -47,7 +47,7 @@ func MegariaEmpressOfDread(c *match.Card) {
 			})
 
 			fx.Find(
-				ctx.Match.Opponent(card.Player),
+				ctx2.Match.Opponent(card.Player),
 				match.BATTLEZONE,
 			).Map(func(x *match.Card) {
 				x.AddUniqueSourceCondition(cnd.Slayer, true, card.ID)

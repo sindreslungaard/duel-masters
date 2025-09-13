@@ -25,11 +25,11 @@ func RaVuSeekerOfLightning(c *match.Card) {
 			ctx.Match,
 			card.Player,
 			match.GRAVEYARD,
-			fmt.Sprintf("%s: You may return 1 spell from your graveyard to your hand", card.Name),
+			fmt.Sprintf("%s: You may return 1 light spell from your graveyard to your hand", card.Name),
 			1,
 			1,
 			true,
-			func(x *match.Card) bool { return x.HasCondition(cnd.Spell) },
+			func(x *match.Card) bool { return x.HasCondition(cnd.Spell) && x.Civ == civ.Light },
 			false,
 		).Map(func(x *match.Card) {
 			x.Player.MoveCard(x.ID, match.GRAVEYARD, match.HAND, card.ID)

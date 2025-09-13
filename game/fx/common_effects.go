@@ -93,7 +93,6 @@ func BlockerWhenNoShields(card *match.Card, ctx *match.Context) {
 
 func HaveSelfConditionsWhenNoShields(card *match.Card, ctx *match.Context, conditions []*match.Condition) {
 	ctx.Match.ApplyPersistentEffect(func(ctx2 *match.Context, exit func()) {
-
 		notInTheBZ := card.Zone != match.BATTLEZONE
 		if notInTheBZ || IHaveShields(card) {
 			for _, cond := range conditions {
@@ -115,7 +114,6 @@ func HaveSelfConditionsWhenNoShields(card *match.Card, ctx *match.Context, condi
 				}
 			}
 		}
-
 	})
 }
 
@@ -167,7 +165,7 @@ func RotateShields(card *match.Card, ctx *match.Context, max int) {
 
 }
 
-func DestoryOpShield(card *match.Card, ctx *match.Context) {
+func DestroyOpShield(card *match.Card, ctx *match.Context) {
 	opponent := ctx.Match.Opponent(card.Player)
 
 	ctx.Match.BreakShields(SelectBackside(

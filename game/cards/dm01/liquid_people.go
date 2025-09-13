@@ -69,43 +69,27 @@ func AquaSniper(c *match.Card) {
 		cards["Your creatures"] = myCards
 		cards["Opponent's creatures"] = opponentCards
 
-		ctx.Match.NewMultipartAction(card.Player, cards, 1, 2, fmt.Sprintf("%s: Choose up to 2 creatures in the battle zone and return them to their owners' hands", card.Name), true)
+		fx.SelectMultipart(
+			card.Player,
+			ctx.Match,
+			cards,
+			fmt.Sprintf("%s: Select up to 2 creatures in the battlezone and return it to its owner's hand", card.Name),
+			1,
+			2,
+			true,
+		).Map(func(x *match.Card) {
+			ref, err := card.Player.MoveCard(x.ID, match.BATTLEZONE, match.HAND, card.ID)
 
-		for {
+			if err != nil {
+				ref, err := ctx.Match.Opponent(card.Player).MoveCard(x.ID, match.BATTLEZONE, match.HAND, card.ID)
 
-			action := <-card.Player.Action
-
-			if action.Cancel {
-				break
-			}
-
-			if len(action.Cards) < 1 || len(action.Cards) > 2 {
-				break
-			}
-
-			for _, vid := range action.Cards {
-
-				ref, err := c.Player.MoveCard(vid, match.BATTLEZONE, match.HAND, card.ID)
-
-				if err != nil {
-
-					ref, err := ctx.Match.Opponent(c.Player).MoveCard(vid, match.BATTLEZONE, match.HAND, card.ID)
-
-					if err == nil {
-						ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s was moved to %s's hand", ref.Name, ctx.Match.PlayerRef(ref.Player).Socket.User.Username))
-					}
-
-				} else {
-					ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s was moved to %s's hand", ref.Name, ctx.Match.PlayerRef(ref.Player).Socket.User.Username))
+				if err == nil {
+					ctx.Match.ReportActionInChat(ctx.Match.Opponent(card.Player), fmt.Sprintf("%s was moved to %s's hand", ref.Name, ctx.Match.PlayerRef(ref.Player).Socket.User.Username))
 				}
-
+			} else {
+				ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s was moved to %s's hand", ref.Name, ctx.Match.PlayerRef(ref.Player).Socket.User.Username))
 			}
-
-			break
-
-		}
-
-		ctx.Match.CloseAction(c.Player)
+		})
 
 	}))
 
