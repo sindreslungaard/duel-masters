@@ -46,7 +46,7 @@ func PetrovaChannelerOfSuns(c *match.Card) {
 						})
 
 						fx.FindFilter(
-							ctx.Match.Opponent(card.Player),
+							ctx2.Match.Opponent(card.Player),
 							match.BATTLEZONE,
 							func(x *match.Card) bool {
 								return x.HasFamily(chosenFamily)
@@ -55,7 +55,7 @@ func PetrovaChannelerOfSuns(c *match.Card) {
 							x.RemoveConditionBySource(card.ID)
 						})
 
-						ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("All creatures in the battlezone of race %s NO more have +4000 power", chosenFamily))
+						ctx2.Match.ReportActionInChat(card.Player, fmt.Sprintf("All creatures in the battlezone of race %s NO more have +4000 power", chosenFamily))
 
 						exit()
 						return
@@ -72,7 +72,7 @@ func PetrovaChannelerOfSuns(c *match.Card) {
 					})
 
 					fx.FindFilter(
-						ctx.Match.Opponent(card.Player),
+						ctx2.Match.Opponent(card.Player),
 						match.BATTLEZONE,
 						func(x *match.Card) bool {
 							return x.HasFamily(chosenFamily)

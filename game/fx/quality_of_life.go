@@ -169,6 +169,17 @@ func BinaryQuestion(p *match.Player, m *match.Match, text string) bool {
 }
 
 func OrderCards(p *match.Player, m *match.Match, cards []*match.Card, text string) []string {
+	var cardsIds []string
+	cardsIds = make([]string, 0)
+
+	if len(cards) < 2 {
+		for _, c := range cards {
+			cardsIds = append(cardsIds, c.ID)
+		}
+
+		return cardsIds
+	}
+
 	m.NewOrderAction(p, cards, text)
 	defer m.CloseAction(p)
 
@@ -177,7 +188,6 @@ func OrderCards(p *match.Player, m *match.Match, cards []*match.Card, text strin
 		defer m.EndWait(m.Opponent(p))
 	}
 
-	var cardsIds []string
 	for _, c := range cards {
 		cardsIds = append(cardsIds, c.ID)
 	}
@@ -263,7 +273,7 @@ func SelectFilter(p *match.Player, m *match.Match, containerOwner *match.Player,
 	}
 
 	filteredLength := len(filtered)
-	if filteredLength < 1 {
+	if !showUnselectables && filteredLength < 1 {
 		return result
 	}
 
@@ -280,7 +290,7 @@ func SelectFilter(p *match.Player, m *match.Match, containerOwner *match.Player,
 	filtered = newCards
 
 	filteredLength = len(filtered)
-	if filteredLength < 1 {
+	if !showUnselectables && filteredLength < 1 {
 		return result
 	}
 
@@ -290,6 +300,12 @@ func SelectFilter(p *match.Player, m *match.Match, containerOwner *match.Player,
 		max = filteredLength
 	} else if filteredLength < max {
 		max = filteredLength
+	}
+
+	// Bypass the selection pop-up if action is NOT cancellable and the selection is unambiguous, i.e. filtered cards length == min == max
+	// i.e. user doesn't have a choice
+	if !cancellable && min == max && filteredLength == min {
+		return filtered
 	}
 
 	if !m.IsPlayerTurn(p) {
@@ -928,9 +944,18 @@ func IsTapped(card *match.Card, ctx *match.Context) bool {
 	return false
 }
 
+// Blocked checks if the card was blocked
 func Blocked(card *match.Card, ctx *match.Context) bool {
 	if event, ok := ctx.Event.(*match.Battle); ok {
 		return event.Blocked && event.Attacker == card
+	}
+	return false
+}
+
+// Blocks checks if the card blocks another creature
+func Blocks(card *match.Card, ctx *match.Context) bool {
+	if event, ok := ctx.Event.(*match.Battle); ok {
+		return event.Blocked && event.Defender == card
 	}
 	return false
 }
@@ -959,6 +984,16 @@ func WheneverThisAttacksPlayerAndIsntBlocked(card *match.Card, ctx *match.Contex
 		}
 	}
 
+	return false
+}
+
+func WheneverThisAttacksPlayerAndBecomesBlocked(card *match.Card, ctx *match.Context) bool {
+	if event, ok := ctx.Event.(*match.Battle); ok &&
+		event.FromAttackPlayer &&
+		event.Attacker == card &&
+		event.Blocked {
+		return true
+	}
 	return false
 }
 
@@ -1170,7 +1205,7 @@ func LookTop4Put1IntoHandReorderRestOnBottomDeck(card *match.Card, ctx *match.Co
 		false,
 	).Map(func(x *match.Card) {
 		card.Player.MoveCard(x.ID, match.DECK, match.HAND, card.ID)
-		ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s was put into %s's hand from his deck by %s's effect.", x.Name, card.Player.Username(), card.Name))
+		ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("A card was put into %s's hand from his deck by %s's effect.", card.Player.Username(), card.Name))
 
 		restOfCards := top4CardsDeck[:0]
 		for _, card := range top4CardsDeck {
@@ -1188,6 +1223,7 @@ func LookTop4Put1IntoHandReorderRestOnBottomDeck(card *match.Card, ctx *match.Co
 
 		if len(orderedCardIds) == len(restOfCards) {
 			card.Player.ReorderCardsOnBottomDeck(restOfCards, orderedCardIds)
+			ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%v cards were reordered at the bottom of %s's deck by %s's effect.", len(orderedCardIds), card.Player.Username(), card.Name))
 		}
 
 	})

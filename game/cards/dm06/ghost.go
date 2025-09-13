@@ -19,11 +19,8 @@ func FrostSpecterShadowOfAge(c *match.Card) {
 	c.ManaRequirement = []string{civ.Darkness}
 
 	c.Use(fx.Creature, fx.Evolution, fx.When(fx.InTheBattlezone, func(card *match.Card, ctx *match.Context) {
-
 		ctx.Match.ApplyPersistentEffect(func(ctx2 *match.Context, exit func()) {
-
 			if card.Zone != match.BATTLEZONE {
-
 				// remove cards with current buffs
 				getGhostCreatures(card).Map(func(x *match.Card) {
 					x.RemoveConditionBySource(card.ID)
@@ -31,21 +28,17 @@ func FrostSpecterShadowOfAge(c *match.Card) {
 
 				exit()
 				return
-
 			}
 
 			getGhostCreatures(card).Map(func(x *match.Card) {
 				x.AddUniqueSourceCondition(cnd.Slayer, true, card.ID)
 			})
-
 		})
-
 	}))
 
 }
 
 func getGhostCreatures(card *match.Card) fx.CardCollection {
-
 	ghostCreatures := fx.FindFilter(
 		card.Player,
 		match.BATTLEZONE,
