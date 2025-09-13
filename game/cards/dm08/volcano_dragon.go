@@ -39,7 +39,6 @@ func MagmadragonJagalzor(c *match.Card) {
 		fx.When(fx.EndOfMyTurn, func(card *match.Card, ctx *match.Context) { turboRush = false }),
 		fx.When(fx.InTheBattlezone, func(card *match.Card, ctx *match.Context) {
 			ctx.Match.ApplyPersistentEffect(func(ctx2 *match.Context, exit func()) {
-
 				if card.Zone != match.BATTLEZONE {
 					fx.Find(
 						card.Player,
@@ -55,7 +54,6 @@ func MagmadragonJagalzor(c *match.Card) {
 				if turboRush {
 					fx.Find(card.Player, match.BATTLEZONE).Map(func(x *match.Card) { x.AddUniqueSourceCondition(cnd.SpeedAttacker, true, card.ID) })
 				}
-
 			})
 		}),
 	)

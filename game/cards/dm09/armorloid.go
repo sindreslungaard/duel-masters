@@ -18,9 +18,7 @@ func SimianWarriorGrash(c *match.Card) {
 	c.ManaRequirement = []string{civ.Fire}
 
 	c.Use(fx.Creature, fx.When(fx.InTheBattlezone, func(card *match.Card, ctx *match.Context) {
-
 		ctx.Match.ApplyPersistentEffect(func(ctx2 *match.Context, exit func()) {
-
 			if card.Zone != match.BATTLEZONE {
 
 				exit()
@@ -31,9 +29,7 @@ func SimianWarriorGrash(c *match.Card) {
 			if event, ok := ctx2.Event.(*match.CreatureDestroyed); ok && event.Card.Player == c.Player && event.Card.HasFamily(family.Armorloid) {
 				fx.OpponentChoosesManaBurn(card, ctx2)
 			}
-
 		})
-
 	}))
 
 }

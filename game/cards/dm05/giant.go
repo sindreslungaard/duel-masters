@@ -17,7 +17,7 @@ func AvalancheGiant(c *match.Card) {
 	c.ManaCost = 6
 	c.ManaRequirement = []string{civ.Nature}
 
-	c.Use(fx.Creature, fx.Doublebreaker, fx.CantAttackCreatures, fx.When(fx.Blocked, fx.DestoryOpShield))
+	c.Use(fx.Creature, fx.Doublebreaker, fx.CantAttackCreatures, fx.When(fx.Blocked, fx.DestroyOpShield))
 
 }
 

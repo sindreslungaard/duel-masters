@@ -29,7 +29,6 @@ func KachuaKeeperOfTheIcegate(c *match.Card) {
 // Bazagazeal case: you should be able to choose from this creature's effect or
 // the card itself's effect (Bazagazeal)
 func kachuaKeeperOfTheIcegateTapAbility(card *match.Card, ctx *match.Context) {
-
 	// Search your deck. You MAY take a Dragon from your deck
 	fx.SelectFilter(
 		card.Player,
@@ -70,5 +69,4 @@ func kachuaKeeperOfTheIcegateTapAbility(card *match.Card, ctx *match.Context) {
 		// then shuffle deck
 		fx.ShuffleDeck(card, ctx, false)
 	})
-
 }
