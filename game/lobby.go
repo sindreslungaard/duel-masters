@@ -221,7 +221,7 @@ func (l *Lobby) Parse(s *server.Socket, data []byte) {
 
 			flags := moderation.ChatModeration.CheckFlags(s.User.Username)
 			if flags >= moderation.FlagsTolerance {
-				chat(s, "Several of your previous messages have been flagged by the automatic chat moderation system and you have therefore been blocked from sending chat messages until the next server restart")
+				chat(s, "The automatic chat moderation system has flagged some of your previous messages and blocked you from chatting until the next server restart. Keep in mind that this occured from a scan of all messages since the last server restart and not just your latest ones, there can also be false positives, so in the future please refrain from words and phrases that could be interpreted as harassment without context.")
 				for i, msg := range l.messages {
 					if msg.Username == s.User.Username {
 						l.messages[i].Removed = true
