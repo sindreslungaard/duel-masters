@@ -20,7 +20,7 @@ func BaleskBajTheTimeburner(c *match.Card) {
 
 	attacked := false
 
-	c.Use(fx.Creature, fx.Evolution,
+	c.Use(fx.Creature, fx.Doublebreaker, fx.Evolution,
 		func(card *match.Card, ctx *match.Context) {
 			if _, ok := ctx.Event.(*match.UntapStep); ok {
 				attacked = false

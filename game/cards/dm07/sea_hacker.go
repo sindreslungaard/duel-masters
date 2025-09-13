@@ -25,7 +25,7 @@ func Garatyano(c *match.Card) {
 		)
 
 		for _, cID := range sortedCards {
-			card.Player.MoveCardToFront(cID, match.DECK, match.DECK)
+			card.Player.MoveCardToFront(cID, match.DECK, match.DECK, card.ID)
 		}
 	}
 
