@@ -46,11 +46,8 @@ func GalliaZohlIronGuardianQ(c *match.Card) {
 	c.ManaRequirement = []string{civ.Light}
 
 	c.Use(fx.Creature, fx.Survivor, fx.When(fx.InTheBattlezone, func(card *match.Card, ctx *match.Context) {
-
 		ctx.Match.ApplyPersistentEffect(func(ctx2 *match.Context, exit func()) {
-
 			if card.Zone != match.BATTLEZONE {
-
 				fx.FindFilter(
 					card.Player,
 					match.BATTLEZONE,
@@ -61,7 +58,6 @@ func GalliaZohlIronGuardianQ(c *match.Card) {
 
 				exit()
 				return
-
 			}
 
 			fx.FindFilter(
@@ -71,9 +67,7 @@ func GalliaZohlIronGuardianQ(c *match.Card) {
 			).Map(func(x *match.Card) {
 				fx.ForceBlocker(x, ctx2, card.ID)
 			})
-
 		})
-
 	}))
 
 }
