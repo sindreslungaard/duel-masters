@@ -165,7 +165,7 @@ func RotateShields(card *match.Card, ctx *match.Context, max int) {
 
 }
 
-func DestoryOpShield(card *match.Card, ctx *match.Context) {
+func DestroyOpShield(card *match.Card, ctx *match.Context) {
 	opponent := ctx.Match.Opponent(card.Player)
 
 	ctx.Match.BreakShields(SelectBackside(

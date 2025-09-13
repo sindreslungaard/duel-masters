@@ -377,7 +377,7 @@ func Creature(card *match.Card, ctx *match.Context) {
 					ctx.Match.EndWait(card.Player)
 					ctx.Match.CloseAction(opponent)
 
-					ctx.Match.Battle(card, c, true)
+					ctx.Match.Battle(card, c, true, true)
 
 					break
 
@@ -449,7 +449,7 @@ func Creature(card *match.Card, ctx *match.Context) {
 					ctx.Match.EndWait(card.Player)
 					ctx.Match.CloseAction(opponent)
 
-					ctx.Match.Battle(card, blocker, true)
+					ctx.Match.Battle(card, blocker, true, false)
 
 					return
 
@@ -457,7 +457,7 @@ func Creature(card *match.Card, ctx *match.Context) {
 
 			}
 
-			ctx.Match.Battle(card, attackedCard, false)
+			ctx.Match.Battle(card, attackedCard, false, false)
 
 		}
 	}
