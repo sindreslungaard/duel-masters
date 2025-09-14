@@ -17,6 +17,24 @@ func EmperorQuazla(c *match.Card) {
 	c.ManaCost = 6
 	c.ManaRequirement = []string{civ.Water}
 
-	c.Use(fx.Creature, fx.Evolution, fx.Blocker(), fx.When(fx.OpponentPlayedShieldTrigger, fx.DrawUpTo2))
+	oppShieldTriggerCast := false
+
+	c.Use(fx.Creature, fx.Evolution, fx.Blocker(),
+		func(card *match.Card, ctx *match.Context) {
+			if _, ok := ctx.Event.(*match.UntapStep); ok {
+				oppShieldTriggerCast = false
+			}
+		},
+		fx.When(fx.OppShieldTriggerCast, func(card *match.Card, ctx *match.Context) {
+			oppShieldTriggerCast = true
+		}),
+		fx.When(fx.OpponentPlayedShieldTrigger, func(card *match.Card, ctx *match.Context) {
+			if oppShieldTriggerCast {
+				oppShieldTriggerCast = false
+
+				fx.DrawUpTo2(card, ctx)
+			}
+		}),
+	)
 
 }

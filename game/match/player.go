@@ -444,18 +444,25 @@ func (p *Player) GetCard(id string, container string) (*Card, error) {
 }
 
 // MoveCard tries to move a card from container a to container b
-func (p *Player) MoveCard(cardID string, from string, to string, source string) (*Card, error) {
+func (p *Player) MoveCard(cardID string, from string, to string, source string, isShieldTriggerParam ...bool) (*Card, error) {
 	c, err := p.GetCard(cardID, from)
 
 	if err != nil {
 		return nil, err
 	}
 
+	isShieldTrigger := false
+
+	if len(isShieldTriggerParam) > 0 && isShieldTriggerParam[0] {
+		isShieldTrigger = true
+	}
+
 	ctx := NewContext(p.match, &MoveCard{
-		CardID: cardID,
-		From:   from,
-		To:     to,
-		Source: source,
+		CardID:          cardID,
+		From:            from,
+		To:              to,
+		Source:          source,
+		IsShieldTrigger: isShieldTrigger,
 	})
 
 	p.match.HandleFx(ctx)

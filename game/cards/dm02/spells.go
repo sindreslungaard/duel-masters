@@ -272,7 +272,7 @@ func DiamondCutter(c *match.Card) {
 			})
 
 			// remove persistent effect when turn ends
-			_, ok := ctx2.Event.(*match.EndStep)
+			_, ok := ctx2.Event.(*match.EndOfTurnStep)
 			if ok {
 				exit()
 			}
