@@ -128,7 +128,7 @@ func StormWranglerTheFurious(c *match.Card) {
 
 									// And we manually trigger the battle event
 									// Between this creature and the selected opp blocker
-									ctx2.Match.Battle(card, x, true)
+									ctx2.Match.Battle(card, x, true, event.AttackedCardID == "")
 								}
 							}
 						}
