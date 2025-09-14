@@ -158,7 +158,7 @@ func BinaryQuestion(p *match.Player, m *match.Match, text string) bool {
 
 	defer m.CloseAction(p)
 
-	if !m.IsPlayerTurn(p) { //@TODO see here why shield trigger pop-up remains open after GlenaVuele interaction
+	if !m.IsPlayerTurn(p) {
 		m.Wait(m.Opponent(p), "Waiting for your opponent to make an action")
 		defer m.EndWait(m.Opponent(p))
 	}
@@ -591,11 +591,10 @@ func AnySpellCast(card *match.Card, ctx *match.Context) bool {
 
 }
 
-// SpellCast returns true if any spell was cast by the opponent from shield trigger
+// SpellCast returns true if any shield was cast by the opponent from shield trigger
+// While the current card is in the battlezone
 func OppShieldTriggerCast(card *match.Card, ctx *match.Context) bool {
-
-	if event, ok := ctx.Event.(*match.SpellCast); ok && event.FromShield {
-
+	if event, ok := ctx.Event.(*match.SpellCast); ok && card.Zone == match.BATTLEZONE && event.FromShield {
 		crtPlayerId := byte(1)
 		if card.Player == ctx.Match.Player2.Player {
 			crtPlayerId = 2
@@ -604,11 +603,30 @@ func OppShieldTriggerCast(card *match.Card, ctx *match.Context) bool {
 		if event.MatchPlayerID != crtPlayerId {
 			return true
 		}
+	}
 
+	if event, ok := ctx.Event.(*match.MoveCard); ok && card.Zone == match.BATTLEZONE && event.IsShieldTrigger {
+		crtPlayerId := byte(1)
+		if card.Player == ctx.Match.Player2.Player {
+			crtPlayerId = 2
+		}
+
+		if crtPlayerId == 1 {
+			_, err := ctx.Match.Player2.Player.GetCard(event.CardID, event.From)
+
+			if err == nil {
+				return true
+			}
+		} else {
+			_, err := ctx.Match.Player1.Player.GetCard(event.CardID, event.From)
+
+			if err == nil {
+				return true
+			}
+		}
 	}
 
 	return false
-
 }
 
 // Attacking returns true if the card is attacking a player or creature
@@ -918,14 +936,6 @@ func AnotherOwnCreatureDestroyed(card *match.Card, ctx *match.Context) bool {
 
 	return false
 
-}
-
-func OpponentUsedShieldTrigger(card *match.Card, ctx *match.Context) bool {
-	if event, ok := ctx.Event.(*match.ShieldTriggerPlayedEvent); ok {
-		return event.Card.Player != card.Player
-	}
-
-	return false
 }
 
 func MyDrawStep(card *match.Card, ctx *match.Context) bool {

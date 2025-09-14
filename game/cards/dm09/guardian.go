@@ -26,11 +26,11 @@ func GlenaVueleTheHypnotic(c *match.Card) {
 				oppShieldTriggerCast = false
 			}
 		},
-		fx.When(fx.OppShieldTriggerCast, func(card *match.Card, ctx *match.Context) { oppShieldTriggerCast = true }),
-		fx.WhenAll([]func(*match.Card, *match.Context) bool{fx.OpponentPlayedShieldTrigger, func(card *match.Card, ctx *match.Context) bool { return oppShieldTriggerCast }}, func(card *match.Card, ctx *match.Context) {
-			ctx.ScheduleAfter(func() { //@TODO try without ScheduleAfter
-				//@TODO see binary question interaction with shield trigger pop-up
-				// consider adding m.Wait(opponent) without an if check for current player turn
+		fx.When(fx.OppShieldTriggerCast, func(card *match.Card, ctx *match.Context) {
+			oppShieldTriggerCast = true
+		}),
+		fx.When(fx.OpponentPlayedShieldTrigger, func(card *match.Card, ctx *match.Context) {
+			if oppShieldTriggerCast {
 				oppShieldTriggerCast = false
 
 				if fx.BinaryQuestion(
@@ -39,7 +39,7 @@ func GlenaVueleTheHypnotic(c *match.Card) {
 					fmt.Sprintf("%s's effect: do you want to add the top card of your deck to your shields?", card.Name)) {
 					fx.TopCardToShield(card, ctx)
 				}
-			})
+			}
 		}),
 	)
 
@@ -62,7 +62,7 @@ func JilWarkaTimeGuardian(c *match.Card) {
 				ctx.Match,
 				ctx.Match.Opponent(card.Player),
 				match.BATTLEZONE,
-				fmt.Sprintf("%s's effect: Choose up to 2 of your opponent's creatures in the battlezone and tap them.", card.Name),
+				fmt.Sprintf("%s's effect: You may choose up to 2 of your opponent's creatures in the battlezone and tap them.", card.Name),
 				1,
 				2,
 				true,

@@ -25,10 +25,15 @@ func EmperorQuazla(c *match.Card) {
 				oppShieldTriggerCast = false
 			}
 		},
-		fx.When(fx.OppShieldTriggerCast, func(card *match.Card, ctx *match.Context) { oppShieldTriggerCast = true }),
-		fx.WhenAll([]func(*match.Card, *match.Context) bool{fx.OpponentPlayedShieldTrigger, func(card *match.Card, ctx *match.Context) bool { return oppShieldTriggerCast }}, func(card *match.Card, ctx *match.Context) {
-			oppShieldTriggerCast = false
-			fx.DrawUpTo2(card, ctx)
+		fx.When(fx.OppShieldTriggerCast, func(card *match.Card, ctx *match.Context) {
+			oppShieldTriggerCast = true
+		}),
+		fx.When(fx.OpponentPlayedShieldTrigger, func(card *match.Card, ctx *match.Context) {
+			if oppShieldTriggerCast {
+				oppShieldTriggerCast = false
+
+				fx.DrawUpTo2(card, ctx)
+			}
 		}),
 	)
 
