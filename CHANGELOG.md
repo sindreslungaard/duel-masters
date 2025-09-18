@@ -18,6 +18,8 @@
 - New card "Dance of the Sproutlings" (thanks @DragosIonita23)
 - New card "Relentless Blitz" (thanks @DragosIonita23)
 - New card "Gigio's Hammer" (thanks @DragosIonita23)
+- Fixed an issue where "Nariel, the Oracle" would not prevent tab abilities of cards with power 3000 or more (thanks @DragosIonita23)
+- Fixed an issue where "Diamond Cutter" would not prevent "Nariel, the Oracle" from preventing attacks (thanks @DragosIonita23)
 
 ## 31/08/2025
 
