@@ -654,6 +654,8 @@ var DM08 = map[string]match.CardConstructor{
 }
 
 var DM09 = map[string]match.CardConstructor{
+	"206b19fb-b389-44f3-9a45-06a7df6dc0f0": dm09.SteamRumblerKain,
+	"c23b0bbb-6a76-4b92-a224-832ed12544ff": dm09.AerodactylKooza,
 	"c13a5315-dec4-47ee-85fd-4feefeafe385": dm09.ImpossibleTunnel,
 	"687ab68e-4c9e-4a1f-8b80-7ced8a7eff7f": dm09.ZombieCarnival,
 	"6f2b5764-ebb1-4f26-8dfa-32333b051df1": dm09.DanceOfTheSproutlings,
