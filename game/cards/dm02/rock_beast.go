@@ -48,8 +48,6 @@ func Bombersaur(c *match.Card) {
 	c.ManaCost = 5
 	c.ManaRequirement = []string{civ.Fire}
 
-	c.Use(fx.Creature, fx.When(fx.Destroyed, func(card *match.Card, ctx *match.Context) {
-		fx.EachPlayerDestroysMana(card, ctx, 2)
-	}))
+	c.Use(fx.Creature, fx.When(fx.Destroyed, fx.EachPlayerDestroys2Mana))
 
 }
