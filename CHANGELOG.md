@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+- No unreleased changes
+
+## 21/09/2025
+
 - Fixed an issue where "Balesk Baj, the Timeburner" did not have doublebreaker (thanks @DragosIonita23)
 - Fixed an issue where "Zeppelin Crawler" and "Kelp Candle"'s effect would trigger not only when blocking (thanks @DragosIonita23)
 - Updated card selection popup to not be opened if the user does not have more than one unique outcome to select (thanks @DragosIonita23)
