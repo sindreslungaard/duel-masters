@@ -20,7 +20,6 @@ func Gigaberos(c *match.Card) {
 	c.ManaRequirement = []string{civ.Darkness}
 
 	c.Use(fx.Creature, fx.Doublebreaker, fx.When(fx.Summoned, func(card *match.Card, ctx *match.Context) {
-
 		creatures, err := card.Player.Container(match.BATTLEZONE)
 
 		if err != nil {
@@ -33,63 +32,37 @@ func Gigaberos(c *match.Card) {
 				otherCreatures = append(otherCreatures, creature)
 			}
 		}
-		this := make([]*match.Card, 0)
-		this = append(this, card)
 
-		options := make(map[string][]*match.Card)
-
-		options["This creature"] = this
-		options["Your other creatures"] = otherCreatures
-
-		ctx.Match.NewMultipartAction(card.Player, options, 1, 2, "Choose 2 of your other creatures in the battle zone that will be destroyed or destroy this creature", false)
-
-		defer ctx.Match.CloseAction(card.Player)
-
-		for {
-
-			action := <-card.Player.Action
-
-			if len(action.Cards) < 1 || len(action.Cards) > 2 {
-				ctx.Match.DefaultActionWarning(card.Player)
-				continue
-			}
-
-			// must be an attempt to destroy this creature
-			if len(action.Cards) == 1 {
-
-				if action.Cards[0] != card.ID {
-					ctx.Match.DefaultActionWarning(card.Player)
-					continue
-				}
-
-				ctx.Match.Destroy(card, card, match.DestroyedByMiscAbility)
-				ctx.InterruptFlow()
-
-				break
-
-			}
-
-			if !match.AssertCardsIn(creatures, action.Cards...) {
-				ctx.Match.DefaultActionWarning(card.Player)
-				continue
-			}
-
-			for _, id := range action.Cards {
-
-				creature, err := card.Player.GetCard(id, match.BATTLEZONE)
-
-				if err != nil {
-					continue
-				}
-
-				ctx.Match.Destroy(creature, card, match.DestroyedByMiscAbility)
-
-			}
-
-			break
-
+		if len(otherCreatures) < 2 {
+			ctx.Match.WarnPlayer(card.Player, fmt.Sprintf("You don't have 2 other creatures to destroy. Your %s will be destroyed instead.", card.Name))
+			ctx.Match.Destroy(card, card, match.DestroyedByMiscAbility)
+			return
 		}
 
+		choiceIndex := fx.MultipleChoiceQuestion(card.Player, ctx.Match, fmt.Sprintf("Do you want to destroy 2 of your other creatures, or destroy %s instead?", card.Name), []string{"Destroy 2 of my other creatures", fmt.Sprintf("Destroy %s", card.Name)})
+
+		if choiceIndex == 0 {
+			// Destroy 2 other creatures
+			fx.SelectFilter(
+				card.Player,
+				ctx.Match,
+				card.Player,
+				match.BATTLEZONE,
+				"Select 2 of your other creatures to destroy",
+				2,
+				2,
+				false,
+				func(x *match.Card) bool {
+					return x.ID != card.ID
+				},
+				false,
+			).Map(func(x *match.Card) {
+				ctx.Match.Destroy(x, card, match.DestroyedByMiscAbility)
+			})
+		} else {
+			// Destroy this creature
+			ctx.Match.Destroy(card, card, match.DestroyedByMiscAbility)
+		}
 	}))
 
 }
