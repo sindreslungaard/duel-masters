@@ -397,7 +397,8 @@ func ManaBonanza(c *match.Card) {
 		))
 
 		if manaLen > maxDeck {
-			manaLen = maxDeck
+			ctx.Match.End(ctx.Match.Opponent(card.Player), fmt.Sprintf("%s won by deck out because %s casted %s while having not enough cards in deck!", ctx.Match.Opponent(card.Player).Username(), card.Player.Username(), card.Name))
+			return
 		}
 
 		for _, deckCard := range card.Player.PeekDeck(manaLen) {
