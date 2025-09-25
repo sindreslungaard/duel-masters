@@ -2,12 +2,28 @@
 
 ## [Unreleased]
 
+- No unreleased changes
+
+## 21/09/2025
+
 - Fixed an issue where "Balesk Baj, the Timeburner" did not have doublebreaker (thanks @DragosIonita23)
 - Fixed an issue where "Zeppelin Crawler" and "Kelp Candle"'s effect would trigger not only when blocking (thanks @DragosIonita23)
 - Updated card selection popup to not be opened if the user does not have more than one unique outcome to select (thanks @DragosIonita23)
 - Fixed an issue where "Spiral Grass"'s untap effect could wrongly interfere with cards like Mighty Shouter (thanks @DragosIonita23)
 - Fixed an issue where "Bat Doctor Shadow of Undeath"'s effect would be able to retrieve non-creatures from the graveyard (thanks @DragosIonita23)
 - Fixed an issue where "Aqua Sniper" could bypass "Petrova, Channeler of Suns"'s effect (thanks @DragosIonita23)
+- Fixed an issue where "Snork La, Shrine Guardian"'s effect worked even if it was not the opponent that caused it (thanks @DragosIonita23)
+- Fixed an issue where "Carbonite Scarab"'s turbo rush effect would apply not just from attacking the player (thanks @DragosIonita23)
+- Fixed an issue where "Chaos Strike" would tap the opponent's card instead of treating it as if it were tapped (thanks @DragosIonita23)
+- New card "Steam Rumbler Kain" (thanks @DragosIonita23)
+- New card "Aerodactyl Kooza" (thanks @DragosIonita23)
+- New card "Impossible Tunnel" (thanks @DragosIonita23)
+- New card "Zombie Carnival" (thanks @DragosIonita23)
+- New card "Dance of the Sproutlings" (thanks @DragosIonita23)
+- New card "Relentless Blitz" (thanks @DragosIonita23)
+- New card "Gigio's Hammer" (thanks @DragosIonita23)
+- Fixed an issue where "Nariel, the Oracle" would not prevent tab abilities of cards with power 3000 or more (thanks @DragosIonita23)
+- Fixed an issue where "Diamond Cutter" would not prevent "Nariel, the Oracle" from preventing attacks (thanks @DragosIonita23)
 
 ## 31/08/2025
 

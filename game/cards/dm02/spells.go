@@ -262,17 +262,18 @@ func DiamondCutter(c *match.Card) {
 			fx.Find(
 				card.Player,
 				match.BATTLEZONE,
-			).Map(func(c *match.Card) {
-				if fx.HasSummoningSickness(c) {
-					c.RemoveCondition(cnd.SummoningSickness)
-					c.AddCondition(cnd.CantAttackCreatures, nil, card.ID)
+			).Map(func(x *match.Card) {
+				if fx.HasSummoningSickness(x) {
+					x.RemoveCondition(cnd.SummoningSickness)
+					x.AddCondition(cnd.CantAttackCreatures, nil, card.ID)
 				}
 
-				c.RemoveCondition(cnd.CantAttackPlayers)
+				x.RemoveCondition(cnd.CantAttackPlayers)
+				x.AddUniqueSourceCondition(cnd.IgnoreCantAttack, nil, card.ID)
 			})
 
 			// remove persistent effect when turn ends
-			_, ok := ctx2.Event.(*match.EndStep)
+			_, ok := ctx2.Event.(*match.EndOfTurnStep)
 			if ok {
 				exit()
 			}
