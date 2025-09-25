@@ -29,19 +29,19 @@ func silvermoonTrailblazerTapAbility(card *match.Card, ctx *match.Context) {
 
 	ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("Creatures of '%s' can't be blocked by creatures that have power 3000 or less this turn.", family))
 
-	fx.FindFilter(
-		card.Player,
-		match.BATTLEZONE,
-		func(x *match.Card) bool {
-			return x.HasFamily(family)
-		},
-	).Map(func(x *match.Card) {
-		ctx.Match.ApplyPersistentEffect(func(ctx2 *match.Context, exit func()) {
-			if _, ok := ctx2.Event.(*match.EndOfTurnStep); ok {
-				exit()
-				return
-			}
+	ctx.Match.ApplyPersistentEffect(func(ctx2 *match.Context, exit func()) {
+		if _, ok := ctx2.Event.(*match.EndOfTurnStep); ok {
+			exit()
+			return
+		}
 
+		fx.FindFilter(
+			card.Player,
+			match.BATTLEZONE,
+			func(x *match.Card) bool {
+				return x.HasFamily(family)
+			},
+		).Map(func(x *match.Card) {
 			fx.CantBeBlockedByPowerUpTo3000(x, ctx2)
 		})
 	})
