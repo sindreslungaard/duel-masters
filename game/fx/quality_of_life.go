@@ -350,62 +350,6 @@ func SelectFilter(p *match.Player, m *match.Match, containerOwner *match.Player,
 
 }
 
-// SelectFromCollection prompts the user to select n cards from the specified card collection given.
-// Specified card collection MUST be from specified container (battlezone, manazone etc)
-func SelectFromCollection(p *match.Player, m *match.Match, sourceCollection CardCollection, sourceContainer string, text string, min int, max int, cancellable bool) CardCollection {
-
-	result := make([]*match.Card, 0)
-
-	if len(sourceCollection) < 1 {
-		return result
-	}
-
-	if !m.IsPlayerTurn(p) {
-		m.Wait(m.Opponent(p), "Waiting for your opponent to make an action")
-		defer m.EndWait(m.Opponent(p))
-	}
-
-	m.NewActionFullList(p, sourceCollection, min, max, text, false, []*match.Card{})
-
-	defer m.CloseAction(p)
-
-	for {
-
-		action := <-p.Action
-
-		if cancellable && action.Cancel {
-			break
-		}
-
-		if len(action.Cards) < min || len(action.Cards) > max || !match.AssertCardsIn(sourceCollection, action.Cards...) {
-			m.ActionWarning(p, "The cards you selected does not meet the requirements")
-			continue
-		}
-
-		for _, c := range action.Cards {
-
-			selectedCard, err := p.GetCard(c, sourceContainer)
-
-			if err != nil {
-				selectedCard, err = m.Opponent(p).GetCard(c, sourceContainer)
-
-				if err != nil {
-					continue
-				}
-			}
-
-			result = append(result, selectedCard)
-
-		}
-
-		break
-
-	}
-
-	return result
-
-}
-
 // SelectMultipart prompts the user to select n cards from the specified list of cards
 func SelectMultipart(p *match.Player, m *match.Match, cards map[string][]*match.Card, text string, min int, max int, cancellable bool) CardCollection {
 	return selectMultipartBase(p, m, cards, text, min, max, cancellable, false)
