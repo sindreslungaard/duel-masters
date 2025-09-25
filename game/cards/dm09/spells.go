@@ -28,7 +28,6 @@ func CosmicWing(c *match.Card) {
 			false,
 		).Map(func(x *match.Card) {
 			ctx.Match.ApplyPersistentEffect(func(ctx2 *match.Context, exit func()) {
-
 				if x.Zone != match.BATTLEZONE {
 					x.RemoveConditionBySource(card.ID)
 					exit()
@@ -42,7 +41,6 @@ func CosmicWing(c *match.Card) {
 				}
 
 				x.AddUniqueSourceCondition(cnd.CantBeBlocked, true, card.ID)
-
 			})
 		})
 	}))
@@ -112,11 +110,12 @@ func GrinningHunger(c *match.Card) {
 		indexChoice := fx.MultipleChoiceQuestion(
 			ctx.Match.Opponent(card.Player),
 			ctx.Match,
-			fmt.Sprintf("%s's effect: Choose one of your creatures in the battlezone or one of your shields and put it into your graveyard.\r\nChoose 'Battle zone' OR 'Shields' to continue.", card.Name),
+			fmt.Sprintf("%s's effect: Choose one of your creatures in the battlezone or one of your shields and destroy it.\r\nChoose 'Battle zone' OR 'Shields' to continue.", card.Name),
 			[]string{"Battle zone", "Shields"},
 		)
 
-		if indexChoice == 0 {
+		switch indexChoice {
+		case 0:
 			fx.Select(
 				ctx.Match.Opponent(card.Player),
 				ctx.Match,
@@ -129,7 +128,7 @@ func GrinningHunger(c *match.Card) {
 			).Map(func(x *match.Card) {
 				ctx.Match.Destroy(x, card, match.DestroyedByMiscAbility)
 			})
-		} else if indexChoice == 1 {
+		case 1:
 			fx.SelectBackside(
 				ctx.Match.Opponent(card.Player),
 				ctx.Match,
@@ -143,6 +142,8 @@ func GrinningHunger(c *match.Card) {
 				x.Player.MoveCard(x.ID, match.SHIELDZONE, match.GRAVEYARD, card.ID)
 				ctx.Match.ReportActionInChat(x.Player, fmt.Sprintf("%s was put into the graveyard from %s's shieldzone.", x.Name, x.Player.Username()))
 			})
+		default:
+			return
 		}
 	}))
 
@@ -269,7 +270,7 @@ func SubmarineProject(c *match.Card) {
 	c.ManaCost = 3
 	c.ManaRequirement = []string{civ.Water}
 
-	c.Use(fx.Spell, fx.ShieldTrigger, fx.LookTop4Put1IntoHandReorderRestOnBottomDeck)
+	c.Use(fx.Spell, fx.ShieldTrigger, fx.When(fx.SpellCast, fx.LookTop4Put1IntoHandReorderRestOnBottomDeck))
 
 }
 
@@ -281,8 +282,7 @@ func SlashCharger(c *match.Card) {
 	c.ManaCost = 3
 	c.ManaRequirement = []string{civ.Darkness}
 
-	c.Use(fx.Spell, fx.Charger, func(card *match.Card, ctx *match.Context) {
-
+	c.Use(fx.Spell, fx.Charger, fx.When(fx.SpellCast, func(card *match.Card, ctx *match.Context) {
 		choices := []string{"Yourself", "Your opponent"}
 
 		choiceIndex := fx.MultipleChoiceQuestion(
@@ -296,15 +296,16 @@ func SlashCharger(c *match.Card) {
 		var choiceMessageFormat string
 		var moveMessageFormat string
 
-		if choiceIndex == 0 {
+		switch choiceIndex {
+		case 0:
 			choicePlayer = card.Player
 			choiceMessageFormat = "You may take a card from your deck and put it into your graveyard."
 			moveMessageFormat = "his deck."
-		} else if choiceIndex == 1 {
+		case 1:
 			choicePlayer = ctx.Match.Opponent(card.Player)
 			choiceMessageFormat = "You may take a card from your opponent's deck and put it into his graveyard."
 			moveMessageFormat = "his opponent's deck."
-		} else {
+		default:
 			return
 		}
 
@@ -327,8 +328,7 @@ func SlashCharger(c *match.Card) {
 		} else {
 			fx.ShuffleDeck(card, ctx, true)
 		}
-
-	})
+	}))
 
 }
 
@@ -352,6 +352,11 @@ func FistsOfForever(c *match.Card) {
 			false,
 		).Map(func(x *match.Card) {
 			ctx.Match.ApplyPersistentEffect(func(ctx2 *match.Context, exit func()) {
+				if _, ok := ctx2.Event.(*match.EndOfTurnStep); ok {
+					exit()
+					return
+				}
+
 				if x.Zone != match.BATTLEZONE {
 					exit()
 					return
@@ -362,13 +367,9 @@ func FistsOfForever(c *match.Card) {
 						(event.Blocked && event.Defender == x && event.AttackerPower < event.DefenderPower) {
 						ctx2.ScheduleAfter(func() {
 							x.Tapped = false
+							ctx2.Match.BroadcastState()
 						})
 					}
-				}
-
-				if _, ok := ctx2.Event.(*match.EndOfTurnStep); ok {
-					exit()
-					return
 				}
 			})
 		})
@@ -396,10 +397,10 @@ func ManaBonanza(c *match.Card) {
 		))
 
 		if manaLen > maxDeck {
-			maxDeck = manaLen
+			manaLen = maxDeck
 		}
 
-		for _, deckCard := range card.Player.PeekDeck(maxDeck) {
+		for _, deckCard := range card.Player.PeekDeck(manaLen) {
 			card.Player.MoveCard(deckCard.ID, match.DECK, match.MANAZONE, card.ID)
 			deckCard.Tapped = true
 			ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s was put into %s's manazone from the top of this deck due to %s's effect.", deckCard.Name, card.Player.Username(), card.Name))
