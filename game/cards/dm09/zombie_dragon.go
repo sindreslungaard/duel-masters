@@ -38,8 +38,8 @@ func NecrodragonIzoristVhal(c *match.Card) {
 				})) * 2000
 
 			if addPower == 0 {
-				ctx2.Match.Destroy(card, card, match.DestroyedByMiscAbility)
 				exit()
+				ctx2.Match.Destroy(card, card, match.DestroyedByMiscAbility)
 				return
 			}
 

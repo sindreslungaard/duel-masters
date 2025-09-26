@@ -33,8 +33,8 @@ func MagmadragonOgristVhal(c *match.Card) {
 			addPower += len(fx.Find(card.Player, match.HAND)) * 3000
 
 			if addPower == 0 {
-				ctx2.Match.Destroy(card, card, match.DestroyedByMiscAbility)
 				exit()
+				ctx2.Match.Destroy(card, card, match.DestroyedByMiscAbility)
 				return
 			}
 
