@@ -21,6 +21,10 @@ func NarielTheOracle(c *match.Card) {
 
 	c.Use(fx.Creature, fx.When(fx.InTheBattlezone, func(card *match.Card, ctx *match.Context) {
 		ctx.Match.ApplyPersistentEffect(func(ctx2 *match.Context, exit func()) {
+			if _, ok := ctx2.Event.(*match.GetPowerEvent); ok {
+				return
+			}
+
 			fx.Find(
 				card.Player,
 				match.BATTLEZONE,
@@ -37,10 +41,6 @@ func NarielTheOracle(c *match.Card) {
 
 			if card.Zone != match.BATTLEZONE {
 				exit()
-				return
-			}
-
-			if _, ok := ctx2.Event.(*match.GetPowerEvent); ok {
 				return
 			}
 
