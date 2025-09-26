@@ -34,7 +34,7 @@ func NecrodragonIzoristVhal(c *match.Card) {
 				card.Player,
 				match.GRAVEYARD,
 				func(x *match.Card) bool {
-					return len(x.Family) > 0 && x.Civ == civ.Darkness
+					return x.HasCondition(cnd.Creature) && x.Civ == civ.Darkness
 				})) * 2000
 
 			if addPower == 0 {
