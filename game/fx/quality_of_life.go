@@ -5,7 +5,6 @@ import (
 	"duel-masters/game/family"
 	"duel-masters/game/match"
 	"fmt"
-	"math/rand"
 	"slices"
 )
 
@@ -19,17 +18,6 @@ func (c CardCollection) Map(h func(x *match.Card)) CardCollection {
 	}
 
 	return c
-}
-
-// Project iterates through cards in the collection and selects the family field
-func (c CardCollection) ProjectFamilies() []string {
-	var families []string
-
-	for _, card := range c {
-		families = append(families, card.Family...)
-	}
-
-	return families
 }
 
 func (c CardCollection) Or(h func()) {
@@ -226,6 +214,38 @@ func MultipleChoiceQuestion(p *match.Player, m *match.Match, text string, option
 	result := 0
 
 	m.NewMultipleChoiceQuestionAction(p, text, options)
+
+	defer m.CloseAction(p)
+
+	if !m.IsPlayerTurn(p) {
+		m.Wait(m.Opponent(p), "Waiting for your opponent to make an action")
+		defer m.EndWait(m.Opponent(p))
+	}
+
+	for {
+
+		action := <-p.Action
+
+		if action.Count >= len(options) || action.Count < 0 {
+			m.ActionWarning(p, "The option selected doesn't exist")
+			continue
+		}
+
+		result = action.Count
+
+		break
+
+	}
+
+	return result
+}
+
+// Send multiple strings as options, will return the index of the chosen option
+// The UI allows searching and scrolling through the options in a list view
+func MultipleChoiceSearchable(p *match.Player, m *match.Match, text string, options []string) int {
+	result := 0
+
+	m.NewMultipleChoiceSearchableAction(p, text, options)
 
 	defer m.CloseAction(p)
 
@@ -1045,27 +1065,15 @@ func ForcePutCreatureIntoBZ(ctx *match.Context, creature *match.Card, from strin
 		}
 	}
 }
+
 func ChooseAFamily(card *match.Card, ctx *match.Context, text string) string {
-	allFamilies := GetAllFamiliesFilter(card, ctx, func(x string) bool { return true })
-
-	chosenIndex := MultipleChoiceQuestion(
-		card.Player,
-		ctx.Match,
-		text,
-		allFamilies,
-	)
-
-	if chosenIndex >= 0 && chosenIndex < len(allFamilies) {
-		return allFamilies[chosenIndex]
-	} else {
-		return ""
-	}
+	return ChooseAFamilyFilter(card, ctx, text, func(x string) bool { return true })
 }
 
 func ChooseAFamilyFilter(card *match.Card, ctx *match.Context, text string, filter func(x string) bool) string {
 	filteredFamilies := GetAllFamiliesFilter(card, ctx, filter)
 
-	chosenIndex := MultipleChoiceQuestion(
+	chosenIndex := MultipleChoiceSearchable(
 		card.Player,
 		ctx.Match,
 		text,
@@ -1080,151 +1088,21 @@ func ChooseAFamilyFilter(card *match.Card, ctx *match.Context, text string, filt
 }
 
 // Returns a list of all families currently implemented in the game
-// The relative order of the returned list is as follows:
-//  1. Your creatures from the battle zone
-//  2. Your creatures in your hand
-//  3. Your creatures in your mana zone
-//  4. Your creatures in your graveyard
-//  5. Opponent creatures from the battle zone
-//  6. Opponent creatures in his hand
-//  7. Opponent creatures in his mana zone
-//  8. Opponent creatures in his graveyard
-//  9. Rest of families in the game
 func GetAllFamiliesFilter(card *match.Card, ctx *match.Context, filter func(x string) bool) []string {
-	families := make([]string, 0)
-	unseenFamilies := make([]string, 0)
+	families := family.GetAllFamilies()
 
-	myBZFamilies := FindFilter(
-		card.Player,
-		match.BATTLEZONE,
-		func(x *match.Card) bool {
-			return !x.HasCondition(cnd.Spell) && len(x.Family) > 0
-		},
-	).ProjectFamilies()
-
-	myHandFamilies := FindFilter(
-		card.Player,
-		match.HAND,
-		func(x *match.Card) bool {
-			return !x.HasCondition(cnd.Spell) && len(x.Family) > 0
-		},
-	).ProjectFamilies()
-
-	myManaFamilies := FindFilter(
-		card.Player,
-		match.MANAZONE,
-		func(x *match.Card) bool {
-			return !x.HasCondition(cnd.Spell) && len(x.Family) > 0
-		},
-	).ProjectFamilies()
-
-	myGraveFamilies := FindFilter(
-		card.Player,
-		match.GRAVEYARD,
-		func(x *match.Card) bool {
-			return !x.HasCondition(cnd.Spell) && len(x.Family) > 0
-		},
-	).ProjectFamilies()
-
-	myDeckFamilies := FindFilter(
-		card.Player,
-		match.DECK,
-		func(x *match.Card) bool {
-			return !x.HasCondition(cnd.Spell) && len(x.Family) > 0
-		},
-	).ProjectFamilies()
-
-	myShieldFamilies := FindFilter(
-		card.Player,
-		match.SHIELDZONE,
-		func(x *match.Card) bool {
-			return !x.HasCondition(cnd.Spell) && len(x.Family) > 0
-		},
-	).ProjectFamilies()
-
-	oppBZFamilies := FindFilter(
-		ctx.Match.Opponent(card.Player),
-		match.BATTLEZONE,
-		func(x *match.Card) bool {
-			return !x.HasCondition(cnd.Spell) && len(x.Family) > 0
-		},
-	).ProjectFamilies()
-
-	oppHandFamilies := FindFilter(
-		ctx.Match.Opponent(card.Player),
-		match.HAND,
-		func(x *match.Card) bool {
-			return !x.HasCondition(cnd.Spell) && len(x.Family) > 0
-		},
-	).ProjectFamilies()
-
-	oppManaFamilies := FindFilter(
-		ctx.Match.Opponent(card.Player),
-		match.MANAZONE,
-		func(x *match.Card) bool {
-			return !x.HasCondition(cnd.Spell) && len(x.Family) > 0
-		},
-	).ProjectFamilies()
-
-	oppGraveFamilies := FindFilter(
-		ctx.Match.Opponent(card.Player),
-		match.GRAVEYARD,
-		func(x *match.Card) bool {
-			return !x.HasCondition(cnd.Spell) && len(x.Family) > 0
-		},
-	).ProjectFamilies()
-
-	oppDeckFamilies := FindFilter(
-		ctx.Match.Opponent(card.Player),
-		match.DECK,
-		func(x *match.Card) bool {
-			return !x.HasCondition(cnd.Spell) && len(x.Family) > 0
-		},
-	).ProjectFamilies()
-
-	oppShieldFamilies := FindFilter(
-		ctx.Match.Opponent(card.Player),
-		match.SHIELDZONE,
-		func(x *match.Card) bool {
-			return !x.HasCondition(cnd.Spell) && len(x.Family) > 0
-		},
-	).ProjectFamilies()
-
-	families = append(families, myBZFamilies...)
-	families = append(families, myHandFamilies...)
-	families = append(families, myManaFamilies...)
-	families = append(families, myGraveFamilies...)
-	families = append(families, oppBZFamilies...)
-	families = append(families, oppManaFamilies...)
-	families = append(families, oppGraveFamilies...)
-
-	unseenFamilies = append(unseenFamilies, myDeckFamilies...)
-	unseenFamilies = append(unseenFamilies, myShieldFamilies...)
-	unseenFamilies = append(unseenFamilies, oppHandFamilies...)
-	unseenFamilies = append(unseenFamilies, oppDeckFamilies...)
-	unseenFamilies = append(unseenFamilies, oppShieldFamilies...)
-
-	// Shuffles the "unseen" families,
-	// not to give the choosing player an unfair advantage
-	// of knowing the relative order of the families in his shields and/or battlezone,
-	// or in the opponent's zones
-	rand.Shuffle(len(unseenFamilies), func(i, j int) { unseenFamilies[i], unseenFamilies[j] = unseenFamilies[j], unseenFamilies[i] })
-
-	families = append(families, unseenFamilies...)
-
-	return distinctStringsFilter(families, filter)
+	return filterStrings(families, filter)
 }
 
-func distinctStringsFilter(slice []string, filter func(x string) bool) []string {
-	seen := make(map[string]bool) // Map to track seen elements
+func filterStrings(slice []string, filter func(x string) bool) []string {
 	var result []string
 
 	for _, str := range slice {
-		if !seen[str] && filter(str) { // If the element hasn't been seen before
-			seen[str] = true             // Mark it as seen
-			result = append(result, str) // Append to result, maintaining order
+		if filter(str) {
+			result = append(result, str)
 		}
 	}
+
 	return result
 }
 
