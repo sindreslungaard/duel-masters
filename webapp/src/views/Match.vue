@@ -117,6 +117,26 @@
           </div>
         </template>
       </template>
+      <template v-else-if="action.actionType == 'searchable' && action.choices && action.choices.length > 0">
+        <div class="searchable-popup">
+          <div class="searchable-row">
+            <input type="text" v-model="searchQuery" placeholder="Search..." class="search-input" />
+            <select size="8" class="searchable-dropdown" v-model="selectedSearchableIndex">
+              <option v-for="choice in filteredChoices" :key="choice" :value="action.choices.indexOf(choice)">
+                {{ choice }}
+              </option>
+            </select>
+          </div>
+          <div class="searchable-actions">
+            <button
+              class="btn"
+              :class="{ disabled: selectedSearchableIndex === null }"
+              :disabled="selectedSearchableIndex === null"
+              @click="chooseMultipleChoiceAction(selectedSearchableIndex)"
+            >Choose</button>
+          </div>
+        </div>
+      </template>
       <template v-else-if="action.actionType == 'order'">
         <div class="action-cards action-cards-order">
           <div v-for="(card, index) in action.cards" :key="index" class="card">
@@ -854,12 +874,22 @@ export default {
       TAPPED_FLAG: 1,
       PLAYABLE_FLAG: 2,
       TAP_ABILITY_FLAG: 4,
-      SHIELD_FACE_UP_FLAG: 8
+      SHIELD_FACE_UP_FLAG: 8,
+
+      searchQuery: '',
+      selectedSearchableIndex: null,
     };
   },
   computed: {
     playmat: () => store.preferences.playmat,
-    username: () => localStorage.getItem("username")
+    username: () => localStorage.getItem("username"),
+    filteredChoices() {
+      if (!this.action || !this.action.choices) return [];
+      if (!this.searchQuery) return this.action.choices;
+      return this.action.choices.filter(choice =>
+        choice.toLowerCase().includes(this.searchQuery.toLowerCase())
+      );
+    }
   },
   methods: {
     redirect(to) {
@@ -998,6 +1028,10 @@ export default {
       if (!this.action) {
         return;
       }
+
+      // Reset searchable selection and search
+      this.selectedSearchableIndex = null;
+      this.searchQuery = '';
       this.ws.send(JSON.stringify({ header: "action", count: option, cancel: false }));
     },
 
@@ -1435,6 +1469,20 @@ export default {
                   };
                 }
                 break
+              case 'searchable':
+                if (data.choices === null || data.choices === undefined || data.choices.length === 0) {
+                  break;
+                }
+
+                this.selectedSearchableIndex = null;
+                this.searchQuery = '';
+                this.action = {
+                  text: data.text,
+                  actionType: data.actionType,
+                  cancellable: false,
+                  choices: data.choices
+                };
+                break
               default: 
                 if (!(data.cards instanceof Array)) {
                   this.actionObject = data.cards;
@@ -1527,6 +1575,48 @@ export default {
 </script>
 
 <style scoped lang="scss">
+/* Searchable dropdown styles */
+.searchable-popup {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 18px;
+  margin-top: 10px;
+}
+.searchable-row {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
+  width: 100%;
+}
+.searchable-popup .search-input {
+  width: 180px;
+  padding: 8px;
+  border-radius: 4px;
+  border: 1px solid #333;
+  background: #222;
+  color: #ccc;
+  margin-bottom: 0;
+}
+.searchable-popup .searchable-dropdown {
+  width: 200px;
+  max-height: 200px;
+  border-radius: 4px;
+  border: 1px solid #333;
+  background: #222;
+  color: #ccc;
+  margin-bottom: 0;
+  overflow-y: auto;
+}
+.searchable-popup .searchable-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+}
 .match-container {
   width: 100%;
   height: 100vh;
@@ -2197,5 +2287,10 @@ export default {
 
 .chat-message-playmat {
   background: rgba(0, 0, 0, 0.3)
+}
+
+.btn.disabled {
+  cursor: not-allowed !important;
+  pointer-events: none;
 }
 </style>
