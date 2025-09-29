@@ -42,6 +42,7 @@ const (
 	RainbowPhantom  = "Rainbow Phantom"
 	Gladiator       = "Gladiator"
 	SeaHacker       = "Sea Hacker"
+	Soltrooper      = "Soltrooper"
 	EarthEater      = "Earth Eater"
 	DeathPuppet     = "Death Puppet"
 	DevilMask       = "Devil Mask"
