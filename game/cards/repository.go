@@ -695,6 +695,7 @@ var DM09 = map[string]match.CardConstructor{
 
 var DM10 = map[string]match.CardConstructor{
 	"7d379ea7-da2a-4b4a-ba4f-beceda436998": dm10.StaticWarp,
+	"d906c8b7-4797-4569-a444-cd0c88b308c3": dm10.TulkTheOracle,
 }
 
 // Promo is a map with all the card id's in the game and corresponding CardConstructor for promotional exclusive cards
