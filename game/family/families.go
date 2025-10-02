@@ -36,6 +36,7 @@ const (
 	BrainJacker     = "Brain Jacker"
 	Giant           = "Giant"
 	MechaThunder    = "Mecha Thunder"
+	Merfolk         = "Merfolk"
 	CyberCluster    = "Cyber Cluster"
 	Hedrian         = "Hedrian"
 	FireBird        = "Fire Bird"
