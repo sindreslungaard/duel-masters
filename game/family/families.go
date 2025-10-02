@@ -8,6 +8,7 @@ const (
 	ArmoredDragon   = "Armored Dragon"
 	ArmoredWyvern   = "Armored Wyvern"
 	ColonyBeetle    = "Colony Beetle"
+	CyberMoon       = "Cyber Moon"
 	HornedBeast     = "Horned Beast"
 	Leviathan       = "Leviathan"
 	CyberVirus      = "Cyber Virus"
@@ -57,5 +58,5 @@ const (
 	MechaDelSol     = "Mecha del Sol"
 )
 
-var Cybers = []string{CyberCluster, CyberLord, CyberVirus}
+var Cybers = []string{CyberCluster, CyberLord, CyberVirus, CyberMoon}
 var Dragons = []string{ArmoredDragon, VolcanoDragon, EarthDragon, ZombieDragon}

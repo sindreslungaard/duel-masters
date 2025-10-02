@@ -61,6 +61,28 @@ func FireAndNatureBlocker() func(*match.Card, *match.Context) {
 	})
 }
 
+func BlockIfAbleWhenOppAttacks(card *match.Card, ctx *match.Context) {
+	if event, ok := ctx.Event.(*match.Block); ok {
+		if event.Attacker.Player == card.Player ||
+			event.Attacker.Zone != match.BATTLEZONE ||
+			card.Zone != match.BATTLEZONE {
+			return
+		}
+
+		//@TODO test this
+		if len(event.Blockers) > 0 && event.Attacker.IsBlockable(ctx) {
+			for _, b := range event.Blockers {
+				if b.ID == card.ID {
+					// Force the battle between the attacker and this card
+					ctx.InterruptFlow()
+					ctx.Match.Battle(event.Attacker, card, true, len(event.ShieldsAttacked) > 0)
+					return
+				}
+			}
+		}
+	}
+}
+
 // Default helper function that adds the given card to the blockers list
 // If all conditions passed are met
 func addToBlockersListIfConditions(card *match.Card, ctx *match.Context, conditions ...func(event *match.SelectBlockers) bool) {
