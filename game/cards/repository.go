@@ -695,6 +695,10 @@ var DM09 = map[string]match.CardConstructor{
 
 var DM10 = map[string]match.CardConstructor{
 	"4251847b-2e9c-4a14-97a3-cff496fdef2d": dm10.AquaStrummer,
+	"a15ddc75-f015-42b6-be15-eb17e1da2779": dm10.BatteryCluster,
+	"3f923abc-b3c0-4e04-89aa-6361900722a5": dm10.BuoyantBlowfish,
+	"9ae35b47-0f98-4e96-a356-a7908077d45e": dm10.CrystalSpinslicer,
+	"8e45b9c2-9845-4cdc-88f7-2c062364ce5a": dm10.FluorogillManta,
 }
 
 // Promo is a map with all the card id's in the game and corresponding CardConstructor for promotional exclusive cards

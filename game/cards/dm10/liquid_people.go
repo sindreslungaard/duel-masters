@@ -15,8 +15,22 @@ func AquaStrummer(c *match.Card) {
 	c.Civ = civ.Water
 	c.Family = []string{family.LiquidPeople}
 	c.ManaCost = 3
-	c.ManaRequirement = []string{civ.Light}
+	c.ManaRequirement = []string{civ.Water}
 
 	c.Use(fx.Creature, fx.When(fx.Summoned, fx.LookAtUpTo5CardsFromTopDeckAndReorder))
+
+}
+
+// CrystalSpinslicer ...
+func CrystalSpinslicer(c *match.Card) {
+
+	c.Name = "Crystal Spinslicer"
+	c.Power = 5000
+	c.Civ = civ.Water
+	c.Family = []string{family.LiquidPeople}
+	c.ManaCost = 2
+	c.ManaRequirement = []string{civ.Water}
+
+	c.Use(fx.Creature, fx.Evolution, fx.Blocker())
 
 }
