@@ -859,6 +859,12 @@ func AnotherOwnCyberSummoned(card *match.Card, ctx *match.Context) bool {
 	})
 }
 
+func AnotherOwnCyberVirusSummoned(card *match.Card, ctx *match.Context) bool {
+	return AnotherOwnCreatureSummonedFilter(card, ctx, func(c *match.Card) bool {
+		return c.HasFamily(family.CyberVirus)
+	})
+}
+
 func AnotherCreatureDestroyed(card *match.Card, ctx *match.Context) bool {
 	if card.Zone != match.BATTLEZONE {
 		return false
