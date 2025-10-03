@@ -54,6 +54,7 @@ const (
 	EarthDragon     = "Earth Dragon"
 	ZombieDragon    = "Zombie Dragon"
 	MechaDelSol     = "Mecha del Sol"
+	PandorasBox     = "Pandora's Box"
 )
 
 var Cybers = []string{CyberCluster, CyberLord, CyberVirus}
