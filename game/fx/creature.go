@@ -632,7 +632,7 @@ func handleBattle(ctx *match.Context, winner *match.Card, winnerPower int, loose
 
 	// Slayer
 	hasSlayer := false
-	//@TODO implement slayer second definition starting from DM-10
+
 	for _, condition := range looser.Conditions() {
 		if condition.ID != cnd.Slayer {
 			continue
