@@ -1055,7 +1055,6 @@ func ForcePutCreatureIntoBZ(ctx *match.Context, creature *match.Card, from strin
 			ctx.Match.ReportActionInChat(creature.Player, fmt.Sprintf("%s was moved to the battle zone from %s by %s's effect", creature.Name, from, source.Name))
 		}
 	}
-
 }
 func ChooseAFamily(card *match.Card, ctx *match.Context, text string) string {
 	allFamilies := GetAllFamiliesFilter(card, ctx, func(x string) bool { return true })
