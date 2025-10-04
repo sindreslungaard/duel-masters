@@ -2,7 +2,11 @@
 
 ## [Unreleased]
 
-- No unreleased changes
+- New card "Silvermoon Trailblazer" (thanks @DragosIonita23)
+- New card "Storm Wrangler, the Furious" (thanks @DragosIonita23)
+- New card "Hokira" (thanks @DragosIonita23)
+- New card "Tra Rion, Penumbra Guardian" (thanks @DragosIonita23)
+- New card "Unified Resistance" (thanks @DragosIonita23)
 
 ## 21/09/2025
 

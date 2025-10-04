@@ -82,6 +82,12 @@ func cantBeBlockedByPowerXOrMore(card *match.Card, ctx *match.Context, power int
 	})
 }
 
+func CantBeBlockedByOtherCreaturesBesidesX(card *match.Card, ctx *match.Context, x *match.Card) {
+	filterBlocker(card, ctx, func(blocker *match.Card) bool {
+		return blocker.ID == x.ID
+	})
+}
+
 // filterBlocker
 func filterBlocker(card *match.Card, ctx *match.Context, test func(blocker *match.Card) bool) {
 
