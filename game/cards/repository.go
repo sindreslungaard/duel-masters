@@ -702,6 +702,7 @@ var DM10 = map[string]match.CardConstructor{
 	"e3d3ba3e-eb9b-40b3-a7f6-befc78f2683f": dm10.DedreenTheHiddenCorrupter,
 	"40c90a0f-d083-48af-b503-7c2845d9765a": dm10.Gigandura,
 	"08f2ebba-8996-405d-be3b-deca75936afc": dm10.InfernalCommand,
+	"ae997a18-0cba-4393-8548-185816bb68ca": dm10.MikayRattlingDoll,
 }
 
 // Promo is a map with all the card id's in the game and corresponding CardConstructor for promotional exclusive cards
