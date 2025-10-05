@@ -6,10 +6,14 @@ import (
 )
 
 func EachPlayerDestroys1Mana(card *match.Card, ctx *match.Context) {
-	EachPlayerDestroysMana(card, ctx, 1)
+	eachPlayerDestroysMana(card, ctx, 1)
 }
 
-func EachPlayerDestroysMana(card *match.Card, ctx *match.Context, quantity int) {
+func EachPlayerDestroys2Mana(card *match.Card, ctx *match.Context) {
+	eachPlayerDestroysMana(card, ctx, 2)
+}
+
+func eachPlayerDestroysMana(card *match.Card, ctx *match.Context, quantity int) {
 
 	players := make([]*match.Player, 0)
 	players = append(players, card.Player)
@@ -31,9 +35,9 @@ func EachPlayerDestroysMana(card *match.Card, ctx *match.Context, quantity int) 
 			quantity,
 			quantity,
 			false,
-		).Map(func(manaCard *match.Card) {
-			p.MoveCard(manaCard.ID, match.MANAZONE, match.GRAVEYARD, card.ID)
-			ctx.Match.ReportActionInChat(p, fmt.Sprintf("%s effect: %s moved from MZ to GY", card.Name, manaCard.Name))
+		).Map(func(x *match.Card) {
+			p.MoveCard(x.ID, match.MANAZONE, match.GRAVEYARD, card.ID)
+			ctx.Match.ReportActionInChat(p, fmt.Sprintf("%s effect: %s moved from mana zone to graveyard", card.Name, x.Name))
 		})
 
 	}

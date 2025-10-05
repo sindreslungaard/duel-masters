@@ -31,5 +31,6 @@ const (
 	AddFamily                 = "add_family"
 	HasShieldsSelectionEffect = "has_shields_selection_effect"
 	CantBeSelectedByOpp       = "cant_be_selected_by_opp"
+	IgnoreCantAttack          = "ignore_cant_attack"
 	TreatedAsTapped           = "treated_as_tapped"
 )
