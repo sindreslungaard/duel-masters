@@ -49,7 +49,16 @@ func UliyaTheEntrancer(c *match.Card) {
 					},
 					false,
 				).Map(func(y *match.Card) {
-					//@TODO force cast shield trigger
+					if y.HasCondition(cnd.Spell) {
+						ctx.Match.CastSpell(y, true)
+					} else {
+						ctx.Match.MoveCard(y, match.BATTLEZONE, card)
+					}
+
+					ctx.Match.HandleFx(match.NewContext(ctx.Match, &match.ShieldTriggerPlayedEvent{
+						Card:   y,
+						Source: card.ID,
+					}))
 				})
 			}
 		})
