@@ -25,7 +25,7 @@ func UliyaTheEntrancer(c *match.Card) {
 			ctx.Match,
 			card.Player,
 			match.SHIELDZONE,
-			fmt.Sprintf("%s's effect: Choose a card from your shields and put it into your hand. You can use the 'shield trigger' ability of that shield.", card.Name),
+			fmt.Sprintf("%s's effect: Choose one of your shields and put it into your hand. You can use the 'shield trigger' ability of that shield.", card.Name),
 			1,
 			1,
 			false,
