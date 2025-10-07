@@ -30,33 +30,37 @@ func BenzoTheHiddenFury(c *match.Card) {
 			1,
 			false,
 		).Map(func(x *match.Card) {
-			ctx.Match.MoveCard(x, match.HAND, card)
+			_, err := x.Player.MoveCard(x.ID, match.SHIELDZONE, match.HAND, card.ID)
 
-			fx.SelectFilter(
-				card.Player,
-				ctx.Match,
-				card.Player,
-				match.HAND,
-				fmt.Sprintf("%s's effect: You can use the 'Shield Trigger' ability of %s by choosing it.", card.Name, x.Name),
-				1,
-				1,
-				true,
-				func(y *match.Card) bool {
-					return y.ID == x.ID
-				},
-				false,
-			).Map(func(x *match.Card) {
-				if x.HasCondition(cnd.Spell) {
-					ctx.Match.CastSpell(x, true)
-				} else {
-					ctx.Match.MoveCard(x, match.BATTLEZONE, card)
-				}
+			if err == nil {
+				ctx.Match.ReportActionInChat(x.Player, fmt.Sprintf("%s was put into %s's hand from his shields.", x.Name, card.Player.Username()))
 
-				ctx.Match.HandleFx(match.NewContext(ctx.Match, &match.ShieldTriggerPlayedEvent{
-					Card:   x,
-					Source: card.ID,
-				}))
-			})
+				fx.SelectFilter(
+					card.Player,
+					ctx.Match,
+					card.Player,
+					match.HAND,
+					fmt.Sprintf("%s's effect: You can use the 'Shield Trigger' ability of %s by choosing it.", card.Name, x.Name),
+					1,
+					1,
+					true,
+					func(y *match.Card) bool {
+						return y.ID == x.ID
+					},
+					false,
+				).Map(func(y *match.Card) {
+					if y.HasCondition(cnd.Spell) {
+						ctx.Match.CastSpell(y, true)
+					} else {
+						ctx.Match.MoveCard(y, match.BATTLEZONE, card)
+					}
+
+					ctx.Match.HandleFx(match.NewContext(ctx.Match, &match.ShieldTriggerPlayedEvent{
+						Card:   y,
+						Source: card.ID,
+					}))
+				})
+			}
 		})
 	}))
 
