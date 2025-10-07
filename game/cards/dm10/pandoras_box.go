@@ -45,7 +45,7 @@ func BenzoTheHiddenFury(c *match.Card) {
 					1,
 					true,
 					func(y *match.Card) bool {
-						return y.ID == x.ID
+						return y.ID == x.ID && y.HasCondition(cnd.ShieldTrigger)
 					},
 					false,
 				).Map(func(y *match.Card) {
