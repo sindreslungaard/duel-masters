@@ -200,3 +200,17 @@ func ReturnXCreaturesFromGraveToHand(x int) match.HandlerFunc {
 		})
 	}
 }
+
+func ReturnAllCardsFromManaToHand(card *match.Card, ctx *match.Context) {
+	globalErr := false
+
+	Find(card.Player, match.MANAZONE).Map(func(x *match.Card) {
+		_, err := card.Player.MoveCard(x.ID, match.MANAZONE, match.HAND, card.ID)
+
+		globalErr = globalErr && (err != nil)
+	})
+
+	if !globalErr {
+		ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s returned all cards from his mana zone to his hand", card.Player.Username()))
+	}
+}
