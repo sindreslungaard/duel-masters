@@ -10,6 +10,7 @@ import (
 	"duel-masters/game/cards/dm07"
 	"duel-masters/game/cards/dm08"
 	"duel-masters/game/cards/dm09"
+	"duel-masters/game/cards/dm10"
 	"duel-masters/game/cards/promo"
 	"duel-masters/game/match"
 )
@@ -25,6 +26,7 @@ var Sets = map[string]*map[string]match.CardConstructor{
 	"dm-07": &DM07,
 	"dm-08": &DM08,
 	"dm-09": &DM09,
+	"dm-10": &DM10,
 	"promo": &Promo,
 }
 
@@ -694,6 +696,11 @@ var DM09 = map[string]match.CardConstructor{
 	"cf96ecd5-481a-4a63-b8f1-61731525d956": dm09.KelpCandle,
 	"83ac5a3a-1b3d-43f9-a08e-4415e5f478ff": dm09.AzaghastTyrantOfShadows,
 	"da93d9d0-b569-408d-af93-b4a4286fc91f": dm09.BatDoctorShadowOfUndeath,
+}
+
+var DM10 = map[string]match.CardConstructor{
+	"9dced850-9c8c-431c-82f7-38d6e6d2dce3": dm10.Upheaval,
+	"ddf61f9a-752d-4072-a497-7ed8b14ca8ce": dm10.ZeroNemesisShadowOfPanic,
 }
 
 // Promo is a map with all the card id's in the game and corresponding CardConstructor for promotional exclusive cards

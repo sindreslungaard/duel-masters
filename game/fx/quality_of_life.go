@@ -612,11 +612,22 @@ func Attacking(card *match.Card, ctx *match.Context) bool {
 
 // AttackConfirmed returns true if the card is attacking and it cannot be cancelled
 func AttackConfirmed(card *match.Card, ctx *match.Context) bool {
-
 	if event, ok := ctx.Event.(*match.AttackConfirmed); ok {
 		if event.CardID == card.ID {
 			return true
 		}
+	}
+
+	return false
+}
+
+// OneOfMyCreaturesAttacksConfirmed returns true
+// if one of the player's creatures is attacking and it cannot be cancelled
+func OneOfMyCreaturesAttacksConfirmed(card *match.Card, ctx *match.Context) bool {
+	if event, ok := ctx.Event.(*match.AttackConfirmed); ok {
+		_, err := card.Player.GetCard(event.CardID, match.BATTLEZONE)
+
+		return err == nil
 	}
 
 	return false
