@@ -46,3 +46,34 @@ func ColossusBoost(c *match.Card) {
 	}))
 
 }
+
+// ForcedFrenzy ...
+func ForcedFrenzy(c *match.Card) {
+
+	c.Name = "Forced Frenzy"
+	c.Civ = civ.Fire
+	c.ManaCost = 3
+	c.ManaRequirement = []string{civ.Fire}
+
+	c.Use(fx.Spell, fx.ShieldTrigger, fx.When(fx.SpellCast, func(card *match.Card, ctx *match.Context) {
+		fx.Find(
+			ctx.Match.Opponent(card.Player),
+			match.BATTLEZONE,
+		).Map(func(x *match.Card) {
+			ctx.Match.ApplyPersistentEffect(func(ctx2 *match.Context, exit func()) {
+				if x.Zone != match.BATTLEZONE {
+					exit()
+					return
+				}
+
+				if _, ok := ctx2.Event.(*match.StartOfTurnStep); ok && ctx2.Match.IsPlayerTurn(card.Player) {
+					exit()
+					return
+				}
+
+				fx.ForceAttack(x, ctx2)
+			})
+		})
+	}))
+
+}
