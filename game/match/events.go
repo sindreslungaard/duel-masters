@@ -14,6 +14,11 @@ type CardPlayedEvent struct {
 	CardID string
 }
 
+// UntapManaEvent is fired when the player attempts to untap mana before untap step event
+type UntapManaEvent struct {
+	CurrentPlayer *Player
+}
+
 // ChargeManaEvent is fired when the player attempts to charge mana
 type ChargeManaEvent struct {
 	CardID string
