@@ -10,6 +10,7 @@ import (
 	"duel-masters/game/cards/dm07"
 	"duel-masters/game/cards/dm08"
 	"duel-masters/game/cards/dm09"
+	"duel-masters/game/cards/dm10"
 	"duel-masters/game/cards/promo"
 	"duel-masters/game/match"
 )
@@ -25,6 +26,7 @@ var Sets = map[string]*map[string]match.CardConstructor{
 	"dm-07": &DM07,
 	"dm-08": &DM08,
 	"dm-09": &DM09,
+	"dm-10": &DM10,
 	"promo": &Promo,
 }
 
@@ -694,6 +696,14 @@ var DM09 = map[string]match.CardConstructor{
 	"cf96ecd5-481a-4a63-b8f1-61731525d956": dm09.KelpCandle,
 	"83ac5a3a-1b3d-43f9-a08e-4415e5f478ff": dm09.AzaghastTyrantOfShadows,
 	"da93d9d0-b569-408d-af93-b4a4286fc91f": dm09.BatDoctorShadowOfUndeath,
+}
+
+var DM10 = map[string]match.CardConstructor{
+	"2690a6cc-9919-4a76-8bf6-69d4602e0047": dm10.EarthRipperTalonOfRage,
+	"6a8fa457-5871-4620-8562-b1ae2a7dbf00": dm10.JigglyTotem,
+	"49e7d612-c46d-4cf1-a726-6d931fce19c2": dm10.KaratePotato,
+	"7d7aed90-5573-44eb-87fc-b0721777fc1a": dm10.LegacyShell,
+	"f7020449-33e3-488a-807d-59e007180d60": dm10.SabermaskScarab,
 }
 
 // Promo is a map with all the card id's in the game and corresponding CardConstructor for promotional exclusive cards
