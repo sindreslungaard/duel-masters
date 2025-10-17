@@ -25,7 +25,7 @@ func RyudmilaChannelerOfSuns(c *match.Card) {
 				func(x *match.Card) bool {
 					return !x.Tapped && x.ID != c.ID
 				},
-			)) * 1000
+			)) * 2000
 		}
 	}), fx.When(fx.WouldBeDestroyed, fx.ShuffleCardIntoDeck))
 
