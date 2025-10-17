@@ -86,6 +86,16 @@ func ShuffleDeck(card *match.Card, ctx *match.Context, forOpponent bool) {
 
 }
 
+// Moves a card into the deck and then shuffles the deck
+func ShuffleCardIntoDeck(card *match.Card, ctx *match.Context) {
+	_, err := card.Player.MoveCard(card.ID, card.Zone, match.DECK, card.ID)
+
+	if err == nil {
+		card.Player.ShuffleDeck()
+		ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s was moved into %s's deck and then he shuffled his deck.", card.Name, card.Player.Username()))
+	}
+}
+
 func BlockerWhenNoShields(card *match.Card, ctx *match.Context) {
 	condition := &match.Condition{ID: cnd.Blocker, Val: true, Src: card.ID}
 	HaveSelfConditionsWhenNoShields(card, ctx, []*match.Condition{condition})
