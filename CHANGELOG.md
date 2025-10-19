@@ -7,6 +7,15 @@
 - New card "Hokira" (thanks @DragosIonita23)
 - New card "Tra Rion, Penumbra Guardian" (thanks @DragosIonita23)
 - New card "Unified Resistance" (thanks @DragosIonita23)
+- Improve popup for selecting card race (thanks @DragosIonita23)
+- New card "Cosmic Wing" (thanks @DragosIonita23)
+- New card "Nexus Charger" (thanks @DragosIonita23)
+- New card "Abduction Charger" (thanks @DragosIonita23)
+- New card "Grinning Hunger" (thanks @DragosIonita23)
+- New card "Submarine Project" (thanks @DragosIonita23)
+- New card "Fists of Forever" (thanks @DragosIonita23)
+- New card "Mana Bonanza" (thanks @DragosIonita23)
+- New card "Vine Charger" (thanks @DragosIonita23)
 
 ## 21/09/2025
 
