@@ -44,68 +44,35 @@ func NarielTheOracle(c *match.Card) {
 				return
 			}
 
-			if event, ok := ctx2.Event.(*match.AttackPlayer); ok {
-				creature, err := ctx2.Match.CurrentPlayer().Player.GetCard(event.CardID, match.BATTLEZONE)
-				if err != nil {
-					return
-				}
+			if !creature.HasCondition(cnd.IgnoreCantAttack) && ctx.Match.GetPower(creature, false) >= 3000 {
+				ctx.Match.WarnPlayer(creature.Player, fmt.Sprintf("%s can't attack due to %s's effect.", creature.Name, card.Name))
+				ctx.InterruptFlow()
+			}
+		}
 
-				if !creature.HasCondition(cnd.IgnoreCantAttack) && ctx2.Match.GetPower(creature, false) >= 3000 {
-					ctx2.Match.WarnPlayer(creature.Player, fmt.Sprintf("%s can't attack due to %s's effect.", creature.Name, card.Name))
-					ctx2.InterruptFlow()
-				}
+		if event, ok := ctx.Event.(*match.AttackCreature); ok {
+			creature, err := ctx.Match.CurrentPlayer().Player.GetCard(event.CardID, match.BATTLEZONE)
+			if err != nil {
+				return
 			}
 
-			if event, ok := ctx2.Event.(*match.AttackCreature); ok {
-				creature, err := ctx2.Match.CurrentPlayer().Player.GetCard(event.CardID, match.BATTLEZONE)
-				if err != nil {
-					return
-				}
+			if ctx.Match.GetPower(creature, false) >= 3000 {
+				ctx.Match.WarnPlayer(creature.Player, fmt.Sprintf("%s can't attack due to %s's effect.", creature.Name, card.Name))
+				ctx.InterruptFlow()
+			}
+		}
 
-				if ctx2.Match.GetPower(creature, false) >= 3000 {
-					ctx2.Match.WarnPlayer(creature.Player, fmt.Sprintf("%s can't attack due to %s's effect.", creature.Name, card.Name))
-					ctx2.InterruptFlow()
-				}
+		if event, ok := ctx.Event.(*match.TapAbility); ok {
+			creature, err := ctx.Match.CurrentPlayer().Player.GetCard(event.CardID, match.BATTLEZONE)
+			if err != nil {
+				return
 			}
 
-			if event, ok := ctx2.Event.(*match.TapAbility); ok {
-				creature, err := ctx2.Match.CurrentPlayer().Player.GetCard(event.CardID, match.BATTLEZONE)
-				if err != nil {
-					return
-				}
-
-				if !creature.HasCondition(cnd.IgnoreCantAttack) && ctx2.Match.GetPower(creature, false) >= 3000 {
-					ctx2.Match.WarnPlayer(creature.Player, fmt.Sprintf("%s can't use tap ability due to %s's effect.", creature.Name, card.Name))
-					ctx2.InterruptFlow()
-				}
+			if !creature.HasCondition(cnd.IgnoreCantAttack) && ctx.Match.GetPower(creature, false) >= 3000 {
+				ctx.Match.WarnPlayer(creature.Player, fmt.Sprintf("%s can't use tap ability due to %s's effect.", creature.Name, card.Name))
+				ctx.InterruptFlow()
 			}
-
-			fx.FindFilter(
-				card.Player,
-				match.BATTLEZONE,
-				func(x *match.Card) bool {
-					return ctx2.Match.GetPower(x, false) >= 3000
-				},
-			).Map(func(x *match.Card) {
-				x.AddUniqueSourceCondition(cnd.CantAttackCreatures, nil, card.ID)
-				if !x.HasCondition(cnd.IgnoreCantAttack) {
-					x.AddUniqueSourceCondition(cnd.CantAttackPlayers, nil, card.ID)
-				}
-			})
-
-			fx.FindFilter(
-				ctx2.Match.Opponent(card.Player),
-				match.BATTLEZONE,
-				func(x *match.Card) bool {
-					return ctx2.Match.GetPower(x, false) >= 3000
-				},
-			).Map(func(x *match.Card) {
-				x.AddUniqueSourceCondition(cnd.CantAttackCreatures, nil, card.ID)
-				if !x.HasCondition(cnd.IgnoreCantAttack) {
-					x.AddUniqueSourceCondition(cnd.CantAttackPlayers, nil, card.ID)
-				}
-			})
-		})
-	}))
+		}
+	})
 
 }
