@@ -663,6 +663,8 @@ var DM09 = map[string]match.CardConstructor{
 	"dc879044-c47b-4a05-b3fb-d305fb47370e": dm09.FistsOfForever,
 	"c6b9f290-208f-4c7f-9e1f-4d0742c785ce": dm09.ManaBonanza,
 	"4a31d053-5846-4229-a740-cc2fc8438fc7": dm09.VineCharger,
+	"eea41196-819f-48a4-ad2d-300bedfec3b7": dm09.MagmadragonOgristVhal,
+	"56486d95-811d-4a77-a21b-dd773eb67d97": dm09.NecrodragonIzoristVhal,
 	"b8e18b9a-5ba1-40c1-bcee-78f5e3e194fe": dm09.SilvermoonTrailblazer,
 	"1c877a61-6ec5-4c4c-87ee-8d4ab417b476": dm09.StormWranglerTheFurious,
 	"62f0d41e-61c0-4050-9fde-97be0b573a59": dm09.Hokira,

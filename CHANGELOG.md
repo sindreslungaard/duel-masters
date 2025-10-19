@@ -16,6 +16,7 @@
 - New card "Fists of Forever" (thanks @DragosIonita23)
 - New card "Mana Bonanza" (thanks @DragosIonita23)
 - New card "Vine Charger" (thanks @DragosIonita23)
+- Fixed an issue where "Simian Warrior Grash" would not correctly handle destruction of Armorloids (thanks @DragosIonita23)
 
 ## 21/09/2025
 
