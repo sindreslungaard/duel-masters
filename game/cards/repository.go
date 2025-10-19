@@ -654,6 +654,15 @@ var DM08 = map[string]match.CardConstructor{
 }
 
 var DM09 = map[string]match.CardConstructor{
+	"d2e9e450-11c3-430c-9e1a-364f3232110b": dm09.CosmicWing,
+	"70cac25c-bf54-4934-8180-cf18867e9d7d": dm09.NexusCharger,
+	"2afbe361-644f-4c89-a9af-f18dd2c10825": dm09.AbductionCharger,
+	"5a81f94e-aff8-4c15-a0bb-a787eb7362f4": dm09.GrinningHunger,
+	"10e8af32-72f0-486c-abdc-dd1088735cb7": dm09.SubmarineProject,
+	"7e9225cc-b7d8-4267-a8db-9ec0c7629216": dm09.SlashCharger,
+	"dc879044-c47b-4a05-b3fb-d305fb47370e": dm09.FistsOfForever,
+	"c6b9f290-208f-4c7f-9e1f-4d0742c785ce": dm09.ManaBonanza,
+	"4a31d053-5846-4229-a740-cc2fc8438fc7": dm09.VineCharger,
 	"b8e18b9a-5ba1-40c1-bcee-78f5e3e194fe": dm09.SilvermoonTrailblazer,
 	"1c877a61-6ec5-4c4c-87ee-8d4ab417b476": dm09.StormWranglerTheFurious,
 	"62f0d41e-61c0-4050-9fde-97be0b573a59": dm09.Hokira,
