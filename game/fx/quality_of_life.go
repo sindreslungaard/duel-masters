@@ -880,6 +880,43 @@ func AnotherOwnCyberSummoned(card *match.Card, ctx *match.Context) bool {
 	})
 }
 
+func AnotherOwnArmorloidDestroyed(card *match.Card, ctx *match.Context) bool {
+	return AnotherOwnCreatureDestroyedFilter(card, ctx, func(c *match.Card) bool {
+		return c.HasFamily(family.Armorloid)
+	})
+}
+
+// AnotherOwnCreatureDestroyedFilter returns true if another creature of yours is destroyed
+// filtered by the provided function
+func AnotherOwnCreatureDestroyedFilter(card *match.Card, ctx *match.Context, filter func(c *match.Card) bool) bool {
+	event, ok := ctx.Event.(*match.CardMoved)
+	if !ok {
+		return false
+	}
+
+	// check if it was the card's player whose creature got destroyed
+	var p *match.Player
+	if event.MatchPlayerID == 1 {
+		p = ctx.Match.Player1.Player
+	} else {
+		p = ctx.Match.Player2.Player
+	}
+
+	anotherOwnCreatureDestroyed := AnotherOwnCreatureDestroyed(card, ctx)
+
+	if filter != nil {
+		movedCard, err := p.GetCard(event.CardID, event.To)
+
+		if err != nil {
+			return false
+		}
+
+		anotherOwnCreatureDestroyed = anotherOwnCreatureDestroyed && filter(movedCard)
+	}
+
+	return anotherOwnCreatureDestroyed
+}
+
 func AnotherCreatureDestroyed(card *match.Card, ctx *match.Context) bool {
 	if card.Zone != match.BATTLEZONE {
 		return false
@@ -903,7 +940,8 @@ func AnotherOwnCreatureDestroyed(card *match.Card, ctx *match.Context) bool {
 
 	if event, ok := ctx.Event.(*match.CardMoved); ok &&
 		event.From == match.BATTLEZONE &&
-		event.To == match.GRAVEYARD {
+		event.To == match.GRAVEYARD &&
+		event.CardID != card.ID {
 
 		// check if it was the card's player whose creature got destroyed
 		var p *match.Player
