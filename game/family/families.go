@@ -1,61 +1,121 @@
 package family
 
-// Families
 const (
-	MachineEater    = "Machine Eater"
-	Berserker       = "Berserker"
-	BeastFolk       = "Beast Folk"
+	AngelCommand    = "Angel Command"
+	Armorloid       = "Armorloid"
 	ArmoredDragon   = "Armored Dragon"
 	ArmoredWyvern   = "Armored Wyvern"
-	ColonyBeetle    = "Colony Beetle"
-	HornedBeast     = "Horned Beast"
-	Leviathan       = "Leviathan"
-	CyberVirus      = "Cyber Virus"
-	GelFish         = "Gel Fish"
 	BalloonMushroom = "Balloon Mushroom"
-	LivingDead      = "Living Dead"
-	AngelCommand    = "Angel Command"
-	Chimera         = "Chimera"
-	DemonCommand    = "Demon Command"
-	CyberLord       = "Cyber Lord"
-	LiquidPeople    = "Liquid People"
-	Initiate        = "Initiate"
-	RockBeast       = "Rock Beast"
-	GiantInsect     = "Giant Insect"
-	Ghost           = "Ghost"
-	Dragonoid       = "Dragonoid"
-	LightBringer    = "Light Bringer"
-	StarlightTree   = "Starlight Tree"
-	Human           = "Human"
-	Guardian        = "Guardian"
-	ParasiteWorm    = "Parasite Worm"
-	Armorloid       = "Armorloid"
-	TreeFolk        = "Tree Folk"
-	Fish            = "Fish"
-	DarkLord        = "Dark Lord"
+	BeastFolk       = "Beast Folk"
+	Berserker       = "Berserker"
 	BrainJacker     = "Brain Jacker"
-	Giant           = "Giant"
-	MechaThunder    = "Mecha Thunder"
+	Chimera         = "Chimera"
+	ColonyBeetle    = "Colony Beetle"
 	CyberCluster    = "Cyber Cluster"
-	Hedrian         = "Hedrian"
-	FireBird        = "Fire Bird"
-	RainbowPhantom  = "Rainbow Phantom"
-	Gladiator       = "Gladiator"
-	SeaHacker       = "Sea Hacker"
-	EarthEater      = "Earth Eater"
+	CyberLord       = "Cyber Lord"
+	CyberVirus      = "Cyber Virus"
+	DarkLord        = "Dark Lord"
 	DeathPuppet     = "Death Puppet"
+	DemonCommand    = "Demon Command"
 	DevilMask       = "Devil Mask"
-	Xenoparts       = "Xenoparts"
+	Dragonoid       = "Dragonoid"
 	DuneGecko       = "Dune Gecko"
-	SnowFaerie      = "Snow Faerie"
-	MysteryTotem    = "Mystery Totem"
-	Survivor        = "Survivor"
-	VolcanoDragon   = "Volcano Dragon"
 	EarthDragon     = "Earth Dragon"
-	ZombieDragon    = "Zombie Dragon"
+	EarthEater      = "Earth Eater"
+	Family          = "Family"
+	FireBird        = "Fire Bird"
+	Fish            = "Fish"
+	GelFish         = "Gel Fish"
+	Giant           = "Giant"
+	GiantInsect     = "Giant Insect"
+	Gladiator       = "Gladiator"
+	Ghost           = "Ghost"
+	Guardian        = "Guardian"
+	Hedrian         = "Hedrian"
+	HornedBeast     = "Horned Beast"
+	Human           = "Human"
+	Initiate        = "Initiate"
+	Leviathan       = "Leviathan"
+	LightBringer    = "Light Bringer"
+	LiquidPeople    = "Liquid People"
+	LivingDead      = "Living Dead"
+	MachineEater    = "Machine Eater"
 	MechaDelSol     = "Mecha del Sol"
+	MechaThunder    = "Mecha Thunder"
+	MysteryTotem    = "Mystery Totem"
+	ParasiteWorm    = "Parasite Worm"
+	RainbowPhantom  = "Rainbow Phantom"
+	RockBeast       = "Rock Beast"
+	SeaHacker       = "Sea Hacker"
+	SnowFaerie      = "Snow Faerie"
+	StarlightTree   = "Starlight Tree"
+	Survivor        = "Survivor"
+	TreeFolk        = "Tree Folk"
+	VolcanoDragon   = "Volcano Dragon"
 	WildVeggies     = "Wild Veggies"
+	Xenoparts       = "Xenoparts"
+	ZombieDragon    = "Zombie Dragon"
 )
+
+var Families = []string{
+	AngelCommand,
+	Armorloid,
+	ArmoredDragon,
+	ArmoredWyvern,
+	BalloonMushroom,
+	BeastFolk,
+	Berserker,
+	BrainJacker,
+	Chimera,
+	ColonyBeetle,
+	CyberCluster,
+	CyberLord,
+	CyberVirus,
+	DarkLord,
+	DeathPuppet,
+	DemonCommand,
+	DevilMask,
+	Dragonoid,
+	DuneGecko,
+	EarthDragon,
+	EarthEater,
+	FireBird,
+	Fish,
+	GelFish,
+	Giant,
+	GiantInsect,
+	Gladiator,
+	Ghost,
+	Guardian,
+	Hedrian,
+	HornedBeast,
+	Human,
+	Initiate,
+	Leviathan,
+	LightBringer,
+	LiquidPeople,
+	LivingDead,
+	MachineEater,
+	MechaDelSol,
+	MechaThunder,
+	MysteryTotem,
+	ParasiteWorm,
+	RainbowPhantom,
+	RockBeast,
+	SeaHacker,
+	SnowFaerie,
+	StarlightTree,
+	Survivor,
+	TreeFolk,
+	VolcanoDragon,
+	WildVeggies,
+	Xenoparts,
+	ZombieDragon,
+}
+
+func GetAllFamilies() []string {
+	return Families
+}
 
 var Cybers = []string{CyberCluster, CyberLord, CyberVirus}
 var Dragons = []string{ArmoredDragon, VolcanoDragon, EarthDragon, ZombieDragon}
