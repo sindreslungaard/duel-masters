@@ -25,7 +25,7 @@ func SimianWarriorGrash(c *match.Card) {
 				return
 			}
 
-			if event, ok := ctx2.Event.(*match.CreatureDestroyed); ok && event.Card.Player == c.Player && event.Card.HasFamily(family.Armorloid) {
+			if fx.AnotherOwnArmorloidDestroyed(card, ctx2) {
 				fx.OpponentChoosesManaBurn(card, ctx2)
 			}
 		})
