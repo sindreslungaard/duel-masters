@@ -848,6 +848,26 @@ func (m *Match) NewMultipleChoiceQuestionAction(player *Player, text string, cho
 
 }
 
+// NewMultipleChoiceSearchableAction prompts the user to select an option
+// from a multiple choice selection with a search and scrollable bar
+func (m *Match) NewMultipleChoiceSearchableAction(player *Player, text string, choices []string) {
+
+	msg := &server.ActionMessage{
+		Header:     "action",
+		ActionType: "searchable",
+		Text:       text,
+		Choices:    choices,
+	}
+
+	player.ActionState = PlayerActionState{
+		resolved: false,
+		data:     msg,
+	}
+
+	m.PlayerRef(player).Socket.Send(msg)
+
+}
+
 // CloseAction closes the card selection popup for the given player
 func (m *Match) CloseAction(p *Player) {
 	p.ActionState.resolved = true
