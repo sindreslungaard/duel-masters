@@ -365,10 +365,10 @@ func (m *Match) BreakShields(attemptedShields []*Card, source *Card) {
 			if card.HasCondition(cnd.Spell) {
 				m.CastSpell(card, true)
 			} else {
-				m.MoveCard(card, BATTLEZONE, card)
+				card.Player.MoveCard(card.ID, HAND, BATTLEZONE, "shield_trigger")
 			}
 
-			// Elimnate all shield triggers from that list that are not in hand anymore for any reason.
+			// Eliminate all shield triggers from that list that are not in hand anymore for any reason.
 			// We need to also make sure to specifically eliminate the played card, for the cases where the card
 			// can return itself to the hand. e.g. a card with bounce that can bounce itself back to hand.
 			var stillValidShieldtriggers []*Card

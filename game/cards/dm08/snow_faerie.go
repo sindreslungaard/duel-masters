@@ -58,8 +58,8 @@ func kachuaKeeperOfTheIcegateTapAbility(card *match.Card, ctx *match.Context) {
 
 			if _, ok := ctx2.Event.(*match.EndOfTurnStep); ok {
 				selDragon.RemoveConditionBySource(card.ID)
-				ctx2.Match.Destroy(selDragon, selDragon, match.DestroyedByMiscAbility)
 				exit()
+				ctx2.Match.Destroy(selDragon, selDragon, match.DestroyedByMiscAbility)
 				return
 			}
 
