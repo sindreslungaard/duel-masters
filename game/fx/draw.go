@@ -96,6 +96,30 @@ func MayDrawAmount(card *match.Card, ctx *match.Context, amount int) {
 	card.Player.DrawCards(drawAmount)
 }
 
+// HandCardToShield puts top 1 card from player's hand to shielzone
+func HandCardToShield(card *match.Card, ctx *match.Context) {
+
+	Select(
+		card.Player,
+		ctx.Match,
+		card.Player,
+		match.HAND,
+		fmt.Sprintf("%s's effect: Add a card from your hand to your shields face down.", card.Name),
+		1,
+		1,
+		false,
+	).Map(func(x *match.Card) {
+		_, err := card.Player.MoveCard(x.ID, match.HAND, match.SHIELDZONE, card.ID)
+
+		if err != nil {
+			return
+		}
+
+		ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s put the %s from his hand into the shieldzone from %s's effect", card.Player.Username(), x.Name, card.Name))
+	})
+
+}
+
 // TopCardToShield puts top 1 card from deck to shielzone
 func TopCardToShield(card *match.Card, ctx *match.Context) {
 
