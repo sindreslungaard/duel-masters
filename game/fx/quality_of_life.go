@@ -626,7 +626,7 @@ func OppShieldTriggerCast(card *match.Card, ctx *match.Context) bool {
 		}
 	}
 
-	if event, ok := ctx.Event.(*match.MoveCard); ok && card.Zone == match.BATTLEZONE && event.IsShieldTrigger {
+	if event, ok := ctx.Event.(*match.MoveCard); ok && card.Zone == match.BATTLEZONE && event.Source == "shield_trigger" {
 		crtPlayerId := byte(1)
 		if card.Player == ctx.Match.Player2.Player {
 			crtPlayerId = 2

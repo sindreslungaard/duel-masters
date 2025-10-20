@@ -237,15 +237,9 @@ func (m *Match) Destroy(card *Card, source *Card, context CreatureDestroyedConte
 }
 
 // MoveCard moves a card and sends a chat message about what source moved it
-func (m *Match) MoveCard(card *Card, destination string, source *Card, isShieldTriggerParam ...bool) {
+func (m *Match) MoveCard(card *Card, destination string, source *Card) {
 
-	isShieldTrigger := false
-
-	if len(isShieldTriggerParam) > 0 && isShieldTriggerParam[0] {
-		isShieldTrigger = true
-	}
-
-	_, err := card.Player.MoveCard(card.ID, card.Zone, destination, source.ID, isShieldTrigger)
+	_, err := card.Player.MoveCard(card.ID, card.Zone, destination, source.ID)
 
 	if err != nil {
 		return
@@ -371,7 +365,7 @@ func (m *Match) BreakShields(attemptedShields []*Card, source *Card) {
 			if card.HasCondition(cnd.Spell) {
 				m.CastSpell(card, true)
 			} else {
-				m.MoveCard(card, BATTLEZONE, card, true)
+				card.Player.MoveCard(card.ID, HAND, BATTLEZONE, "shield_trigger")
 			}
 
 			// Eliminate all shield triggers from that list that are not in hand anymore for any reason.

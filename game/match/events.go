@@ -47,11 +47,10 @@ type ShieldTriggerPlayedEvent struct {
 
 // MoveCard is fired from the *Player.MoveCard method before moving a card between containers
 type MoveCard struct {
-	CardID          string
-	From            string
-	To              string
-	Source          string // What caused the card to move, usually the ID of a card
-	IsShieldTrigger bool   // true if the card is being played as a shield trigger
+	CardID string
+	From   string
+	To     string
+	Source string // What caused the card to move, usually the ID of a card
 }
 
 // CardMoved is fired from the *Player.MoveCard method after moving a card between containers
