@@ -825,43 +825,5 @@ func (p *Player) Username() string {
 
 // Dispose clears out references in the player object
 func (p *Player) Dispose() {
-
-	p.mutex.Lock()
-
-	defer p.mutex.Unlock()
-
 	close(p.Action)
-
-	for _, c := range p.deck {
-		c.Player = nil
-	}
-
-	for _, c := range p.hand {
-		c.Player = nil
-	}
-
-	for _, c := range p.shieldzone {
-		c.Player = nil
-	}
-
-	for _, c := range p.manazone {
-		c.Player = nil
-	}
-
-	for _, c := range p.graveyard {
-		c.Player = nil
-	}
-
-	for _, c := range p.battlezone {
-		c.Player = nil
-	}
-
-	for _, c := range p.hiddenzone {
-		c.Player = nil
-	}
-
-	for _, c := range p.spellzone {
-		c.Player = nil
-	}
-
 }
