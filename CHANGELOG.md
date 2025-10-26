@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+No unreleased changes
+
+## 26/10/2025
+
 - New card "Silvermoon Trailblazer" (thanks @DragosIonita23)
 - New card "Storm Wrangler, the Furious" (thanks @DragosIonita23)
 - New card "Hokira" (thanks @DragosIonita23)
