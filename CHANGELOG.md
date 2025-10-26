@@ -26,7 +26,6 @@ No unreleased changes
 - New card "Stratosphere Giant" (thanks @DragosIonita23)
 - New card "Glena Vuele, the Hypnotic" (thanks @DragosIonita23)
 - New card "Jil Warka, Time Guardian" (thanks @DragosIonita23)
-- New card "XXXX" (thanks @DragosIonita23)
 - Improve popup for selecting card race (thanks @DragosIonita23)
 - Fixed an issue where "Simian Warrior Grash" would not correctly handle destruction of Armorloids (thanks @DragosIonita23)
 
