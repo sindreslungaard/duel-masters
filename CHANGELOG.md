@@ -17,6 +17,12 @@
 - New card "Vine Charger" (thanks @DragosIonita23)
 - New card "Magmadragon Ogrist Vhal" (thanks @DragosIonita23)
 - New card "Necrodragon Izorist Vhal" (thanks @DragosIonita23)
+- New card "Emperor Maroll" (thanks @DragosIonita23)
+- New card "Terradragon Anrist Vhal" (thanks @DragosIonita23)
+- New card "Stratosphere Giant" (thanks @DragosIonita23)
+- New card "Glena Vuele, the Hypnotic" (thanks @DragosIonita23)
+- New card "Jil Warka, Time Guardian" (thanks @DragosIonita23)
+- New card "XXXX" (thanks @DragosIonita23)
 - Improve popup for selecting card race (thanks @DragosIonita23)
 - Fixed an issue where "Simian Warrior Grash" would not correctly handle destruction of Armorloids (thanks @DragosIonita23)
 
@@ -122,6 +128,7 @@
 - New card "Scream Slicer, Shadow of Fear" (thanks @DragosIonita23)
 
 ## 24/04/2025
+
 - New card "Magmadragon Jagalzor" (thanks @jyotiskaghosh)
 - New card "Bruiser Dragon" (thanks @DragosIonita23)
 - New card "Rocketdive Skyterror" (thanks @DragosIonita23)
@@ -143,6 +150,7 @@
 - New card "Super Necrodragon Abzo Dolba" (thanks @jyotiskaghosh)
 
 ## 11/04/2025
+
 - Fixed an issue where "Vacuum Gel" could destroy untapped creatures with its effect (thanks @DragosIonita23)
 - Added automated chat moderation
 
@@ -438,6 +446,7 @@
 - Fixed an issue where the lobby chat would not scroll all the way down on page load if there were any pinned messages
 
 ## 08/08/2023
+
 - New card "Gigaling Q"
 - New card "Wisp Howler, Shadow of Tears"
 - New card "Gigakail"
@@ -446,6 +455,7 @@
 - Fixed an issue where cards would keep their stat changes between turns
 
 ## 05/08/2023
+
 - Right clicking cards in "select card" popups during matches will now preview the card
 - Updated the backside card image used in match action/popups to the high quality version
 - Updated the color scheme of the site
