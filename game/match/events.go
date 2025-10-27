@@ -152,3 +152,8 @@ type GetPowerEvent struct {
 type TapAbility struct {
 	CardID string
 }
+
+// TapAbility is fired right before the tap ability is executed
+type ActivatesTapAbility struct {
+	CardID string
+}
