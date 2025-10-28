@@ -107,6 +107,48 @@ func GrinningHunger(c *match.Card) {
 
 	c.Use(fx.Spell, fx.When(fx.SpellCast, func(card *match.Card, ctx *match.Context) {
 
+		oppBZ := fx.Find(ctx.Match.Opponent(card.Player), match.BATTLEZONE)
+		oppShields := fx.Find(ctx.Match.Opponent(card.Player), match.SHIELDZONE)
+
+		if len(oppBZ) == 0 && len(oppShields) == 0 {
+			return
+		}
+
+		if len(oppBZ) == 0 {
+			// No creatures in battlezone, must choose shield
+			fx.SelectBackside(
+				ctx.Match.Opponent(card.Player),
+				ctx.Match,
+				ctx.Match.Opponent(card.Player),
+				match.SHIELDZONE,
+				fmt.Sprintf("%s's effect: Choose one of your shields and destroy it.", card.Name),
+				1,
+				1,
+				false,
+			).Map(func(x *match.Card) {
+				x.Player.MoveCard(x.ID, match.SHIELDZONE, match.GRAVEYARD, card.ID)
+				ctx.Match.ReportActionInChat(x.Player, fmt.Sprintf("%s was put into the graveyard from %s's shieldzone.", x.Name, x.Player.Username()))
+			})
+
+			return
+		} else if len(oppShields) == 0 {
+			// No shields, must choose creature in battlezone
+			fx.Select(
+				ctx.Match.Opponent(card.Player),
+				ctx.Match,
+				ctx.Match.Opponent(card.Player),
+				match.BATTLEZONE,
+				fmt.Sprintf("%s's effect: Choose one of your creatures in the battlezone and destroy it.", card.Name),
+				1,
+				1,
+				false,
+			).Map(func(x *match.Card) {
+				ctx.Match.Destroy(x, card, match.DestroyedByMiscAbility)
+			})
+
+			return
+		}
+
 		indexChoice := fx.MultipleChoiceQuestion(
 			ctx.Match.Opponent(card.Player),
 			ctx.Match,
