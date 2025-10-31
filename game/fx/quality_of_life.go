@@ -75,9 +75,38 @@ func FindFilter(p *match.Player, collection string, h func(card *match.Card) boo
 
 }
 
+// FindMultipleFilter returns a CardCollection matching the filter
+// from multiple containers specified in collections slice
+func FindMultipleFilter(p *match.Player, collections []string, h func(card *match.Card) bool) CardCollection {
+
+	result := CardCollection{}
+
+	for _, collection := range collections {
+		container, err := p.Container(collection)
+
+		if err != nil {
+			return result
+		}
+
+		for _, card := range container {
+			if h(card) {
+				result = append(result, card)
+			}
+		}
+	}
+
+	return result
+
+}
+
 // Find returns a CardCollection for the specified container
 func Find(p *match.Player, collection string) CardCollection {
 	return FindFilter(p, collection, func(x *match.Card) bool { return true })
+}
+
+// FindMultiple returns a CardCollection for the specified containers
+func FindMultiple(p *match.Player, collections []string) CardCollection {
+	return FindMultipleFilter(p, collections, func(x *match.Card) bool { return true })
 }
 
 // When performs the specified function if the test is successful
