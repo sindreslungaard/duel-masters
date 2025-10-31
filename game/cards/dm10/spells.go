@@ -13,7 +13,7 @@ func RapidReincarnation(c *match.Card) {
 
 	c.Name = "Rapid Reincarnation"
 	c.Civ = civ.Light
-	c.ManaCost = 5
+	c.ManaCost = 3
 	c.ManaRequirement = []string{civ.Light}
 
 	c.Use(fx.Spell, fx.ShieldTrigger, fx.When(fx.SpellCast, func(card *match.Card, ctx *match.Context) {

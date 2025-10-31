@@ -8,10 +8,10 @@ import (
 	"duel-masters/game/match"
 )
 
-// MessaBanhaExpanseGuardian ...
-func MessaBanhaExpanseGuardian(c *match.Card) {
+// MessaBahnaExpanseGuardian ...
+func MessaBahnaExpanseGuardian(c *match.Card) {
 
-	c.Name = "Messa Banha, Expanse Guardian"
+	c.Name = "Messa Bahna, Expanse Guardian"
 	c.Power = 5000
 	c.Civ = civ.Light
 	c.Family = []string{family.Guardian}
@@ -58,9 +58,12 @@ func PalaOlesisMorningGuardian(c *match.Card) {
 						x.AddUniqueSourceCondition(cnd.PowerAmplifier, 2000, card.ID)
 					})
 				} else {
-					fx.Find(
+					fx.FindFilter(
 						card.Player,
 						match.BATTLEZONE,
+						func(x *match.Card) bool {
+							return x.ID != card.ID
+						},
 					).Map(func(x *match.Card) {
 						x.RemoveConditionBySource(card.ID)
 					})

@@ -69,12 +69,12 @@ func BlockIfAbleWhenOppAttacks(card *match.Card, ctx *match.Context) {
 			return
 		}
 
-		//@TODO test this
 		if len(event.Blockers) > 0 && event.Attacker.IsBlockable(ctx) {
 			for _, b := range event.Blockers {
 				if b.ID == card.ID {
 					// Force the battle between the attacker and this card
 					ctx.InterruptFlow()
+					card.Tapped = true
 					ctx.Match.Battle(event.Attacker, card, true, len(event.ShieldsAttacked) > 0)
 					return
 				}
