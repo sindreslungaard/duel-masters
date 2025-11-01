@@ -6,6 +6,7 @@ import (
 	"duel-masters/game/match"
 	"fmt"
 	"slices"
+	"strconv"
 )
 
 // CardCollection is a slice of cards with a mapping function
@@ -1149,11 +1150,16 @@ func LookAtUpTo5CardsFromTopDeckAndReorder(card *match.Card, ctx *match.Context)
 }
 
 func lookAtUpToXCardsFromTopDeckAndReorder(card *match.Card, ctx *match.Context, x int) {
+	choices := make([]string, x+1)
+	for i := 0; i <= x; i++ {
+		choices[i] = strconv.Itoa(i)
+	}
+
 	numberOfCardsToShow := MultipleChoiceQuestion(
 		card.Player,
 		ctx.Match,
 		fmt.Sprintf("%s's effect: Choose a number up to %d. Look at that many cards from the top of your deck and put them back in any order.", card.Name, x),
-		[]string{"0", "1", "2", "3", "4", "5"},
+		choices,
 	)
 
 	if numberOfCardsToShow == 0 {
@@ -1161,13 +1167,6 @@ func lookAtUpToXCardsFromTopDeckAndReorder(card *match.Card, ctx *match.Context,
 	}
 
 	cardsToShow := card.Player.PeekDeck(numberOfCardsToShow)
-
-	cardIdsToShow := make([]string, 0)
-	for _, c := range cardsToShow {
-		cardIdsToShow = append(cardIdsToShow, c.ID)
-	}
-
-	ctx.Match.ShowCards(card.Player, "Look at those cards, then put them back in any order.", cardIdsToShow)
 
 	newCardsOrder := OrderCards(
 		card.Player,
