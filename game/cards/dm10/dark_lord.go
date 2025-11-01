@@ -20,7 +20,7 @@ func UliyaTheEntrancer(c *match.Card) {
 	c.ManaRequirement = []string{civ.Darkness}
 
 	c.Use(fx.Creature, fx.When(fx.Summoned, func(card *match.Card, ctx *match.Context) {
-		fx.Select(
+		fx.SelectBackside(
 			card.Player,
 			ctx.Match,
 			card.Player,
