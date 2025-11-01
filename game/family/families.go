@@ -22,7 +22,6 @@ const (
 	DuneGecko       = "Dune Gecko"
 	EarthDragon     = "Earth Dragon"
 	EarthEater      = "Earth Eater"
-	Family          = "Family"
 	FireBird        = "Fire Bird"
 	Fish            = "Fish"
 	GelFish         = "Gel Fish"
@@ -42,6 +41,7 @@ const (
 	MachineEater    = "Machine Eater"
 	MechaDelSol     = "Mecha del Sol"
 	MechaThunder    = "Mecha Thunder"
+	Merfolk         = "Merfolk"
 	MysteryTotem    = "Mystery Totem"
 	ParasiteWorm    = "Parasite Worm"
 	RainbowPhantom  = "Rainbow Phantom"
@@ -97,6 +97,7 @@ var Families = []string{
 	MachineEater,
 	MechaDelSol,
 	MechaThunder,
+	Merfolk,
 	MysteryTotem,
 	ParasiteWorm,
 	RainbowPhantom,
