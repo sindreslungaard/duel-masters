@@ -1227,3 +1227,7 @@ func LookTop4Put1IntoHandReorderRestOnBottomDeck(card *match.Card, ctx *match.Co
 
 	})
 }
+
+func CanAttack(card *match.Card) bool {
+	return !HasSummoningSickness(card) && !card.Tapped && (!card.HasCondition(cnd.CantAttackPlayers) || !card.HasCondition(cnd.CantAttackCreatures))
+}

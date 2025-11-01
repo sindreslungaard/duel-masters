@@ -53,6 +53,21 @@ func FilterShieldTriggers(ctx *match.Context, filter func(*match.Card) bool) {
 
 }
 
+func PlayerDiscardsRandomCard(card *match.Card, ctx *match.Context) {
+
+	hand, err := card.Player.Container(match.HAND)
+
+	if err != nil || len(hand) < 1 {
+		return
+	}
+
+	discardedCard, err := card.Player.MoveCard(hand[rand.Intn(len(hand))].ID, match.HAND, match.GRAVEYARD, card.ID)
+	if err == nil {
+		ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s was discarded from %s's hand by %s", discardedCard.Name, discardedCard.Player.Username(), card.Name))
+	}
+
+}
+
 func OpponentDiscardsRandomCard(card *match.Card, ctx *match.Context) {
 
 	hand, err := ctx.Match.Opponent(card.Player).Container(match.HAND)
