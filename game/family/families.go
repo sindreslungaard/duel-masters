@@ -43,6 +43,7 @@ const (
 	MechaDelSol     = "Mecha del Sol"
 	MechaThunder    = "Mecha Thunder"
 	MysteryTotem    = "Mystery Totem"
+	PandorasBox     = "Pandora's Box"
 	ParasiteWorm    = "Parasite Worm"
 	RainbowPhantom  = "Rainbow Phantom"
 	RockBeast       = "Rock Beast"
@@ -98,6 +99,7 @@ var Families = []string{
 	MechaDelSol,
 	MechaThunder,
 	MysteryTotem,
+	PandorasBox,
 	ParasiteWorm,
 	RainbowPhantom,
 	RockBeast,
