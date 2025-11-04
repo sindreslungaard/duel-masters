@@ -18,18 +18,7 @@ func SimianWarriorGrash(c *match.Card) {
 	c.ManaCost = 4
 	c.ManaRequirement = []string{civ.Fire}
 
-	c.Use(fx.Creature, fx.When(fx.InTheBattlezone, func(card *match.Card, ctx *match.Context) {
-		ctx.Match.ApplyPersistentEffect(func(ctx2 *match.Context, exit func()) {
-			if card.Zone != match.BATTLEZONE {
-				exit()
-				return
-			}
-
-			if fx.AnotherOwnArmorloidDestroyed(card, ctx2) {
-				fx.OpponentChoosesManaBurn(card, ctx2)
-			}
-		})
-	}))
+	c.Use(fx.Creature, fx.When(fx.OwnArmorloidDestroyed, fx.OpponentChoosesManaBurn))
 
 }
 
