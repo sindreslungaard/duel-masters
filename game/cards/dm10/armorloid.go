@@ -25,7 +25,7 @@ func ExplosiveTrooperZalmez(c *match.Card) {
 			fx.SelectFilter(
 				card.Player,
 				ctx.Match,
-				card.Player,
+				ctx.Match.Opponent(card.Player),
 				match.BATTLEZONE,
 				fmt.Sprintf("%s's effect: You may destroy one of your opponent's creatures that has power 3000 or less.", card.Name),
 				1,
