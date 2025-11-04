@@ -33,7 +33,6 @@ func BubbleScarab(c *match.Card) {
 			}
 		}
 
-		myAttackedCreature = nil
 		return false
 	}, func(card *match.Card, ctx *match.Context) {
 		if myAttackedCreature != nil {
@@ -52,6 +51,7 @@ func BubbleScarab(c *match.Card) {
 				if err == nil {
 					ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s discards %s to give %s +3000 Power until the end of the turn.", card.Player.Username(), x.Name, myAttackedCreature.Name))
 					myAttackedCreature.AddUniqueSourceCondition(cnd.PowerAmplifier, 3000, card.ID)
+					myAttackedCreature = nil
 				}
 			})
 		}
