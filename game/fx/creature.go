@@ -21,7 +21,7 @@ func Creature(card *match.Card, ctx *match.Context) {
 
 		card.AddCondition(cnd.Creature, nil, nil)
 
-		if ctx.Match.IsPlayerTurn(card.Player) {
+		if ctx.Match.IsPlayerTurn(card.Player) && card.Zone == match.BATTLEZONE {
 			card.Tapped = false
 		}
 

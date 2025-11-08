@@ -13,7 +13,7 @@ func Soulswap(c *match.Card) {
 
 	c.Name = "Soulswap"
 	c.Civ = civ.Nature
-	c.ManaCost = 2
+	c.ManaCost = 3
 	c.ManaRequirement = []string{civ.Nature}
 
 	c.Use(fx.Spell, fx.ShieldTrigger, fx.When(fx.SpellCast, func(card *match.Card, ctx *match.Context) {
@@ -80,10 +80,10 @@ func Soulswap(c *match.Card) {
 
 }
 
-// ThirstOfTheHunt ...
-func ThirstOfTheHunt(c *match.Card) {
+// ThirstForTheHunt ...
+func ThirstForTheHunt(c *match.Card) {
 
-	c.Name = "Thirst of the Hunt"
+	c.Name = "Thirst for the Hunt"
 	c.Civ = civ.Nature
 	c.ManaCost = 1
 	c.ManaRequirement = []string{civ.Nature}

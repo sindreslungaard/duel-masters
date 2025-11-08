@@ -22,10 +22,10 @@ func ScowlingTomato(c *match.Card) {
 
 }
 
-// ShamanBrocolli ...
-func ShamanBrocolli(c *match.Card) {
+// ShamanBroccoli ...
+func ShamanBroccoli(c *match.Card) {
 
-	c.Name = "Shaman Brocolli"
+	c.Name = "Shaman Broccoli"
 	c.Power = 1000
 	c.Civ = civ.Nature
 	c.Family = []string{family.WildVeggies}

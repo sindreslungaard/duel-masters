@@ -11,10 +11,10 @@ import (
 func TerradragonCusdalf(c *match.Card) {
 
 	c.Name = "Terradragon Cusdalf"
-	c.Power = 1000
+	c.Power = 7000
 	c.Civ = civ.Nature
-	c.Family = []string{family.WildVeggies}
-	c.ManaCost = 2
+	c.Family = []string{family.EarthDragon}
+	c.ManaCost = 5
 	c.ManaRequirement = []string{civ.Nature}
 
 	c.Use(fx.Creature, fx.Doublebreaker, fx.PowerAttacker4000, func(card *match.Card, ctx *match.Context) {

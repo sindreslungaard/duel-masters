@@ -711,10 +711,10 @@ var DM09 = map[string]match.CardConstructor{
 
 var DM10 = map[string]match.CardConstructor{
 	"2e10b4fb-3f85-4144-8762-51c04fe609d5": dm10.ScowlingTomato,
-	"b22f0d6b-7703-4bd4-b97f-4389f907577e": dm10.ShamanBrocolli,
+	"b22f0d6b-7703-4bd4-b97f-4389f907577e": dm10.ShamanBroccoli,
 	"a82ec211-588c-4308-95be-798581045e31": dm10.Soulswap,
 	"45b557c2-6beb-4c9d-aa2b-0f7804a3e214": dm10.TerradragonCusdalf,
-	"244080a8-c85f-4e05-b403-dfae3fac0618": dm10.ThirstOfTheHunt,
+	"244080a8-c85f-4e05-b403-dfae3fac0618": dm10.ThirstForTheHunt,
 	"47875b7c-6472-41d9-8994-7c21306a1a99": dm10.TwitchHornTheAgressor,
 }
 
