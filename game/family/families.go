@@ -52,6 +52,7 @@ const (
 	Survivor        = "Survivor"
 	TreeFolk        = "Tree Folk"
 	VolcanoDragon   = "Volcano Dragon"
+	WildVeggies     = "Wild Veggies"
 	Xenoparts       = "Xenoparts"
 	ZombieDragon    = "Zombie Dragon"
 )
@@ -107,6 +108,7 @@ var Families = []string{
 	Survivor,
 	TreeFolk,
 	VolcanoDragon,
+	WildVeggies,
 	Xenoparts,
 	ZombieDragon,
 }

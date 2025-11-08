@@ -1008,6 +1008,20 @@ func (m *Match) BeginNewTurn(repeatTurn ...bool) {
 	m.CurrentPlayer().Player.HasChargedMana = false
 	m.CurrentPlayer().Player.CanChargeMana = true
 
+	ctx = NewContext(m, &UntapManaEvent{
+		CurrentPlayer: m.CurrentPlayer().Player,
+	})
+
+	m.HandleFx(ctx)
+
+	if !ctx.Cancelled() {
+		if mana, err := m.CurrentPlayer().Player.Container(MANAZONE); err == nil {
+			for _, c := range mana {
+				c.Tapped = false
+			}
+		}
+	}
+
 	m.BroadcastState()
 
 	m.UntapStep()
@@ -1018,12 +1032,6 @@ func (m *Match) BeginNewTurn(repeatTurn ...bool) {
 func (m *Match) UntapStep() {
 
 	m.Step = &UntapStep{}
-
-	if mana, err := m.CurrentPlayer().Player.Container(MANAZONE); err == nil {
-		for _, c := range mana {
-			c.Tapped = false
-		}
-	}
 
 	ctx := NewContext(m, m.Step)
 
