@@ -66,7 +66,14 @@ func DrawUpto(card *match.Card, ctx *match.Context, max int) {
 			ctx.Match.BroadcastState()
 
 			if len(drawnCards) == 1 && max > 1 {
-				ctx.Match.ShowCards(card.Player, fmt.Sprintf("%s's effect: You drew %s", card.Name, drawnCards[0].Name), []string{drawnCards[0].ImageID})
+				// We use ShowCardsNonDismissible here so that the Glena Vuele + Emperor Quazla interaction works properly.
+				// If we used ShowCards, this caused issues with Glena Vuele breaking 2 shields that were both shield triggers.
+				// Specifically, the second trigger played by the opponent would NOT trigger Glena Vuele's effect, but only Quazla's effect.
+				// This was because ShowCards allowed the player to "close" the drawn card pop-up of Quazla's effect before Glena Vuele's 2nd trigger effect,
+				// And thus the game thought you responded "No" to Glena Vuele's 2nd trigger effect, which is indeed a bug and wrong behaviour.
+				// NOTE: This only happens when both shields broken are shield triggers, if only one of them is a shield trigger, everything worked as intended.
+				// NOTE 2: This behaviour was very hard to debug and find out, took me quite some time to figure out what was going on.
+				ctx.Match.ShowCardsNonDismissible(card.Player, fmt.Sprintf("%s's effect: You drew %s", card.Name, drawnCards[0].Name), []string{drawnCards[0].ImageID})
 			}
 		} else {
 			return
