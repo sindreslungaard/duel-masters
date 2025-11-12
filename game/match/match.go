@@ -365,10 +365,10 @@ func (m *Match) BreakShields(attemptedShields []*Card, source *Card) {
 			if card.HasCondition(cnd.Spell) {
 				m.CastSpell(card, true)
 			} else {
-				m.MoveCard(card, BATTLEZONE, card)
+				card.Player.MoveCard(card.ID, HAND, BATTLEZONE, "shield_trigger")
 			}
 
-			// Elimnate all shield triggers from that list that are not in hand anymore for any reason.
+			// Eliminate all shield triggers from that list that are not in hand anymore for any reason.
 			// We need to also make sure to specifically eliminate the played card, for the cases where the card
 			// can return itself to the hand. e.g. a card with bounce that can bounce itself back to hand.
 			var stillValidShieldtriggers []*Card
@@ -622,6 +622,13 @@ func (m *Match) DefaultActionWarning(p *Player) {
 
 // HandleFx ...
 func (m *Match) HandleFx(ctx *Context) {
+	if m == nil || m.ending {
+		return
+	}
+
+	if m.Player1 == nil || m.Player1.Player == nil || m.Player2 == nil || m.Player2.Player == nil {
+		return
+	}
 
 	players := make([]*PlayerReference, 0)
 
@@ -649,6 +656,9 @@ func (m *Match) HandleFx(ctx *Context) {
 
 	// Handle persistent effects
 	for _, fx := range m.persistentEffects {
+		if m.ending {
+			return
+		}
 		fx.effect(ctx, fx.exit)
 	}
 
@@ -657,7 +667,7 @@ func (m *Match) HandleFx(ctx *Context) {
 
 		for _, h := range card.handlers {
 
-			if ctx.cancel {
+			if ctx.cancel || m.ending {
 				return
 			}
 
@@ -670,7 +680,7 @@ func (m *Match) HandleFx(ctx *Context) {
 	// Handle ctx.ScheduleAfter effects
 	for _, h := range ctx.postFxs {
 
-		if ctx.cancel {
+		if ctx.cancel || m.ending {
 			return
 		}
 
