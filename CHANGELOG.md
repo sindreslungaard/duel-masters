@@ -2,7 +2,28 @@
 
 ## [Unreleased]
 
-No unreleased changes
+- Fixed an issue where "Elf-X" and "Cocco Lupia"'s cost reduction effect would not immediately make the add to battlezone button be visibly clickable (thanks @DragosIonita23)
+- New card "Clearlo, Grace Enforcer" (thanks @DragosIonita23)
+- New card "Glais Mejicula, the Extreme" (thanks @DragosIonita23)
+- New card "Berochika, Channeler of Suns" (thanks @DragosIonita23)
+- New card "Ferrosaturn, Spectral Knight" (thanks @DragosIonita23)
+- New card "Ikaz, The Spydroid" (thanks @DragosIonita23)
+- New card "Lemik, Vizier Of Thought" (thanks @DragosIonita23)
+- New card "Messa Bahna, Expanse Guardian" (thanks @DragosIonita23)
+- New card "Pala Olesis, Morning Guardian" (thanks @DragosIonita23)
+- New card "Rapid Reincarnation" (thanks @DragosIonita23)
+- New card "Ardent Lunatron" (thanks @DragosIonita23)
+- New card "Static Warp" (thanks @DragosIonita23)
+- New card "Tulk, the Oracle" (thanks @DragosIonita23)
+- New card "Aqua Strummer" (thanks @DragosIonita23)
+- New card "Baterry Cluster" (thanks @DragosIonita23)
+- New card "Buoyant Fish" (thanks @DragosIonita23)
+- New card "Crystal Splinslicer" (thanks @DragosIonita23)
+- New card "Fluorogill Manta" (thanks @DragosIonita23)
+- New card "Siren Concerto" (thanks @DragosIonita23)
+- New card "Tide Patroller" (thanks @DragosIonita23)
+- New card "Transmogrify" (thanks @DragosIonita23)
+- New card "Zaltan" (thanks @DragosIonita23)
 
 ## 26/10/2025
 
