@@ -715,6 +715,11 @@ var DM09 = map[string]match.CardConstructor{
 }
 
 var DM10 = map[string]match.CardConstructor{
+	"78b562fb-b011-4ed1-a014-88c8d5dfeb2d": dm10.BerochikaChannelerOfSuns,
+	"f6ef26e0-be8d-4685-94eb-b2e2b764fa9c": dm10.ClearloGraceEnforcer,
+	"85852774-dd96-4395-8980-eb5b85bf5bfc": dm10.FerrosaturnSpectralKnight,
+	"455cb293-8296-4ffc-be01-ddaaedf2e63a": dm10.GlaisMejiculaTheExtreme,
+	"5da3bdf7-98b4-4f5d-9639-68702c59ad2a": dm10.IkazTheSpydroid,
 	"56ecfb42-15f2-4559-9cb5-0ea4c9e34fed": dm10.LemikVizierOfThought,
 	"e0fcacac-1394-4dff-8c58-ebf67fba7da4": dm10.MessaBahnaExpanseGuardian,
 	"a8e806e4-9675-49c1-b4c1-4c9ab2fa789d": dm10.PalaOlesisMorningGuardian,
