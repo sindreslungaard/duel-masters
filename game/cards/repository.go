@@ -715,6 +715,8 @@ var DM09 = map[string]match.CardConstructor{
 }
 
 var DM10 = map[string]match.CardConstructor{
+	"7d379ea7-da2a-4b4a-ba4f-beceda436998": dm10.StaticWarp,
+	"d906c8b7-4797-4569-a444-cd0c88b308c3": dm10.TulkTheOracle,
 	"78b562fb-b011-4ed1-a014-88c8d5dfeb2d": dm10.BerochikaChannelerOfSuns,
 	"f6ef26e0-be8d-4685-94eb-b2e2b764fa9c": dm10.ClearloGraceEnforcer,
 	"85852774-dd96-4395-8980-eb5b85bf5bfc": dm10.FerrosaturnSpectralKnight,
