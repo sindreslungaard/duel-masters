@@ -26,10 +26,10 @@ const (
 	FireBird        = "Fire Bird"
 	Fish            = "Fish"
 	GelFish         = "Gel Fish"
+	Ghost           = "Ghost"
 	Giant           = "Giant"
 	GiantInsect     = "Giant Insect"
 	Gladiator       = "Gladiator"
-	Ghost           = "Ghost"
 	Guardian        = "Guardian"
 	Hedrian         = "Hedrian"
 	HornedBeast     = "Horned Beast"
@@ -83,10 +83,10 @@ var Families = []string{
 	FireBird,
 	Fish,
 	GelFish,
+	Ghost,
 	Giant,
 	GiantInsect,
 	Gladiator,
-	Ghost,
 	Guardian,
 	Hedrian,
 	HornedBeast,
