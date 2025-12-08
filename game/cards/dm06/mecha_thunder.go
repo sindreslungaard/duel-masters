@@ -5,7 +5,6 @@ import (
 	"duel-masters/game/family"
 	"duel-masters/game/fx"
 	"duel-masters/game/match"
-	"fmt"
 )
 
 func LaveilSeekerOfCatastrophe(c *match.Card) {
@@ -31,19 +30,15 @@ func DavaToreySeekerOfClouds(c *match.Card) {
 	c.ManaRequirement = []string{civ.Light}
 
 	c.Use(fx.Creature, func(card *match.Card, ctx *match.Context) {
-
 		if event, ok := ctx.Event.(*match.CardMoved); ok {
 			if event.CardID == card.ID && event.From == match.HAND && event.To == match.GRAVEYARD {
 				if !ctx.Match.IsPlayerTurn(card.Player) {
 					ctx.ScheduleAfter(func() {
-						card.Player.MoveCard(card.ID, match.GRAVEYARD, match.BATTLEZONE, card.ID)
-						ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s was discarded and moved to the battle zone", card.Name))
+						fx.ForcePutCreatureIntoBZ(ctx, card, match.GRAVEYARD, card)
 					})
-
 				}
 			}
 		}
-
 	})
 
 }
