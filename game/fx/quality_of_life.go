@@ -948,6 +948,12 @@ func AnotherOwnCyberSummoned(card *match.Card, ctx *match.Context) bool {
 	})
 }
 
+func AnotherOwnCyberVirusSummoned(card *match.Card, ctx *match.Context) bool {
+	return AnotherOwnCreatureSummonedFilter(card, ctx, func(c *match.Card) bool {
+		return c.HasFamily(family.CyberVirus)
+	})
+}
+
 func AnotherOwnArmorloidDestroyed(card *match.Card, ctx *match.Context) bool {
 	return AnotherOwnCreatureDestroyedFilter(card, ctx, func(c *match.Card) bool {
 		return c.HasFamily(family.Armorloid)

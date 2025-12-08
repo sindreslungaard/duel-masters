@@ -715,6 +715,8 @@ var DM09 = map[string]match.CardConstructor{
 }
 
 var DM10 = map[string]match.CardConstructor{
+	"659e9cb0-a340-4c4e-bff1-049ed0036b09": dm10.Transmogrify,
+	"99f49ffb-8ffb-4f79-98cf-40aca018bc4a": dm10.Zaltan,
 	"4251847b-2e9c-4a14-97a3-cff496fdef2d": dm10.AquaStrummer,
 	"a15ddc75-f015-42b6-be15-eb17e1da2779": dm10.BatteryCluster,
 	"3f923abc-b3c0-4e04-89aa-6361900722a5": dm10.BuoyantBlowfish,
