@@ -6,6 +6,7 @@ import (
 	"duel-masters/game/match"
 	"fmt"
 	"slices"
+	"strconv"
 )
 
 // CardCollection is a slice of cards with a mapping function
@@ -1210,6 +1211,39 @@ func filterStrings(slice []string, filter func(x string) bool) []string {
 	return result
 }
 
+func LookAtUpTo5CardsFromTopDeckAndReorder(card *match.Card, ctx *match.Context) {
+	lookAtUpToXCardsFromTopDeckAndReorder(card, ctx, 5)
+}
+
+func lookAtUpToXCardsFromTopDeckAndReorder(card *match.Card, ctx *match.Context, x int) {
+	choices := make([]string, x+1)
+	for i := 0; i <= x; i++ {
+		choices[i] = strconv.Itoa(i)
+	}
+
+	numberOfCardsToShow := MultipleChoiceQuestion(
+		card.Player,
+		ctx.Match,
+		fmt.Sprintf("%s's effect: Choose a number up to %d. Look at that many cards from the top of your deck and put them back in any order.", card.Name, x),
+		choices,
+	)
+
+	if numberOfCardsToShow == 0 {
+		return
+	}
+
+	cardsToShow := card.Player.PeekDeck(numberOfCardsToShow)
+
+	newCardsOrder := OrderCards(
+		card.Player,
+		ctx.Match,
+		cardsToShow,
+		fmt.Sprintf("%s's effect: Order these cards that will be put back on top of your deck.", card.Name),
+	)
+
+	card.Player.ReorderCardsInDeck(cardsToShow, newCardsOrder, false)
+}
+
 func LookTop4Put1IntoHandReorderRestOnBottomDeck(card *match.Card, ctx *match.Context) {
 	top4CardsDeck := card.Player.PeekDeck(4)
 
@@ -1250,7 +1284,7 @@ func LookTop4Put1IntoHandReorderRestOnBottomDeck(card *match.Card, ctx *match.Co
 		)
 
 		if len(orderedCardIds) == len(restOfCards) {
-			card.Player.ReorderCardsOnBottomDeck(restOfCards, orderedCardIds)
+			card.Player.ReorderCardsInDeck(restOfCards, orderedCardIds, true)
 			ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%v cards were reordered at the bottom of %s's deck by %s's effect.", len(orderedCardIds), card.Player.Username(), card.Name))
 		}
 
