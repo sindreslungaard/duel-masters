@@ -47,6 +47,11 @@
 - New card "Mykees Pliers" (thanks @DragosIonita23)
 - New card "Siege Roller Bagash" (thanks @DragosIonita23)
 - New card "Smash Warrior Stagrandu" (thanks @DragosIonita23)
+- New card "Supersonic Jetpack" (thanks @DragosIonita23)
+- New card "Taunting Skyterror" (thanks @DragosIonita23)
+- New card "Adventure Boar" (thanks @DragosIonita23)
+- New card "Ancient Horn The Watcher" (thanks @DragosIonita23)
+- New card "Bubble Scarab" (thanks @DragosIonita23)
 
 ## 26/10/2025
 
