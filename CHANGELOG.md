@@ -29,6 +29,11 @@
 - New card "Gigandura" (thanks @DragosIonita23)
 - New card "Infernal Command" (thanks @DragosIonita23)
 - New card "Mikay, Rattling Doll" (thanks @DragosIonita23)
+- New card "Mummy Wrap Shadow Of Fatigue" (thanks @DragosIonita23)
+- New card "Nightmare Invader" (thanks @DragosIonita23)
+- New card "Spark Chemist Shadow Of Whim" (thanks @DragosIonita23)
+- New card "Spinal Parasite" (thanks @DragosIonita23)
+- New card "Uliya, The Entrancer" (thanks @DragosIonita23)
 
 ## 26/10/2025
 
