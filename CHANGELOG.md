@@ -24,6 +24,11 @@
 - New card "Tide Patroller" (thanks @DragosIonita23)
 - New card "Transmogrify" (thanks @DragosIonita23)
 - New card "Zaltan" (thanks @DragosIonita23)
+- New card "Benzo, the Hidden Fury" (thanks @DragosIonita23)
+- New card "Dedreen, the Hidden Corrupter" (thanks @DragosIonita23)
+- New card "Gigandura" (thanks @DragosIonita23)
+- New card "Infernal Command" (thanks @DragosIonita23)
+- New card "Mikay, Rattling Doll" (thanks @DragosIonita23)
 
 ## 26/10/2025
 
