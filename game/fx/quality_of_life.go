@@ -6,6 +6,7 @@ import (
 	"duel-masters/game/match"
 	"fmt"
 	"slices"
+	"strconv"
 )
 
 // CardCollection is a slice of cards with a mapping function
@@ -75,9 +76,38 @@ func FindFilter(p *match.Player, collection string, h func(card *match.Card) boo
 
 }
 
+// FindMultipleFilter returns a CardCollection matching the filter
+// from multiple containers specified in collections slice
+func FindMultipleFilter(p *match.Player, collections []string, h func(card *match.Card) bool) CardCollection {
+
+	result := CardCollection{}
+
+	for _, collection := range collections {
+		container, err := p.Container(collection)
+
+		if err != nil {
+			return result
+		}
+
+		for _, card := range container {
+			if h(card) {
+				result = append(result, card)
+			}
+		}
+	}
+
+	return result
+
+}
+
 // Find returns a CardCollection for the specified container
 func Find(p *match.Player, collection string) CardCollection {
 	return FindFilter(p, collection, func(x *match.Card) bool { return true })
+}
+
+// FindMultiple returns a CardCollection for the specified containers
+func FindMultiple(p *match.Player, collections []string) CardCollection {
+	return FindMultipleFilter(p, collections, func(x *match.Card) bool { return true })
 }
 
 // When performs the specified function if the test is successful
@@ -612,6 +642,44 @@ func AnySpellCast(card *match.Card, ctx *match.Context) bool {
 
 }
 
+// SpellCast returns true if any shield was cast by the opponent from shield trigger
+// While the current card is in the battlezone
+func OppShieldTriggerCast(card *match.Card, ctx *match.Context) bool {
+	if event, ok := ctx.Event.(*match.SpellCast); ok && card.Zone == match.BATTLEZONE && event.FromShield {
+		crtPlayerId := byte(1)
+		if card.Player == ctx.Match.Player2.Player {
+			crtPlayerId = 2
+		}
+
+		if event.MatchPlayerID != crtPlayerId {
+			return true
+		}
+	}
+
+	if event, ok := ctx.Event.(*match.MoveCard); ok && card.Zone == match.BATTLEZONE && event.Source == "shield_trigger" {
+		crtPlayerId := byte(1)
+		if card.Player == ctx.Match.Player2.Player {
+			crtPlayerId = 2
+		}
+
+		if crtPlayerId == 1 {
+			_, err := ctx.Match.Player2.Player.GetCard(event.CardID, event.From)
+
+			if err == nil {
+				return true
+			}
+		} else {
+			_, err := ctx.Match.Player1.Player.GetCard(event.CardID, event.From)
+
+			if err == nil {
+				return true
+			}
+		}
+	}
+
+	return false
+}
+
 // Attacking returns true if the card is attacking a player or creature
 func Attacking(card *match.Card, ctx *match.Context) bool {
 
@@ -754,9 +822,9 @@ func TurboRushCondition(card *match.Card, ctx *match.Context) bool {
 
 }
 
-// OpponentPlayedShieldTrigger returns true if the opponent has played a shield trigger and creature is in the Battlezone
+// OpponentPlayedShieldTrigger returns true only after the opponent has played a shield trigger
 func OpponentPlayedShieldTrigger(card *match.Card, ctx *match.Context) bool {
-	if event, ok := ctx.Event.(*match.ShieldTriggerPlayedEvent); ok && card.Zone == match.BATTLEZONE && event.Card.Player != card.Player {
+	if event, ok := ctx.Event.(*match.ShieldTriggerPlayedEvent); ok && event.Card.Player != card.Player {
 		return true
 	}
 	return false
@@ -877,6 +945,12 @@ func AnotherOwnGhostSummoned(card *match.Card, ctx *match.Context) bool {
 func AnotherOwnCyberSummoned(card *match.Card, ctx *match.Context) bool {
 	return AnotherOwnCreatureSummonedFilter(card, ctx, func(c *match.Card) bool {
 		return c.SharesAFamily(family.Cybers)
+	})
+}
+
+func AnotherOwnCyberVirusSummoned(card *match.Card, ctx *match.Context) bool {
+	return AnotherOwnCreatureSummonedFilter(card, ctx, func(c *match.Card) bool {
+		return c.HasFamily(family.CyberVirus)
 	})
 }
 
@@ -1086,7 +1160,6 @@ func CanBeSummoned(player *match.Player, card *match.Card) bool {
 }
 
 func ForcePutCreatureIntoBZ(ctx *match.Context, creature *match.Card, from string, source *match.Card) {
-
 	cardPlayedCtx := match.NewContext(ctx.Match, &match.CardPlayedEvent{
 		CardID: creature.ID,
 	})
@@ -1144,6 +1217,39 @@ func filterStrings(slice []string, filter func(x string) bool) []string {
 	return result
 }
 
+func LookAtUpTo5CardsFromTopDeckAndReorder(card *match.Card, ctx *match.Context) {
+	lookAtUpToXCardsFromTopDeckAndReorder(card, ctx, 5)
+}
+
+func lookAtUpToXCardsFromTopDeckAndReorder(card *match.Card, ctx *match.Context, x int) {
+	choices := make([]string, x+1)
+	for i := 0; i <= x; i++ {
+		choices[i] = strconv.Itoa(i)
+	}
+
+	numberOfCardsToShow := MultipleChoiceQuestion(
+		card.Player,
+		ctx.Match,
+		fmt.Sprintf("%s's effect: Choose a number up to %d. Look at that many cards from the top of your deck and put them back in any order.", card.Name, x),
+		choices,
+	)
+
+	if numberOfCardsToShow == 0 {
+		return
+	}
+
+	cardsToShow := card.Player.PeekDeck(numberOfCardsToShow)
+
+	newCardsOrder := OrderCards(
+		card.Player,
+		ctx.Match,
+		cardsToShow,
+		fmt.Sprintf("%s's effect: Order these cards that will be put back on top of your deck.", card.Name),
+	)
+
+	card.Player.ReorderCardsInDeck(cardsToShow, newCardsOrder, false)
+}
+
 func LookTop4Put1IntoHandReorderRestOnBottomDeck(card *match.Card, ctx *match.Context) {
 	top4CardsDeck := card.Player.PeekDeck(4)
 
@@ -1184,7 +1290,7 @@ func LookTop4Put1IntoHandReorderRestOnBottomDeck(card *match.Card, ctx *match.Co
 		)
 
 		if len(orderedCardIds) == len(restOfCards) {
-			card.Player.ReorderCardsOnBottomDeck(restOfCards, orderedCardIds)
+			card.Player.ReorderCardsInDeck(restOfCards, orderedCardIds, true)
 			ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%v cards were reordered at the bottom of %s's deck by %s's effect.", len(orderedCardIds), card.Player.Username(), card.Name))
 		}
 

@@ -656,6 +656,11 @@ var DM08 = map[string]match.CardConstructor{
 }
 
 var DM09 = map[string]match.CardConstructor{
+	"256dc280-5ba0-4b20-9544-b62552a5398c": dm09.EmperorMaroll,
+	"228e33e9-662d-4fc2-8a7c-b6bc51731807": dm09.TerradragonAnristVhal,
+	"0dc0f75b-403e-4171-ab65-b45e7e021f41": dm09.StratosphereGiant,
+	"5fc46bb1-486a-4b00-833e-1b2075b1587f": dm09.GlenaVueleTheHypnotic,
+	"6d7cf87d-21d6-4671-823a-32aa93de67ee": dm09.JilWarkaTimeGuardian,
 	"d2e9e450-11c3-430c-9e1a-364f3232110b": dm09.CosmicWing,
 	"70cac25c-bf54-4934-8180-cf18867e9d7d": dm09.NexusCharger,
 	"2afbe361-644f-4c89-a9af-f18dd2c10825": dm09.AbductionCharger,
@@ -715,6 +720,28 @@ var DM10 = map[string]match.CardConstructor{
 	"40c90a0f-d083-48af-b503-7c2845d9765a": dm10.Gigandura,
 	"08f2ebba-8996-405d-be3b-deca75936afc": dm10.InfernalCommand,
 	"ae997a18-0cba-4393-8548-185816bb68ca": dm10.MikayRattlingDoll,
+	"659e9cb0-a340-4c4e-bff1-049ed0036b09": dm10.Transmogrify,
+	"99f49ffb-8ffb-4f79-98cf-40aca018bc4a": dm10.Zaltan,
+	"4251847b-2e9c-4a14-97a3-cff496fdef2d": dm10.AquaStrummer,
+	"a15ddc75-f015-42b6-be15-eb17e1da2779": dm10.BatteryCluster,
+	"3f923abc-b3c0-4e04-89aa-6361900722a5": dm10.BuoyantBlowfish,
+	"9ae35b47-0f98-4e96-a356-a7908077d45e": dm10.CrystalSpinslicer,
+	"8e45b9c2-9845-4cdc-88f7-2c062364ce5a": dm10.FluorogillManta,
+	"49b6747c-6bdf-4cf0-9a5e-8978c9af15c1": dm10.SirenConcerto,
+	"acc8adb5-63c9-4438-976c-dcdf8fe1dad8": dm10.TidePatroller,
+	"7d379ea7-da2a-4b4a-ba4f-beceda436998": dm10.StaticWarp,
+	"d906c8b7-4797-4569-a444-cd0c88b308c3": dm10.TulkTheOracle,
+	"78b562fb-b011-4ed1-a014-88c8d5dfeb2d": dm10.BerochikaChannelerOfSuns,
+	"f6ef26e0-be8d-4685-94eb-b2e2b764fa9c": dm10.ClearloGraceEnforcer,
+	"85852774-dd96-4395-8980-eb5b85bf5bfc": dm10.FerrosaturnSpectralKnight,
+	"455cb293-8296-4ffc-be01-ddaaedf2e63a": dm10.GlaisMejiculaTheExtreme,
+	"5da3bdf7-98b4-4f5d-9639-68702c59ad2a": dm10.IkazTheSpydroid,
+	"56ecfb42-15f2-4559-9cb5-0ea4c9e34fed": dm10.LemikVizierOfThought,
+	"e0fcacac-1394-4dff-8c58-ebf67fba7da4": dm10.MessaBahnaExpanseGuardian,
+	"a8e806e4-9675-49c1-b4c1-4c9ab2fa789d": dm10.PalaOlesisMorningGuardian,
+	"b1651408-0b72-41d1-ab38-e7e65cac7d8d": dm10.PoltalesterTheSpydroid,
+	"e3d5a9f5-cfd1-491d-baa3-2b14b66171f2": dm10.RapidReincarnation,
+	"097ab46d-e7f0-4586-a179-c5f7ca4d3693": dm10.ArdentLunatron,
 }
 
 // Promo is a map with all the card id's in the game and corresponding CardConstructor for promotional exclusive cards

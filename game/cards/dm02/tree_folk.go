@@ -18,31 +18,41 @@ func ElfX(c *match.Card) {
 	c.ManaCost = 4
 	c.ManaRequirement = []string{civ.Nature}
 
-	c.Use(fx.Creature, func(card *match.Card, ctx *match.Context) {
+	c.Use(fx.Creature, fx.When(fx.InTheBattlezone, func(card *match.Card, ctx *match.Context) {
+		ctx.Match.ApplyPersistentEffect(func(ctx2 *match.Context, exit func()) {
+			if card.Zone != match.BATTLEZONE {
+				// we use fx.FindMultipleFilter for edge cases when elf x might leave the BZ
+				// and during the same turn some other old "reduced" used creatures might be returned
+				// from other zones to hand, and then re-summoned
+				fx.FindMultipleFilter(
+					card.Player,
+					[]string{match.HAND, match.BATTLEZONE, match.GRAVEYARD, match.MANAZONE, match.SHIELDZONE},
+					func(x *match.Card) bool {
+						return x.HasCondition(cnd.Creature)
+					},
+				).Map(func(x *match.Card) {
+					x.RemoveConditionBySource(card.ID)
+				})
 
-		if !ctx.Match.IsPlayerTurn(card.Player) {
-			return
-		}
-
-		if event, ok := ctx.Event.(*match.PlayCardEvent); ok {
-
-			if card.Zone == match.BATTLEZONE && event.CardID != card.ID {
-
-				toReduce, err := ctx.Match.CurrentPlayer().Player.GetCard(event.CardID, match.HAND)
-
-				if err != nil {
-					return
-				}
-
-				if toReduce.HasCondition(cnd.Creature) {
-					toReduce.AddUniqueSourceCondition(cnd.ReducedCost, 1, card.ID)
-				}
-
+				exit()
+				return
 			}
 
-		}
+			if !ctx.Match.IsPlayerTurn(card.Player) {
+				return
+			}
 
-	})
+			fx.FindFilter(
+				card.Player,
+				match.HAND,
+				func(x *match.Card) bool {
+					return x.HasCondition(cnd.Creature)
+				},
+			).Map(func(x *match.Card) {
+				x.AddUniqueSourceCondition(cnd.ReducedCost, 1, card.ID)
+			})
+		})
+	}))
 
 }
 
@@ -56,30 +66,40 @@ func EssenceElf(c *match.Card) {
 	c.ManaCost = 2
 	c.ManaRequirement = []string{civ.Nature}
 
-	c.Use(fx.Creature, func(card *match.Card, ctx *match.Context) {
+	c.Use(fx.Creature, fx.When(fx.InTheBattlezone, func(card *match.Card, ctx *match.Context) {
+		ctx.Match.ApplyPersistentEffect(func(ctx2 *match.Context, exit func()) {
+			if card.Zone != match.BATTLEZONE {
+				// we use fx.FindMultipleFilter for edge cases when essence elf might leave the BZ
+				// and during the same turn some other old "reduced" used spell might be returned
+				// from grave/mana/shield to hand (i.e. chargers) and then re-casted
+				fx.FindMultipleFilter(
+					card.Player,
+					[]string{match.HAND, match.GRAVEYARD, match.MANAZONE, match.SHIELDZONE},
+					func(x *match.Card) bool {
+						return x.HasCondition(cnd.Spell)
+					},
+				).Map(func(x *match.Card) {
+					x.RemoveConditionBySource(card.ID)
+				})
 
-		if !ctx.Match.IsPlayerTurn(card.Player) {
-			return
-		}
-
-		if event, ok := ctx.Event.(*match.PlayCardEvent); ok {
-
-			if card.Zone == match.BATTLEZONE && event.CardID != card.ID {
-
-				toReduce, err := ctx.Match.CurrentPlayer().Player.GetCard(event.CardID, match.HAND)
-
-				if err != nil {
-					return
-				}
-
-				if toReduce.HasCondition(cnd.Spell) {
-					toReduce.AddUniqueSourceCondition(cnd.ReducedCost, 1, card.ID)
-				}
-
+				exit()
+				return
 			}
 
-		}
+			if !ctx.Match.IsPlayerTurn(card.Player) {
+				return
+			}
 
-	})
+			fx.FindFilter(
+				card.Player,
+				match.HAND,
+				func(x *match.Card) bool {
+					return x.HasCondition(cnd.Spell)
+				},
+			).Map(func(x *match.Card) {
+				x.AddUniqueSourceCondition(cnd.ReducedCost, 1, card.ID)
+			})
+		})
+	}))
 
 }
