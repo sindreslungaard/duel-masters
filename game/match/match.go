@@ -237,8 +237,7 @@ func (m *Match) Destroy(card *Card, source *Card, context CreatureDestroyedConte
 }
 
 // MoveCard moves a card and sends a chat message about what source moved it
-// If dontReportInChat is passed and true, no chat messages will be sent
-func (m *Match) MoveCard(card *Card, destination string, source *Card, dontReportInChat ...bool) {
+func (m *Match) MoveCard(card *Card, destination string, source *Card) {
 
 	_, err := card.Player.MoveCard(card.ID, card.Zone, destination, source.ID)
 
@@ -246,9 +245,7 @@ func (m *Match) MoveCard(card *Card, destination string, source *Card, dontRepor
 		return
 	}
 
-	if len(dontReportInChat) == 0 || !dontReportInChat[0] {
-		m.ReportActionInChat(card.Player, fmt.Sprintf("%s was moved to %s %s by %s", card.Name, card.Player.Username(), destination, source.Name))
-	}
+	m.ReportActionInChat(card.Player, fmt.Sprintf("%s was moved to %s %s by %s", card.Name, card.Player.Username(), destination, source.Name))
 
 }
 

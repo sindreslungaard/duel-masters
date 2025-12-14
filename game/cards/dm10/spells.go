@@ -22,20 +22,20 @@ func Upheaval(c *match.Card) {
 		myOppHandCards := fx.Find(ctx.Match.Opponent(card.Player), match.HAND)
 
 		for _, x := range myManaCards {
-			ctx.Match.MoveCard(x, match.HAND, card, true)
+			x.Player.MoveCard(x.ID, x.Zone, match.HAND, card.ID)
 		}
 
 		for _, x := range myHandCards {
-			ctx.Match.MoveCard(x, match.MANAZONE, card, true)
+			x.Player.MoveCard(x.ID, x.Zone, match.MANAZONE, card.ID)
 			x.Tapped = true
 		}
 
 		for _, x := range myOppManaCards {
-			ctx.Match.MoveCard(x, match.HAND, card, true)
+			x.Player.MoveCard(x.ID, x.Zone, match.HAND, card.ID)
 		}
 
 		for _, x := range myOppHandCards {
-			ctx.Match.MoveCard(x, match.MANAZONE, card, true)
+			x.Player.MoveCard(x.ID, x.Zone, match.MANAZONE, card.ID)
 			x.Tapped = true
 		}
 
