@@ -747,6 +747,8 @@ var DM10 = map[string]match.CardConstructor{
 	"98fcae59-b6f7-46a7-85d6-ffa55ee33627": dm10.SparkChemistShadowOfWhim,
 	"46346474-92da-4465-994c-ba48bfcd1537": dm10.SpinalParasite,
 	"5926c4c5-efc1-41b5-a9f6-30819e4a4407": dm10.UliyaTheEntrancer,
+	"9dced850-9c8c-431c-82f7-38d6e6d2dce3": dm10.Upheaval,
+	"ddf61f9a-752d-4072-a497-7ed8b14ca8ce": dm10.ZeroNemesisShadowOfPanic,
 }
 
 // Promo is a map with all the card id's in the game and corresponding CardConstructor for promotional exclusive cards

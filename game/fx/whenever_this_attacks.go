@@ -28,6 +28,10 @@ func WheneverThisAttacksMayTapDorFCreature() match.HandlerFunc {
 	})
 }
 
+func WheneverOneOfMyCreaturesAttacksOppDiscardsRandom() match.HandlerFunc {
+	return When(OneOfMyCreaturesAttacksConfirmed, OpponentDiscardsRandomCard)
+}
+
 func LookAtOppShields(card *match.Card, ctx *match.Context) {
 	ctx.Match.ShowCards(
 		card.Player,
