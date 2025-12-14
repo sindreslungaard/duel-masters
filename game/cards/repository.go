@@ -742,6 +742,11 @@ var DM10 = map[string]match.CardConstructor{
 	"b1651408-0b72-41d1-ab38-e7e65cac7d8d": dm10.PoltalesterTheSpydroid,
 	"e3d5a9f5-cfd1-491d-baa3-2b14b66171f2": dm10.RapidReincarnation,
 	"097ab46d-e7f0-4586-a179-c5f7ca4d3693": dm10.ArdentLunatron,
+	"d22eba6d-8172-4886-98e3-0a83de612fcc": dm10.MummyWrapShadowOfFatigue,
+	"cab1a72e-ba8a-416c-bf9b-4b39dc4a0f9b": dm10.NightmareInvader,
+	"98fcae59-b6f7-46a7-85d6-ffa55ee33627": dm10.SparkChemistShadowOfWhim,
+	"46346474-92da-4465-994c-ba48bfcd1537": dm10.SpinalParasite,
+	"5926c4c5-efc1-41b5-a9f6-30819e4a4407": dm10.UliyaTheEntrancer,
 }
 
 // Promo is a map with all the card id's in the game and corresponding CardConstructor for promotional exclusive cards
