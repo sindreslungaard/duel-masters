@@ -34,3 +34,17 @@ func ArmoredRaiderGandaval(c *match.Card) {
 	c.Use(fx.Creature, fx.Evolution, fx.Doublebreaker)
 
 }
+
+// MezgerCommandoLeader ...
+func MezgerCommandoLeader(c *match.Card) {
+
+	c.Name = "Mezger Commando Leader"
+	c.Power = 2000
+	c.Civ = civ.Fire
+	c.Family = []string{family.Human}
+	c.ManaCost = 4
+	c.ManaRequirement = []string{civ.Fire}
+
+	c.Use(fx.Creature, fx.SpeedAttacker)
+
+}
