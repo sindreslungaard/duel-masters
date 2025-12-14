@@ -715,6 +715,11 @@ var DM09 = map[string]match.CardConstructor{
 }
 
 var DM10 = map[string]match.CardConstructor{
+	"c1ec3b3b-80e6-4fd0-86bf-c28b5fa01fc6": dm10.BenzoTheHiddenFury,
+	"e3d3ba3e-eb9b-40b3-a7f6-befc78f2683f": dm10.DedreenTheHiddenCorrupter,
+	"40c90a0f-d083-48af-b503-7c2845d9765a": dm10.Gigandura,
+	"08f2ebba-8996-405d-be3b-deca75936afc": dm10.InfernalCommand,
+	"ae997a18-0cba-4393-8548-185816bb68ca": dm10.MikayRattlingDoll,
 	"659e9cb0-a340-4c4e-bff1-049ed0036b09": dm10.Transmogrify,
 	"99f49ffb-8ffb-4f79-98cf-40aca018bc4a": dm10.Zaltan,
 	"4251847b-2e9c-4a14-97a3-cff496fdef2d": dm10.AquaStrummer,
