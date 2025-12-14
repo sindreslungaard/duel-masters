@@ -34,6 +34,8 @@
 - New card "Spark Chemist Shadow Of Whim" (thanks @DragosIonita23)
 - New card "Spinal Parasite" (thanks @DragosIonita23)
 - New card "Uliya, The Entrancer" (thanks @DragosIonita23)
+- New card "Upheaval" (thanks @DragosIonita23)
+- New card "Zero Nemesis, Shadow Of Panic" (thanks @DragosIonita23)
 
 ## 26/10/2025
 
