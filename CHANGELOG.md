@@ -37,6 +37,11 @@
 - New card "Uliya, The Entrancer" (thanks @DragosIonita23)
 - New card "Upheaval" (thanks @DragosIonita23)
 - New card "Zero Nemesis, Shadow Of Panic" (thanks @DragosIonita23)
+- New card "Armored Raider Gandaval(thanks @DragosIonita23)
+- New card "Colossus Boost(thanks @DragosIonita23)
+- New card "Cragsaur(thanks @DragosIonita23)
+- New card "Explosive Trooper Zalmez(thanks @DragosIonita23)
+- New card "Forced Frenzy(thanks @DragosIonita23)
 
 ## 26/10/2025
 
