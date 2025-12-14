@@ -52,6 +52,11 @@
 - New card "Adventure Boar" (thanks @DragosIonita23)
 - New card "Ancient Horn The Watcher" (thanks @DragosIonita23)
 - New card "Bubble Scarab" (thanks @DragosIonita23)
+- New card "Earth Ripper, Talon Of Rage" (thanks @DragosIonita23)
+- New card "Jiggly Totem" (thanks @DragosIonita23)
+- New card "Karate Potato" (thanks @DragosIonita23)
+- New card "Legacy Shell" (thanks @DragosIonita23)
+- New card "Sabermask Scarab" (thanks @DragosIonita23)
 
 ## 26/10/2025
 
