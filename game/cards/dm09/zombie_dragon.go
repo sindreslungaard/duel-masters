@@ -30,7 +30,7 @@ func NecrodragonIzoristVhal(c *match.Card) {
 				return
 			}
 
-			addPower += len(fx.FindFilter(
+			addPower = len(fx.FindFilter(
 				card.Player,
 				match.GRAVEYARD,
 				func(x *match.Card) bool {
