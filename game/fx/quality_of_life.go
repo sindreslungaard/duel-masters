@@ -433,7 +433,9 @@ func selectMultipartBase(p *match.Player, m *match.Match, cards map[string][]*ma
 			}
 		}
 
-		newCardsMap[key] = newCards
+		if len(newCards) > 0 {
+			newCardsMap[key] = newCards
+		}
 	}
 
 	notEmpty := false
@@ -457,6 +459,14 @@ func selectMultipartBase(p *match.Player, m *match.Match, cards map[string][]*ma
 		max = totalCardsLength
 	} else if totalCardsLength < max {
 		max = totalCardsLength
+	}
+
+	// Bypass the selection pop-up if action is NOT cancellable and the selection is unambiguous, i.e. filtered cards length == min == max
+	// i.e. user doesn't have a choice
+	if !cancellable && min == max && totalCardsLength == min && len(cards) == 1 {
+		for key := range cards {
+			return cards[key]
+		}
 	}
 
 	if backsideOnly {
