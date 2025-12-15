@@ -6,7 +6,6 @@ import (
 	"duel-masters/game/family"
 	"duel-masters/game/fx"
 	"duel-masters/game/match"
-	"strings"
 )
 
 func CoccoLupia(c *match.Card) {
@@ -19,60 +18,63 @@ func CoccoLupia(c *match.Card) {
 	c.ManaRequirement = []string{civ.Fire}
 
 	c.Use(fx.Creature, func(card *match.Card, ctx *match.Context) {
+		ctx.Match.ApplyPersistentEffect(func(ctx2 *match.Context, exit func()) {
+			if card.Zone != match.BATTLEZONE {
+				// we use fx.FindMultipleFilter for edge cases when Cocco Lupia might leave the BZ
+				// and during the same turn some other old "reduced" used creatures might be returned
+				// from other zones to hand, and then re-summoned
+				fx.FindMultipleFilter(
+					card.Player,
+					[]string{match.HAND, match.BATTLEZONE, match.GRAVEYARD, match.MANAZONE, match.SHIELDZONE},
+					func(x *match.Card) bool {
+						return x.HasCondition(cnd.Creature) && x.SharesAFamily(family.Dragons)
+					},
+				).Map(func(x *match.Card) {
+					x.RemoveConditionBySource(card.ID)
+				})
 
-		event, ok := ctx.Event.(*match.PlayCardEvent)
-
-		if !ok || !ctx.Match.IsPlayerTurn(card.Player) || card.Zone != match.BATTLEZONE {
-			return
-		}
-
-		creature, err := card.Player.GetCard(event.CardID, match.HAND)
-
-		if err != nil {
-			return
-		}
-
-		ok = false
-		for _, f := range creature.Family {
-			if f == family.Dragonoid {
+				exit()
 				return
 			}
 
-			if strings.Contains(strings.ToLower(f), "dragon") {
-				ok = true
-				break
+			if !ctx2.Match.IsPlayerTurn(card.Player) {
+				return
 			}
-		}
 
-		if !ok {
-			return
-		}
+			fx.FindFilter(
+				card.Player,
+				match.HAND,
+				func(x *match.Card) bool {
+					return x.HasCondition(cnd.Creature) && x.SharesAFamily(family.Dragons)
+				},
+			).Map(func(x *match.Card) {
+				manaCost := x.ManaCost
 
-		manaCost := creature.ManaCost
+				for _, condition := range x.Conditions() {
+					if condition.ID == cnd.ReducedCost {
+						manaCost -= condition.Val.(int)
+						if manaCost < 1 {
+							manaCost = 1
+						}
+					}
 
-		for _, condition := range creature.Conditions() {
-			if condition.ID == cnd.ReducedCost {
-				manaCost -= condition.Val.(int)
-				if manaCost < 1 {
-					manaCost = 1
+					if condition.ID == cnd.IncreasedCost {
+						manaCost += condition.Val.(int)
+					}
 				}
-			}
 
-			if condition.ID == cnd.IncreasedCost {
-				manaCost += condition.Val.(int)
-			}
-		}
+				if manaCost <= 2 {
+					return
+				}
 
-		if manaCost <= 2 {
-			return
-		}
+				subtraction := 2
+				if manaCost == 3 {
+					subtraction = 1
+				}
 
-		subtraction := 2
-		if manaCost == 3 {
-			subtraction = 1
-		}
-
-		creature.AddUniqueSourceCondition(cnd.ReducedCost, subtraction, card.ID)
+				x.AddUniqueSourceCondition(cnd.ReducedCost, subtraction, card.ID)
+			})
+		})
 	})
 
 }

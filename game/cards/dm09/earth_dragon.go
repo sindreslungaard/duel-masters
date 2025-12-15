@@ -22,16 +22,15 @@ func TerradragonAnristVhal(c *match.Card) {
 
 	c.Use(fx.Creature, fx.When(fx.InTheBattlezone, func(card *match.Card, ctx *match.Context) {
 		ctx.Match.ApplyPersistentEffect(func(ctx2 *match.Context, exit func()) {
-			addPower = 0
 			c.Power = 0
-			card.RemoveConditionBySource(card.ID)
+			c.RemoveConditionBySource(card.ID)
 
 			if card.Zone != match.BATTLEZONE {
 				exit()
 				return
 			}
 
-			addPower += len(fx.FindFilter(
+			addPower = len(fx.FindFilter(
 				card.Player,
 				match.BATTLEZONE,
 				func(x *match.Card) bool {

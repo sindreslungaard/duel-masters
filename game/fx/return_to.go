@@ -128,13 +128,15 @@ func ReturnMyCardFromMZToHand(card *match.Card, ctx *match.Context) {
 		ctx.Match,
 		card.Player,
 		match.MANAZONE,
-		"Select 1 card from your mana zone that will be sent to your hand",
+		fmt.Sprintf("%s's effect: Select 1 card from your mana zone that will be sent to your hand", card.Name),
 		1,
 		1,
 		false,
-	).Map(func(c *match.Card) {
-		c.Player.MoveCard(c.ID, match.MANAZONE, match.HAND, card.ID)
-		ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s effect: %s returned %s from MZ to their hand", card.Name, c.Player.Username(), c.Name))
+	).Map(func(x *match.Card) {
+		_, err := x.Player.MoveCard(x.ID, match.MANAZONE, match.HAND, card.ID)
+		if err == nil {
+			ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s effect: %s returned %s from mana zone to their hand", card.Name, x.Player.Username(), x.Name))
+		}
 	})
 }
 
@@ -198,5 +200,19 @@ func ReturnXCreaturesFromGraveToHand(x int) match.HandlerFunc {
 			card.Player.MoveCard(x.ID, match.GRAVEYARD, match.HAND, card.ID)
 			ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s was moved to %s's hand from their graveyard by %s", x.Name, card.Player.Username(), card.Name))
 		})
+	}
+}
+
+func ReturnAllCardsFromManaToHand(card *match.Card, ctx *match.Context) {
+	globalErr := false
+
+	Find(card.Player, match.MANAZONE).Map(func(x *match.Card) {
+		_, err := card.Player.MoveCard(x.ID, match.MANAZONE, match.HAND, card.ID)
+
+		globalErr = globalErr && (err != nil)
+	})
+
+	if !globalErr {
+		ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s returned all cards from his mana zone to his hand", card.Player.Username()))
 	}
 }

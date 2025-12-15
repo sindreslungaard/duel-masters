@@ -6,6 +6,12 @@ import (
 	"fmt"
 )
 
+func WheneverThisAttacksReturnCardFromMZToHand() match.HandlerFunc {
+	return When(AttackConfirmed, func(c *match.Card, ctx *match.Context) {
+		ReturnMyCardFromMZToHand(c, ctx)
+	})
+}
+
 func WheneverThisAttacksMayTapDorFCreature() match.HandlerFunc {
 	return When(AttackConfirmed, func(c *match.Card, ctx *match.Context) {
 		filter := func(x *match.Card) bool { return x.Civ == civ.Fire || x.Civ == civ.Darkness }
@@ -26,6 +32,10 @@ func WheneverThisAttacksMayTapDorFCreature() match.HandlerFunc {
 		})
 
 	})
+}
+
+func WheneverOneOfMyCreaturesAttacksOppDiscardsRandom() match.HandlerFunc {
+	return When(OneOfMyCreaturesAttacksConfirmed, OpponentDiscardsRandomCard)
 }
 
 func LookAtOppShields(card *match.Card, ctx *match.Context) {

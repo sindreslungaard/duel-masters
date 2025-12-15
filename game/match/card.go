@@ -286,3 +286,31 @@ func (c *Card) SharesAllFamilies(families []string) bool {
 
 	return ok
 }
+
+// StealthActive returns true if the card has stealth
+// and the opponent has a card in manazone that matches the stealth civ
+func (c *Card) StealthActive(ctx *Context) bool {
+	if !c.HasCondition(cnd.Stealth) {
+		return false
+	}
+
+	for _, cond := range c.Conditions() {
+		if cond.ID != cnd.Stealth {
+			continue
+		}
+		if ContainerHas(
+			ctx.Match.Opponent(c.Player),
+			MANAZONE,
+			func(x *Card) bool { return x.Civ == cond.Val },
+		) {
+			return true
+		}
+	}
+
+	return false
+}
+
+// IsBlockable returns true if the card can be blocked by the opponent's blockers
+func (c *Card) IsBlockable(ctx *Context) bool {
+	return !c.HasCondition(cnd.CantBeBlocked) && !c.StealthActive(ctx)
+}
