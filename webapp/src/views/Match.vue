@@ -334,7 +334,7 @@
             @click="addToPlayzone()"
             :class="[
               'btn',
-              { disabled: !hasFlag(handSelection, PLAYABLE_FLAG) }
+              { disabled: !hasFlag(handSelection, PLAYABLE_FLAG) || state.hasAttackedThisRound }
             ]"
           >
             Add to playzone
@@ -342,7 +342,7 @@
           <div class="spacer"></div>
           <div
             @click="addToManazone()"
-            :class="['btn', { disabled: state.hasAddedManaThisRound }]"
+            :class="['btn', { disabled: state.hasAddedManaThisRound || state.hasAttackedThisRound || !state.canChargeManaThisRound }]"
           >
             Add to manazone
           </div>
@@ -1179,13 +1179,13 @@ export default {
         : "#7d5252";
 
       if (source === "hand") {
-        if (this.hasFlag(card, this.PLAYABLE_FLAG)) {
+        if (this.hasFlag(card, this.PLAYABLE_FLAG) && !this.state.hasAttackedThisRound) {
           this.$refs.myplayzone.style.background = greenHighlight;
         } else {
           this.$refs.myplayzone.style.background = redHighlight;
         }
 
-        if (!this.state.hasAddedManaThisRound) {
+        if (!this.state.hasAddedManaThisRound && !this.state.hasAttackedThisRound && this.state.canChargeManaThisRound) {
           this.$refs.mymanazone.style.background = greenHighlight;
         } else {
           this.$refs.mymanazone.style.background = redHighlight;
