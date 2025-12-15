@@ -2,6 +2,64 @@
 
 ## [Unreleased]
 
+- Fixed an issue where "Elf-X" and "Cocco Lupia"'s cost reduction effect would not immediately make the add to battlezone button be visibly clickable (thanks @DragosIonita23)
+- Fixed an issue where some creatures with 0 power could not die (thanks @DragosIonita23)
+- New card "Clearlo, Grace Enforcer" (thanks @DragosIonita23
+- New card "Glais Mejicula, the Extreme" (thanks @DragosIonita23)
+- New card "Berochika, Channeler of Suns" (thanks @DragosIonita23)
+- New card "Ferrosaturn, Spectral Knight" (thanks @DragosIonita23)
+- New card "Ikaz, The Spydroid" (thanks @DragosIonita23)
+- New card "Lemik, Vizier Of Thought" (thanks @DragosIonita23)
+- New card "Messa Bahna, Expanse Guardian" (thanks @DragosIonita23)
+- New card "Pala Olesis, Morning Guardian" (thanks @DragosIonita23)
+- New card "Rapid Reincarnation" (thanks @DragosIonita23)
+- New card "Ardent Lunatron" (thanks @DragosIonita23)
+- New card "Static Warp" (thanks @DragosIonita23)
+- New card "Tulk, the Oracle" (thanks @DragosIonita23)
+- New card "Aqua Strummer" (thanks @DragosIonita23)
+- New card "Baterry Cluster" (thanks @DragosIonita23)
+- New card "Buoyant Fish" (thanks @DragosIonita23)
+- New card "Crystal Splinslicer" (thanks @DragosIonita23)
+- New card "Fluorogill Manta" (thanks @DragosIonita23)
+- New card "Siren Concerto" (thanks @DragosIonita23)
+- New card "Tide Patroller" (thanks @DragosIonita23)
+- New card "Transmogrify" (thanks @DragosIonita23)
+- New card "Zaltan" (thanks @DragosIonita23)
+- New card "Benzo, the Hidden Fury" (thanks @DragosIonita23)
+- New card "Dedreen, the Hidden Corrupter" (thanks @DragosIonita23)
+- New card "Gigandura" (thanks @DragosIonita23)
+- New card "Infernal Command" (thanks @DragosIonita23)
+- New card "Mikay, Rattling Doll" (thanks @DragosIonita23)
+- New card "Mummy Wrap Shadow Of Fatigue" (thanks @DragosIonita23)
+- New card "Nightmare Invader" (thanks @DragosIonita23)
+- New card "Spark Chemist Shadow Of Whim" (thanks @DragosIonita23)
+- New card "Spinal Parasite" (thanks @DragosIonita23)
+- New card "Uliya, The Entrancer" (thanks @DragosIonita23)
+- New card "Upheaval" (thanks @DragosIonita23)
+- New card "Zero Nemesis, Shadow Of Panic" (thanks @DragosIonita23)
+- New card "Armored Raider Gandaval(thanks @DragosIonita23)
+- New card "Colossus Boost (thanks @DragosIonita23)
+- New card "Cragsaur (thanks @DragosIonita23)
+- New card "Explosive Trooper Zalmez (thanks @DragosIonita23)
+- New card "Forced Frenzy (thanks @DragosIonita23)
+- New card "Hurlosaur" (thanks @DragosIonita23)
+- New card "Mezger Commando Leader" (thanks @DragosIonita23)
+- New card "Mykees Pliers" (thanks @DragosIonita23)
+- New card "Siege Roller Bagash" (thanks @DragosIonita23)
+- New card "Smash Warrior Stagrandu" (thanks @DragosIonita23)
+- New card "Supersonic Jetpack" (thanks @DragosIonita23)
+- New card "Taunting Skyterror" (thanks @DragosIonita23)
+- New card "Adventure Boar" (thanks @DragosIonita23)
+- New card "Ancient Horn The Watcher" (thanks @DragosIonita23)
+- New card "Bubble Scarab" (thanks @DragosIonita23)
+- New card "Earth Ripper, Talon Of Rage" (thanks @DragosIonita23)
+- New card "Jiggly Totem" (thanks @DragosIonita23)
+- New card "Karate Potato" (thanks @DragosIonita23)
+- New card "Legacy Shell" (thanks @DragosIonita23)
+- New card "Sabermask Scarab" (thanks @DragosIonita23)
+
+## 26/10/2025
+
 - New card "Silvermoon Trailblazer" (thanks @DragosIonita23)
 - New card "Storm Wrangler, the Furious" (thanks @DragosIonita23)
 - New card "Hokira" (thanks @DragosIonita23)
@@ -17,6 +75,11 @@
 - New card "Vine Charger" (thanks @DragosIonita23)
 - New card "Magmadragon Ogrist Vhal" (thanks @DragosIonita23)
 - New card "Necrodragon Izorist Vhal" (thanks @DragosIonita23)
+- New card "Emperor Maroll" (thanks @DragosIonita23)
+- New card "Terradragon Anrist Vhal" (thanks @DragosIonita23)
+- New card "Stratosphere Giant" (thanks @DragosIonita23)
+- New card "Glena Vuele, the Hypnotic" (thanks @DragosIonita23)
+- New card "Jil Warka, Time Guardian" (thanks @DragosIonita23)
 - Improve popup for selecting card race (thanks @DragosIonita23)
 - Fixed an issue where "Simian Warrior Grash" would not correctly handle destruction of Armorloids (thanks @DragosIonita23)
 
@@ -122,6 +185,7 @@
 - New card "Scream Slicer, Shadow of Fear" (thanks @DragosIonita23)
 
 ## 24/04/2025
+
 - New card "Magmadragon Jagalzor" (thanks @jyotiskaghosh)
 - New card "Bruiser Dragon" (thanks @DragosIonita23)
 - New card "Rocketdive Skyterror" (thanks @DragosIonita23)
@@ -143,6 +207,7 @@
 - New card "Super Necrodragon Abzo Dolba" (thanks @jyotiskaghosh)
 
 ## 11/04/2025
+
 - Fixed an issue where "Vacuum Gel" could destroy untapped creatures with its effect (thanks @DragosIonita23)
 - Added automated chat moderation
 
@@ -438,6 +503,7 @@
 - Fixed an issue where the lobby chat would not scroll all the way down on page load if there were any pinned messages
 
 ## 08/08/2023
+
 - New card "Gigaling Q"
 - New card "Wisp Howler, Shadow of Tears"
 - New card "Gigakail"
@@ -446,6 +512,7 @@
 - Fixed an issue where cards would keep their stat changes between turns
 
 ## 05/08/2023
+
 - Right clicking cards in "select card" popups during matches will now preview the card
 - Updated the backside card image used in match action/popups to the high quality version
 - Updated the color scheme of the site

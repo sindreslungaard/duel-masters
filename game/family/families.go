@@ -13,6 +13,7 @@ const (
 	ColonyBeetle    = "Colony Beetle"
 	CyberCluster    = "Cyber Cluster"
 	CyberLord       = "Cyber Lord"
+	CyberMoon       = "Cyber Moon"
 	CyberVirus      = "Cyber Virus"
 	DarkLord        = "Dark Lord"
 	DeathPuppet     = "Death Puppet"
@@ -22,14 +23,13 @@ const (
 	DuneGecko       = "Dune Gecko"
 	EarthDragon     = "Earth Dragon"
 	EarthEater      = "Earth Eater"
-	Family          = "Family"
 	FireBird        = "Fire Bird"
 	Fish            = "Fish"
 	GelFish         = "Gel Fish"
+	Ghost           = "Ghost"
 	Giant           = "Giant"
 	GiantInsect     = "Giant Insect"
 	Gladiator       = "Gladiator"
-	Ghost           = "Ghost"
 	Guardian        = "Guardian"
 	Hedrian         = "Hedrian"
 	HornedBeast     = "Horned Beast"
@@ -42,16 +42,20 @@ const (
 	MachineEater    = "Machine Eater"
 	MechaDelSol     = "Mecha del Sol"
 	MechaThunder    = "Mecha Thunder"
+	Merfolk         = "Merfolk"
 	MysteryTotem    = "Mystery Totem"
+	PandorasBox     = "Pandora's Box"
 	ParasiteWorm    = "Parasite Worm"
 	RainbowPhantom  = "Rainbow Phantom"
 	RockBeast       = "Rock Beast"
 	SeaHacker       = "Sea Hacker"
 	SnowFaerie      = "Snow Faerie"
+	Soltrooper      = "Soltrooper"
 	StarlightTree   = "Starlight Tree"
 	Survivor        = "Survivor"
 	TreeFolk        = "Tree Folk"
 	VolcanoDragon   = "Volcano Dragon"
+	WildVeggies     = "Wild Veggies"
 	Xenoparts       = "Xenoparts"
 	ZombieDragon    = "Zombie Dragon"
 )
@@ -69,6 +73,7 @@ var Families = []string{
 	ColonyBeetle,
 	CyberCluster,
 	CyberLord,
+	CyberMoon,
 	CyberVirus,
 	DarkLord,
 	DeathPuppet,
@@ -81,10 +86,10 @@ var Families = []string{
 	FireBird,
 	Fish,
 	GelFish,
+	Ghost,
 	Giant,
 	GiantInsect,
 	Gladiator,
-	Ghost,
 	Guardian,
 	Hedrian,
 	HornedBeast,
@@ -97,16 +102,20 @@ var Families = []string{
 	MachineEater,
 	MechaDelSol,
 	MechaThunder,
+	Merfolk,
 	MysteryTotem,
+	PandorasBox,
 	ParasiteWorm,
 	RainbowPhantom,
 	RockBeast,
 	SeaHacker,
 	SnowFaerie,
+	Soltrooper,
 	StarlightTree,
 	Survivor,
 	TreeFolk,
 	VolcanoDragon,
+	WildVeggies,
 	Xenoparts,
 	ZombieDragon,
 }
@@ -115,5 +124,5 @@ func GetAllFamilies() []string {
 	return Families
 }
 
-var Cybers = []string{CyberCluster, CyberLord, CyberVirus}
+var Cybers = []string{CyberCluster, CyberLord, CyberVirus, CyberMoon}
 var Dragons = []string{ArmoredDragon, VolcanoDragon, EarthDragon, ZombieDragon}

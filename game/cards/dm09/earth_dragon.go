@@ -8,15 +8,15 @@ import (
 	"duel-masters/game/match"
 )
 
-// NecrodragonIzoristVhal ...
-func NecrodragonIzoristVhal(c *match.Card) {
+// TerradragonAnristVhal ...
+func TerradragonAnristVhal(c *match.Card) {
 
-	c.Name = "Necrodragon Izorist Vhal"
+	c.Name = "Terradragon Anrist Vhal"
 	c.Power = 0
-	c.Civ = civ.Darkness
-	c.Family = []string{family.ZombieDragon}
+	c.Civ = civ.Nature
+	c.Family = []string{family.EarthDragon}
 	c.ManaCost = 6
-	c.ManaRequirement = []string{civ.Darkness}
+	c.ManaRequirement = []string{civ.Nature}
 
 	addPower := 0
 
@@ -32,13 +32,14 @@ func NecrodragonIzoristVhal(c *match.Card) {
 
 			addPower = len(fx.FindFilter(
 				card.Player,
-				match.GRAVEYARD,
+				match.BATTLEZONE,
 				func(x *match.Card) bool {
-					return x.HasCondition(cnd.Creature) && x.Civ == civ.Darkness
+					return x.ID != card.ID && x.Civ == civ.Nature
 				})) * 2000
 
 			if addPower == 0 {
-				exit()
+				card.RemoveConditionBySource(card.ID)
+				exit() //NOTE: We call exit() before calling Destroy below to avoid stack overflow error!
 				ctx2.Match.Destroy(card, card, match.DestroyedByMiscAbility)
 				return
 			}
@@ -46,7 +47,7 @@ func NecrodragonIzoristVhal(c *match.Card) {
 			c.Power += addPower
 
 			if c.Power >= 6000 {
-				c.AddUniqueSourceCondition(cnd.DoubleBreaker, true, card.ID)
+				card.AddUniqueSourceCondition(cnd.DoubleBreaker, true, card.ID)
 			}
 		})
 	}))

@@ -219,7 +219,7 @@ func (l *Lobby) Parse(s *server.Socket, data []byte) {
 			l.messagesMutex.Lock()
 			defer l.messagesMutex.Unlock()
 
-			flags := moderation.ChatModeration.CheckFlags(s.User.Username)
+			/* flags := moderation.ChatModeration.CheckFlags(s.User.Username)
 			if flags >= moderation.FlagsTolerance {
 				chat(s, "The automatic chat moderation system has flagged some of your previous messages and blocked you from chatting until the next server restart. Keep in mind that this occured from a scan of all messages since the last server restart and not just your latest ones, there can also be false positives, so in the future please refrain from words and phrases that could be interpreted as harassment without context.")
 				for i, msg := range l.messages {
@@ -229,7 +229,7 @@ func (l *Lobby) Parse(s *server.Socket, data []byte) {
 				}
 				return
 			}
-			moderation.ChatModeration.Write(s.User.Username, msg.Message)
+			moderation.ChatModeration.Write(s.User.Username, msg.Message) */
 
 			if len(l.messages) >= messageBufferSize {
 				_, l.messages = l.messages[0], l.messages[1:]

@@ -597,7 +597,7 @@ func (p *Player) MoveCardToFront(cardID string, from string, to string, source s
 // ReorderCardsOnBottomDeck re-orders the given cards on the bottom of the deck
 // in the order given by the orderedIDs parameter
 // Returns a new []*Card slice with the cards ordered, or error
-func (p *Player) ReorderCardsOnBottomDeck(cards []*Card, orderedIDs []string) ([]*Card, error) {
+func (p *Player) ReorderCardsInDeck(cards []*Card, orderedIDs []string, onBottom bool) ([]*Card, error) {
 
 	deckRef, err := p.ContainerRef(DECK)
 
@@ -658,24 +658,46 @@ func (p *Player) ReorderCardsOnBottomDeck(cards []*Card, orderedIDs []string) ([
 
 	*deckRef = temp
 
-	// 2. Put them on the bottom of the deck, in the order
-	//    specified by the card IDs in orderedIDs slice parameter
-	for _, cardIDToAppend := range orderedIDs {
-		var cardToAppend *Card
+	if onBottom {
+		// 2.1 Put them on the bottom of the deck, in the order
+		//    specified by the card IDs in orderedIDs slice parameter
+		for _, cardIDToAppend := range orderedIDs {
+			var cardToAppend *Card
 
-		// Find the card in the cards slice (since it's no longer in the deck)
-		for _, card := range cards {
-			if card.ID == cardIDToAppend {
-				cardToAppend = card
-				break
+			// Find the card in the cards slice (since it's no longer in the deck)
+			for _, card := range cards {
+				if card.ID == cardIDToAppend {
+					cardToAppend = card
+					break
+				}
 			}
-		}
 
-		if cardToAppend == nil {
-			return nil, errors.New("Card not found in provided cards slice")
-		}
+			if cardToAppend == nil {
+				return nil, errors.New("Card not found in provided cards slice")
+			}
 
-		*deckRef = append(*deckRef, cardToAppend)
+			*deckRef = append(*deckRef, cardToAppend)
+		}
+	} else {
+		// 2.2 Put them on the top of the deck, in the order
+		//    specified by the card IDs in orderedIDs slice parameter
+		for i := len(orderedIDs) - 1; i >= 0; i-- {
+			var cardToPrepend *Card
+
+			// Find the card in the cards slice (since it's no longer in the deck)
+			for _, card := range cards {
+				if card.ID == orderedIDs[i] {
+					cardToPrepend = card
+					break
+				}
+			}
+
+			if cardToPrepend == nil {
+				return nil, errors.New("Card not found in provided cards slice")
+			}
+
+			*deckRef = append([]*Card{cardToPrepend}, *deckRef...)
+		}
 	}
 
 	return *deckRef, nil
@@ -825,43 +847,5 @@ func (p *Player) Username() string {
 
 // Dispose clears out references in the player object
 func (p *Player) Dispose() {
-
-	p.mutex.Lock()
-
-	defer p.mutex.Unlock()
-
 	close(p.Action)
-
-	for _, c := range p.deck {
-		c.Player = nil
-	}
-
-	for _, c := range p.hand {
-		c.Player = nil
-	}
-
-	for _, c := range p.shieldzone {
-		c.Player = nil
-	}
-
-	for _, c := range p.manazone {
-		c.Player = nil
-	}
-
-	for _, c := range p.graveyard {
-		c.Player = nil
-	}
-
-	for _, c := range p.battlezone {
-		c.Player = nil
-	}
-
-	for _, c := range p.hiddenzone {
-		c.Player = nil
-	}
-
-	for _, c := range p.spellzone {
-		c.Player = nil
-	}
-
 }
