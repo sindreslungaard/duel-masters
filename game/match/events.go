@@ -69,6 +69,14 @@ type SpellCast struct {
 	MatchPlayerID byte
 }
 
+// SpellResolved is fired after a spell is resolved, either from being played or from shield triggers
+// It has the same fields as SpellCast event
+type SpellResolved struct {
+	CardID        string
+	FromShield    bool
+	MatchPlayerID byte
+}
+
 // AttackPlayer is fired when the player attempts to use a creature to attack the player
 type AttackPlayer struct {
 	CardID string

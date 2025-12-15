@@ -633,10 +633,23 @@ func SpellCast(card *match.Card, ctx *match.Context) bool {
 
 }
 
-// SpellCasted returns true if a spell was cast
-func AnySpellCast(card *match.Card, ctx *match.Context) bool {
+func IHaveCastASpell(card *match.Card, ctx *match.Context) bool {
+	if event, ok := ctx.Event.(*match.SpellCast); ok {
 
-	_, ok := ctx.Event.(*match.SpellCast)
+		// Check to see if I am the player who casted a spell
+		if (card.Player == ctx.Match.Player1.Player && event.MatchPlayerID == 1) ||
+			(card.Player == ctx.Match.Player2.Player && event.MatchPlayerID == 2) {
+			return true
+		}
+	}
+
+	return false
+}
+
+// AnySpellResolved returns true if a spell was resolved
+func AnySpellResolved(card *match.Card, ctx *match.Context) bool {
+
+	_, ok := ctx.Event.(*match.SpellResolved)
 
 	return ok
 
@@ -1096,24 +1109,23 @@ func Blocked(card *match.Card, ctx *match.Context) bool {
 	return false
 }
 
+func WheneverThisAttacksAndIsntBlocked(card *match.Card, ctx *match.Context) bool {
+	if event, ok := ctx.Event.(*match.Battle); ok {
+		return event.Attacker == card && !event.Blocked
+	}
+
+	if event, ok := ctx.Event.(*match.BreakShieldEvent); ok {
+		return event.Source == card
+	}
+
+	return false
+}
+
 // Blocks checks if the card blocks another creature
 func Blocks(card *match.Card, ctx *match.Context) bool {
 	if event, ok := ctx.Event.(*match.Battle); ok {
 		return event.Blocked && event.Defender == card
 	}
-	return false
-}
-
-func IHaveCastASpell(card *match.Card, ctx *match.Context) bool {
-	if event, ok := ctx.Event.(*match.SpellCast); ok {
-
-		// Check to see if I am the player who casted a spell
-		if (card.Player == ctx.Match.Player1.Player && event.MatchPlayerID == 1) ||
-			(card.Player == ctx.Match.Player2.Player && event.MatchPlayerID == 2) {
-			return true
-		}
-	}
-
 	return false
 }
 
