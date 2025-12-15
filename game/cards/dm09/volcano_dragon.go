@@ -30,7 +30,7 @@ func MagmadragonOgristVhal(c *match.Card) {
 				return
 			}
 
-			addPower += len(fx.Find(card.Player, match.HAND)) * 3000
+			addPower = len(fx.Find(card.Player, match.HAND)) * 3000
 
 			if addPower == 0 {
 				exit()

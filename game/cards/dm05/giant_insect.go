@@ -79,20 +79,14 @@ func AmbushScorpion(c *match.Card) {
 			ctx.Match,
 			card.Player,
 			match.MANAZONE,
-			fmt.Sprintf("You may choose an %s from your manazone and send it to battlezone", card.Name),
+			fmt.Sprintf("You may choose an %s from your mana zone and put it into the battle zone", card.Name),
 			1,
 			1,
 			true,
-			func(x *match.Card) bool { return x.Name == card.Name },
+			func(x *match.Card) bool { return x.Name == card.Name && fx.CanBeSummoned(card.Player, x) },
 			false,
 		).Map(func(x *match.Card) {
-			x.Player.MoveCard(x.ID, match.MANAZONE, match.BATTLEZONE, card.ID)
-
-			if ctx.Match.IsPlayerTurn(x.Player) {
-				x.AddCondition(cnd.SummoningSickness, nil, nil)
-			}
-
-			ctx.Match.ReportActionInChat(x.Player, fmt.Sprintf("%s was moved to %s's battlezone from their manazone", x.Name, x.Player.Username()))
+			fx.ForcePutCreatureIntoBZ(ctx, x, match.MANAZONE, card)
 		})
 	}))
 
@@ -118,16 +112,10 @@ func ObsidianScarab(c *match.Card) {
 			1,
 			1,
 			true,
-			func(x *match.Card) bool { return x.Name == card.Name },
+			func(x *match.Card) bool { return x.Name == card.Name && fx.CanBeSummoned(card.Player, x) },
 			false,
 		).Map(func(x *match.Card) {
-			x.Player.MoveCard(x.ID, match.MANAZONE, match.BATTLEZONE, card.ID)
-
-			if ctx.Match.IsPlayerTurn(x.Player) {
-				x.AddCondition(cnd.SummoningSickness, nil, nil)
-			}
-
-			ctx.Match.ReportActionInChat(x.Player, fmt.Sprintf("%s was moved to %s's battlezone from their manazone", x.Name, x.Player.Username()))
+			fx.ForcePutCreatureIntoBZ(ctx, x, match.MANAZONE, card)
 		})
 	}))
 
