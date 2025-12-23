@@ -599,7 +599,7 @@ func Summoned(card *match.Card, ctx *match.Context) bool {
 		return false
 	}
 
-	return CreatureSummoned(card, ctx) && event.CardID == card.ID
+	return creatureSummoned(card, ctx) && event.CardID == card.ID
 }
 
 // InTheBattlezone returns true if the card arrives in the battlezone.
@@ -844,7 +844,7 @@ func OpponentPlayedShieldTrigger(card *match.Card, ctx *match.Context) bool {
 // CreatureSummoned returns true if a card was summoned
 //
 // Does not activate if a card that was under an Evolution card becomes visible again.
-func CreatureSummoned(card *match.Card, ctx *match.Context) bool {
+func creatureSummoned(card *match.Card, ctx *match.Context) bool {
 	if card.Zone != match.BATTLEZONE {
 		return false
 	}
@@ -865,7 +865,7 @@ func CreatureSummoned(card *match.Card, ctx *match.Context) bool {
 // Does not activate if a card that was under an Evolution card becomes visible again.
 func MySurvivorSummoned(card *match.Card, ctx *match.Context) bool {
 
-	if !CreatureSummoned(card, ctx) {
+	if !creatureSummoned(card, ctx) {
 		return false
 	}
 
@@ -896,21 +896,21 @@ func AnotherCreatureSummoned(card *match.Card, ctx *match.Context) bool {
 		return false
 	}
 
-	return CreatureSummoned(card, ctx) && event.CardID != card.ID
+	return creatureSummoned(card, ctx) && event.CardID != card.ID
 }
 
 func AnotherOwnCreatureSummoned(card *match.Card, ctx *match.Context) bool {
-	return AnotherOwnCreatureSummonedFilter(card, ctx, func(c *match.Card) bool { return true })
+	return anotherOwnCreatureSummonedFilter(card, ctx, func(c *match.Card) bool { return true })
 }
 
 func AnotherOwnDragonoidOrDragonSummoned(card *match.Card, ctx *match.Context) bool {
-	return AnotherOwnCreatureSummonedFilter(card, ctx, func(c *match.Card) bool {
+	return anotherOwnCreatureSummonedFilter(card, ctx, func(c *match.Card) bool {
 		return c.SharesAFamily(append(family.Dragons, family.Dragonoid))
 	})
 }
 
 func AnotherOwnGuardianSummoned(card *match.Card, ctx *match.Context) bool {
-	return AnotherOwnCreatureSummonedFilter(card, ctx, func(c *match.Card) bool {
+	return anotherOwnCreatureSummonedFilter(card, ctx, func(c *match.Card) bool {
 		return c.HasFamily(family.Guardian)
 	})
 }
@@ -918,7 +918,7 @@ func AnotherOwnGuardianSummoned(card *match.Card, ctx *match.Context) bool {
 // AnotherOwnCreatureSummonedFilter returns true if you summoned another filtered creature
 // Does not activate if this current card is summoned.
 // Does not activate if the filtered card that was under an Evolution card becomes visible again.
-func AnotherOwnCreatureSummonedFilter(card *match.Card, ctx *match.Context, filter func(c *match.Card) bool) bool {
+func anotherOwnCreatureSummonedFilter(card *match.Card, ctx *match.Context, filter func(c *match.Card) bool) bool {
 	event, ok := ctx.Event.(*match.CardMoved)
 	if !ok {
 		return false
@@ -932,7 +932,7 @@ func AnotherOwnCreatureSummonedFilter(card *match.Card, ctx *match.Context, filt
 		p = ctx.Match.Player2.Player
 	}
 
-	creatureSummoned := CreatureSummoned(card, ctx) && event.CardID != card.ID && p == card.Player
+	creatureSummoned := creatureSummoned(card, ctx) && event.CardID != card.ID && p == card.Player
 
 	if filter != nil {
 		movedCard, err := p.GetCard(event.CardID, event.To)
@@ -948,13 +948,13 @@ func AnotherOwnCreatureSummonedFilter(card *match.Card, ctx *match.Context, filt
 }
 
 func AnotherOwnGhostSummoned(card *match.Card, ctx *match.Context) bool {
-	return AnotherOwnCreatureSummonedFilter(card, ctx, func(c *match.Card) bool {
+	return anotherOwnCreatureSummonedFilter(card, ctx, func(c *match.Card) bool {
 		return c.HasFamily(family.Ghost)
 	})
 }
 
 func AnotherOwnCyberSummoned(card *match.Card, ctx *match.Context) bool {
-	return AnotherOwnCreatureSummonedFilter(card, ctx, func(c *match.Card) bool {
+	return anotherOwnCreatureSummonedFilter(card, ctx, func(c *match.Card) bool {
 		return c.SharesAFamily(family.Cybers)
 	})
 }
@@ -966,14 +966,20 @@ func AnotherOwnCyberVirusSummoned(card *match.Card, ctx *match.Context) bool {
 }
 
 func AnotherOwnArmorloidDestroyed(card *match.Card, ctx *match.Context) bool {
-	return AnotherOwnCreatureDestroyedFilter(card, ctx, func(c *match.Card) bool {
+	return anotherOwnCreatureDestroyedFilter(card, ctx, func(c *match.Card) bool {
 		return c.HasFamily(family.Armorloid)
 	})
 }
 
-// AnotherOwnCreatureDestroyedFilter returns true if another creature of yours is destroyed
+func OwnArmorloidDestroyed(card *match.Card, ctx *match.Context) bool {
+	return ownCreatureDestroyedFilter(card, ctx, func(c *match.Card) bool {
+		return c.HasFamily(family.Armorloid)
+	})
+}
+
+// customSelectedCardMovedFilter returns true if a card that passes the custom selector and
 // filtered by the provided function
-func AnotherOwnCreatureDestroyedFilter(card *match.Card, ctx *match.Context, filter func(c *match.Card) bool) bool {
+func customSelectedCardMovedFilter(card *match.Card, ctx *match.Context, customSelected func(c *match.Card, ctx *match.Context) bool, filter func(c *match.Card) bool) bool {
 	event, ok := ctx.Event.(*match.CardMoved)
 	if !ok {
 		return false
@@ -987,7 +993,7 @@ func AnotherOwnCreatureDestroyedFilter(card *match.Card, ctx *match.Context, fil
 		p = ctx.Match.Player2.Player
 	}
 
-	anotherOwnCreatureDestroyed := AnotherOwnCreatureDestroyed(card, ctx)
+	isSelected := customSelected(card, ctx)
 
 	if filter != nil {
 		movedCard, err := p.GetCard(event.CardID, event.To)
@@ -996,10 +1002,22 @@ func AnotherOwnCreatureDestroyedFilter(card *match.Card, ctx *match.Context, fil
 			return false
 		}
 
-		anotherOwnCreatureDestroyed = anotherOwnCreatureDestroyed && filter(movedCard)
+		isSelected = isSelected && filter(movedCard)
 	}
 
-	return anotherOwnCreatureDestroyed
+	return isSelected
+}
+
+// OwnCreatureDestroyedFilter returns true if a creature of yours is destroyed
+// filtered by the provided function
+func ownCreatureDestroyedFilter(card *match.Card, ctx *match.Context, filter func(c *match.Card) bool) bool {
+	return customSelectedCardMovedFilter(card, ctx, ownCreatureDestroyed, filter)
+}
+
+// AnotherOwnCreatureDestroyedFilter returns true if another creature of yours is destroyed
+// filtered by the provided function
+func anotherOwnCreatureDestroyedFilter(card *match.Card, ctx *match.Context, filter func(c *match.Card) bool) bool {
+	return customSelectedCardMovedFilter(card, ctx, AnotherOwnCreatureDestroyed, filter)
 }
 
 func AnotherCreatureDestroyed(card *match.Card, ctx *match.Context) bool {
@@ -1017,8 +1035,26 @@ func AnotherCreatureDestroyed(card *match.Card, ctx *match.Context) bool {
 	return false
 }
 
-func AnotherOwnCreatureDestroyed(card *match.Card, ctx *match.Context) bool {
+func ownCreatureDestroyed(card *match.Card, ctx *match.Context) bool {
+	if event, ok := ctx.Event.(*match.CardMoved); ok &&
+		event.From == match.BATTLEZONE &&
+		event.To == match.GRAVEYARD {
 
+		// check if it was the card's player whose creature got destroyed
+		var p *match.Player
+		if event.MatchPlayerID == 1 {
+			p = ctx.Match.Player1.Player
+		} else {
+			p = ctx.Match.Player2.Player
+		}
+
+		return card.Player == p
+	}
+
+	return false
+}
+
+func AnotherOwnCreatureDestroyed(card *match.Card, ctx *match.Context) bool {
 	if card.Zone != match.BATTLEZONE {
 		return false
 	}
@@ -1037,11 +1073,9 @@ func AnotherOwnCreatureDestroyed(card *match.Card, ctx *match.Context) bool {
 		}
 
 		return card.Player == p
-
 	}
 
 	return false
-
 }
 
 func MyDrawStep(card *match.Card, ctx *match.Context) bool {
