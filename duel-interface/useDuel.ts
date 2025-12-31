@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { MatchState, MatchStateMessage } from "./types";
 
 interface UseDuelOptions {
   duelId: string;
@@ -9,9 +10,8 @@ interface UseDuelOptions {
 export function useDuel({ duelId, duelToken, hostUrl }: UseDuelOptions) {
   const [connected, setConnected] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [messages, setMessages] = useState<any[]>([]);
-  const [gameState, setGameState] = useState<any>(null);
   const wsRef = useRef<WebSocket | null>(null);
+  const [state, setState] = useState<MatchState | null>(null);
 
   useEffect(() => {
     const wsUrl = `${hostUrl}/ws/${duelId}?duelToken=${duelToken}`;
@@ -38,11 +38,11 @@ export function useDuel({ duelId, duelToken, hostUrl }: UseDuelOptions) {
       console.log("WebSocket message:", event.data);
       try {
         const data = JSON.parse(event.data);
-        setMessages((prev) => [...prev, data]);
 
-        // Update game state if the message contains it
-        if (data.gameState) {
-          setGameState(data.gameState);
+        switch (data.header) {
+          case "state_update":
+            setState(data.state);
+            break;
         }
       } catch (err) {
         console.error("Error parsing message:", err);
@@ -72,9 +72,8 @@ export function useDuel({ duelId, duelToken, hostUrl }: UseDuelOptions) {
   return {
     connected,
     error,
-    messages,
-    gameState,
     send,
     sendJoinMatch,
+    state,
   };
 }

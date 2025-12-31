@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import "./App.css";
 import { SignJWT } from "jose";
 import { Duel } from "../../duel-interface";
@@ -11,6 +11,7 @@ function App() {
   const [hostDuelToken, setHostDuelToken] = useState("");
   const [guestDuelToken, setGuestDuelToken] = useState("");
   const [error, setError] = useState<string | null>(null);
+  const [activePlayer, setActivePlayer] = useState<"host" | "guest">("host");
 
   const createMatch = async () => {
     setLoading(true);
@@ -58,30 +59,60 @@ function App() {
     }
   };
 
+  useEffect(() => {
+    createMatch();
+  }, []);
+
   return (
     <>
-      <button
-        onClick={createMatch}
-        disabled={loading}
-        className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 disabled:bg-gray-400"
-      >
-        {loading ? "Creating..." : "Create Match"}
-      </button>
+      {/* Player Toggle */}
+      <div className="fixed top-4 left-1/2 transform -translate-x-1/2 z-50 bg-gray-800 rounded-lg shadow-lg p-2 flex gap-2">
+        <button
+          onClick={() => setActivePlayer("host")}
+          className={`px-4 py-2 rounded font-semibold transition-colors ${
+            activePlayer === "host"
+              ? "bg-blue-500 text-white"
+              : "bg-gray-700 text-gray-300 hover:bg-gray-600"
+          }`}
+        >
+          Player 1
+        </button>
+        <button
+          onClick={() => setActivePlayer("guest")}
+          className={`px-4 py-2 rounded font-semibold transition-colors ${
+            activePlayer === "guest"
+              ? "bg-blue-500 text-white"
+              : "bg-gray-700 text-gray-300 hover:bg-gray-600"
+          }`}
+        >
+          Player 2
+        </button>
+      </div>
 
-      {error && <p className="text-red-600 mt-2">Error: {error}</p>}
+      {loading && (
+        <p className="text-white mt-20 text-center">Loading match...</p>
+      )}
+      {error && (
+        <p className="text-red-600 mt-20 text-center">Error: {error}</p>
+      )}
+
       {duel && (
-        <div className="w-full h-screen flex gap-2">
-          <Duel
-            hostUrl="ws://localhost:3000"
-            duelId={duel.id}
-            duelToken={hostDuelToken}
-          ></Duel>
+        <div className="w-full h-screen">
+          <div className={activePlayer === "host" ? "block" : "hidden"}>
+            <Duel
+              hostUrl="ws://localhost:3000"
+              duelId={duel.id}
+              duelToken={hostDuelToken}
+            />
+          </div>
 
-          <Duel
-            hostUrl="ws://localhost:3000"
-            duelId={duel.id}
-            duelToken={guestDuelToken}
-          ></Duel>
+          <div className={activePlayer === "guest" ? "block" : "hidden"}>
+            <Duel
+              hostUrl="ws://localhost:3000"
+              duelId={duel.id}
+              duelToken={guestDuelToken}
+            />
+          </div>
         </div>
       )}
     </>
