@@ -57,7 +57,7 @@ func ProcessMatch(m *Match) {
 }
 
 // New returns a new match object
-func (s *MatchSystem) NewMatch(matchName string, hostID string, visible bool, matchmaking bool, format Format) *Match {
+func (s *MatchSystem) NewMatch(matchName string, hostID string, hostDeck string, guestID string, guestDeck string, visible bool, matchmaking bool, format Format) *Match {
 
 	id, err := shortid.Generate()
 
@@ -70,6 +70,9 @@ func (s *MatchSystem) NewMatch(matchName string, hostID string, visible bool, ma
 		MatchName:         matchName,
 		Format:            format,
 		HostID:            hostID,
+		HostDeck:          hostDeck,
+		GuestID:           guestID,
+		GuestDeck:         guestDeck,
 		spectators:        internal.NewConcurrentDictionary[Spectator](),
 		persistentEffects: make(map[int]PersistentEffect),
 		Turn:              1,

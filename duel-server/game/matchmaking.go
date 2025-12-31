@@ -270,7 +270,7 @@ func (m *Matchmaking) Kick(s *server.Socket, requestId string, toKickId string) 
 }
 
 func (m *Matchmaking) Start(s *server.Socket, requestId string) {
-	m.Lock()
+	/* m.Lock()
 	defer m.Unlock()
 
 	r, ok := m.requests.Find(requestId)
@@ -307,7 +307,7 @@ func (m *Matchmaking) Start(s *server.Socket, requestId string) {
 	}
 
 	s.Send(msg)
-	guestSocket.Send(msg)
+	guestSocket.Send(msg) */
 
 }
 

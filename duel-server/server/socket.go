@@ -57,7 +57,7 @@ func FindByUserUID(uid string) (*Socket, bool) {
 }
 
 // NewSocket creates and returns a new Socket instance
-func NewSocket(c Connection, hub Hub) *Socket {
+func NewSocket(c Connection, hub Hub, userID string, username string) *Socket {
 
 	id, err := shortid.Generate()
 
@@ -65,14 +65,19 @@ func NewSocket(c Connection, hub Hub) *Socket {
 		id = uuid.New().String()
 	}
 
+	var user db.User
+	user.UID = userID
+	user.Username = username
+
 	s := &Socket{
 		UID:    id,
 		conn:   c,
 		hub:    hub,
-		ready:  false,
+		ready:  true,
 		mutex:  &sync.Mutex{},
 		closed: false,
 		lost:   false,
+		User:   user,
 	}
 
 	Sockets.Add(id, s)
@@ -105,24 +110,6 @@ func (s *Socket) Listen() {
 
 		if err != nil {
 			return
-		}
-
-		if !s.ready {
-
-			// Look for authorization token as the first message
-			u, err := db.GetUserForToken(string(message))
-
-			if err != nil {
-				continue
-			}
-
-			s.User = u
-			s.ready = true
-
-			s.Send(Message{Header: "hello"})
-
-			continue
-
 		}
 
 		s.hub.Parse(s, message)

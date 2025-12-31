@@ -1376,7 +1376,7 @@ func (m *Match) Parse(s *server.Socket, data []byte) {
 			}
 
 			// This is player2
-			if s.User.UID != m.HostID {
+			if s.User.UID == m.GuestID {
 
 				if m.Player2 != nil {
 					logrus.Debug("Attempt to join as Player2 multiple times")
@@ -1400,75 +1400,17 @@ func (m *Match) Parse(s *server.Socket, data []byte) {
 				m.Chat("Server", fmt.Sprintf("%s started the game", m.Player1.Username))
 				m.Chat("Server", fmt.Sprintf("%s joined the game", m.Player2.Username))
 
-				// If the match format is RandomFormat, create random decks and go straight to coin toss
-				if m.Format == RandomFormat {
+				m.Player1.Player.CreateRandomDeck()
+				m.Player2.Player.CreateRandomDeck()
 
-					m.Player1.Player.CreateRandomDeck()
-					m.Player2.Player.CreateRandomDeck()
+				m.Chat("Server", fmt.Sprintf("%s has received a randomly generated deck", m.Player1.Username))
+				m.Chat("Server", fmt.Sprintf("%s has received a randomly generated deck", m.Player2.Username))
 
-					m.Chat("Server", fmt.Sprintf("%s has received a randomly generated deck", m.Player1.Username))
-					m.Chat("Server", fmt.Sprintf("%s has received a randomly generated deck", m.Player2.Username))
+				m.Player1.Player.Ready = true
+				m.Player2.Player.Ready = true
 
-					m.Player1.Player.Ready = true
-					m.Player2.Player.Ready = true
-
-					// Go straight to coin toss
-					m.CoinToss()
-					return
-				}
-
-				cur, err := db.Decks().Find(context.TODO(), bson.M{
-					"$or": []bson.M{
-						{"owner": m.Player1.Socket.User.UID},
-						{"owner": m.Player2.Socket.User.UID},
-						{"standard": true},
-					},
-				})
-
-				if err != nil {
-					logrus.Error(err)
-					return
-				}
-
-				defer cur.Close(context.TODO())
-
-				player1decks := make([]db.LegacyDeck, 0)
-				player2decks := make([]db.LegacyDeck, 0)
-
-				for cur.Next(context.TODO()) {
-
-					var deck db.Deck
-
-					if err := cur.Decode(&deck); err != nil {
-						continue
-					}
-
-					legacyDeck, err := ConvertToLegacyDeck(deck)
-					if err != nil {
-						continue
-					}
-
-					if deck.Owner == m.Player1.Socket.User.UID || deck.Standard {
-						player1decks = append(player1decks, legacyDeck)
-					}
-
-					if deck.Owner == m.Player2.Socket.User.UID || deck.Standard {
-						player2decks = append(player2decks, legacyDeck)
-					}
-
-				}
-
-				m.Player1.Socket.Send(server.DecksMessage{
-					Header: "choose_deck",
-					Decks:  player1decks,
-				})
-
-				m.Player2.Socket.Send(server.DecksMessage{
-					Header: "choose_deck",
-					Decks:  player2decks,
-				})
-
-				m.Chat("Server", "Waiting for both players to choose a deck")
+				m.Start()
+				return
 
 			}
 

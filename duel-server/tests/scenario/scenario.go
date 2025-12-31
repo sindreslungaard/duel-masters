@@ -23,13 +23,13 @@ func New(options Options) *TestScenario {
 	}
 
 	matchSystem := match.NewSystem(func(msg interface{}) {})
-	m := matchSystem.NewMatch("test-scenario", "test-host", true, true, match.RegularFormat)
+	m := matchSystem.NewMatch("test-scenario", "test-host", "", "test-guest", "", true, true, match.RegularFormat)
 
 	p1 := match.NewPlayer(m, 1)
-	m.Player1 = match.NewPlayerReference(p1, server.NewSocket(NewMockConnection(), m))
+	m.Player1 = match.NewPlayerReference(p1, server.NewSocket(NewMockConnection(), m, "1", "Player1"))
 
 	p2 := match.NewPlayer(m, 2)
-	m.Player2 = match.NewPlayerReference(p2, server.NewSocket(NewMockConnection(), m))
+	m.Player2 = match.NewPlayerReference(p2, server.NewSocket(NewMockConnection(), m, "2", "Player2"))
 
 	deck := []string{}
 	for range 40 {

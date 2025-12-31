@@ -52,7 +52,7 @@ func (api *API) createMatchHandler(w http.ResponseWriter, r *http.Request) {
 
 	format := match.FormatFromStr(body.Format)
 
-	m := api.matchSystem.NewMatch(name, body.HostID, visible, false, format)
+	m := api.matchSystem.NewMatch(name, body.HostID, body.HostDeck, body.GuestID, body.GuestDeck, visible, false, format)
 
 	write(w, http.StatusOK, m)
 }

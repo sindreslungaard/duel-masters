@@ -1,10 +1,15 @@
 import { useState } from "react";
 import "./App.css";
+import { SignJWT } from "jose";
+import { Duel } from "../../duel-interface";
+
+const DUEL_TOKEN_SECRET = new TextEncoder().encode("duel-secret");
 
 function App() {
   const [loading, setLoading] = useState(false);
   const [duel, setDuel] = useState<any>(null);
-  const [duelToken, setDuelToken] = useState<string | null>(null);
+  const [hostDuelToken, setHostDuelToken] = useState("");
+  const [guestDuelToken, setGuestDuelToken] = useState("");
   const [error, setError] = useState<string | null>(null);
 
   const createMatch = async () => {
@@ -35,6 +40,16 @@ function App() {
       }
 
       const data = await res.json();
+
+      const hostToken = await new SignJWT({ id: "1", username: "Player1" })
+        .setProtectedHeader({ alg: "HS256" })
+        .sign(DUEL_TOKEN_SECRET);
+      const guestToken = await new SignJWT({ id: "2", username: "Player2" })
+        .setProtectedHeader({ alg: "HS256" })
+        .sign(DUEL_TOKEN_SECRET);
+
+      setHostDuelToken(hostToken);
+      setGuestDuelToken(guestToken);
       setDuel(data);
     } catch (err) {
       setError(err instanceof Error ? err.message : "An error occurred");
@@ -45,7 +60,6 @@ function App() {
 
   return (
     <>
-      <p className="bg-red-500">hello</p>
       <button
         onClick={createMatch}
         disabled={loading}
@@ -56,9 +70,19 @@ function App() {
 
       {error && <p className="text-red-600 mt-2">Error: {error}</p>}
       {duel && (
-        <pre className="mt-2 p-2 bg-gray-100 rounded">
-          {JSON.stringify(duel, null, 2)}
-        </pre>
+        <div className="w-full h-screen flex gap-2">
+          <Duel
+            hostUrl="ws://localhost:3000"
+            duelId={duel.id}
+            duelToken={hostDuelToken}
+          ></Duel>
+
+          <Duel
+            hostUrl="ws://localhost:3000"
+            duelId={duel.id}
+            duelToken={guestDuelToken}
+          ></Duel>
+        </div>
       )}
     </>
   );
