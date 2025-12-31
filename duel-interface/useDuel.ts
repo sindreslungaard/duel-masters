@@ -69,11 +69,26 @@ export function useDuel({ duelId, duelToken, hostUrl }: UseDuelOptions) {
     send({ header: "join_match" });
   };
 
+  const sendAddToBattlezone = (virtualId: string) => {
+    send({ header: "add_to_playzone", virtualId });
+  };
+
+  const sendAddToManazone = (virtualId: string) => {
+    send({ header: "add_to_manazone", virtualId });
+  };
+
+  const sendTapAbility = (virtualId: string) => {
+    send({ header: "tap_ability", virtualId });
+  };
+
   return {
     connected,
     error,
     send,
     sendJoinMatch,
+    sendAddToBattlezone,
+    sendAddToManazone,
+    sendTapAbility,
     state,
   };
 }

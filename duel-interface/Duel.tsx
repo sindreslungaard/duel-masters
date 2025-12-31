@@ -17,7 +17,16 @@ interface DuelProps {
 }
 
 export function Duel({ duelId, duelToken, hostUrl }: DuelProps) {
-  const { connected, error, send, sendJoinMatch, state } = useDuel({
+  const {
+    connected,
+    error,
+    send,
+    sendJoinMatch,
+    sendAddToBattlezone,
+    sendAddToManazone,
+    sendTapAbility,
+    state,
+  } = useDuel({
     hostUrl,
     duelId,
     duelToken,
@@ -59,6 +68,9 @@ export function Duel({ duelId, duelToken, hostUrl }: DuelProps) {
             CreateCard({
               interactable: true,
               canAddToManazone: !state.hasAddedManaThisRound,
+              onAddToManazone: (virtualId) => {
+                sendAddToManazone(virtualId);
+              },
             })
           )}
         </div>
@@ -68,7 +80,13 @@ export function Duel({ duelId, duelToken, hostUrl }: DuelProps) {
 }
 
 function CreateCard(
-  options: { interactable?: boolean; canAddToManazone?: boolean } = {}
+  options: {
+    interactable?: boolean;
+    canAddToManazone?: boolean;
+    onAddToBattlezone?: (virtualId: string) => void;
+    onAddToManazone?: (virtualId: string) => void;
+    onTapAbility?: (virtualId: string) => void;
+  } = {}
 ) {
   return (card: CardState | ShieldState, index: number) => {
     const name = "name" in card && card.name ? card.name : undefined;
@@ -83,6 +101,9 @@ function CreateCard(
         interactable={options.interactable}
         canAddToBattlezone={cardHasFlag(card.flags, PLAYABLE_FLAG)}
         canAddToManazone={options.canAddToManazone}
+        onAddToBattlezone={options.onAddToBattlezone}
+        onAddToManazone={options.onAddToManazone}
+        onTapAbility={options.onTapAbility}
       ></Card>
     );
   };

@@ -7,6 +7,9 @@ export interface CardProps {
   canAddToBattlezone?: boolean;
   canAddToManazone?: boolean;
   hasTapAbility?: boolean;
+  onAddToBattlezone?: (virtualId: string) => void;
+  onAddToManazone?: (virtualId: string) => void;
+  onTapAbility?: (virtualId: string) => void;
 }
 
 export function Card({
@@ -18,6 +21,9 @@ export function Card({
   canAddToBattlezone = true,
   canAddToManazone = true,
   hasTapAbility = false,
+  onAddToBattlezone,
+  onAddToManazone,
+  onTapAbility,
 }: CardProps) {
   return (
     <>
@@ -35,7 +41,10 @@ export function Card({
           <div className="absolute top-2 left-1/2 -translate-x-1/2 flex gap-2 z-10 opacity-0 group-hover:opacity-100 transition-opacity">
             {canAddToBattlezone && (
               <div className="group/icon relative">
-                <div className="w-6 h-6 bg-orange-700 rounded-full flex items-center justify-center cursor-pointer hover:bg-orange-800 transition-colors">
+                <div
+                  onClick={() => onAddToBattlezone?.(virtualId!)}
+                  className="w-6 h-6 bg-orange-700 rounded-full flex items-center justify-center cursor-pointer hover:bg-orange-800 transition-colors"
+                >
                   <span className="text-white text-xs font-bold">
                     <svg
                       className="w-full p-[4px]"
@@ -57,7 +66,10 @@ export function Card({
             )}
             {canAddToManazone && (
               <div className="group/icon relative">
-                <div className="w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center cursor-pointer hover:bg-blue-600 transition-colors">
+                <div
+                  className="w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center cursor-pointer hover:bg-blue-600 transition-colors"
+                  onClick={() => onAddToManazone?.(virtualId!)}
+                >
                   <span className="text-white text-xs font-bold">
                     <svg
                       fill="#ffffff"
@@ -79,7 +91,10 @@ export function Card({
             )}
             {hasTapAbility && (
               <div className="group/icon relative">
-                <div className="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center cursor-pointer hover:bg-green-600 transition-colors">
+                <div
+                  onClick={() => onTapAbility?.(virtualId!)}
+                  className="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center cursor-pointer hover:bg-green-600 transition-colors"
+                >
                   <span className="text-white text-xs font-bold">↻</span>
                 </div>
                 <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1 px-2 py-1 bg-gray-900 text-white text-xs rounded whitespace-nowrap opacity-0 group-hover/icon:opacity-100 transition-opacity pointer-events-none">
