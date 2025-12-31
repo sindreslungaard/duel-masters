@@ -9,6 +9,7 @@ import {
   TAPPED_FLAG,
 } from "./types";
 import { Card } from "./Card";
+import { Button } from "./Button";
 
 interface DuelProps {
   hostUrl: string;
@@ -22,6 +23,7 @@ export function Duel({ duelId, duelToken, hostUrl }: DuelProps) {
     error,
     send,
     sendJoinMatch,
+    sendEndTurn,
     sendAddToBattlezone,
     sendAddToManazone,
     sendTapAbility,
@@ -43,33 +45,49 @@ export function Duel({ duelId, duelToken, hostUrl }: DuelProps) {
   }
 
   return (
-    <div className="w-full h-screen bg-gray-900 text-white p-4">
-      <div className="flex flex-col h-full">
-        <div className="h-[10%] flex gap-5">
-          {state.opponent.manazone.map(CreateCard())}
+    <div className="w-full h-screen text-white flex bg-[url('https://i.imgur.com/mWy5Cnl.gif')] bg-cover bg-center gap-2 p-2">
+      <div className="w-[300px] flex flex-col gap-2">
+        <div className="flex-1 bg-black/50 rounded-md"></div>
+        <Button
+          onClick={sendEndTurn}
+          disabled={!state.myTurn}
+          disabledTooltip="It's not your turn"
+        >
+          End turn
+        </Button>
+      </div>
+      <div className="flex flex-col h-full w-full">
+        <div className="h-[10%] flex gap-5 pb-1">
+          {state.opponent.manazone.map(CreateCard({ flipped: true }))}
         </div>
-        <div className="h-[10%] flex gap-5">
+        <div className="h-[10%] flex gap-5 p-1 w-full">
           {state.opponent.shieldzone.map(CreateCard())}
         </div>
-        <div className="flex h-[20%] gap-5">
-          {state.opponent.playzone.map(CreateCard())}
+        <div className="flex h-[20%] gap-5 p-1 w-full">
+          {state.opponent.playzone.map(CreateCard({ flipped: true }))}
         </div>
-        <div className="flex h-[20%] gap-5">
+        <div className="flex h-[20%] gap-5 p-1 w-full">
           {state.me.playzone.map(CreateCard())}
         </div>
-        <div className="flex h-[10%] gap-5">
+        <div className="flex h-[10%] gap-5 p-1 w-full">
           {state.me.shieldzone.map(CreateCard())}
         </div>
-        <div className="flex h-[10%] gap-5">
-          {state.me.manazone.map(CreateCard())}
+        <div className="flex h-[10%] gap-5 p-1 w-full">
+          {state.me.manazone.map(CreateCard({ flipped: true }))}
         </div>
-        <div className="flex h-[20%] gap-5">
+        <div className="flex h-[20%] gap-5 pt-1 w-full">
           {state.me.hand.map(
             CreateCard({
               interactable: true,
               canAddToManazone: !state.hasAddedManaThisRound,
+              onAddToBattlezone: (virtualId) => {
+                sendAddToBattlezone(virtualId);
+              },
               onAddToManazone: (virtualId) => {
                 sendAddToManazone(virtualId);
+              },
+              onTapAbility: (virtualId) => {
+                sendTapAbility(virtualId);
               },
             })
           )}
@@ -83,6 +101,7 @@ function CreateCard(
   options: {
     interactable?: boolean;
     canAddToManazone?: boolean;
+    flipped?: boolean;
     onAddToBattlezone?: (virtualId: string) => void;
     onAddToManazone?: (virtualId: string) => void;
     onTapAbility?: (virtualId: string) => void;
@@ -104,6 +123,7 @@ function CreateCard(
         onAddToBattlezone={options.onAddToBattlezone}
         onAddToManazone={options.onAddToManazone}
         onTapAbility={options.onTapAbility}
+        flipped={options.flipped}
       ></Card>
     );
   };

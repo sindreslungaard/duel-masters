@@ -63,6 +63,21 @@ function App() {
     createMatch();
   }, []);
 
+  useEffect(() => {
+    const handleKeyPress = (event: KeyboardEvent) => {
+      if (event.key === "1") {
+        setActivePlayer("host");
+      } else if (event.key === "2") {
+        setActivePlayer("guest");
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyPress);
+    return () => {
+      window.removeEventListener("keydown", handleKeyPress);
+    };
+  }, []);
+
   return (
     <>
       {/* Player Toggle */}

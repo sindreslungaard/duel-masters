@@ -3,6 +3,7 @@ export interface CardProps {
   name?: string;
   imageId?: string;
   rotated?: boolean;
+  flipped?: boolean;
   interactable?: boolean;
   canAddToBattlezone?: boolean;
   canAddToManazone?: boolean;
@@ -17,6 +18,7 @@ export function Card({
   name,
   imageId,
   rotated = false,
+  flipped = false,
   interactable = false,
   canAddToBattlezone = true,
   canAddToManazone = true,
@@ -35,7 +37,7 @@ export function Card({
                       0 0 10px rgba(255, 255, 255, 0.045);
         }
       `}</style>
-      <div className="group relative pt-10 -mt-10">
+      <div className="group relative pt-10 -mt-10 flex-shrink-0">
         {/* Icons container */}
         {interactable && (
           <div className="absolute top-2 left-1/2 -translate-x-1/2 flex gap-2 z-10 opacity-0 group-hover:opacity-100 transition-opacity">
@@ -109,9 +111,9 @@ export function Card({
         <img
           src={`https://scans.shobu.io/${imageId || "backside"}.jpg`}
           alt={name || "Backside card"}
-          className={`h-full rounded-xl transition-all duration-300 ${
+          className={`h-full flex-shrink-0 rounded-md transition-all duration-300 ${
             interactable ? "card-glow-animate cursor-grab" : ""
-          } ${rotated ? "rotate-90 mx-8" : ""}`}
+          } ${rotated ? "rotate-90 mx-8" : ""} ${flipped ? "rotate-180" : ""}`}
         />
       </div>
     </>

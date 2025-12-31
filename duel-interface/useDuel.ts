@@ -69,6 +69,10 @@ export function useDuel({ duelId, duelToken, hostUrl }: UseDuelOptions) {
     send({ header: "join_match" });
   };
 
+  const sendEndTurn = () => {
+    send({ header: "end_turn" });
+  };
+
   const sendAddToBattlezone = (virtualId: string) => {
     send({ header: "add_to_playzone", virtualId });
   };
@@ -86,6 +90,7 @@ export function useDuel({ duelId, duelToken, hostUrl }: UseDuelOptions) {
     error,
     send,
     sendJoinMatch,
+    sendEndTurn,
     sendAddToBattlezone,
     sendAddToManazone,
     sendTapAbility,
