@@ -17,6 +17,15 @@ export interface ChatMessage {
   color: string;
 }
 
+export const TAPPED_FLAG = 1;
+export const PLAYABLE_FLAG = 2;
+export const TAP_ABILITY_FLAG = 4;
+export const SHIELD_FACE_UP_FLAG = 8;
+
+export const cardHasFlag = (flags: number, flag: number): boolean => {
+  return (flags & flag) > 0;
+};
+
 // CardState stores information about the state of a card
 export interface CardState {
   virtualId: string;

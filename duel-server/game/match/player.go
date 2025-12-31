@@ -823,14 +823,14 @@ func denormalizeShields(cards []*Card) []server.ShieldState {
 
 		var flags CardFlags
 
-		if card.ShieldFaceUp {
-			flags |= ShieldFaceUpFlag
+		ss := server.ShieldState{
+			CardID: card.ID,
 		}
 
-		ss := server.ShieldState{
-			CardID:  card.ID,
-			ImageID: card.ImageID,
-			Flags:   uint8(flags),
+		if card.ShieldFaceUp {
+			ss.ImageID = card.ImageID
+			flags |= ShieldFaceUpFlag
+			ss.Flags = uint8(flags)
 		}
 
 		arr = append(arr, ss)
