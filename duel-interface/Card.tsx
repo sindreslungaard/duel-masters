@@ -47,8 +47,8 @@ export function Card({
         <img
           src={`https://scans.shobu.io/${imageId || "backside"}.jpg`}
           alt={name || "Backside card"}
-          className={`h-full flex-shrink-0 rounded-md transition-all duration-300 ${
-            interactable || draggable ? "cursor-grab" : ""
+          className={`h-full flex-shrink-0 rounded-md ${
+            (interactable || draggable) && !isDragging ? "cursor-grab" : ""
           } ${rotated ? "rotate-90 mx-8" : ""} ${flipped ? "rotate-180" : ""} ${
             isDragging ? "opacity-0" : ""
           }`}
