@@ -184,9 +184,9 @@ export function Duel({ duelId, duelToken, hostUrl }: DuelProps) {
   };
 
   return (
-    <div 
+    <div
       className="w-full h-screen text-white flex bg-[url('https://i.imgur.com/mWy5Cnl.gif')] bg-cover bg-center gap-2 p-2"
-      style={dragState ? { cursor: 'grabbing' } : {}}
+      style={dragState ? { cursor: "grabbing" } : {}}
     >
       <div className="w-[300px] flex flex-col gap-2">
         <div className="flex-1 bg-black/50 rounded-md"></div>
