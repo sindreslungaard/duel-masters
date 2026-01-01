@@ -37,11 +37,7 @@ export function Card({
                       0 0 10px rgba(255, 255, 255, 0.045);
         }
       `}</style>
-      <div
-        className={`group relative flex-shrink-0 ${
-          interactable ? "pt-10" : ""
-        }`}
-      >
+      <div className="group relative pt-10 -mt-10 flex-shrink-0">
         {/* Icons container */}
         {interactable && (
           <div className="absolute top-2 left-1/2 -translate-x-1/2 flex gap-2 z-10 opacity-0 group-hover:opacity-100 transition-opacity">
