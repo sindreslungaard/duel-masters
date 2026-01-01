@@ -55,6 +55,18 @@ export function Duel({ duelId, duelToken, hostUrl }: DuelProps) {
 
   const [dragState, setDragState] = useState<DragState | null>(null);
   const [dropZone, setDropZone] = useState<DragZone | null>(null);
+  const [selectedCardId, setSelectedCardId] = useState<string | null>(null);
+  const [dragStartPosition, setDragStartPosition] = useState<{
+    x: number;
+    y: number;
+    virtualId: string;
+    imageId: string;
+    name?: string;
+    sourceZone: DragZone;
+    rotated: boolean;
+  } | null>(null);
+
+  const DRAG_THRESHOLD = 5; // pixels
 
   const handleCardDragStart = (
     virtualId: string,
@@ -64,25 +76,52 @@ export function Duel({ duelId, duelToken, hostUrl }: DuelProps) {
     rotated: boolean,
     e: React.MouseEvent | React.TouchEvent
   ) => {
+    // Ignore right clicks
+    if ("button" in e && e.button === 2) {
+      return;
+    }
+
     const clientX = "touches" in e ? e.touches[0].clientX : e.clientX;
     const clientY = "touches" in e ? e.touches[0].clientY : e.clientY;
 
-    setDragState({
+    // Record start position but don't start dragging yet
+    setDragStartPosition({
+      x: clientX,
+      y: clientY,
       virtualId,
       imageId,
       name,
       sourceZone,
-      mouseX: clientX,
-      mouseY: clientY,
       rotated,
     });
   };
 
   const handleMouseMove = (e: MouseEvent | TouchEvent) => {
-    if (!dragState) return;
-
     const clientX = "touches" in e ? e.touches[0].clientX : e.clientX;
     const clientY = "touches" in e ? e.touches[0].clientY : e.clientY;
+
+    // Check if we should start dragging based on threshold
+    if (dragStartPosition && !dragState) {
+      const deltaX = Math.abs(clientX - dragStartPosition.x);
+      const deltaY = Math.abs(clientY - dragStartPosition.y);
+
+      if (deltaX > DRAG_THRESHOLD || deltaY > DRAG_THRESHOLD) {
+        // Start dragging
+        setDragState({
+          virtualId: dragStartPosition.virtualId,
+          imageId: dragStartPosition.imageId,
+          name: dragStartPosition.name,
+          sourceZone: dragStartPosition.sourceZone,
+          mouseX: clientX,
+          mouseY: clientY,
+          rotated: dragStartPosition.rotated,
+        });
+        setDragStartPosition(null);
+      }
+      return;
+    }
+
+    if (!dragState) return;
 
     setDragState({
       ...dragState,
@@ -109,9 +148,18 @@ export function Duel({ duelId, duelToken, hostUrl }: DuelProps) {
   };
 
   const handleMouseUp = () => {
+    // If we have a dragStartPosition but no dragState, it's a click
+    if (dragStartPosition && !dragState) {
+      setSelectedCardId(dragStartPosition.virtualId);
+      console.log("selected card", dragStartPosition.virtualId);
+      setDragStartPosition(null);
+      return;
+    }
+
     if (!dragState || !dropZone) {
       setDragState(null);
       setDropZone(null);
+      setDragStartPosition(null);
       return;
     }
 
@@ -136,10 +184,11 @@ export function Duel({ duelId, duelToken, hostUrl }: DuelProps) {
 
     setDragState(null);
     setDropZone(null);
+    setDragStartPosition(null);
   };
 
   useEffect(() => {
-    if (dragState) {
+    if (dragState || dragStartPosition) {
       window.addEventListener("mousemove", handleMouseMove);
       window.addEventListener("touchmove", handleMouseMove);
       window.addEventListener("mouseup", handleMouseUp);
@@ -152,7 +201,7 @@ export function Duel({ duelId, duelToken, hostUrl }: DuelProps) {
         window.removeEventListener("touchend", handleMouseUp);
       };
     }
-  }, [dragState, dropZone]);
+  }, [dragState, dropZone, dragStartPosition]);
 
   useEffect(() => {
     if (connected) {

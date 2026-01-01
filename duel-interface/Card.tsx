@@ -36,7 +36,18 @@ export function Card({
   const handleMouseDown = (e: React.MouseEvent | React.TouchEvent) => {
     if (draggable && onDragStart) {
       e.preventDefault();
+      // Prevent context menu on touch devices
+      if ('touches' in e) {
+        e.stopPropagation();
+      }
       onDragStart(e);
+    }
+  };
+
+  const handleContextMenu = (e: React.MouseEvent) => {
+    // Prevent default context menu when right clicking
+    if (draggable) {
+      e.preventDefault();
     }
   };
 
@@ -54,6 +65,7 @@ export function Card({
           }`}
           onMouseDown={handleMouseDown}
           onTouchStart={handleMouseDown}
+          onContextMenu={handleContextMenu}
           style={{ touchAction: "none" }}
         />
       </div>
