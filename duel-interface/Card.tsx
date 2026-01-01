@@ -11,6 +11,9 @@ export interface CardProps {
   onAddToBattlezone?: (virtualId: string) => void;
   onAddToManazone?: (virtualId: string) => void;
   onTapAbility?: (virtualId: string) => void;
+  isDragging?: boolean;
+  draggable?: boolean;
+  onDragStart?: (e: React.MouseEvent | React.TouchEvent) => void;
 }
 
 export function Card({
@@ -26,7 +29,17 @@ export function Card({
   onAddToBattlezone,
   onAddToManazone,
   onTapAbility,
+  isDragging = false,
+  draggable = false,
+  onDragStart,
 }: CardProps) {
+  const handleMouseDown = (e: React.MouseEvent | React.TouchEvent) => {
+    if (draggable && onDragStart) {
+      e.preventDefault();
+      onDragStart(e);
+    }
+  };
+
   return (
     <>
       <div className="group relative pt-10 -mt-10 flex-shrink-0">
@@ -35,8 +48,13 @@ export function Card({
           src={`https://scans.shobu.io/${imageId || "backside"}.jpg`}
           alt={name || "Backside card"}
           className={`h-full flex-shrink-0 rounded-md transition-all duration-300 ${
-            interactable ? "cursor-grab" : ""
-          } ${rotated ? "rotate-90 mx-8" : ""} ${flipped ? "rotate-180" : ""}`}
+            interactable || draggable ? "cursor-grab" : ""
+          } ${rotated ? "rotate-90 mx-8" : ""} ${flipped ? "rotate-180" : ""} ${
+            isDragging ? "opacity-0" : ""
+          }`}
+          onMouseDown={handleMouseDown}
+          onTouchStart={handleMouseDown}
+          style={{ touchAction: "none" }}
         />
       </div>
     </>
