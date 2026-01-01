@@ -37,7 +37,7 @@ export function Card({
     if (draggable && onDragStart) {
       e.preventDefault();
       // Prevent context menu on touch devices
-      if ('touches' in e) {
+      if ("touches" in e) {
         e.stopPropagation();
       }
       onDragStart(e);
