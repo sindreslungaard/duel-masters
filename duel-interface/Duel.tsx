@@ -75,7 +75,7 @@ export function Duel({ duelId, duelToken, hostUrl }: DuelProps) {
         <div className="flex h-[10%] gap-5 p-1 w-full">
           {state.me.manazone.map(CreateCard({ flipped: true }))}
         </div>
-        <div className="flex h-[20%] gap-5 pt-1 w-full">
+        <div className="flex h-[20%] gap-5 pt-1 w-full overflow-x-auto">
           {state.me.hand.map(
             CreateCard({
               interactable: true,
