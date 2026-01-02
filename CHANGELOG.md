@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+- No unreleased changes
+
+## 02/01/2025
+
 - Fixed an issue where "Elf-X" and "Cocco Lupia"'s cost reduction effect would not immediately make the add to battlezone button be visibly clickable (thanks @DragosIonita23)
 - Fixed an issue where some creatures with 0 power could not die (thanks @DragosIonita23)
 - New card "Clearlo, Grace Enforcer" (thanks @DragosIonita23
