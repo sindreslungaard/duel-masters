@@ -57,6 +57,7 @@
 - New card "Karate Potato" (thanks @DragosIonita23)
 - New card "Legacy Shell" (thanks @DragosIonita23)
 - New card "Sabermask Scarab" (thanks @DragosIonita23)
+- Fixed an issue where too much information about each players shieldzone could be seen by inspecting network traffic
 
 ## 26/10/2025
 
