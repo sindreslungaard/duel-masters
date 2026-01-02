@@ -11,6 +11,8 @@ import {
 } from "./types";
 import { Card } from "./Card";
 import { Button } from "./Button";
+import { Popup } from "./Popup";
+import { Action } from "./Action";
 
 interface DuelProps {
   hostUrl: string;
@@ -45,6 +47,18 @@ interface SelectedCard {
   zone: "hand" | "battlezone";
 }
 
+interface PreviewCard {
+  name: string;
+  imageId: string;
+}
+
+interface PreviewCards {
+  text?: string;
+  cards: PreviewCard[];
+}
+
+interface Action {}
+
 export function Duel({ duelId, duelToken, hostUrl }: DuelProps) {
   const {
     connected,
@@ -63,6 +77,17 @@ export function Duel({ duelId, duelToken, hostUrl }: DuelProps) {
     duelId,
     duelToken,
   });
+
+  // Popup modal related refs
+  const [opponentDisconnected, setOpponentDisconnected] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+  const [warningMessage, setWarningMessage] = useState("");
+  const [reconnecting, setReconnecting] = useState(false);
+  const [wait, setWait] = useState(false);
+  const [previewCard, setPreviewCard] = useState<PreviewCard | null>(null);
+  const [previewCards, setPreviewCards] = useState<PreviewCards | null>(null);
+
+  const [showPopup1, setShowPopup1] = useState(true);
 
   const [selectedCardId, setSelectedCardId] = useState<string | null>(null);
   const [selectedCard, setSelectedCard] = useState<SelectedCard | null>(null);
@@ -280,6 +305,18 @@ export function Duel({ duelId, duelToken, hostUrl }: DuelProps) {
       className="w-full h-screen text-white flex bg-[url('https://i.imgur.com/mWy5Cnl.gif')] bg-cover bg-center gap-2 p-2"
       style={dragState ? { cursor: "grabbing" } : {}}
     >
+      {/* <Popup
+        title="Your Title Here"
+        visible={showPopup1}
+        onClose={() => setShowPopup1(false)}
+        maxWidth="500px"
+        zIndex={1000}
+      >
+        <div className="p-6">Your content here</div>
+      </Popup> */}
+
+      <Action title="Your Action Here" visible={true}></Action>
+
       <div className="w-[300px] flex flex-col gap-2">
         <div className="flex-1 bg-black/50 rounded-md"></div>
 
