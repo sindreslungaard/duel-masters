@@ -1,5 +1,10 @@
 # Changelog
 
+## Next
+
+- Added support for drag and dropping cards on mobile
+- Updated duel interface to make use of more space to increase card size
+
 ## [Unreleased]
 
 - Fixed an issue where "Elf-X" and "Cocco Lupia"'s cost reduction effect would not immediately make the add to battlezone button be visibly clickable (thanks @DragosIonita23)

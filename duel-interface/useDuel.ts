@@ -81,6 +81,14 @@ export function useDuel({ duelId, duelToken, hostUrl }: UseDuelOptions) {
     send({ header: "add_to_manazone", virtualId });
   };
 
+  const sendAttackPlayer = (virtualId: string) => {
+    send({ header: "attack_player", virtualId });
+  };
+
+  const sendAttackCreature = (virtualId: string) => {
+    send({ header: "attack_player", virtualId });
+  };
+
   const sendTapAbility = (virtualId: string) => {
     send({ header: "tap_ability", virtualId });
   };
@@ -93,6 +101,8 @@ export function useDuel({ duelId, duelToken, hostUrl }: UseDuelOptions) {
     sendEndTurn,
     sendAddToBattlezone,
     sendAddToManazone,
+    sendAttackPlayer,
+    sendAttackCreature,
     sendTapAbility,
     state,
   };

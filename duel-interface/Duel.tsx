@@ -54,6 +54,8 @@ export function Duel({ duelId, duelToken, hostUrl }: DuelProps) {
     sendEndTurn,
     sendAddToBattlezone,
     sendAddToManazone,
+    sendAttackPlayer,
+    sendAttackCreature,
     sendTapAbility,
     state,
   } = useDuel({
@@ -313,6 +315,22 @@ export function Duel({ duelId, duelToken, hostUrl }: DuelProps) {
 
               {selectedCard.zone === "battlezone" && (
                 <div className="flex gap-2">
+                  <div className="flex-1 min-w-0">
+                    <Button
+                      onClick={() => sendAttackPlayer(selectedCard.virtualId)}
+                      disabled={!selectedCard.canPlay}
+                    >
+                      Attack player
+                    </Button>
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <Button
+                      onClick={() => sendAttackCreature(selectedCard.virtualId)}
+                      disabled={!selectedCard.canPlay}
+                    >
+                      Attack creature
+                    </Button>
+                  </div>
                   <div className="flex-1 min-w-0">
                     <Button
                       onClick={() => sendTapAbility(selectedCard.virtualId)}
