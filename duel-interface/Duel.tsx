@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useDuel } from "./useDuel";
 import {
   cardHasFlag,
@@ -6,6 +6,7 @@ import {
   MatchState,
   PLAYABLE_FLAG,
   ShieldState,
+  TAP_ABILITY_FLAG,
   TAPPED_FLAG,
 } from "./types";
 import { Card } from "./Card";
@@ -36,6 +37,14 @@ interface DragState {
   rotated?: boolean;
 }
 
+interface SelectedCard {
+  virtualId: string;
+  name: string;
+  canPlay: boolean;
+  hasTapAbility: boolean;
+  zone: "hand" | "battlezone";
+}
+
 export function Duel({ duelId, duelToken, hostUrl }: DuelProps) {
   const {
     connected,
@@ -53,9 +62,41 @@ export function Duel({ duelId, duelToken, hostUrl }: DuelProps) {
     duelToken,
   });
 
+  const [selectedCardId, setSelectedCardId] = useState<string | null>(null);
+  const [selectedCard, setSelectedCard] = useState<SelectedCard | null>(null);
+
+  useEffect(() => {
+    if (selectedCardId) {
+      let zone: "hand" | "battlezone" = "hand";
+      let card = state?.me.hand.find((c) => c.virtualId === selectedCardId);
+
+      if (!card) {
+        card = state?.me.playzone.find((c) => c.virtualId === selectedCardId);
+        zone = "battlezone";
+      }
+
+      if (!card) {
+        setSelectedCard(null);
+        return;
+      }
+
+      const canPlay = cardHasFlag(card.flags, PLAYABLE_FLAG);
+      const hasTapAbility = cardHasFlag(card.flags, TAP_ABILITY_FLAG);
+
+      setSelectedCard({
+        virtualId: card.virtualId,
+        name: card.name || "",
+        canPlay,
+        hasTapAbility,
+        zone,
+      });
+    } else {
+      setSelectedCard(null);
+    }
+  }, [selectedCardId, state]);
+
   const [dragState, setDragState] = useState<DragState | null>(null);
   const [dropZone, setDropZone] = useState<DragZone | null>(null);
-  const [selectedCardId, setSelectedCardId] = useState<string | null>(null);
   const [dragStartPosition, setDragStartPosition] = useState<{
     x: number;
     y: number;
@@ -239,15 +280,64 @@ export function Duel({ duelId, duelToken, hostUrl }: DuelProps) {
     >
       <div className="w-[300px] flex flex-col gap-2">
         <div className="flex-1 bg-black/50 rounded-md"></div>
-        <Button
-          onClick={sendEndTurn}
-          disabled={!state.myTurn}
-          disabledTooltip="It's not your turn"
-        >
-          End turn
-        </Button>
+
+        <div className="bg-black/50 p-2 rounded-md h-[72px] text-gray-400">
+          {selectedCard && state.myTurn && (
+            <div className="flex flex-col gap-2">
+              <div className="flex-1 text-xs whitespace-nowrap overflow-hidden text-ellipsis">
+                {selectedCard.name}
+              </div>
+              {selectedCard.zone === "hand" && (
+                <div className="flex gap-2">
+                  {/* Hand zone */}
+                  <div className="flex-1 min-w-0">
+                    <Button
+                      onClick={() =>
+                        sendAddToBattlezone(selectedCard.virtualId)
+                      }
+                      disabled={!selectedCard.canPlay}
+                    >
+                      Summon
+                    </Button>
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <Button
+                      onClick={() => sendAddToManazone(selectedCard.virtualId)}
+                      disabled={state.hasAddedManaThisRound}
+                    >
+                      Add to manazone
+                    </Button>
+                  </div>
+                </div>
+              )}
+
+              {selectedCard.zone === "battlezone" && (
+                <div className="flex gap-2">
+                  <div className="flex-1 min-w-0">
+                    <Button
+                      onClick={() => sendTapAbility(selectedCard.virtualId)}
+                      disabled={!selectedCard.canPlay}
+                    >
+                      Tap ability
+                    </Button>
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+
+        <div className="bg-black/50 p-2 rounded-md">
+          <Button
+            onClick={sendEndTurn}
+            disabled={!state.myTurn}
+            disabledTooltip="It's not your turn"
+          >
+            End turn
+          </Button>
+        </div>
       </div>
-      <div className="flex flex-col h-full w-full">
+      <div className="flex flex-1 flex-col h-full w-full">
         <div
           className="h-[10%] flex gap-5 pb-1 relative"
           data-dropzone="opponentManazone"
