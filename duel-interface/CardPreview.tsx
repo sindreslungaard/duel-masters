@@ -1,12 +1,19 @@
 import { useEffect } from "react";
+import { Button } from "./Button";
 
 interface CardPreviewProps {
   visible: boolean;
-  imageUrl: string;
+  imageId: string | null;
+  name: string | null;
   onClose: () => void;
 }
 
-export function CardPreview({ visible, imageUrl, onClose }: CardPreviewProps) {
+export function CardPreview({
+  visible,
+  imageId,
+  name,
+  onClose,
+}: CardPreviewProps) {
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
       if (e.key === "Escape" && visible) {
@@ -33,6 +40,8 @@ export function CardPreview({ visible, imageUrl, onClose }: CardPreviewProps) {
 
   if (!visible) return null;
 
+  const imageUrl = imageId ? `https://scans.shobu.io/${imageId}.jpg` : "";
+
   return (
     <div
       className="fixed inset-0 bg-black/60 flex items-center justify-center p-4"
@@ -43,20 +52,18 @@ export function CardPreview({ visible, imageUrl, onClose }: CardPreviewProps) {
         <img
           src={imageUrl}
           alt="Card preview"
-          className="rounded-lg shadow-2xl"
+          className="shadow-2xl"
           style={{
             maxHeight: "80vh",
             maxWidth: "90vw",
             height: "auto",
             width: "auto",
+            borderRadius: "5%",
           }}
         />
-        <button
-          onClick={onClose}
-          className="px-6 py-2 bg-gray-800 hover:bg-gray-700 text-white rounded-md transition-colors"
-        >
+        <Button variant="gray" onClick={onClose}>
           Close
-        </button>
+        </Button>
       </div>
     </div>
   );

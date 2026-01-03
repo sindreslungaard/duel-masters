@@ -63,7 +63,7 @@ export function Card({
           src={`https://scans.shobu.io/${imageId || "backside"}.jpg`}
           alt={name || "Backside card"}
           draggable={false}
-          className={`h-full flex-shrink-0 rounded-md ${
+          className={`h-full flex-shrink-0 ${
             interactable && !isDragging ? "cursor-grab" : ""
           } ${
             rotated && flipped
@@ -79,7 +79,7 @@ export function Card({
           onMouseDown={handleMouseDown}
           onTouchStart={handleMouseDown}
           onContextMenu={handleContextMenu}
-          style={{ touchAction: "none" }}
+          style={{ touchAction: "none", borderRadius: "5%" }}
         />
       </div>
     </>

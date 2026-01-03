@@ -134,7 +134,6 @@ export function Duel({ duelId, duelToken, hostUrl }: DuelProps) {
   const [wait, setWait] = useState(false);
   const [previewCard, setPreviewCard] = useState<PreviewCard | null>(null);
   const [previewCards, setPreviewCards] = useState<PreviewCards | null>(null);
-  const [previewImageUrl, setPreviewImageUrl] = useState<string | null>(null);
 
   const [showPopup1, setShowPopup1] = useState(true);
 
@@ -487,8 +486,8 @@ export function Duel({ duelId, duelToken, hostUrl }: DuelProps) {
                   flipped: true,
                   dragState,
                   zone: "opponentManazone",
-                  onRightClick: (imageId) =>
-                    setPreviewImageUrl(`https://scans.shobu.io/${imageId}.jpg`),
+                  onRightClick: (imageId, name) =>
+                    setPreviewCard({ imageId, name: name || "" }),
                 })
               )}
             </div>
@@ -509,8 +508,8 @@ export function Duel({ duelId, duelToken, hostUrl }: DuelProps) {
                 CreateCard({
                   dragState,
                   zone: "opponentShieldzone",
-                  onRightClick: (imageId) =>
-                    setPreviewImageUrl(`https://scans.shobu.io/${imageId}.jpg`),
+                  onRightClick: (imageId, name) =>
+                    setPreviewCard({ imageId, name: name || "" }),
                 })
               )}
             </div>
@@ -532,8 +531,8 @@ export function Duel({ duelId, duelToken, hostUrl }: DuelProps) {
                   flipped: true,
                   dragState,
                   zone: "opponentPlayzone",
-                  onRightClick: (imageId) =>
-                    setPreviewImageUrl(`https://scans.shobu.io/${imageId}.jpg`),
+                  onRightClick: (imageId, name) =>
+                    setPreviewCard({ imageId, name: name || "" }),
                 })
               )}
             </div>
@@ -555,8 +554,8 @@ export function Duel({ duelId, duelToken, hostUrl }: DuelProps) {
                   zone: "myPlayzone",
                   draggable: state.myTurn,
                   onDragStart: handleCardDragStart,
-                  onRightClick: (imageId) =>
-                    setPreviewImageUrl(`https://scans.shobu.io/${imageId}.jpg`),
+                  onRightClick: (imageId, name) =>
+                    setPreviewCard({ imageId, name: name || "" }),
                 })
               )}
             </div>
@@ -577,8 +576,8 @@ export function Duel({ duelId, duelToken, hostUrl }: DuelProps) {
                 CreateCard({
                   dragState,
                   zone: "myShieldzone",
-                  onRightClick: (imageId) =>
-                    setPreviewImageUrl(`https://scans.shobu.io/${imageId}.jpg`),
+                  onRightClick: (imageId, name) =>
+                    setPreviewCard({ imageId, name: name || "" }),
                 })
               )}
             </div>
@@ -597,8 +596,8 @@ export function Duel({ duelId, duelToken, hostUrl }: DuelProps) {
                   flipped: true,
                   dragState,
                   zone: "myManazone",
-                  onRightClick: (imageId) =>
-                    setPreviewImageUrl(`https://scans.shobu.io/${imageId}.jpg`),
+                  onRightClick: (imageId, name) =>
+                    setPreviewCard({ imageId, name: name || "" }),
                 })
               )}
             </div>
@@ -627,8 +626,8 @@ export function Duel({ duelId, duelToken, hostUrl }: DuelProps) {
                   zone: "hand",
                   draggable: state.myTurn,
                   onDragStart: handleCardDragStart,
-                  onRightClick: (imageId) =>
-                    setPreviewImageUrl(`https://scans.shobu.io/${imageId}.jpg`),
+                  onRightClick: (imageId, name) =>
+                    setPreviewCard({ imageId, name: name || "" }),
                 })
               )}
             </div>
@@ -648,18 +647,19 @@ export function Duel({ duelId, duelToken, hostUrl }: DuelProps) {
             <img
               src={`https://scans.shobu.io/${dragState.imageId}.jpg`}
               alt={dragState.name || "Card"}
-              className={`h-[150px] rounded-md opacity-90 ${
+              className={`h-[150px] opacity-90 ${
                 dragState.rotated ? "rotate-90" : ""
               }`}
-              style={{ pointerEvents: "none" }}
+              style={{ pointerEvents: "none", borderRadius: "5%" }}
             />
           </div>
         )}
       </div>
       <CardPreview
-        visible={!!previewImageUrl}
-        imageUrl={previewImageUrl || ""}
-        onClose={() => setPreviewImageUrl(null)}
+        visible={!!previewCard}
+        imageId={previewCard?.imageId || null}
+        name={previewCard?.name || null}
+        onClose={() => setPreviewCard(null)}
       />
     </>
   );
@@ -685,7 +685,7 @@ function CreateCard(
       rotated: boolean,
       e: React.MouseEvent | React.TouchEvent
     ) => void;
-    onRightClick?: (imageId: string) => void;
+    onRightClick?: (imageId: string, name?: string) => void;
   } = {}
 ) {
   return (card: CardState | ShieldState, index: number) => {
@@ -724,7 +724,7 @@ function CreateCard(
         }}
         onRightClick={() => {
           if (options.onRightClick && card.uid) {
-            options.onRightClick(card.uid);
+            options.onRightClick(card.uid, name);
           }
         }}
       ></Card>
