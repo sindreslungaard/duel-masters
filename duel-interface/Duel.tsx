@@ -356,7 +356,7 @@ export function Duel({ duelId, duelToken, hostUrl }: DuelProps) {
         className="w-full h-screen text-white flex bg-[url('https://i.imgur.com/mWy5Cnl.gif')] bg-cover bg-no-repeat gap-2 p-1 custom-scrollbar"
         style={dragState ? { cursor: "grabbing" } : {}}
       >
-      {/* <Popup
+        {/* <Popup
         title="Your Title Here"
         visible={showPopup1}
         onClose={() => setShowPopup1(false)}
@@ -366,255 +366,270 @@ export function Duel({ duelId, duelToken, hostUrl }: DuelProps) {
         <div className="p-6">Your content here</div>
       </Popup> */}
 
-      {action && (
-        <Action
-          title="Action Required"
-          visible={true}
-          error={actionError ? actionError.message : undefined}
-          actionType={action.actionType}
-          cards={action.cards}
-          text={action.text}
-          minSelections={action.minSelections}
-          maxSelections={action.maxSelections}
-          cancellable={action.cancellable}
-          unselectableCards={action.unselectableCards}
-          choices={action.choices}
-          onChoose={sendAction}
-          onClose={() => sendAction({ cards: [], cancel: true })}
-        ></Action>
-      )}
+        {action && (
+          <Action
+            title="Action Required"
+            visible={true}
+            error={actionError ? actionError.message : undefined}
+            actionType={action.actionType}
+            cards={action.cards}
+            text={action.text}
+            minSelections={action.minSelections}
+            maxSelections={action.maxSelections}
+            cancellable={action.cancellable}
+            unselectableCards={action.unselectableCards}
+            choices={action.choices}
+            onChoose={sendAction}
+            onClose={() => sendAction({ cards: [], cancel: true })}
+          ></Action>
+        )}
 
-      <div className="w-[300px] flex flex-col gap-2">
-        <div className="flex-1 bg-black/30 rounded-md overflow-hidden">
-          <Chat messages={chatMessages} onSendMessage={sendChat} />
-        </div>
+        <div className="w-[300px] flex flex-col gap-2">
+          <div className="flex-1 bg-black/30 rounded-md overflow-hidden">
+            <Chat messages={chatMessages} onSendMessage={sendChat} />
+          </div>
 
-        <div className="bg-black/50 p-2 rounded-md h-[72px] text-gray-400">
-          {selectedCard && state.myTurn && (
-            <div className="flex flex-col gap-2">
-              <div className="flex-1 text-xs whitespace-nowrap overflow-hidden text-ellipsis">
-                {selectedCard.name}
-              </div>
-              {selectedCard.zone === "hand" && (
-                <div className="flex gap-2">
-                  {/* Hand zone */}
-                  <div className="flex-1 min-w-0">
-                    <Button
-                      onClick={() =>
-                        sendAddToBattlezone(selectedCard.virtualId)
-                      }
-                      disabled={!selectedCard.canPlay}
-                    >
-                      Summon
-                    </Button>
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <Button
-                      onClick={() => sendAddToManazone(selectedCard.virtualId)}
-                      disabled={state.hasAddedManaThisRound}
-                    >
-                      Add to manazone
-                    </Button>
-                  </div>
+          <div className="bg-black/50 p-2 rounded-md h-[72px] text-gray-400">
+            {selectedCard && state.myTurn && (
+              <div className="flex flex-col gap-2">
+                <div className="flex-1 text-xs whitespace-nowrap overflow-hidden text-ellipsis">
+                  {selectedCard.name}
                 </div>
-              )}
-
-              {selectedCard.zone === "battlezone" && (
-                <div className="flex gap-2">
-                  <div className="flex-1 min-w-0">
-                    <Button
-                      onClick={() => sendAttackPlayer(selectedCard.virtualId)}
-                      disabled={!selectedCard.canPlay}
-                    >
-                      Attack Player
-                    </Button>
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <Button
-                      onClick={() => sendAttackCreature(selectedCard.virtualId)}
-                      disabled={!selectedCard.canPlay}
-                    >
-                      Attack Creature
-                    </Button>
-                  </div>
-                  {selectedCard.hasTapAbility && (
+                {selectedCard.zone === "hand" && (
+                  <div className="flex gap-2">
+                    {/* Hand zone */}
                     <div className="flex-1 min-w-0">
                       <Button
-                        onClick={() => sendTapAbility(selectedCard.virtualId)}
+                        onClick={() =>
+                          sendAddToBattlezone(selectedCard.virtualId)
+                        }
                         disabled={!selectedCard.canPlay}
                       >
-                        Tap Ability
+                        Summon
                       </Button>
                     </div>
-                  )}
-                </div>
+                    <div className="flex-1 min-w-0">
+                      <Button
+                        onClick={() =>
+                          sendAddToManazone(selectedCard.virtualId)
+                        }
+                        disabled={state.hasAddedManaThisRound}
+                      >
+                        Add to manazone
+                      </Button>
+                    </div>
+                  </div>
+                )}
+
+                {selectedCard.zone === "battlezone" && (
+                  <div className="flex gap-2">
+                    <div className="flex-1 min-w-0">
+                      <Button
+                        onClick={() => sendAttackPlayer(selectedCard.virtualId)}
+                        disabled={!selectedCard.canPlay}
+                      >
+                        Attack Player
+                      </Button>
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <Button
+                        onClick={() =>
+                          sendAttackCreature(selectedCard.virtualId)
+                        }
+                        disabled={!selectedCard.canPlay}
+                      >
+                        Attack Creature
+                      </Button>
+                    </div>
+                    {selectedCard.hasTapAbility && (
+                      <div className="flex-1 min-w-0">
+                        <Button
+                          onClick={() => sendTapAbility(selectedCard.virtualId)}
+                          disabled={!selectedCard.canPlay}
+                        >
+                          Tap Ability
+                        </Button>
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+
+          <div className="bg-black/30 p-2 rounded-md">
+            <Button
+              onClick={sendEndTurn}
+              disabled={!state.myTurn}
+              disabledTooltip="It's not your turn"
+            >
+              End turn
+            </Button>
+          </div>
+        </div>
+        <div className="flex flex-1 flex-col h-full w-full">
+          <div
+            className="h-[10%] flex gap-5 pb-1 relative"
+            data-dropzone="opponentManazone"
+          >
+            <div
+              className="absolute inset-0 z-0"
+              data-dropzone="opponentManazone"
+            />
+            {isValidDropZone("opponentManazone") && (
+              <div className="absolute inset-0 bg-green-500/30 border-2 border-green-500 rounded-md pointer-events-none z-10" />
+            )}
+            <div className="relative z-10 flex gap-5 w-full">
+              {state.opponent.manazone.map(
+                CreateCard({
+                  flipped: true,
+                  dragState,
+                  zone: "opponentManazone",
+                })
               )}
             </div>
-          )}
-        </div>
-
-        <div className="bg-black/30 p-2 rounded-md">
-          <Button
-            onClick={sendEndTurn}
-            disabled={!state.myTurn}
-            disabledTooltip="It's not your turn"
-          >
-            End turn
-          </Button>
-        </div>
-      </div>
-      <div className="flex flex-1 flex-col h-full w-full">
-        <div
-          className="h-[10%] flex gap-5 pb-1 relative"
-          data-dropzone="opponentManazone"
-        >
-          <div
-            className="absolute inset-0 z-0"
-            data-dropzone="opponentManazone"
-          />
-          {isValidDropZone("opponentManazone") && (
-            <div className="absolute inset-0 bg-green-500/30 border-2 border-green-500 rounded-md pointer-events-none z-10" />
-          )}
-          <div className="relative z-10 flex gap-5 w-full">
-            {state.opponent.manazone.map(
-              CreateCard({ flipped: true, dragState, zone: "opponentManazone" })
-            )}
           </div>
-        </div>
-        <div
-          className="h-[10%] flex gap-5 p-1 w-full relative"
-          data-dropzone="opponentShieldzone"
-        >
           <div
-            className="absolute inset-0 z-0"
+            className="h-[10%] flex gap-5 p-1 w-full relative"
             data-dropzone="opponentShieldzone"
-          />
-          {isValidDropZone("opponentShieldzone") && (
-            <div className="absolute inset-0 bg-green-500/30 border-2 border-green-500 rounded-md pointer-events-none z-10" />
-          )}
-          <div className="relative z-10 flex gap-5 w-full">
-            {state.opponent.shieldzone.map(
-              CreateCard({ dragState, zone: "opponentShieldzone" })
+          >
+            <div
+              className="absolute inset-0 z-0"
+              data-dropzone="opponentShieldzone"
+            />
+            {isValidDropZone("opponentShieldzone") && (
+              <div className="absolute inset-0 bg-green-500/30 border-2 border-green-500 rounded-md pointer-events-none z-10" />
             )}
+            <div className="relative z-10 flex gap-5 w-full">
+              {state.opponent.shieldzone.map(
+                CreateCard({ dragState, zone: "opponentShieldzone" })
+              )}
+            </div>
           </div>
-        </div>
-        <div
-          className="flex h-[20%] gap-5 p-1 w-full relative"
-          data-dropzone="opponentPlayzone"
-        >
           <div
-            className="absolute inset-0 z-0"
+            className="flex h-[20%] gap-5 p-1 w-full relative"
             data-dropzone="opponentPlayzone"
-          />
-          {isValidDropZone("opponentPlayzone") && (
-            <div className="absolute inset-0 bg-green-500/30 border-2 border-green-500 rounded-md pointer-events-none z-10" />
-          )}
-          <div className="relative z-10 flex gap-5 w-full">
-            {state.opponent.playzone.map(
-              CreateCard({ flipped: true, dragState, zone: "opponentPlayzone" })
+          >
+            <div
+              className="absolute inset-0 z-0"
+              data-dropzone="opponentPlayzone"
+            />
+            {isValidDropZone("opponentPlayzone") && (
+              <div className="absolute inset-0 bg-green-500/30 border-2 border-green-500 rounded-md pointer-events-none z-10" />
             )}
+            <div className="relative z-10 flex gap-5 w-full">
+              {state.opponent.playzone.map(
+                CreateCard({
+                  flipped: true,
+                  dragState,
+                  zone: "opponentPlayzone",
+                })
+              )}
+            </div>
+          </div>
+          <div
+            className="flex h-[20%] gap-5 p-1 w-full relative"
+            data-dropzone="myPlayzone"
+          >
+            <div className="absolute inset-0 z-0" data-dropzone="myPlayzone" />
+            {isValidDropZone("myPlayzone") && (
+              <div className="absolute inset-0 bg-green-500/30 border-2 border-green-500 rounded-md pointer-events-none z-10" />
+            )}
+            <div className="relative z-10 flex gap-5 w-full">
+              {state.me.playzone.map(
+                CreateCard({
+                  selected: (id: string) => id === selectedCardId,
+                  interactable: true,
+                  dragState,
+                  zone: "myPlayzone",
+                  draggable: true,
+                  onDragStart: handleCardDragStart,
+                })
+              )}
+            </div>
+          </div>
+          <div
+            className="flex h-[10%] gap-5 p-1 w-full relative"
+            data-dropzone="myShieldzone"
+          >
+            <div
+              className="absolute inset-0 z-0"
+              data-dropzone="myShieldzone"
+            />
+            {isValidDropZone("myShieldzone") && (
+              <div className="absolute inset-0 bg-green-500/30 border-2 border-green-500 rounded-md pointer-events-none z-10" />
+            )}
+            <div className="relative z-10 flex gap-5 w-full">
+              {state.me.shieldzone.map(
+                CreateCard({ dragState, zone: "myShieldzone" })
+              )}
+            </div>
+          </div>
+          <div
+            className="flex h-[10%] gap-5 p-1 w-full relative"
+            data-dropzone="myManazone"
+          >
+            <div className="absolute inset-0 z-0" data-dropzone="myManazone" />
+            {isValidDropZone("myManazone") && (
+              <div className="absolute inset-0 bg-green-500/30 border-2 border-green-500 rounded-md pointer-events-none z-10" />
+            )}
+            <div className="relative z-10 flex gap-5 w-full">
+              {state.me.manazone.map(
+                CreateCard({ flipped: true, dragState, zone: "myManazone" })
+              )}
+            </div>
+          </div>
+          <div
+            className="flex h-[20%] gap-5 pt-1 w-full relative"
+            data-dropzone="hand"
+          >
+            <div className="absolute inset-0 z-0" data-dropzone="hand" />
+            <div className="relative z-10 flex gap-5 w-full">
+              {state.me.hand.map(
+                CreateCard({
+                  selected: (id: string) => id === selectedCardId,
+                  interactable: true,
+                  canAddToManazone: !state.hasAddedManaThisRound,
+                  onAddToBattlezone: (virtualId) => {
+                    sendAddToBattlezone(virtualId);
+                  },
+                  onAddToManazone: (virtualId) => {
+                    sendAddToManazone(virtualId);
+                  },
+                  onTapAbility: (virtualId) => {
+                    sendTapAbility(virtualId);
+                  },
+                  dragState,
+                  zone: "hand",
+                  draggable: true,
+                  onDragStart: handleCardDragStart,
+                })
+              )}
+            </div>
           </div>
         </div>
-        <div
-          className="flex h-[20%] gap-5 p-1 w-full relative"
-          data-dropzone="myPlayzone"
-        >
-          <div className="absolute inset-0 z-0" data-dropzone="myPlayzone" />
-          {isValidDropZone("myPlayzone") && (
-            <div className="absolute inset-0 bg-green-500/30 border-2 border-green-500 rounded-md pointer-events-none z-10" />
-          )}
-          <div className="relative z-10 flex gap-5 w-full">
-            {state.me.playzone.map(
-              CreateCard({
-                selected: (id: string) => id === selectedCardId,
-                interactable: true,
-                dragState,
-                zone: "myPlayzone",
-                draggable: true,
-                onDragStart: handleCardDragStart,
-              })
-            )}
+        {/* Floating card that follows cursor */}
+        {dragState && (
+          <div
+            className="fixed pointer-events-none z-50"
+            style={{
+              left: dragState.mouseX,
+              top: dragState.mouseY,
+              transform: "translate(-50%, -50%)",
+              pointerEvents: "none",
+            }}
+          >
+            <img
+              src={`https://scans.shobu.io/${dragState.imageId}.jpg`}
+              alt={dragState.name || "Card"}
+              className={`h-[150px] rounded-md opacity-90 ${
+                dragState.rotated ? "rotate-90" : ""
+              }`}
+              style={{ pointerEvents: "none" }}
+            />
           </div>
-        </div>
-        <div
-          className="flex h-[10%] gap-5 p-1 w-full relative"
-          data-dropzone="myShieldzone"
-        >
-          <div className="absolute inset-0 z-0" data-dropzone="myShieldzone" />
-          {isValidDropZone("myShieldzone") && (
-            <div className="absolute inset-0 bg-green-500/30 border-2 border-green-500 rounded-md pointer-events-none z-10" />
-          )}
-          <div className="relative z-10 flex gap-5 w-full">
-            {state.me.shieldzone.map(
-              CreateCard({ dragState, zone: "myShieldzone" })
-            )}
-          </div>
-        </div>
-        <div
-          className="flex h-[10%] gap-5 p-1 w-full relative"
-          data-dropzone="myManazone"
-        >
-          <div className="absolute inset-0 z-0" data-dropzone="myManazone" />
-          {isValidDropZone("myManazone") && (
-            <div className="absolute inset-0 bg-green-500/30 border-2 border-green-500 rounded-md pointer-events-none z-10" />
-          )}
-          <div className="relative z-10 flex gap-5 w-full">
-            {state.me.manazone.map(
-              CreateCard({ flipped: true, dragState, zone: "myManazone" })
-            )}
-          </div>
-        </div>
-        <div
-          className="flex h-[20%] gap-5 pt-1 w-full relative"
-          data-dropzone="hand"
-        >
-          <div className="absolute inset-0 z-0" data-dropzone="hand" />
-          <div className="relative z-10 flex gap-5 w-full">
-            {state.me.hand.map(
-              CreateCard({
-                selected: (id: string) => id === selectedCardId,
-                interactable: true,
-                canAddToManazone: !state.hasAddedManaThisRound,
-                onAddToBattlezone: (virtualId) => {
-                  sendAddToBattlezone(virtualId);
-                },
-                onAddToManazone: (virtualId) => {
-                  sendAddToManazone(virtualId);
-                },
-                onTapAbility: (virtualId) => {
-                  sendTapAbility(virtualId);
-                },
-                dragState,
-                zone: "hand",
-                draggable: true,
-                onDragStart: handleCardDragStart,
-              })
-            )}
-          </div>
-        </div>
+        )}
       </div>
-      {/* Floating card that follows cursor */}
-      {dragState && (
-        <div
-          className="fixed pointer-events-none z-50"
-          style={{
-            left: dragState.mouseX,
-            top: dragState.mouseY,
-            transform: "translate(-50%, -50%)",
-            pointerEvents: "none",
-          }}
-        >
-          <img
-            src={`https://scans.shobu.io/${dragState.imageId}.jpg`}
-            alt={dragState.name || "Card"}
-            className={`h-[150px] rounded-md opacity-90 ${
-              dragState.rotated ? "rotate-90" : ""
-            }`}
-            style={{ pointerEvents: "none" }}
-          />
-        </div>
-      )}
-    </div>
     </>
   );
 }
@@ -679,4 +694,3 @@ function CreateCard(
     );
   };
 }
-

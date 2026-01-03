@@ -83,9 +83,7 @@ export function Chat({ messages, onSendMessage }: ChatProps) {
                 <div className="text-sm">
                   {!fromServer && (
                     <>
-                      <span className="text-orange-500">
-                        {message.sender}:
-                      </span>{" "}
+                      <span className="text-orange-500">{message.sender}:</span>{" "}
                     </>
                   )}
                   <span className="text-white">{message.message}</span>
