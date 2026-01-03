@@ -32,6 +32,7 @@ export function Action({
   onChoose,
   onClose,
   onCardRightClick,
+  maxSelections,
 }: ActionProps) {
   const [selectedCardIds, setSelectedCardIds] = useState(new Set<string>());
 
@@ -44,6 +45,10 @@ export function Action({
         return next;
       });
     } else {
+      // Don't allow selecting more than maxSelections
+      if (selectedCardIds.size >= maxSelections) {
+        return;
+      }
       setSelectedCardIds((prev) => new Set(prev).add(cardId));
     }
   };
@@ -63,9 +68,11 @@ export function Action({
       >
         <div className="px-6 py-6 pt-4">
           <div className="text-sm text-gray-100">{text}</div>
-          <div 
+          <div
             className="grid gap-2 p-2 mt-4 bg-black/30 rounded-md w-fit"
-            style={{ gridTemplateColumns: `repeat(${gridCols}, minmax(0, 1fr))` }}
+            style={{
+              gridTemplateColumns: `repeat(${gridCols}, minmax(0, 1fr))`,
+            }}
           >
             {cards?.map((card, index) => (
               <div key={index} className="w-full">
