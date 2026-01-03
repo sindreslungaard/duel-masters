@@ -382,6 +382,9 @@ export function Duel({ duelId, duelToken, hostUrl }: DuelProps) {
             choices={action.choices}
             onChoose={sendAction}
             onClose={() => sendAction({ cards: [], cancel: true })}
+            onCardRightClick={(imageId, name) =>
+              setPreviewCard({ imageId, name: name || "" })
+            }
           ></Action>
         )}
 
@@ -470,7 +473,7 @@ export function Duel({ duelId, duelToken, hostUrl }: DuelProps) {
         </div>
         <div className="flex flex-1 flex-col h-full w-full">
           <div
-            className="h-[10%] flex gap-5 pb-1 relative"
+            className="h-[10%] flex gap-5 pb-1 relative overflow-x-auto"
             data-dropzone="opponentManazone"
           >
             <div
@@ -493,7 +496,7 @@ export function Duel({ duelId, duelToken, hostUrl }: DuelProps) {
             </div>
           </div>
           <div
-            className="h-[10%] flex gap-5 p-1 w-full relative"
+            className="h-[10%] flex gap-5 p-1 w-full relative overflow-x-auto"
             data-dropzone="opponentShieldzone"
           >
             <div
@@ -515,7 +518,7 @@ export function Duel({ duelId, duelToken, hostUrl }: DuelProps) {
             </div>
           </div>
           <div
-            className="flex h-[20%] gap-5 p-1 w-full relative"
+            className="flex h-[20%] gap-5 p-1 w-full relative overflow-x-auto"
             data-dropzone="opponentPlayzone"
           >
             <div
@@ -538,7 +541,7 @@ export function Duel({ duelId, duelToken, hostUrl }: DuelProps) {
             </div>
           </div>
           <div
-            className="flex h-[20%] gap-5 p-1 w-full relative"
+            className="flex h-[20%] gap-5 p-1 w-full relative overflow-x-auto"
             data-dropzone="myPlayzone"
           >
             <div className="absolute inset-0 z-0" data-dropzone="myPlayzone" />
@@ -561,11 +564,11 @@ export function Duel({ duelId, duelToken, hostUrl }: DuelProps) {
             </div>
           </div>
           <div
-            className="flex h-[10%] gap-5 p-1 w-full relative"
+            className="flex h-[10%] gap-5 p-1 w-full relative overflow-x-auto"
             data-dropzone="myShieldzone"
           >
             <div
-              className="absolute inset-0 z-0"
+              className="absolute inset-0 z-0 "
               data-dropzone="myShieldzone"
             />
             {isValidDropZone("myShieldzone") && (
@@ -583,14 +586,14 @@ export function Duel({ duelId, duelToken, hostUrl }: DuelProps) {
             </div>
           </div>
           <div
-            className="flex h-[10%] gap-5 p-1 w-full relative"
+            className="flex h-[10%] gap-5 p-1 w-full relative overflow-x-auto"
             data-dropzone="myManazone"
           >
             <div className="absolute inset-0 z-0" data-dropzone="myManazone" />
             {isValidDropZone("myManazone") && (
               <div className="absolute inset-0 bg-green-500/30 border-2 border-green-500 rounded-md pointer-events-none z-10" />
             )}
-            <div className="relative z-10 flex gap-5 w-full">
+            <div className="relative z-10 flex gap-5 w-full ">
               {state.me.manazone.map(
                 CreateCard({
                   flipped: true,
@@ -603,7 +606,7 @@ export function Duel({ duelId, duelToken, hostUrl }: DuelProps) {
             </div>
           </div>
           <div
-            className="flex h-[20%] gap-5 pt-1 w-full relative"
+            className="flex h-[20%] gap-5 pt-1 w-full relative overflow-x-auto"
             data-dropzone="hand"
           >
             <div className="absolute inset-0 z-0" data-dropzone="hand" />

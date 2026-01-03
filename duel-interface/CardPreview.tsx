@@ -62,7 +62,7 @@ export function CardPreview({
           }}
         />
         <Button variant="gray" onClick={onClose}>
-          Close
+          Close Preview
         </Button>
       </div>
     </div>

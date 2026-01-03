@@ -9,6 +9,7 @@ export interface ActionProps {
   error?: string;
   onChoose: (data: { cards: string[]; cancel: false; count?: number }) => void;
   onClose: () => void;
+  onCardRightClick?: (imageId: string, name?: string) => void;
 
   // Action details
   actionType: ActionType;
@@ -30,6 +31,7 @@ export function Action({
   visible,
   onChoose,
   onClose,
+  onCardRightClick,
 }: ActionProps) {
   const [selectedCardIds, setSelectedCardIds] = useState(new Set<string>());
 
@@ -63,6 +65,12 @@ export function Action({
               <div key={index} className="w-30">
                 <img
                   onClick={() => selectCard(card.virtualId)}
+                  onContextMenu={(e) => {
+                    e.preventDefault();
+                    if (onCardRightClick && card.uid) {
+                      onCardRightClick(card.uid, card.name);
+                    }
+                  }}
                   className={`rounded-md ${
                     selectedCardIds.has(card.virtualId)
                       ? "ring-1 ring-blue-100"
@@ -70,6 +78,7 @@ export function Action({
                   }`}
                   src={`https://scans.shobu.io/${card.uid}.jpg`}
                   alt={card.name}
+                  style={{ borderRadius: "5%" }}
                 />
               </div>
             ))}

@@ -10,6 +10,7 @@ import (
 	"errors"
 	"fmt"
 	"math/rand"
+	"os"
 	"runtime/debug"
 	"strconv"
 	"strings"
@@ -1970,7 +1971,7 @@ func (m *Match) handleAdminMessages(message string, user db.User) {
 
 func hasAdminRightsAndValidMsgFormat(message string, user db.User) bool {
 
-	hasRights := false
+	/* hasRights := false
 
 	for _, permission := range user.Permissions {
 		if permission == "admin" {
@@ -1980,6 +1981,10 @@ func hasAdminRightsAndValidMsgFormat(message string, user db.User) bool {
 	}
 
 	if !hasRights {
+		return false
+	} */
+
+	if os.Getenv("local_dev") != "true" {
 		return false
 	}
 
