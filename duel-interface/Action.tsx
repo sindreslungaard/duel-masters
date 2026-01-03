@@ -48,6 +48,9 @@ export function Action({
     }
   };
 
+  const cardCount = cards?.length || 0;
+  const gridCols = Math.max(3, Math.min(cardCount, 6));
+
   return (
     <>
       <Popup
@@ -60,9 +63,12 @@ export function Action({
       >
         <div className="px-6 py-6 pt-4">
           <div className="text-sm text-gray-100">{text}</div>
-          <div className="flex gap-2 p-2 mt-4 bg-black/30 rounded-md">
+          <div 
+            className="grid gap-2 p-2 mt-4 bg-black/30 rounded-md w-fit"
+            style={{ gridTemplateColumns: `repeat(${gridCols}, minmax(0, 1fr))` }}
+          >
             {cards?.map((card, index) => (
-              <div key={index} className="w-30">
+              <div key={index} className="w-full">
                 <img
                   onClick={() => selectCard(card.virtualId)}
                   onContextMenu={(e) => {
