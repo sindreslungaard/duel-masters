@@ -15,6 +15,7 @@ export interface CardProps {
   isDragging?: boolean;
   draggable?: boolean;
   onDragStart?: (e: React.MouseEvent | React.TouchEvent) => void;
+  onRightClick?: () => void;
 }
 
 export function Card({
@@ -34,6 +35,7 @@ export function Card({
   isDragging = false,
   draggable = false,
   onDragStart,
+  onRightClick,
 }: CardProps) {
   const handleMouseDown = (e: React.MouseEvent | React.TouchEvent) => {
     if (draggable && onDragStart) {
@@ -47,9 +49,9 @@ export function Card({
   };
 
   const handleContextMenu = (e: React.MouseEvent) => {
-    // Prevent default context menu when right clicking
-    if (draggable) {
-      e.preventDefault();
+    e.preventDefault();
+    if (onRightClick) {
+      onRightClick();
     }
   };
 
