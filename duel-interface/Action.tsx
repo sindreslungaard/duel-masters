@@ -35,6 +35,9 @@ export function Action({
   maxSelections,
 }: ActionProps) {
   const [selectedCardIds, setSelectedCardIds] = useState(new Set<string>());
+  const [isBrushing, setIsBrushing] = useState(false);
+  const [brushedCards, setBrushedCards] = useState(new Set<string>());
+  const mouseDownHandledRef = useRef(false);
 
   const selectCard = (cardId: string) => {
     if (selectedCardIds.has(cardId)) {
@@ -53,6 +56,78 @@ export function Action({
     }
   };
 
+  const handleBrushStart = () => {
+    setIsBrushing(true);
+    setBrushedCards(new Set());
+  };
+
+  const handleBrushEnd = () => {
+    setIsBrushing(false);
+    setBrushedCards(new Set());
+  };
+
+  const handleCardHover = (cardId: string) => {
+    if (!isBrushing) return;
+    
+    // Only toggle each card once per brush session
+    if (brushedCards.has(cardId)) return;
+    
+    setBrushedCards((prev) => new Set(prev).add(cardId));
+    
+    // Toggle the card
+    if (selectedCardIds.has(cardId)) {
+      // Always allow deselection
+      setSelectedCardIds((prev) => {
+        const next = new Set(prev);
+        next.delete(cardId);
+        return next;
+      });
+    } else {
+      // Only allow selection if under max
+      if (selectedCardIds.size < maxSelections) {
+        setSelectedCardIds((prev) => new Set(prev).add(cardId));
+      }
+    }
+  };
+
+  const handleCardMouseDown = (cardId: string) => {
+    // Start brushing and immediately handle this card
+    mouseDownHandledRef.current = true;
+    setIsBrushing(true);
+    setBrushedCards(new Set([cardId]));
+    
+    // Toggle the card
+    if (selectedCardIds.has(cardId)) {
+      setSelectedCardIds((prev) => {
+        const next = new Set(prev);
+        next.delete(cardId);
+        return next;
+      });
+    } else {
+      if (selectedCardIds.size < maxSelections) {
+        setSelectedCardIds((prev) => new Set(prev).add(cardId));
+      }
+    }
+  };
+
+  const handleCardClick = (cardId: string, e: React.MouseEvent) => {
+    // Prevent double-toggle if mousedown already handled it
+    if (mouseDownHandledRef.current) {
+      mouseDownHandledRef.current = false;
+      e.preventDefault();
+      return;
+    }
+    selectCard(cardId);
+  };
+
+  useEffect(() => {
+    if (isBrushing) {
+      const handleMouseUp = () => handleBrushEnd();
+      window.addEventListener('mouseup', handleMouseUp);
+      return () => window.removeEventListener('mouseup', handleMouseUp);
+    }
+  }, [isBrushing]);
+
   const cardCount = cards?.length || 0;
   const gridCols = Math.max(3, Math.min(cardCount, 6));
 
@@ -66,7 +141,10 @@ export function Action({
         closeOnOutsideClick={false}
         onClose={onClose}
       >
-        <div className="px-6 py-6 pt-4">
+        <div 
+          className="px-6 py-6 pt-4 select-none" 
+          onMouseDown={handleBrushStart}
+        >
           <div className="text-sm text-gray-100">{text}</div>
           <div
             className="grid gap-2 p-2 mt-4 bg-black/30 rounded-md w-fit"
@@ -75,15 +153,22 @@ export function Action({
             }}
           >
             {cards?.map((card, index) => (
-              <div key={index} className="w-full">
+              <div 
+                key={index} 
+                className="w-full"
+                onMouseEnter={() => handleCardHover(card.virtualId)}
+                onMouseDown={() => handleCardMouseDown(card.virtualId)}
+              >
                 <img
-                  onClick={() => selectCard(card.virtualId)}
+                  onClick={(e) => handleCardClick(card.virtualId, e)}
                   onContextMenu={(e) => {
                     e.preventDefault();
                     if (onCardRightClick && card.uid) {
                       onCardRightClick(card.uid, card.name);
                     }
                   }}
+                  onDragStart={(e) => e.preventDefault()}
+                  draggable={false}
                   className={`rounded-md ${
                     selectedCardIds.has(card.virtualId)
                       ? "ring-1 ring-blue-100"
