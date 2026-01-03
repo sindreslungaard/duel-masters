@@ -16,6 +16,33 @@ import { Card } from "./Card";
 import { Button } from "./Button";
 import { Popup } from "./Popup";
 import { Action } from "./Action";
+import { Chat } from "./Chat";
+
+const scrollbarStyles = `
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 4px;
+  }
+  
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 4px;
+  }
+  
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.5);
+  }
+  
+  .custom-scrollbar {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.3) rgba(0, 0, 0, 0.2);
+  }
+`;
 
 interface DuelProps {
   hostUrl: string;
@@ -67,6 +94,7 @@ export function Duel({ duelId, duelToken, hostUrl }: DuelProps) {
   const [actionError, setActionError] = useState<ActionWarningMessage | null>(
     null
   );
+  const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
 
   const {
     connected,
@@ -93,7 +121,7 @@ export function Duel({ duelId, duelToken, hostUrl }: DuelProps) {
       setActionError(null);
     },
     onChat: (data) => {
-      /* TODO: implement */
+      setChatMessages((prev) => [...prev, data]);
     },
   });
 
@@ -321,19 +349,13 @@ export function Duel({ duelId, duelToken, hostUrl }: DuelProps) {
     return getValidDropZones(dragState.sourceZone).includes(zone);
   };
 
-  const isFromServer = (data: ChatMessage) => {
-    let sender = data.sender.toLowerCase();
-    if (sender === "server" || sender === "server_1" || sender === "server_2")
-      return true;
-
-    return false;
-  };
-
   return (
-    <div
-      className="w-full h-screen text-white flex bg-[url('https://i.imgur.com/mWy5Cnl.gif')] bg-cover bg-no-repeat gap-2 p-2"
-      style={dragState ? { cursor: "grabbing" } : {}}
-    >
+    <>
+      <style>{scrollbarStyles}</style>
+      <div
+        className="w-full h-screen text-white flex bg-[url('https://i.imgur.com/mWy5Cnl.gif')] bg-cover bg-no-repeat gap-2 p-1 custom-scrollbar"
+        style={dragState ? { cursor: "grabbing" } : {}}
+      >
       {/* <Popup
         title="Your Title Here"
         visible={showPopup1}
@@ -363,8 +385,8 @@ export function Duel({ duelId, duelToken, hostUrl }: DuelProps) {
       )}
 
       <div className="w-[300px] flex flex-col gap-2">
-        <div className="flex-1 bg-black/50 rounded-md">
-          {/* add chat here */}
+        <div className="flex-1 bg-black/30 rounded-md overflow-hidden">
+          <Chat messages={chatMessages} onSendMessage={sendChat} />
         </div>
 
         <div className="bg-black/50 p-2 rounded-md h-[72px] text-gray-400">
@@ -431,7 +453,7 @@ export function Duel({ duelId, duelToken, hostUrl }: DuelProps) {
           )}
         </div>
 
-        <div className="bg-black/50 p-2 rounded-md">
+        <div className="bg-black/30 p-2 rounded-md">
           <Button
             onClick={sendEndTurn}
             disabled={!state.myTurn}
@@ -593,6 +615,7 @@ export function Duel({ duelId, duelToken, hostUrl }: DuelProps) {
         </div>
       )}
     </div>
+    </>
   );
 }
 
@@ -656,3 +679,4 @@ function CreateCard(
     );
   };
 }
+

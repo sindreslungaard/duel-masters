@@ -58,7 +58,7 @@ export function Action({
       >
         <div className="px-6 py-6 pt-4">
           <div className="text-sm text-gray-100">{text}</div>
-          <div className="flex gap-2 p-2 mt-4 bg-black/50 rounded-md">
+          <div className="flex gap-2 p-2 mt-4 bg-black/30 rounded-md">
             {cards?.map((card, index) => (
               <div key={index} className="w-30">
                 <img
