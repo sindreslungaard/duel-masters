@@ -86,6 +86,10 @@ export function Duel({ duelId, duelToken, hostUrl }: DuelProps) {
     duelToken,
     onActionMessage: setAction,
     onActionError: setActionError,
+    onActionClose: () => {
+      setAction(null);
+      setActionError(null);
+    },
   });
 
   // Popup modal related refs

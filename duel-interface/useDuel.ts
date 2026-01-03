@@ -64,7 +64,7 @@ export function useDuel({
           case "action_error":
             onActionError?.(data);
             break;
-          case "action_close":
+          case "close_action":
             onActionClose?.();
             break;
           default:
@@ -124,7 +124,7 @@ export function useDuel({
     cancel: boolean;
     count?: number;
   }) => {
-    send({ header: "action", data });
+    send({ header: "action", ...data });
   };
 
   return {
