@@ -77,10 +77,18 @@ export interface WarningMessage {
   message: string;
 }
 
+export enum ActionType {
+  None = "",
+  Count = "count",
+  Question = "question",
+  Order = "order",
+  Searchable = "searchable",
+}
+
 // ActionMessage is used to prompt the user to make a selection of the specified cards
 export interface ActionMessage {
   header: string;
-  actionType: string;
+  actionType: ActionType;
   cards: CardState[];
   text: string;
   minSelections: number;

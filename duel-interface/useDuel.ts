@@ -1,13 +1,28 @@
 import { useEffect, useRef, useState } from "react";
-import { MatchState, MatchStateMessage } from "./types";
+import {
+  ActionMessage,
+  ActionWarningMessage,
+  MatchState,
+  MatchStateMessage,
+} from "./types";
 
 interface UseDuelOptions {
   duelId: string;
   duelToken: string;
   hostUrl: string;
+  onActionMessage?: (message: ActionMessage) => void;
+  onActionError?: (message: ActionWarningMessage) => void;
+  onActionClose?: () => void;
 }
 
-export function useDuel({ duelId, duelToken, hostUrl }: UseDuelOptions) {
+export function useDuel({
+  duelId,
+  duelToken,
+  hostUrl,
+  onActionMessage,
+  onActionError,
+  onActionClose,
+}: UseDuelOptions) {
   const [connected, setConnected] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const wsRef = useRef<WebSocket | null>(null);
@@ -43,6 +58,17 @@ export function useDuel({ duelId, duelToken, hostUrl }: UseDuelOptions) {
           case "state_update":
             setState(data.state);
             break;
+          case "action":
+            onActionMessage?.(data);
+            break;
+          case "action_error":
+            onActionError?.(data);
+            break;
+          case "action_close":
+            onActionClose?.();
+            break;
+          default:
+            console.log("Unknown message type:", data.header);
         }
       } catch (err) {
         console.error("Error parsing message:", err);
@@ -93,9 +119,18 @@ export function useDuel({ duelId, duelToken, hostUrl }: UseDuelOptions) {
     send({ header: "tap_ability", virtualId });
   };
 
+  const sendAction = (data: {
+    cards: string[];
+    cancel: boolean;
+    count?: number;
+  }) => {
+    send({ header: "action", data });
+  };
+
   return {
     connected,
     error,
+    state,
     send,
     sendJoinMatch,
     sendEndTurn,
@@ -104,6 +139,6 @@ export function useDuel({ duelId, duelToken, hostUrl }: UseDuelOptions) {
     sendAttackPlayer,
     sendAttackCreature,
     sendTapAbility,
-    state,
+    sendAction,
   };
 }

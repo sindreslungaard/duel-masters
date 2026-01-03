@@ -1,6 +1,8 @@
 import { useEffect, useMemo, useState } from "react";
 import { useDuel } from "./useDuel";
 import {
+  ActionMessage,
+  ActionWarningMessage,
   cardHasFlag,
   CardState,
   MatchState,
@@ -60,6 +62,11 @@ interface PreviewCards {
 interface Action {}
 
 export function Duel({ duelId, duelToken, hostUrl }: DuelProps) {
+  const [action, setAction] = useState<ActionMessage | null>(null);
+  const [actionError, setActionError] = useState<ActionWarningMessage | null>(
+    null
+  );
+
   const {
     connected,
     error,
@@ -71,11 +78,14 @@ export function Duel({ duelId, duelToken, hostUrl }: DuelProps) {
     sendAttackPlayer,
     sendAttackCreature,
     sendTapAbility,
+    sendAction,
     state,
   } = useDuel({
     hostUrl,
     duelId,
     duelToken,
+    onActionMessage: setAction,
+    onActionError: setActionError,
   });
 
   // Popup modal related refs
@@ -315,7 +325,23 @@ export function Duel({ duelId, duelToken, hostUrl }: DuelProps) {
         <div className="p-6">Your content here</div>
       </Popup> */}
 
-      <Action title="Your Action Here" visible={true}></Action>
+      {action && (
+        <Action
+          title="Action Required"
+          visible={true}
+          error={actionError ? actionError.message : undefined}
+          actionType={action.actionType}
+          cards={action.cards}
+          text={action.text}
+          minSelections={action.minSelections}
+          maxSelections={action.maxSelections}
+          cancellable={action.cancellable}
+          unselectableCards={action.unselectableCards}
+          choices={action.choices}
+          onChoose={sendAction}
+          onClose={() => sendAction({ cards: [], cancel: true })}
+        ></Action>
+      )}
 
       <div className="w-[300px] flex flex-col gap-2">
         <div className="flex-1 bg-black/50 rounded-md"></div>
