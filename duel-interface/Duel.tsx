@@ -387,7 +387,7 @@ export function Duel({ duelId, duelToken, hostUrl }: DuelProps) {
                       onClick={() => sendAttackPlayer(selectedCard.virtualId)}
                       disabled={!selectedCard.canPlay}
                     >
-                      Attack player
+                      Attack Player
                     </Button>
                   </div>
                   <div className="flex-1 min-w-0">
@@ -395,17 +395,19 @@ export function Duel({ duelId, duelToken, hostUrl }: DuelProps) {
                       onClick={() => sendAttackCreature(selectedCard.virtualId)}
                       disabled={!selectedCard.canPlay}
                     >
-                      Attack creature
+                      Attack Creature
                     </Button>
                   </div>
-                  <div className="flex-1 min-w-0">
-                    <Button
-                      onClick={() => sendTapAbility(selectedCard.virtualId)}
-                      disabled={!selectedCard.canPlay}
-                    >
-                      Tap ability
-                    </Button>
-                  </div>
+                  {selectedCard.hasTapAbility && (
+                    <div className="flex-1 min-w-0">
+                      <Button
+                        onClick={() => sendTapAbility(selectedCard.virtualId)}
+                        disabled={!selectedCard.canPlay}
+                      >
+                        Tap Ability
+                      </Button>
+                    </div>
+                  )}
                 </div>
               )}
             </div>
@@ -485,6 +487,8 @@ export function Duel({ duelId, duelToken, hostUrl }: DuelProps) {
           <div className="relative z-10 flex gap-5 w-full">
             {state.me.playzone.map(
               CreateCard({
+                selected: (id: string) => id === selectedCardId,
+                interactable: true,
                 dragState,
                 zone: "myPlayzone",
                 draggable: true,
@@ -529,6 +533,7 @@ export function Duel({ duelId, duelToken, hostUrl }: DuelProps) {
           <div className="relative z-10 flex gap-5 w-full">
             {state.me.hand.map(
               CreateCard({
+                selected: (id: string) => id === selectedCardId,
                 interactable: true,
                 canAddToManazone: !state.hasAddedManaThisRound,
                 onAddToBattlezone: (virtualId) => {
@@ -579,6 +584,7 @@ function CreateCard(
     interactable?: boolean;
     canAddToManazone?: boolean;
     flipped?: boolean;
+    selected?: (virtualId: string) => boolean;
     onAddToBattlezone?: (virtualId: string) => void;
     onAddToManazone?: (virtualId: string) => void;
     onTapAbility?: (virtualId: string) => void;
@@ -607,6 +613,7 @@ function CreateCard(
         imageId={card.uid}
         key={index}
         rotated={rotated}
+        selected={options.selected ? options.selected(card.virtualId) : false}
         interactable={options.interactable}
         canAddToBattlezone={cardHasFlag(card.flags, PLAYABLE_FLAG)}
         canAddToManazone={options.canAddToManazone}

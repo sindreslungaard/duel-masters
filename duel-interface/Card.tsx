@@ -8,6 +8,7 @@ export interface CardProps {
   canAddToBattlezone?: boolean;
   canAddToManazone?: boolean;
   hasTapAbility?: boolean;
+  selected?: boolean;
   onAddToBattlezone?: (virtualId: string) => void;
   onAddToManazone?: (virtualId: string) => void;
   onTapAbility?: (virtualId: string) => void;
@@ -23,6 +24,7 @@ export function Card({
   rotated = false,
   flipped = false,
   interactable = false,
+  selected = false,
   canAddToBattlezone = true,
   canAddToManazone = true,
   hasTapAbility = false,
@@ -60,8 +62,16 @@ export function Card({
           alt={name || "Backside card"}
           className={`h-full flex-shrink-0 rounded-md ${
             (interactable || draggable) && !isDragging ? "cursor-grab" : ""
-          } ${rotated ? "rotate-90 mx-8" : ""} ${flipped ? "rotate-180" : ""} ${
-            isDragging ? "opacity-0" : ""
+          } ${
+            rotated && flipped
+              ? "-rotate-90 mx-3"
+              : rotated
+              ? "rotate-90 mx-3"
+              : flipped
+              ? "rotate-180"
+              : ""
+          } ${isDragging ? "opacity-0" : ""} ${
+            selected ? "ring-1 ring-blue-100" : ""
           }`}
           onMouseDown={handleMouseDown}
           onTouchStart={handleMouseDown}

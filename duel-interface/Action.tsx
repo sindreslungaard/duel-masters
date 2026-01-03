@@ -1,11 +1,7 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Popup } from "./Popup";
 import { ActionType, CardState } from "./types";
 import { Button } from "./Button";
-
-export interface SelectableCard extends CardState {
-  selected?: boolean;
-}
 
 export interface ActionProps {
   title: string;
@@ -16,7 +12,7 @@ export interface ActionProps {
 
   // Action details
   actionType: ActionType;
-  cards: SelectableCard[];
+  cards?: CardState[];
   text: string;
   minSelections: number;
   maxSelections: number;
@@ -35,6 +31,21 @@ export function Action({
   onChoose,
   onClose,
 }: ActionProps) {
+  const [selectedCardIds, setSelectedCardIds] = useState(new Set<string>());
+
+  const selectCard = (cardId: string) => {
+    if (selectedCardIds.has(cardId)) {
+      setSelectedCardIds((prev) => {
+        const next = new Set(prev);
+
+        next.delete(cardId);
+        return next;
+      });
+    } else {
+      setSelectedCardIds((prev) => new Set(prev).add(cardId));
+    }
+  };
+
   return (
     <>
       <Popup
@@ -48,10 +59,15 @@ export function Action({
         <div className="px-6 py-6 pt-4">
           <div className="text-sm text-gray-100">{text}</div>
           <div className="flex gap-2 p-2 mt-4 bg-black/50 rounded-md">
-            {cards.map((card, index) => (
+            {cards?.map((card, index) => (
               <div key={index} className="w-30">
                 <img
-                  className="rounded-md"
+                  onClick={() => selectCard(card.virtualId)}
+                  className={`rounded-md ${
+                    selectedCardIds.has(card.virtualId)
+                      ? "ring-1 ring-blue-100"
+                      : ""
+                  }`}
                   src={`https://scans.shobu.io/${card.uid}.jpg`}
                   alt={card.name}
                 />
@@ -62,9 +78,9 @@ export function Action({
             <Button
               onClick={() =>
                 onChoose({
-                  cards: cards
-                    .filter((card) => card.selected)
-                    .map((card) => card.virtualId),
+                  cards: (cards || [])
+                    .map((card) => card.virtualId)
+                    .filter((id) => selectedCardIds.has(id)),
                   cancel: false,
                   count: 0,
                 })
