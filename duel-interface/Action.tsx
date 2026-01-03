@@ -37,38 +37,18 @@ export function Action({
   const [selectedCardIds, setSelectedCardIds] = useState(new Set<string>());
   const [isBrushing, setIsBrushing] = useState(false);
   const [brushedCards, setBrushedCards] = useState(new Set<string>());
-  const mouseDownHandledRef = useRef(false);
-
-  const selectCard = (cardId: string) => {
-    if (selectedCardIds.has(cardId)) {
-      setSelectedCardIds((prev) => {
-        const next = new Set(prev);
-
-        next.delete(cardId);
-        return next;
-      });
-    } else {
-      // Don't allow selecting more than maxSelections
-      if (selectedCardIds.size >= maxSelections) {
-        return;
-      }
-      setSelectedCardIds((prev) => new Set(prev).add(cardId));
-    }
-  };
-
-  const handleBrushStart = () => {
-    setIsBrushing(true);
-    setBrushedCards(new Set());
-  };
+  const touchInProgressRef = useRef(false);
 
   const handleBrushEnd = () => {
     setIsBrushing(false);
     setBrushedCards(new Set());
+    // Reset touch flag after a delay to ensure mouse events are blocked
+    setTimeout(() => {
+      touchInProgressRef.current = false;
+    }, 300);
   };
 
-  const handleCardHover = (cardId: string) => {
-    if (!isBrushing) return;
-
+  const toggleCard = (cardId: string) => {
     // Only toggle each card once per brush session
     if (brushedCards.has(cardId)) return;
 
@@ -90,43 +70,57 @@ export function Action({
     }
   };
 
-  const handleCardMouseDown = (cardId: string) => {
-    // Start brushing and immediately handle this card
-    mouseDownHandledRef.current = true;
-    setIsBrushing(true);
-    setBrushedCards(new Set([cardId]));
-
-    // Toggle the card
-    if (selectedCardIds.has(cardId)) {
-      setSelectedCardIds((prev) => {
-        const next = new Set(prev);
-        next.delete(cardId);
-        return next;
-      });
-    } else {
-      if (selectedCardIds.size < maxSelections) {
-        setSelectedCardIds((prev) => new Set(prev).add(cardId));
-      }
-    }
-  };
-
-  const handleCardClick = (cardId: string, e: React.MouseEvent) => {
-    // Prevent double-toggle if mousedown already handled it
-    if (mouseDownHandledRef.current) {
-      mouseDownHandledRef.current = false;
-      e.preventDefault();
+  const handleCardMouseDown = (
+    cardId: string,
+    e?: React.MouseEvent | React.TouchEvent
+  ) => {
+    // Ignore mouse events if a touch is in progress
+    if (e && !("touches" in e) && touchInProgressRef.current) {
       return;
     }
-    selectCard(cardId);
+
+    if (e && "touches" in e) {
+      touchInProgressRef.current = true;
+    }
+
+    setIsBrushing(true);
+    toggleCard(cardId);
+  };
+
+  const handleCardHover = (cardId: string) => {
+    if (!isBrushing) return;
+    toggleCard(cardId);
   };
 
   useEffect(() => {
     if (isBrushing) {
       const handleMouseUp = () => handleBrushEnd();
+      const handleTouchEnd = () => handleBrushEnd();
+
       window.addEventListener("mouseup", handleMouseUp);
-      return () => window.removeEventListener("mouseup", handleMouseUp);
+      window.addEventListener("touchend", handleTouchEnd);
+
+      return () => {
+        window.removeEventListener("mouseup", handleMouseUp);
+        window.removeEventListener("touchend", handleTouchEnd);
+      };
     }
   }, [isBrushing]);
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    if (!isBrushing) return;
+
+    const touch = e.touches[0];
+    const element = document.elementFromPoint(touch.clientX, touch.clientY);
+    const cardElement = element?.closest("[data-card-id]") as HTMLElement;
+
+    if (cardElement) {
+      const cardId = cardElement.getAttribute("data-card-id");
+      if (cardId) {
+        handleCardHover(cardId);
+      }
+    }
+  };
 
   const cardCount = cards?.length || 0;
   const gridCols = Math.max(3, Math.min(cardCount, 6));
@@ -143,7 +137,7 @@ export function Action({
       >
         <div
           className="px-6 py-6 pt-4 select-none"
-          onMouseDown={handleBrushStart}
+          onTouchMove={handleTouchMove}
         >
           <div className="text-sm text-gray-100">{text}</div>
           <div
@@ -156,11 +150,12 @@ export function Action({
               <div
                 key={index}
                 className="w-full"
+                data-card-id={card.virtualId}
                 onMouseEnter={() => handleCardHover(card.virtualId)}
-                onMouseDown={() => handleCardMouseDown(card.virtualId)}
+                onMouseDown={(e) => handleCardMouseDown(card.virtualId, e)}
+                onTouchStart={(e) => handleCardMouseDown(card.virtualId, e)}
               >
                 <img
-                  onClick={(e) => handleCardClick(card.virtualId, e)}
                   onContextMenu={(e) => {
                     e.preventDefault();
                     if (onCardRightClick && card.uid) {
