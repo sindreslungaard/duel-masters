@@ -134,7 +134,12 @@ export function Duel({ duelId, duelToken, hostUrl }: DuelProps) {
     } else {
       setSelectedCard(null);
     }
-  }, [selectedCardId, state]);
+  }, [selectedCardId]);
+
+  useEffect(() => {
+    setSelectedCardId(null);
+    setSelectedCard(null);
+  }, [state]);
 
   const [dragState, setDragState] = useState<DragState | null>(null);
   const [dropZone, setDropZone] = useState<DragZone | null>(null);
@@ -233,7 +238,6 @@ export function Duel({ duelId, duelToken, hostUrl }: DuelProps) {
     // If we have a dragStartPosition but no dragState, it's a click
     if (dragStartPosition && !dragState) {
       setSelectedCardId(dragStartPosition.virtualId);
-      console.log("selected card", dragStartPosition.virtualId);
       setDragStartPosition(null);
       return;
     }
@@ -254,14 +258,12 @@ export function Duel({ duelId, duelToken, hostUrl }: DuelProps) {
       dragState.sourceZone === "myPlayzone" &&
       dropZone === "opponentPlayzone"
     ) {
-      // Handle attack on playzone
-      console.log("Attack playzone", dragState.virtualId);
+      sendAttackCreature(dragState.virtualId);
     } else if (
       dragState.sourceZone === "myPlayzone" &&
       dropZone === "opponentShieldzone"
     ) {
-      // Handle attack on shields
-      console.log("Attack shields", dragState.virtualId);
+      sendAttackPlayer(dragState.virtualId);
     }
 
     setDragState(null);
@@ -316,7 +318,7 @@ export function Duel({ duelId, duelToken, hostUrl }: DuelProps) {
 
   return (
     <div
-      className="w-full h-screen text-white flex bg-[url('https://i.imgur.com/mWy5Cnl.gif')] bg-cover bg-center gap-2 p-2"
+      className="w-full h-screen text-white flex bg-[url('https://i.imgur.com/mWy5Cnl.gif')] bg-cover bg-no-repeat gap-2 p-2"
       style={dragState ? { cursor: "grabbing" } : {}}
     >
       {/* <Popup
