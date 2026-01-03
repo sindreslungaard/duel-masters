@@ -68,12 +68,12 @@ export function Action({
 
   const handleCardHover = (cardId: string) => {
     if (!isBrushing) return;
-    
+
     // Only toggle each card once per brush session
     if (brushedCards.has(cardId)) return;
-    
+
     setBrushedCards((prev) => new Set(prev).add(cardId));
-    
+
     // Toggle the card
     if (selectedCardIds.has(cardId)) {
       // Always allow deselection
@@ -95,7 +95,7 @@ export function Action({
     mouseDownHandledRef.current = true;
     setIsBrushing(true);
     setBrushedCards(new Set([cardId]));
-    
+
     // Toggle the card
     if (selectedCardIds.has(cardId)) {
       setSelectedCardIds((prev) => {
@@ -123,8 +123,8 @@ export function Action({
   useEffect(() => {
     if (isBrushing) {
       const handleMouseUp = () => handleBrushEnd();
-      window.addEventListener('mouseup', handleMouseUp);
-      return () => window.removeEventListener('mouseup', handleMouseUp);
+      window.addEventListener("mouseup", handleMouseUp);
+      return () => window.removeEventListener("mouseup", handleMouseUp);
     }
   }, [isBrushing]);
 
@@ -141,8 +141,8 @@ export function Action({
         closeOnOutsideClick={false}
         onClose={onClose}
       >
-        <div 
-          className="px-6 py-6 pt-4 select-none" 
+        <div
+          className="px-6 py-6 pt-4 select-none"
           onMouseDown={handleBrushStart}
         >
           <div className="text-sm text-gray-100">{text}</div>
@@ -153,8 +153,8 @@ export function Action({
             }}
           >
             {cards?.map((card, index) => (
-              <div 
-                key={index} 
+              <div
+                key={index}
                 className="w-full"
                 onMouseEnter={() => handleCardHover(card.virtualId)}
                 onMouseDown={() => handleCardMouseDown(card.virtualId)}
