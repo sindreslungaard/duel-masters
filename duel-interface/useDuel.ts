@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import {
   ActionMessage,
   ActionWarningMessage,
+  ChatMessage,
   MatchState,
   MatchStateMessage,
 } from "./types";
@@ -13,6 +14,7 @@ interface UseDuelOptions {
   onActionMessage?: (message: ActionMessage) => void;
   onActionError?: (message: ActionWarningMessage) => void;
   onActionClose?: () => void;
+  onChat?: (message: ChatMessage) => void;
 }
 
 export function useDuel({
@@ -22,6 +24,7 @@ export function useDuel({
   onActionMessage,
   onActionError,
   onActionClose,
+  onChat,
 }: UseDuelOptions) {
   const [connected, setConnected] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -67,6 +70,10 @@ export function useDuel({
           case "close_action":
             onActionClose?.();
             break;
+          case "chat":
+            onChat?.(data);
+            break;
+
           default:
             console.log("Unknown message type:", data.header);
         }
@@ -127,6 +134,10 @@ export function useDuel({
     send({ header: "action", ...data });
   };
 
+  const sendChat = (message: string) => {
+    send({ header: "chat", message });
+  };
+
   return {
     connected,
     error,
@@ -140,5 +151,6 @@ export function useDuel({
     sendAttackCreature,
     sendTapAbility,
     sendAction,
+    sendChat,
   };
 }

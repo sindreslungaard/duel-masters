@@ -5,6 +5,7 @@ import {
   ActionWarningMessage,
   cardHasFlag,
   CardState,
+  ChatMessage,
   MatchState,
   PLAYABLE_FLAG,
   ShieldState,
@@ -79,6 +80,7 @@ export function Duel({ duelId, duelToken, hostUrl }: DuelProps) {
     sendAttackCreature,
     sendTapAbility,
     sendAction,
+    sendChat,
     state,
   } = useDuel({
     hostUrl,
@@ -89,6 +91,9 @@ export function Duel({ duelId, duelToken, hostUrl }: DuelProps) {
     onActionClose: () => {
       setAction(null);
       setActionError(null);
+    },
+    onChat: (data) => {
+      /* TODO: implement */
     },
   });
 
@@ -316,6 +321,14 @@ export function Duel({ duelId, duelToken, hostUrl }: DuelProps) {
     return getValidDropZones(dragState.sourceZone).includes(zone);
   };
 
+  const isFromServer = (data: ChatMessage) => {
+    let sender = data.sender.toLowerCase();
+    if (sender === "server" || sender === "server_1" || sender === "server_2")
+      return true;
+
+    return false;
+  };
+
   return (
     <div
       className="w-full h-screen text-white flex bg-[url('https://i.imgur.com/mWy5Cnl.gif')] bg-cover bg-no-repeat gap-2 p-2"
@@ -350,7 +363,9 @@ export function Duel({ duelId, duelToken, hostUrl }: DuelProps) {
       )}
 
       <div className="w-[300px] flex flex-col gap-2">
-        <div className="flex-1 bg-black/50 rounded-md"></div>
+        <div className="flex-1 bg-black/50 rounded-md">
+          {/* add chat here */}
+        </div>
 
         <div className="bg-black/50 p-2 rounded-md h-[72px] text-gray-400">
           {selectedCard && state.myTurn && (
