@@ -269,7 +269,7 @@ export function Duel({ duelId, duelToken, hostUrl }: DuelProps) {
 
   const handleMouseUp = () => {
     // If we have a dragStartPosition but no dragState, it's a click
-    if (dragStartPosition && !dragState) {
+    if (dragStartPosition && !dragState && state?.myTurn) {
       setSelectedCardId(dragStartPosition.virtualId);
       setDragStartPosition(null);
       return;
@@ -539,10 +539,10 @@ export function Duel({ duelId, duelToken, hostUrl }: DuelProps) {
               {state.me.playzone.map(
                 CreateCard({
                   selected: (id: string) => id === selectedCardId,
-                  interactable: true,
+                  interactable: state?.myTurn,
                   dragState,
                   zone: "myPlayzone",
-                  draggable: true,
+                  draggable: state.myTurn,
                   onDragStart: handleCardDragStart,
                 })
               )}
@@ -588,7 +588,7 @@ export function Duel({ duelId, duelToken, hostUrl }: DuelProps) {
               {state.me.hand.map(
                 CreateCard({
                   selected: (id: string) => id === selectedCardId,
-                  interactable: true,
+                  interactable: state?.myTurn,
                   canAddToManazone: !state.hasAddedManaThisRound,
                   onAddToBattlezone: (virtualId) => {
                     sendAddToBattlezone(virtualId);
@@ -601,7 +601,7 @@ export function Duel({ duelId, duelToken, hostUrl }: DuelProps) {
                   },
                   dragState,
                   zone: "hand",
-                  draggable: true,
+                  draggable: state.myTurn,
                   onDragStart: handleCardDragStart,
                 })
               )}
