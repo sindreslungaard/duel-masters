@@ -364,10 +364,7 @@ export function Duel({ duelId, duelToken, hostUrl, devTools }: DuelProps) {
 
   const getValidDropZones = (sourceZone: DragZone): DragZone[] => {
     if (sourceZone === "hand") {
-      const zones: DragZone[] = ["myPlayzone"];
-      if (!state?.hasAddedManaThisRound) {
-        zones.push("myManazone");
-      }
+      const zones: DragZone[] = ["myPlayzone", "myManazone"];
       return zones;
     }
     if (sourceZone === "myPlayzone") {
@@ -381,11 +378,38 @@ export function Duel({ duelId, duelToken, hostUrl, devTools }: DuelProps) {
     return getValidDropZones(dragState.sourceZone).includes(zone);
   };
 
+  const getDropZoneColor = (zone: DragZone): "green" | "red" | null => {
+    if (!dragState || !isValidDropZone(zone)) return null;
+
+    // Check if the action is actually allowed
+    if (dragState.sourceZone === "hand") {
+      // Find the card being dragged
+      const draggedCard = state?.me.hand.find(
+        (c) => c.virtualId === dragState.virtualId
+      );
+
+      if (zone === "myPlayzone") {
+        // Check if card can be played
+        return draggedCard && cardHasFlag(draggedCard.flags, PLAYABLE_FLAG)
+          ? "green"
+          : "red";
+      }
+
+      if (zone === "myManazone") {
+        // Check if mana can be added
+        return state?.hasAddedManaThisRound ? "red" : "green";
+      }
+    }
+
+    // For other zones (attacking), always green if valid
+    return "green";
+  };
+
   return (
     <>
       <style>{scrollbarStyles}</style>
       <div
-        className="w-full h-screen text-white flex bg-[url('https://i.imgur.com/mWy5Cnl.gif')] bg-cover bg-no-repeat gap-2 p-1 custom-scrollbar"
+        className="w-full h-screen text-white flex bg-[linear-gradient(45deg,rgb(29,33,42),rgb(20,16,21))] bg-cover bg-no-repeat gap-2 p-1 custom-scrollbar"
         style={dragState ? { cursor: "grabbing" } : {}}
       >
         {/* <Popup
@@ -503,7 +527,6 @@ export function Duel({ duelId, duelToken, hostUrl, devTools }: DuelProps) {
                     <div className="flex-1 min-w-0">
                       <Button
                         onClick={() => sendAttackPlayer(selectedCard.virtualId)}
-                        disabled={!selectedCard.canPlay}
                       >
                         Attack Player
                       </Button>
@@ -513,7 +536,6 @@ export function Duel({ duelId, duelToken, hostUrl, devTools }: DuelProps) {
                         onClick={() =>
                           sendAttackCreature(selectedCard.virtualId)
                         }
-                        disabled={!selectedCard.canPlay}
                       >
                         Attack Creature
                       </Button>
@@ -522,7 +544,6 @@ export function Duel({ duelId, duelToken, hostUrl, devTools }: DuelProps) {
                       <div className="flex-1 min-w-0">
                         <Button
                           onClick={() => sendTapAbility(selectedCard.virtualId)}
-                          disabled={!selectedCard.canPlay}
                         >
                           Tap Ability
                         </Button>
@@ -554,8 +575,11 @@ export function Duel({ duelId, duelToken, hostUrl, devTools }: DuelProps) {
               className="absolute inset-0 z-0"
               data-dropzone="opponentManazone"
             />
-            {isValidDropZone("opponentManazone") && (
-              <div className="absolute inset-0 bg-green-500/30 border-2 border-green-500 rounded-md pointer-events-none z-10" />
+            {getDropZoneColor("opponentManazone") === "green" && (
+              <div className="absolute inset-0 bg-green-500/30 pointer-events-none z-10" />
+            )}
+            {getDropZoneColor("opponentManazone") === "red" && (
+              <div className="absolute inset-0 bg-red-500/30 pointer-events-none z-10" />
             )}
             <div className="relative z-10 flex gap-5 w-full">
               {state.opponent.manazone.map(
@@ -577,8 +601,11 @@ export function Duel({ duelId, duelToken, hostUrl, devTools }: DuelProps) {
               className="absolute inset-0 z-0"
               data-dropzone="opponentShieldzone"
             />
-            {isValidDropZone("opponentShieldzone") && (
-              <div className="absolute inset-0 bg-green-500/30 border-2 border-green-500 rounded-md pointer-events-none z-10" />
+            {getDropZoneColor("opponentShieldzone") === "green" && (
+              <div className="absolute inset-0 bg-green-500/30 pointer-events-none z-10" />
+            )}
+            {getDropZoneColor("opponentShieldzone") === "red" && (
+              <div className="absolute inset-0 bg-red-500/30 pointer-events-none z-10" />
             )}
             <div className="relative z-10 flex gap-5 w-full">
               {state.opponent.shieldzone.map(
@@ -599,8 +626,11 @@ export function Duel({ duelId, duelToken, hostUrl, devTools }: DuelProps) {
               className="absolute inset-0 z-0"
               data-dropzone="opponentPlayzone"
             />
-            {isValidDropZone("opponentPlayzone") && (
-              <div className="absolute inset-0 bg-green-500/30 border-2 border-green-500 rounded-md pointer-events-none z-10" />
+            {getDropZoneColor("opponentPlayzone") === "green" && (
+              <div className="absolute inset-0 bg-green-500/30 pointer-events-none z-10" />
+            )}
+            {getDropZoneColor("opponentPlayzone") === "red" && (
+              <div className="absolute inset-0 bg-red-500/30 pointer-events-none z-10" />
             )}
             <div className="relative z-10 flex gap-5 w-full">
               {state.opponent.playzone.map(
@@ -619,8 +649,11 @@ export function Duel({ duelId, duelToken, hostUrl, devTools }: DuelProps) {
             data-dropzone="myPlayzone"
           >
             <div className="absolute inset-0 z-0" data-dropzone="myPlayzone" />
-            {isValidDropZone("myPlayzone") && (
-              <div className="absolute inset-0 bg-green-500/30 border-2 border-green-500 rounded-md pointer-events-none z-10" />
+            {getDropZoneColor("myPlayzone") === "green" && (
+              <div className="absolute inset-0 bg-green-500/30 pointer-events-none z-10" />
+            )}
+            {getDropZoneColor("myPlayzone") === "red" && (
+              <div className="absolute inset-0 bg-red-500/30 pointer-events-none z-10" />
             )}
             <div className="relative z-10 flex gap-5 w-full">
               {state.me.playzone.map(
@@ -645,8 +678,11 @@ export function Duel({ duelId, duelToken, hostUrl, devTools }: DuelProps) {
               className="absolute inset-0 z-0 "
               data-dropzone="myShieldzone"
             />
-            {isValidDropZone("myShieldzone") && (
-              <div className="absolute inset-0 bg-green-500/30 border-2 border-green-500 rounded-md pointer-events-none z-10" />
+            {getDropZoneColor("myShieldzone") === "green" && (
+              <div className="absolute inset-0 bg-green-500/30 pointer-events-none z-10" />
+            )}
+            {getDropZoneColor("myShieldzone") === "red" && (
+              <div className="absolute inset-0 bg-red-500/30 pointer-events-none z-10" />
             )}
             <div className="relative z-10 flex gap-5 w-full">
               {state.me.shieldzone.map(
@@ -664,8 +700,11 @@ export function Duel({ duelId, duelToken, hostUrl, devTools }: DuelProps) {
             data-dropzone="myManazone"
           >
             <div className="absolute inset-0 z-0" data-dropzone="myManazone" />
-            {isValidDropZone("myManazone") && (
-              <div className="absolute inset-0 bg-green-500/30 border-2 border-green-500 rounded-md pointer-events-none z-10" />
+            {getDropZoneColor("myManazone") === "green" && (
+              <div className="absolute inset-0 bg-green-500/30 pointer-events-none z-10" />
+            )}
+            {getDropZoneColor("myManazone") === "red" && (
+              <div className="absolute inset-0 bg-red-500/30 pointer-events-none z-10" />
             )}
             <div className="relative z-10 flex gap-5 w-full ">
               {state.me.manazone.map(

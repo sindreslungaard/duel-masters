@@ -52,7 +52,7 @@ export function Chat({ messages, onSendMessage }: ChatProps) {
     if (sender === "server_1") {
       return {
         container: "flex justify-start",
-        bubble: "bg-orange-500/30 max-w-[80%] rounded-sm px-2 py-1",
+        bubble: "bg-orange-200/30 max-w-[80%] rounded-sm px-2 py-1",
       };
     }
 
