@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { Popup } from "./Popup";
 import { ActionType, CardState } from "./types";
 import { Button } from "./Button";
+import { CountInput } from "./CountInput";
 
 export interface ActionProps {
   title: string;
@@ -36,13 +37,16 @@ export function Action({
   onChoose,
   onClose,
   onCardRightClick,
+  minSelections,
   maxSelections,
   actionType,
   choices,
 }: ActionProps) {
   const [selectedCardIds, setSelectedCardIds] = useState(new Set<string>());
+  const [count, setCount] = useState(minSelections);
   const [isBrushing, setIsBrushing] = useState(false);
   const [brushedCards, setBrushedCards] = useState(new Set<string>());
+  const [selectedSearchValue, setSelectedSearchValue] = useState("-1");
   const touchInProgressRef = useRef(false);
 
   const handleBrushEnd = () => {
@@ -248,6 +252,67 @@ export function Action({
             )}
           </>
         )}
+
+        {/* Count action */}
+        {actionType === ActionType.Count && (
+          <>
+            <div className="text-sm text-gray-100">{text}</div>
+            <div className="mt-6 flex gap-4">
+              <CountInput
+                value={count}
+                onChange={setCount}
+                min={minSelections}
+                max={maxSelections}
+              />
+              <Button
+                onClick={() => onChoose({ cards: [], cancel: false, count })}
+              >
+                Choose
+              </Button>
+            </div>
+          </>
+        )}
+
+        {/* Searchable action */}
+        {actionType === ActionType.Searchable &&
+          choices &&
+          choices.length > 0 && (
+            <>
+              <div className="text-sm text-gray-100">{text}</div>
+              <div className="mt-6 flex gap-4">
+                <select
+                  className="bg-gray-800 text-white px-2 py-[0.4rem] rounded border border-gray-700 focus:outline-none focus:border-blue-500 text-xs"
+                  id="action-searchable-selector"
+                  value={selectedSearchValue}
+                  onChange={(e) => setSelectedSearchValue(e.target.value)}
+                >
+                  <option value="-1" disabled>
+                    Search and select
+                  </option>
+                  {choices?.map((choice, i) => (
+                    <option key={i} value={`${i}`}>
+                      {choice}
+                    </option>
+                  ))}
+                </select>
+
+                <Button
+                  disabled={selectedSearchValue === "-1"}
+                  onClick={() => {
+                    if (selectedSearchValue !== "-1") {
+                      onChoose({
+                        cards: [],
+                        count: parseInt(selectedSearchValue),
+                        cancel: false,
+                      });
+                    }
+                  }}
+                >
+                  Choose
+                </Button>
+              </div>
+            </>
+          )}
 
         {error && (
           <div className="mt-4 flex items-center gap-2 text-sm text-red-500">
