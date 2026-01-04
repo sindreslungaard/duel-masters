@@ -18,6 +18,7 @@ import { Popup } from "./Popup";
 import { Action } from "./Action";
 import { Chat } from "./Chat";
 import { CardPreview } from "./CardPreview";
+import { MultiCardPreview } from "./MultiCardPreview";
 
 const scrollbarStyles = `
   .custom-scrollbar::-webkit-scrollbar {
@@ -153,6 +154,10 @@ export function Duel({ duelId, duelToken, hostUrl, devTools }: DuelProps) {
   const [wait, setWait] = useState(false);
   const [previewCard, setPreviewCard] = useState<PreviewCard | null>(null);
   const [previewCards, setPreviewCards] = useState<PreviewCards | null>(null);
+  const [multiCardView, setMultiCardView] = useState<{
+    cards: { imageId: string; name: string }[];
+    title: string;
+  } | null>(null);
 
   const [showPopup1, setShowPopup1] = useState(true);
 
@@ -749,13 +754,22 @@ export function Duel({ duelId, duelToken, hostUrl, devTools }: DuelProps) {
                     className="h-full cursor-pointer hover:scale-105 transition-transform"
                     style={{ borderRadius: "5%" }}
                     onClick={() => {
-                      const topCard =
-                        state.opponent.graveyard[
-                          state.opponent.graveyard.length - 1
-                        ];
-                      setPreviewCard({
-                        imageId: topCard.uid,
-                        name: topCard.name,
+                      setMultiCardView({
+                        cards: state.opponent.graveyard.map((card) => ({
+                          imageId: card.uid,
+                          name: card.name,
+                        })),
+                        title: "Opponent's Graveyard",
+                      });
+                    }}
+                    onContextMenu={(e) => {
+                      e.preventDefault();
+                      setMultiCardView({
+                        cards: state.opponent.graveyard.map((card) => ({
+                          imageId: card.uid,
+                          name: card.name,
+                        })),
+                        title: "Opponent's Graveyard",
                       });
                     }}
                   />
@@ -788,11 +802,22 @@ export function Duel({ duelId, duelToken, hostUrl, devTools }: DuelProps) {
                     className="h-full cursor-pointer hover:scale-105 transition-transform"
                     style={{ borderRadius: "5%" }}
                     onClick={() => {
-                      const topCard =
-                        state.me.graveyard[state.me.graveyard.length - 1];
-                      setPreviewCard({
-                        imageId: topCard.uid,
-                        name: topCard.name,
+                      setMultiCardView({
+                        cards: state.me.graveyard.map((card) => ({
+                          imageId: card.uid,
+                          name: card.name,
+                        })),
+                        title: "My Graveyard",
+                      });
+                    }}
+                    onContextMenu={(e) => {
+                      e.preventDefault();
+                      setMultiCardView({
+                        cards: state.me.graveyard.map((card) => ({
+                          imageId: card.uid,
+                          name: card.name,
+                        })),
+                        title: "My Graveyard",
                       });
                     }}
                   />
@@ -851,6 +876,16 @@ export function Duel({ duelId, duelToken, hostUrl, devTools }: DuelProps) {
         imageId={previewCard?.imageId || null}
         name={previewCard?.name || null}
         onClose={() => setPreviewCard(null)}
+      />
+      <MultiCardPreview
+        visible={!!multiCardView}
+        cards={multiCardView?.cards || []}
+        title={multiCardView?.title || ""}
+        onClose={() => setMultiCardView(null)}
+        onCardClick={(imageId, name) => {
+          setPreviewCard({ imageId, name });
+          setMultiCardView(null);
+        }}
       />
     </>
   );

@@ -45,7 +45,7 @@ export function CardPreview({
   return (
     <div
       className="fixed inset-0 bg-black/60 flex items-center justify-center p-4"
-      style={{ zIndex: 1000 }}
+      style={{ zIndex: 1100 }}
       onClick={handleOverlayClick}
     >
       <div className="flex flex-col items-center gap-4">
