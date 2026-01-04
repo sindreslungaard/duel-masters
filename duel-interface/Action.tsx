@@ -176,7 +176,7 @@ export function Action({
               </div>
             ))}
           </div>
-          <div className="flex gap-4 mt-4">
+          <div className="flex items-center gap-4 mt-4">
             <Button
               onClick={() =>
                 onChoose({
@@ -195,6 +195,9 @@ export function Action({
                 Close
               </Button>
             )}
+            <div className="flex-1 text-right text-xs text-gray-300 italic">
+              Click and drag to (de)select faster
+            </div>
           </div>
           {error && (
             <div className="mt-4 flex items-center gap-2 text-sm text-red-500">

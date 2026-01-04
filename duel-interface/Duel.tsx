@@ -271,7 +271,12 @@ export function Duel({ duelId, duelToken, hostUrl }: DuelProps) {
   const handleMouseUp = () => {
     // If we have a dragStartPosition but no dragState, it's a click
     if (dragStartPosition && !dragState && state?.myTurn) {
-      setSelectedCardId(dragStartPosition.virtualId);
+      // Toggle selection: unselect if already selected, select if not
+      setSelectedCardId((prev) =>
+        prev === dragStartPosition.virtualId
+          ? null
+          : dragStartPosition.virtualId
+      );
       setDragStartPosition(null);
       return;
     }
@@ -610,7 +615,7 @@ export function Duel({ duelId, duelToken, hostUrl }: DuelProps) {
             data-dropzone="hand"
           >
             <div className="absolute inset-0 z-0" data-dropzone="hand" />
-            <div className="relative z-10 flex gap-5 w-full">
+            <div className="relative z-10 flex gap-5 w-full p-px">
               {state.me.hand.map(
                 CreateCard({
                   selected: (id: string) => id === selectedCardId,
