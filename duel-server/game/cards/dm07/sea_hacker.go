@@ -21,7 +21,7 @@ func Garatyano(c *match.Card) {
 			card.Player,
 			ctx.Match,
 			cardsOnTop,
-			"Order cards from top of your deck (First one will be at the bottom)",
+			"Order cards from top of your deck (First one will be at the top)",
 		)
 
 		for _, cID := range sortedCards {
