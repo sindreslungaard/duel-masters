@@ -16,7 +16,7 @@ export function Popup({
   visible,
   onClose,
   showCloseButton = true,
-  closeOnOutsideClick = true,
+  closeOnOutsideClick = false,
   maxWidth = "600px",
   maxHeight = "80vh",
   zIndex = 1000,
@@ -27,7 +27,7 @@ export function Popup({
 
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
-      if (e.key === "Escape" && visible && onClose) {
+      if (e.key === "Escape" && visible && showCloseButton && onClose) {
         onClose();
       }
     };

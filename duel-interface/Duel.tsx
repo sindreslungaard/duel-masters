@@ -116,6 +116,9 @@ export function Duel({ duelId, duelToken, hostUrl, devTools }: DuelProps) {
     null
   );
   const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
+  const [wait, setWait] = useState("");
+  const [warningMessage, setWarningMessage] = useState("");
+  const [dots, setDots] = useState<"." | ".." | "...">(".");
 
   const {
     connected,
@@ -144,14 +147,23 @@ export function Duel({ duelId, duelToken, hostUrl, devTools }: DuelProps) {
     onChat: (data) => {
       setChatMessages((prev) => [...prev, data]);
     },
+    onWarning: (data) => {
+      setWarningMessage(data.message);
+    },
+    onWait: (data) => {
+      setWait(data.message);
+    },
+    onEndWait: () => {
+      setWait("");
+    },
   });
 
   // Popup modal related refs
   const [opponentDisconnected, setOpponentDisconnected] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
-  const [warningMessage, setWarningMessage] = useState("");
+
   const [reconnecting, setReconnecting] = useState(false);
-  const [wait, setWait] = useState(false);
+
   const [previewCard, setPreviewCard] = useState<PreviewCard | null>(null);
   const [previewCards, setPreviewCards] = useState<PreviewCards | null>(null);
   const [multiCardView, setMultiCardView] = useState<{
@@ -198,6 +210,18 @@ export function Duel({ duelId, duelToken, hostUrl, devTools }: DuelProps) {
     setSelectedCardId(null);
     setSelectedCard(null);
   }, [state]);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setDots((prev) => {
+        if (prev === ".") return "..";
+        if (prev === "..") return "...";
+        return ".";
+      });
+    }, 500);
+
+    return () => clearInterval(interval);
+  }, []);
 
   const [dragState, setDragState] = useState<DragState | null>(null);
   const [dropZone, setDropZone] = useState<DragZone | null>(null);
@@ -427,27 +451,6 @@ export function Duel({ duelId, duelToken, hostUrl, devTools }: DuelProps) {
       >
         <div className="p-6">Your content here</div>
       </Popup> */}
-
-        {action && (
-          <Action
-            title="Action Required"
-            visible={true}
-            error={actionError ? actionError.message : undefined}
-            actionType={action.actionType}
-            cards={action.cards}
-            text={action.text}
-            minSelections={action.minSelections}
-            maxSelections={action.maxSelections}
-            cancellable={action.cancellable}
-            unselectableCards={action.unselectableCards}
-            choices={action.choices}
-            onChoose={sendAction}
-            onClose={() => sendAction({ cards: [], cancel: true })}
-            onCardRightClick={(imageId, name) =>
-              setPreviewCard({ imageId, name: name || "" })
-            }
-          ></Action>
-        )}
 
         <div className="w-[300px] flex flex-col gap-2">
           {/* Devtools */}
@@ -916,12 +919,14 @@ export function Duel({ duelId, duelToken, hostUrl, devTools }: DuelProps) {
           </div>
         )}
       </div>
+
       <CardPreview
         visible={!!previewCard}
         imageId={previewCard?.imageId || null}
         name={previewCard?.name || null}
         onClose={() => setPreviewCard(null)}
       />
+
       <MultiCardPreview
         visible={!!multiCardView}
         cards={multiCardView?.cards || []}
@@ -932,6 +937,51 @@ export function Duel({ duelId, duelToken, hostUrl, devTools }: DuelProps) {
           setMultiCardView(null);
         }}
       />
+
+      <Popup
+        visible={!!warningMessage.length}
+        onClose={() => setWarningMessage("")}
+        title="Warning"
+        maxWidth="500px"
+        closeOnOutsideClick={false}
+      >
+        <div className="p-6 text-white ">{warningMessage}</div>
+      </Popup>
+
+      <Popup
+        visible={!!wait.length}
+        onClose={() => setWait("")}
+        title="Wait"
+        maxWidth="500px"
+        closeOnOutsideClick={false}
+        showCloseButton={false}
+      >
+        <div className="p-6 text-white ">
+          {wait}
+          {dots}
+        </div>
+      </Popup>
+
+      {action && (
+        <Action
+          title="Action Required"
+          visible={true}
+          error={actionError ? actionError.message : undefined}
+          actionType={action.actionType}
+          cards={action.cards}
+          text={action.text}
+          minSelections={action.minSelections}
+          maxSelections={action.maxSelections}
+          cancellable={action.cancellable}
+          unselectableCards={action.unselectableCards}
+          choices={action.choices}
+          onChoose={sendAction}
+          onClose={() => sendAction({ cards: [], cancel: true })}
+          onCardRightClick={(imageId, name) =>
+            setPreviewCard({ imageId, name: name || "" })
+          }
+        ></Action>
+      )}
     </>
   );
 }

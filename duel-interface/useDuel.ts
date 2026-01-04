@@ -5,6 +5,8 @@ import {
   ChatMessage,
   MatchState,
   MatchStateMessage,
+  WaitMessage,
+  WarningMessage,
 } from "./types";
 
 interface UseDuelOptions {
@@ -15,6 +17,9 @@ interface UseDuelOptions {
   onActionError?: (message: ActionWarningMessage) => void;
   onActionClose?: () => void;
   onChat?: (message: ChatMessage) => void;
+  onWarning?: (message: WarningMessage) => void;
+  onWait?: (message: WaitMessage) => void;
+  onEndWait?: () => void;
 }
 
 export function useDuel({
@@ -25,6 +30,9 @@ export function useDuel({
   onActionError,
   onActionClose,
   onChat,
+  onWarning,
+  onWait,
+  onEndWait,
 }: UseDuelOptions) {
   const [connected, setConnected] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -72,6 +80,15 @@ export function useDuel({
             break;
           case "chat":
             onChat?.(data);
+            break;
+          case "warn":
+            onWarning?.(data);
+            break;
+          case "wait":
+            onWait?.(data);
+            break;
+          case "end_wait":
+            onEndWait?.();
             break;
 
           default:
