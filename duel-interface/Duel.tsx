@@ -712,7 +712,9 @@ export function Duel({ duelId, duelToken, hostUrl, devTools }: DuelProps) {
           <div className="rounded-lg flex flex-col gap-[1vh]">
             {/* Opponent Hand Count */}
             <div className="text-center">
-              <p className="text-[clamp(0.6rem,1.2vh,0.85rem)] text-white mb-[0.5vh]">Hand [{state.opponent.handCount}]</p>
+              <p className="text-[clamp(0.6rem,1.2vh,0.85rem)] text-white mb-[0.5vh]">
+                Hand [{state.opponent.handCount}]
+              </p>
             </div>
 
             {/* Opponent Graveyard */}
@@ -730,7 +732,7 @@ export function Duel({ duelId, duelToken, hostUrl, devTools }: DuelProps) {
                     }.jpg`}
                     alt="Top graveyard card"
                     className="h-full cursor-pointer hover:scale-105 transition-transform"
-                    style={{ borderRadius: '5%' }}
+                    style={{ borderRadius: "5%" }}
                     onClick={() => {
                       const topCard =
                         state.opponent.graveyard[
@@ -747,7 +749,7 @@ export function Duel({ duelId, duelToken, hostUrl, devTools }: DuelProps) {
                     src="https://scans.shobu.io/backside.jpg"
                     alt="Empty graveyard"
                     className="h-full opacity-30"
-                    style={{ borderRadius: '5%' }}
+                    style={{ borderRadius: "5%" }}
                   />
                 )}
               </div>
@@ -763,7 +765,7 @@ export function Duel({ duelId, duelToken, hostUrl, devTools }: DuelProps) {
                   src="https://scans.shobu.io/backside.jpg"
                   alt="Deck back"
                   className="h-full"
-                  style={{ borderRadius: '5%' }}
+                  style={{ borderRadius: "5%" }}
                 />
               </div>
             </div>
@@ -784,7 +786,7 @@ export function Duel({ duelId, duelToken, hostUrl, devTools }: DuelProps) {
                     }.jpg`}
                     alt="Top graveyard card"
                     className="h-full cursor-pointer hover:scale-105 transition-transform"
-                    style={{ borderRadius: '5%' }}
+                    style={{ borderRadius: "5%" }}
                     onClick={() => {
                       const topCard =
                         state.me.graveyard[state.me.graveyard.length - 1];
@@ -799,7 +801,7 @@ export function Duel({ duelId, duelToken, hostUrl, devTools }: DuelProps) {
                     src="https://scans.shobu.io/backside.jpg"
                     alt="Empty graveyard"
                     className="h-full opacity-30"
-                    style={{ borderRadius: '5%' }}
+                    style={{ borderRadius: "5%" }}
                   />
                 )}
               </div>
@@ -815,7 +817,7 @@ export function Duel({ duelId, duelToken, hostUrl, devTools }: DuelProps) {
                   src="https://scans.shobu.io/backside.jpg"
                   alt="Deck back"
                   className="h-full"
-                  style={{ borderRadius: '5%' }}
+                  style={{ borderRadius: "5%" }}
                 />
               </div>
             </div>
