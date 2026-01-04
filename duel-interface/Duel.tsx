@@ -237,6 +237,8 @@ export function Duel({ duelId, duelToken, hostUrl }: DuelProps) {
           mouseY: clientY,
           rotated: dragStartPosition.rotated,
         });
+        // Select the card being dragged
+        setSelectedCardId(dragStartPosition.virtualId);
         setDragStartPosition(null);
       }
       return;
