@@ -119,7 +119,7 @@ export function useDuel({
   };
 
   const sendAttackCreature = (virtualId: string) => {
-    send({ header: "attack_player", virtualId });
+    send({ header: "attack_creature", virtualId });
   };
 
   const sendTapAbility = (virtualId: string) => {

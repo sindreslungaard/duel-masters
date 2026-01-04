@@ -1,3 +1,5 @@
+import { useEffect, useRef, useState } from "react";
+
 export interface CardProps {
   virtualId?: string;
   name?: string;
@@ -37,6 +39,25 @@ export function Card({
   onDragStart,
   onRightClick,
 }: CardProps) {
+  const imgRef = useRef<HTMLImageElement>(null);
+  const [horizontalMargin, setHorizontalMargin] = useState("2rem");
+
+  useEffect(() => {
+    const updateMargin = () => {
+      if (imgRef.current && rotated) {
+        const height = imgRef.current.offsetHeight;
+        // Calculate margin proportional to card height
+        // Use smaller margins for smaller cards, larger for bigger cards
+        const margin = Math.max(12, Math.min(32, height * 0.15));
+        setHorizontalMargin(`${margin}px`);
+      }
+    };
+
+    updateMargin();
+    window.addEventListener("resize", updateMargin);
+    return () => window.removeEventListener("resize", updateMargin);
+  }, [rotated]);
+
   const handleMouseDown = (e: React.MouseEvent | React.TouchEvent) => {
     if (draggable && onDragStart) {
       e.preventDefault();
@@ -60,6 +81,7 @@ export function Card({
       <div className="group relative pt-10 -mt-10 flex-shrink-0">
         {/* Card image */}
         <img
+          ref={imgRef}
           src={`https://scans.shobu.io/${imageId || "backside"}.jpg`}
           alt={name || "Backside card"}
           draggable={false}
@@ -67,9 +89,9 @@ export function Card({
             interactable && !isDragging ? "cursor-grab" : ""
           } ${
             rotated && flipped
-              ? "-rotate-90 mx-3"
+              ? "-rotate-90"
               : rotated
-              ? "rotate-90 mx-3"
+              ? "rotate-90"
               : flipped
               ? "rotate-180"
               : ""
@@ -79,7 +101,12 @@ export function Card({
           onMouseDown={handleMouseDown}
           onTouchStart={handleMouseDown}
           onContextMenu={handleContextMenu}
-          style={{ touchAction: "none", borderRadius: "5%" }}
+          style={{
+            touchAction: "none",
+            borderRadius: "5%",
+            marginLeft: rotated ? horizontalMargin : undefined,
+            marginRight: rotated ? horizontalMargin : undefined,
+          }}
         />
       </div>
     </>

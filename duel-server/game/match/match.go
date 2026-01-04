@@ -1410,6 +1410,7 @@ func (m *Match) Parse(s *server.Socket, data []byte) {
 				m.Player1.Player.Ready = true
 				m.Player2.Player.Ready = true
 
+				m.Turn = 0
 				m.Start()
 				return
 
