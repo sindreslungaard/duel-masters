@@ -13,6 +13,7 @@
     "@duel-masters/duel-interface": "file:../duel-interface",
     "@tailwindcss/vite": "^4.1.18",
     "@types/jsonwebtoken": "^9.0.10",
+    "jose": "^6.1.3",
     "jsonwebtoken": "^9.0.3",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",

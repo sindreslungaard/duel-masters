@@ -49,6 +49,10 @@ interface DuelProps {
   hostUrl: string;
   duelId: string;
   duelToken: string;
+  devTools?: {
+    activePlayer: "host" | "guest";
+    onPlayerSwitch: (player: "host" | "guest") => void;
+  };
 }
 
 type DragZone =
@@ -90,7 +94,22 @@ interface PreviewCards {
 
 interface Action {}
 
-export function Duel({ duelId, duelToken, hostUrl }: DuelProps) {
+function DevToolSection({
+  title,
+  children,
+}: {
+  title: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <fieldset className="border border-gray-700 rounded px-3 pb-3 pt-2">
+      <legend className="px-2 text-xs text-gray-500">{title}</legend>
+      {children}
+    </fieldset>
+  );
+}
+
+export function Duel({ duelId, duelToken, hostUrl, devTools }: DuelProps) {
   const [action, setAction] = useState<ActionMessage | null>(null);
   const [actionError, setActionError] = useState<ActionWarningMessage | null>(
     null
@@ -396,10 +415,52 @@ export function Duel({ duelId, duelToken, hostUrl }: DuelProps) {
         )}
 
         <div className="w-[300px] flex flex-col gap-2">
+          {/* Devtools */}
+          <div className="bg-black/30 rounded-md overflow-hidden p-3 text-sm">
+            <p className="mb-3 font-semibold">Local Development Tools</p>
+
+            {devTools && (
+              <DevToolSection title="Player Switch">
+                <div className="flex gap-2">
+                  <div className="flex-1">
+                    <Button
+                      variant={
+                        devTools.activePlayer === "host" ? "default" : "gray"
+                      }
+                      onClick={() => devTools.onPlayerSwitch("host")}
+                    >
+                      Player 1
+                    </Button>
+                  </div>
+                  <div className="flex-1">
+                    <Button
+                      variant={
+                        devTools.activePlayer === "guest" ? "default" : "gray"
+                      }
+                      onClick={() => devTools.onPlayerSwitch("guest")}
+                    >
+                      Player 2
+                    </Button>
+                  </div>
+                </div>
+              </DevToolSection>
+            )}
+
+            <div className={devTools ? "mt-3" : ""}>
+              <DevToolSection title="Add Cards">
+                <Button variant="gray" onClick={() => sendChat("/init all")}>
+                  Initialize zones with 1 of each race
+                </Button>
+              </DevToolSection>
+            </div>
+          </div>
+
+          {/* Chat */}
           <div className="flex-1 bg-black/30 rounded-md overflow-hidden">
             <Chat messages={chatMessages} onSendMessage={sendChat} />
           </div>
 
+          {/* Actions */}
           <div className="bg-black/50 p-2 rounded-md h-[72px] text-gray-400">
             {selectedCard && state.myTurn && (
               <div className="flex flex-col gap-2">
@@ -468,6 +529,7 @@ export function Duel({ duelId, duelToken, hostUrl }: DuelProps) {
             )}
           </div>
 
+          {/* End turn / forfeit */}
           <div className="bg-black/30 p-2 rounded-md">
             <Button
               onClick={sendEndTurn}

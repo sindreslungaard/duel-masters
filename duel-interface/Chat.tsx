@@ -103,7 +103,7 @@ export function Chat({ messages, onSendMessage }: ChatProps) {
           onChange={(e) => setInputValue(e.target.value)}
           onKeyPress={handleKeyPress}
           placeholder="Type to chat"
-          className="w-full bg-black/30 text-white placeholder-gray-400 rounded-md px-3 py-2 outline-none focus:ring-1 focus:ring-white/30"
+          className="text-sm w-full bg-black/30 text-white placeholder-gray-400 rounded-md px-3 py-2 outline-none focus:ring-1 focus:ring-white/30"
         />
       </div>
     </div>

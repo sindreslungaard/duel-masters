@@ -80,30 +80,6 @@ function App() {
 
   return (
     <>
-      {/* Player Toggle */}
-      <div className="fixed top-4 left-1/2 transform -translate-x-1/2 z-50 bg-gray-800 rounded-lg shadow-lg p-2 flex gap-2">
-        <button
-          onClick={() => setActivePlayer("host")}
-          className={`px-4 py-2 rounded font-semibold transition-colors ${
-            activePlayer === "host"
-              ? "bg-blue-500 text-white"
-              : "bg-gray-700 text-gray-300 hover:bg-gray-600"
-          }`}
-        >
-          Player 1
-        </button>
-        <button
-          onClick={() => setActivePlayer("guest")}
-          className={`px-4 py-2 rounded font-semibold transition-colors ${
-            activePlayer === "guest"
-              ? "bg-blue-500 text-white"
-              : "bg-gray-700 text-gray-300 hover:bg-gray-600"
-          }`}
-        >
-          Player 2
-        </button>
-      </div>
-
       {loading && (
         <p className="text-white mt-20 text-center">Loading match...</p>
       )}
@@ -118,6 +94,10 @@ function App() {
               hostUrl="ws://localhost:3000"
               duelId={duel.id}
               duelToken={hostDuelToken}
+              devTools={{
+                activePlayer,
+                onPlayerSwitch: setActivePlayer,
+              }}
             />
           </div>
 
@@ -126,6 +106,10 @@ function App() {
               hostUrl="ws://localhost:3000"
               duelId={duel.id}
               duelToken={guestDuelToken}
+              devTools={{
+                activePlayer,
+                onPlayerSwitch: setActivePlayer,
+              }}
             />
           </div>
         </div>
