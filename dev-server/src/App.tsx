@@ -12,6 +12,7 @@ function App() {
   const [guestDuelToken, setGuestDuelToken] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [activePlayer, setActivePlayer] = useState<"host" | "guest">("host");
+  const [cards, setCards] = useState<{ uid: string; name: string }[]>([]);
 
   const createMatch = async () => {
     setLoading(true);
@@ -28,19 +29,28 @@ function App() {
     };
 
     try {
-      const res = await fetch("/api/match", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(payload),
-      });
+      const [matchRes, cardsRes] = await Promise.all([
+        fetch("/api/match", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(payload),
+        }),
+        fetch("/api/cards"),
+      ]);
 
-      if (!res.ok) {
-        throw new Error(`HTTP error! status: ${res.status}`);
+      if (!matchRes.ok) {
+        throw new Error(`HTTP error! status: ${matchRes.status}`);
       }
 
-      const data = await res.json();
+      if (!cardsRes.ok) {
+        throw new Error(`HTTP error! status: ${cardsRes.status}`);
+      }
+
+      const match = await matchRes.json();
+      const cards = await cardsRes.json();
+      setCards(cards);
 
       const hostToken = await new SignJWT({ id: "1", username: "Player1" })
         .setProtectedHeader({ alg: "HS256" })
@@ -51,7 +61,7 @@ function App() {
 
       setHostDuelToken(hostToken);
       setGuestDuelToken(guestToken);
-      setDuel(data);
+      setDuel(match);
     } catch (err) {
       setError(err instanceof Error ? err.message : "An error occurred");
     } finally {
@@ -95,6 +105,7 @@ function App() {
               duelId={duel.id}
               duelToken={hostDuelToken}
               devTools={{
+                cards,
                 activePlayer,
                 onPlayerSwitch: setActivePlayer,
               }}
@@ -107,6 +118,7 @@ function App() {
               duelId={duel.id}
               duelToken={guestDuelToken}
               devTools={{
+                cards,
                 activePlayer,
                 onPlayerSwitch: setActivePlayer,
               }}

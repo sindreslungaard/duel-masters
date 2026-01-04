@@ -7,7 +7,11 @@ export interface ActionProps {
   title: string;
   visible: boolean;
   error?: string;
-  onChoose: (data: { cards: string[]; cancel: false; count?: number }) => void;
+  onChoose: (data: {
+    cards: string[];
+    cancel: boolean;
+    count?: number;
+  }) => void;
   onClose: () => void;
   onCardRightClick?: (imageId: string, name?: string) => void;
 
@@ -19,7 +23,7 @@ export interface ActionProps {
   maxSelections: number;
   cancellable: boolean;
   unselectableCards: CardState[];
-  choices: string[];
+  choices: string[] | null;
 }
 
 export function Action({
@@ -33,6 +37,8 @@ export function Action({
   onClose,
   onCardRightClick,
   maxSelections,
+  actionType,
+  choices,
 }: ActionProps) {
   const [selectedCardIds, setSelectedCardIds] = useState(new Set<string>());
   const [isBrushing, setIsBrushing] = useState(false);
@@ -126,98 +132,141 @@ export function Action({
   const gridCols = Math.max(3, Math.min(cardCount, 6));
 
   return (
-    <>
-      <Popup
-        title={title}
-        visible={visible}
-        showCloseButton={cancellable}
-        zIndex={1000}
-        closeOnOutsideClick={false}
-        onClose={onClose}
-      >
-        <div
-          className="px-6 py-6 pt-4 select-none"
-          onTouchMove={handleTouchMove}
-        >
-          <div className="text-sm text-gray-100">{text}</div>
-          <div
-            className="grid gap-2 p-2 mt-4 bg-black/30 rounded-md w-fit"
-            style={{
-              gridTemplateColumns: `repeat(${gridCols}, minmax(0, 1fr))`,
-            }}
-          >
-            {cards?.map((card, index) => (
-              <div
-                key={index}
-                className="w-full"
-                data-card-id={card.virtualId}
-                onMouseEnter={() => handleCardHover(card.virtualId)}
-                onMouseDown={(e) => handleCardMouseDown(card.virtualId, e)}
-                onTouchStart={(e) => handleCardMouseDown(card.virtualId, e)}
-              >
-                <img
-                  onContextMenu={(e) => {
-                    e.preventDefault();
-                    if (onCardRightClick && card.uid) {
-                      onCardRightClick(card.uid, card.name);
-                    }
-                  }}
-                  onDragStart={(e) => e.preventDefault()}
-                  draggable={false}
-                  className={`rounded-md ${
-                    selectedCardIds.has(card.virtualId)
-                      ? "ring-1 ring-blue-100"
-                      : ""
-                  }`}
-                  src={`https://scans.shobu.io/${card.uid}.jpg`}
-                  alt={card.name}
-                  style={{ borderRadius: "5%" }}
-                />
-              </div>
-            ))}
-          </div>
-          <div className="flex items-center gap-4 mt-4">
-            <Button
-              onClick={() =>
-                onChoose({
-                  cards: (cards || [])
-                    .map((card) => card.virtualId)
-                    .filter((id) => selectedCardIds.has(id)),
-                  cancel: false,
-                  count: 0,
-                })
-              }
+    <Popup
+      title={title}
+      visible={visible}
+      showCloseButton={cancellable}
+      zIndex={1000}
+      closeOnOutsideClick={false}
+      onClose={onClose}
+    >
+      <div className="px-6 py-6 pt-4 select-none" onTouchMove={handleTouchMove}>
+        {/* Normal card selection */}
+        {actionType === ActionType.None && (
+          <>
+            <div className="text-sm text-gray-100">{text}</div>
+            <div
+              className="grid gap-2 p-2 mt-4 bg-black/30 rounded-md w-fit"
+              style={{
+                gridTemplateColumns: `repeat(${gridCols}, minmax(0, 1fr))`,
+              }}
             >
-              Choose
-            </Button>
-            {cancellable && (
-              <Button variant="gray" onClick={onClose}>
-                Close
-              </Button>
-            )}
-            <div className="flex-1 text-right text-xs text-gray-300 italic">
-              Click and drag to (de)select faster
+              {cards?.map((card, index) => (
+                <div
+                  key={index}
+                  className="w-full"
+                  data-card-id={card.virtualId}
+                  onMouseEnter={() => handleCardHover(card.virtualId)}
+                  onMouseDown={(e) => handleCardMouseDown(card.virtualId, e)}
+                  onTouchStart={(e) => handleCardMouseDown(card.virtualId, e)}
+                >
+                  <img
+                    onContextMenu={(e) => {
+                      e.preventDefault();
+                      if (onCardRightClick && card.uid) {
+                        onCardRightClick(card.uid, card.name);
+                      }
+                    }}
+                    onDragStart={(e) => e.preventDefault()}
+                    draggable={false}
+                    className={`rounded-md ${
+                      selectedCardIds.has(card.virtualId)
+                        ? "ring-1 ring-blue-100"
+                        : ""
+                    }`}
+                    src={`https://scans.shobu.io/${card.uid}.jpg`}
+                    alt={card.name}
+                    style={{ borderRadius: "5%" }}
+                  />
+                </div>
+              ))}
             </div>
-          </div>
-          {error && (
-            <div className="mt-4 flex items-center gap-2 text-sm text-red-500">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 20 20"
-                fill="currentColor"
-                className="w-5 h-5 flex-shrink-0"
+            <div className="flex items-center gap-4 mt-4">
+              <Button
+                onClick={() =>
+                  onChoose({
+                    cards: (cards || [])
+                      .map((card) => card.virtualId)
+                      .filter((id) => selectedCardIds.has(id)),
+                    cancel: false,
+                    count: 0,
+                  })
+                }
               >
-                <path
-                  fillRule="evenodd"
-                  d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-5a.75.75 0 01.75.75v4.5a.75.75 0 01-1.5 0v-4.5A.75.75 0 0110 5zm0 10a1 1 0 100-2 1 1 0 000 2z"
-                  clipRule="evenodd"
-                />
-              </svg>
-              {error}
+                Choose
+              </Button>
+              {cancellable && (
+                <Button variant="gray" onClick={onClose}>
+                  Close
+                </Button>
+              )}
+              <div className="flex-1 text-right text-xs text-gray-300 italic">
+                Click and drag to (de)select faster
+              </div>
             </div>
-          )}
-        </div>
-      </Popup>
-    </>
+          </>
+        )}
+
+        {/* Question action */}
+        {actionType === ActionType.Question && (
+          <>
+            <div className="text-sm text-gray-100">{text}</div>
+            {choices && choices.length > 0 ? (
+              <div className="gap-4 mt-6 flex flex-wrap">
+                {choices.map((choice, i) => (
+                  <div className="flex-1">
+                    <Button
+                      key={i}
+                      onClick={() =>
+                        onChoose({ cards: [], cancel: false, count: i })
+                      }
+                    >
+                      {choice}
+                    </Button>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="gap-4 mt-6 flex flex-wrap">
+                <div className="flex-1">
+                  <Button
+                    onClick={() => onChoose({ cards: [], cancel: false })}
+                  >
+                    Yes
+                  </Button>
+                </div>
+
+                <div className="flex-1">
+                  <Button
+                    variant="gray"
+                    onClick={() => onChoose({ cards: [], cancel: true })}
+                  >
+                    No
+                  </Button>
+                </div>
+              </div>
+            )}
+          </>
+        )}
+
+        {error && (
+          <div className="mt-4 flex items-center gap-2 text-sm text-red-500">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 20 20"
+              fill="currentColor"
+              className="w-5 h-5 flex-shrink-0"
+            >
+              <path
+                fillRule="evenodd"
+                d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-5a.75.75 0 01.75.75v4.5a.75.75 0 01-1.5 0v-4.5A.75.75 0 0110 5zm0 10a1 1 0 100-2 1 1 0 000 2z"
+                clipRule="evenodd"
+              />
+            </svg>
+            {error}
+          </div>
+        )}
+      </div>
+    </Popup>
   );
 }

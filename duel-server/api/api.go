@@ -55,6 +55,7 @@ func (api *API) Start(port string) {
 	api.Use(corsMiddleware)
 
 	api.HandleFunc("GET /ws/{hub}", api.websocketHandler)
+	api.HandleFunc("GET /api/cards", api.getCardsHandler)
 	api.HandleFunc("POST /api/match", api.createMatchHandler)
 
 	// webapp

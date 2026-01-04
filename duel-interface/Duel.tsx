@@ -51,6 +51,7 @@ interface DuelProps {
   duelId: string;
   duelToken: string;
   devTools?: {
+    cards: { uid: string; name: string }[];
     activePlayer: "host" | "guest";
     onPlayerSwitch: (player: "host" | "guest") => void;
   };
@@ -454,10 +455,10 @@ export function Duel({ duelId, duelToken, hostUrl, devTools }: DuelProps) {
 
         <div className="w-[300px] flex flex-col gap-2">
           {/* Devtools */}
-          <div className="bg-black/30 rounded-md overflow-hidden p-3 text-sm">
-            <p className="mb-3 font-semibold">Local Development Tools</p>
+          {devTools && (
+            <div className="bg-black/30 rounded-md overflow-hidden p-3 text-sm">
+              <p className="mb-3 font-semibold">Development Tools</p>
 
-            {devTools && (
               <DevToolSection title="Player Switch">
                 <div className="flex gap-2">
                   <div className="flex-1">
@@ -482,16 +483,55 @@ export function Duel({ duelId, duelToken, hostUrl, devTools }: DuelProps) {
                   </div>
                 </div>
               </DevToolSection>
-            )}
 
-            <div className={devTools ? "mt-3" : ""}>
-              <DevToolSection title="Add Cards">
-                <Button variant="gray" onClick={() => sendChat("/init all")}>
-                  Initialize zones with 1 of each race
-                </Button>
-              </DevToolSection>
+              <div className="mt-3">
+                <DevToolSection title="Initialize">
+                  <Button variant="gray" onClick={() => sendChat("/init all")}>
+                    Initialize zones with 1 of each race
+                  </Button>
+                </DevToolSection>
+              </div>
+
+              <div className="mt-3">
+                <DevToolSection title="Add Cards">
+                  <div className="flex gap-2">
+                    <div className="flex-1">
+                      <select
+                        className="w-full bg-gray-800 text-white px-2 py-[0.4rem] rounded border border-gray-700 focus:outline-none focus:border-blue-500 text-xs"
+                        id="card-selector"
+                        defaultValue=""
+                      >
+                        <option value="" disabled>
+                          Select a card...
+                        </option>
+                        {devTools?.cards.map((card) => (
+                          <option key={card.uid} value={card.uid}>
+                            {card.name}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+
+                    <div className="">
+                      <Button
+                        variant="gray"
+                        onClick={() => {
+                          const select = document.getElementById(
+                            "card-selector"
+                          ) as HTMLSelectElement;
+                          if (select.value) {
+                            sendChat(`/add ${select.value}`);
+                          }
+                        }}
+                      >
+                        Add
+                      </Button>
+                    </div>
+                  </div>
+                </DevToolSection>
+              </div>
             </div>
-          </div>
+          )}
 
           {/* Chat */}
           <div className="flex-1 bg-black/30 rounded-md overflow-hidden">

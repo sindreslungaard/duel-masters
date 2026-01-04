@@ -2,6 +2,8 @@
 
 ## Next
 
+- Added support for playing as a guest without registering an account
+- Added email verification for new users
 - Added support for drag and dropping cards on mobile
 - Updated duel interface to make use of more space to increase card sizes
 - Added support for press and drag to select and deselect action cards on mobile
