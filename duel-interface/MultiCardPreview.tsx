@@ -99,7 +99,10 @@ export function MultiCardPreview({
             <div
               className="grid gap-3 justify-items-center"
               style={{
-                gridTemplateColumns: `repeat(${Math.min(cards.length, 6)}, 150px)`,
+                gridTemplateColumns: `repeat(${Math.min(
+                  cards.length,
+                  6
+                )}, 150px)`,
               }}
             >
               {cards.map((card, index) => (
