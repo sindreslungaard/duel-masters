@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
 interface PopupProps {
   visible: boolean;
@@ -24,6 +24,70 @@ export function Popup({
   children,
 }: PopupProps) {
   const popupRef = useRef<HTMLDivElement>(null);
+  const [isDragging, setIsDragging] = useState(false);
+  const [position, setPosition] = useState({ x: 0, y: 0 });
+  const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
+
+  // Reset position when popup becomes visible
+  useEffect(() => {
+    if (visible) {
+      setPosition({ x: 0, y: 0 });
+    }
+  }, [visible]);
+
+  const handlePointerDown = (e: React.MouseEvent | React.TouchEvent) => {
+    // Don't start dragging if clicking on the close button
+    if ((e.target as HTMLElement).closest('button')) {
+      return;
+    }
+    
+    const clientX = 'touches' in e ? e.touches[0].clientX : e.clientX;
+    const clientY = 'touches' in e ? e.touches[0].clientY : e.clientY;
+    
+    setIsDragging(true);
+    setDragStart({
+      x: clientX - position.x,
+      y: clientY - position.y,
+    });
+  };
+
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      if (!isDragging) return;
+      
+      setPosition({
+        x: e.clientX - dragStart.x,
+        y: e.clientY - dragStart.y,
+      });
+    };
+
+    const handleTouchMove = (e: TouchEvent) => {
+      if (!isDragging) return;
+      
+      setPosition({
+        x: e.touches[0].clientX - dragStart.x,
+        y: e.touches[0].clientY - dragStart.y,
+      });
+    };
+
+    const handleEnd = () => {
+      setIsDragging(false);
+    };
+
+    if (isDragging) {
+      document.addEventListener('mousemove', handleMouseMove);
+      document.addEventListener('mouseup', handleEnd);
+      document.addEventListener('touchmove', handleTouchMove);
+      document.addEventListener('touchend', handleEnd);
+    }
+
+    return () => {
+      document.removeEventListener('mousemove', handleMouseMove);
+      document.removeEventListener('mouseup', handleEnd);
+      document.removeEventListener('touchmove', handleTouchMove);
+      document.removeEventListener('touchend', handleEnd);
+    };
+  }, [isDragging, dragStart]);
 
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
@@ -69,11 +133,17 @@ export function Popup({
         style={{
           maxWidth,
           maxHeight,
+          transform: `translate(${position.x}px, ${position.y}px)`,
+          transition: isDragging ? 'none' : 'transform 0.1s ease-out',
         }}
       >
         {/* Header */}
         {title && (
-          <div className="flex-shrink-0 px-6 py-4 border-b border-gray-800">
+          <div 
+            className="flex-shrink-0 px-6 py-4 border-b border-gray-800 cursor-move select-none"
+            onMouseDown={handlePointerDown}
+            onTouchStart={handlePointerDown}
+          >
             <h2 className="text-xl font-semibold text-white pr-8">{title}</h2>
           </div>
         )}
