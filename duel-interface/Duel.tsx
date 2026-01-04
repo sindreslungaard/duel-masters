@@ -401,7 +401,13 @@ export function Duel({ duelId, duelToken, hostUrl, devTools }: DuelProps) {
       }
     }
 
-    // For other zones (attacking), always green if valid
+    // Check if attacking opponent's battlezone when it's empty
+    if (dragState.sourceZone === "myPlayzone" && zone === "opponentPlayzone") {
+      // If opponent has no creatures, highlight red
+      return state?.opponent.playzone.length === 0 ? "red" : "green";
+    }
+
+    // For other zones (attacking shields), always green if valid
     return "green";
   };
 
