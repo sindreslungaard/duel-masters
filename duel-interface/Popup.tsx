@@ -37,13 +37,13 @@ export function Popup({
 
   const handlePointerDown = (e: React.MouseEvent | React.TouchEvent) => {
     // Don't start dragging if clicking on the close button
-    if ((e.target as HTMLElement).closest('button')) {
+    if ((e.target as HTMLElement).closest("button")) {
       return;
     }
-    
-    const clientX = 'touches' in e ? e.touches[0].clientX : e.clientX;
-    const clientY = 'touches' in e ? e.touches[0].clientY : e.clientY;
-    
+
+    const clientX = "touches" in e ? e.touches[0].clientX : e.clientX;
+    const clientY = "touches" in e ? e.touches[0].clientY : e.clientY;
+
     setIsDragging(true);
     setDragStart({
       x: clientX - position.x,
@@ -54,7 +54,7 @@ export function Popup({
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
       if (!isDragging) return;
-      
+
       setPosition({
         x: e.clientX - dragStart.x,
         y: e.clientY - dragStart.y,
@@ -63,7 +63,7 @@ export function Popup({
 
     const handleTouchMove = (e: TouchEvent) => {
       if (!isDragging) return;
-      
+
       setPosition({
         x: e.touches[0].clientX - dragStart.x,
         y: e.touches[0].clientY - dragStart.y,
@@ -75,17 +75,17 @@ export function Popup({
     };
 
     if (isDragging) {
-      document.addEventListener('mousemove', handleMouseMove);
-      document.addEventListener('mouseup', handleEnd);
-      document.addEventListener('touchmove', handleTouchMove);
-      document.addEventListener('touchend', handleEnd);
+      document.addEventListener("mousemove", handleMouseMove);
+      document.addEventListener("mouseup", handleEnd);
+      document.addEventListener("touchmove", handleTouchMove);
+      document.addEventListener("touchend", handleEnd);
     }
 
     return () => {
-      document.removeEventListener('mousemove', handleMouseMove);
-      document.removeEventListener('mouseup', handleEnd);
-      document.removeEventListener('touchmove', handleTouchMove);
-      document.removeEventListener('touchend', handleEnd);
+      document.removeEventListener("mousemove", handleMouseMove);
+      document.removeEventListener("mouseup", handleEnd);
+      document.removeEventListener("touchmove", handleTouchMove);
+      document.removeEventListener("touchend", handleEnd);
     };
   }, [isDragging, dragStart]);
 
@@ -134,12 +134,12 @@ export function Popup({
           maxWidth,
           maxHeight,
           transform: `translate(${position.x}px, ${position.y}px)`,
-          transition: isDragging ? 'none' : 'transform 0.1s ease-out',
+          transition: isDragging ? "none" : "transform 0.1s ease-out",
         }}
       >
         {/* Header */}
         {title && (
-          <div 
+          <div
             className="flex-shrink-0 px-6 py-4 border-b border-gray-800 cursor-move select-none"
             onMouseDown={handlePointerDown}
             onTouchStart={handlePointerDown}
