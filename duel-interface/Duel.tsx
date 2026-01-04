@@ -707,7 +707,7 @@ export function Duel({ duelId, duelToken, hostUrl, devTools }: DuelProps) {
         </div>
 
         {/* Player Info Panel - Right Side */}
-        <div className="fixed right-[0.5vw] top-1/2 -translate-y-1/2 w-[12vw] min-w-[100px] max-w-[160px] flex flex-col gap-[0.5vh] md:gap-[15vh] z-20">
+        <div className="fixed right-[0.5vw] top-1/2 -translate-y-2/3 w-[12vw] min-w-[100px] max-w-[160px] flex flex-col gap-[0.5vh] md:gap-[5vh] z-20">
           {/* Opponent Section */}
           <div className="rounded-lg flex flex-col gap-[1vh]">
             {/* Opponent Hand Count */}
@@ -715,6 +715,21 @@ export function Duel({ duelId, duelToken, hostUrl, devTools }: DuelProps) {
               <p className="text-[clamp(0.6rem,1.2vh,0.85rem)] text-white mb-[0.5vh]">
                 Hand [{state.opponent.handCount}]
               </p>
+            </div>
+
+            {/* Opponent Deck */}
+            <div>
+              <p className="text-[clamp(0.6rem,1.2vh,0.85rem)] text-white mb-[0.5vh] text-center">
+                Deck [{state.opponent.deck}]
+              </p>
+              <div className="relative h-[12vh] min-h-[60px] max-h-[110px] flex items-center justify-center">
+                <img
+                  src="https://scans.shobu.io/backside.jpg"
+                  alt="Deck back"
+                  className="h-full"
+                  style={{ borderRadius: "5%" }}
+                />
+              </div>
             </div>
 
             {/* Opponent Graveyard */}
@@ -752,21 +767,6 @@ export function Duel({ duelId, duelToken, hostUrl, devTools }: DuelProps) {
                     style={{ borderRadius: "5%" }}
                   />
                 )}
-              </div>
-            </div>
-
-            {/* Opponent Deck */}
-            <div>
-              <p className="text-[clamp(0.6rem,1.2vh,0.85rem)] text-white mb-[0.5vh] text-center">
-                Deck [{state.opponent.deck}]
-              </p>
-              <div className="relative h-[12vh] min-h-[60px] max-h-[110px] flex items-center justify-center">
-                <img
-                  src="https://scans.shobu.io/backside.jpg"
-                  alt="Deck back"
-                  className="h-full"
-                  style={{ borderRadius: "5%" }}
-                />
               </div>
             </div>
           </div>
