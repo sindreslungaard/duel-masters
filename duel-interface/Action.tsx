@@ -17,13 +17,14 @@ export interface ActionProps {
   onCardRightClick?: (imageId: string, name?: string) => void;
 
   // Action details
-  actionType: ActionType;
+  actionType?: ActionType;
   cards?: CardState[];
+  cardsObject?: Record<string, CardState[]>;
   text: string;
   minSelections: number;
   maxSelections: number;
   cancellable: boolean;
-  unselectableCards: CardState[];
+  unselectableCards?: CardState[];
   choices: string[] | null;
 }
 
@@ -32,6 +33,8 @@ export function Action({
   text,
   error,
   cards,
+  unselectableCards,
+  cardsObject,
   cancellable,
   visible,
   onChoose,
@@ -47,6 +50,9 @@ export function Action({
     maxSelections = cards ? cards.length : 0;
   }
 
+  const [selectedCardsObjectKey, setSelectedCardsObjectKey] = useState<
+    string | null
+  >(cardsObject ? Object.keys(cardsObject)[0] : null);
   const [selectedCardIds, setSelectedCardIds] = useState(new Set<string>());
   const [count, setCount] = useState(minSelections);
   const [isBrushing, setIsBrushing] = useState(false);
@@ -137,8 +143,22 @@ export function Action({
     }
   };
 
-  const cardCount = cards?.length || 0;
-  const gridCols = Math.max(3, Math.min(cardCount, 6));
+  const [cardCount, setCardCount] = useState(0);
+  const [gridCols, setGridCols] = useState(3);
+  useEffect(() => {
+    if (cardsObject) {
+      const c = cardsObject[selectedCardsObjectKey || ""];
+      setCardCount(c?.length || 0);
+    } else {
+      setCardCount((cards?.length || 0) + (unselectableCards?.length || 0));
+    }
+  }, [selectedCardsObjectKey]);
+
+  useEffect(() => {
+    setGridCols(Math.max(3, Math.min(cardCount, 6)));
+  }, [cardCount]);
+
+  /* This is a bit of a mess in order to accomodate for the legacy system */
 
   return (
     <Popup
@@ -151,52 +171,122 @@ export function Action({
     >
       <div className="px-6 py-6 pt-4 select-none" onTouchMove={handleTouchMove}>
         {/* Normal card selection */}
-        {actionType === ActionType.None && (
+        {(actionType === ActionType.None || !actionType) && (
           <>
             <div className="text-sm text-gray-100">{text}</div>
+            {cardsObject && (
+              <div className="mt-4 flex gap-4">
+                <select
+                  className="bg-gray-800 text-white px-2 py-[0.4rem] rounded border border-gray-700 focus:outline-none focus:border-blue-500 text-xs"
+                  id="action-searchable-selector"
+                  value={selectedCardsObjectKey || ""}
+                  onChange={(e) => setSelectedCardsObjectKey(e.target.value)}
+                >
+                  {Object.keys(cardsObject).map((key, i) => (
+                    <option key={i} value={key}>
+                      {key}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            )}
             <div
               className="grid gap-2 p-2 mt-4 bg-black/30 rounded-md w-fit"
               style={{
                 gridTemplateColumns: `repeat(${gridCols}, minmax(0, 1fr))`,
               }}
             >
-              {cards?.map((card, index) => (
-                <div
-                  key={index}
-                  className="w-full"
-                  data-card-id={card.virtualId}
-                  onMouseEnter={() => handleCardHover(card.virtualId)}
-                  onMouseDown={(e) => handleCardMouseDown(card.virtualId, e)}
-                  onTouchStart={(e) => handleCardMouseDown(card.virtualId, e)}
-                >
-                  <img
-                    onContextMenu={(e) => {
-                      e.preventDefault();
-                      if (onCardRightClick && card.uid) {
-                        onCardRightClick(card.uid, card.name);
-                      }
-                    }}
-                    onDragStart={(e) => e.preventDefault()}
-                    draggable={false}
-                    className={`rounded-md ${
-                      selectedCardIds.has(card.virtualId)
-                        ? "ring-1 ring-blue-100"
-                        : ""
-                    }`}
-                    src={`https://scans.shobu.io/${card.uid}.jpg`}
-                    alt={card.name}
-                    style={{ borderRadius: "5%" }}
-                  />
-                </div>
-              ))}
+              {cardsObject &&
+                cardsObject[selectedCardsObjectKey || ""].map((card, index) => (
+                  <div
+                    key={index}
+                    className="w-full"
+                    data-card-id={card.virtualId}
+                    onMouseEnter={() => handleCardHover(card.virtualId)}
+                    onMouseDown={(e) => handleCardMouseDown(card.virtualId, e)}
+                    onTouchStart={(e) => handleCardMouseDown(card.virtualId, e)}
+                  >
+                    <img
+                      onContextMenu={(e) => {
+                        e.preventDefault();
+                        if (onCardRightClick && card.uid) {
+                          onCardRightClick(card.uid, card.name);
+                        }
+                      }}
+                      onDragStart={(e) => e.preventDefault()}
+                      draggable={false}
+                      className={`rounded-md ${
+                        selectedCardIds.has(card.virtualId)
+                          ? "ring-1 ring-blue-100"
+                          : ""
+                      }`}
+                      src={`https://scans.shobu.io/${card.uid}.jpg`}
+                      alt={card.name}
+                      style={{ borderRadius: "5%" }}
+                    />
+                  </div>
+                ))}
+
+              {cardsObject &&
+                !cardsObject[selectedCardsObjectKey || ""].length && (
+                  <div className="text-gray-400 text-sm">No cards to show</div>
+                )}
+
+              {!cardsObject &&
+                cards?.map((card, index) => (
+                  <div
+                    key={index}
+                    className="w-full"
+                    data-card-id={card.virtualId}
+                    onMouseEnter={() => handleCardHover(card.virtualId)}
+                    onMouseDown={(e) => handleCardMouseDown(card.virtualId, e)}
+                    onTouchStart={(e) => handleCardMouseDown(card.virtualId, e)}
+                  >
+                    <img
+                      onContextMenu={(e) => {
+                        e.preventDefault();
+                        if (onCardRightClick && card.uid) {
+                          onCardRightClick(card.uid, card.name);
+                        }
+                      }}
+                      onDragStart={(e) => e.preventDefault()}
+                      draggable={false}
+                      className={`rounded-md ${
+                        selectedCardIds.has(card.virtualId)
+                          ? "ring-1 ring-blue-100"
+                          : ""
+                      }`}
+                      src={`https://scans.shobu.io/${card.uid}.jpg`}
+                      alt={card.name}
+                      style={{ borderRadius: "5%" }}
+                    />
+                  </div>
+                ))}
+
+              {!cardsObject &&
+                unselectableCards?.map((card, index) => (
+                  <div key={index} className="w-full">
+                    <img
+                      onContextMenu={(e) => {
+                        e.preventDefault();
+                        if (onCardRightClick && card.uid) {
+                          onCardRightClick(card.uid, card.name);
+                        }
+                      }}
+                      draggable={false}
+                      className={`rounded-md opacity-50 grayscale cursor-not-allowed`}
+                      src={`https://scans.shobu.io/${card.uid}.jpg`}
+                      alt={card.name}
+                      style={{ borderRadius: "5%" }}
+                    />
+                  </div>
+                ))}
             </div>
             <div className="flex items-center gap-4 mt-4">
               <Button
                 onClick={() =>
                   onChoose({
-                    cards: (cards || [])
-                      .map((card) => card.virtualId)
-                      .filter((id) => selectedCardIds.has(id)),
+                    cards: [...selectedCardIds],
                     cancel: false,
                     count: 0,
                   })
@@ -374,9 +464,7 @@ export function Action({
               <Button
                 onClick={() =>
                   onChoose({
-                    cards: (cards || [])
-                      .map((card) => card.virtualId)
-                      .filter((id) => selectedCardIds.has(id)),
+                    cards: [...selectedCardIds],
                     cancel: false,
                     count: 0,
                   })

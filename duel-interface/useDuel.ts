@@ -61,7 +61,6 @@ export function useDuel({
     };
 
     ws.onmessage = (event) => {
-      console.log("WebSocket message:", event.data);
       try {
         const data = JSON.parse(event.data);
 

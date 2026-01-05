@@ -1008,7 +1008,12 @@ export function Duel({ duelId, duelToken, hostUrl, devTools }: DuelProps) {
           visible={true}
           error={actionError ? actionError.message : undefined}
           actionType={action.actionType}
-          cards={action.cards}
+          cards={Array.isArray(action.cards) ? action.cards : undefined}
+          cardsObject={
+            typeof action.cards === "object" && !Array.isArray(action.cards)
+              ? action.cards
+              : undefined
+          }
           text={action.text}
           minSelections={action.minSelections}
           maxSelections={action.maxSelections}

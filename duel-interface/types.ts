@@ -89,7 +89,7 @@ export enum ActionType {
 export interface ActionMessage {
   header: string;
   actionType: ActionType;
-  cards: CardState[];
+  cards?: CardState[] | Record<string, CardState[]>;
   text: string;
   minSelections: number;
   maxSelections: number;
