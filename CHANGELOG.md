@@ -6,8 +6,9 @@
 - Added email verification for new users
 - Added support for drag and dropping cards on mobile
 - Updated duel interface to make use of more space to increase card sizes
-- Added support for press and drag to select and deselect action cards on mobile
-- Added smooth scroll when new chat messages appear
+- Added support for press and drag to select and deselect action popup cards on mobile
+- Added smooth scroll when new chat messages appear both in duels and the lobby
+- Updated all action popups to be more coherent and mobile friendly
 
 ## [Unreleased]
 

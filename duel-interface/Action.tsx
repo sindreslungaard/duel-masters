@@ -177,7 +177,7 @@ export function Action({
             {cardsObject && (
               <div className="mt-4 flex gap-4">
                 <select
-                  className="bg-gray-800 text-white px-2 py-[0.4rem] rounded border border-gray-700 focus:outline-none focus:border-blue-500 text-xs"
+                  className="bg-gray-800 text-white pl-2 pr-8 py-[0.4rem] rounded border border-gray-700 focus:outline-none focus:border-blue-500 text-xs appearance-none bg-[url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2212%22%20height%3D%2212%22%20viewBox%3D%220%200%2012%2012%22%3E%3Cpath%20fill%3D%22%23ffffff%22%20d%3D%22M6%209L1%204h10z%22%2F%3E%3C%2Fsvg%3E')] bg-[length:12px_12px] bg-[position:right_0.5rem_center] bg-no-repeat"
                   id="action-searchable-selector"
                   value={selectedCardsObjectKey || ""}
                   onChange={(e) => setSelectedCardsObjectKey(e.target.value)}
@@ -376,7 +376,7 @@ export function Action({
               <div className="text-sm text-gray-100">{text}</div>
               <div className="mt-6 flex gap-4">
                 <select
-                  className="bg-gray-800 text-white px-2 py-[0.4rem] rounded border border-gray-700 focus:outline-none focus:border-blue-500 text-xs"
+                  className="bg-gray-800 text-white pl-2 pr-8 py-[0.4rem] rounded border border-gray-700 focus:outline-none focus:border-blue-500 text-xs appearance-none bg-[url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2212%22%20height%3D%2212%22%20viewBox%3D%220%200%2012%2012%22%3E%3Cpath%20fill%3D%22%23ffffff%22%20d%3D%22M6%209L1%204h10z%22%2F%3E%3C%2Fsvg%3E')] bg-[length:12px_12px] bg-[position:right_0.5rem_center] bg-no-repeat"
                   id="action-searchable-selector"
                   value={selectedSearchValue}
                   onChange={(e) => setSelectedSearchValue(e.target.value)}
