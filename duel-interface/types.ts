@@ -83,6 +83,7 @@ export enum ActionType {
   Question = "question",
   Order = "order",
   Searchable = "searchable",
+  ShowCards = "show_cards",
 }
 
 // ActionMessage is used to prompt the user to make a selection of the specified cards
@@ -91,11 +92,15 @@ export interface ActionMessage {
   actionType: ActionType;
   cards?: CardState[] | Record<string, CardState[]>;
   text: string;
-  minSelections: number;
-  maxSelections: number;
-  cancellable: boolean;
-  unselectableCards: CardState[];
-  choices: string[];
+  minSelections?: number;
+  maxSelections?: number;
+  cancellable?: boolean;
+  unselectableCards?: CardState[];
+  choices?: string[];
+  showCards?: {
+    cards: string[];
+    dismissable: boolean;
+  };
 }
 
 // MultipartActionMessage is used to prompt the user to make a selection of the specified cards

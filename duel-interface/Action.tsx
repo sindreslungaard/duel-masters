@@ -14,12 +14,17 @@ export interface ActionProps {
     count?: number;
   }) => void;
   onClose: () => void;
+  onDismiss?: () => void;
   onCardRightClick?: (imageId: string, name?: string) => void;
 
   // Action details
   actionType?: ActionType;
   cards?: CardState[];
   cardsObject?: Record<string, CardState[]>;
+  showCards?: {
+    cards: string[];
+    dismissable: boolean;
+  };
   text: string;
   minSelections: number;
   maxSelections: number;
@@ -35,10 +40,12 @@ export function Action({
   cards,
   unselectableCards,
   cardsObject,
+  showCards,
   cancellable,
   visible,
   onChoose,
   onClose,
+  onDismiss,
   onCardRightClick,
   minSelections,
   maxSelections,
@@ -149,6 +156,8 @@ export function Action({
     if (cardsObject) {
       const c = cardsObject[selectedCardsObjectKey || ""];
       setCardCount(c?.length || 0);
+    } else if (showCards) {
+      setCardCount(showCards.cards.length);
     } else {
       setCardCount((cards?.length || 0) + (unselectableCards?.length || 0));
     }
@@ -164,12 +173,48 @@ export function Action({
     <Popup
       title={title}
       visible={visible}
-      showCloseButton={cancellable}
+      showCloseButton={showCards ? true : cancellable}
       zIndex={1000}
       closeOnOutsideClick={false}
-      onClose={onClose}
+      onClose={showCards ? onDismiss : onClose}
     >
       <div className="px-6 py-6 pt-4 select-none" onTouchMove={handleTouchMove}>
+        {/* Show cards action */}
+        {actionType === ActionType.ShowCards && (
+          <>
+            <div className="text-sm text-gray-100">{text}</div>
+
+            <div
+              className="grid gap-2 p-2 mt-4 bg-black/30 rounded-md w-fit"
+              style={{
+                gridTemplateColumns: `repeat(${gridCols}, minmax(0, 1fr))`,
+              }}
+            >
+              {showCards?.cards.map((imageId, index) => (
+                <div key={index} className="w-full">
+                  <img
+                    onContextMenu={(e) => {
+                      e.preventDefault();
+                      onCardRightClick?.(imageId, "");
+                    }}
+                    draggable={false}
+                    className={`rounded-md`}
+                    src={`https://scans.shobu.io/${imageId}.jpg`}
+                    alt="Card preview"
+                    style={{ borderRadius: "5%" }}
+                  />
+                </div>
+              ))}
+            </div>
+
+            <div className="flex mt-4">
+              <Button onClick={() => onDismiss?.()}>
+                Acknowledge and Close
+              </Button>
+            </div>
+          </>
+        )}
+
         {/* Normal card selection */}
         {(actionType === ActionType.None || !actionType) && (
           <>

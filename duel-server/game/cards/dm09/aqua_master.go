@@ -34,11 +34,6 @@ func AquaMaster(c *match.Card) {
 					x.ShieldFaceUp = true
 					ctx.Match.BroadcastState()
 					ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s was turned face up from %s's shieldzone.", x.Name, ctx.Match.Opponent(card.Player).Username()))
-					ctx.Match.ShowCardsNonDismissible(
-						card.Player,
-						fmt.Sprintf("%s was turned face up from your opponent's shieldzone by %s's effect.", x.Name, card.Name),
-						[]string{x.ImageID},
-					)
 				})
 			}))
 }

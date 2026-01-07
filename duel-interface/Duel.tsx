@@ -172,8 +172,6 @@ export function Duel({ duelId, duelToken, hostUrl, devTools }: DuelProps) {
     title: string;
   } | null>(null);
 
-  const [showPopup1, setShowPopup1] = useState(true);
-
   const [selectedCardId, setSelectedCardId] = useState<string | null>(null);
   const [selectedCard, setSelectedCard] = useState<SelectedCard | null>(null);
 
@@ -468,7 +466,7 @@ export function Duel({ duelId, duelToken, hostUrl, devTools }: DuelProps) {
                       }
                       onClick={() => devTools.onPlayerSwitch("host")}
                     >
-                      Player 1
+                      Host
                     </Button>
                   </div>
                   <div className="flex-1">
@@ -478,7 +476,7 @@ export function Duel({ duelId, duelToken, hostUrl, devTools }: DuelProps) {
                       }
                       onClick={() => devTools.onPlayerSwitch("guest")}
                     >
-                      Player 2
+                      Guest
                     </Button>
                   </div>
                 </div>
@@ -1004,7 +1002,7 @@ export function Duel({ duelId, duelToken, hostUrl, devTools }: DuelProps) {
 
       {action && (
         <Action
-          title="Action Required"
+          title={action.showCards ? "Card Preview" : "Action Required"}
           visible={true}
           error={actionError ? actionError.message : undefined}
           actionType={action.actionType}
@@ -1014,14 +1012,16 @@ export function Duel({ duelId, duelToken, hostUrl, devTools }: DuelProps) {
               ? action.cards
               : undefined
           }
+          showCards={action.showCards}
           text={action.text}
-          minSelections={action.minSelections}
-          maxSelections={action.maxSelections}
-          cancellable={action.cancellable}
+          minSelections={action.minSelections || 0}
+          maxSelections={action.maxSelections || 0}
+          cancellable={action.cancellable || false}
           unselectableCards={action.unselectableCards}
-          choices={action.choices}
+          choices={action.choices || null}
           onChoose={sendAction}
           onClose={() => sendAction({ cards: [], cancel: true })}
+          onDismiss={() => setAction(null)}
           onCardRightClick={(imageId, name) =>
             setPreviewCard({ imageId, name: name || "" })
           }

@@ -1,10 +1,12 @@
 import { useEffect, useRef, useState } from "react";
 import {
   ActionMessage,
+  ActionType,
   ActionWarningMessage,
   ChatMessage,
   MatchState,
   MatchStateMessage,
+  ShowCardsMessage,
   WaitMessage,
   WarningMessage,
 } from "./types";
@@ -20,6 +22,8 @@ interface UseDuelOptions {
   onWarning?: (message: WarningMessage) => void;
   onWait?: (message: WaitMessage) => void;
   onEndWait?: () => void;
+  onShowCards?: (message: ShowCardsMessage) => void;
+  onShowCardsNonDismissable?: (message: ShowCardsMessage) => void;
 }
 
 export function useDuel({
@@ -88,6 +92,28 @@ export function useDuel({
             break;
           case "end_wait":
             onEndWait?.();
+            break;
+          case "show_cards":
+            onActionMessage?.({
+              header: data.header,
+              actionType: ActionType.ShowCards,
+              text: data.message,
+              showCards: {
+                cards: data.cards,
+                dismissable: true,
+              },
+            });
+            break;
+          case "show_cards_non_dismissible":
+            onActionMessage?.({
+              header: data.header,
+              actionType: ActionType.ShowCards,
+              text: data.message,
+              showCards: {
+                cards: data.cards,
+                dismissable: false,
+              },
+            });
             break;
 
           default:
