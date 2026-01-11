@@ -57,6 +57,7 @@ export function Action({
     maxSelections = cards ? cards.length : 0;
   }
 
+  const [ready, setReady] = useState(false);
   const [selectedCardsObjectKey, setSelectedCardsObjectKey] = useState<
     string | null
   >(cardsObject ? Object.keys(cardsObject)[0] : null);
@@ -151,7 +152,7 @@ export function Action({
   };
 
   const [cardCount, setCardCount] = useState(0);
-  const [gridCols, setGridCols] = useState(3);
+  const [gridCols, setGridCols] = useState(6);
   useEffect(() => {
     if (cardsObject) {
       const c = cardsObject[selectedCardsObjectKey || ""];
@@ -165,6 +166,9 @@ export function Action({
 
   useEffect(() => {
     setGridCols(Math.max(3, Math.min(cardCount, 6)));
+    if (!ready) {
+      setTimeout(() => setReady(true), 1);
+    }
   }, [cardCount]);
 
   /* This is a bit of a mess in order to accomodate for the legacy system */
@@ -172,7 +176,7 @@ export function Action({
   return (
     <Popup
       title={title}
-      visible={visible}
+      visible={visible && ready}
       showCloseButton={showCards ? true : cancellable}
       zIndex={1000}
       closeOnOutsideClick={false}
