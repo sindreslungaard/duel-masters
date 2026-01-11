@@ -42,6 +42,7 @@ export function useDuel({
   const [error, setError] = useState<string | null>(null);
   const wsRef = useRef<WebSocket | null>(null);
   const [state, setState] = useState<MatchState | null>(null);
+  const [opponentDisconnected, setOpponentDisconnected] = useState(false);
 
   useEffect(() => {
     const wsUrl = `${hostUrl}/ws/${duelId}?duelToken=${duelToken}`;
@@ -115,6 +116,13 @@ export function useDuel({
               },
             });
             break;
+          case "opponent_disconnected":
+            setOpponentDisconnected(true);
+            break;
+
+          case "opponent_reconnected":
+            setOpponentDisconnected(false);
+            break;
 
           default:
             console.log("Unknown message type:", data.header);
@@ -184,6 +192,7 @@ export function useDuel({
     connected,
     error,
     state,
+    opponentDisconnected,
     send,
     sendJoinMatch,
     sendEndTurn,

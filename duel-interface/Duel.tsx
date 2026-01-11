@@ -55,6 +55,7 @@ interface DuelProps {
     activePlayer: "host" | "guest";
     onPlayerSwitch: (player: "host" | "guest") => void;
   };
+  onLeaveDuel?: () => void;
 }
 
 type DragZone =
@@ -111,7 +112,13 @@ function DevToolSection({
   );
 }
 
-export function Duel({ duelId, duelToken, hostUrl, devTools }: DuelProps) {
+export function Duel({
+  duelId,
+  duelToken,
+  hostUrl,
+  devTools,
+  onLeaveDuel,
+}: DuelProps) {
   const [action, setAction] = useState<ActionMessage | null>(null);
   const [actionError, setActionError] = useState<ActionWarningMessage | null>(
     null
@@ -135,6 +142,7 @@ export function Duel({ duelId, duelToken, hostUrl, devTools }: DuelProps) {
     sendAction,
     sendChat,
     state,
+    opponentDisconnected,
   } = useDuel({
     hostUrl,
     duelId,
@@ -159,14 +167,7 @@ export function Duel({ duelId, duelToken, hostUrl, devTools }: DuelProps) {
     },
   });
 
-  // Popup modal related refs
-  const [opponentDisconnected, setOpponentDisconnected] = useState(false);
-  const [errorMessage, setErrorMessage] = useState("");
-
-  const [reconnecting, setReconnecting] = useState(false);
-
   const [previewCard, setPreviewCard] = useState<PreviewCard | null>(null);
-  const [previewCards, setPreviewCards] = useState<PreviewCards | null>(null);
   const [multiCardView, setMultiCardView] = useState<{
     cards: { imageId: string; name: string }[];
     title: string;
@@ -441,16 +442,6 @@ export function Duel({ duelId, duelToken, hostUrl, devTools }: DuelProps) {
         className="w-full h-screen text-white flex bg-[linear-gradient(45deg,rgb(29,33,42),rgb(20,16,21))] bg-cover bg-no-repeat gap-2 p-1 custom-scrollbar"
         style={dragState ? { cursor: "grabbing" } : {}}
       >
-        {/* <Popup
-        title="Your Title Here"
-        visible={showPopup1}
-        onClose={() => setShowPopup1(false)}
-        maxWidth="500px"
-        zIndex={1000}
-      >
-        <div className="p-6">Your content here</div>
-      </Popup> */}
-
         <div className="w-[300px] flex flex-col gap-2">
           {/* Devtools */}
           {devTools && (
@@ -957,6 +948,39 @@ export function Duel({ duelId, duelToken, hostUrl, devTools }: DuelProps) {
           </div>
         )}
       </div>
+
+      <Popup
+        visible={reconnecting}
+        title="Reconnecting"
+        maxWidth="500px"
+        closeOnOutsideClick={false}
+        showCloseButton={false}
+      >
+        <div className="p-6 text-white ">
+          Disconnected from server. Attempting to reconnect{dots}
+        </div>
+
+        <div className="flex-1">
+          <Button onClick={onLeaveDuel}>Leave Duel</Button>
+        </div>
+      </Popup>
+
+      <Popup
+        visible={opponentDisconnected}
+        title="Opponent Disconnected"
+        maxWidth="500px"
+        closeOnOutsideClick={false}
+        showCloseButton={false}
+      >
+        <div className="p-6 text-white ">
+          Your opponent disconnected or left the match. Waiting for them to
+          reconnect{dots}
+        </div>
+
+        <div className="flex-1">
+          <Button onClick={onLeaveDuel}>Leave Duel</Button>
+        </div>
+      </Popup>
 
       <CardPreview
         visible={!!previewCard}
