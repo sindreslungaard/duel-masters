@@ -43,99 +43,161 @@ export function useDuel({
   const wsRef = useRef<WebSocket | null>(null);
   const [state, setState] = useState<MatchState | null>(null);
   const [opponentDisconnected, setOpponentDisconnected] = useState(false);
+  const [reconnecting, setReconnecting] = useState(false);
+  const reconnectTimeoutRef = useRef<number | null>(null);
+  const reconnectAttemptsRef = useRef(0);
+  const isUnmountingRef = useRef(false);
 
   useEffect(() => {
-    const wsUrl = `${hostUrl}/ws/${duelId}?duelToken=${duelToken}`;
-    const ws = new WebSocket(wsUrl);
-    wsRef.current = ws;
+    isUnmountingRef.current = false;
 
-    ws.onopen = () => {
-      console.log("WebSocket connected");
-      setConnected(true);
-      setError(null);
-    };
-
-    ws.onerror = (event) => {
-      console.error("WebSocket error:", event);
-      setError("WebSocket connection error");
-    };
-
-    ws.onclose = () => {
-      console.log("WebSocket closed");
-      setConnected(false);
-    };
-
-    ws.onmessage = (event) => {
-      try {
-        const data = JSON.parse(event.data);
-
-        switch (data.header) {
-          case "state_update":
-            setState(data.state);
-            break;
-          case "action":
-            onActionMessage?.(data);
-            break;
-          case "action_error":
-            onActionError?.(data);
-            break;
-          case "close_action":
-            onActionClose?.();
-            break;
-          case "chat":
-            onChat?.(data);
-            break;
-          case "warn":
-            onWarning?.(data);
-            break;
-          case "wait":
-            onWait?.(data);
-            break;
-          case "end_wait":
-            onEndWait?.();
-            break;
-          case "show_cards":
-            onActionMessage?.({
-              header: data.header,
-              actionType: ActionType.ShowCards,
-              text: data.message,
-              showCards: {
-                cards: data.cards,
-                dismissable: true,
-              },
-            });
-            break;
-          case "show_cards_non_dismissible":
-            onActionMessage?.({
-              header: data.header,
-              actionType: ActionType.ShowCards,
-              text: data.message,
-              showCards: {
-                cards: data.cards,
-                dismissable: false,
-              },
-            });
-            break;
-          case "opponent_disconnected":
-            setOpponentDisconnected(true);
-            break;
-
-          case "opponent_reconnected":
-            setOpponentDisconnected(false);
-            break;
-
-          default:
-            console.log("Unknown message type:", data.header);
-        }
-      } catch (err) {
-        console.error("Error parsing message:", err);
+    const connect = () => {
+      // Clear any existing reconnect timeout
+      if (reconnectTimeoutRef.current) {
+        clearTimeout(reconnectTimeoutRef.current);
+        reconnectTimeoutRef.current = null;
       }
+
+      const wsUrl = `${hostUrl}/ws/${duelId}?duelToken=${duelToken}`;
+      const ws = new WebSocket(wsUrl);
+      wsRef.current = ws;
+
+      ws.onopen = () => {
+        console.log("WebSocket connected");
+        setConnected(true);
+        setError(null);
+        setReconnecting(false);
+        reconnectAttemptsRef.current = 0; // Reset reconnect attempts on successful connection
+      };
+
+      ws.onerror = (event) => {
+        console.error("WebSocket error:", event);
+        setError("WebSocket connection error");
+      };
+
+      ws.onclose = () => {
+        console.log("WebSocket closed");
+        setConnected(false);
+        setReconnecting(true);
+
+        // Only attempt to reconnect if we're not unmounting
+        if (!isUnmountingRef.current) {
+          const maxReconnectAttempts = 20;
+          const baseDelay = 1000; // Start with 1 second
+          const maxDelay = 5000; // Max 5 seconds
+
+          if (reconnectAttemptsRef.current < maxReconnectAttempts) {
+            // First attempt is immediate, then exponential backoff with cap
+            const delay =
+              reconnectAttemptsRef.current === 0
+                ? 0
+                : Math.min(
+                    baseDelay * Math.pow(2, reconnectAttemptsRef.current - 1),
+                    maxDelay
+                  );
+
+            console.log(
+              `Reconnecting in ${delay}ms (attempt ${
+                reconnectAttemptsRef.current + 1
+              }/${maxReconnectAttempts})`
+            );
+
+            reconnectAttemptsRef.current++;
+            reconnectTimeoutRef.current = setTimeout(connect, delay);
+          } else {
+            setReconnecting(false);
+            setError("Connection lost. Max reconnection attempts reached.");
+            alert(
+              "Connection lost. Max reconnection attempts reached. Please refresh the page or go back to the lobby."
+            );
+          }
+        }
+      };
+
+      ws.onmessage = (event) => {
+        try {
+          const data = JSON.parse(event.data);
+
+          switch (data.header) {
+            case "state_update":
+              setState(data.state);
+              break;
+            case "action":
+              onActionMessage?.(data);
+              break;
+            case "action_error":
+              onActionError?.(data);
+              break;
+            case "close_action":
+              onActionClose?.();
+              break;
+            case "chat":
+              onChat?.(data);
+              break;
+            case "warn":
+              onWarning?.(data);
+              break;
+            case "wait":
+              onWait?.(data);
+              break;
+            case "end_wait":
+              onEndWait?.();
+              break;
+            case "show_cards":
+              onActionMessage?.({
+                header: data.header,
+                actionType: ActionType.ShowCards,
+                text: data.message,
+                showCards: {
+                  cards: data.cards,
+                  dismissable: true,
+                },
+              });
+              break;
+            case "show_cards_non_dismissible":
+              onActionMessage?.({
+                header: data.header,
+                actionType: ActionType.ShowCards,
+                text: data.message,
+                showCards: {
+                  cards: data.cards,
+                  dismissable: false,
+                },
+              });
+              break;
+            case "opponent_disconnected":
+              setOpponentDisconnected(true);
+              break;
+
+            case "opponent_reconnected":
+              setOpponentDisconnected(false);
+              break;
+
+            default:
+              console.log("Unknown message type:", data.header);
+          }
+        } catch (err) {
+          console.error("Error parsing message:", err);
+        }
+      };
     };
+
+    // Start the initial connection
+    connect();
 
     // Cleanup on unmount
     return () => {
-      if (ws.readyState === WebSocket.OPEN) {
-        ws.close();
+      isUnmountingRef.current = true;
+
+      // Clear any pending reconnect timeout
+      if (reconnectTimeoutRef.current) {
+        clearTimeout(reconnectTimeoutRef.current);
+        reconnectTimeoutRef.current = null;
+      }
+
+      // Close the WebSocket if it's open
+      if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN) {
+        wsRef.current.close();
       }
     };
   }, [duelId, duelToken, hostUrl]);
@@ -193,6 +255,7 @@ export function useDuel({
     error,
     state,
     opponentDisconnected,
+    reconnecting,
     send,
     sendJoinMatch,
     sendEndTurn,

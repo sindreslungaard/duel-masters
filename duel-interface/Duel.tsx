@@ -143,6 +143,7 @@ export function Duel({
     sendChat,
     state,
     opponentDisconnected,
+    reconnecting,
   } = useDuel({
     hostUrl,
     duelId,
@@ -951,17 +952,18 @@ export function Duel({
 
       <Popup
         visible={reconnecting}
-        title="Reconnecting"
+        title="Disconnected"
         maxWidth="500px"
         closeOnOutsideClick={false}
         showCloseButton={false}
       >
         <div className="p-6 text-white ">
-          Disconnected from server. Attempting to reconnect{dots}
-        </div>
-
-        <div className="flex-1">
-          <Button onClick={onLeaveDuel}>Leave Duel</Button>
+          <p>Attempting to reconnect{dots}</p>
+          <div className="flex mt-6">
+            <Button variant="destructive" onClick={onLeaveDuel}>
+              Leave Duel
+            </Button>
+          </div>
         </div>
       </Popup>
 
@@ -973,12 +975,16 @@ export function Duel({
         showCloseButton={false}
       >
         <div className="p-6 text-white ">
-          Your opponent disconnected or left the match. Waiting for them to
-          reconnect{dots}
+          <p>
+            Your opponent disconnected or left the match. Waiting for them to
+            reconnect{dots}
+          </p>
         </div>
 
-        <div className="flex-1">
-          <Button onClick={onLeaveDuel}>Leave Duel</Button>
+        <div className="flex mt-6">
+          <Button variant="destructive" onClick={onLeaveDuel}>
+            Leave Duel
+          </Button>
         </div>
       </Popup>
 
