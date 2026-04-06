@@ -712,6 +712,7 @@ var DM09 = map[string]match.CardConstructor{
 	"cf96ecd5-481a-4a63-b8f1-61731525d956": dm09.KelpCandle,
 	"83ac5a3a-1b3d-43f9-a08e-4415e5f478ff": dm09.AzaghastTyrantOfShadows,
 	"da93d9d0-b569-408d-af93-b4a4286fc91f": dm09.BatDoctorShadowOfUndeath,
+	"blizzad_of_spears": dm09.BlizzardofSpears,
 }
 
 var DM10 = map[string]match.CardConstructor{
