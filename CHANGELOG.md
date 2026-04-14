@@ -1,7 +1,8 @@
 # Changelog
 
-## Next
+## Unreleased
 
+- Brand new website
 - Added support for playing as a guest without registering an account
 - Added email verification for new users
 - Added support for drag and dropping cards on mobile
@@ -10,8 +11,14 @@
 - Added smooth scroll when new chat messages appear both in duels and the lobby
 - Updated all action popups to be more coherent and mobile friendly
 - Added ESC keyboard shortcut to close cancellable popups
+- Added user profiles
+- Added support for scheduled matches, to be used for tournaments
+- Added moderation and user management tools
+- Added chat restrictions and requirements
+- Added post-duel view with mactch summary, chat and rematch options
+- Made it possible for the website to support multiple different simulators/rule engines for multi-environment purposes and future plans to overhaul the current rule engine
 
-## [Unreleased]
+## 02/01/202
 
 - Fixed an issue where "Elf-X" and "Cocco Lupia"'s cost reduction effect would not immediately make the add to battlezone button be visibly clickable (thanks @DragosIonita23)
 - Fixed an issue where some creatures with 0 power could not die (thanks @DragosIonita23)

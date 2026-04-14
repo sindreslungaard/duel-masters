@@ -10,7 +10,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@duel-masters/duel-interface": "file:../duel-interface",
+    "@duel-masters/duel-interface": "file:../packages/duel-interface",
     "@tailwindcss/vite": "^4.1.18",
     "@types/jsonwebtoken": "^9.0.10",
     "jose": "^6.1.3",

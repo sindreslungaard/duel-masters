@@ -1,4 +1,4 @@
 @import "tailwindcss";
 
 @source "../src/**/*.{js,jsx,ts,tsx}";
-@source "../../duel-interface/**/*.{js,jsx,ts,tsx}";
+@source "../../packages/duel-interface/**/*.{js,jsx,ts,tsx}";

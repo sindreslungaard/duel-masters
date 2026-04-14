@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import "./App.css";
 import { SignJWT } from "jose";
-import { Duel } from "../../duel-interface";
+import { Duel } from "../../packages/duel-interface";
 
 const DUEL_TOKEN_SECRET = new TextEncoder().encode("duel-secret");
 
@@ -20,9 +20,9 @@ function App() {
 
     const payload = {
       hostId: "1",
-      hostDeck: "",
+      hostDeck: [],
       guestId: "2",
-      guestDeck: "",
+      guestDeck: [],
       name: "Test Match",
       visibility: "public",
       format: "regular",
@@ -101,7 +101,7 @@ function App() {
         <div className="w-full h-screen">
           <div className={activePlayer === "host" ? "block" : "hidden"}>
             <Duel
-              hostUrl="ws://localhost:3000"
+              hostUrl="ws://localhost:3001"
               duelId={duel.id}
               duelToken={hostDuelToken}
               devTools={{
@@ -114,7 +114,7 @@ function App() {
 
           <div className={activePlayer === "guest" ? "block" : "hidden"}>
             <Duel
-              hostUrl="ws://localhost:3000"
+              hostUrl="ws://localhost:3001"
               duelId={duel.id}
               duelToken={guestDuelToken}
               devTools={{

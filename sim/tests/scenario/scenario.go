@@ -23,7 +23,7 @@ func New(options Options) *TestScenario {
 	}
 
 	matchSystem := match.NewSystem(func(msg interface{}) {})
-	m := matchSystem.NewMatch("test-scenario", "test-host", "", "test-guest", "", true, true, match.RegularFormat)
+	m := matchSystem.NewMatch("test-scenario", "test-host", []string{}, "", []string{}, true, true, match.RegularFormat)
 
 	p1 := match.NewPlayer(m, 1)
 	m.Player1 = match.NewPlayerReference(p1, server.NewSocket(NewMockConnection(), m, "1", "Player1"))
