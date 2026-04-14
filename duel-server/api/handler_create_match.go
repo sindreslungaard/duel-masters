@@ -12,13 +12,13 @@ import (
 )
 
 type matchReqBody struct {
-	HostID     string `json:"hostId" binding:"required"`
-	HostDeck   string `json:"hostDeck" binding:"required"`
-	GuestID    string `json:"guestId" binding:"required"`
-	GuestDeck  string `json:"guestDeck" binding:"required"`
-	Name       string `json:"name" binding:"max=50"`
-	Visibility string `json:"visibility" binding:"required"`
-	Format     string `json:"format"`
+	HostID     string   `json:"hostId" binding:"required"`
+	HostDeck   []string `json:"hostDeck" binding:"required"`
+	GuestID    string   `json:"guestId" binding:"required"`
+	GuestDeck  []string `json:"guestDeck" binding:"required"`
+	Name       string   `json:"name" binding:"max=50"`
+	Visibility string   `json:"visibility" binding:"required"`
+	Format     string   `json:"format"`
 }
 
 func (api *API) createMatchHandler(w http.ResponseWriter, r *http.Request) {

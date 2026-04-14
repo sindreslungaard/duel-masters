@@ -26,9 +26,9 @@ type Match struct {
 	MatchName         string                                   `json:"name"`
 	Format            Format                                   `json:"format"`
 	HostID            string                                   `json:"-"`
-	HostDeck          string                                   `json:"-"`
+	HostDeck          []string                                 `json:"-"`
 	GuestID           string                                   `json:"-"`
-	GuestDeck         string                                   `json:"-"`
+	GuestDeck         []string                                 `json:"-"`
 	Player1           *PlayerReference                         `json:"-"`
 	Player2           *PlayerReference                         `json:"-"`
 	spectators        internal.ConcurrentDictionary[Spectator] `json:"-"`
