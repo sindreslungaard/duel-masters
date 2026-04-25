@@ -2134,12 +2134,14 @@ func spawnCardsToGivenZones(m *Match,
 		for _, z := range zones {
 			for i := range cardsToSpawn {
 				for range count {
-					card := player.SpawnCard(cardsToSpawn[i], z)
-					if card != nil {
-						// Run this card's own handlers with UntapStep so conditions like cnd.Creature and cnd.Spell are initialised, matching real game behaviour
-						for _, h := range card.handlers {
-							h(card, ctx)
-						}
+					card, err := player.SpawnCard(cardsToSpawn[i], z)
+					if err != nil {
+						logrus.Warnf("Failed to spawn card %s: %v", cardsToSpawn[i], err)
+						continue
+					}
+					// Run this card's own handlers with UntapStep so conditions like cnd.Creature and cnd.Spell are initialised, matching real game behaviour
+					for _, h := range card.handlers {
+						h(card, ctx)
 					}
 				}
 			}
