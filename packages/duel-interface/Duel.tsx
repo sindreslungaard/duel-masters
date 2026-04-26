@@ -626,34 +626,33 @@ export function Duel({
           )}
         </div>
         <div className="flex flex-1 flex-col h-full w-full">
-          <div
-            className="h-[10%] flex gap-5 pb-1 relative overflow-x-auto"
-            data-dropzone="opponentManazone"
-          >
+          <div className="h-[10%] relative" data-dropzone="opponentManazone">
             <div
               className="absolute inset-0 z-0"
               data-dropzone="opponentManazone"
             />
             {getDropZoneColor("opponentManazone") === "green" && (
-              <div className="absolute inset-0 bg-green-500/30 pointer-events-none z-10" />
+              <div className="absolute inset-0 bg-green-500/30 pointer-events-none z-20" />
             )}
             {getDropZoneColor("opponentManazone") === "red" && (
-              <div className="absolute inset-0 bg-red-500/30 pointer-events-none z-10" />
+              <div className="absolute inset-0 bg-red-500/30 pointer-events-none z-20" />
             )}
-            <div className="relative z-10 flex gap-5 w-full">
-              {state.opponent.manazone.map(
-                CreateCard({
-                  flipped: true,
-                  dragState,
-                  zone: "opponentManazone",
-                  onRightClick: (imageId, name) =>
-                    setPreviewCard({ imageId, name: name || "" }),
-                }),
-              )}
+            <div className="absolute inset-0 z-10 overflow-x-auto overflow-y-hidden">
+              <div className="inline-flex w-max justify-start gap-5 h-full pb-1">
+                {state.opponent.manazone.map(
+                  CreateCard({
+                    flipped: true,
+                    dragState,
+                    zone: "opponentManazone",
+                    onRightClick: (imageId, name) =>
+                      setPreviewCard({ imageId, name: name || "" }),
+                  }),
+                )}
+              </div>
             </div>
           </div>
           <div
-            className="h-[10%] flex gap-5 p-1 w-full relative overflow-x-auto"
+            className="h-[10%] w-full relative"
             data-dropzone="opponentShieldzone"
           >
             <div
@@ -661,24 +660,26 @@ export function Duel({
               data-dropzone="opponentShieldzone"
             />
             {getDropZoneColor("opponentShieldzone") === "green" && (
-              <div className="absolute inset-0 bg-green-500/30 pointer-events-none z-10" />
+              <div className="absolute inset-0 bg-green-500/30 pointer-events-none z-20" />
             )}
             {getDropZoneColor("opponentShieldzone") === "red" && (
-              <div className="absolute inset-0 bg-red-500/30 pointer-events-none z-10" />
+              <div className="absolute inset-0 bg-red-500/30 pointer-events-none z-20" />
             )}
-            <div className="relative z-10 flex gap-5 w-full">
-              {state.opponent.shieldzone.map(
-                CreateCard({
-                  dragState,
-                  zone: "opponentShieldzone",
-                  onRightClick: (imageId, name) =>
-                    setPreviewCard({ imageId, name: name || "" }),
-                }),
-              )}
+            <div className="absolute inset-0 z-10 overflow-x-auto overflow-y-hidden">
+              <div className="inline-flex w-max justify-start gap-5 h-full p-1">
+                {state.opponent.shieldzone.map(
+                  CreateCard({
+                    dragState,
+                    zone: "opponentShieldzone",
+                    onRightClick: (imageId, name) =>
+                      setPreviewCard({ imageId, name: name || "" }),
+                  }),
+                )}
+              </div>
             </div>
           </div>
           <div
-            className="flex h-[20%] gap-5 p-1 w-full relative overflow-x-auto"
+            className="h-[20%] w-full relative"
             data-dropzone="opponentPlayzone"
           >
             <div
@@ -686,101 +687,97 @@ export function Duel({
               data-dropzone="opponentPlayzone"
             />
             {getDropZoneColor("opponentPlayzone") === "green" && (
-              <div className="absolute inset-0 bg-green-500/30 pointer-events-none z-10" />
+              <div className="absolute inset-0 bg-green-500/30 pointer-events-none z-20" />
             )}
             {getDropZoneColor("opponentPlayzone") === "red" && (
-              <div className="absolute inset-0 bg-red-500/30 pointer-events-none z-10" />
+              <div className="absolute inset-0 bg-red-500/30 pointer-events-none z-20" />
             )}
-            <div className="relative z-10 flex gap-5 w-full">
-              {state.opponent.playzone.map(
-                CreateCard({
-                  flipped: true,
-                  dragState,
-                  zone: "opponentPlayzone",
-                  onRightClick: (imageId, name) =>
-                    setPreviewCard({ imageId, name: name || "" }),
-                }),
-              )}
+            <div className="absolute inset-0 z-10 overflow-x-auto overflow-y-hidden">
+              <div className="inline-flex w-max justify-start gap-5 h-full p-1">
+                {state.opponent.playzone.map(
+                  CreateCard({
+                    flipped: true,
+                    dragState,
+                    zone: "opponentPlayzone",
+                    onRightClick: (imageId, name) =>
+                      setPreviewCard({ imageId, name: name || "" }),
+                  }),
+                )}
+              </div>
             </div>
           </div>
-          <div
-            className="flex h-[20%] gap-5 p-1 w-full relative overflow-x-auto"
-            data-dropzone="myPlayzone"
-          >
+          <div className="h-[20%] w-full relative" data-dropzone="myPlayzone">
             <div className="absolute inset-0 z-0" data-dropzone="myPlayzone" />
             {getDropZoneColor("myPlayzone") === "green" && (
-              <div className="absolute inset-0 bg-green-500/30 pointer-events-none z-10" />
+              <div className="absolute inset-0 bg-green-500/30 pointer-events-none z-20" />
             )}
             {getDropZoneColor("myPlayzone") === "red" && (
-              <div className="absolute inset-0 bg-red-500/30 pointer-events-none z-10" />
+              <div className="absolute inset-0 bg-red-500/30 pointer-events-none z-20" />
             )}
-            <div className="relative z-10 flex gap-5 w-full">
-              {state.me.playzone.map(
-                CreateCard({
-                  selected: (id: string) => id === selectedCardId,
-                  interactable: state?.myTurn,
-                  dragState,
-                  zone: "myPlayzone",
-                  draggable: state.myTurn,
-                  onDragStart: handleCardDragStart,
-                  onRightClick: (imageId, name) =>
-                    setPreviewCard({ imageId, name: name || "" }),
-                }),
-              )}
+            <div className="absolute inset-0 z-10 overflow-x-auto overflow-y-hidden">
+              <div className="inline-flex w-max justify-start gap-5 h-full p-1">
+                {state.me.playzone.map(
+                  CreateCard({
+                    selected: (id: string) => id === selectedCardId,
+                    interactable: state?.myTurn,
+                    dragState,
+                    zone: "myPlayzone",
+                    draggable: state.myTurn,
+                    onDragStart: handleCardDragStart,
+                    onRightClick: (imageId, name) =>
+                      setPreviewCard({ imageId, name: name || "" }),
+                  }),
+                )}
+              </div>
             </div>
           </div>
-          <div
-            className="flex h-[10%] gap-5 p-1 w-full relative overflow-x-auto"
-            data-dropzone="myShieldzone"
-          >
+          <div className="h-[10%] w-full relative" data-dropzone="myShieldzone">
             <div
               className="absolute inset-0 z-0 "
               data-dropzone="myShieldzone"
             />
             {getDropZoneColor("myShieldzone") === "green" && (
-              <div className="absolute inset-0 bg-green-500/30 pointer-events-none z-10" />
+              <div className="absolute inset-0 bg-green-500/30 pointer-events-none z-20" />
             )}
             {getDropZoneColor("myShieldzone") === "red" && (
-              <div className="absolute inset-0 bg-red-500/30 pointer-events-none z-10" />
+              <div className="absolute inset-0 bg-red-500/30 pointer-events-none z-20" />
             )}
-            <div className="relative z-10 flex gap-5 w-full">
-              {state.me.shieldzone.map(
-                CreateCard({
-                  dragState,
-                  zone: "myShieldzone",
-                  onRightClick: (imageId, name) =>
-                    setPreviewCard({ imageId, name: name || "" }),
-                }),
-              )}
+            <div className="absolute inset-0 z-10 overflow-x-auto overflow-y-hidden">
+              <div className="inline-flex w-max justify-start gap-5 h-full p-1">
+                {state.me.shieldzone.map(
+                  CreateCard({
+                    dragState,
+                    zone: "myShieldzone",
+                    onRightClick: (imageId, name) =>
+                      setPreviewCard({ imageId, name: name || "" }),
+                  }),
+                )}
+              </div>
             </div>
           </div>
-          <div
-            className="flex h-[10%] gap-5 p-1 w-full relative overflow-x-auto"
-            data-dropzone="myManazone"
-          >
+          <div className="h-[10%] w-full relative" data-dropzone="myManazone">
             <div className="absolute inset-0 z-0" data-dropzone="myManazone" />
             {getDropZoneColor("myManazone") === "green" && (
-              <div className="absolute inset-0 bg-green-500/30 pointer-events-none z-10" />
+              <div className="absolute inset-0 bg-green-500/30 pointer-events-none z-20" />
             )}
             {getDropZoneColor("myManazone") === "red" && (
-              <div className="absolute inset-0 bg-red-500/30 pointer-events-none z-10" />
+              <div className="absolute inset-0 bg-red-500/30 pointer-events-none z-20" />
             )}
-            <div className="relative z-10 flex gap-5 w-full ">
-              {state.me.manazone.map(
-                CreateCard({
-                  flipped: true,
-                  dragState,
-                  zone: "myManazone",
-                  onRightClick: (imageId, name) =>
-                    setPreviewCard({ imageId, name: name || "" }),
-                }),
-              )}
+            <div className="absolute inset-0 z-10 overflow-x-auto overflow-y-hidden">
+              <div className="inline-flex w-max justify-start gap-5 h-full p-1">
+                {state.me.manazone.map(
+                  CreateCard({
+                    flipped: true,
+                    dragState,
+                    zone: "myManazone",
+                    onRightClick: (imageId, name) =>
+                      setPreviewCard({ imageId, name: name || "" }),
+                  }),
+                )}
+              </div>
             </div>
           </div>
-          <div
-            className="flex h-[20%] gap-5 pt-1 w-full relative overflow-x-auto"
-            data-dropzone="hand"
-          >
+          <div className="h-[20%] w-full relative" data-dropzone="hand">
             {isSpectating ? (
               <div className="relative z-10 flex items-end justify-center w-full pb-6">
                 <div className="flex flex-col items-center gap-3 text-center">
@@ -801,29 +798,31 @@ export function Duel({
             ) : (
               <>
                 <div className="absolute inset-0 z-0" data-dropzone="hand" />
-                <div className="relative z-10 flex gap-5 w-full p-px">
-                  {state.me.hand.map(
-                    CreateCard({
-                      selected: (id: string) => id === selectedCardId,
-                      interactable: state?.myTurn,
-                      canAddToManazone: !state.hasAddedManaThisRound,
-                      onAddToBattlezone: (virtualId) => {
-                        sendAddToBattlezone(virtualId);
-                      },
-                      onAddToManazone: (virtualId) => {
-                        sendAddToManazone(virtualId);
-                      },
-                      onTapAbility: (virtualId) => {
-                        sendTapAbility(virtualId);
-                      },
-                      dragState,
-                      zone: "hand",
-                      draggable: state.myTurn,
-                      onDragStart: handleCardDragStart,
-                      onRightClick: (imageId, name) =>
-                        setPreviewCard({ imageId, name: name || "" }),
-                    }),
-                  )}
+                <div className="absolute inset-0 z-10 overflow-x-auto overflow-y-hidden">
+                  <div className="inline-flex w-max justify-start gap-5 h-full pt-1 p-px">
+                    {state.me.hand.map(
+                      CreateCard({
+                        selected: (id: string) => id === selectedCardId,
+                        interactable: state?.myTurn,
+                        canAddToManazone: !state.hasAddedManaThisRound,
+                        onAddToBattlezone: (virtualId) => {
+                          sendAddToBattlezone(virtualId);
+                        },
+                        onAddToManazone: (virtualId) => {
+                          sendAddToManazone(virtualId);
+                        },
+                        onTapAbility: (virtualId) => {
+                          sendTapAbility(virtualId);
+                        },
+                        dragState,
+                        zone: "hand",
+                        draggable: state.myTurn,
+                        onDragStart: handleCardDragStart,
+                        onRightClick: (imageId, name) =>
+                          setPreviewCard({ imageId, name: name || "" }),
+                      }),
+                    )}
+                  </div>
                 </div>
               </>
             )}
