@@ -543,73 +543,79 @@ export function Duel({
           </div>
 
           {/* Actions */}
-          <div className="bg-black/50 p-2 rounded-md h-[72px] text-gray-400">
-            {!isSpectating && selectedCard && state.myTurn && (
-              <div className="flex flex-col gap-2">
-                <div className="flex-1 text-xs whitespace-nowrap overflow-hidden text-ellipsis">
-                  {selectedCard.name}
-                </div>
-                {selectedCard.zone === "hand" && (
-                  <div className="flex gap-2">
-                    {/* Hand zone */}
-                    <div className="flex-1 min-w-0">
-                      <Button
-                        onClick={() =>
-                          sendAddToBattlezone(selectedCard.virtualId)
-                        }
-                        disabled={!selectedCard.canPlay}
-                      >
-                        Summon
-                      </Button>
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <Button
-                        onClick={() =>
-                          sendAddToManazone(selectedCard.virtualId)
-                        }
-                        disabled={state.hasAddedManaThisRound}
-                      >
-                        Add to manazone
-                      </Button>
-                    </div>
+          {!isSpectating && (
+            <div className="bg-black/50 p-2 rounded-md h-[72px] text-gray-400">
+              {!isSpectating && selectedCard && state.myTurn && (
+                <div className="flex flex-col gap-2">
+                  <div className="flex-1 text-xs whitespace-nowrap overflow-hidden text-ellipsis">
+                    {selectedCard.name}
                   </div>
-                )}
-
-                {selectedCard.zone === "battlezone" && (
-                  <div className="flex gap-2">
-                    <div className="flex-1 min-w-0">
-                      <Button
-                        onClick={() => sendAttackPlayer(selectedCard.virtualId)}
-                      >
-                        Attack Player
-                      </Button>
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <Button
-                        onClick={() =>
-                          sendAttackCreature(selectedCard.virtualId)
-                        }
-                      >
-                        Attack Creature
-                      </Button>
-                    </div>
-                    {selectedCard.hasTapAbility && (
+                  {selectedCard.zone === "hand" && (
+                    <div className="flex gap-2">
+                      {/* Hand zone */}
                       <div className="flex-1 min-w-0">
                         <Button
-                          onClick={() => sendTapAbility(selectedCard.virtualId)}
+                          onClick={() =>
+                            sendAddToBattlezone(selectedCard.virtualId)
+                          }
+                          disabled={!selectedCard.canPlay}
                         >
-                          Tap Ability
+                          Summon
                         </Button>
                       </div>
-                    )}
-                  </div>
-                )}
-              </div>
-            )}
-          </div>
+                      <div className="flex-1 min-w-0">
+                        <Button
+                          onClick={() =>
+                            sendAddToManazone(selectedCard.virtualId)
+                          }
+                          disabled={state.hasAddedManaThisRound}
+                        >
+                          Add to manazone
+                        </Button>
+                      </div>
+                    </div>
+                  )}
+
+                  {selectedCard.zone === "battlezone" && (
+                    <div className="flex gap-2">
+                      <div className="flex-1 min-w-0">
+                        <Button
+                          onClick={() =>
+                            sendAttackPlayer(selectedCard.virtualId)
+                          }
+                        >
+                          Attack Player
+                        </Button>
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <Button
+                          onClick={() =>
+                            sendAttackCreature(selectedCard.virtualId)
+                          }
+                        >
+                          Attack Creature
+                        </Button>
+                      </div>
+                      {selectedCard.hasTapAbility && (
+                        <div className="flex-1 min-w-0">
+                          <Button
+                            onClick={() =>
+                              sendTapAbility(selectedCard.virtualId)
+                            }
+                          >
+                            Tap Ability
+                          </Button>
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+          )}
 
           {/* End turn / forfeit */}
-          {!isSpectating ? (
+          {!isSpectating && (
             <div className="bg-black/30 p-2 rounded-md">
               <Button
                 onClick={sendEndTurn}
@@ -618,10 +624,6 @@ export function Duel({
               >
                 End turn
               </Button>
-            </div>
-          ) : (
-            <div className="bg-black/30 p-2 rounded-md text-center text-xs text-gray-400 py-3">
-              Spectating
             </div>
           )}
         </div>
@@ -779,9 +781,9 @@ export function Duel({
           </div>
           <div className="h-[20%] w-full relative" data-dropzone="hand">
             {isSpectating ? (
-              <div className="relative z-10 flex items-end justify-center w-full pb-6">
+              <div className="absolute inset-0 bg-black/30 rounded-md flex items-center justify-center">
                 <div className="flex flex-col items-center gap-3 text-center">
-                  <span className="text-xs font-semibold uppercase tracking-widest text-gray-400 bg-black/40 px-3 py-1 rounded-full">
+                  <span className="text-xs font-semibold uppercase tracking-widest text-gray-400">
                     Spectating
                   </span>
                   <div className="flex items-center gap-8">
