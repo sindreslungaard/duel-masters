@@ -11,7 +11,10 @@ function App() {
   const [hostDuelToken, setHostDuelToken] = useState("");
   const [guestDuelToken, setGuestDuelToken] = useState("");
   const [error, setError] = useState<string | null>(null);
-  const [activePlayer, setActivePlayer] = useState<"host" | "guest">("host");
+  const [activePlayer, setActivePlayer] = useState<
+    "host" | "guest" | "spectator"
+  >("host");
+  const [spectatorDuelToken, setSpectatorDuelToken] = useState("");
   const [cards, setCards] = useState<{ uid: string; name: string }[]>([]);
 
   const createMatch = async () => {
@@ -58,9 +61,16 @@ function App() {
       const guestToken = await new SignJWT({ id: "2", username: "Player2" })
         .setProtectedHeader({ alg: "HS256" })
         .sign(DUEL_TOKEN_SECRET);
+      const spectatorToken = await new SignJWT({
+        id: "3",
+        username: "Spectator",
+      })
+        .setProtectedHeader({ alg: "HS256" })
+        .sign(DUEL_TOKEN_SECRET);
 
       setHostDuelToken(hostToken);
       setGuestDuelToken(guestToken);
+      setSpectatorDuelToken(spectatorToken);
       setDuel(match);
     } catch (err) {
       setError(err instanceof Error ? err.message : "An error occurred");
@@ -79,6 +89,8 @@ function App() {
         setActivePlayer("host");
       } else if (event.key === "2") {
         setActivePlayer("guest");
+      } else if (event.key === "3") {
+        setActivePlayer("spectator");
       }
     };
 
@@ -117,6 +129,19 @@ function App() {
               hostUrl="ws://localhost:3001"
               duelId={duel.id}
               duelToken={guestDuelToken}
+              devTools={{
+                cards,
+                activePlayer,
+                onPlayerSwitch: setActivePlayer,
+              }}
+            />
+          </div>
+
+          <div className={activePlayer === "spectator" ? "block" : "hidden"}>
+            <Duel
+              hostUrl="ws://localhost:3001"
+              duelId={duel.id}
+              duelToken={spectatorDuelToken}
               devTools={{
                 cards,
                 activePlayer,

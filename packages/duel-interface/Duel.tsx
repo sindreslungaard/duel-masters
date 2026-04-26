@@ -52,8 +52,8 @@ interface DuelProps {
   duelToken: string;
   devTools?: {
     cards: { uid: string; name: string }[];
-    activePlayer: "host" | "guest";
-    onPlayerSwitch: (player: "host" | "guest") => void;
+    activePlayer: "host" | "guest" | "spectator";
+    onPlayerSwitch: (player: "host" | "guest" | "spectator") => void;
   };
   onLeaveDuel?: () => void;
 }
@@ -121,7 +121,7 @@ export function Duel({
 }: DuelProps) {
   const [action, setAction] = useState<ActionMessage | null>(null);
   const [actionError, setActionError] = useState<ActionWarningMessage | null>(
-    null
+    null,
   );
   const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
   const [wait, setWait] = useState("");
@@ -244,7 +244,7 @@ export function Duel({
     name: string | undefined,
     sourceZone: DragZone,
     rotated: boolean,
-    e: React.MouseEvent | React.TouchEvent
+    e: React.MouseEvent | React.TouchEvent,
   ) => {
     // Ignore right clicks
     if ("button" in e && e.button === 2) {
@@ -326,7 +326,7 @@ export function Duel({
       setSelectedCardId((prev) =>
         prev === dragStartPosition.virtualId
           ? null
-          : dragStartPosition.virtualId
+          : dragStartPosition.virtualId,
       );
       setDragStartPosition(null);
       return;
@@ -387,6 +387,8 @@ export function Duel({
     return <div>Waiting for both players to join...</div>;
   }
 
+  const isSpectating = state.spectator;
+
   const getValidDropZones = (sourceZone: DragZone): DragZone[] => {
     if (sourceZone === "hand") {
       const zones: DragZone[] = ["myPlayzone", "myManazone"];
@@ -410,7 +412,7 @@ export function Duel({
     if (dragState.sourceZone === "hand") {
       // Find the card being dragged
       const draggedCard = state?.me.hand.find(
-        (c) => c.virtualId === dragState.virtualId
+        (c) => c.virtualId === dragState.virtualId,
       );
 
       if (zone === "myPlayzone") {
@@ -471,6 +473,18 @@ export function Duel({
                       Guest
                     </Button>
                   </div>
+                  <div className="flex-1">
+                    <Button
+                      variant={
+                        devTools.activePlayer === "spectator"
+                          ? "default"
+                          : "gray"
+                      }
+                      onClick={() => devTools.onPlayerSwitch("spectator")}
+                    >
+                      Spectator
+                    </Button>
+                  </div>
                 </div>
               </DevToolSection>
 
@@ -507,7 +521,7 @@ export function Duel({
                         variant="gray"
                         onClick={() => {
                           const select = document.getElementById(
-                            "card-selector"
+                            "card-selector",
                           ) as HTMLSelectElement;
                           if (select.value) {
                             sendChat(`/add ${select.value}`);
@@ -530,7 +544,7 @@ export function Duel({
 
           {/* Actions */}
           <div className="bg-black/50 p-2 rounded-md h-[72px] text-gray-400">
-            {selectedCard && state.myTurn && (
+            {!isSpectating && selectedCard && state.myTurn && (
               <div className="flex flex-col gap-2">
                 <div className="flex-1 text-xs whitespace-nowrap overflow-hidden text-ellipsis">
                   {selectedCard.name}
@@ -595,15 +609,21 @@ export function Duel({
           </div>
 
           {/* End turn / forfeit */}
-          <div className="bg-black/30 p-2 rounded-md">
-            <Button
-              onClick={sendEndTurn}
-              disabled={!state.myTurn}
-              disabledTooltip="It's not your turn"
-            >
-              End turn
-            </Button>
-          </div>
+          {!isSpectating ? (
+            <div className="bg-black/30 p-2 rounded-md">
+              <Button
+                onClick={sendEndTurn}
+                disabled={!state.myTurn}
+                disabledTooltip="It's not your turn"
+              >
+                End turn
+              </Button>
+            </div>
+          ) : (
+            <div className="bg-black/30 p-2 rounded-md text-center text-xs text-gray-400 py-3">
+              Spectating
+            </div>
+          )}
         </div>
         <div className="flex flex-1 flex-col h-full w-full">
           <div
@@ -628,7 +648,7 @@ export function Duel({
                   zone: "opponentManazone",
                   onRightClick: (imageId, name) =>
                     setPreviewCard({ imageId, name: name || "" }),
-                })
+                }),
               )}
             </div>
           </div>
@@ -653,7 +673,7 @@ export function Duel({
                   zone: "opponentShieldzone",
                   onRightClick: (imageId, name) =>
                     setPreviewCard({ imageId, name: name || "" }),
-                })
+                }),
               )}
             </div>
           </div>
@@ -679,7 +699,7 @@ export function Duel({
                   zone: "opponentPlayzone",
                   onRightClick: (imageId, name) =>
                     setPreviewCard({ imageId, name: name || "" }),
-                })
+                }),
               )}
             </div>
           </div>
@@ -705,7 +725,7 @@ export function Duel({
                   onDragStart: handleCardDragStart,
                   onRightClick: (imageId, name) =>
                     setPreviewCard({ imageId, name: name || "" }),
-                })
+                }),
               )}
             </div>
           </div>
@@ -730,7 +750,7 @@ export function Duel({
                   zone: "myShieldzone",
                   onRightClick: (imageId, name) =>
                     setPreviewCard({ imageId, name: name || "" }),
-                })
+                }),
               )}
             </div>
           </div>
@@ -753,7 +773,7 @@ export function Duel({
                   zone: "myManazone",
                   onRightClick: (imageId, name) =>
                     setPreviewCard({ imageId, name: name || "" }),
-                })
+                }),
               )}
             </div>
           </div>
@@ -761,31 +781,52 @@ export function Duel({
             className="flex h-[20%] gap-5 pt-1 w-full relative overflow-x-auto"
             data-dropzone="hand"
           >
-            <div className="absolute inset-0 z-0" data-dropzone="hand" />
-            <div className="relative z-10 flex gap-5 w-full p-px">
-              {state.me.hand.map(
-                CreateCard({
-                  selected: (id: string) => id === selectedCardId,
-                  interactable: state?.myTurn,
-                  canAddToManazone: !state.hasAddedManaThisRound,
-                  onAddToBattlezone: (virtualId) => {
-                    sendAddToBattlezone(virtualId);
-                  },
-                  onAddToManazone: (virtualId) => {
-                    sendAddToManazone(virtualId);
-                  },
-                  onTapAbility: (virtualId) => {
-                    sendTapAbility(virtualId);
-                  },
-                  dragState,
-                  zone: "hand",
-                  draggable: state.myTurn,
-                  onDragStart: handleCardDragStart,
-                  onRightClick: (imageId, name) =>
-                    setPreviewCard({ imageId, name: name || "" }),
-                })
-              )}
-            </div>
+            {isSpectating ? (
+              <div className="relative z-10 flex items-end justify-center w-full pb-6">
+                <div className="flex flex-col items-center gap-3 text-center">
+                  <span className="text-xs font-semibold uppercase tracking-widest text-gray-400 bg-black/40 px-3 py-1 rounded-full">
+                    Spectating
+                  </span>
+                  <div className="flex items-center gap-8">
+                    <span className="text-sm font-semibold text-white">
+                      {state.me.username}
+                    </span>
+                    <span className="text-gray-500 text-lg font-bold">vs</span>
+                    <span className="text-sm font-semibold text-white">
+                      {state.opponent.username}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <>
+                <div className="absolute inset-0 z-0" data-dropzone="hand" />
+                <div className="relative z-10 flex gap-5 w-full p-px">
+                  {state.me.hand.map(
+                    CreateCard({
+                      selected: (id: string) => id === selectedCardId,
+                      interactable: state?.myTurn,
+                      canAddToManazone: !state.hasAddedManaThisRound,
+                      onAddToBattlezone: (virtualId) => {
+                        sendAddToBattlezone(virtualId);
+                      },
+                      onAddToManazone: (virtualId) => {
+                        sendAddToManazone(virtualId);
+                      },
+                      onTapAbility: (virtualId) => {
+                        sendTapAbility(virtualId);
+                      },
+                      dragState,
+                      zone: "hand",
+                      draggable: state.myTurn,
+                      onDragStart: handleCardDragStart,
+                      onRightClick: (imageId, name) =>
+                        setPreviewCard({ imageId, name: name || "" }),
+                    }),
+                  )}
+                </div>
+              </>
+            )}
           </div>
         </div>
 
@@ -865,6 +906,14 @@ export function Duel({
 
           {/* Player Section */}
           <div className="rounded-lg flex flex-col gap-[1vh]">
+            {/* Player Hand Count (spectator only) */}
+            {isSpectating && (
+              <div className="text-center">
+                <p className="text-[clamp(0.6rem,1.2vh,0.85rem)] text-white mb-[0.5vh]">
+                  Hand [{state.me.handCount}]
+                </p>
+              </div>
+            )}
             {/* Player Graveyard */}
             <div>
               <p className="text-[clamp(0.6rem,1.2vh,0.85rem)] text-white mb-[0.5vh] text-center">
@@ -1079,10 +1128,10 @@ function CreateCard(
       name: string | undefined,
       sourceZone: DragZone,
       rotated: boolean,
-      e: React.MouseEvent | React.TouchEvent
+      e: React.MouseEvent | React.TouchEvent,
     ) => void;
     onRightClick?: (imageId: string, name?: string) => void;
-  } = {}
+  } = {},
 ) {
   return (card: CardState | ShieldState, index: number) => {
     const name = "name" in card && card.name ? card.name : undefined;
@@ -1114,7 +1163,7 @@ function CreateCard(
               name,
               options.zone,
               rotated,
-              e
+              e,
             );
           }
         }}
