@@ -1890,7 +1890,7 @@ func (m *Match) OnSocketClose(s *server.Socket) {
 		}
 	}
 
-	if !m.Started {
+	/* if !m.Started {
 		logrus.Debug(fmt.Sprintf("Disconnected %s Host %s", s.User.UID, m.HostID))
 
 		// If the host left before the game started, close the game
@@ -1924,7 +1924,7 @@ func (m *Match) OnSocketClose(s *server.Socket) {
 		m.TossPrediction = 0
 
 		m.system.UpdateMatchList()
-	}
+	} */
 
 	if p == nil {
 		return

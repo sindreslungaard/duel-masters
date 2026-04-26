@@ -125,7 +125,7 @@ type PrintingsFromJson struct {
 }
 
 func readFromJson() map[string]CardFromJson {
-	jsonFileName := "DuelMastersCards.json"
+	jsonFileName := "./sim/DuelMastersCards.json"
 	jsonFile, err := os.Open(jsonFileName)
 	if err != nil {
 		logrus.Error(fmt.Sprintf("Error loading %s", jsonFileName), err)
