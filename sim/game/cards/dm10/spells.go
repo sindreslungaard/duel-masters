@@ -122,7 +122,7 @@ func SirenConcerto(c *match.Card) {
 			}
 		})
 
-		fx.Select(
+		fx.SelectFilter(
 			card.Player,
 			ctx.Match,
 			card.Player,
@@ -130,6 +130,8 @@ func SirenConcerto(c *match.Card) {
 			fmt.Sprintf("%s's effect: Put a card from your hand into your mana zone.", card.Name),
 			1,
 			1,
+			false,
+			func(x *match.Card) bool { return x.ID != card.ID },
 			false,
 		).Map(func(x *match.Card) {
 			_, err := card.Player.MoveCard(x.ID, match.HAND, match.MANAZONE, card.ID)
