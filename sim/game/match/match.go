@@ -48,6 +48,7 @@ type Match struct {
 	closed      bool
 	isFirstTurn bool
 	startedAt   int64
+	turnsPlayed int
 
 	eventloop *EventLoop
 	system    *MatchSystem
@@ -431,6 +432,8 @@ func (m *Match) SaveMatchHistory(winner *Player, wonByDisconnect bool) {
 		return
 	}
 
+	endedAt := time.Now().Unix()
+
 	p1id := ""
 	p1deck := ""
 	p2id := ""
@@ -454,7 +457,8 @@ func (m *Match) SaveMatchHistory(winner *Player, wonByDisconnect bool) {
 		Guest:           p2id,
 		GuestDeck:       p2deck,
 		Started:         m.startedAt,
-		Ended:           time.Now().Unix(),
+		Ended:           endedAt,
+		Turns:           m.turnsPlayed,
 		WonByDisconnect: wonByDisconnect,
 	}
 
@@ -469,6 +473,8 @@ func (m *Match) SaveMatchHistory(winner *Player, wonByDisconnect bool) {
 	if err != nil {
 		logrus.Error("Failed to save duel result to db", err)
 	}
+
+	m.sendMatchResultWebhook(duel)
 }
 
 // ColorChat sends a chat message with color
@@ -998,6 +1004,8 @@ func (m *Match) BeginNewTurn(repeatTurn ...bool) {
 	m.Step = &BeginTurnStep{}
 
 	if len(repeatTurn) == 0 || !repeatTurn[0] {
+		m.turnsPlayed++
+
 		if m.Turn == 1 {
 			m.Turn = 2
 		} else {

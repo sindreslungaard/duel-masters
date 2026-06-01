@@ -13,6 +13,7 @@ type Duel struct {
 	GuestDeck       string `bson:"p2deck"`
 	Started         int64  `bson:"startedAt"`
 	Ended           int64  `bson:"endedAt"`
+	Turns           int    `bson:"turns,omitempty"`
 	Winner          string `bson:"winner"`
 	WonByDisconnect bool   `bson:"dc"`
 }
