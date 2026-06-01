@@ -79,6 +79,21 @@ type WarningMessage struct {
 	Message string `json:"message"`
 }
 
+type DuelFinishedPlayer struct {
+	UID      string `json:"uid,omitempty"`
+	Username string `json:"username,omitempty"`
+}
+
+type DuelFinishedMessage struct {
+	Header               string              `json:"header"`
+	DuelID               string              `json:"duelId"`
+	Winner               *DuelFinishedPlayer `json:"winner,omitempty"`
+	MatchResultGenerated bool                `json:"matchResultGenerated"`
+	WonByDisconnect      bool                `json:"wonByDisconnect"`
+	Turns                int                 `json:"turns"`
+	DurationSeconds      int64               `json:"durationSeconds"`
+}
+
 // ActionMessage is used to prompt the user to make a selection of the specified cards
 type ActionMessage struct {
 	Header            string      `json:"header"`

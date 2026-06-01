@@ -86,6 +86,21 @@ export interface WarningMessage {
   message: string;
 }
 
+export interface DuelFinishedPlayer {
+  uid: string;
+  username?: string;
+}
+
+export interface DuelFinishedMessage {
+  header: "duel_finished";
+  duelId: string;
+  winner?: DuelFinishedPlayer;
+  matchResultGenerated: boolean;
+  wonByDisconnect: boolean;
+  turns: number;
+  durationSeconds: number;
+}
+
 export enum ActionType {
   None = "",
   Count = "count",

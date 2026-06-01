@@ -411,25 +411,31 @@ func (m *Match) End(winner *Player, winnerStr string) {
 	m.ending = true
 
 	if m.Started {
+		duel, matchResultGenerated := m.SaveMatchHistory(winner, false)
+
 		m.Broadcast(server.WarningMessage{
 			Header:  "error",
 			Message: winnerStr,
 		})
 
-		m.SaveMatchHistory(winner, false)
+		m.Broadcast(m.newDuelFinishedMessage(duel, matchResultGenerated))
 	}
 
 	m.Dispose()
 
 }
 
-func (m *Match) SaveMatchHistory(winner *Player, wonByDisconnect bool) {
-	// don't save if the match lasted less than a minute
-	if m.startedAt > time.Now().Unix()-60 {
-		return
+func (m *Match) SaveMatchHistory(winner *Player, wonByDisconnect bool) (DuelRecord, bool) {
+	duel := m.newDuelRecord(winner, wonByDisconnect, time.Now().Unix())
+	if !shouldGenerateMatchResult(duel) {
+		return duel, false
 	}
 
-	endedAt := time.Now().Unix()
+	m.sendMatchResultWebhook(duel)
+	return duel, true
+}
+
+func (m *Match) newDuelRecord(winner *Player, wonByDisconnect bool, endedAt int64) DuelRecord {
 
 	p1id := ""
 	p1deck := ""
@@ -465,7 +471,45 @@ func (m *Match) SaveMatchHistory(winner *Player, wonByDisconnect bool) {
 		duel.Winner = m.Player2.UID
 	}
 
-	m.sendMatchResultWebhook(duel)
+	return duel
+}
+
+func shouldGenerateMatchResult(duel DuelRecord) bool {
+	// don't save if the match lasted less than a minute
+	return duel.Started <= duel.Ended-60
+}
+
+func (m *Match) newDuelFinishedMessage(duel DuelRecord, matchResultGenerated bool) server.DuelFinishedMessage {
+	durationSeconds := duel.Ended - duel.Started
+	if durationSeconds < 0 {
+		durationSeconds = 0
+	}
+
+	return server.DuelFinishedMessage{
+		Header:               "duel_finished",
+		DuelID:               duel.UID,
+		Winner:               duelFinishedWinner(duel.Winner, m.Player1, m.Player2),
+		MatchResultGenerated: matchResultGenerated,
+		WonByDisconnect:      duel.WonByDisconnect,
+		Turns:                duel.Turns,
+		DurationSeconds:      durationSeconds,
+	}
+}
+
+func duelFinishedWinner(winnerUID string, player1 *PlayerReference, player2 *PlayerReference) *server.DuelFinishedPlayer {
+	if winnerUID == "" {
+		return nil
+	}
+
+	if player1 != nil && player1.UID == winnerUID {
+		return &server.DuelFinishedPlayer{UID: player1.UID, Username: player1.Username}
+	}
+
+	if player2 != nil && player2.UID == winnerUID {
+		return &server.DuelFinishedPlayer{UID: player2.UID, Username: player2.Username}
+	}
+
+	return &server.DuelFinishedPlayer{UID: winnerUID}
 }
 
 // ColorChat sends a chat message with color

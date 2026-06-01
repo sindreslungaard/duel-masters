@@ -6,6 +6,7 @@ import {
   cardHasFlag,
   CardState,
   ChatMessage,
+  DuelFinishedMessage,
   MatchState,
   PLAYABLE_FLAG,
   ShieldState,
@@ -56,6 +57,7 @@ interface DuelProps {
     onPlayerSwitch: (player: "host" | "guest" | "spectator") => void;
   };
   onLeaveDuel?: () => void;
+  onDuelFinished?: (message: DuelFinishedMessage) => void;
 }
 
 type DragZone =
@@ -118,6 +120,7 @@ export function Duel({
   hostUrl,
   devTools,
   onLeaveDuel,
+  onDuelFinished,
 }: DuelProps) {
   const [action, setAction] = useState<ActionMessage | null>(null);
   const [actionError, setActionError] = useState<ActionWarningMessage | null>(
@@ -127,10 +130,16 @@ export function Duel({
   const [wait, setWait] = useState("");
   const [warningMessage, setWarningMessage] = useState("");
   const [dots, setDots] = useState<"." | ".." | "...">(".");
+  const [duelFinishedCountdown, setDuelFinishedCountdown] = useState<
+    number | null
+  >(null);
+  const [duelFinishedRedirectFailed, setDuelFinishedRedirectFailed] =
+    useState(false);
 
   const {
     connected,
     error,
+    duelFinished,
     send,
     sendJoinMatch,
     sendEndTurn,
@@ -167,6 +176,49 @@ export function Duel({
       setWait("");
     },
   });
+
+  useEffect(() => {
+    if (!duelFinished) {
+      return;
+    }
+
+    setWarningMessage("");
+    setWait("");
+    setAction(null);
+    setActionError(null);
+    setDuelFinishedCountdown(5);
+    setDuelFinishedRedirectFailed(false);
+
+    let countdown = 5;
+    const interval = window.setInterval(() => {
+      countdown -= 1;
+
+      if (countdown <= 0) {
+        window.clearInterval(interval);
+        setDuelFinishedCountdown(0);
+        onDuelFinished?.(duelFinished);
+
+        window.setTimeout(() => {
+          setDuelFinishedRedirectFailed(true);
+        }, 3000);
+        return;
+      }
+
+      setDuelFinishedCountdown(countdown);
+    }, 1000);
+
+    return () => {
+      window.clearInterval(interval);
+    };
+  }, [duelFinished, onDuelFinished]);
+
+  const duelFinishedWinner =
+    duelFinished?.winner?.username ?? duelFinished?.winner?.uid ?? "No winner";
+
+  const duelFinishedStatusText =
+    duelFinishedCountdown !== null && duelFinishedCountdown > 0
+      ? `Redirecting in ${duelFinishedCountdown}...`
+      : "Redirecting...";
 
   const [previewCard, setPreviewCard] = useState<PreviewCard | null>(null);
   const [multiCardView, setMultiCardView] = useState<{
@@ -999,6 +1051,26 @@ export function Duel({
           </div>
         )}
       </div>
+
+      <Popup
+        visible={!!duelFinished}
+        title="Duel Finished"
+        maxWidth="500px"
+        closeOnOutsideClick={false}
+        showCloseButton={false}
+      >
+        <div className="p-6 text-white">
+          <p className="text-lg font-semibold">
+            {duelFinishedWinner} won the duel
+          </p>
+          <p className="mt-3 text-sm text-gray-400">{duelFinishedStatusText}</p>
+          {duelFinishedRedirectFailed && (
+            <p className="mt-3 text-sm text-gray-400">
+              Failed to redirect, please close the page manually
+            </p>
+          )}
+        </div>
+      </Popup>
 
       <Popup
         visible={reconnecting}

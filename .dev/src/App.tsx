@@ -151,6 +151,11 @@ function App() {
                 activePlayer,
                 onPlayerSwitch: setActivePlayer,
               }}
+              onDuelFinished={(message) => {
+                alert(
+                  `Duel finished! Winner: ${message.winner?.username || "Unknown"}, Turns: ${message.turns}, Duration: ${message.durationSeconds} seconds`,
+                );
+              }}
             />
           </div>
 

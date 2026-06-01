@@ -4,8 +4,8 @@ import {
   ActionType,
   ActionWarningMessage,
   ChatMessage,
+  DuelFinishedMessage,
   MatchState,
-  MatchStateMessage,
   ShowCardsMessage,
   WaitMessage,
   WarningMessage,
@@ -42,11 +42,15 @@ export function useDuel({
   const [error, setError] = useState<string | null>(null);
   const wsRef = useRef<WebSocket | null>(null);
   const [state, setState] = useState<MatchState | null>(null);
+  const [duelFinished, setDuelFinished] = useState<DuelFinishedMessage | null>(
+    null,
+  );
   const [opponentDisconnected, setOpponentDisconnected] = useState(false);
   const [reconnecting, setReconnecting] = useState(false);
   const reconnectTimeoutRef = useRef<number | null>(null);
   const reconnectAttemptsRef = useRef(0);
   const isUnmountingRef = useRef(false);
+  const duelFinishedRef = useRef(false);
 
   useEffect(() => {
     isUnmountingRef.current = false;
@@ -78,6 +82,12 @@ export function useDuel({
       ws.onclose = () => {
         console.log("WebSocket closed");
         setConnected(false);
+
+        if (duelFinishedRef.current) {
+          setReconnecting(false);
+          return;
+        }
+
         setReconnecting(true);
 
         // Only attempt to reconnect if we're not unmounting
@@ -93,13 +103,13 @@ export function useDuel({
                 ? 0
                 : Math.min(
                     baseDelay * Math.pow(2, reconnectAttemptsRef.current - 1),
-                    maxDelay
+                    maxDelay,
                   );
 
             console.log(
               `Reconnecting in ${delay}ms (attempt ${
                 reconnectAttemptsRef.current + 1
-              }/${maxReconnectAttempts})`
+              }/${maxReconnectAttempts})`,
             );
 
             reconnectAttemptsRef.current++;
@@ -108,7 +118,7 @@ export function useDuel({
             setReconnecting(false);
             setError("Connection lost. Max reconnection attempts reached.");
             alert(
-              "Connection lost. Max reconnection attempts reached. Please refresh the page or go back to the lobby."
+              "Connection lost. Max reconnection attempts reached. Please refresh the page or go back to the lobby.",
             );
           }
         }
@@ -171,6 +181,11 @@ export function useDuel({
 
             case "opponent_reconnected":
               setOpponentDisconnected(false);
+              break;
+
+            case "duel_finished":
+              duelFinishedRef.current = true;
+              setDuelFinished(data);
               break;
 
             default:
@@ -254,6 +269,7 @@ export function useDuel({
     connected,
     error,
     state,
+    duelFinished,
     opponentDisconnected,
     reconnecting,
     send,
