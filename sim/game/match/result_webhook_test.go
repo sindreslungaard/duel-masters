@@ -1,7 +1,6 @@
 package match
 
 import (
-	"duel-masters/db"
 	"encoding/json"
 	"net/http"
 	"net/http/httptest"
@@ -18,7 +17,7 @@ func TestNewDuelResultWebhookPayload(t *testing.T) {
 		Player2:     &PlayerReference{UID: "guest-2", Username: "Bob", DeckStr: "deck-b"},
 	}
 
-	duel := db.Duel{
+	duel := DuelRecord{
 		UID:             "duel-123",
 		Format:          string(RegularFormat),
 		Host:            "host-1",

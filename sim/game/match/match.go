@@ -1,8 +1,6 @@
 package match
 
 import (
-	"context"
-	"duel-masters/db"
 	"duel-masters/game/cnd"
 	"duel-masters/internal"
 	"duel-masters/server"
@@ -17,7 +15,6 @@ import (
 	"time"
 
 	"github.com/sirupsen/logrus"
-	"go.mongodb.org/mongo-driver/bson"
 )
 
 // Match struct
@@ -449,7 +446,7 @@ func (m *Match) SaveMatchHistory(winner *Player, wonByDisconnect bool) {
 		p2deck = m.Player2.DeckStr
 	}
 
-	duel := db.Duel{
+	duel := DuelRecord{
 		UID:             m.ID,
 		Format:          string(m.Format),
 		Host:            p1id,
@@ -466,12 +463,6 @@ func (m *Match) SaveMatchHistory(winner *Player, wonByDisconnect bool) {
 		duel.Winner = m.Player1.UID
 	} else if winner != nil && m.Player2 != nil && m.Player2.Player == winner {
 		duel.Winner = m.Player2.UID
-	}
-
-	_, err := db.Duels().InsertOne(context.Background(), duel)
-
-	if err != nil {
-		logrus.Error("Failed to save duel result to db", err)
 	}
 
 	m.sendMatchResultWebhook(duel)
@@ -1409,11 +1400,25 @@ func (m *Match) Parse(s *server.Socket, data []byte) {
 				m.Chat("Server", fmt.Sprintf("%s started the game", m.Player1.Username))
 				m.Chat("Server", fmt.Sprintf("%s joined the game", m.Player2.Username))
 
-				m.Player1.Player.CreateRandomDeck()
-				m.Player2.Player.CreateRandomDeck()
+				hostDeck := m.HostDeck
+				guestDeck := m.GuestDeck
 
-				m.Chat("Server", fmt.Sprintf("%s has received a randomly generated deck", m.Player1.Username))
-				m.Chat("Server", fmt.Sprintf("%s has received a randomly generated deck", m.Player2.Username))
+				if m.Format == RandomFormat || len(hostDeck) == 0 || len(guestDeck) == 0 {
+					m.Player1.Player.CreateRandomDeck()
+					m.Player2.Player.CreateRandomDeck()
+
+					m.Chat("Server", fmt.Sprintf("%s has received a randomly generated deck", m.Player1.Username))
+					m.Chat("Server", fmt.Sprintf("%s has received a randomly generated deck", m.Player2.Username))
+				} else {
+					m.Player1.DeckStr = strings.Join(hostDeck, ",")
+					m.Player2.DeckStr = strings.Join(guestDeck, ",")
+
+					m.Player1.Player.CreateDeck(hostDeck)
+					m.Player2.Player.CreateDeck(guestDeck)
+
+					m.Chat("Server", fmt.Sprintf("%s's deck loaded", m.Player1.Username))
+					m.Chat("Server", fmt.Sprintf("%s's deck loaded", m.Player2.Username))
+				}
 
 				m.Player1.Player.Ready = true
 				m.Player2.Player.Ready = true
@@ -1605,57 +1610,6 @@ func (m *Match) Parse(s *server.Socket, data []byte) {
 
 			}, SequentialEvent)
 		}
-
-	case "choose_deck":
-		m.eventloop.schedule(func() {
-
-			if m.Started {
-				return
-			}
-
-			if m.Format == RandomFormat {
-				return
-			}
-
-			p, err := m.PlayerForSocket(s)
-
-			if err != nil {
-				return
-			}
-
-			var msg struct {
-				UID string `json:"uid"`
-			}
-
-			if err := json.Unmarshal(data, &msg); err != nil {
-				return
-			}
-
-			var deck db.Deck
-
-			if err := db.Decks().FindOne(context.TODO(), bson.M{"uid": msg.UID}).Decode(&deck); err != nil {
-				return
-			}
-
-			p.DeckStr = deck.Cards
-
-			legacyDeck, err := ConvertToLegacyDeck(deck)
-
-			if err != nil {
-				return
-			}
-
-			p.Player.CreateDeck(legacyDeck.Cards)
-
-			m.Chat("Server", fmt.Sprintf("%s has chosen their deck", s.User.Username))
-
-			p.Player.Ready = true
-
-			if m.Player1.Player.Ready && m.Player2.Player.Ready {
-				m.CoinToss()
-			}
-
-		}, SequentialEvent)
 
 	case "add_to_manazone":
 		m.eventloop.schedule(func() {
@@ -1969,7 +1923,7 @@ func (p *PlayerReference) Dispose() {
 	}
 }
 
-func (m *Match) handleAdminMessages(message string, user db.User) {
+func (m *Match) handleAdminMessages(message string, user server.User) {
 
 	if !hasAdminRightsAndValidMsgFormat(message, user) {
 		return
@@ -1978,7 +1932,7 @@ func (m *Match) handleAdminMessages(message string, user db.User) {
 	handleAdminCommandCases(m, message)
 }
 
-func hasAdminRightsAndValidMsgFormat(message string, user db.User) bool {
+func hasAdminRightsAndValidMsgFormat(message string, user server.User) bool {
 
 	/* hasRights := false
 

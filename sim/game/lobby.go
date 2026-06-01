@@ -1,8 +1,6 @@
 package game
 
 import (
-	"context"
-	"duel-masters/db"
 	"duel-masters/flags"
 	"duel-masters/game/match"
 	"duel-masters/internal"
@@ -18,8 +16,6 @@ import (
 	"time"
 
 	"github.com/sirupsen/logrus"
-	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 const (
@@ -429,134 +425,17 @@ func (l *Lobby) handleChatCommand(s *server.Socket, command string) {
 
 	case "chatblock":
 		{
-			if len(parts) < 2 {
-				chat(s, "Missing command arguments")
-				return
-			}
-
-			var user db.User
-
-			if err := db.Users().FindOne(context.Background(), bson.M{"username": primitive.Regex{Pattern: "^" + parts[1] + "$", Options: "i"}}).Decode(&user); err != nil {
-				chat(s, fmt.Sprintf("Could not find the user \"%s\"", parts[1]))
-				return
-			}
-
-			_, err := db.Users().UpdateOne(
-				context.Background(),
-				bson.M{"uid": user.UID},
-				bson.M{"$set": bson.M{"chat_blocked": true}},
-			)
-
-			if err != nil {
-				chat(s, fmt.Sprintf("Failed to chatblock %s", user.Username))
-			}
-
-			l.messagesMutex.Lock()
-			defer l.messagesMutex.Unlock()
-
-			for i, msg := range l.messages {
-				if msg.Username == user.Username {
-					l.messages[i].Removed = true
-				}
-			}
-
-			blockedSocket, ok := server.FindByUserUID(user.UID)
-
-			if ok {
-				blockedSocket.User.Chatblocked = true
-			}
-
-			chat(s, fmt.Sprintf("Successfully chatblocked %s", user.Username))
+			chat(s, "chatblock was removed with the database layer")
 		}
 
 	case "ban":
 		{
-			if len(parts) < 2 {
-				chat(s, "Missing command arguments")
-				return
-			}
-
-			var user db.User
-
-			if err := db.Users().FindOne(context.Background(), bson.M{"username": primitive.Regex{Pattern: "^" + parts[1] + "$", Options: "i"}}).Decode(&user); err != nil {
-				chat(s, fmt.Sprintf("Could not find the user \"%s\"", parts[1]))
-				return
-			}
-
-			banEntry := db.Ban{
-				Type:  db.UserBan,
-				Value: user.UID,
-			}
-
-			db.Bans().InsertOne(context.Background(), banEntry)
-
-			// clear banned user sessions
-			db.Users().UpdateOne(
-				context.Background(),
-				bson.M{"uid": user.UID},
-				bson.M{"$set": bson.M{"sessions": []db.UserSession{}}},
-			)
-
-			// disconnect the banned user if online
-			bannedSocket, ok := server.FindByUserUID(user.UID)
-
-			if ok {
-				bannedSocket.Close()
-			}
-
-			chat(s, fmt.Sprintf("Successfully banned %s (%s)", user.Username, user.UID))
+			chat(s, "ban was removed with the database layer")
 		}
 
 	case "ipban":
 		{
-			if len(parts) < 2 {
-				chat(s, "Missing command arguments")
-				return
-			}
-
-			var user db.User
-
-			if err := db.Users().FindOne(context.Background(), bson.M{"username": primitive.Regex{Pattern: "^" + parts[1] + "$", Options: "i"}}).Decode(&user); err != nil {
-				chat(s, fmt.Sprintf("Could not find the user \"%s\"", parts[1]))
-				return
-			}
-
-			banEntries := []interface{}{}
-
-			banEntries = append(banEntries, db.Ban{
-				Type:  db.UserBan,
-				Value: user.UID,
-			})
-
-			if user.Sessions != nil && len(user.Sessions) > 0 {
-				banEntries = append(banEntries, db.Ban{
-					Type:  db.IPBan,
-					Value: user.Sessions[len(user.Sessions)-1].IP,
-				})
-			}
-
-			db.Bans().InsertMany(context.Background(), banEntries)
-
-			// clear banned user sessions
-			db.Users().UpdateOne(
-				context.Background(),
-				bson.M{"uid": user.UID},
-				bson.M{"$set": bson.M{"sessions": []db.UserSession{}}},
-			)
-
-			// disconnect the banned user if online
-			bannedSocket, ok := server.FindByUserUID(user.UID)
-
-			if ok {
-				bannedSocket.Close()
-			}
-
-			if len(banEntries) > 1 {
-				chat(s, fmt.Sprintf("Successfully banned %s (%s), and their IP", user.Username, user.UID))
-			} else {
-				chat(s, fmt.Sprintf("Successfully banned %s (%s), but did not find an IP to ban", user.Username, user.UID))
-			}
-
+			chat(s, "ipban was removed with the database layer")
 		}
 
 	case "malloc":

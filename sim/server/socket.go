@@ -4,7 +4,6 @@ import (
 	"sync"
 	"time"
 
-	"duel-masters/db"
 	"duel-masters/internal"
 
 	"github.com/google/uuid"
@@ -37,7 +36,7 @@ type Connection interface {
 type Socket struct {
 	UID    string
 	conn   Connection
-	User   db.User
+	User   User
 	hub    Hub
 	ready  bool
 	mutex  *sync.Mutex
@@ -65,7 +64,7 @@ func NewSocket(c Connection, hub Hub, userID string, username string) *Socket {
 		id = uuid.New().String()
 	}
 
-	var user db.User
+	var user User
 	user.UID = userID
 	user.Username = username
 

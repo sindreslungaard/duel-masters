@@ -2,7 +2,6 @@ package match
 
 import (
 	"bytes"
-	"duel-masters/db"
 	"duel-masters/internal"
 	"encoding/json"
 	"net/http"
@@ -32,7 +31,7 @@ type duelResultWebhookPayload struct {
 	Loser           *duelResultWebhookPlayer `json:"loser,omitempty"`
 }
 
-func (m *Match) sendMatchResultWebhook(duel db.Duel) {
+func (m *Match) sendMatchResultWebhook(duel DuelRecord) {
 	webhookURL := os.Getenv("duel_result_webhook_url")
 	if webhookURL == "" {
 		logrus.Debug("Duel result webhook not configured, skipping")
@@ -56,7 +55,7 @@ func (m *Match) sendMatchResultWebhook(duel db.Duel) {
 	}()
 }
 
-func (m *Match) newDuelResultWebhookPayload(duel db.Duel) duelResultWebhookPayload {
+func (m *Match) newDuelResultWebhookPayload(duel DuelRecord) duelResultWebhookPayload {
 	host := newDuelResultWebhookPlayer(m.Player1)
 	guest := newDuelResultWebhookPlayer(m.Player2)
 	winner, loser := winnerAndLoserForWebhook(duel.Winner, host, guest)

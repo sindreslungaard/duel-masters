@@ -4,6 +4,36 @@ import { SignJWT } from "jose";
 import { Duel } from "../../packages/duel-interface";
 
 const DUEL_TOKEN_SECRET = new TextEncoder().encode("duel-secret");
+const DECK_SIZE = 40;
+const UNIQUE_CARDS_PER_DECK = 10;
+
+type CardSummary = {
+  uid: string;
+  name: string;
+};
+
+const buildDeck = (availableCards: CardSummary[], offset = 0): string[] => {
+  if (availableCards.length === 0) {
+    return [];
+  }
+
+  const uniqueCards = Array.from(
+    { length: Math.min(UNIQUE_CARDS_PER_DECK, availableCards.length) },
+    (_, index) => availableCards[(offset + index) % availableCards.length].uid,
+  );
+
+  const deck: string[] = [];
+  while (deck.length < DECK_SIZE) {
+    for (const uid of uniqueCards) {
+      deck.push(uid);
+      if (deck.length === DECK_SIZE) {
+        break;
+      }
+    }
+  }
+
+  return deck;
+};
 
 function App() {
   const [loading, setLoading] = useState(false);
@@ -15,45 +45,45 @@ function App() {
     "host" | "guest" | "spectator"
   >("host");
   const [spectatorDuelToken, setSpectatorDuelToken] = useState("");
-  const [cards, setCards] = useState<{ uid: string; name: string }[]>([]);
+  const [cards, setCards] = useState<CardSummary[]>([]);
 
   const createMatch = async () => {
     setLoading(true);
     setError(null);
 
-    const payload = {
-      hostId: "1",
-      hostDeck: [],
-      guestId: "2",
-      guestDeck: [],
-      name: "Test Match",
-      visibility: "public",
-      format: "regular",
-    };
-
     try {
-      const [matchRes, cardsRes] = await Promise.all([
-        fetch("/api/match", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(payload),
-        }),
-        fetch("/api/cards"),
-      ]);
-
-      if (!matchRes.ok) {
-        throw new Error(`HTTP error! status: ${matchRes.status}`);
-      }
+      const cardsRes = await fetch("/api/cards");
 
       if (!cardsRes.ok) {
         throw new Error(`HTTP error! status: ${cardsRes.status}`);
       }
 
+      const availableCards = (await cardsRes.json()) as CardSummary[];
+      setCards(availableCards);
+
+      const payload = {
+        hostId: "1",
+        hostDeck: buildDeck(availableCards, 0),
+        guestId: "2",
+        guestDeck: buildDeck(availableCards, UNIQUE_CARDS_PER_DECK),
+        name: "Test Match",
+        visibility: "public",
+        format: "regular",
+      };
+
+      const matchRes = await fetch("/api/match", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+      });
+
+      if (!matchRes.ok) {
+        throw new Error(`HTTP error! status: ${matchRes.status}`);
+      }
+
       const match = await matchRes.json();
-      const cards = await cardsRes.json();
-      setCards(cards);
 
       const hostToken = await new SignJWT({ id: "1", username: "Player1" })
         .setProtectedHeader({ alg: "HS256" })

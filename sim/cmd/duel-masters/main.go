@@ -9,8 +9,6 @@ import (
 	"time"
 
 	"duel-masters/api"
-	"duel-masters/db"
-	"duel-masters/db/migrations"
 	"duel-masters/game"
 	"duel-masters/game/cards"
 	"duel-masters/game/match"
@@ -49,8 +47,6 @@ func init() {
 }
 
 func main() {
-	match.InitDecks()
-
 	for _, set := range cards.Sets {
 		for uid, ctor := range *set {
 			if ctor == nil {
@@ -59,6 +55,8 @@ func main() {
 			match.AddCard(uid, ctor)
 		}
 	}
+
+	match.InitDecks()
 
 	lobby := game.NewLobby()
 	go lobby.StartTicker()
@@ -74,8 +72,6 @@ func main() {
 	API := api.New(lobby, matchSystem)
 
 	api.CreateCardCache()
-
-	migrations.Migrate(db.Connection())
 
 	go checkForAutoRestart(lobby)
 

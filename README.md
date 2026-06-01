@@ -40,6 +40,8 @@ cd sim
 go run cmd/duel-masters/main.go
 ```
 
+The simulator no longer requires a database to boot. Match creation expects the caller to provide `hostDeck` and `guestDeck` as arrays of card UIDs from the codebase card catalog.
+
 Alternatively use the predefined vscode debug launcher
 
 ### Dev server

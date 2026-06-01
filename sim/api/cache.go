@@ -12,7 +12,7 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-// CardInfo struct is used for the card database api
+// CardInfo describes the card catalog exposed by the simulator API.
 type CardInfo struct {
 	UID          string   `json:"uid"`
 	Name         string   `json:"name"`
@@ -67,8 +67,6 @@ func CreateCardCache() {
 			}
 
 			register = append(register, entry)
-
-			match.CreateIfNotExists(entry.UID)
 
 		}
 

@@ -1,16 +1,23 @@
 package server
 
-import "duel-masters/db"
-
 // Message is the default message struct
 type Message struct {
 	Header string `json:"header"`
 }
 
 // DecksMessage lists the users decks
+type DeckMessage struct {
+	UID      string   `json:"uid"`
+	Owner    string   `json:"owner"`
+	Name     string   `json:"name"`
+	Public   bool     `json:"public"`
+	Standard bool     `json:"standard"`
+	Cards    []string `json:"cards"`
+}
+
 type DecksMessage struct {
-	Header string          `json:"header"`
-	Decks  []db.LegacyDeck `json:"decks"`
+	Header string        `json:"header"`
+	Decks  []DeckMessage `json:"decks"`
 }
 
 // ChatMessage stores information about a chat message

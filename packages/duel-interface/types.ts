@@ -9,6 +9,15 @@ export interface DecksMessage {
   decks: LegacyDeck[];
 }
 
+export interface LegacyDeck {
+  uid: string;
+  owner: string;
+  name: string;
+  public: boolean;
+  standard: boolean;
+  cards: string[];
+}
+
 // ChatMessage stores information about a chat message
 export interface ChatMessage {
   header: string;
@@ -212,6 +221,3 @@ export interface PlaySoundMessage {
   header: string;
   sound: string;
 }
-
-// Type alias for LegacyDeck (assuming it's imported from db module)
-export type LegacyDeck = any; // Replace with actual type definition if available
