@@ -176,6 +176,73 @@ func (s *TestScenario) SubmitAction(player *match.PlayerReference, cardIDs ...st
 	})
 }
 
+// CancelAction answers "no" or cancels a pending action prompt (e.g. a binary yes/no question).
+func (s *TestScenario) CancelAction(player *match.PlayerReference) error {
+	return s.send(player, struct {
+		Header string   `json:"header"`
+		Cards  []string `json:"cards"`
+		Count  int      `json:"count"`
+		Cancel bool     `json:"cancel"`
+	}{
+		Header: "action",
+		Cards:  []string{},
+		Count:  0,
+		Cancel: true,
+	})
+}
+
+// MessageHeaders returns the header field of every JSON message sent to the player so far,
+// starting from position since. Useful for debugging test failures.
+func (s *TestScenario) MessageHeaders(player *match.PlayerReference, since int) ([]string, error) {
+	conn, err := s.connectionFor(player)
+	if err != nil {
+		return nil, err
+	}
+	var headers []string
+	for _, raw := range conn.JSONMessagesSince(since) {
+		var h server.Message
+		if json.Unmarshal([]byte(raw), &h) == nil {
+			headers = append(headers, h.Header)
+		}
+	}
+	return headers, nil
+}
+
+// MessageCount returns the number of JSON messages the server has sent to the player so far.
+// Capture this value BEFORE an action so that WaitForMessage can find the response.
+func (s *TestScenario) MessageCount(player *match.PlayerReference) (int, error) {
+	conn, err := s.connectionFor(player)
+	if err != nil {
+		return 0, err
+	}
+	return conn.JSONWriteCount(), nil
+}
+
+// WaitForMessage blocks until a server message whose header matches one of the supplied values
+// appears at a position >= since in the player's received message log.
+// Always capture since = MessageCount(player) BEFORE the action that triggers the message.
+func (s *TestScenario) WaitForMessage(player *match.PlayerReference, since int, headers ...string) error {
+	conn, err := s.connectionFor(player)
+	if err != nil {
+		return err
+	}
+
+	return s.waitFor(func() bool {
+		for _, raw := range conn.JSONMessagesSince(since) {
+			var h server.Message
+			if err := json.Unmarshal([]byte(raw), &h); err != nil {
+				continue
+			}
+			for _, header := range headers {
+				if h.Header == header {
+					return true
+				}
+			}
+		}
+		return false
+	})
+}
+
 func (s *TestScenario) connectionFor(player *match.PlayerReference) (*MockConnection, error) {
 	conn, ok := s.connections[player]
 	if !ok {
