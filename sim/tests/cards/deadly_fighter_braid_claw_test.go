@@ -1,4 +1,4 @@
-package tests
+package cards
 
 import (
 	"duel-masters/game/match"
