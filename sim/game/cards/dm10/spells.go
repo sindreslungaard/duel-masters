@@ -184,7 +184,7 @@ func SirenConcerto(c *match.Card) {
 	c.ManaCost = 1
 	c.ManaRequirement = []string{civ.Water}
 
-	c.Use(fx.Spell, fx.When(fx.SpellCast, func(card *match.Card, ctx *match.Context) {
+	c.Use(fx.Spell, fx.ShieldTrigger, fx.When(fx.SpellCast, func(card *match.Card, ctx *match.Context) {
 		fx.Select(
 			card.Player,
 			ctx.Match,
@@ -201,7 +201,7 @@ func SirenConcerto(c *match.Card) {
 			}
 		})
 
-		fx.Select(
+		fx.SelectFilter(
 			card.Player,
 			ctx.Match,
 			card.Player,
@@ -209,6 +209,8 @@ func SirenConcerto(c *match.Card) {
 			fmt.Sprintf("%s's effect: Put a card from your hand into your mana zone.", card.Name),
 			1,
 			1,
+			false,
+			func(candidate *match.Card) bool { return candidate.ID != card.ID },
 			false,
 		).Map(func(x *match.Card) {
 			_, err := card.Player.MoveCard(x.ID, match.HAND, match.MANAZONE, card.ID)
