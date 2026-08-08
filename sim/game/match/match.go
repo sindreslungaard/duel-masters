@@ -428,6 +428,10 @@ func (m *Match) End(winner *Player, winnerStr string) {
 func (m *Match) SaveMatchHistory(winner *Player, wonByDisconnect bool) (DuelRecord, bool) {
 	duel := m.newDuelRecord(winner, wonByDisconnect, time.Now().Unix())
 	if !shouldGenerateMatchResult(duel) {
+		logrus.WithFields(logrus.Fields{
+			"match_id":         duel.UID,
+			"duration_seconds": duel.Ended - duel.Started,
+		}).Info("Skipping duel match result because it did not meet the minimum duration")
 		return duel, false
 	}
 
@@ -487,17 +491,7 @@ func shouldGenerateMatchResult(duel DuelRecord) bool {
 		}
 	}
 
-	duration := duel.Ended - duel.Started
-	if duration < int64(minimumDuration) {
-		logrus.WithFields(logrus.Fields{
-			"match_id":                 duel.UID,
-			"duration_seconds":         duration,
-			"minimum_duration_seconds": minimumDuration,
-		}).Info("Skipping duel match result because it did not meet the minimum duration")
-		return false
-	}
-
-	return true
+	return duel.Ended-duel.Started >= int64(minimumDuration)
 }
 
 func (m *Match) newDuelFinishedMessage(duel DuelRecord, matchResultGenerated bool) server.DuelFinishedMessage {
