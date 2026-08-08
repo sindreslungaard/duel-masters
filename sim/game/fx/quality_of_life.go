@@ -729,6 +729,10 @@ func AttackConfirmed(card *match.Card, ctx *match.Context) bool {
 // OneOfMyCreaturesAttacksConfirmed returns true
 // if one of the player's creatures is attacking and it cannot be cancelled
 func OneOfMyCreaturesAttacksConfirmed(card *match.Card, ctx *match.Context) bool {
+	if card.Zone != match.BATTLEZONE {
+		return false
+	}
+
 	if event, ok := ctx.Event.(*match.AttackConfirmed); ok {
 		_, err := card.Player.GetCard(event.CardID, match.BATTLEZONE)
 

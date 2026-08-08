@@ -186,6 +186,74 @@ func (s *TestScenario) ActionEndTurn(player *match.PlayerReference) error {
 	})
 }
 
+// ActionAttackCreature attacks a specific opposing creature and waits until
+// the confirmed attack and its resulting battle have finished resolving.
+func (s *TestScenario) ActionAttackCreature(player *match.PlayerReference, attackerID string, defenderID string) error {
+	conn, err := s.connectionFor(player)
+	if err != nil {
+		return err
+	}
+
+	if _, err := player.Player.GetCard(attackerID, match.BATTLEZONE); err != nil {
+		return err
+	}
+
+	opponent := s.Match.Opponent(player.Player)
+	if _, err := opponent.GetCard(defenderID, match.BATTLEZONE); err != nil {
+		return err
+	}
+
+	messageCount := conn.JSONWriteCount()
+	if err := s.send(player, struct {
+		Header string `json:"header"`
+		ID     string `json:"virtualId"`
+	}{
+		Header: "attack_creature",
+		ID:     attackerID,
+	}); err != nil {
+		return err
+	}
+
+	action, err := s.waitForActionMessage(player, messageCount)
+	if err != nil {
+		return err
+	}
+
+	defenderOffered := false
+	for _, candidate := range action.Cards {
+		if candidate.CardID == defenderID {
+			defenderOffered = true
+			break
+		}
+	}
+	if !defenderOffered {
+		// Attack target selection is cancellable. Answer the outstanding prompt
+		// before returning so a failed test cannot strand the event loop.
+		_ = s.CancelAction(player)
+		return fmt.Errorf("creature %s was not offered as an attack target", defenderID)
+	}
+
+	completionStart := conn.JSONWriteCount()
+	if err := s.SubmitAction(player, defenderID); err != nil {
+		return err
+	}
+
+	// Confirming an attack broadcasts once after tapping the attacker and the
+	// outer AttackCreature action broadcasts again after all nested effects and
+	// battle processing have returned.
+	return s.waitFor(func() bool {
+		stateUpdates := 0
+		for _, raw := range conn.JSONMessagesSince(completionStart) {
+			var header server.Message
+			if err := json.Unmarshal([]byte(raw), &header); err == nil && header.Header == "state_update" {
+				stateUpdates++
+			}
+		}
+
+		return stateUpdates >= 2
+	})
+}
+
 func (s *TestScenario) SubmitAction(player *match.PlayerReference, cardIDs ...string) error {
 	return s.send(player, struct {
 		Header string   `json:"header"`
