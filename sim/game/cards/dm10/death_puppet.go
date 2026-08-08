@@ -20,3 +20,24 @@ func MikayRattlingDoll(c *match.Card) {
 	c.Use(fx.Creature, fx.Blocker(), fx.CantAttackCreatures, fx.CantAttackPlayers)
 
 }
+
+// PierrPsychoDoll ...
+func PierrPsychoDoll(c *match.Card) {
+
+	c.Name = "Pierr, Psycho Doll"
+	c.Power = 1000
+	c.Civ = civ.Darkness
+	c.Family = []string{family.DeathPuppet}
+	c.ManaCost = 2
+	c.ManaRequirement = []string{civ.Darkness}
+
+	c.Use(
+		fx.Creature,
+		fx.Blocker(),
+		fx.BlockIfAbleWhenOppAttacks,
+		fx.CantAttackCreatures,
+		fx.CantAttackPlayers,
+		fx.Slayer,
+	)
+
+}

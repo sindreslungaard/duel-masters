@@ -12,6 +12,10 @@ import (
 
 const actionTimeout = 2 * time.Second
 
+// eventLoopProbeID is deliberately not a valid card id so the probe attack in
+// WaitForEventLoop is always rejected without changing any match state.
+const eventLoopProbeID = "scenario-event-loop-probe"
+
 type TestScenario struct {
 	Match       *match.Match
 	connections map[*match.PlayerReference]*MockConnection
@@ -166,7 +170,7 @@ func (s *TestScenario) ActionEndTurn(player *match.PlayerReference) error {
 	// again after draw. Wait for the second update so tests cannot observe the
 	// event loop halfway through the new turn. A prevented transition sends a
 	// warning instead.
-	return s.waitFor(func() bool {
+	if err := s.waitFor(func() bool {
 		stateUpdates := 0
 		for _, raw := range conn.JSONMessagesSince(messageCount) {
 			var header server.Message
@@ -183,7 +187,73 @@ func (s *TestScenario) ActionEndTurn(player *match.PlayerReference) error {
 		}
 
 		return stateUpdates >= 2
-	})
+	}); err != nil {
+		return err
+	}
+
+	// An end-of-turn effect may have opened a prompt, in which case the event
+	// loop is deliberately blocked until the caller answers it.
+	headers, err := s.MessageHeaders(player, messageCount)
+	if err != nil {
+		return err
+	}
+	for _, header := range headers {
+		if header == "action" || header == "wait" {
+			return nil
+		}
+	}
+
+	// A turn transition keeps running past its last state broadcast, so the test
+	// goroutine must not touch match state until the event loop is idle again.
+	return s.WaitForEventLoop()
+}
+
+// WaitForEventLoop blocks until the match event loop has finished whatever it
+// was processing. The loop drops sequential events that arrive while it is
+// busy, so an inert probe is resent until the engine answers it; the answer
+// proves that every earlier sequential event has run to completion.
+//
+// Call this before reading or mutating match state directly after a scenario
+// action, because an action can return while the engine is still executing the
+// steps that follow its last state broadcast.
+func (s *TestScenario) WaitForEventLoop() error {
+	player := s.Match.CurrentPlayer()
+
+	conn, err := s.connectionFor(player)
+	if err != nil {
+		return err
+	}
+
+	deadline := time.Now().Add(actionTimeout)
+	for time.Now().Before(deadline) {
+		start := conn.JSONWriteCount()
+
+		// An attack declared with an id no card can have is rejected with a
+		// warning and changes nothing about the match.
+		if err := s.send(player, struct {
+			Header string `json:"header"`
+			ID     string `json:"virtualId"`
+		}{
+			Header: "attack_player",
+			ID:     eventLoopProbeID,
+		}); err != nil {
+			return err
+		}
+
+		probeDeadline := time.Now().Add(20 * time.Millisecond)
+		for time.Now().Before(probeDeadline) {
+			for _, raw := range conn.JSONMessagesSince(start) {
+				var header server.Message
+				if err := json.Unmarshal([]byte(raw), &header); err == nil && header.Header == "warn" {
+					return nil
+				}
+			}
+
+			time.Sleep(time.Millisecond)
+		}
+	}
+
+	return fmt.Errorf("timed out waiting for the match event loop to become idle after %s", actionTimeout)
 }
 
 // ActionAttackCreature attacks a specific opposing creature and waits until
@@ -214,7 +284,7 @@ func (s *TestScenario) ActionAttackCreature(player *match.PlayerReference, attac
 		return err
 	}
 
-	action, err := s.waitForActionMessage(player, messageCount)
+	action, err := s.waitForAttackPrompt(player, messageCount)
 	if err != nil {
 		return err
 	}
@@ -246,6 +316,75 @@ func (s *TestScenario) ActionAttackCreature(player *match.PlayerReference, attac
 		for _, raw := range conn.JSONMessagesSince(completionStart) {
 			var header server.Message
 			if err := json.Unmarshal([]byte(raw), &header); err == nil && header.Header == "state_update" {
+				stateUpdates++
+			}
+		}
+
+		return stateUpdates >= 2
+	})
+}
+
+// ActionAttackPlayer attacks the opponent directly and returns the shield
+// selection prompt the attacker receives, without answering it. The caller must
+// always answer that prompt through ResolveAttack or CancelAction so the
+// sequential event loop is never left waiting on a response.
+//
+// The defender must hold at least one shield; an attack against an empty shield
+// zone never opens a shield selection and ends the match instead.
+func (s *TestScenario) ActionAttackPlayer(player *match.PlayerReference, attackerID string) (*server.ActionMessage, error) {
+	conn, err := s.connectionFor(player)
+	if err != nil {
+		return nil, err
+	}
+
+	if _, err := player.Player.GetCard(attackerID, match.BATTLEZONE); err != nil {
+		return nil, err
+	}
+
+	messageCount := conn.JSONWriteCount()
+	if err := s.send(player, struct {
+		Header string `json:"header"`
+		ID     string `json:"virtualId"`
+	}{
+		Header: "attack_player",
+		ID:     attackerID,
+	}); err != nil {
+		return nil, err
+	}
+
+	return s.waitForAttackPrompt(player, messageCount)
+}
+
+// ResolveAttack answers the attacker's pending shield selection with the given
+// shields and waits until the attack has finished resolving. It returns early
+// when the attacker is put into a wait state because the defender was offered a
+// block; the caller then answers the defender's prompt.
+func (s *TestScenario) ResolveAttack(player *match.PlayerReference, shieldIDs ...string) error {
+	conn, err := s.connectionFor(player)
+	if err != nil {
+		return err
+	}
+
+	completionStart := conn.JSONWriteCount()
+	if err := s.SubmitAction(player, shieldIDs...); err != nil {
+		return err
+	}
+
+	// Confirming the attack broadcasts once after tapping the attacker and the
+	// outer AttackPlayer action broadcasts again once blocking, battles, shield
+	// breaking and their nested effects have returned.
+	return s.waitFor(func() bool {
+		stateUpdates := 0
+		for _, raw := range conn.JSONMessagesSince(completionStart) {
+			var header server.Message
+			if err := json.Unmarshal([]byte(raw), &header); err != nil {
+				continue
+			}
+
+			switch header.Header {
+			case "wait":
+				return true
+			case "state_update":
 				stateUpdates++
 			}
 		}
@@ -438,6 +577,56 @@ func (s *TestScenario) send(player *match.PlayerReference, payload interface{}) 
 
 	s.Match.Parse(player.Socket, data)
 	return nil
+}
+
+// waitForAttackPrompt waits for the prompt an attack declaration opens, but
+// gives up immediately when the engine rejects the attack with a warning
+// instead of making the caller wait out the full action timeout.
+func (s *TestScenario) waitForAttackPrompt(player *match.PlayerReference, start int) (*server.ActionMessage, error) {
+	conn, err := s.connectionFor(player)
+	if err != nil {
+		return nil, err
+	}
+
+	var action *server.ActionMessage
+	var warning string
+
+	err = s.waitFor(func() bool {
+		for _, raw := range conn.JSONMessagesSince(start) {
+			var header server.Message
+			if err := json.Unmarshal([]byte(raw), &header); err != nil {
+				continue
+			}
+
+			switch header.Header {
+			case "warn":
+				message := &server.WarningMessage{}
+				if err := json.Unmarshal([]byte(raw), message); err == nil {
+					warning = message.Message
+				}
+				return true
+			case "action":
+				candidate := &server.ActionMessage{}
+				if err := json.Unmarshal([]byte(raw), candidate); err != nil {
+					continue
+				}
+
+				action = candidate
+				return true
+			}
+		}
+
+		return false
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	if action == nil {
+		return nil, fmt.Errorf("the attack was rejected: %s", warning)
+	}
+
+	return action, nil
 }
 
 func (s *TestScenario) waitForActionMessage(player *match.PlayerReference, start int) (*server.ActionMessage, error) {
