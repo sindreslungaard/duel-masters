@@ -286,6 +286,40 @@ func (s *TestScenario) WaitForAction(player *match.PlayerReference, since int) (
 	return s.waitForActionMessage(player, since)
 }
 
+// LatestAction returns the most recent standard card or question action sent
+// at or after since. This is useful when a higher-level scenario method has
+// already answered an earlier prompt, such as mana payment.
+func (s *TestScenario) LatestAction(player *match.PlayerReference, since int) (*server.ActionMessage, error) {
+	conn, err := s.connectionFor(player)
+	if err != nil {
+		return nil, err
+	}
+
+	var action *server.ActionMessage
+	err = s.waitFor(func() bool {
+		for _, raw := range conn.JSONMessagesSince(since) {
+			var header server.Message
+			if err := json.Unmarshal([]byte(raw), &header); err != nil || header.Header != "action" {
+				continue
+			}
+
+			candidate := &server.ActionMessage{}
+			if err := json.Unmarshal([]byte(raw), candidate); err != nil {
+				continue
+			}
+
+			action = candidate
+		}
+
+		return action != nil
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	return action, nil
+}
+
 // WaitForMultipartAction returns the first grouped-card action sent at or after since.
 func (s *TestScenario) WaitForMultipartAction(player *match.PlayerReference, since int) (*server.MultipartActionMessage, error) {
 	conn, err := s.connectionFor(player)

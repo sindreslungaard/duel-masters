@@ -2168,7 +2168,7 @@
       "subtypes": [
         "Mecha Thunder"
       ],
-      "text": "Shield trigger (When this creature is put into your hand from your shield zone, you may summon it for no cost.)\nBlocker (Whenever an opponent's creature attacks, you may tap this creature to stop the attack. Then the 2 creatures battle.)",
+      "text": "Shield trigger (When this creature is put into your hand from your shield zone, you may summon it for no cost.)\nBlocker (Whenever an opponent's creature attacks, you may tap this creature to stop the attack. Then the 2 creatures battle.)\nThis creature can't attack players.",
       "type": "Creature"
     },
     {
