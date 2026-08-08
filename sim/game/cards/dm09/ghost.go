@@ -42,3 +42,22 @@ func BatDoctorShadowOfUndeath(c *match.Card) {
 	}))
 
 }
+
+// IceVaporShadowOfAnguish ...
+func IceVaporShadowOfAnguish(c *match.Card) {
+
+	c.Name = "Ice Vapor, Shadow of Anguish"
+	c.Power = 1000
+	c.Civ = civ.Darkness
+	c.Family = []string{family.Ghost}
+	c.ManaCost = 5
+	c.ManaRequirement = []string{civ.Darkness}
+
+	// Both choices belong to the opponent, and both are mandatory when they have
+	// a card to give up.
+	c.Use(fx.Creature, fx.When(fx.OpponentCastASpell, func(card *match.Card, ctx *match.Context) {
+		fx.OpDiscardsXCards(1)(card, ctx)
+		fx.OpponentChoosesManaBurn(card, ctx)
+	}))
+
+}

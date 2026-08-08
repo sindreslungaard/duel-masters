@@ -713,6 +713,9 @@ var DM09 = map[string]match.CardConstructor{
 	"cf96ecd5-481a-4a63-b8f1-61731525d956": dm09.KelpCandle,
 	"83ac5a3a-1b3d-43f9-a08e-4415e5f478ff": dm09.AzaghastTyrantOfShadows,
 	"da93d9d0-b569-408d-af93-b4a4286fc91f": dm09.BatDoctorShadowOfUndeath,
+	"d53bb7b9-5d3e-44ed-a8ab-ab262ec23cb8": dm09.GabzagulWarlordOfPain,
+	"ab6c7559-1714-4238-a063-393cfe8adc08": dm09.IceVaporShadowOfAnguish,
+	"04dc2f45-6c44-486c-9bdf-9f99694792ff": dm09.ShockTrooperMykee,
 }
 
 var DM10 = map[string]match.CardConstructor{
@@ -788,6 +791,11 @@ var DM10 = map[string]match.CardConstructor{
 	"b6ebbe0b-7441-4a89-9d7e-185b0c7bfe57": dm10.HawkeyeLunatron,
 	"06e93dfb-b8d7-4307-a444-a3eba52ad63c": dm10.HourglassMutant,
 	"8ae71daf-a39d-4bff-8ebc-b966bf6a059c": dm10.TerradragonDakmaBalgarow,
+	"e46de1fa-e307-4119-ac71-69c95dc5e443": dm10.CoreCrashLizard,
+	"b9380b9c-894f-421b-b060-1450a4eb32cd": dm10.ElixiaPurebladeElemental,
+	"31683921-16fc-4d4c-bb77-3225d10f7366": dm10.UltimateDragon,
+	"8f0df729-fa1a-439e-a4a1-961650bcd192": dm10.NecrodragonBryzenaga,
+	"7a39340a-4601-4c34-8754-05554d49cbf4": dm10.BodaciousGiant,
 }
 
 // Promo is a map with all the card id's in the game and corresponding CardConstructor for promotional exclusive cards

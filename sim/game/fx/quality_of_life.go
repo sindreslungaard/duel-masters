@@ -1181,6 +1181,22 @@ func IHaveCastASpell(card *match.Card, ctx *match.Context) bool {
 	return false
 }
 
+// OpponentCastASpell returns true if the opponent of the card's controller cast
+// a spell while the card is in the battle zone. Shield trigger casts count as
+// casts, matching the printed "whenever your opponent casts a spell" wording.
+func OpponentCastASpell(card *match.Card, ctx *match.Context) bool {
+	if card.Zone != match.BATTLEZONE {
+		return false
+	}
+
+	if event, ok := ctx.Event.(*match.SpellCast); ok {
+		return (card.Player == ctx.Match.Player1.Player && event.MatchPlayerID == 2) ||
+			(card.Player == ctx.Match.Player2.Player && event.MatchPlayerID == 1)
+	}
+
+	return false
+}
+
 func WheneverThisAttacksPlayerAndIsntBlocked(card *match.Card, ctx *match.Context) bool {
 	if card.HasCondition(cnd.HasShieldsSelectionEffect) {
 		if event, ok := ctx.Event.(*match.SelectShields); ok {

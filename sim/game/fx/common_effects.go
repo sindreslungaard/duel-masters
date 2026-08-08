@@ -220,6 +220,30 @@ func DestroyOpShield(card *match.Card, ctx *match.Context) {
 
 }
 
+// PutOpShieldIntoGraveyard lets the card's controller choose one of the
+// opponent's shields face down and puts it straight into the opponent's
+// graveyard. Unlike DestroyOpShield the shield is never broken, so it does not
+// go to the opponent's hand and its shield trigger is not offered.
+func PutOpShieldIntoGraveyard(card *match.Card, ctx *match.Context) {
+	opponent := ctx.Match.Opponent(card.Player)
+
+	SelectBackside(
+		card.Player,
+		ctx.Match,
+		opponent,
+		match.SHIELDZONE,
+		fmt.Sprintf("%s's effect: Choose one of your opponent's shields and put it into their graveyard.", card.Name),
+		1,
+		1,
+		false,
+	).Map(func(shield *match.Card) {
+		moved, err := opponent.MoveCard(shield.ID, match.SHIELDZONE, match.GRAVEYARD, card.ID)
+		if err == nil && moved.Zone == match.GRAVEYARD {
+			ctx.Match.ReportActionInChat(opponent, fmt.Sprintf("A shield was put into %s's graveyard by %s", opponent.Username(), card.Name))
+		}
+	})
+}
+
 func OpDiscardsXCards(x int) match.HandlerFunc {
 	return func(card *match.Card, ctx *match.Context) {
 

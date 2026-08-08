@@ -50,61 +50,71 @@ func TerradragonDakmaBalgarow(c *match.Card) {
 		return shields * 2000
 	}
 
+	c.Use(fx.Creature, fx.PowerBreakerTiers(6000, 15000))
+}
+
+// UltimateDragon ...
+func UltimateDragon(c *match.Card) {
+	c.Name = "Ultimate Dragon"
+	c.Power = 5000
+	c.Civ = civ.Fire
+	c.Family = []string{family.ArmoredDragon}
+	c.ManaCost = 6
+	c.ManaRequirement = []string{civ.Fire}
+
+	otherDragons := func() int {
+		if c.Zone != match.BATTLEZONE {
+			return 0
+		}
+
+		return len(fx.FindFilter(
+			c.Player,
+			match.BATTLEZONE,
+			func(x *match.Card) bool {
+				return x.ID != c.ID && x.SharesAFamily(family.Dragons)
+			},
+		))
+	}
+
+	c.PowerModifier = func(m *match.Match, attacking bool) int {
+		return otherDragons() * 5000
+	}
+
+	// Crew breaker-Dragon. The modifier is kept in sync with the battle zone on
+	// every event instead of being added for the duration of an attack, so a
+	// cancelled attack can never leave a stale value behind.
 	c.Use(fx.Creature, func(card *match.Card, ctx *match.Context) {
-		// GetPower dispatches handlers synchronously. Do not recursively ask for
-		// power while already handling that calculation.
 		if _, calculatingPower := ctx.Event.(*match.GetPowerEvent); calculatingPower {
 			return
 		}
 
-		hasDoubleBreaker := terradragonDakmaBalgarowHasOwnCondition(card, cnd.DoubleBreaker)
-		hasTripleBreaker := terradragonDakmaBalgarowHasOwnCondition(card, cnd.TripleBreaker)
+		wanted := otherDragons()
+		current, has := ultimateDragonOwnShieldBreakModifier(card)
 
-		if card.Zone != match.BATTLEZONE {
-			if hasDoubleBreaker {
-				card.RemoveSpecificConditionBySource(cnd.DoubleBreaker, card.ID)
-			}
-			if hasTripleBreaker {
-				card.RemoveSpecificConditionBySource(cnd.TripleBreaker, card.ID)
-			}
+		if has && current == wanted {
 			return
 		}
 
-		attacking := false
-		switch event := ctx.Event.(type) {
-		case *match.AttackPlayer:
-			attacking = event.CardID == card.ID
-		case *match.AttackCreature:
-			attacking = event.CardID == card.ID
-		case *match.SelectShields:
-			attacking = event.Attacker == card
+		if has {
+			card.RemoveSpecificConditionBySource(cnd.ShieldBreakModifier, card.ID)
 		}
 
-		power := ctx.Match.GetPower(card, attacking)
-
-		// "Triple breaker" replaces "double breaker" rather than stacking with it.
-		wantsTripleBreaker := power >= 15000
-		wantsDoubleBreaker := power >= 6000 && !wantsTripleBreaker
-
-		if wantsDoubleBreaker && !hasDoubleBreaker {
-			card.AddUniqueSourceCondition(cnd.DoubleBreaker, true, card.ID)
-		} else if !wantsDoubleBreaker && hasDoubleBreaker {
-			card.RemoveSpecificConditionBySource(cnd.DoubleBreaker, card.ID)
-		}
-
-		if wantsTripleBreaker && !hasTripleBreaker {
-			card.AddUniqueSourceCondition(cnd.TripleBreaker, true, card.ID)
-		} else if !wantsTripleBreaker && hasTripleBreaker {
-			card.RemoveSpecificConditionBySource(cnd.TripleBreaker, card.ID)
+		if wanted > 0 {
+			card.AddUniqueSourceCondition(cnd.ShieldBreakModifier, wanted, card.ID)
 		}
 	})
 }
 
-func terradragonDakmaBalgarowHasOwnCondition(card *match.Card, id string) bool {
+func ultimateDragonOwnShieldBreakModifier(card *match.Card) (int, bool) {
 	for _, condition := range card.Conditions() {
-		if condition.ID == id && condition.Src == card.ID {
-			return true
+		if condition.ID != cnd.ShieldBreakModifier || condition.Src != card.ID {
+			continue
+		}
+
+		if val, ok := condition.Val.(int); ok {
+			return val, true
 		}
 	}
-	return false
+
+	return 0, false
 }

@@ -298,8 +298,11 @@ func (s *TestScenario) ActionAttackCreature(player *match.PlayerReference, attac
 	}
 	if !defenderOffered {
 		// Attack target selection is cancellable. Answer the outstanding prompt
-		// before returning so a failed test cannot strand the event loop.
+		// and let the cancelled attack unwind before returning, so a caller that
+		// expects this error can immediately issue another action instead of
+		// having it dropped by the still busy event loop.
 		_ = s.CancelAction(player)
+		_ = s.WaitForEventLoop()
 		return fmt.Errorf("creature %s was not offered as an attack target", defenderID)
 	}
 
@@ -357,8 +360,9 @@ func (s *TestScenario) ActionAttackPlayer(player *match.PlayerReference, attacke
 
 // ResolveAttack answers the attacker's pending shield selection with the given
 // shields and waits until the attack has finished resolving. It returns early
-// when the attacker is put into a wait state because the defender was offered a
-// block; the caller then answers the defender's prompt.
+// when the attack opens another prompt for the attacker, or puts them into a
+// wait state because the defender was offered a block; the caller then answers
+// whichever prompt is outstanding.
 func (s *TestScenario) ResolveAttack(player *match.PlayerReference, shieldIDs ...string) error {
 	conn, err := s.connectionFor(player)
 	if err != nil {
@@ -382,7 +386,7 @@ func (s *TestScenario) ResolveAttack(player *match.PlayerReference, shieldIDs ..
 			}
 
 			switch header.Header {
-			case "wait":
+			case "action", "wait":
 				return true
 			case "state_update":
 				stateUpdates++
@@ -450,6 +454,30 @@ func (s *TestScenario) MessageHeaders(player *match.PlayerReference, since int) 
 		}
 	}
 	return headers, nil
+}
+
+// Warnings returns the text of every "warn" message sent to the player since
+// position since, so tests can assert how often an effect warned and why.
+func (s *TestScenario) Warnings(player *match.PlayerReference, since int) ([]string, error) {
+	conn, err := s.connectionFor(player)
+	if err != nil {
+		return nil, err
+	}
+
+	warnings := make([]string, 0)
+	for _, raw := range conn.JSONMessagesSince(since) {
+		var header server.Message
+		if err := json.Unmarshal([]byte(raw), &header); err != nil || header.Header != "warn" {
+			continue
+		}
+
+		message := &server.WarningMessage{}
+		if err := json.Unmarshal([]byte(raw), message); err == nil {
+			warnings = append(warnings, message.Message)
+		}
+	}
+
+	return warnings, nil
 }
 
 // MessageCount returns the number of JSON messages the server has sent to the player so far.
@@ -623,6 +651,8 @@ func (s *TestScenario) waitForAttackPrompt(player *match.PlayerReference, start 
 	}
 
 	if action == nil {
+		// Let the rejected attack finish unwinding so the caller can act again.
+		_ = s.WaitForEventLoop()
 		return nil, fmt.Errorf("the attack was rejected: %s", warning)
 	}
 
