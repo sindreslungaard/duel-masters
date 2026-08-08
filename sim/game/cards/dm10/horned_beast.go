@@ -8,6 +8,30 @@ import (
 	"fmt"
 )
 
+// TwitchHornTheAggressor ...
+func TwitchHornTheAggressor(c *match.Card) {
+	c.Name = "Twitch Horn, the Aggressor"
+	c.Power = 2000
+	c.Civ = civ.Nature
+	c.Family = []string{family.HornedBeast}
+	c.ManaCost = 6
+	c.ManaRequirement = []string{civ.Nature}
+
+	c.PowerModifier = func(m *match.Match, attacking bool) int {
+		if !attacking || c.Zone != match.BATTLEZONE {
+			return 0
+		}
+
+		return len(fx.FindFilter(
+			c.Player,
+			match.MANAZONE,
+			func(card *match.Card) bool { return card.Tapped },
+		)) * 2000
+	}
+
+	c.Use(fx.Creature)
+}
+
 // AncientHornTheWatcher ...
 func AncientHornTheWatcher(c *match.Card) {
 

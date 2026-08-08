@@ -14,6 +14,12 @@ type CardPlayedEvent struct {
 	CardID string
 }
 
+// UntapManaEvent is fired immediately before the current player's mana cards
+// would untap at the start of their turn. Cancelling it prevents that untap.
+type UntapManaEvent struct {
+	Player *Player
+}
+
 // ChargeManaEvent is fired when the player attempts to charge mana
 type ChargeManaEvent struct {
 	CardID string

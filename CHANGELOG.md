@@ -11,6 +11,12 @@
 - New card "Gajirabute, Vile Centurion" (thanks @DragosIonita23)
 - New card "Gaulezal Dragon" (thanks @DragosIonita23)
 - New card "Carnival Totem" (thanks @DragosIonita23)
+- New card "Scowling Tomato" (thanks @DragosIonita23)
+- New card "Shaman Broccoli" (thanks @DragosIonita23)
+- New card "Soulswap" (thanks @DragosIonita23)
+- New card "Terradragon Cusdalf" (thanks @DragosIonita23)
+- New card "Thirst for the Hunt" (thanks @DragosIonita23)
+- New card "Twitch Horn, the Aggressor" (thanks @DragosIonita23)
 - Brand new website
 - Added support for playing as a guest without registering an account
 - Added email verification for new users

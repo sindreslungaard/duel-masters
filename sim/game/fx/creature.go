@@ -16,12 +16,14 @@ func Creature(card *match.Card, ctx *match.Context) {
 		card.ClearConditions()
 	}
 
-	// Untap the card, add creature condition
+	// Rebuild creature identity for every zone because effects may inspect
+	// creatures in hand, mana, graveyard, or deck. Mana untapping is handled
+	// separately so effects such as Terradragon Cusdalf can prevent it.
 	if _, ok := ctx.Event.(*match.UntapStep); ok {
 
 		card.AddCondition(cnd.Creature, nil, nil)
 
-		if ctx.Match.IsPlayerTurn(card.Player) {
+		if ctx.Match.IsPlayerTurn(card.Player) && card.Zone != match.MANAZONE {
 			card.Tapped = false
 		}
 

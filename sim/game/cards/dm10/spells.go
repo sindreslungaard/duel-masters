@@ -8,6 +8,85 @@ import (
 	"fmt"
 )
 
+// Soulswap ...
+func Soulswap(c *match.Card) {
+	c.Name = "Soulswap"
+	c.Civ = civ.Nature
+	c.ManaCost = 3
+	c.ManaRequirement = []string{civ.Nature}
+
+	c.Use(fx.Spell, fx.ShieldTrigger, fx.When(fx.SpellCast, func(card *match.Card, ctx *match.Context) {
+		creatures := map[string][]*match.Card{
+			"Your creatures": fx.FindFilter(card.Player, match.BATTLEZONE, func(candidate *match.Card) bool {
+				return candidate.HasCondition(cnd.Creature)
+			}),
+			"Opponent's creatures": fx.FindFilter(ctx.Match.Opponent(card.Player), match.BATTLEZONE, func(candidate *match.Card) bool {
+				return candidate.HasCondition(cnd.Creature)
+			}),
+		}
+
+		fx.SelectMultipart(
+			card.Player,
+			ctx.Match,
+			creatures,
+			fmt.Sprintf("%s's effect: You may choose a creature in the battle zone and put it into its owner's mana zone.", card.Name),
+			1,
+			1,
+			true,
+		).Map(func(selectedCreature *match.Card) {
+			moved, err := selectedCreature.Player.MoveCard(
+				selectedCreature.ID,
+				match.BATTLEZONE,
+				match.MANAZONE,
+				card.ID,
+			)
+			if err != nil || moved.Zone != match.MANAZONE {
+				return
+			}
+
+			ctx.Match.ReportActionInChat(
+				moved.Player,
+				fmt.Sprintf("%s was put into %s's mana zone by %s.", moved.Name, moved.Player.Username(), card.Name),
+			)
+
+			manaCards := fx.Find(moved.Player, match.MANAZONE)
+			manaCount := len(manaCards)
+			fx.SelectFilter(
+				card.Player,
+				ctx.Match,
+				moved.Player,
+				match.MANAZONE,
+				fmt.Sprintf("%s's effect: Choose a non-evolution creature in %s's mana zone with cost %d or less and put it into the battle zone.", card.Name, moved.Player.Username(), manaCount),
+				1,
+				1,
+				false,
+				func(candidate *match.Card) bool {
+					return candidate.HasCondition(cnd.Creature) &&
+						!candidate.HasCondition(cnd.Evolution) &&
+						candidate.ManaCost <= manaCount
+				},
+				false,
+			).Map(func(manaCreature *match.Card) {
+				fx.ForcePutCreatureIntoBZ(ctx, manaCreature, match.MANAZONE, card)
+			})
+		})
+	}))
+}
+
+// ThirstForTheHunt ...
+func ThirstForTheHunt(c *match.Card) {
+	c.Name = "Thirst for the Hunt"
+	c.Civ = civ.Nature
+	c.ManaCost = 1
+	c.ManaRequirement = []string{civ.Nature}
+
+	c.Use(fx.Spell, fx.When(fx.SpellCast, func(card *match.Card, ctx *match.Context) {
+		fx.Find(card.Player, match.BATTLEZONE).Map(func(creature *match.Card) {
+			creature.AddUniqueSourceCondition(cnd.PowerAttacker, 1000, card.ID)
+		})
+	}))
+}
+
 // RapidReincarnation ...
 func RapidReincarnation(c *match.Card) {
 

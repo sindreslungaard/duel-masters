@@ -1193,9 +1193,9 @@ func ForcePutCreatureIntoBZ(ctx *match.Context, creature *match.Card, from strin
 	ctx.Match.HandleFx(cardPlayedCtx)
 
 	if !cardPlayedCtx.Cancelled() {
-		_, err := creature.Player.MoveCard(creature.ID, from, match.BATTLEZONE, source.ID)
+		moved, err := creature.Player.MoveCard(creature.ID, from, match.BATTLEZONE, source.ID)
 
-		if err == nil {
+		if err == nil && moved.Zone == match.BATTLEZONE {
 			if !creature.HasCondition(cnd.Evolution) {
 				creature.AddCondition(cnd.SummoningSickness, nil, source.ID)
 			}

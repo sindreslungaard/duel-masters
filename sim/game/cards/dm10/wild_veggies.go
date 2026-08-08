@@ -8,6 +8,30 @@ import (
 	"fmt"
 )
 
+// ScowlingTomato ...
+func ScowlingTomato(c *match.Card) {
+	c.Name = "Scowling Tomato"
+	c.Power = 2000
+	c.Civ = civ.Nature
+	c.Family = []string{family.WildVeggies}
+	c.ManaCost = 2
+	c.ManaRequirement = []string{civ.Nature}
+
+	c.Use(fx.Creature)
+}
+
+// ShamanBroccoli ...
+func ShamanBroccoli(c *match.Card) {
+	c.Name = "Shaman Broccoli"
+	c.Power = 1000
+	c.Civ = civ.Nature
+	c.Family = []string{family.WildVeggies}
+	c.ManaCost = 2
+	c.ManaRequirement = []string{civ.Nature}
+
+	c.Use(fx.Creature, fx.When(fx.WouldBeDestroyed, fx.ReturnToMana))
+}
+
 // KaratePotato ...
 func KaratePotato(c *match.Card) {
 

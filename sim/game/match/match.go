@@ -1081,9 +1081,15 @@ func (m *Match) UntapStep() {
 
 	m.Step = &UntapStep{}
 
-	if mana, err := m.CurrentPlayer().Player.Container(MANAZONE); err == nil {
-		for _, c := range mana {
-			c.Tapped = false
+	currentPlayer := m.CurrentPlayer().Player
+	manaUntapContext := NewContext(m, &UntapManaEvent{Player: currentPlayer})
+	m.HandleFx(manaUntapContext)
+
+	if !manaUntapContext.Cancelled() {
+		if mana, err := currentPlayer.Container(MANAZONE); err == nil {
+			for _, c := range mana {
+				c.Tapped = false
+			}
 		}
 	}
 
