@@ -4,7 +4,7 @@ Read and follow [`../AGENTS.md`](../AGENTS.md) in full before proposing or makin
 
 For every new or changed card, Copilot must:
 
-- use `sim/DuelMastersCards.json` for the exact name, base power, mana cost, civilization, races/type, and complete effect text, and use `sim/game/cards/repository.go` for the UUID/set;
+- use the top-level `cards[].id` in `sim/DuelMastersCards.json` for the canonical UUID and use the same file for the exact name, base power, mana cost, civilization, races/type, printings, and complete effect text; do not confuse the UUID with a printing's collector-number `id`;
 - inspect cards with similar timing and effects and search all of `sim/game/fx` before writing custom logic;
 - reason explicitly about handler order, zones, pre/post events, cancellation, nested events, `ScheduleAfter`, persistent-effect cleanup, multiple effect sources, evolution piles, targeting protection, shields, and destruction replacements;
 - add scenario-based automated tests, including applicable interaction and empty/cancel/cleanup cases; extend `sim/tests/scenario` with reusable bounded helpers when the current harness is insufficient;

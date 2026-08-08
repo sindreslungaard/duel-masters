@@ -15,6 +15,7 @@ These instructions apply to every automated coding agent working in this reposit
 
 Use `sim/DuelMastersCards.json` as the local source of truth for the card's:
 
+- top-level simulator UUID in `cards[].id` when present;
 - exact name;
 - printed/base power (the numeric part of values such as `3000+`);
 - mana cost;
@@ -22,7 +23,16 @@ Use `sim/DuelMastersCards.json` as the local source of truth for the card's:
 - type and race(s);
 - complete rules text, including optional words such as "may," ownership, target restrictions, duration, replacement wording, and ordering.
 
-The JSON does not supply the simulator UUID. Find that in the appropriate set map in `sim/game/cards/repository.go`. Confirm the printing/set before editing. Do not silently "correct" the local JSON from memory or an external card database.
+The top-level `cards[].id` is the canonical simulator UUID. Do not confuse it with `cards[].printings[].id`, which is the printed collector number such as `19/110`. Confirm the printing/set before editing and register the constructor under the top-level UUID in `sim/game/cards/repository.go`.
+
+Cards from DM-01 through DM-12 have UUIDs sourced from the sibling OCTGN database at `../dm-ocg-octgn/GameDatabase/bb784fc6-fe21-4603-90d7-82c049908a74/Sets/<set>/set.xml`. DM-07 currently calls the file `sets.xml`. When a JSON card lacks a top-level UUID:
+
+- inspect the corresponding set XML and take the `<card id="...">` UUID;
+- match exact names first, then verify the DM set code and collector number because either data source can contain spelling, encoding, set-title, or collector-number mistakes;
+- if a card has multiple DM printings with distinct OCTGN UUIDs, use the UUID from its earliest DM printing listed in the JSON as the canonical top-level ID, consistent with the existing repository maps;
+- validate UUID format and uniqueness and update the catalog integrity test when expanding coverage beyond DM-12.
+
+Do not silently "correct" other local JSON metadata from memory or an external card database while importing an ID.
 
 Translate every independent sentence or clause into an explicit implementation obligation before coding. Record at least: trigger/event, controller making each choice, eligible cards and zones, minimum/maximum selections, whether cancellation is legal, movement/destruction source, duration, cleanup condition, and interaction with replacement or prevention effects.
 
@@ -51,7 +61,7 @@ rg -n '^func ' sim/game/fx
 - Set all printed fields explicitly using `civ` and `family` constants: `Name`, `Power` for creatures, `Civ`, `Family`, `ManaCost`, and `ManaRequirement`.
 - A normal creature starts with `c.Use(fx.Creature, ...)`; a normal spell starts with `c.Use(fx.Spell, ...)`. Add `fx.Evolution`, `fx.ShieldTrigger`, `fx.Charger`, breaker helpers, and other standard mechanics as required by the exact text.
 - `c.Use` order is semantic. Default handlers commonly validate, interrupt, mutate events, or schedule default behavior. Keep the established order from genuinely similar cards and reason about cancellation and scheduled callbacks before changing it.
-- Register the constructor under the exact existing UUID in the correct set map in `sim/game/cards/repository.go`. The executable and scenario harness register those maps; do not add ad hoc `match.AddCard` calls in card files.
+- Register the constructor under the card's top-level JSON UUID in the correct set map in `sim/game/cards/repository.go`. The executable and scenario harness register those maps; do not add ad hoc `match.AddCard` calls in card files.
 - If several cards need the same operation, add or improve a focused helper in `sim/game/fx` and test the helper's boundaries. Do not create a card-specific helper merely to hide complex logic.
 
 ### 4. Model the engine's event semantics correctly
@@ -183,7 +193,7 @@ Run `gofmt` on changed Go files. A timeout, leaked waiter, data race, or flaky t
 
 Before declaring the work complete, verify all of the following:
 
-- Constructor metadata matches the exact `DuelMastersCards.json` entry and the UUID/set registration is correct.
+- Constructor metadata and UUID match the exact top-level `DuelMastersCards.json` entry and the set registration is correct.
 - Each rules-text clause maps to the correct event and zone, including "may," "up to," "other," owner/controller, duration, and replacement timing.
 - Similar cards and every relevant `fx` helper were inspected; duplicated logic is justified.
 - `c.Use` ordering, cancellation, nested events, and `ScheduleAfter` behavior were reasoned through.
