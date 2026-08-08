@@ -8,23 +8,32 @@ import (
 	"time"
 )
 
+func TestDeckStringUsesCreatedCardIDs(t *testing.T) {
+	player := NewPlayer(&Match{}, 1)
+	player.deck = []*Card{{ImageID: "card-a"}, {ImageID: "card-b"}, {ImageID: "card-a"}}
+
+	if deck := player.deckString(); deck != "card-a,card-b,card-a" {
+		t.Fatalf("expected created card IDs in deck string, got %q", deck)
+	}
+}
+
 func TestNewDuelResultWebhookPayload(t *testing.T) {
 	m := &Match{
 		ID:          "duel-123",
 		MatchName:   "Ranked Duel",
 		Format:      RegularFormat,
 		turnsPlayed: 14,
-		Player1:     &PlayerReference{UID: "host-1", Username: "Alice", DeckStr: "deck-a"},
-		Player2:     &PlayerReference{UID: "guest-2", Username: "Bob", DeckStr: "deck-b"},
+		Player1:     &PlayerReference{UID: "host-1", Username: "Alice", DeckStr: "card-a,card-b"},
+		Player2:     &PlayerReference{UID: "guest-2", Username: "Bob", DeckStr: "card-c,card-d"},
 	}
 
 	duel := DuelRecord{
 		UID:             "duel-123",
 		Format:          string(RegularFormat),
 		Host:            "host-1",
-		HostDeck:        "deck-a",
+		HostDeck:        "card-a,card-b",
 		Guest:           "guest-2",
-		GuestDeck:       "deck-b",
+		GuestDeck:       "card-c,card-d",
 		Started:         100,
 		Ended:           190,
 		Turns:           14,
@@ -62,6 +71,14 @@ func TestNewDuelResultWebhookPayload(t *testing.T) {
 		t.Fatalf("expected guest info to be included, got %+v", payload.Guest)
 	}
 
+	if payload.Host.Deck != "card-a,card-b" {
+		t.Fatalf("expected host's actual deck cards, got %#v", payload.Host.Deck)
+	}
+
+	if payload.Guest.Deck != "card-c,card-d" {
+		t.Fatalf("expected guest's actual deck cards, got %#v", payload.Guest.Deck)
+	}
+
 	if payload.StartedAt != time.Unix(100, 0).UTC().Format(time.RFC3339) {
 		t.Fatalf("expected RFC3339 start time, got %q", payload.StartedAt)
 	}
@@ -88,8 +105,8 @@ func TestSendDuelResultWebhookMatchesShobuContract(t *testing.T) {
 	payload := duelResultWebhookPayload{
 		MatchID: "duel-123",
 		EndedAt: "2026-08-08T01:02:03Z",
-		Host:    &duelResultWebhookPlayer{UserID: "host-1", Username: "Alice"},
-		Guest:   &duelResultWebhookPlayer{UserID: "guest-2", Username: "Bob"},
+		Host:    &duelResultWebhookPlayer{UserID: "host-1", Username: "Alice", Deck: "card-a,card-b"},
+		Guest:   &duelResultWebhookPlayer{UserID: "guest-2", Username: "Bob", Deck: "card-c,card-d"},
 	}
 
 	if err := sendDuelResultWebhook(server.URL, " duel-secret ", payload); err != nil {
@@ -115,6 +132,10 @@ func TestSendDuelResultWebhookMatchesShobuContract(t *testing.T) {
 	host, ok := got["host"].(map[string]any)
 	if !ok || host["userId"] != "host-1" || host["username"] != "Alice" {
 		t.Fatalf("expected Shobu host participant fields, got %#v", got["host"])
+	}
+
+	if host["deck"] != "card-a,card-b" {
+		t.Fatalf("expected host deck string, got %#v", host["deck"])
 	}
 
 	if got["endedAt"] != "2026-08-08T01:02:03Z" {

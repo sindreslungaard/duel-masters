@@ -1465,6 +1465,8 @@ func (m *Match) Parse(s *server.Socket, data []byte) {
 				if m.Format == RandomFormat || len(hostDeck) == 0 || len(guestDeck) == 0 {
 					m.Player1.Player.CreateRandomDeck()
 					m.Player2.Player.CreateRandomDeck()
+					m.Player1.DeckStr = m.Player1.Player.deckString()
+					m.Player2.DeckStr = m.Player2.Player.deckString()
 
 					m.Chat("Server", fmt.Sprintf("%s has received a randomly generated deck", m.Player1.Username))
 					m.Chat("Server", fmt.Sprintf("%s has received a randomly generated deck", m.Player2.Username))

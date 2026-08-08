@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"math/rand"
+	"strings"
 	"sync"
 	"time"
 
@@ -273,6 +274,18 @@ func (p *Player) CreateRandomDeck() {
 	for i := 0; i < 40; i++ {
 		addRandomCardToDeck()
 	}
+}
+
+func (p *Player) deckString() string {
+	p.mutex.Lock()
+	defer p.mutex.Unlock()
+
+	deck := make([]string, len(p.deck))
+	for index, card := range p.deck {
+		deck[index] = card.ImageID
+	}
+
+	return strings.Join(deck, ",")
 }
 
 // Empties the players deck
