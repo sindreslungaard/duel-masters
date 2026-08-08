@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"testing"
+	"time"
 )
 
 func TestNewDuelResultWebhookPayload(t *testing.T) {
@@ -33,8 +34,8 @@ func TestNewDuelResultWebhookPayload(t *testing.T) {
 
 	payload := m.newDuelResultWebhookPayload(duel)
 
-	if payload.DuelID != "duel-123" {
-		t.Fatalf("expected duel id to be preserved, got %q", payload.DuelID)
+	if payload.MatchID != "duel-123" {
+		t.Fatalf("expected match id to be preserved, got %q", payload.MatchID)
 	}
 
 	if payload.DurationSeconds != 90 {
@@ -45,11 +46,11 @@ func TestNewDuelResultWebhookPayload(t *testing.T) {
 		t.Fatalf("expected turns to be 14, got %d", payload.Turns)
 	}
 
-	if payload.Winner == nil || payload.Winner.UID != "guest-2" {
+	if payload.Winner == nil || payload.Winner.UserID != "guest-2" {
 		t.Fatalf("expected winner to be guest-2, got %+v", payload.Winner)
 	}
 
-	if payload.Loser == nil || payload.Loser.UID != "host-1" {
+	if payload.Loser == nil || payload.Loser.UserID != "host-1" {
 		t.Fatalf("expected loser to be host-1, got %+v", payload.Loser)
 	}
 
@@ -60,34 +61,69 @@ func TestNewDuelResultWebhookPayload(t *testing.T) {
 	if payload.Guest == nil || payload.Guest.Username != "Bob" {
 		t.Fatalf("expected guest info to be included, got %+v", payload.Guest)
 	}
+
+	if payload.StartedAt != time.Unix(100, 0).UTC().Format(time.RFC3339) {
+		t.Fatalf("expected RFC3339 start time, got %q", payload.StartedAt)
+	}
+
+	if payload.EndedAt != time.Unix(190, 0).UTC().Format(time.RFC3339) {
+		t.Fatalf("expected RFC3339 end time, got %q", payload.EndedAt)
+	}
 }
 
-func TestSendDuelResultWebhookSetsAuthorizationHeader(t *testing.T) {
+func TestSendDuelResultWebhookMatchesShobuContract(t *testing.T) {
 	var gotAuthorization string
-	var gotPayload duelResultWebhookPayload
+	var gotContentType string
+	var got map[string]any
+	var decodeErr error
 
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		gotAuthorization = r.Header.Get("Authorization")
-
-		if err := json.NewDecoder(r.Body).Decode(&gotPayload); err != nil {
-			t.Fatalf("failed to decode request payload: %v", err)
-		}
-
+		gotContentType = r.Header.Get("Content-Type")
+		decodeErr = json.NewDecoder(r.Body).Decode(&got)
 		w.WriteHeader(http.StatusAccepted)
 	}))
 	defer server.Close()
 
-	payload := duelResultWebhookPayload{DuelID: "duel-123", Turns: 7}
+	payload := duelResultWebhookPayload{
+		MatchID: "duel-123",
+		EndedAt: "2026-08-08T01:02:03Z",
+		Host:    &duelResultWebhookPlayer{UserID: "host-1", Username: "Alice"},
+		Guest:   &duelResultWebhookPlayer{UserID: "guest-2", Username: "Bob"},
+	}
 
-	if err := sendDuelResultWebhook(server.URL, "duel-secret", payload); err != nil {
+	if err := sendDuelResultWebhook(server.URL, " duel-secret ", payload); err != nil {
 		t.Fatalf("expected webhook request to succeed, got %v", err)
 	}
 
-	if gotAuthorization != "duel-secret" {
-		t.Fatalf("expected Authorization header to contain duel secret, got %q", gotAuthorization)
+	if gotAuthorization != "Bearer duel-secret" {
+		t.Fatalf("expected bearer authorization header, got %q", gotAuthorization)
 	}
 
-	if gotPayload.DuelID != "duel-123" || gotPayload.Turns != 7 {
-		t.Fatalf("unexpected webhook payload received: %+v", gotPayload)
+	if gotContentType != "application/json" {
+		t.Fatalf("expected JSON content type, got %q", gotContentType)
+	}
+
+	if decodeErr != nil {
+		t.Fatalf("failed to decode request body: %v", decodeErr)
+	}
+
+	if got["matchId"] != "duel-123" {
+		t.Fatalf("expected Shobu matchId field, got %#v", got["matchId"])
+	}
+
+	host, ok := got["host"].(map[string]any)
+	if !ok || host["userId"] != "host-1" || host["username"] != "Alice" {
+		t.Fatalf("expected Shobu host participant fields, got %#v", got["host"])
+	}
+
+	if got["endedAt"] != "2026-08-08T01:02:03Z" {
+		t.Fatalf("expected Shobu endedAt field, got %#v", got["endedAt"])
+	}
+
+	for _, legacyField := range []string{"duel_id", "ended_at"} {
+		if _, exists := got[legacyField]; exists {
+			t.Fatalf("legacy field %q must not be sent", legacyField)
+		}
 	}
 }

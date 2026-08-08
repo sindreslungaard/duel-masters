@@ -4,27 +4,30 @@ import (
 	"bytes"
 	"duel-masters/internal"
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"os"
+	"strings"
+	"time"
 
 	"github.com/sirupsen/logrus"
 )
 
 type duelResultWebhookPlayer struct {
-	UID      string `json:"uid"`
+	UserID   string `json:"userId"`
 	Username string `json:"username,omitempty"`
 	Deck     string `json:"deck,omitempty"`
 }
 
 type duelResultWebhookPayload struct {
-	DuelID          string                   `json:"duel_id"`
-	MatchName       string                   `json:"match_name,omitempty"`
+	MatchID         string                   `json:"matchId"`
+	MatchName       string                   `json:"matchName,omitempty"`
 	Format          string                   `json:"format"`
-	StartedAt       int64                    `json:"started_at"`
-	EndedAt         int64                    `json:"ended_at"`
-	DurationSeconds int64                    `json:"duration_seconds"`
+	StartedAt       string                   `json:"startedAt"`
+	EndedAt         string                   `json:"endedAt"`
+	DurationSeconds int64                    `json:"durationSeconds"`
 	Turns           int                      `json:"turns"`
-	WonByDisconnect bool                     `json:"won_by_disconnect"`
+	WonByDisconnect bool                     `json:"wonByDisconnect"`
 	Host            *duelResultWebhookPlayer `json:"host,omitempty"`
 	Guest           *duelResultWebhookPlayer `json:"guest,omitempty"`
 	Winner          *duelResultWebhookPlayer `json:"winner,omitempty"`
@@ -66,11 +69,11 @@ func (m *Match) newDuelResultWebhookPayload(duel DuelRecord) duelResultWebhookPa
 	}
 
 	return duelResultWebhookPayload{
-		DuelID:          duel.UID,
+		MatchID:         duel.UID,
 		MatchName:       m.MatchName,
 		Format:          duel.Format,
-		StartedAt:       duel.Started,
-		EndedAt:         duel.Ended,
+		StartedAt:       time.Unix(duel.Started, 0).UTC().Format(time.RFC3339),
+		EndedAt:         time.Unix(duel.Ended, 0).UTC().Format(time.RFC3339),
 		DurationSeconds: durationSeconds,
 		Turns:           duel.Turns,
 		WonByDisconnect: duel.WonByDisconnect,
@@ -87,7 +90,7 @@ func newDuelResultWebhookPlayer(player *PlayerReference) *duelResultWebhookPlaye
 	}
 
 	return &duelResultWebhookPlayer{
-		UID:      player.UID,
+		UserID:   player.UID,
 		Username: player.Username,
 		Deck:     player.DeckStr,
 	}
@@ -98,32 +101,25 @@ func winnerAndLoserForWebhook(winnerUID string, host *duelResultWebhookPlayer, g
 		return nil, nil
 	}
 
-	if host != nil && host.UID == winnerUID {
+	if host != nil && host.UserID == winnerUID {
 		return host, guest
 	}
 
-	if guest != nil && guest.UID == winnerUID {
+	if guest != nil && guest.UserID == winnerUID {
 		return guest, host
 	}
 
 	return nil, nil
 }
 
-func sendDuelResultWebhook(webhookURL string, auth string, payload duelResultWebhookPayload) error {
-	body, err := json.Marshal(payload)
+func sendDuelResultWebhook(webhookURL string, secret string, payload duelResultWebhookPayload) error {
+	req, err := newDuelResultWebhookRequest(webhookURL, secret, payload)
 	if err != nil {
 		return err
 	}
 
-	req, err := http.NewRequest(http.MethodPost, webhookURL, bytes.NewReader(body))
-	if err != nil {
-		return err
-	}
-
-	req.Header.Set("Content-Type", "application/json")
-	req.Header.Set("Authorization", auth)
-
-	resp, err := http.DefaultClient.Do(req)
+	client := &http.Client{Timeout: 10 * time.Second}
+	resp, err := client.Do(req)
 	if err != nil {
 		return err
 	}
@@ -136,10 +132,27 @@ func sendDuelResultWebhook(webhookURL string, auth string, payload duelResultWeb
 	return nil
 }
 
+func newDuelResultWebhookRequest(webhookURL string, secret string, payload duelResultWebhookPayload) (*http.Request, error) {
+	body, err := json.Marshal(payload)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodPost, webhookURL, bytes.NewReader(body))
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("Authorization", "Bearer "+strings.TrimSpace(secret))
+
+	return req, nil
+}
+
 type webhookStatusError struct {
 	statusCode int
 }
 
 func (e *webhookStatusError) Error() string {
-	return http.StatusText(e.statusCode)
+	return fmt.Sprintf("duel result webhook returned HTTP %d (%s)", e.statusCode, http.StatusText(e.statusCode))
 }
