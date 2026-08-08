@@ -79,6 +79,20 @@ func ReturnToShield(card *match.Card, ctx *match.Context) {
 
 }
 
+// ShuffleIntoDeckInsteadOfDestruction replaces destruction by moving the
+// creature into its owner's deck and shuffling that deck.
+func ShuffleIntoDeckInsteadOfDestruction(card *match.Card, ctx *match.Context) {
+	ctx.InterruptFlow()
+
+	moved, err := card.Player.MoveCard(card.ID, match.BATTLEZONE, match.DECK, card.ID)
+	if err != nil || moved.Zone != match.DECK {
+		return
+	}
+
+	card.Player.ShuffleDeck()
+	ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s was shuffled into %s's deck instead of being destroyed", card.Name, card.Player.Username()))
+}
+
 // PutShieldIntoHand Player picks an own shield and puts it into their hand
 func PutShieldIntoHand(card *match.Card, ctx *match.Context) {
 	SelectBackside(

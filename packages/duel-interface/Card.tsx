@@ -78,23 +78,23 @@ export function Card({
 
   return (
     <>
-      <div className="group relative pt-10 -mt-10 flex-shrink-0">
+      <div className="group relative flex-shrink-0 h-full">
         {/* Card image */}
         <img
           ref={imgRef}
           src={`https://scans.shobu.io/${imageId || "backside"}.jpg`}
           alt={name || "Backside card"}
           draggable={false}
-          className={`h-full flex-shrink-0 ${
+          className={`block h-full w-auto flex-shrink-0 ${
             interactable && !isDragging ? "cursor-grab" : ""
           } ${
             rotated && flipped
               ? "-rotate-90"
               : rotated
-              ? "rotate-90"
-              : flipped
-              ? "rotate-180"
-              : ""
+                ? "rotate-90"
+                : flipped
+                  ? "rotate-180"
+                  : ""
           } ${isDragging ? "opacity-0" : ""} ${
             selected ? "ring-1 ring-blue-100" : ""
           }`}

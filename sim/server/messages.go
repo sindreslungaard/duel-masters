@@ -1,16 +1,23 @@
 package server
 
-import "duel-masters/db"
-
 // Message is the default message struct
 type Message struct {
 	Header string `json:"header"`
 }
 
 // DecksMessage lists the users decks
+type DeckMessage struct {
+	UID      string   `json:"uid"`
+	Owner    string   `json:"owner"`
+	Name     string   `json:"name"`
+	Public   bool     `json:"public"`
+	Standard bool     `json:"standard"`
+	Cards    []string `json:"cards"`
+}
+
 type DecksMessage struct {
-	Header string          `json:"header"`
-	Decks  []db.LegacyDeck `json:"decks"`
+	Header string        `json:"header"`
+	Decks  []DeckMessage `json:"decks"`
 }
 
 // ChatMessage stores information about a chat message
@@ -70,6 +77,21 @@ type MatchStateMessage struct {
 type WarningMessage struct {
 	Header  string `json:"header"`
 	Message string `json:"message"`
+}
+
+type DuelFinishedPlayer struct {
+	UID      string `json:"uid,omitempty"`
+	Username string `json:"username,omitempty"`
+}
+
+type DuelFinishedMessage struct {
+	Header               string              `json:"header"`
+	DuelID               string              `json:"duelId"`
+	Winner               *DuelFinishedPlayer `json:"winner,omitempty"`
+	MatchResultGenerated bool                `json:"matchResultGenerated"`
+	WonByDisconnect      bool                `json:"wonByDisconnect"`
+	Turns                int                 `json:"turns"`
+	DurationSeconds      int64               `json:"durationSeconds"`
 }
 
 // ActionMessage is used to prompt the user to make a selection of the specified cards

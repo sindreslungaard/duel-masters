@@ -6,6 +6,7 @@ import {
   cardHasFlag,
   CardState,
   ChatMessage,
+  DuelFinishedMessage,
   MatchState,
   PLAYABLE_FLAG,
   ShieldState,
@@ -50,12 +51,14 @@ interface DuelProps {
   hostUrl: string;
   duelId: string;
   duelToken: string;
+  playmat?: string;
   devTools?: {
     cards: { uid: string; name: string }[];
-    activePlayer: "host" | "guest";
-    onPlayerSwitch: (player: "host" | "guest") => void;
+    activePlayer: "host" | "guest" | "spectator";
+    onPlayerSwitch: (player: "host" | "guest" | "spectator") => void;
   };
   onLeaveDuel?: () => void;
+  onDuelFinished?: (message: DuelFinishedMessage) => void;
 }
 
 type DragZone =
@@ -116,21 +119,29 @@ export function Duel({
   duelId,
   duelToken,
   hostUrl,
+  playmat,
   devTools,
   onLeaveDuel,
+  onDuelFinished,
 }: DuelProps) {
   const [action, setAction] = useState<ActionMessage | null>(null);
   const [actionError, setActionError] = useState<ActionWarningMessage | null>(
-    null
+    null,
   );
   const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
   const [wait, setWait] = useState("");
   const [warningMessage, setWarningMessage] = useState("");
   const [dots, setDots] = useState<"." | ".." | "...">(".");
+  const [duelFinishedCountdown, setDuelFinishedCountdown] = useState<
+    number | null
+  >(null);
+  const [duelFinishedRedirectFailed, setDuelFinishedRedirectFailed] =
+    useState(false);
 
   const {
     connected,
     error,
+    duelFinished,
     send,
     sendJoinMatch,
     sendEndTurn,
@@ -167,6 +178,49 @@ export function Duel({
       setWait("");
     },
   });
+
+  useEffect(() => {
+    if (!duelFinished) {
+      return;
+    }
+
+    setWarningMessage("");
+    setWait("");
+    setAction(null);
+    setActionError(null);
+    setDuelFinishedCountdown(5);
+    setDuelFinishedRedirectFailed(false);
+
+    let countdown = 5;
+    const interval = window.setInterval(() => {
+      countdown -= 1;
+
+      if (countdown <= 0) {
+        window.clearInterval(interval);
+        setDuelFinishedCountdown(0);
+        onDuelFinished?.(duelFinished);
+
+        window.setTimeout(() => {
+          setDuelFinishedRedirectFailed(true);
+        }, 3000);
+        return;
+      }
+
+      setDuelFinishedCountdown(countdown);
+    }, 1000);
+
+    return () => {
+      window.clearInterval(interval);
+    };
+  }, [duelFinished, onDuelFinished]);
+
+  const duelFinishedWinner =
+    duelFinished?.winner?.username ?? duelFinished?.winner?.uid ?? "No winner";
+
+  const duelFinishedStatusText =
+    duelFinishedCountdown !== null && duelFinishedCountdown > 0
+      ? `Redirecting in ${duelFinishedCountdown}...`
+      : "Redirecting...";
 
   const [previewCard, setPreviewCard] = useState<PreviewCard | null>(null);
   const [multiCardView, setMultiCardView] = useState<{
@@ -244,7 +298,7 @@ export function Duel({
     name: string | undefined,
     sourceZone: DragZone,
     rotated: boolean,
-    e: React.MouseEvent | React.TouchEvent
+    e: React.MouseEvent | React.TouchEvent,
   ) => {
     // Ignore right clicks
     if ("button" in e && e.button === 2) {
@@ -326,7 +380,7 @@ export function Duel({
       setSelectedCardId((prev) =>
         prev === dragStartPosition.virtualId
           ? null
-          : dragStartPosition.virtualId
+          : dragStartPosition.virtualId,
       );
       setDragStartPosition(null);
       return;
@@ -387,6 +441,8 @@ export function Duel({
     return <div>Waiting for both players to join...</div>;
   }
 
+  const isSpectating = state.spectator;
+
   const getValidDropZones = (sourceZone: DragZone): DragZone[] => {
     if (sourceZone === "hand") {
       const zones: DragZone[] = ["myPlayzone", "myManazone"];
@@ -410,7 +466,7 @@ export function Duel({
     if (dragState.sourceZone === "hand") {
       // Find the card being dragged
       const draggedCard = state?.me.hand.find(
-        (c) => c.virtualId === dragState.virtualId
+        (c) => c.virtualId === dragState.virtualId,
       );
 
       if (zone === "myPlayzone") {
@@ -441,7 +497,13 @@ export function Duel({
       <style>{scrollbarStyles}</style>
       <div
         className="w-full h-screen text-white flex bg-[linear-gradient(45deg,rgb(29,33,42),rgb(20,16,21))] bg-cover bg-no-repeat gap-2 p-1 custom-scrollbar"
-        style={dragState ? { cursor: "grabbing" } : {}}
+        style={{
+          ...(playmat && {
+            backgroundImage: `url(${JSON.stringify(playmat)}), linear-gradient(45deg, rgb(29, 33, 42), rgb(20, 16, 21))`,
+            backgroundPosition: "center",
+          }),
+          ...(dragState && { cursor: "grabbing" }),
+        }}
       >
         <div className="w-[300px] flex flex-col gap-2">
           {/* Devtools */}
@@ -469,6 +531,18 @@ export function Duel({
                       onClick={() => devTools.onPlayerSwitch("guest")}
                     >
                       Guest
+                    </Button>
+                  </div>
+                  <div className="flex-1">
+                    <Button
+                      variant={
+                        devTools.activePlayer === "spectator"
+                          ? "default"
+                          : "gray"
+                      }
+                      onClick={() => devTools.onPlayerSwitch("spectator")}
+                    >
+                      Spectator
                     </Button>
                   </div>
                 </div>
@@ -507,7 +581,7 @@ export function Duel({
                         variant="gray"
                         onClick={() => {
                           const select = document.getElementById(
-                            "card-selector"
+                            "card-selector",
                           ) as HTMLSelectElement;
                           if (select.value) {
                             sendChat(`/add ${select.value}`);
@@ -529,111 +603,118 @@ export function Duel({
           </div>
 
           {/* Actions */}
-          <div className="bg-black/50 p-2 rounded-md h-[72px] text-gray-400">
-            {selectedCard && state.myTurn && (
-              <div className="flex flex-col gap-2">
-                <div className="flex-1 text-xs whitespace-nowrap overflow-hidden text-ellipsis">
-                  {selectedCard.name}
-                </div>
-                {selectedCard.zone === "hand" && (
-                  <div className="flex gap-2">
-                    {/* Hand zone */}
-                    <div className="flex-1 min-w-0">
-                      <Button
-                        onClick={() =>
-                          sendAddToBattlezone(selectedCard.virtualId)
-                        }
-                        disabled={!selectedCard.canPlay}
-                      >
-                        Summon
-                      </Button>
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <Button
-                        onClick={() =>
-                          sendAddToManazone(selectedCard.virtualId)
-                        }
-                        disabled={state.hasAddedManaThisRound}
-                      >
-                        Add to manazone
-                      </Button>
-                    </div>
+          {!isSpectating && (
+            <div className="bg-black/50 p-2 rounded-md h-[72px] text-gray-400">
+              {!isSpectating && selectedCard && state.myTurn && (
+                <div className="flex flex-col gap-2">
+                  <div className="flex-1 text-xs whitespace-nowrap overflow-hidden text-ellipsis">
+                    {selectedCard.name}
                   </div>
-                )}
-
-                {selectedCard.zone === "battlezone" && (
-                  <div className="flex gap-2">
-                    <div className="flex-1 min-w-0">
-                      <Button
-                        onClick={() => sendAttackPlayer(selectedCard.virtualId)}
-                      >
-                        Attack Player
-                      </Button>
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <Button
-                        onClick={() =>
-                          sendAttackCreature(selectedCard.virtualId)
-                        }
-                      >
-                        Attack Creature
-                      </Button>
-                    </div>
-                    {selectedCard.hasTapAbility && (
+                  {selectedCard.zone === "hand" && (
+                    <div className="flex gap-2">
+                      {/* Hand zone */}
                       <div className="flex-1 min-w-0">
                         <Button
-                          onClick={() => sendTapAbility(selectedCard.virtualId)}
+                          onClick={() =>
+                            sendAddToBattlezone(selectedCard.virtualId)
+                          }
+                          disabled={!selectedCard.canPlay}
                         >
-                          Tap Ability
+                          Summon
                         </Button>
                       </div>
-                    )}
-                  </div>
-                )}
-              </div>
-            )}
-          </div>
+                      <div className="flex-1 min-w-0">
+                        <Button
+                          onClick={() =>
+                            sendAddToManazone(selectedCard.virtualId)
+                          }
+                          disabled={state.hasAddedManaThisRound}
+                        >
+                          Add to manazone
+                        </Button>
+                      </div>
+                    </div>
+                  )}
+
+                  {selectedCard.zone === "battlezone" && (
+                    <div className="flex gap-2">
+                      <div className="flex-1 min-w-0">
+                        <Button
+                          onClick={() =>
+                            sendAttackPlayer(selectedCard.virtualId)
+                          }
+                        >
+                          Attack Player
+                        </Button>
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <Button
+                          onClick={() =>
+                            sendAttackCreature(selectedCard.virtualId)
+                          }
+                        >
+                          Attack Creature
+                        </Button>
+                      </div>
+                      {selectedCard.hasTapAbility && (
+                        <div className="flex-1 min-w-0">
+                          <Button
+                            onClick={() =>
+                              sendTapAbility(selectedCard.virtualId)
+                            }
+                          >
+                            Tap Ability
+                          </Button>
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+          )}
 
           {/* End turn / forfeit */}
-          <div className="bg-black/30 p-2 rounded-md">
-            <Button
-              onClick={sendEndTurn}
-              disabled={!state.myTurn}
-              disabledTooltip="It's not your turn"
-            >
-              End turn
-            </Button>
-          </div>
+          {!isSpectating && (
+            <div className="bg-black/30 p-2 rounded-md">
+              <Button
+                onClick={sendEndTurn}
+                disabled={!state.myTurn}
+                disabledTooltip="It's not your turn"
+              >
+                End turn
+              </Button>
+            </div>
+          )}
         </div>
         <div className="flex flex-1 flex-col h-full w-full">
-          <div
-            className="h-[10%] flex gap-5 pb-1 relative overflow-x-auto"
-            data-dropzone="opponentManazone"
-          >
+          <div className="h-[10%] relative" data-dropzone="opponentManazone">
             <div
               className="absolute inset-0 z-0"
               data-dropzone="opponentManazone"
             />
             {getDropZoneColor("opponentManazone") === "green" && (
-              <div className="absolute inset-0 bg-green-500/30 pointer-events-none z-10" />
+              <div className="absolute inset-0 bg-green-500/30 pointer-events-none z-20" />
             )}
             {getDropZoneColor("opponentManazone") === "red" && (
-              <div className="absolute inset-0 bg-red-500/30 pointer-events-none z-10" />
+              <div className="absolute inset-0 bg-red-500/30 pointer-events-none z-20" />
             )}
-            <div className="relative z-10 flex gap-5 w-full">
-              {state.opponent.manazone.map(
-                CreateCard({
-                  flipped: true,
-                  dragState,
-                  zone: "opponentManazone",
-                  onRightClick: (imageId, name) =>
-                    setPreviewCard({ imageId, name: name || "" }),
-                })
-              )}
+            <div className="absolute inset-0 z-10 overflow-x-auto overflow-y-hidden">
+              <div className="inline-flex w-max justify-start gap-5 h-full pb-1">
+                {state.opponent.manazone.map(
+                  CreateCard({
+                    flipped: true,
+                    dragState,
+                    zone: "opponentManazone",
+                    onRightClick: (imageId, name) =>
+                      setPreviewCard({ imageId, name: name || "" }),
+                  }),
+                )}
+              </div>
             </div>
           </div>
           <div
-            className="h-[10%] flex gap-5 p-1 w-full relative overflow-x-auto"
+            className="h-[10%] w-full relative"
             data-dropzone="opponentShieldzone"
           >
             <div
@@ -641,24 +722,26 @@ export function Duel({
               data-dropzone="opponentShieldzone"
             />
             {getDropZoneColor("opponentShieldzone") === "green" && (
-              <div className="absolute inset-0 bg-green-500/30 pointer-events-none z-10" />
+              <div className="absolute inset-0 bg-green-500/30 pointer-events-none z-20" />
             )}
             {getDropZoneColor("opponentShieldzone") === "red" && (
-              <div className="absolute inset-0 bg-red-500/30 pointer-events-none z-10" />
+              <div className="absolute inset-0 bg-red-500/30 pointer-events-none z-20" />
             )}
-            <div className="relative z-10 flex gap-5 w-full">
-              {state.opponent.shieldzone.map(
-                CreateCard({
-                  dragState,
-                  zone: "opponentShieldzone",
-                  onRightClick: (imageId, name) =>
-                    setPreviewCard({ imageId, name: name || "" }),
-                })
-              )}
+            <div className="absolute inset-0 z-10 overflow-x-auto overflow-y-hidden">
+              <div className="inline-flex w-max justify-start gap-5 h-full p-1">
+                {state.opponent.shieldzone.map(
+                  CreateCard({
+                    dragState,
+                    zone: "opponentShieldzone",
+                    onRightClick: (imageId, name) =>
+                      setPreviewCard({ imageId, name: name || "" }),
+                  }),
+                )}
+              </div>
             </div>
           </div>
           <div
-            className="flex h-[20%] gap-5 p-1 w-full relative overflow-x-auto"
+            className="h-[20%] w-full relative"
             data-dropzone="opponentPlayzone"
           >
             <div
@@ -666,126 +749,145 @@ export function Duel({
               data-dropzone="opponentPlayzone"
             />
             {getDropZoneColor("opponentPlayzone") === "green" && (
-              <div className="absolute inset-0 bg-green-500/30 pointer-events-none z-10" />
+              <div className="absolute inset-0 bg-green-500/30 pointer-events-none z-20" />
             )}
             {getDropZoneColor("opponentPlayzone") === "red" && (
-              <div className="absolute inset-0 bg-red-500/30 pointer-events-none z-10" />
+              <div className="absolute inset-0 bg-red-500/30 pointer-events-none z-20" />
             )}
-            <div className="relative z-10 flex gap-5 w-full">
-              {state.opponent.playzone.map(
-                CreateCard({
-                  flipped: true,
-                  dragState,
-                  zone: "opponentPlayzone",
-                  onRightClick: (imageId, name) =>
-                    setPreviewCard({ imageId, name: name || "" }),
-                })
-              )}
+            <div className="absolute inset-0 z-10 overflow-x-auto overflow-y-hidden">
+              <div className="inline-flex w-max justify-start gap-5 h-full p-1">
+                {state.opponent.playzone.map(
+                  CreateCard({
+                    flipped: true,
+                    dragState,
+                    zone: "opponentPlayzone",
+                    onRightClick: (imageId, name) =>
+                      setPreviewCard({ imageId, name: name || "" }),
+                  }),
+                )}
+              </div>
             </div>
           </div>
-          <div
-            className="flex h-[20%] gap-5 p-1 w-full relative overflow-x-auto"
-            data-dropzone="myPlayzone"
-          >
+          <div className="h-[20%] w-full relative" data-dropzone="myPlayzone">
             <div className="absolute inset-0 z-0" data-dropzone="myPlayzone" />
             {getDropZoneColor("myPlayzone") === "green" && (
-              <div className="absolute inset-0 bg-green-500/30 pointer-events-none z-10" />
+              <div className="absolute inset-0 bg-green-500/30 pointer-events-none z-20" />
             )}
             {getDropZoneColor("myPlayzone") === "red" && (
-              <div className="absolute inset-0 bg-red-500/30 pointer-events-none z-10" />
+              <div className="absolute inset-0 bg-red-500/30 pointer-events-none z-20" />
             )}
-            <div className="relative z-10 flex gap-5 w-full">
-              {state.me.playzone.map(
-                CreateCard({
-                  selected: (id: string) => id === selectedCardId,
-                  interactable: state?.myTurn,
-                  dragState,
-                  zone: "myPlayzone",
-                  draggable: state.myTurn,
-                  onDragStart: handleCardDragStart,
-                  onRightClick: (imageId, name) =>
-                    setPreviewCard({ imageId, name: name || "" }),
-                })
-              )}
+            <div className="absolute inset-0 z-10 overflow-x-auto overflow-y-hidden">
+              <div className="inline-flex w-max justify-start gap-5 h-full p-1">
+                {state.me.playzone.map(
+                  CreateCard({
+                    selected: (id: string) => id === selectedCardId,
+                    interactable: state?.myTurn,
+                    dragState,
+                    zone: "myPlayzone",
+                    draggable: state.myTurn,
+                    onDragStart: handleCardDragStart,
+                    onRightClick: (imageId, name) =>
+                      setPreviewCard({ imageId, name: name || "" }),
+                  }),
+                )}
+              </div>
             </div>
           </div>
-          <div
-            className="flex h-[10%] gap-5 p-1 w-full relative overflow-x-auto"
-            data-dropzone="myShieldzone"
-          >
+          <div className="h-[10%] w-full relative" data-dropzone="myShieldzone">
             <div
               className="absolute inset-0 z-0 "
               data-dropzone="myShieldzone"
             />
             {getDropZoneColor("myShieldzone") === "green" && (
-              <div className="absolute inset-0 bg-green-500/30 pointer-events-none z-10" />
+              <div className="absolute inset-0 bg-green-500/30 pointer-events-none z-20" />
             )}
             {getDropZoneColor("myShieldzone") === "red" && (
-              <div className="absolute inset-0 bg-red-500/30 pointer-events-none z-10" />
+              <div className="absolute inset-0 bg-red-500/30 pointer-events-none z-20" />
             )}
-            <div className="relative z-10 flex gap-5 w-full">
-              {state.me.shieldzone.map(
-                CreateCard({
-                  dragState,
-                  zone: "myShieldzone",
-                  onRightClick: (imageId, name) =>
-                    setPreviewCard({ imageId, name: name || "" }),
-                })
-              )}
+            <div className="absolute inset-0 z-10 overflow-x-auto overflow-y-hidden">
+              <div className="inline-flex w-max justify-start gap-5 h-full p-1">
+                {state.me.shieldzone.map(
+                  CreateCard({
+                    dragState,
+                    zone: "myShieldzone",
+                    onRightClick: (imageId, name) =>
+                      setPreviewCard({ imageId, name: name || "" }),
+                  }),
+                )}
+              </div>
             </div>
           </div>
-          <div
-            className="flex h-[10%] gap-5 p-1 w-full relative overflow-x-auto"
-            data-dropzone="myManazone"
-          >
+          <div className="h-[10%] w-full relative" data-dropzone="myManazone">
             <div className="absolute inset-0 z-0" data-dropzone="myManazone" />
             {getDropZoneColor("myManazone") === "green" && (
-              <div className="absolute inset-0 bg-green-500/30 pointer-events-none z-10" />
+              <div className="absolute inset-0 bg-green-500/30 pointer-events-none z-20" />
             )}
             {getDropZoneColor("myManazone") === "red" && (
-              <div className="absolute inset-0 bg-red-500/30 pointer-events-none z-10" />
+              <div className="absolute inset-0 bg-red-500/30 pointer-events-none z-20" />
             )}
-            <div className="relative z-10 flex gap-5 w-full ">
-              {state.me.manazone.map(
-                CreateCard({
-                  flipped: true,
-                  dragState,
-                  zone: "myManazone",
-                  onRightClick: (imageId, name) =>
-                    setPreviewCard({ imageId, name: name || "" }),
-                })
-              )}
+            <div className="absolute inset-0 z-10 overflow-x-auto overflow-y-hidden">
+              <div className="inline-flex w-max justify-start gap-5 h-full p-1">
+                {state.me.manazone.map(
+                  CreateCard({
+                    flipped: true,
+                    dragState,
+                    zone: "myManazone",
+                    onRightClick: (imageId, name) =>
+                      setPreviewCard({ imageId, name: name || "" }),
+                  }),
+                )}
+              </div>
             </div>
           </div>
-          <div
-            className="flex h-[20%] gap-5 pt-1 w-full relative overflow-x-auto"
-            data-dropzone="hand"
-          >
-            <div className="absolute inset-0 z-0" data-dropzone="hand" />
-            <div className="relative z-10 flex gap-5 w-full p-px">
-              {state.me.hand.map(
-                CreateCard({
-                  selected: (id: string) => id === selectedCardId,
-                  interactable: state?.myTurn,
-                  canAddToManazone: !state.hasAddedManaThisRound,
-                  onAddToBattlezone: (virtualId) => {
-                    sendAddToBattlezone(virtualId);
-                  },
-                  onAddToManazone: (virtualId) => {
-                    sendAddToManazone(virtualId);
-                  },
-                  onTapAbility: (virtualId) => {
-                    sendTapAbility(virtualId);
-                  },
-                  dragState,
-                  zone: "hand",
-                  draggable: state.myTurn,
-                  onDragStart: handleCardDragStart,
-                  onRightClick: (imageId, name) =>
-                    setPreviewCard({ imageId, name: name || "" }),
-                })
-              )}
-            </div>
+          <div className="h-[20%] w-full relative" data-dropzone="hand">
+            {isSpectating ? (
+              <div className="absolute inset-0 bg-black/30 rounded-md flex items-center justify-center">
+                <div className="flex flex-col items-center gap-3 text-center">
+                  <span className="text-xs font-semibold uppercase tracking-widest text-gray-400">
+                    Spectating
+                  </span>
+                  <div className="flex items-center gap-8">
+                    <span className="text-sm font-semibold text-white">
+                      {state.me.username}
+                    </span>
+                    <span className="text-gray-500 text-lg font-bold">vs</span>
+                    <span className="text-sm font-semibold text-white">
+                      {state.opponent.username}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <>
+                <div className="absolute inset-0 z-0" data-dropzone="hand" />
+                <div className="absolute inset-0 z-10 overflow-x-auto overflow-y-hidden">
+                  <div className="inline-flex w-max justify-start gap-5 h-full pt-1 p-px">
+                    {state.me.hand.map(
+                      CreateCard({
+                        selected: (id: string) => id === selectedCardId,
+                        interactable: state?.myTurn,
+                        canAddToManazone: !state.hasAddedManaThisRound,
+                        onAddToBattlezone: (virtualId) => {
+                          sendAddToBattlezone(virtualId);
+                        },
+                        onAddToManazone: (virtualId) => {
+                          sendAddToManazone(virtualId);
+                        },
+                        onTapAbility: (virtualId) => {
+                          sendTapAbility(virtualId);
+                        },
+                        dragState,
+                        zone: "hand",
+                        draggable: state.myTurn,
+                        onDragStart: handleCardDragStart,
+                        onRightClick: (imageId, name) =>
+                          setPreviewCard({ imageId, name: name || "" }),
+                      }),
+                    )}
+                  </div>
+                </div>
+              </>
+            )}
           </div>
         </div>
 
@@ -865,6 +967,14 @@ export function Duel({
 
           {/* Player Section */}
           <div className="rounded-lg flex flex-col gap-[1vh]">
+            {/* Player Hand Count (spectator only) */}
+            {isSpectating && (
+              <div className="text-center">
+                <p className="text-[clamp(0.6rem,1.2vh,0.85rem)] text-white mb-[0.5vh]">
+                  Hand [{state.me.handCount}]
+                </p>
+              </div>
+            )}
             {/* Player Graveyard */}
             <div>
               <p className="text-[clamp(0.6rem,1.2vh,0.85rem)] text-white mb-[0.5vh] text-center">
@@ -951,6 +1061,26 @@ export function Duel({
       </div>
 
       <Popup
+        visible={!!duelFinished}
+        title="Duel Finished"
+        maxWidth="500px"
+        closeOnOutsideClick={false}
+        showCloseButton={false}
+      >
+        <div className="p-6 text-white">
+          <p className="text-lg font-semibold">
+            {duelFinishedWinner} won the duel
+          </p>
+          <p className="mt-3 text-sm text-gray-400">{duelFinishedStatusText}</p>
+          {duelFinishedRedirectFailed && (
+            <p className="mt-3 text-sm text-gray-400">
+              Failed to redirect, please close the page manually
+            </p>
+          )}
+        </div>
+      </Popup>
+
+      <Popup
         visible={reconnecting}
         title="Disconnected"
         maxWidth="500px"
@@ -974,17 +1104,16 @@ export function Duel({
         closeOnOutsideClick={false}
         showCloseButton={false}
       >
-        <div className="p-6 text-white ">
+        <div className="p-6 text-white">
           <p>
             Your opponent disconnected or left the match. Waiting for them to
             reconnect{dots}
           </p>
-        </div>
-
-        <div className="flex mt-6">
-          <Button variant="destructive" onClick={onLeaveDuel}>
-            Leave Duel
-          </Button>
+          <div className="flex mt-6">
+            <Button variant="destructive" onClick={onLeaveDuel}>
+              Leave Duel
+            </Button>
+          </div>
         </div>
       </Popup>
 
@@ -1079,10 +1208,10 @@ function CreateCard(
       name: string | undefined,
       sourceZone: DragZone,
       rotated: boolean,
-      e: React.MouseEvent | React.TouchEvent
+      e: React.MouseEvent | React.TouchEvent,
     ) => void;
     onRightClick?: (imageId: string, name?: string) => void;
-  } = {}
+  } = {},
 ) {
   return (card: CardState | ShieldState, index: number) => {
     const name = "name" in card && card.name ? card.name : undefined;
@@ -1114,7 +1243,7 @@ function CreateCard(
               name,
               options.zone,
               rotated,
-              e
+              e,
             );
           }
         }}

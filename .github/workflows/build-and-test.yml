@@ -19,7 +19,7 @@ jobs:
       - name: Build
         run: go build -v ./cmd/duel-masters
       - name: Test with the Go CLI
-        run: go test ./tests
+        run: go test ./...
   test:
     runs-on: ubuntu-latest
     defaults:
@@ -35,4 +35,4 @@ jobs:
       - name: Install dependencies
         run: go mod download
       - name: Test with the Go CLI
-        run: go test ./tests
+        run: go test ./...

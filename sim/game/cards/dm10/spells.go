@@ -8,6 +8,85 @@ import (
 	"fmt"
 )
 
+// Soulswap ...
+func Soulswap(c *match.Card) {
+	c.Name = "Soulswap"
+	c.Civ = civ.Nature
+	c.ManaCost = 3
+	c.ManaRequirement = []string{civ.Nature}
+
+	c.Use(fx.Spell, fx.ShieldTrigger, fx.When(fx.SpellCast, func(card *match.Card, ctx *match.Context) {
+		creatures := map[string][]*match.Card{
+			"Your creatures": fx.FindFilter(card.Player, match.BATTLEZONE, func(candidate *match.Card) bool {
+				return candidate.HasCondition(cnd.Creature)
+			}),
+			"Opponent's creatures": fx.FindFilter(ctx.Match.Opponent(card.Player), match.BATTLEZONE, func(candidate *match.Card) bool {
+				return candidate.HasCondition(cnd.Creature)
+			}),
+		}
+
+		fx.SelectMultipart(
+			card.Player,
+			ctx.Match,
+			creatures,
+			fmt.Sprintf("%s's effect: You may choose a creature in the battle zone and put it into its owner's mana zone.", card.Name),
+			1,
+			1,
+			true,
+		).Map(func(selectedCreature *match.Card) {
+			moved, err := selectedCreature.Player.MoveCard(
+				selectedCreature.ID,
+				match.BATTLEZONE,
+				match.MANAZONE,
+				card.ID,
+			)
+			if err != nil || moved.Zone != match.MANAZONE {
+				return
+			}
+
+			ctx.Match.ReportActionInChat(
+				moved.Player,
+				fmt.Sprintf("%s was put into %s's mana zone by %s.", moved.Name, moved.Player.Username(), card.Name),
+			)
+
+			manaCards := fx.Find(moved.Player, match.MANAZONE)
+			manaCount := len(manaCards)
+			fx.SelectFilter(
+				card.Player,
+				ctx.Match,
+				moved.Player,
+				match.MANAZONE,
+				fmt.Sprintf("%s's effect: Choose a non-evolution creature in %s's mana zone with cost %d or less and put it into the battle zone.", card.Name, moved.Player.Username(), manaCount),
+				1,
+				1,
+				false,
+				func(candidate *match.Card) bool {
+					return candidate.HasCondition(cnd.Creature) &&
+						!candidate.HasCondition(cnd.Evolution) &&
+						candidate.ManaCost <= manaCount
+				},
+				false,
+			).Map(func(manaCreature *match.Card) {
+				fx.ForcePutCreatureIntoBZ(ctx, manaCreature, match.MANAZONE, card)
+			})
+		})
+	}))
+}
+
+// ThirstForTheHunt ...
+func ThirstForTheHunt(c *match.Card) {
+	c.Name = "Thirst for the Hunt"
+	c.Civ = civ.Nature
+	c.ManaCost = 1
+	c.ManaRequirement = []string{civ.Nature}
+
+	c.Use(fx.Spell, fx.When(fx.SpellCast, func(card *match.Card, ctx *match.Context) {
+		fx.Find(card.Player, match.BATTLEZONE).Map(func(creature *match.Card) {
+			creature.AddUniqueSourceCondition(cnd.PowerAttacker, 1000, card.ID)
+		})
+	}))
+}
+
 // RapidReincarnation ...
 func RapidReincarnation(c *match.Card) {
 
@@ -105,7 +184,7 @@ func SirenConcerto(c *match.Card) {
 	c.ManaCost = 1
 	c.ManaRequirement = []string{civ.Water}
 
-	c.Use(fx.Spell, fx.When(fx.SpellCast, func(card *match.Card, ctx *match.Context) {
+	c.Use(fx.Spell, fx.ShieldTrigger, fx.When(fx.SpellCast, func(card *match.Card, ctx *match.Context) {
 		fx.Select(
 			card.Player,
 			ctx.Match,
@@ -122,7 +201,7 @@ func SirenConcerto(c *match.Card) {
 			}
 		})
 
-		fx.Select(
+		fx.SelectFilter(
 			card.Player,
 			ctx.Match,
 			card.Player,
@@ -130,6 +209,8 @@ func SirenConcerto(c *match.Card) {
 			fmt.Sprintf("%s's effect: Put a card from your hand into your mana zone.", card.Name),
 			1,
 			1,
+			false,
+			func(candidate *match.Card) bool { return candidate.ID != card.ID },
 			false,
 		).Map(func(x *match.Card) {
 			_, err := card.Player.MoveCard(x.ID, match.HAND, match.MANAZONE, card.ID)
@@ -266,28 +347,8 @@ func Upheaval(c *match.Card) {
 	c.ManaRequirement = []string{civ.Darkness}
 
 	c.Use(fx.Spell, fx.ShieldTrigger, fx.When(fx.SpellCast, func(card *match.Card, ctx *match.Context) {
-		myManaCards := fx.Find(card.Player, match.MANAZONE)
-		myHandCards := fx.FindFilter(card.Player, match.HAND, func(x *match.Card) bool { return x.ID != card.ID })
-		myOppManaCards := fx.Find(ctx.Match.Opponent(card.Player), match.MANAZONE)
-		myOppHandCards := fx.Find(ctx.Match.Opponent(card.Player), match.HAND)
-
-		for _, x := range myManaCards {
-			x.Player.MoveCard(x.ID, x.Zone, match.HAND, card.ID)
-		}
-
-		for _, x := range myHandCards {
-			x.Player.MoveCard(x.ID, x.Zone, match.MANAZONE, card.ID)
-			x.Tapped = true
-		}
-
-		for _, x := range myOppManaCards {
-			x.Player.MoveCard(x.ID, x.Zone, match.HAND, card.ID)
-		}
-
-		for _, x := range myOppHandCards {
-			x.Player.MoveCard(x.ID, x.Zone, match.MANAZONE, card.ID)
-			x.Tapped = true
-		}
+		fx.SwapHandAndMana(card, card.Player)
+		fx.SwapHandAndMana(card, ctx.Match.Opponent(card.Player))
 
 		ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s's effect: Both players moved their mana cards to their hand, and at the same time, their hand cards to their mana zone.", card.Name))
 	}))

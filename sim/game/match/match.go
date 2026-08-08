@@ -1,8 +1,6 @@
 package match
 
 import (
-	"context"
-	"duel-masters/db"
 	"duel-masters/game/cnd"
 	"duel-masters/internal"
 	"duel-masters/server"
@@ -17,7 +15,6 @@ import (
 	"time"
 
 	"github.com/sirupsen/logrus"
-	"go.mongodb.org/mongo-driver/bson"
 )
 
 // Match struct
@@ -48,6 +45,7 @@ type Match struct {
 	closed      bool
 	isFirstTurn bool
 	startedAt   int64
+	turnsPlayed int
 
 	eventloop *EventLoop
 	system    *MatchSystem
@@ -413,23 +411,35 @@ func (m *Match) End(winner *Player, winnerStr string) {
 	m.ending = true
 
 	if m.Started {
+		duel, matchResultGenerated := m.SaveMatchHistory(winner, false)
+
 		m.Broadcast(server.WarningMessage{
 			Header:  "error",
 			Message: winnerStr,
 		})
 
-		m.SaveMatchHistory(winner, false)
+		m.Broadcast(m.newDuelFinishedMessage(duel, matchResultGenerated))
 	}
 
 	m.Dispose()
 
 }
 
-func (m *Match) SaveMatchHistory(winner *Player, wonByDisconnect bool) {
-	// don't save if the match lasted less than a minute
-	if m.startedAt > time.Now().Unix()-60 {
-		return
+func (m *Match) SaveMatchHistory(winner *Player, wonByDisconnect bool) (DuelRecord, bool) {
+	duel := m.newDuelRecord(winner, wonByDisconnect, time.Now().Unix())
+	if !shouldGenerateMatchResult(duel) {
+		logrus.WithFields(logrus.Fields{
+			"match_id":         duel.UID,
+			"duration_seconds": duel.Ended - duel.Started,
+		}).Info("Skipping duel match result because it did not meet the minimum duration")
+		return duel, false
 	}
+
+	m.sendMatchResultWebhook(duel)
+	return duel, true
+}
+
+func (m *Match) newDuelRecord(winner *Player, wonByDisconnect bool, endedAt int64) DuelRecord {
 
 	p1id := ""
 	p1deck := ""
@@ -446,7 +456,7 @@ func (m *Match) SaveMatchHistory(winner *Player, wonByDisconnect bool) {
 		p2deck = m.Player2.DeckStr
 	}
 
-	duel := db.Duel{
+	duel := DuelRecord{
 		UID:             m.ID,
 		Format:          string(m.Format),
 		Host:            p1id,
@@ -454,7 +464,8 @@ func (m *Match) SaveMatchHistory(winner *Player, wonByDisconnect bool) {
 		Guest:           p2id,
 		GuestDeck:       p2deck,
 		Started:         m.startedAt,
-		Ended:           time.Now().Unix(),
+		Ended:           endedAt,
+		Turns:           m.turnsPlayed,
 		WonByDisconnect: wonByDisconnect,
 	}
 
@@ -464,11 +475,56 @@ func (m *Match) SaveMatchHistory(winner *Player, wonByDisconnect bool) {
 		duel.Winner = m.Player2.UID
 	}
 
-	_, err := db.Duels().InsertOne(context.Background(), duel)
+	return duel
+}
 
-	if err != nil {
-		logrus.Error("Failed to save duel result to db", err)
+func shouldGenerateMatchResult(duel DuelRecord) bool {
+	minimumDuration := 60
+	configuredDuration := strings.TrimSpace(os.Getenv("duel_result_min_duration_seconds"))
+
+	if configuredDuration != "" {
+		value, err := strconv.Atoi(configuredDuration)
+		if err != nil || value < 0 {
+			logrus.WithField("value", configuredDuration).Warn("Invalid duel_result_min_duration_seconds; using 60 seconds")
+		} else {
+			minimumDuration = value
+		}
 	}
+
+	return duel.Ended-duel.Started >= int64(minimumDuration)
+}
+
+func (m *Match) newDuelFinishedMessage(duel DuelRecord, matchResultGenerated bool) server.DuelFinishedMessage {
+	durationSeconds := duel.Ended - duel.Started
+	if durationSeconds < 0 {
+		durationSeconds = 0
+	}
+
+	return server.DuelFinishedMessage{
+		Header:               "duel_finished",
+		DuelID:               duel.UID,
+		Winner:               duelFinishedWinner(duel.Winner, m.Player1, m.Player2),
+		MatchResultGenerated: matchResultGenerated,
+		WonByDisconnect:      duel.WonByDisconnect,
+		Turns:                duel.Turns,
+		DurationSeconds:      durationSeconds,
+	}
+}
+
+func duelFinishedWinner(winnerUID string, player1 *PlayerReference, player2 *PlayerReference) *server.DuelFinishedPlayer {
+	if winnerUID == "" {
+		return nil
+	}
+
+	if player1 != nil && player1.UID == winnerUID {
+		return &server.DuelFinishedPlayer{UID: player1.UID, Username: player1.Username}
+	}
+
+	if player2 != nil && player2.UID == winnerUID {
+		return &server.DuelFinishedPlayer{UID: player2.UID, Username: player2.Username}
+	}
+
+	return &server.DuelFinishedPlayer{UID: winnerUID}
 }
 
 // ColorChat sends a chat message with color
@@ -998,6 +1054,8 @@ func (m *Match) BeginNewTurn(repeatTurn ...bool) {
 	m.Step = &BeginTurnStep{}
 
 	if len(repeatTurn) == 0 || !repeatTurn[0] {
+		m.turnsPlayed++
+
 		if m.Turn == 1 {
 			m.Turn = 2
 		} else {
@@ -1023,9 +1081,15 @@ func (m *Match) UntapStep() {
 
 	m.Step = &UntapStep{}
 
-	if mana, err := m.CurrentPlayer().Player.Container(MANAZONE); err == nil {
-		for _, c := range mana {
-			c.Tapped = false
+	currentPlayer := m.CurrentPlayer().Player
+	manaUntapContext := NewContext(m, &UntapManaEvent{Player: currentPlayer})
+	m.HandleFx(manaUntapContext)
+
+	if !manaUntapContext.Cancelled() {
+		if mana, err := currentPlayer.Container(MANAZONE); err == nil {
+			for _, c := range mana {
+				c.Tapped = false
+			}
 		}
 	}
 
@@ -1401,11 +1465,27 @@ func (m *Match) Parse(s *server.Socket, data []byte) {
 				m.Chat("Server", fmt.Sprintf("%s started the game", m.Player1.Username))
 				m.Chat("Server", fmt.Sprintf("%s joined the game", m.Player2.Username))
 
-				m.Player1.Player.CreateRandomDeck()
-				m.Player2.Player.CreateRandomDeck()
+				hostDeck := m.HostDeck
+				guestDeck := m.GuestDeck
 
-				m.Chat("Server", fmt.Sprintf("%s has received a randomly generated deck", m.Player1.Username))
-				m.Chat("Server", fmt.Sprintf("%s has received a randomly generated deck", m.Player2.Username))
+				if m.Format == RandomFormat || len(hostDeck) == 0 || len(guestDeck) == 0 {
+					m.Player1.Player.CreateRandomDeck()
+					m.Player2.Player.CreateRandomDeck()
+					m.Player1.DeckStr = m.Player1.Player.deckString()
+					m.Player2.DeckStr = m.Player2.Player.deckString()
+
+					m.Chat("Server", fmt.Sprintf("%s has received a randomly generated deck", m.Player1.Username))
+					m.Chat("Server", fmt.Sprintf("%s has received a randomly generated deck", m.Player2.Username))
+				} else {
+					m.Player1.DeckStr = strings.Join(hostDeck, ",")
+					m.Player2.DeckStr = strings.Join(guestDeck, ",")
+
+					m.Player1.Player.CreateDeck(hostDeck)
+					m.Player2.Player.CreateDeck(guestDeck)
+
+					m.Chat("Server", fmt.Sprintf("%s's deck loaded", m.Player1.Username))
+					m.Chat("Server", fmt.Sprintf("%s's deck loaded", m.Player2.Username))
+				}
 
 				m.Player1.Player.Ready = true
 				m.Player2.Player.Ready = true
@@ -1597,57 +1677,6 @@ func (m *Match) Parse(s *server.Socket, data []byte) {
 
 			}, SequentialEvent)
 		}
-
-	case "choose_deck":
-		m.eventloop.schedule(func() {
-
-			if m.Started {
-				return
-			}
-
-			if m.Format == RandomFormat {
-				return
-			}
-
-			p, err := m.PlayerForSocket(s)
-
-			if err != nil {
-				return
-			}
-
-			var msg struct {
-				UID string `json:"uid"`
-			}
-
-			if err := json.Unmarshal(data, &msg); err != nil {
-				return
-			}
-
-			var deck db.Deck
-
-			if err := db.Decks().FindOne(context.TODO(), bson.M{"uid": msg.UID}).Decode(&deck); err != nil {
-				return
-			}
-
-			p.DeckStr = deck.Cards
-
-			legacyDeck, err := ConvertToLegacyDeck(deck)
-
-			if err != nil {
-				return
-			}
-
-			p.Player.CreateDeck(legacyDeck.Cards)
-
-			m.Chat("Server", fmt.Sprintf("%s has chosen their deck", s.User.Username))
-
-			p.Player.Ready = true
-
-			if m.Player1.Player.Ready && m.Player2.Player.Ready {
-				m.CoinToss()
-			}
-
-		}, SequentialEvent)
 
 	case "add_to_manazone":
 		m.eventloop.schedule(func() {
@@ -1890,7 +1919,7 @@ func (m *Match) OnSocketClose(s *server.Socket) {
 		}
 	}
 
-	if !m.Started {
+	/* if !m.Started {
 		logrus.Debug(fmt.Sprintf("Disconnected %s Host %s", s.User.UID, m.HostID))
 
 		// If the host left before the game started, close the game
@@ -1924,7 +1953,7 @@ func (m *Match) OnSocketClose(s *server.Socket) {
 		m.TossPrediction = 0
 
 		m.system.UpdateMatchList()
-	}
+	} */
 
 	if p == nil {
 		return
@@ -1961,7 +1990,7 @@ func (p *PlayerReference) Dispose() {
 	}
 }
 
-func (m *Match) handleAdminMessages(message string, user db.User) {
+func (m *Match) handleAdminMessages(message string, user server.User) {
 
 	if !hasAdminRightsAndValidMsgFormat(message, user) {
 		return
@@ -1970,7 +1999,7 @@ func (m *Match) handleAdminMessages(message string, user db.User) {
 	handleAdminCommandCases(m, message)
 }
 
-func hasAdminRightsAndValidMsgFormat(message string, user db.User) bool {
+func hasAdminRightsAndValidMsgFormat(message string, user server.User) bool {
 
 	/* hasRights := false
 
@@ -2129,10 +2158,20 @@ func spawnCardsToGivenZones(m *Match,
 			}
 		}
 
+		ctx := NewContext(m, &UntapStep{})
+
 		for _, z := range zones {
 			for i := range cardsToSpawn {
 				for range count {
-					player.SpawnCard(cardsToSpawn[i], z)
+					card, err := player.SpawnCard(cardsToSpawn[i], z)
+					if err != nil {
+						logrus.Warnf("Failed to spawn card %s: %v", cardsToSpawn[i], err)
+						continue
+					}
+					// Run this card's own handlers with UntapStep so conditions like cnd.Creature and cnd.Spell are initialised, matching real game behaviour
+					for _, h := range card.handlers {
+						h(card, ctx)
+					}
 				}
 			}
 		}

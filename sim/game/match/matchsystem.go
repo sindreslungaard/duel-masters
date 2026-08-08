@@ -88,6 +88,7 @@ func (s *MatchSystem) NewMatch(matchName string, hostID string, hostDeck []strin
 		created:     time.Now().Unix(),
 		ending:      false,
 		isFirstTurn: true,
+		turnsPlayed: 0,
 
 		eventloop: NewEventLoop(),
 

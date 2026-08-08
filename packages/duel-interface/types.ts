@@ -9,6 +9,15 @@ export interface DecksMessage {
   decks: LegacyDeck[];
 }
 
+export interface LegacyDeck {
+  uid: string;
+  owner: string;
+  name: string;
+  public: boolean;
+  standard: boolean;
+  cards: string[];
+}
+
 // ChatMessage stores information about a chat message
 export interface ChatMessage {
   header: string;
@@ -75,6 +84,21 @@ export interface MatchStateMessage {
 export interface WarningMessage {
   header: string;
   message: string;
+}
+
+export interface DuelFinishedPlayer {
+  uid: string;
+  username?: string;
+}
+
+export interface DuelFinishedMessage {
+  header: "duel_finished";
+  duelId: string;
+  winner?: DuelFinishedPlayer;
+  matchResultGenerated: boolean;
+  wonByDisconnect: boolean;
+  turns: number;
+  durationSeconds: number;
 }
 
 export enum ActionType {
@@ -212,6 +236,3 @@ export interface PlaySoundMessage {
   header: string;
   sound: string;
 }
-
-// Type alias for LegacyDeck (assuming it's imported from db module)
-export type LegacyDeck = any; // Replace with actual type definition if available

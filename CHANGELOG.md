@@ -2,6 +2,31 @@
 
 ## Unreleased
 
+- New card "Blizzard of Spears" (thanks @dilawer007)
+- Fixed a loophole that allowed "Grinning Hunger" to avoid its mandatory effect by choosing an empty zone (thanks @DragosIonita23)
+- Updated multipart card selections to automatically resolve mandatory selections with only one possible outcome (thanks @DragosIonita23)
+- Fixed an issue where "Simian Warrior Grash" would not trigger when it was destroyed (thanks @DragosIonita23)
+- Fixed "Siren Concerto" being able to select itself with its effect and added its missing shield trigger (thanks @Vladdudu12)
+- Fixed "Zero Nemesis, Shadow of Panic" triggering its discard effect from outside the battle zone (thanks @Vladdudu12)
+- Fixed "Elf-X" applying its creature cost reduction one turn late (thanks @Shahrukh95)
+- New card "Torpedo Cluster"
+- New card "Pierr, Psycho Doll"
+- New card "Hurricane Crawler"
+- New card "Hawkeye Lunatron"
+- New card "Hourglass Mutant"
+- New card "Terradragon Dakma Balgarow"
+- New card "Balza, Seeker of Hyperpearls" (thanks @DragosIonita23)
+- New card "Ryudmila, Channeler of Suns" (thanks @DragosIonita23)
+- New card "King Oquanos" (thanks @DragosIonita23)
+- New card "Gajirabute, Vile Centurion" (thanks @DragosIonita23)
+- New card "Gaulezal Dragon" (thanks @DragosIonita23)
+- New card "Carnival Totem" (thanks @DragosIonita23)
+- New card "Scowling Tomato" (thanks @DragosIonita23)
+- New card "Shaman Broccoli" (thanks @DragosIonita23)
+- New card "Soulswap" (thanks @DragosIonita23)
+- New card "Terradragon Cusdalf" (thanks @DragosIonita23)
+- New card "Thirst for the Hunt" (thanks @DragosIonita23)
+- New card "Twitch Horn, the Aggressor" (thanks @DragosIonita23)
 - Brand new website
 - Added support for playing as a guest without registering an account
 - Added email verification for new users
@@ -100,7 +125,6 @@
 - New card "Glena Vuele, the Hypnotic" (thanks @DragosIonita23)
 - New card "Jil Warka, Time Guardian" (thanks @DragosIonita23)
 - Improve popup for selecting card race (thanks @DragosIonita23)
-- Fixed an issue where "Simian Warrior Grash" would not correctly handle destruction of Armorloids (thanks @DragosIonita23)
 
 ## 21/09/2025
 

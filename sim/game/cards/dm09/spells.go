@@ -97,6 +97,21 @@ func AbductionCharger(c *match.Card) {
 
 }
 
+// BlizzardOfSpears ...
+func BlizzardOfSpears(c *match.Card) {
+
+	c.Name = "Blizzard of Spears"
+	c.Civ = civ.Fire
+	c.ManaCost = 6
+	c.ManaRequirement = []string{civ.Fire}
+
+	c.Use(
+		fx.Spell,
+		fx.When(fx.SpellCast, fx.DestroyAllCreaturesXPowerOrLess(4000, match.DestroyedBySpell)),
+	)
+
+}
+
 // GrinningHunger ...
 func GrinningHunger(c *match.Card) {
 
@@ -106,42 +121,66 @@ func GrinningHunger(c *match.Card) {
 	c.ManaRequirement = []string{civ.Darkness}
 
 	c.Use(fx.Spell, fx.When(fx.SpellCast, func(card *match.Card, ctx *match.Context) {
+		opponent := ctx.Match.Opponent(card.Player)
+		opponentCreatures := fx.Find(opponent, match.BATTLEZONE)
+		opponentShields := fx.Find(opponent, match.SHIELDZONE)
+
+		chooseCreature := func() {
+			fx.Select(
+				opponent,
+				ctx.Match,
+				opponent,
+				match.BATTLEZONE,
+				fmt.Sprintf("%s's effect: Choose one of your creatures in the battlezone and put it into your graveyard.", card.Name),
+				1,
+				1,
+				false,
+			).Map(func(x *match.Card) {
+				ctx.Match.Destroy(x, card, match.DestroyedBySpell)
+			})
+		}
+
+		chooseShield := func() {
+			fx.SelectBackside(
+				opponent,
+				ctx.Match,
+				opponent,
+				match.SHIELDZONE,
+				fmt.Sprintf("%s's effect: Choose one of your shields and put it into your graveyard.", card.Name),
+				1,
+				1,
+				false,
+			).Map(func(x *match.Card) {
+				moved, err := x.Player.MoveCard(x.ID, match.SHIELDZONE, match.GRAVEYARD, card.ID)
+				if err == nil && moved.Zone == match.GRAVEYARD {
+					ctx.Match.ReportActionInChat(x.Player, fmt.Sprintf("%s was put into the graveyard from %s's shieldzone.", x.Name, x.Player.Username()))
+				}
+			})
+		}
+
+		switch {
+		case len(opponentCreatures) == 0 && len(opponentShields) == 0:
+			return
+		case len(opponentCreatures) == 0:
+			chooseShield()
+			return
+		case len(opponentShields) == 0:
+			chooseCreature()
+			return
+		}
 
 		indexChoice := fx.MultipleChoiceQuestion(
-			ctx.Match.Opponent(card.Player),
+			opponent,
 			ctx.Match,
-			fmt.Sprintf("%s's effect: Choose one of your creatures in the battlezone or one of your shields and destroy it.\r\nChoose 'Battle zone' OR 'Shields' to continue.", card.Name),
+			fmt.Sprintf("%s's effect: Choose one of your creatures in the battlezone or one of your shields and put it into your graveyard.\r\nChoose 'Battle zone' OR 'Shields' to continue.", card.Name),
 			[]string{"Battle zone", "Shields"},
 		)
 
 		switch indexChoice {
 		case 0:
-			fx.Select(
-				ctx.Match.Opponent(card.Player),
-				ctx.Match,
-				ctx.Match.Opponent(card.Player),
-				match.BATTLEZONE,
-				fmt.Sprintf("%s's effect: Choose one of your creatures in the battlezone and destroy it.", card.Name),
-				1,
-				1,
-				false,
-			).Map(func(x *match.Card) {
-				ctx.Match.Destroy(x, card, match.DestroyedByMiscAbility)
-			})
+			chooseCreature()
 		case 1:
-			fx.SelectBackside(
-				ctx.Match.Opponent(card.Player),
-				ctx.Match,
-				ctx.Match.Opponent(card.Player),
-				match.SHIELDZONE,
-				fmt.Sprintf("%s's effect: Choose one of your shields and destroy it.", card.Name),
-				1,
-				1,
-				false,
-			).Map(func(x *match.Card) {
-				x.Player.MoveCard(x.ID, match.SHIELDZONE, match.GRAVEYARD, card.ID)
-				ctx.Match.ReportActionInChat(x.Player, fmt.Sprintf("%s was put into the graveyard from %s's shieldzone.", x.Name, x.Player.Username()))
-			})
+			chooseShield()
 		default:
 			return
 		}

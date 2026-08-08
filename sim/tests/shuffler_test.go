@@ -12,7 +12,7 @@ const ShufflerTestEnabled = false
 const ShufflerTestIterations = 10000
 
 func TestShuffler(t *testing.T) {
-	scenario := scenario.New(scenario.Options{})
+	scn := scenario.New()
 
 	t.Run("Shuffler shuffles as expected", func(t *testing.T) {
 		if !ShufflerTestEnabled {
@@ -24,7 +24,7 @@ func TestShuffler(t *testing.T) {
 		// Result holds the number of times each card appears in the first 5 cards after shuffling
 		result := map[string]int{}
 
-		p := scenario.Match.Player1.Player
+		p := scn.Match.Player1.Player
 
 		for i := 0; i < ShufflerTestIterations; i++ {
 			p.ShuffleDeck()

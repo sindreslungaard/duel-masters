@@ -15,6 +15,7 @@ type MockConnection struct {
 	pongHandler   func(string) error
 
 	MessagesWritten []string
+	JSONWritten     []string
 	LastJSONWritten interface{}
 	Closed          bool
 
@@ -25,6 +26,7 @@ type MockConnection struct {
 func NewMockConnection() *MockConnection {
 	return &MockConnection{
 		MessagesWritten: make([]string, 0),
+		JSONWritten:     make([]string, 0),
 	}
 }
 
@@ -75,9 +77,32 @@ func (m *MockConnection) WriteMessage(messageType int, data []byte) error {
 func (m *MockConnection) WriteJSON(v interface{}) error {
 	m.mu.Lock()
 	defer m.mu.Unlock()
+	data, err := json.Marshal(v)
+	if err != nil {
+		return err
+	}
 	m.LastJSONWritten = v
-	_, err := json.Marshal(v) // Just test if it can be marshaled
+	m.JSONWritten = append(m.JSONWritten, string(data))
 	return err
+}
+
+func (m *MockConnection) JSONWriteCount() int {
+	m.mu.Lock()
+	defer m.mu.Unlock()
+	return len(m.JSONWritten)
+}
+
+func (m *MockConnection) JSONMessagesSince(start int) []string {
+	m.mu.Lock()
+	defer m.mu.Unlock()
+
+	if start >= len(m.JSONWritten) {
+		return []string{}
+	}
+
+	result := make([]string, len(m.JSONWritten[start:]))
+	copy(result, m.JSONWritten[start:])
+	return result
 }
 
 // Close simulates closing the connection.
