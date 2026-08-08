@@ -1104,17 +1104,16 @@ export function Duel({
         closeOnOutsideClick={false}
         showCloseButton={false}
       >
-        <div className="p-6 text-white ">
+        <div className="p-6 text-white">
           <p>
             Your opponent disconnected or left the match. Waiting for them to
             reconnect{dots}
           </p>
-        </div>
-
-        <div className="flex mt-6">
-          <Button variant="destructive" onClick={onLeaveDuel}>
-            Leave Duel
-          </Button>
+          <div className="flex mt-6">
+            <Button variant="destructive" onClick={onLeaveDuel}>
+              Leave Duel
+            </Button>
+          </div>
         </div>
       </Popup>
 
