@@ -8,6 +8,7 @@
 - Fixed an issue where "Simian Warrior Grash" would not trigger when it was destroyed (thanks @DragosIonita23)
 - Fixed "Siren Concerto" being able to select itself with its effect and added its missing shield trigger (thanks @Vladdudu12)
 - Fixed "Zero Nemesis, Shadow of Panic" triggering its discard effect from outside the battle zone (thanks @Vladdudu12)
+- Fixed "Elf-X" applying its creature cost reduction one turn late (thanks @Shahrukh95)
 - New card "Balza, Seeker of Hyperpearls" (thanks @DragosIonita23)
 - New card "Ryudmila, Channeler of Suns" (thanks @DragosIonita23)
 - New card "King Oquanos" (thanks @DragosIonita23)

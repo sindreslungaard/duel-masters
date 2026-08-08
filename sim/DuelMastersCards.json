@@ -477,6 +477,7 @@
       ],
       "cost": 7,
       "name": "Amnis, Holy Elemental",
+      "id": "5f6d4906-1f2b-455a-a620-992dfa6c3673",
       "power": "5000",
       "printings": [
         {
@@ -567,6 +568,7 @@
       ],
       "cost": 3,
       "name": "Angry Maple",
+      "id": "04986395-67af-4e3e-9b46-1a19efc4e7e8",
       "power": "1000+",
       "printings": [
         {
@@ -1382,6 +1384,7 @@
       ],
       "cost": 5,
       "name": "Armored Groblav",
+      "id": "540a15e7-3751-4b30-97ed-8c737bd2c231",
       "power": "6000+",
       "printings": [
         {
@@ -3512,6 +3515,7 @@
       ],
       "cost": 3,
       "name": "Brigade Shell Q",
+      "id": "80f04b78-bcd4-418f-8429-88dee42a522d",
       "power": "1000",
       "printings": [
         {
@@ -9703,6 +9707,7 @@
       ],
       "cost": 8,
       "name": "Gigagrax",
+      "id": "5e42765f-432b-4e33-8fee-65fc9026d1cd",
       "power": "5000",
       "printings": [
         {
@@ -10094,6 +10099,7 @@
       ],
       "cost": 7,
       "name": "Giliam, the Tormentor",
+      "id": "b02fb837-3b16-4480-9408-49c710c9217d",
       "power": "5000",
       "printings": [
         {
@@ -13754,6 +13760,7 @@
       ],
       "cost": 6,
       "name": "Loth Rix, the Iridescent",
+      "id": "bf0eb592-fb6f-4604-8851-f41835cceab9",
       "power": "4000",
       "printings": [
         {
@@ -16763,6 +16770,7 @@
       ],
       "cost": 7,
       "name": "Olgate, Nightmare Samurai",
+      "id": "ff54e307-7097-4b12-9c35-e06307f61e74",
       "power": "6000",
       "printings": [
         {
@@ -17919,7 +17927,7 @@
       ],
       "cost": 6,
       "name": "Psychic Shaper",
-      "id": "14609828-6c61-441a-aa76-c436bf2c6b00",
+      "id": "c4f3db71-e9e7-4ab6-95fc-1174b4f42aca",
       "printings": [
         {
           "set": "DM-03 Rampage of the Super Warriors",
@@ -21989,6 +21997,7 @@
       ],
       "cost": 7,
       "name": "Star-Cry Dragon",
+      "id": "7cab8643-2cf5-483d-b7a1-8b8243a75737",
       "power": "8000",
       "printings": [
         {
@@ -24234,6 +24243,7 @@
       ],
       "cost": 5,
       "name": "Twister Fish",
+      "id": "9db6b2d5-c3f3-4a00-b237-bc7504a9b7df",
       "power": "3000",
       "printings": [
         {

@@ -19,6 +19,23 @@ func ElfX(c *match.Card) {
 	c.ManaRequirement = []string{civ.Nature}
 
 	c.Use(fx.Creature, fx.When(fx.InTheBattlezone, func(card *match.Card, ctx *match.Context) {
+		applyDiscount := func() {
+			fx.FindFilter(
+				card.Player,
+				match.HAND,
+				func(x *match.Card) bool {
+					return x.HasCondition(cnd.Creature)
+				},
+			).Map(func(x *match.Card) {
+				x.AddUniqueSourceCondition(cnd.ReducedCost, 1, card.ID)
+			})
+		}
+
+		// Apply immediately so BroadcastState after this summon reflects the discount
+		if ctx.Match.IsPlayerTurn(card.Player) {
+			applyDiscount()
+		}
+
 		ctx.Match.ApplyPersistentEffect(func(ctx2 *match.Context, exit func()) {
 			if card.Zone != match.BATTLEZONE {
 				// we use fx.FindMultipleFilter for edge cases when elf x might leave the BZ
@@ -42,15 +59,7 @@ func ElfX(c *match.Card) {
 				return
 			}
 
-			fx.FindFilter(
-				card.Player,
-				match.HAND,
-				func(x *match.Card) bool {
-					return x.HasCondition(cnd.Creature)
-				},
-			).Map(func(x *match.Card) {
-				x.AddUniqueSourceCondition(cnd.ReducedCost, 1, card.ID)
-			})
+			applyDiscount()
 		})
 	}))
 
