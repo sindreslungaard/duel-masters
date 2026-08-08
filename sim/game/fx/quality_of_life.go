@@ -987,9 +987,30 @@ func AnotherOwnArmorloidDestroyed(card *match.Card, ctx *match.Context) bool {
 	})
 }
 
+// OwnArmorloidDestroyed returns true when one of the card controller's
+// Armorloids is destroyed while the card is in the battle zone. It also
+// includes the card's own destruction, whose post-move event is handled after
+// the card has entered the graveyard.
+func OwnArmorloidDestroyed(card *match.Card, ctx *match.Context) bool {
+	return ownCreatureDestroyedFilter(card, ctx, func(c *match.Card) bool {
+		return c.HasFamily(family.Armorloid)
+	})
+}
+
 // AnotherOwnCreatureDestroyedFilter returns true if another creature of yours is destroyed
 // filtered by the provided function
 func AnotherOwnCreatureDestroyedFilter(card *match.Card, ctx *match.Context, filter func(c *match.Card) bool) bool {
+	return filteredMovedCardCondition(card, ctx, AnotherOwnCreatureDestroyed, filter)
+}
+
+// ownCreatureDestroyedFilter returns true if one of the card controller's
+// creatures matching filter was destroyed. The source card must be in the
+// battle zone unless the destruction event is for the source card itself.
+func ownCreatureDestroyedFilter(card *match.Card, ctx *match.Context, filter func(c *match.Card) bool) bool {
+	return filteredMovedCardCondition(card, ctx, ownCreatureDestroyed, filter)
+}
+
+func filteredMovedCardCondition(card *match.Card, ctx *match.Context, condition func(*match.Card, *match.Context) bool, filter func(c *match.Card) bool) bool {
 	event, ok := ctx.Event.(*match.CardMoved)
 	if !ok {
 		return false
@@ -1003,7 +1024,7 @@ func AnotherOwnCreatureDestroyedFilter(card *match.Card, ctx *match.Context, fil
 		p = ctx.Match.Player2.Player
 	}
 
-	anotherOwnCreatureDestroyed := AnotherOwnCreatureDestroyed(card, ctx)
+	matches := condition(card, ctx)
 
 	if filter != nil {
 		movedCard, err := p.GetCard(event.CardID, event.To)
@@ -1012,10 +1033,33 @@ func AnotherOwnCreatureDestroyedFilter(card *match.Card, ctx *match.Context, fil
 			return false
 		}
 
-		anotherOwnCreatureDestroyed = anotherOwnCreatureDestroyed && filter(movedCard)
+		matches = matches && filter(movedCard)
 	}
 
-	return anotherOwnCreatureDestroyed
+	return matches
+}
+
+func ownCreatureDestroyed(card *match.Card, ctx *match.Context) bool {
+	event, ok := ctx.Event.(*match.CardMoved)
+	if !ok || event.From != match.BATTLEZONE || event.To != match.GRAVEYARD {
+		return false
+	}
+
+	// A card's handlers run from every zone. Keep the effect inactive outside
+	// the battle zone, except for the post-move event representing this card's
+	// own destruction.
+	if card.Zone != match.BATTLEZONE && event.CardID != card.ID {
+		return false
+	}
+
+	var owner *match.Player
+	if event.MatchPlayerID == 1 {
+		owner = ctx.Match.Player1.Player
+	} else {
+		owner = ctx.Match.Player2.Player
+	}
+
+	return card.Player == owner
 }
 
 func AnotherCreatureDestroyed(card *match.Card, ctx *match.Context) bool {

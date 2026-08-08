@@ -5,6 +5,7 @@
 - New card "Blizzard of Spears" (thanks @dilawer007)
 - Fixed a loophole that allowed "Grinning Hunger" to avoid its mandatory effect by choosing an empty zone (thanks @DragosIonita23)
 - Updated multipart card selections to automatically resolve mandatory selections with only one possible outcome (thanks @DragosIonita23)
+- Fixed an issue where "Simian Warrior Grash" would not trigger when it was destroyed (thanks @DragosIonita23)
 - New card "Balza, Seeker of Hyperpearls" (thanks @DragosIonita23)
 - New card "Ryudmila, Channeler of Suns" (thanks @DragosIonita23)
 - New card "King Oquanos" (thanks @DragosIonita23)
@@ -115,7 +116,6 @@
 - New card "Glena Vuele, the Hypnotic" (thanks @DragosIonita23)
 - New card "Jil Warka, Time Guardian" (thanks @DragosIonita23)
 - Improve popup for selecting card race (thanks @DragosIonita23)
-- Fixed an issue where "Simian Warrior Grash" would not correctly handle destruction of Armorloids (thanks @DragosIonita23)
 
 ## 21/09/2025
 
