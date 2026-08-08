@@ -433,7 +433,9 @@ func selectMultipartBase(p *match.Player, m *match.Match, cards map[string][]*ma
 			}
 		}
 
-		newCardsMap[key] = newCards
+		if len(newCards) > 0 {
+			newCardsMap[key] = newCards
+		}
 	}
 
 	notEmpty := false
@@ -459,6 +461,20 @@ func selectMultipartBase(p *match.Player, m *match.Match, cards map[string][]*ma
 		max = totalCardsLength
 	}
 
+	// Bypass the prompt when a mandatory selection has only one possible
+	// outcome. Empty groups were removed above so the remaining cards can be
+	// returned without opening a redundant Player.Action prompt.
+	if !cancellable && min == max && totalCardsLength == min && len(cards) == 1 {
+		for key := range cards {
+			return cards[key]
+		}
+	}
+
+	selectableCards := make([]*match.Card, 0, totalCardsLength)
+	for _, cardList := range cards {
+		selectableCards = append(selectableCards, cardList...)
+	}
+
 	if backsideOnly {
 		m.NewMultipartActionBackside(p, cards, min, max, text, cancellable)
 	} else {
@@ -480,7 +496,7 @@ func selectMultipartBase(p *match.Player, m *match.Match, cards map[string][]*ma
 			break
 		}
 
-		if len(action.Cards) < min || len(action.Cards) > max {
+		if len(action.Cards) < min || len(action.Cards) > max || !match.AssertCardsIn(selectableCards, action.Cards...) {
 			m.ActionWarning(p, "The cards you selected does not meet the requirements")
 			continue
 		}

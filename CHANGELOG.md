@@ -3,6 +3,8 @@
 ## Unreleased
 
 - New card "Blizzard of Spears" (thanks @dilawer007)
+- Fixed a loophole that allowed "Grinning Hunger" to avoid its mandatory effect by choosing an empty zone (thanks @DragosIonita23)
+- Updated multipart card selections to automatically resolve mandatory selections with only one possible outcome (thanks @DragosIonita23)
 - Brand new website
 - Added support for playing as a guest without registering an account
 - Added email verification for new users

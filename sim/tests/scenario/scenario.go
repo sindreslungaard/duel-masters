@@ -139,11 +139,11 @@ func (s *TestScenario) ActionPlayCard(player *match.PlayerReference, cardID stri
 	}
 
 	// PlayCard broadcasts state after the complete event has resolved. A card
-	// may instead open its next prompt while PlayCard is still resolving; in
-	// that case the caller must be allowed to answer it. Both messages are
-	// synchronized completion signals, unlike polling card.Zone while effects
-	// are still moving cards.
-	return s.WaitForMessage(player, completionStart, "state_update", "action")
+	// may instead open a prompt for either player while PlayCard is still
+	// resolving; the acting player receives either that action or a wait message
+	// so the caller can answer it. These messages are synchronized completion
+	// signals, unlike polling card.Zone while effects are still moving cards.
+	return s.WaitForMessage(player, completionStart, "state_update", "action", "wait")
 }
 
 func (s *TestScenario) ActionEndTurn(player *match.PlayerReference) error {
@@ -162,10 +162,28 @@ func (s *TestScenario) ActionEndTurn(player *match.PlayerReference) error {
 		return err
 	}
 
-	// A successful turn transition broadcasts state; a prevented transition
-	// sends a warning. Use those synchronized completion signals instead of
-	// polling Match.Turn while the event-loop goroutine mutates it.
-	return s.WaitForMessage(player, messageCount, "state_update", "warn")
+	// A successful turn transition broadcasts once before untap/start/draw and
+	// again after draw. Wait for the second update so tests cannot observe the
+	// event loop halfway through the new turn. A prevented transition sends a
+	// warning instead.
+	return s.waitFor(func() bool {
+		stateUpdates := 0
+		for _, raw := range conn.JSONMessagesSince(messageCount) {
+			var header server.Message
+			if err := json.Unmarshal([]byte(raw), &header); err != nil {
+				continue
+			}
+
+			switch header.Header {
+			case "warn":
+				return true
+			case "state_update":
+				stateUpdates++
+			}
+		}
+
+		return stateUpdates >= 2
+	})
 }
 
 func (s *TestScenario) SubmitAction(player *match.PlayerReference, cardIDs ...string) error {
@@ -178,6 +196,19 @@ func (s *TestScenario) SubmitAction(player *match.PlayerReference, cardIDs ...st
 		Header: "action",
 		Cards:  cardIDs,
 		Count:  len(cardIDs),
+		Cancel: false,
+	})
+}
+
+// SubmitChoice answers a multiple-choice action using its zero-based option index.
+func (s *TestScenario) SubmitChoice(player *match.PlayerReference, choice int) error {
+	return s.send(player, struct {
+		Header string `json:"header"`
+		Count  int    `json:"count"`
+		Cancel bool   `json:"cancel"`
+	}{
+		Header: "action",
+		Count:  choice,
 		Cancel: false,
 	})
 }
@@ -247,6 +278,45 @@ func (s *TestScenario) WaitForMessage(player *match.PlayerReference, since int, 
 		}
 		return false
 	})
+}
+
+// WaitForAction returns the first standard card or question action sent at or
+// after since.
+func (s *TestScenario) WaitForAction(player *match.PlayerReference, since int) (*server.ActionMessage, error) {
+	return s.waitForActionMessage(player, since)
+}
+
+// WaitForMultipartAction returns the first grouped-card action sent at or after since.
+func (s *TestScenario) WaitForMultipartAction(player *match.PlayerReference, since int) (*server.MultipartActionMessage, error) {
+	conn, err := s.connectionFor(player)
+	if err != nil {
+		return nil, err
+	}
+
+	var action *server.MultipartActionMessage
+	err = s.waitFor(func() bool {
+		for _, raw := range conn.JSONMessagesSince(since) {
+			var header server.Message
+			if err := json.Unmarshal([]byte(raw), &header); err != nil || header.Header != "action" {
+				continue
+			}
+
+			candidate := &server.MultipartActionMessage{}
+			if err := json.Unmarshal([]byte(raw), candidate); err != nil || candidate.Cards == nil {
+				continue
+			}
+
+			action = candidate
+			return true
+		}
+
+		return false
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	return action, nil
 }
 
 func (s *TestScenario) connectionFor(player *match.PlayerReference) (*MockConnection, error) {
