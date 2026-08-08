@@ -298,8 +298,11 @@ func (s *TestScenario) ActionAttackCreature(player *match.PlayerReference, attac
 	}
 	if !defenderOffered {
 		// Attack target selection is cancellable. Answer the outstanding prompt
-		// before returning so a failed test cannot strand the event loop.
+		// and let the cancelled attack unwind before returning, so a caller that
+		// expects this error can immediately issue another action instead of
+		// having it dropped by the still busy event loop.
 		_ = s.CancelAction(player)
+		_ = s.WaitForEventLoop()
 		return fmt.Errorf("creature %s was not offered as an attack target", defenderID)
 	}
 
@@ -648,6 +651,8 @@ func (s *TestScenario) waitForAttackPrompt(player *match.PlayerReference, start 
 	}
 
 	if action == nil {
+		// Let the rejected attack finish unwinding so the caller can act again.
+		_ = s.WaitForEventLoop()
 		return nil, fmt.Errorf("the attack was rejected: %s", warning)
 	}
 

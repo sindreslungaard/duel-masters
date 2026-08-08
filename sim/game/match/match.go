@@ -303,6 +303,19 @@ func (m *Match) BreakShields(attemptedShields []*Card, source *Card) {
 
 	}
 
+	m.ResolveShieldTriggers(shieldTriggers, source)
+
+}
+
+// ResolveShieldTriggers offers the given cards, which must already be in their
+// owner's hand, to be played for free one at a time.
+//
+// Breaking shields goes through BreakShields, which calls this once the shields
+// have moved. Effects that put shields into a hand without breaking them and
+// still allow their shield triggers call this directly, so that no shield break
+// event is dispatched on their behalf.
+func (m *Match) ResolveShieldTriggers(shieldTriggers []*Card, source *Card) {
+
 	for len(shieldTriggers) > 0 {
 
 		// we broadcast state here as it's needed to move the cards to the hand and

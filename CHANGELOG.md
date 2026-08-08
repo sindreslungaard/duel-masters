@@ -21,6 +21,8 @@
 - New card "Core-Crash Lizard"
 - New card "Elixia, Pureblade Elemental"
 - New card "Ultimate Dragon"
+- New card "Necrodragon Bryzenaga"
+- New card "Bodacious Giant"
 - New card "Balza, Seeker of Hyperpearls" (thanks @DragosIonita23)
 - New card "Ryudmila, Channeler of Suns" (thanks @DragosIonita23)
 - New card "King Oquanos" (thanks @DragosIonita23)
