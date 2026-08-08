@@ -475,8 +475,29 @@ func (m *Match) newDuelRecord(winner *Player, wonByDisconnect bool, endedAt int6
 }
 
 func shouldGenerateMatchResult(duel DuelRecord) bool {
-	// don't save if the match lasted less than a minute
-	return duel.Started <= duel.Ended-60
+	minimumDuration := 60
+	configuredDuration := strings.TrimSpace(os.Getenv("duel_result_min_duration_seconds"))
+
+	if configuredDuration != "" {
+		value, err := strconv.Atoi(configuredDuration)
+		if err != nil || value < 0 {
+			logrus.WithField("value", configuredDuration).Warn("Invalid duel_result_min_duration_seconds; using 60 seconds")
+		} else {
+			minimumDuration = value
+		}
+	}
+
+	duration := duel.Ended - duel.Started
+	if duration < int64(minimumDuration) {
+		logrus.WithFields(logrus.Fields{
+			"match_id":                 duel.UID,
+			"duration_seconds":         duration,
+			"minimum_duration_seconds": minimumDuration,
+		}).Info("Skipping duel match result because it did not meet the minimum duration")
+		return false
+	}
+
+	return true
 }
 
 func (m *Match) newDuelFinishedMessage(duel DuelRecord, matchResultGenerated bool) server.DuelFinishedMessage {

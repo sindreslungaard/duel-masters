@@ -48,12 +48,38 @@ func TestNewDuelFinishedMessageIncludesWinnerAndGeneratedFlag(t *testing.T) {
 	}
 }
 
-func TestShouldGenerateMatchResultRequiresOneMinute(t *testing.T) {
+func TestShouldGenerateMatchResultDefaultsToOneMinute(t *testing.T) {
+	t.Setenv("duel_result_min_duration_seconds", "")
+
 	if shouldGenerateMatchResult(DuelRecord{Started: 100, Ended: 159}) {
 		t.Fatal("expected short duel to be ignored")
 	}
 
 	if !shouldGenerateMatchResult(DuelRecord{Started: 100, Ended: 160}) {
 		t.Fatal("expected 60-second duel to count")
+	}
+}
+
+func TestShouldGenerateMatchResultUsesConfiguredMinimumDuration(t *testing.T) {
+	t.Setenv("duel_result_min_duration_seconds", "10")
+
+	if shouldGenerateMatchResult(DuelRecord{Started: 100, Ended: 109}) {
+		t.Fatal("expected duel below configured duration to be ignored")
+	}
+
+	if !shouldGenerateMatchResult(DuelRecord{Started: 100, Ended: 110}) {
+		t.Fatal("expected duel at configured duration to count")
+	}
+}
+
+func TestShouldGenerateMatchResultFallsBackToOneMinuteForInvalidConfiguration(t *testing.T) {
+	t.Setenv("duel_result_min_duration_seconds", "invalid")
+
+	if shouldGenerateMatchResult(DuelRecord{Started: 100, Ended: 159}) {
+		t.Fatal("expected invalid configuration to use the 60-second default")
+	}
+
+	if !shouldGenerateMatchResult(DuelRecord{Started: 100, Ended: 160}) {
+		t.Fatal("expected invalid configuration to use the 60-second default")
 	}
 }

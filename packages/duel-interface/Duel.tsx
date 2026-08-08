@@ -51,6 +51,7 @@ interface DuelProps {
   hostUrl: string;
   duelId: string;
   duelToken: string;
+  playmat?: string;
   devTools?: {
     cards: { uid: string; name: string }[];
     activePlayer: "host" | "guest" | "spectator";
@@ -118,6 +119,7 @@ export function Duel({
   duelId,
   duelToken,
   hostUrl,
+  playmat,
   devTools,
   onLeaveDuel,
   onDuelFinished,
@@ -495,7 +497,13 @@ export function Duel({
       <style>{scrollbarStyles}</style>
       <div
         className="w-full h-screen text-white flex bg-[linear-gradient(45deg,rgb(29,33,42),rgb(20,16,21))] bg-cover bg-no-repeat gap-2 p-1 custom-scrollbar"
-        style={dragState ? { cursor: "grabbing" } : {}}
+        style={{
+          ...(playmat && {
+            backgroundImage: `url(${JSON.stringify(playmat)}), linear-gradient(45deg, rgb(29, 33, 42), rgb(20, 16, 21))`,
+            backgroundPosition: "center",
+          }),
+          ...(dragState && { cursor: "grabbing" }),
+        }}
       >
         <div className="w-[300px] flex flex-col gap-2">
           {/* Devtools */}

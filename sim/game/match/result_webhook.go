@@ -48,13 +48,23 @@ func (m *Match) sendMatchResultWebhook(duel DuelRecord) {
 	}
 
 	payload := m.newDuelResultWebhookPayload(duel)
+	logger := logrus.WithFields(logrus.Fields{
+		"match_id":         payload.MatchID,
+		"format":           payload.Format,
+		"duration_seconds": payload.DurationSeconds,
+	})
 
 	go func() {
 		defer internal.Recover()
 
+		logger.Info("Sending duel result webhook")
+
 		if err := sendDuelResultWebhook(webhookURL, auth, payload); err != nil {
-			logrus.WithError(err).Error("Failed to send duel result webhook")
+			logger.WithError(err).Error("Failed to send duel result webhook")
+			return
 		}
+
+		logger.Info("Duel result webhook sent successfully")
 	}()
 }
 
