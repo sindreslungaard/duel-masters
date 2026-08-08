@@ -3,12 +3,6 @@
 ## Unreleased
 
 - New card "Blizzard of Spears" (thanks @dilawer007)
-- Fixed a loophole that allowed "Grinning Hunger" to avoid its mandatory effect by choosing an empty zone (thanks @DragosIonita23)
-- Updated multipart card selections to automatically resolve mandatory selections with only one possible outcome (thanks @DragosIonita23)
-- Fixed an issue where "Simian Warrior Grash" would not trigger when it was destroyed (thanks @DragosIonita23)
-- Fixed "Siren Concerto" being able to select itself with its effect and added its missing shield trigger (thanks @Vladdudu12)
-- Fixed "Zero Nemesis, Shadow of Panic" triggering its discard effect from outside the battle zone (thanks @Vladdudu12)
-- Fixed "Elf-X" applying its creature cost reduction one turn late (thanks @Shahrukh95)
 - New card "Torpedo Cluster"
 - New card "Pierr, Psycho Doll"
 - New card "Hurricane Crawler"
@@ -35,6 +29,12 @@
 - New card "Terradragon Cusdalf" (thanks @DragosIonita23)
 - New card "Thirst for the Hunt" (thanks @DragosIonita23)
 - New card "Twitch Horn, the Aggressor" (thanks @DragosIonita23)
+- Fixed a loophole that allowed "Grinning Hunger" to avoid its mandatory effect by choosing an empty zone (thanks @DragosIonita23)
+- Updated multipart card selections to automatically resolve mandatory selections with only one possible outcome (thanks @DragosIonita23)
+- Fixed an issue where "Simian Warrior Grash" would not trigger when it was destroyed (thanks @DragosIonita23)
+- Fixed "Siren Concerto" being able to select itself with its effect and added its missing shield trigger (thanks @Vladdudu12)
+- Fixed "Zero Nemesis, Shadow of Panic" triggering its discard effect from outside the battle zone (thanks @Vladdudu12)
+- Fixed "Elf-X" applying its creature cost reduction one turn late (thanks @Shahrukh95)
 - Brand new website
 - Added support for playing as a guest without registering an account
 - Added email verification for new users
@@ -51,7 +51,7 @@
 - Added post-duel view with mactch summary, chat and rematch options
 - Made it possible for the website to support multiple different simulators/rule engines for multi-environment purposes and future plans to overhaul the current rule engine
 
-## 02/01/202
+## 02/01/2026
 
 - Fixed an issue where "Elf-X" and "Cocco Lupia"'s cost reduction effect would not immediately make the add to battlezone button be visibly clickable (thanks @DragosIonita23)
 - Fixed an issue where some creatures with 0 power could not die (thanks @DragosIonita23)
