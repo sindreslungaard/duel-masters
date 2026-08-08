@@ -4,7 +4,6 @@ import (
 	"duel-masters/game/match"
 	"duel-masters/tests/scenario"
 	"testing"
-	"time"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -34,23 +33,18 @@ func TestAquaHulcus(t *testing.T) {
 	aquaHulcus, err := scn.FindCard(player.Player, match.HAND, aquaHulcusUID)
 	require.NoError(t, err)
 	require.NoError(t, scn.ActionPlayCard(player, aquaHulcus.ID))
+	completionStart, err := scn.MessageCount(player)
+	require.NoError(t, err)
 	require.NoError(t, scn.SubmitAction(player))
+	require.NoError(t, scn.WaitForMessage(player, completionStart, "state_update"))
 
-	assert.Eventually(t, func() bool {
-		handAfter, err := player.Player.Container(match.HAND)
-		if err != nil {
-			return false
-		}
+	handAfter, err := player.Player.Container(match.HAND)
+	require.NoError(t, err)
+	deckAfter, err := player.Player.Container(match.DECK)
+	require.NoError(t, err)
+	_, err = scn.FindCard(player.Player, match.HAND, aquaHulcusDeckSeedUID)
+	require.NoError(t, err)
 
-		deckAfter, err := player.Player.Container(match.DECK)
-		if err != nil {
-			return false
-		}
-
-		if _, err := scn.FindCard(player.Player, match.HAND, aquaHulcusDeckSeedUID); err != nil {
-			return false
-		}
-
-		return len(handAfter) == len(handBefore) && len(deckAfter) == len(deckBefore)-1
-	}, time.Second, 10*time.Millisecond)
+	assert.Len(t, handAfter, len(handBefore))
+	assert.Len(t, deckAfter, len(deckBefore)-1)
 }

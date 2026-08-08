@@ -97,6 +97,21 @@ func AbductionCharger(c *match.Card) {
 
 }
 
+// BlizzardOfSpears ...
+func BlizzardOfSpears(c *match.Card) {
+
+	c.Name = "Blizzard of Spears"
+	c.Civ = civ.Fire
+	c.ManaCost = 6
+	c.ManaRequirement = []string{civ.Fire}
+
+	c.Use(
+		fx.Spell,
+		fx.When(fx.SpellCast, fx.DestroyAllCreaturesXPowerOrLess(4000, match.DestroyedBySpell)),
+	)
+
+}
+
 // GrinningHunger ...
 func GrinningHunger(c *match.Card) {
 

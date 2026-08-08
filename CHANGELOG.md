@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- New card "Blizzard of Spears" (thanks @dilawer007)
 - Brand new website
 - Added support for playing as a guest without registering an account
 - Added email verification for new users

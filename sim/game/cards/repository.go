@@ -664,6 +664,7 @@ var DM09 = map[string]match.CardConstructor{
 	"d2e9e450-11c3-430c-9e1a-364f3232110b": dm09.CosmicWing,
 	"70cac25c-bf54-4934-8180-cf18867e9d7d": dm09.NexusCharger,
 	"2afbe361-644f-4c89-a9af-f18dd2c10825": dm09.AbductionCharger,
+	"0219aa19-f201-4e11-92c5-59f4f5aaa697": dm09.BlizzardOfSpears,
 	"5a81f94e-aff8-4c15-a0bb-a787eb7362f4": dm09.GrinningHunger,
 	"10e8af32-72f0-486c-abdc-dd1088735cb7": dm09.SubmarineProject,
 	"7e9225cc-b7d8-4267-a8db-9ec0c7629216": dm09.SlashCharger,

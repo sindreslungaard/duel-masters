@@ -94,6 +94,37 @@ func DestroyOpCreatureXPowerOrLess(x int, destroyType match.CreatureDestroyedCon
 	}
 }
 
+// DestroyAllCreaturesXPowerOrLess destroys every creature whose effective
+// non-attacking power is at most x. The complete set is determined before any
+// creature is destroyed so power changes caused by those destructions do not
+// change which creatures the effect applies to.
+func DestroyAllCreaturesXPowerOrLess(x int, destroyType match.CreatureDestroyedContext) match.HandlerFunc {
+	return func(card *match.Card, ctx *match.Context) {
+		toDestroy := make([]*match.Card, 0)
+
+		players := []*match.Player{
+			card.Player,
+			ctx.Match.Opponent(card.Player),
+		}
+
+		for _, player := range players {
+			FindFilter(
+				player,
+				match.BATTLEZONE,
+				func(creature *match.Card) bool {
+					return ctx.Match.GetPower(creature, false) <= x
+				},
+			).Map(func(creature *match.Card) {
+				toDestroy = append(toDestroy, creature)
+			})
+		}
+
+		for _, creature := range toDestroy {
+			ctx.Match.Destroy(creature, card, destroyType)
+		}
+	}
+}
+
 // Destroy opponent creature by provided cancellable option and CreatureDestroyedContext
 func DestroyOpponentCreature(cancellable bool, destroyType match.CreatureDestroyedContext) match.HandlerFunc {
 

@@ -133,11 +133,17 @@ func (s *TestScenario) ActionPlayCard(player *match.PlayerReference, cardID stri
 		return err
 	}
 
+	completionStart := conn.JSONWriteCount()
 	if err := s.SubmitAction(player, selection...); err != nil {
 		return err
 	}
 
-	return s.waitFor(func() bool { return card.Zone != match.HAND })
+	// PlayCard broadcasts state after the complete event has resolved. A card
+	// may instead open its next prompt while PlayCard is still resolving; in
+	// that case the caller must be allowed to answer it. Both messages are
+	// synchronized completion signals, unlike polling card.Zone while effects
+	// are still moving cards.
+	return s.WaitForMessage(player, completionStart, "state_update", "action")
 }
 
 func (s *TestScenario) ActionEndTurn(player *match.PlayerReference) error {
@@ -146,7 +152,6 @@ func (s *TestScenario) ActionEndTurn(player *match.PlayerReference) error {
 		return err
 	}
 
-	turn := s.Match.Turn
 	messageCount := conn.JSONWriteCount()
 
 	if err := s.send(player, struct {
@@ -157,9 +162,10 @@ func (s *TestScenario) ActionEndTurn(player *match.PlayerReference) error {
 		return err
 	}
 
-	return s.waitFor(func() bool {
-		return s.Match.Turn != turn || conn.JSONWriteCount() > messageCount
-	})
+	// A successful turn transition broadcasts state; a prevented transition
+	// sends a warning. Use those synchronized completion signals instead of
+	// polling Match.Turn while the event-loop goroutine mutates it.
+	return s.WaitForMessage(player, messageCount, "state_update", "warn")
 }
 
 func (s *TestScenario) SubmitAction(player *match.PlayerReference, cardIDs ...string) error {
