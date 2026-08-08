@@ -42,6 +42,7 @@ const (
 	MachineEater    = "Machine Eater"
 	MechaDelSol     = "Mecha del Sol"
 	MechaThunder    = "Mecha Thunder"
+	MeltWarrior     = "Melt Warrior"
 	Merfolk         = "Merfolk"
 	MysteryTotem    = "Mystery Totem"
 	PandorasBox     = "Pandora's Box"
@@ -102,6 +103,7 @@ var Families = []string{
 	MachineEater,
 	MechaDelSol,
 	MechaThunder,
+	MeltWarrior,
 	Merfolk,
 	MysteryTotem,
 	PandorasBox,

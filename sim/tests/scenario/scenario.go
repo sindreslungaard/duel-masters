@@ -357,8 +357,9 @@ func (s *TestScenario) ActionAttackPlayer(player *match.PlayerReference, attacke
 
 // ResolveAttack answers the attacker's pending shield selection with the given
 // shields and waits until the attack has finished resolving. It returns early
-// when the attacker is put into a wait state because the defender was offered a
-// block; the caller then answers the defender's prompt.
+// when the attack opens another prompt for the attacker, or puts them into a
+// wait state because the defender was offered a block; the caller then answers
+// whichever prompt is outstanding.
 func (s *TestScenario) ResolveAttack(player *match.PlayerReference, shieldIDs ...string) error {
 	conn, err := s.connectionFor(player)
 	if err != nil {
@@ -382,7 +383,7 @@ func (s *TestScenario) ResolveAttack(player *match.PlayerReference, shieldIDs ..
 			}
 
 			switch header.Header {
-			case "wait":
+			case "action", "wait":
 				return true
 			case "state_update":
 				stateUpdates++
@@ -450,6 +451,30 @@ func (s *TestScenario) MessageHeaders(player *match.PlayerReference, since int) 
 		}
 	}
 	return headers, nil
+}
+
+// Warnings returns the text of every "warn" message sent to the player since
+// position since, so tests can assert how often an effect warned and why.
+func (s *TestScenario) Warnings(player *match.PlayerReference, since int) ([]string, error) {
+	conn, err := s.connectionFor(player)
+	if err != nil {
+		return nil, err
+	}
+
+	warnings := make([]string, 0)
+	for _, raw := range conn.JSONMessagesSince(since) {
+		var header server.Message
+		if err := json.Unmarshal([]byte(raw), &header); err != nil || header.Header != "warn" {
+			continue
+		}
+
+		message := &server.WarningMessage{}
+		if err := json.Unmarshal([]byte(raw), message); err == nil {
+			warnings = append(warnings, message.Message)
+		}
+	}
+
+	return warnings, nil
 }
 
 // MessageCount returns the number of JSON messages the server has sent to the player so far.

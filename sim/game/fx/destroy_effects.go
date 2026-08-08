@@ -81,12 +81,21 @@ func DestroyByMiscOpCreature2000OrLess(card *match.Card, ctx *match.Context) {
 }
 
 // Destroy creature less than equal to x
-func DestroyOpCreatureXPowerOrLess(x int, destroyType match.CreatureDestroyedContext) match.HandlerFunc {
+// DestroyOpCreatureXPowerOrLess destroys one of the opponent's creatures whose
+// effective non-attacking power is at most x. A cancellable selection models
+// the printed "you may" wording; the prompt is never opened when no opposing
+// creature is weak enough.
+func DestroyOpCreatureXPowerOrLess(x int, cancellable bool, destroyType match.CreatureDestroyedContext) match.HandlerFunc {
 	return func(card *match.Card, ctx *match.Context) {
+		text := fmt.Sprintf("%s: Select 1 of your opponent's creatures that will be destroyed", card.Name)
+		if cancellable {
+			text = fmt.Sprintf("%s: You may select 1 of your opponent's creatures with power %d or less to destroy", card.Name, x)
+		}
+
 		SelectFilter(
 			card.Player, ctx.Match, ctx.Match.Opponent(card.Player), match.BATTLEZONE,
-			fmt.Sprintf("%s: Select 1 of your opponent's creatures that will be destroyed", card.Name),
-			1, 1, false,
+			text,
+			1, 1, cancellable,
 			func(creature *match.Card) bool { return ctx.Match.GetPower(creature, false) <= x }, false,
 		).Map(func(x *match.Card) {
 			ctx.Match.Destroy(x, card, destroyType)

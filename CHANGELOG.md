@@ -15,6 +15,12 @@
 - New card "Hawkeye Lunatron"
 - New card "Hourglass Mutant"
 - New card "Terradragon Dakma Balgarow"
+- New card "Gabzagul, Warlord of Pain"
+- New card "Ice Vapor, Shadow of Anguish"
+- New card "Shock Trooper Mykee"
+- New card "Core-Crash Lizard"
+- New card "Elixia, Pureblade Elemental"
+- New card "Ultimate Dragon"
 - New card "Balza, Seeker of Hyperpearls" (thanks @DragosIonita23)
 - New card "Ryudmila, Channeler of Suns" (thanks @DragosIonita23)
 - New card "King Oquanos" (thanks @DragosIonita23)
