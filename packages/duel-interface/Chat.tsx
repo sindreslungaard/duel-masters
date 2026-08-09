@@ -3,6 +3,7 @@ import {
   startTransition,
   type ReactNode,
   useEffect,
+  useMemo,
   useRef,
   useState,
 } from "react";
@@ -22,9 +23,11 @@ interface ChatProps {
   onSendMessage: (message: string) => void;
   resolveUser?: DuelChatUserResolver;
   renderUserTrigger?: DuelChatUserTriggerRenderer;
+  blockedUsers?: readonly string[];
 }
 
 const MESSAGE_GROUP_WINDOW_MS = 5 * 60 * 1000;
+const EMPTY_BLOCKED_USERS: readonly string[] = [];
 
 function normalizeUsername(username: string): string {
   return username.trim().toLowerCase();
@@ -92,6 +95,7 @@ function ChatComponent({
   onSendMessage,
   resolveUser,
   renderUserTrigger,
+  blockedUsers = EMPTY_BLOCKED_USERS,
 }: ChatProps) {
   const [inputValue, setInputValue] = useState("");
   const [cachedUsers, setCachedUsers] = useState(
@@ -100,6 +104,17 @@ function ChatComponent({
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const mountedRef = useRef(false);
   const requestedUsernamesRef = useRef(new Set<string>());
+  const visibleMessages = useMemo(() => {
+    const blockedUsernames = new Set(blockedUsers.map(normalizeUsername));
+
+    return messages
+      .map((message, originalIndex) => ({ message, originalIndex }))
+      .filter(
+        ({ message }) =>
+          isFromServer(message) ||
+          !blockedUsernames.has(normalizeUsername(message.sender)),
+      );
+  }, [blockedUsers, messages]);
 
   useEffect(() => {
     mountedRef.current = true;
@@ -114,7 +129,7 @@ function ChatComponent({
 
     const latestSenderByUsername = new Map<string, string>();
 
-    messages.forEach((message) => {
+    visibleMessages.forEach(({ message }) => {
       if (isFromServer(message)) return;
 
       latestSenderByUsername.set(
@@ -160,7 +175,7 @@ function ChatComponent({
           );
         });
     }
-  }, [cachedUsers, messages, resolveUser]);
+  }, [cachedUsers, resolveUser, visibleMessages]);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -168,7 +183,7 @@ function ChatComponent({
 
   useEffect(() => {
     scrollToBottom();
-  }, [messages]);
+  }, [visibleMessages]);
 
   const handleSend = () => {
     if (inputValue.trim()) {
@@ -226,11 +241,12 @@ function ChatComponent({
     <div className="flex flex-col h-full">
       {/* Messages area */}
       <div className="flex-1 overflow-y-auto p-4 space-y-1 min-h-0 custom-scrollbar">
-        {messages.map((message, index) => {
+        {visibleMessages.map(({ message, originalIndex }, index) => {
           const fromServer = isFromServer(message);
 
           if (!fromServer) {
-            const previousMessage = index > 0 ? messages[index - 1] : null;
+            const previousMessage =
+              index > 0 ? visibleMessages[index - 1].message : null;
             const shouldGroup =
               previousMessage !== null &&
               !isFromServer(previousMessage) &&
@@ -243,7 +259,10 @@ function ChatComponent({
 
             if (shouldGroup) {
               return (
-                <div key={index} className="flex gap-3 -mx-2 px-2">
+                <div
+                  key={originalIndex}
+                  className="flex gap-3 -mx-2 px-2"
+                >
                   <div className="w-10 flex-shrink-0" />
                   <div className="flex-1 min-w-0">
                     <p className="text-sm break-words leading-relaxed">
@@ -256,7 +275,7 @@ function ChatComponent({
 
             return (
               <div
-                key={index}
+                key={originalIndex}
                 className="mt-4 flex items-start gap-3 -mx-2 px-2 first:mt-0"
               >
                 {renderTrigger(
@@ -268,7 +287,7 @@ function ChatComponent({
                   <div className="flex items-baseline gap-2">
                     {renderTrigger(
                       user,
-                      "text-sm font-semibold hover:underline",
+                      "text-sm font-semibold",
                       user.username,
                     )}
                     <span className="text-[10px] text-muted-foreground">
@@ -287,8 +306,16 @@ function ChatComponent({
 
           if (!style) return null;
 
+          const followsUserMessage =
+            index > 0 && !isFromServer(visibleMessages[index - 1].message);
+
           return (
-            <div key={index} className={style.container}>
+            <div
+              key={originalIndex}
+              className={`${style.container}${
+                followsUserMessage ? " pt-2" : ""
+              }`}
+            >
               <div className={style.bubble}>
                 <div className="text-sm">
                   <span className="text-white">{message.message}</span>

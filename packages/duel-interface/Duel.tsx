@@ -55,6 +55,11 @@ export interface DuelProps {
   playmat?: string;
   resolveChatUser?: DuelChatUserResolver;
   renderChatUserTrigger?: DuelChatUserTriggerRenderer;
+  /**
+   * Current usernames whose user-authored chat messages should be hidden.
+   * Existing history is retained and re-filtered when this list changes.
+   */
+  blockedChatUsers?: readonly string[];
   devTools?: {
     cards: { uid: string; name: string }[];
     activePlayer: "host" | "guest" | "spectator";
@@ -125,6 +130,7 @@ export function Duel({
   playmat,
   resolveChatUser,
   renderChatUserTrigger,
+  blockedChatUsers,
   devTools,
   onLeaveDuel,
   onDuelFinished,
@@ -612,6 +618,7 @@ export function Duel({
               onSendMessage={sendChat}
               resolveUser={resolveChatUser}
               renderUserTrigger={renderChatUserTrigger}
+              blockedUsers={blockedChatUsers}
             />
           </div>
 

@@ -133,6 +133,10 @@ function DevProfilePreviewTrigger({
     };
   }, [open]);
 
+  if (!profile || user.username.startsWith("Guest ")) {
+    return <span className={className}>{children}</span>;
+  }
+
   const togglePreview = () => {
     if (!open && triggerRef.current) {
       const rect = triggerRef.current.getBoundingClientRect();
