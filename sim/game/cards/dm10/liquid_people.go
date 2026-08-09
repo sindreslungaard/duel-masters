@@ -12,7 +12,7 @@ func AquaStrummer(c *match.Card) {
 
 	c.Name = "Aqua Strummer"
 	c.Power = 2000
-	c.Civ = civ.Water
+	c.Civs = []string{civ.Water}
 	c.Family = []string{family.LiquidPeople}
 	c.ManaCost = 3
 	c.ManaRequirement = []string{civ.Water}
@@ -26,11 +26,25 @@ func CrystalSpinslicer(c *match.Card) {
 
 	c.Name = "Crystal Spinslicer"
 	c.Power = 5000
-	c.Civ = civ.Water
+	c.Civs = []string{civ.Water}
 	c.Family = []string{family.LiquidPeople}
 	c.ManaCost = 2
 	c.ManaRequirement = []string{civ.Water}
 
 	c.Use(fx.Creature, fx.Evolution, fx.Blocker())
+
+}
+
+// MelniaTheAquaShadow ...
+func MelniaTheAquaShadow(c *match.Card) {
+
+	c.Name = "Melnia, the Aqua Shadow"
+	c.Power = 1000
+	c.Civs = []string{civ.Water, civ.Darkness}
+	c.Family = []string{family.LiquidPeople, family.Ghost}
+	c.ManaCost = 2
+	c.ManaRequirement = []string{civ.Water, civ.Darkness}
+
+	c.Use(fx.Creature, fx.CantBeBlocked, fx.Slayer)
 
 }

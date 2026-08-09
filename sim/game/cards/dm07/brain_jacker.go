@@ -12,7 +12,7 @@ func ScalpelSpider(c *match.Card) {
 
 	c.Name = "Scalpel Spider"
 	c.Power = 2000
-	c.Civ = civ.Darkness
+	c.Civs = []string{civ.Darkness}
 	c.Family = []string{family.BrainJacker}
 	c.ManaCost = 3
 	c.ManaRequirement = []string{civ.Darkness}

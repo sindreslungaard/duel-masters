@@ -13,7 +13,7 @@ func SimianWarriorGrash(c *match.Card) {
 
 	c.Name = "Simian Warrior Grash"
 	c.Power = 3000
-	c.Civ = civ.Fire
+	c.Civs = []string{civ.Fire}
 	c.Family = []string{family.Armorloid}
 	c.ManaCost = 4
 	c.ManaRequirement = []string{civ.Fire}
@@ -27,7 +27,7 @@ func SteamRumblerKain(c *match.Card) {
 
 	c.Name = "Steam Rumbler Kain"
 	c.Power = 5000
-	c.Civ = civ.Fire
+	c.Civs = []string{civ.Fire}
 	c.Family = []string{family.Armorloid}
 	c.ManaCost = 4
 	c.ManaRequirement = []string{civ.Fire}
@@ -58,7 +58,7 @@ func AerodactylKooza(c *match.Card) {
 
 	c.Name = "Aerodactyl Kooza"
 	c.Power = 1000
-	c.Civ = civ.Fire
+	c.Civs = []string{civ.Fire}
 	c.Family = []string{family.Armorloid}
 	c.ManaCost = 3
 	c.ManaRequirement = []string{civ.Fire}

@@ -12,7 +12,7 @@ func TangleFistTheWeaver(c *match.Card) {
 
 	c.Name = "Tangle Fist, the Weaver"
 	c.Power = 2000
-	c.Civ = civ.Nature
+	c.Civs = []string{civ.Nature}
 	c.Family = []string{family.BeastFolk}
 	c.ManaCost = 4
 	c.ManaRequirement = []string{civ.Nature}

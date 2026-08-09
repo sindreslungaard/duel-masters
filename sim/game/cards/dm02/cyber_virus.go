@@ -13,7 +13,7 @@ func StainedGlass(c *match.Card) {
 
 	c.Name = "Stained Glass"
 	c.Power = 1000
-	c.Civ = civ.Water
+	c.Civs = []string{civ.Water}
 	c.Family = []string{family.CyberVirus}
 	c.ManaCost = 3
 	c.ManaRequirement = []string{civ.Water}
@@ -29,7 +29,7 @@ func StainedGlass(c *match.Card) {
 			1,
 			1,
 			true,
-			func(x *match.Card) bool { return x.Civ == civ.Fire || x.Civ == civ.Nature },
+			func(x *match.Card) bool { return x.HasCiv(civ.Fire) || x.HasCiv(civ.Nature) },
 			false,
 		).Map(func(x *match.Card) {
 			x.Player.MoveCard(x.ID, match.BATTLEZONE, match.HAND, card.ID)

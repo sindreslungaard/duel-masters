@@ -13,7 +13,7 @@ func CrazeValkyrieTheDrastic(c *match.Card) {
 
 	c.Name = "Craze Valkyrie, the Drastic"
 	c.Power = 7500
-	c.Civ = civ.Light
+	c.Civs = []string{civ.Light}
 	c.Family = []string{family.Initiate}
 	c.ManaCost = 6
 	c.ManaRequirement = []string{civ.Light}
@@ -41,7 +41,7 @@ func BallasVizierOfElectrons(c *match.Card) {
 
 	c.Name = "Ballas, Vizier of Electrons"
 	c.Power = 2000
-	c.Civ = civ.Light
+	c.Civs = []string{civ.Light}
 	c.Family = []string{family.Initiate}
 	c.ManaCost = 2
 	c.ManaRequirement = []string{civ.Light}
@@ -53,7 +53,7 @@ func ChekiculVizierOfEndurance(c *match.Card) {
 
 	c.Name = "Chekicul, Vizier of Endurance"
 	c.Power = 1000
-	c.Civ = civ.Light
+	c.Civs = []string{civ.Light}
 	c.Family = []string{family.Initiate}
 	c.ManaCost = 5
 	c.ManaRequirement = []string{civ.Light}
@@ -78,7 +78,7 @@ func ChenTregVizierOfBlades(c *match.Card) {
 
 	c.Name = "Chen Treg, Vizier of Blades"
 	c.Power = 2000
-	c.Civ = civ.Light
+	c.Civs = []string{civ.Light}
 	c.Family = []string{family.Initiate}
 	c.ManaCost = 5
 	c.ManaRequirement = []string{civ.Light}

@@ -12,7 +12,7 @@ func SnaptongueLizard(c *match.Card) {
 
 	c.Name = "Snaptongue Lizard"
 	c.Power = 3000
-	c.Civ = civ.Fire
+	c.Civs = []string{civ.Fire}
 	c.Family = []string{family.DuneGecko}
 	c.ManaCost = 6
 	c.ManaRequirement = []string{civ.Fire}

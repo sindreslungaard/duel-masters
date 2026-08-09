@@ -12,7 +12,7 @@ func MikayRattlingDoll(c *match.Card) {
 
 	c.Name = "Mikay, Rattling Doll"
 	c.Power = 2000
-	c.Civ = civ.Darkness
+	c.Civs = []string{civ.Darkness}
 	c.Family = []string{family.DeathPuppet}
 	c.ManaCost = 2
 	c.ManaRequirement = []string{civ.Darkness}
@@ -26,7 +26,7 @@ func PierrPsychoDoll(c *match.Card) {
 
 	c.Name = "Pierr, Psycho Doll"
 	c.Power = 1000
-	c.Civ = civ.Darkness
+	c.Civs = []string{civ.Darkness}
 	c.Family = []string{family.DeathPuppet}
 	c.ManaCost = 2
 	c.ManaRequirement = []string{civ.Darkness}

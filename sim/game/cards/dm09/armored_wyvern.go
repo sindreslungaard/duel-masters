@@ -13,7 +13,7 @@ func BaleskBajTheTimeburner(c *match.Card) {
 
 	c.Name = "Balesk Baj, the Timeburner"
 	c.Power = 8000
-	c.Civ = civ.Fire
+	c.Civs = []string{civ.Fire}
 	c.Family = []string{family.ArmoredWyvern}
 	c.ManaCost = 9
 	c.ManaRequirement = []string{civ.Fire}

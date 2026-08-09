@@ -12,7 +12,7 @@ import (
 func FullDefensor(c *match.Card) {
 
 	c.Name = "Full Defensor"
-	c.Civ = civ.Light
+	c.Civs = []string{civ.Light}
 	c.ManaCost = 2
 	c.ManaRequirement = []string{civ.Light}
 
@@ -46,7 +46,7 @@ func FullDefensor(c *match.Card) {
 func CloneFactory(c *match.Card) {
 
 	c.Name = "Clone Factory"
-	c.Civ = civ.Water
+	c.Civs = []string{civ.Water}
 	c.ManaCost = 3
 	c.ManaRequirement = []string{civ.Water}
 
@@ -73,7 +73,7 @@ func CloneFactory(c *match.Card) {
 func MegaDetonator(c *match.Card) {
 
 	c.Name = "Mega Detonator"
-	c.Civ = civ.Fire
+	c.Civs = []string{civ.Fire}
 	c.ManaCost = 2
 	c.ManaRequirement = []string{civ.Fire}
 
@@ -128,7 +128,7 @@ func MegaDetonator(c *match.Card) {
 func SwordOfMalevolentDeath(c *match.Card) {
 
 	c.Name = "Sword of Malevolent Death"
-	c.Civ = civ.Fire
+	c.Civs = []string{civ.Fire}
 	c.ManaCost = 4
 	c.ManaRequirement = []string{civ.Fire}
 
@@ -137,7 +137,7 @@ func SwordOfMalevolentDeath(c *match.Card) {
 		nrDarkCards := len(fx.FindFilter(
 			card.Player,
 			match.MANAZONE,
-			func(x *match.Card) bool { return x.Civ == civ.Darkness },
+			func(x *match.Card) bool { return x.HasCiv(civ.Darkness) },
 		))
 
 		fx.Find(
@@ -154,7 +154,7 @@ func SwordOfMalevolentDeath(c *match.Card) {
 func HydroHurricane(c *match.Card) {
 
 	c.Name = "Hydro Hurricane"
-	c.Civ = civ.Water
+	c.Civs = []string{civ.Water}
 	c.ManaCost = 6
 	c.ManaRequirement = []string{civ.Water}
 
@@ -163,7 +163,7 @@ func HydroHurricane(c *match.Card) {
 		nrLight := len(fx.FindFilter(
 			card.Player,
 			match.BATTLEZONE,
-			func(x *match.Card) bool { return x.Civ == civ.Light },
+			func(x *match.Card) bool { return x.HasCiv(civ.Light) },
 		))
 
 		fx.Select(
@@ -183,7 +183,7 @@ func HydroHurricane(c *match.Card) {
 		nrDark := len(fx.FindFilter(
 			card.Player,
 			match.BATTLEZONE,
-			func(x *match.Card) bool { return x.Civ == civ.Darkness },
+			func(x *match.Card) bool { return x.HasCiv(civ.Darkness) },
 		))
 
 		fx.Select(
@@ -206,7 +206,7 @@ func HydroHurricane(c *match.Card) {
 func MysticInscription(c *match.Card) {
 
 	c.Name = "Mystic Inscription"
-	c.Civ = civ.Nature
+	c.Civs = []string{civ.Nature}
 	c.ManaCost = 6
 	c.ManaRequirement = []string{civ.Nature}
 
@@ -224,7 +224,7 @@ func MysticInscription(c *match.Card) {
 func SwordOfBenevolentLife(c *match.Card) {
 
 	c.Name = "Sword of Benevolent Life"
-	c.Civ = civ.Nature
+	c.Civs = []string{civ.Nature}
 	c.ManaCost = 2
 	c.ManaRequirement = []string{civ.Nature}
 
@@ -233,7 +233,7 @@ func SwordOfBenevolentLife(c *match.Card) {
 		nrLightCards := len(fx.FindFilter(
 			card.Player,
 			match.BATTLEZONE,
-			func(x *match.Card) bool { return x.Civ == civ.Light },
+			func(x *match.Card) bool { return x.HasCiv(civ.Light) },
 		))
 
 		fx.Find(
@@ -251,7 +251,7 @@ func SwordOfBenevolentLife(c *match.Card) {
 func ChainsOfSacrifice(c *match.Card) {
 
 	c.Name = "Chains of Sacrifice"
-	c.Civ = civ.Darkness
+	c.Civs = []string{civ.Darkness}
 	c.ManaCost = 8
 	c.ManaRequirement = []string{civ.Darkness}
 
@@ -289,7 +289,7 @@ func ChainsOfSacrifice(c *match.Card) {
 func Darkpact(c *match.Card) {
 
 	c.Name = "Darkpact"
-	c.Civ = civ.Darkness
+	c.Civs = []string{civ.Darkness}
 	c.ManaCost = 2
 	c.ManaRequirement = []string{civ.Darkness}
 
@@ -330,7 +330,7 @@ func Darkpact(c *match.Card) {
 func SoulGulp(c *match.Card) {
 
 	c.Name = "Soul Gulp"
-	c.Civ = civ.Darkness
+	c.Civs = []string{civ.Darkness}
 	c.ManaCost = 4
 	c.ManaRequirement = []string{civ.Darkness}
 
@@ -339,7 +339,7 @@ func SoulGulp(c *match.Card) {
 		nrLight := len(fx.FindFilter(
 			ctx.Match.Opponent(card.Player),
 			match.BATTLEZONE,
-			func(x *match.Card) bool { return x.Civ == civ.Light },
+			func(x *match.Card) bool { return x.HasCiv(civ.Light) },
 		))
 
 		ctx.Match.Wait(card.Player, "Waiting for your opponent to make an action")
@@ -373,7 +373,7 @@ func SoulGulp(c *match.Card) {
 func WhiskingWhirlwind(c *match.Card) {
 
 	c.Name = "Whisking Whirlwind"
-	c.Civ = civ.Light
+	c.Civs = []string{civ.Light}
 	c.ManaCost = 1
 	c.ManaRequirement = []string{civ.Light}
 
@@ -400,7 +400,7 @@ func WhiskingWhirlwind(c *match.Card) {
 func ScreamingSunburst(c *match.Card) {
 
 	c.Name = "Screaming Sunburst"
-	c.Civ = civ.Light
+	c.Civs = []string{civ.Light}
 	c.ManaCost = 3
 	c.ManaRequirement = []string{civ.Light}
 
@@ -417,7 +417,7 @@ func getNonLightCreatures(card *match.Card, ctx *match.Context) fx.CardCollectio
 	creatures := fx.FindFilter(
 		card.Player,
 		match.BATTLEZONE,
-		func(x *match.Card) bool { return x.Civ != civ.Light },
+		func(x *match.Card) bool { return !x.HasCiv(civ.Light) },
 	)
 
 	creatures = append(creatures,
@@ -425,7 +425,7 @@ func getNonLightCreatures(card *match.Card, ctx *match.Context) fx.CardCollectio
 		fx.FindFilter(
 			ctx.Match.Opponent(card.Player),
 			match.BATTLEZONE,
-			func(x *match.Card) bool { return x.Civ != civ.Light },
+			func(x *match.Card) bool { return !x.HasCiv(civ.Light) },
 		)...,
 	)
 

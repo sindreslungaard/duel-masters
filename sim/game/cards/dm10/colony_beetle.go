@@ -13,7 +13,7 @@ func LegacyShell(c *match.Card) {
 
 	c.Name = "Legacy Shell"
 	c.Power = 4000
-	c.Civ = civ.Nature
+	c.Civs = []string{civ.Nature}
 	c.Family = []string{family.ColonyBeetle}
 	c.ManaCost = 5
 	c.ManaRequirement = []string{civ.Nature}
@@ -25,7 +25,7 @@ func LegacyShell(c *match.Card) {
 					card.Player,
 					match.BATTLEZONE,
 					func(x *match.Card) bool {
-						return x.Civ == civ.Fire || x.Civ == civ.Light
+						return x.HasCiv(civ.Fire) || x.HasCiv(civ.Light)
 					},
 				).Map(func(x *match.Card) {
 					x.RemoveConditionBySource(card.ID)
@@ -39,7 +39,7 @@ func LegacyShell(c *match.Card) {
 				card.Player,
 				match.BATTLEZONE,
 				func(x *match.Card) bool {
-					return x.Civ == civ.Fire || x.Civ == civ.Light
+					return x.HasCiv(civ.Fire) || x.HasCiv(civ.Light)
 				},
 			).Map(func(x *match.Card) {
 				x.AddUniqueSourceCondition(cnd.PowerAttacker, 3000, card.ID)

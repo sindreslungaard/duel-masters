@@ -13,7 +13,7 @@ func ArmoredWarriorQuelos(c *match.Card) {
 
 	c.Name = "Armored Warrior Quelos"
 	c.Power = 2000
-	c.Civ = civ.Fire
+	c.Civs = []string{civ.Fire}
 	c.Family = []string{family.Armorloid}
 	c.ManaCost = 5
 	c.ManaRequirement = []string{civ.Fire}
@@ -29,7 +29,7 @@ func ArmoredWarriorQuelos(c *match.Card) {
 			1,
 			1,
 			false,
-			func(x *match.Card) bool { return x.Civ != civ.Fire },
+			func(x *match.Card) bool { return !x.HasCiv(civ.Fire) },
 			false,
 		)
 
@@ -50,7 +50,7 @@ func ArmoredWarriorQuelos(c *match.Card) {
 			1,
 			1,
 			false,
-			func(x *match.Card) bool { return x.Civ != civ.Fire },
+			func(x *match.Card) bool { return !x.HasCiv(civ.Fire) },
 			false,
 		)
 

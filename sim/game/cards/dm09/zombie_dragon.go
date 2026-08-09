@@ -13,7 +13,7 @@ func NecrodragonIzoristVhal(c *match.Card) {
 
 	c.Name = "Necrodragon Izorist Vhal"
 	c.Power = 0
-	c.Civ = civ.Darkness
+	c.Civs = []string{civ.Darkness}
 	c.Family = []string{family.ZombieDragon}
 	c.ManaCost = 6
 	c.ManaRequirement = []string{civ.Darkness}
@@ -34,7 +34,7 @@ func NecrodragonIzoristVhal(c *match.Card) {
 				card.Player,
 				match.GRAVEYARD,
 				func(x *match.Card) bool {
-					return x.HasCondition(cnd.Creature) && x.Civ == civ.Darkness
+					return x.HasCondition(cnd.Creature) && x.HasCiv(civ.Darkness)
 				})) * 2000
 
 			if addPower == 0 {

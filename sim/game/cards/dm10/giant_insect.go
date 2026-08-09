@@ -13,7 +13,7 @@ import (
 func BubbleScarab(c *match.Card) {
 
 	c.Name = "Bubble Scarab"
-	c.Civ = civ.Nature
+	c.Civs = []string{civ.Nature}
 	c.Power = 4000
 	c.Family = []string{family.GiantInsect}
 	c.ManaCost = 5
@@ -64,7 +64,7 @@ func SabermaskScarab(c *match.Card) {
 
 	c.Name = "Sabermask Scarab"
 	c.Power = 4000
-	c.Civ = civ.Nature
+	c.Civs = []string{civ.Nature}
 	c.Family = []string{family.GiantInsect}
 	c.ManaCost = 4
 	c.ManaRequirement = []string{civ.Nature}

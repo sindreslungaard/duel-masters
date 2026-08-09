@@ -11,7 +11,7 @@ func SiriGloryElemental(c *match.Card) {
 
 	c.Name = "Siri, Glory Elemental"
 	c.Power = 7000
-	c.Civ = civ.Light
+	c.Civs = []string{civ.Light}
 	c.Family = []string{family.AngelCommand}
 	c.ManaCost = 6
 	c.ManaRequirement = []string{civ.Light}

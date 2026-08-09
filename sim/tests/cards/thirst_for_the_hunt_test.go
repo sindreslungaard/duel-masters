@@ -26,7 +26,7 @@ func TestThirstForTheHunt(t *testing.T) {
 
 	assert.Equal(t, "Thirst for the Hunt", spell.Name)
 	assert.Equal(t, 1, spell.ManaCost)
-	assert.Equal(t, civ.Nature, spell.Civ)
+	assert.Equal(t, []string{civ.Nature}, spell.Civs)
 
 	require.NoError(t, scn.ActionPlayCard(player, spell.ID))
 

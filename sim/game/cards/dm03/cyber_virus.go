@@ -12,7 +12,7 @@ func StingerBall(c *match.Card) {
 
 	c.Name = "Stinger Ball"
 	c.Power = 1000
-	c.Civ = civ.Water
+	c.Civs = []string{civ.Water}
 	c.Family = []string{family.CyberVirus}
 	c.ManaCost = 3
 	c.ManaRequirement = []string{civ.Water}

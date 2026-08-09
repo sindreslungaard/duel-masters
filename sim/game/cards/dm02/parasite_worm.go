@@ -13,7 +13,7 @@ func ChaosWorm(c *match.Card) {
 
 	c.Name = "Chaos Worm"
 	c.Power = 5000
-	c.Civ = civ.Darkness
+	c.Civs = []string{civ.Darkness}
 	c.Family = []string{family.ParasiteWorm}
 	c.ManaCost = 5
 	c.ManaRequirement = []string{civ.Darkness}
@@ -40,7 +40,7 @@ func UltracideWorm(c *match.Card) {
 
 	c.Name = "Ultracide Worm"
 	c.Power = 11000
-	c.Civ = civ.Darkness
+	c.Civs = []string{civ.Darkness}
 	c.Family = []string{family.ParasiteWorm}
 	c.ManaCost = 6
 	c.ManaRequirement = []string{civ.Darkness}
@@ -54,7 +54,7 @@ func HorridWorm(c *match.Card) {
 
 	c.Name = "Horrid Worm"
 	c.Power = 2000
-	c.Civ = civ.Darkness
+	c.Civs = []string{civ.Darkness}
 	c.Family = []string{family.ParasiteWorm}
 	c.ManaCost = 3
 	c.ManaRequirement = []string{civ.Darkness}
@@ -68,7 +68,7 @@ func PoisonWorm(c *match.Card) {
 
 	c.Name = "Poison Worm"
 	c.Power = 4000
-	c.Civ = civ.Darkness
+	c.Civs = []string{civ.Darkness}
 	c.Family = []string{family.ParasiteWorm}
 	c.ManaCost = 4
 	c.ManaRequirement = []string{civ.Darkness}

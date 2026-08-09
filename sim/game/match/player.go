@@ -456,6 +456,13 @@ func (p *Player) GetCard(id string, container string) (*Card, error) {
 
 }
 
+// enteringManaZoneTapped returns the tap state a card takes on when it arrives
+// in a zone. A move always untaps a card, except that a multicolored card is
+// put into the mana zone tapped.
+func enteringManaZoneTapped(card *Card, to string) bool {
+	return to == MANAZONE && card.IsMulticolored()
+}
+
 // MoveCard tries to move a card from container a to container b
 func (p *Player) MoveCard(cardID string, from string, to string, source string) (*Card, error) {
 	c, err := p.GetCard(cardID, from)
@@ -513,7 +520,7 @@ func (p *Player) MoveCard(cardID string, from string, to string, source string) 
 	*cTo = temp2
 
 	ref.Zone = to
-	ref.Tapped = false
+	ref.Tapped = enteringManaZoneTapped(ref, to)
 
 	if to == SHIELDZONE {
 		p.ShieldCounter = p.ShieldCounter + 1
@@ -591,7 +598,7 @@ func (p *Player) MoveCardToFront(cardID string, from string, to string, source s
 	*cTo = temp2
 
 	ref.Zone = to
-	ref.Tapped = false
+	ref.Tapped = enteringManaZoneTapped(ref, to)
 
 	p.mutex.Unlock()
 
@@ -745,15 +752,26 @@ func (p *Player) CanPlayCard(card *Card, mana []*Card) bool {
 		return false
 	}
 
-	for _, manaCard := range untappedMana {
-		for _, civ := range card.ManaRequirement {
-			if manaCard.Civ == civ {
-				return true
+	// Every civilization the card requires must be present among the mana being
+	// paid, not just one of them: a multicolored card costs at least one card of
+	// each of its civilizations. A multicolored mana card is a card of all of its
+	// civilizations, so a single one can satisfy several requirements at once.
+	for _, required := range card.ManaRequirement {
+		paid := false
+
+		for _, manaCard := range untappedMana {
+			if manaCard.HasCiv(required) {
+				paid = true
+				break
 			}
+		}
+
+		if !paid {
+			return false
 		}
 	}
 
-	return false
+	return len(card.ManaRequirement) > 0
 
 }
 
@@ -803,11 +821,13 @@ func denormalizeCards(cards []*Card, partial bool) []server.CardState {
 			flags |= TapAbilityFlag
 		}
 
+		// The duel interface still takes a single civilization. Multicolored cards
+		// are reported as their first one until that component moves to a list.
 		cs := server.CardState{
 			CardID:  card.ID,
 			ImageID: card.ImageID,
 			Name:    card.Name,
-			Civ:     card.Civ,
+			Civ:     card.PrimaryCiv(),
 			Flags:   uint8(flags),
 		}
 

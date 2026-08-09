@@ -14,7 +14,7 @@ func CrystalLancer(c *match.Card) {
 
 	c.Name = "Crystal Lancer"
 	c.Power = 8000
-	c.Civ = civ.Water
+	c.Civs = []string{civ.Water}
 	c.Family = []string{family.LiquidPeople}
 	c.ManaCost = 6
 	c.ManaRequirement = []string{civ.Water}
@@ -28,7 +28,7 @@ func CrystalPaladin(c *match.Card) {
 
 	c.Name = "Crystal Paladin"
 	c.Power = 5000
-	c.Civ = civ.Water
+	c.Civs = []string{civ.Water}
 	c.Family = []string{family.LiquidPeople}
 	c.ManaCost = 4
 	c.ManaRequirement = []string{civ.Water}
@@ -62,7 +62,7 @@ func AquaBouncer(c *match.Card) {
 
 	c.Name = "Aqua Bouncer"
 	c.Power = 1000
-	c.Civ = civ.Water
+	c.Civs = []string{civ.Water}
 	c.Family = []string{family.LiquidPeople}
 	c.ManaCost = 6
 	c.ManaRequirement = []string{civ.Water}
@@ -76,7 +76,7 @@ func AquaShooter(c *match.Card) {
 
 	c.Name = "Aqua Shooter"
 	c.Power = 2000
-	c.Civ = civ.Water
+	c.Civs = []string{civ.Water}
 	c.Family = []string{family.LiquidPeople}
 	c.ManaCost = 4
 	c.ManaRequirement = []string{civ.Water}

@@ -12,7 +12,7 @@ func AcidRefluxTheFleshboiler(c *match.Card) {
 
 	c.Name = "Acid Reflux, the Fleshboiler"
 	c.Power = 3000
-	c.Civ = civ.Darkness
+	c.Civs = []string{civ.Darkness}
 	c.Family = []string{family.DevilMask}
 	c.ManaCost = 5
 	c.ManaRequirement = []string{civ.Darkness}

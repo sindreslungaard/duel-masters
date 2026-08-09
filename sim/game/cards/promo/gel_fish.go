@@ -12,7 +12,7 @@ func TwisterFish(c *match.Card) {
 
 	c.Name = "Twister Fish"
 	c.Power = 3000
-	c.Civ = civ.Water
+	c.Civs = []string{civ.Water}
 	c.Family = []string{family.GelFish}
 	c.ManaCost = 5
 	c.ManaRequirement = []string{civ.Water}

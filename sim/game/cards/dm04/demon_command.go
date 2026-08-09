@@ -12,7 +12,7 @@ func BallomMasterOfDeath(c *match.Card) {
 
 	c.Name = "Ballom, Master of Death"
 	c.Power = 12000
-	c.Civ = civ.Darkness
+	c.Civs = []string{civ.Darkness}
 	c.Family = []string{family.DemonCommand}
 	c.ManaCost = 8
 	c.ManaRequirement = []string{civ.Darkness}
@@ -22,7 +22,7 @@ func BallomMasterOfDeath(c *match.Card) {
 		fx.FindFilter(
 			card.Player,
 			match.BATTLEZONE,
-			func(x *match.Card) bool { return x.Civ != civ.Darkness },
+			func(x *match.Card) bool { return !x.HasCiv(civ.Darkness) },
 		).Map(func(x *match.Card) {
 			ctx.Match.Destroy(x, card, match.DestroyedByMiscAbility)
 		})
@@ -30,7 +30,7 @@ func BallomMasterOfDeath(c *match.Card) {
 		fx.FindFilter(
 			ctx.Match.Opponent(card.Player),
 			match.BATTLEZONE,
-			func(x *match.Card) bool { return x.Civ != civ.Darkness },
+			func(x *match.Card) bool { return !x.HasCiv(civ.Darkness) },
 		).Map(func(x *match.Card) {
 			ctx.Match.Destroy(x, card, match.DestroyedByMiscAbility)
 		})
@@ -43,7 +43,7 @@ func TroxGeneralOfDestruction(c *match.Card) {
 
 	c.Name = "Trox, General of Destruction"
 	c.Power = 6000
-	c.Civ = civ.Darkness
+	c.Civs = []string{civ.Darkness}
 	c.Family = []string{family.DemonCommand}
 	c.ManaCost = 7
 	c.ManaRequirement = []string{civ.Darkness}
@@ -53,7 +53,7 @@ func TroxGeneralOfDestruction(c *match.Card) {
 		fx.FindFilter(
 			card.Player,
 			match.BATTLEZONE,
-			func(x *match.Card) bool { return x.Civ == civ.Darkness && x.ID != card.ID },
+			func(x *match.Card) bool { return x.HasCiv(civ.Darkness) && x.ID != card.ID },
 		).Map(func(x *match.Card) { fx.OpponentDiscardsRandomCard(card, ctx) })
 
 	}))
@@ -64,7 +64,7 @@ func PhotocideLordOfTheWastes(c *match.Card) {
 
 	c.Name = "Photocide, Lord of the Wastes"
 	c.Power = 9000
-	c.Civ = civ.Darkness
+	c.Civs = []string{civ.Darkness}
 	c.Family = []string{family.DemonCommand}
 	c.ManaCost = 5
 	c.ManaRequirement = []string{civ.Darkness}
@@ -81,7 +81,7 @@ func PhotocideLordOfTheWastes(c *match.Card) {
 			ctx.Match.Opponent(card.Player),
 			match.BATTLEZONE,
 			func(x *match.Card) bool {
-				return x.Civ == civ.Light && !x.Tapped
+				return x.HasCiv(civ.Light) && !x.Tapped
 			},
 		).Map(func(x *match.Card) {
 			// don't add if already in the list of attackable creatures

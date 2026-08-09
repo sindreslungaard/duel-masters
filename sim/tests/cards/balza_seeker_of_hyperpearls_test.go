@@ -25,7 +25,7 @@ func TestBalzaSeekerOfHyperpearls(t *testing.T) {
 	assert.Equal(t, "Balza, Seeker of Hyperpearls", balza.Name)
 	assert.Equal(t, 4000, balza.Power)
 	assert.Equal(t, 8, balza.ManaCost)
-	assert.Equal(t, civ.Light, balza.Civ)
+	assert.Equal(t, []string{civ.Light}, balza.Civs)
 	assert.True(t, balza.HasFamily(family.MechaThunder))
 
 	moved, err := player.Player.MoveCard(balza.ID, match.HAND, match.BATTLEZONE, "balza_test_setup")

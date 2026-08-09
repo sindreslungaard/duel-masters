@@ -12,7 +12,7 @@ import (
 func BurstShot(c *match.Card) {
 
 	c.Name = "Burst Shot"
-	c.Civ = civ.Fire
+	c.Civs = []string{civ.Fire}
 	c.ManaCost = 6
 	c.ManaRequirement = []string{civ.Fire}
 
@@ -28,7 +28,7 @@ func BurstShot(c *match.Card) {
 func LogicCube(c *match.Card) {
 
 	c.Name = "Logic Cube"
-	c.Civ = civ.Light
+	c.Civs = []string{civ.Light}
 	c.ManaCost = 3
 	c.ManaRequirement = []string{civ.Light}
 
@@ -40,7 +40,7 @@ func LogicCube(c *match.Card) {
 func ThoughtProbe(c *match.Card) {
 
 	c.Name = "Thought Probe"
-	c.Civ = civ.Water
+	c.Civs = []string{civ.Water}
 	c.ManaCost = 4
 	c.ManaRequirement = []string{civ.Water}
 
@@ -63,7 +63,7 @@ func ThoughtProbe(c *match.Card) {
 func CriticalBlade(c *match.Card) {
 
 	c.Name = "Critical Blade"
-	c.Civ = civ.Darkness
+	c.Civs = []string{civ.Darkness}
 	c.ManaCost = 2
 	c.ManaRequirement = []string{civ.Darkness}
 
@@ -92,7 +92,7 @@ func CriticalBlade(c *match.Card) {
 func ReconOperation(c *match.Card) {
 
 	c.Name = "Recon Operation"
-	c.Civ = civ.Water
+	c.Civs = []string{civ.Water}
 	c.ManaCost = 2
 	c.ManaRequirement = []string{civ.Water}
 
@@ -129,7 +129,7 @@ func ReconOperation(c *match.Card) {
 func ManaCrisis(c *match.Card) {
 
 	c.Name = "Mana Crisis"
-	c.Civ = civ.Nature
+	c.Civs = []string{civ.Nature}
 	c.ManaCost = 4
 	c.ManaRequirement = []string{civ.Nature}
 
@@ -157,7 +157,7 @@ func ManaCrisis(c *match.Card) {
 func RumbleGate(c *match.Card) {
 
 	c.Name = "Rumble Gate"
-	c.Civ = civ.Fire
+	c.Civs = []string{civ.Fire}
 	c.ManaCost = 4
 	c.ManaRequirement = []string{civ.Fire}
 
@@ -180,7 +180,7 @@ func RumbleGate(c *match.Card) {
 func LostSoul(c *match.Card) {
 
 	c.Name = "Lost Soul"
-	c.Civ = civ.Darkness
+	c.Civs = []string{civ.Darkness}
 	c.ManaCost = 7
 	c.ManaRequirement = []string{civ.Darkness}
 
@@ -203,7 +203,7 @@ func LostSoul(c *match.Card) {
 func RainbowStone(c *match.Card) {
 
 	c.Name = "Rainbow Stone"
-	c.Civ = civ.Nature
+	c.Civs = []string{civ.Nature}
 	c.ManaCost = 4
 	c.ManaRequirement = []string{civ.Nature}
 
@@ -225,7 +225,7 @@ func RainbowStone(c *match.Card) {
 func DiamondCutter(c *match.Card) {
 
 	c.Name = "Diamond Cutter"
-	c.Civ = civ.Light
+	c.Civs = []string{civ.Light}
 	c.ManaCost = 5
 	c.ManaRequirement = []string{civ.Light}
 

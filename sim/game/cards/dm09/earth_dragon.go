@@ -13,7 +13,7 @@ func TerradragonAnristVhal(c *match.Card) {
 
 	c.Name = "Terradragon Anrist Vhal"
 	c.Power = 0
-	c.Civ = civ.Nature
+	c.Civs = []string{civ.Nature}
 	c.Family = []string{family.EarthDragon}
 	c.ManaCost = 6
 	c.ManaRequirement = []string{civ.Nature}
@@ -34,7 +34,7 @@ func TerradragonAnristVhal(c *match.Card) {
 				card.Player,
 				match.BATTLEZONE,
 				func(x *match.Card) bool {
-					return x.ID != card.ID && x.Civ == civ.Nature
+					return x.ID != card.ID && x.HasCiv(civ.Nature)
 				})) * 2000
 
 			if addPower == 0 {

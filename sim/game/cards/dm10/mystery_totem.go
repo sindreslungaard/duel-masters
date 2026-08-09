@@ -12,7 +12,7 @@ import (
 func CarnivalTotem(c *match.Card) {
 	c.Name = "Carnival Totem"
 	c.Power = 7000
-	c.Civ = civ.Nature
+	c.Civs = []string{civ.Nature}
 	c.Family = []string{family.MysteryTotem}
 	c.ManaCost = 6
 	c.ManaRequirement = []string{civ.Nature}
@@ -28,7 +28,7 @@ func JigglyTotem(c *match.Card) {
 
 	c.Name = "Jiggly Totem"
 	c.Power = 1000
-	c.Civ = civ.Nature
+	c.Civs = []string{civ.Nature}
 	c.Family = []string{family.MysteryTotem}
 	c.ManaCost = 4
 	c.ManaRequirement = []string{civ.Nature}

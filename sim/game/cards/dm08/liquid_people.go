@@ -12,7 +12,7 @@ func AquaRanger(c *match.Card) {
 
 	c.Name = "Aqua Ranger"
 	c.Power = 3000
-	c.Civ = civ.Water
+	c.Civs = []string{civ.Water}
 	c.Family = []string{family.LiquidPeople}
 	c.ManaCost = 6
 	c.ManaRequirement = []string{civ.Water}
@@ -26,7 +26,7 @@ func AquaGrappler(c *match.Card) {
 
 	c.Name = "Aqua Grappler"
 	c.Power = 3000
-	c.Civ = civ.Water
+	c.Civs = []string{civ.Water}
 	c.Family = []string{family.LiquidPeople}
 	c.ManaCost = 5
 	c.ManaRequirement = []string{civ.Water}

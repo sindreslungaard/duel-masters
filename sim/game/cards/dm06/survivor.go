@@ -12,7 +12,7 @@ func QTronicHypermind(c *match.Card) {
 
 	c.Name = "Q-tronic Hypermind"
 	c.Power = 8000
-	c.Civ = civ.Water
+	c.Civs = []string{civ.Water}
 	c.Family = []string{family.Survivor}
 	c.ManaCost = 8
 	c.ManaRequirement = []string{civ.Water}
@@ -36,7 +36,7 @@ func QTronicGargantua(c *match.Card) {
 
 	c.Name = "Q-tronic Gargantua"
 	c.Power = 9000
-	c.Civ = civ.Fire
+	c.Civs = []string{civ.Fire}
 	c.Family = []string{family.Survivor}
 	c.ManaCost = 6
 	c.ManaRequirement = []string{civ.Fire}

@@ -12,7 +12,7 @@ func Gigazoul(c *match.Card) {
 
 	c.Name = "Gigazoul"
 	c.Power = 3000
-	c.Civ = civ.Darkness
+	c.Civs = []string{civ.Darkness}
 	c.Family = []string{family.Chimera}
 	c.ManaCost = 3
 	c.ManaRequirement = []string{civ.Darkness}
@@ -24,13 +24,13 @@ func Gigazoul(c *match.Card) {
 func Gigakail(c *match.Card) {
 	c.Name = "Gigakail"
 	c.Power = 4000
-	c.Civ = civ.Darkness
+	c.Civs = []string{civ.Darkness}
 	c.Family = []string{family.Chimera}
 	c.ManaCost = 5
 	c.ManaRequirement = []string{civ.Darkness}
 
 	c.Use(fx.Creature, fx.ConditionalSlayer(func(target *match.Card) bool {
-		return target.Civ == civ.Nature || target.Civ == civ.Light
+		return target.HasCiv(civ.Nature) || target.HasCiv(civ.Light)
 	}))
 }
 
@@ -38,7 +38,7 @@ func GigalingQ(c *match.Card) {
 
 	c.Name = "Gigaling Q"
 	c.Power = 2000
-	c.Civ = civ.Darkness
+	c.Civs = []string{civ.Darkness}
 	c.Family = []string{family.Chimera, family.Survivor}
 	c.ManaCost = 5
 	c.ManaRequirement = []string{civ.Darkness}

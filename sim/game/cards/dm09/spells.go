@@ -12,7 +12,7 @@ import (
 func CosmicWing(c *match.Card) {
 
 	c.Name = "Cosmic Wing"
-	c.Civ = civ.Light
+	c.Civs = []string{civ.Light}
 	c.ManaCost = 3
 	c.ManaRequirement = []string{civ.Light}
 
@@ -50,7 +50,7 @@ func CosmicWing(c *match.Card) {
 func NexusCharger(c *match.Card) {
 
 	c.Name = "Nexus Charger"
-	c.Civ = civ.Light
+	c.Civs = []string{civ.Light}
 	c.ManaCost = 6
 	c.ManaRequirement = []string{civ.Light}
 
@@ -62,7 +62,7 @@ func NexusCharger(c *match.Card) {
 func AbductionCharger(c *match.Card) {
 
 	c.Name = "Abduction Charger"
-	c.Civ = civ.Water
+	c.Civs = []string{civ.Water}
 	c.ManaCost = 7
 	c.ManaRequirement = []string{civ.Water}
 
@@ -101,7 +101,7 @@ func AbductionCharger(c *match.Card) {
 func BlizzardOfSpears(c *match.Card) {
 
 	c.Name = "Blizzard of Spears"
-	c.Civ = civ.Fire
+	c.Civs = []string{civ.Fire}
 	c.ManaCost = 6
 	c.ManaRequirement = []string{civ.Fire}
 
@@ -116,7 +116,7 @@ func BlizzardOfSpears(c *match.Card) {
 func GrinningHunger(c *match.Card) {
 
 	c.Name = "Grinning Hunger"
-	c.Civ = civ.Darkness
+	c.Civs = []string{civ.Darkness}
 	c.ManaCost = 4
 	c.ManaRequirement = []string{civ.Darkness}
 
@@ -192,7 +192,7 @@ func GrinningHunger(c *match.Card) {
 func UnifiedResistance(c *match.Card) {
 
 	c.Name = "Unified Resistance"
-	c.Civ = civ.Light
+	c.Civs = []string{civ.Light}
 	c.ManaCost = 2
 	c.ManaRequirement = []string{civ.Light}
 
@@ -234,7 +234,7 @@ func UnifiedResistance(c *match.Card) {
 func ImpossibleTunnel(c *match.Card) {
 
 	c.Name = "Impossible Tunnel"
-	c.Civ = civ.Water
+	c.Civs = []string{civ.Water}
 	c.ManaCost = 5
 	c.ManaRequirement = []string{civ.Water}
 
@@ -275,7 +275,7 @@ func ImpossibleTunnel(c *match.Card) {
 func ZombieCarnival(c *match.Card) {
 
 	c.Name = "Zombie Carnival"
-	c.Civ = civ.Darkness
+	c.Civs = []string{civ.Darkness}
 	c.ManaCost = 5
 	c.ManaRequirement = []string{civ.Darkness}
 
@@ -307,7 +307,7 @@ func ZombieCarnival(c *match.Card) {
 func DanceOfTheSproutlings(c *match.Card) {
 
 	c.Name = "Dance of the Sproutlings"
-	c.Civ = civ.Nature
+	c.Civs = []string{civ.Nature}
 	c.ManaCost = 3
 	c.ManaRequirement = []string{civ.Nature}
 
@@ -347,7 +347,7 @@ func DanceOfTheSproutlings(c *match.Card) {
 func SubmarineProject(c *match.Card) {
 
 	c.Name = "Submarine Project"
-	c.Civ = civ.Water
+	c.Civs = []string{civ.Water}
 	c.ManaCost = 3
 	c.ManaRequirement = []string{civ.Water}
 
@@ -359,7 +359,7 @@ func SubmarineProject(c *match.Card) {
 func SlashCharger(c *match.Card) {
 
 	c.Name = "Slash Charger"
-	c.Civ = civ.Darkness
+	c.Civs = []string{civ.Darkness}
 	c.ManaCost = 3
 	c.ManaRequirement = []string{civ.Darkness}
 
@@ -417,7 +417,7 @@ func SlashCharger(c *match.Card) {
 func FistsOfForever(c *match.Card) {
 
 	c.Name = "Fists of Forever"
-	c.Civ = civ.Fire
+	c.Civs = []string{civ.Fire}
 	c.ManaCost = 1
 	c.ManaRequirement = []string{civ.Fire}
 
@@ -462,7 +462,7 @@ func FistsOfForever(c *match.Card) {
 func ManaBonanza(c *match.Card) {
 
 	c.Name = "Mana Bonanza"
-	c.Civ = civ.Nature
+	c.Civs = []string{civ.Nature}
 	c.ManaCost = 8
 	c.ManaRequirement = []string{civ.Nature}
 
@@ -497,7 +497,7 @@ func ManaBonanza(c *match.Card) {
 func VineCharger(c *match.Card) {
 
 	c.Name = "Vine Charger"
-	c.Civ = civ.Nature
+	c.Civs = []string{civ.Nature}
 	c.ManaCost = 4
 	c.ManaRequirement = []string{civ.Nature}
 
@@ -523,7 +523,7 @@ func VineCharger(c *match.Card) {
 func RelentlessBlitz(c *match.Card) {
 
 	c.Name = "Relentless Blitz"
-	c.Civ = civ.Fire
+	c.Civs = []string{civ.Fire}
 	c.ManaCost = 3
 	c.ManaRequirement = []string{civ.Fire}
 

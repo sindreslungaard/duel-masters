@@ -14,7 +14,7 @@ func MetalwingSkyterror(c *match.Card) {
 
 	c.Name = "Metalwing Skyterror"
 	c.Power = 6000
-	c.Civ = civ.Fire
+	c.Civs = []string{civ.Fire}
 	c.Family = []string{family.ArmoredWyvern}
 	c.ManaCost = 7
 	c.ManaRequirement = []string{civ.Fire}

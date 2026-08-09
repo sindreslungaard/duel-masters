@@ -12,7 +12,7 @@ func Torcon(c *match.Card) {
 
 	c.Name = "Torcon"
 	c.Power = 1000
-	c.Civ = civ.Nature
+	c.Civs = []string{civ.Nature}
 	c.Family = []string{family.BeastFolk}
 	c.ManaCost = 2
 	c.ManaRequirement = []string{civ.Nature}

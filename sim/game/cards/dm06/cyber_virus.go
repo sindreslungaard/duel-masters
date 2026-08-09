@@ -11,7 +11,7 @@ func SteamStar(c *match.Card) {
 
 	c.Name = "Steam Star"
 	c.Power = 1000
-	c.Civ = civ.Water
+	c.Civs = []string{civ.Water}
 	c.Family = []string{family.CyberVirus}
 	c.ManaCost = 2
 	c.ManaRequirement = []string{civ.Water}
@@ -23,7 +23,7 @@ func RippleLotusQ(c *match.Card) {
 
 	c.Name = "Ripple Lotus Q"
 	c.Power = 2000
-	c.Civ = civ.Water
+	c.Civs = []string{civ.Water}
 	c.Family = []string{family.CyberVirus, family.Survivor}
 	c.ManaCost = 6
 	c.ManaRequirement = []string{civ.Water}

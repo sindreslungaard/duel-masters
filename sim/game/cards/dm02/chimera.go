@@ -12,7 +12,7 @@ func Gigastand(c *match.Card) {
 
 	c.Name = "Gigastand"
 	c.Power = 3000
-	c.Civ = civ.Darkness
+	c.Civs = []string{civ.Darkness}
 	c.Family = []string{family.Chimera}
 	c.ManaCost = 4
 	c.ManaRequirement = []string{civ.Darkness}

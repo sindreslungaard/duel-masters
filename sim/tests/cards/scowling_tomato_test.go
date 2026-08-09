@@ -25,7 +25,7 @@ func TestScowlingTomato(t *testing.T) {
 	assert.Equal(t, "Scowling Tomato", tomato.Name)
 	assert.Equal(t, 2000, tomato.Power)
 	assert.Equal(t, 2, tomato.ManaCost)
-	assert.Equal(t, civ.Nature, tomato.Civ)
+	assert.Equal(t, []string{civ.Nature}, tomato.Civs)
 	assert.True(t, tomato.HasFamily(family.WildVeggies))
 
 	require.NoError(t, scn.ActionEndTurn(player))

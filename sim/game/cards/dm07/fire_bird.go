@@ -11,7 +11,7 @@ func KoocPollon(c *match.Card) {
 
 	c.Name = "Kooc Pollon"
 	c.Power = 1000
-	c.Civ = civ.Fire
+	c.Civs = []string{civ.Fire}
 	c.Family = []string{family.FireBird}
 	c.ManaCost = 2
 	c.ManaRequirement = []string{civ.Fire}

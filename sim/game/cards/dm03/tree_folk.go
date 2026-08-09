@@ -12,7 +12,7 @@ func MaskedPomegranate(c *match.Card) {
 
 	c.Name = "Masked Pomegranate"
 	c.Power = 1000
-	c.Civ = civ.Nature
+	c.Civs = []string{civ.Nature}
 	c.Family = []string{family.TreeFolk}
 	c.ManaCost = 5
 	c.ManaRequirement = []string{civ.Nature}
@@ -38,7 +38,7 @@ func getNatureCardsInYourBattleZone(card *match.Card) int {
 	count := 0
 
 	for _, battleZoneCard := range battleZone {
-		if battleZoneCard.Civ == civ.Nature {
+		if battleZoneCard.HasCiv(civ.Nature) {
 			count++
 		}
 	}

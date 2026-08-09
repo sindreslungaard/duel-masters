@@ -12,7 +12,7 @@ func BakkraHornTheSilent(c *match.Card) {
 
 	c.Name = "Bakkra Horn, the Silent"
 	c.Power = 2000
-	c.Civ = civ.Nature
+	c.Civs = []string{civ.Nature}
 	c.Family = []string{family.HornedBeast}
 	c.ManaCost = 4
 	c.ManaRequirement = []string{civ.Nature}

@@ -12,7 +12,7 @@ func GrapeGlobbo(c *match.Card) {
 
 	c.Name = "Grape Globbo"
 	c.Power = 1000
-	c.Civ = civ.Water
+	c.Civs = []string{civ.Water}
 	c.Family = []string{family.CyberVirus}
 	c.ManaCost = 2
 	c.ManaRequirement = []string{civ.Water}

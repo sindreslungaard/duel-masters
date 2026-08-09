@@ -13,7 +13,7 @@ func Zaltan(c *match.Card) {
 
 	c.Name = "Zaltan"
 	c.Power = 3000
-	c.Civ = civ.Water
+	c.Civs = []string{civ.Water}
 	c.Family = []string{family.CyberLord}
 	c.ManaCost = 3
 	c.ManaRequirement = []string{civ.Water}

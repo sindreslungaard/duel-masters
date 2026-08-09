@@ -12,7 +12,7 @@ func ZorvazTheBonecrusher(c *match.Card) {
 
 	c.Name = "Zorvaz, the Bonecrusher"
 	c.Power = 8000
-	c.Civ = civ.Darkness
+	c.Civs = []string{civ.Darkness}
 	c.Family = []string{family.DemonCommand}
 	c.ManaCost = 5
 	c.ManaRequirement = []string{civ.Darkness}
@@ -24,7 +24,7 @@ func VileMulderWingOfTheVoid(c *match.Card) {
 
 	c.Name = "Vile Mulder, Wing of the Void"
 	c.Power = 7000
-	c.Civ = civ.Darkness
+	c.Civs = []string{civ.Darkness}
 	c.Family = []string{family.DemonCommand}
 	c.ManaCost = 4
 	c.ManaRequirement = []string{civ.Darkness}
@@ -36,7 +36,7 @@ func DaidalosGeneralOfFury(c *match.Card) {
 
 	c.Name = "Daidalos, General of Fury"
 	c.Power = 11000
-	c.Civ = civ.Darkness
+	c.Civs = []string{civ.Darkness}
 	c.Family = []string{family.DemonCommand}
 	c.ManaCost = 4
 	c.ManaRequirement = []string{civ.Darkness}
@@ -65,7 +65,7 @@ func GnarvashMerchantOfBlood(c *match.Card) {
 
 	c.Name = "Gnarvash, Merchant of Blood"
 	c.Power = 8000
-	c.Civ = civ.Darkness
+	c.Civs = []string{civ.Darkness}
 	c.Family = []string{family.DemonCommand}
 	c.ManaCost = 6
 	c.ManaRequirement = []string{civ.Darkness}

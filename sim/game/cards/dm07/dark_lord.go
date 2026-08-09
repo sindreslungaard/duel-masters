@@ -11,7 +11,7 @@ func CrathLadeMercilessKing(c *match.Card) {
 
 	c.Name = "Crath Lade, Merciless King"
 	c.Power = 4000
-	c.Civ = civ.Darkness
+	c.Civs = []string{civ.Darkness}
 	c.Family = []string{family.DarkLord}
 	c.ManaCost = 8
 	c.ManaRequirement = []string{civ.Darkness}

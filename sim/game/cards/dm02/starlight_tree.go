@@ -12,7 +12,7 @@ func SpiralGrass(c *match.Card) {
 
 	c.Name = "Spiral Grass"
 	c.Power = 2500
-	c.Civ = civ.Light
+	c.Civs = []string{civ.Light}
 	c.Family = []string{family.StarlightTree}
 	c.ManaCost = 4
 	c.ManaRequirement = []string{civ.Light}

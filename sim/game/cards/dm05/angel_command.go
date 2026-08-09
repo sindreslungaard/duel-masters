@@ -14,7 +14,7 @@ func SyriusFirmamentElemental(c *match.Card) {
 
 	c.Name = "Syrius, Firmament Elemental"
 	c.Power = 12000
-	c.Civ = civ.Light
+	c.Civs = []string{civ.Light}
 	c.Family = []string{family.AngelCommand}
 	c.ManaCost = 11
 	c.ManaRequirement = []string{civ.Light}
@@ -28,7 +28,7 @@ func SyforceAuroraElemental(c *match.Card) {
 
 	c.Name = "Syforce, Aurora Elemental"
 	c.Power = 7000
-	c.Civ = civ.Light
+	c.Civs = []string{civ.Light}
 	c.Family = []string{family.AngelCommand}
 	c.ManaCost = 7
 	c.ManaRequirement = []string{civ.Light}

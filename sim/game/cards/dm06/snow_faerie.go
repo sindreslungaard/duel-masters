@@ -11,7 +11,7 @@ func CharmiliaTheEnticer(c *match.Card) {
 
 	c.Name = "Charmilia, the Enticer"
 	c.Power = 3000
-	c.Civ = civ.Nature
+	c.Civs = []string{civ.Nature}
 	c.Family = []string{family.SnowFaerie}
 	c.ManaCost = 4
 	c.ManaRequirement = []string{civ.Nature}
@@ -24,7 +24,7 @@ func GarabonTheGlider(c *match.Card) {
 
 	c.Name = "Garabon, the Glider"
 	c.Power = 1000
-	c.Civ = civ.Nature
+	c.Civs = []string{civ.Nature}
 	c.Family = []string{family.SnowFaerie}
 	c.ManaCost = 2
 	c.ManaRequirement = []string{civ.Nature}

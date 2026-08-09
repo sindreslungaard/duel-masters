@@ -13,7 +13,7 @@ func MagmadragonOgristVhal(c *match.Card) {
 
 	c.Name = "Magmadragon Ogrist Vhal"
 	c.Power = 0
-	c.Civ = civ.Fire
+	c.Civs = []string{civ.Fire}
 	c.Family = []string{family.VolcanoDragon}
 	c.ManaCost = 7
 	c.ManaRequirement = []string{civ.Fire}

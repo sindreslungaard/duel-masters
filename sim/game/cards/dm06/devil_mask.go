@@ -11,7 +11,7 @@ func GrinningAxeTheMonstrosity(c *match.Card) {
 
 	c.Name = "Grinning Axe, the Monstrosity"
 	c.Power = 1000
-	c.Civ = civ.Darkness
+	c.Civs = []string{civ.Darkness}
 	c.Family = []string{family.DevilMask}
 	c.ManaCost = 3
 	c.ManaRequirement = []string{civ.Darkness}
@@ -23,7 +23,7 @@ func SkullcutterSwarmLeader(c *match.Card) {
 
 	c.Name = "Skullcutter, Swarm Leader"
 	c.Power = 4000
-	c.Civ = civ.Darkness
+	c.Civs = []string{civ.Darkness}
 	c.Family = []string{family.DevilMask}
 	c.ManaCost = 4
 	c.ManaRequirement = []string{civ.Darkness}

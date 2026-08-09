@@ -25,7 +25,7 @@ func TestGaulezalDragon(t *testing.T) {
 	assert.Equal(t, "Gaulezal Dragon", dragon.Name)
 	assert.Equal(t, 11000, dragon.Power)
 	assert.Equal(t, 9, dragon.ManaCost)
-	assert.Equal(t, civ.Fire, dragon.Civ)
+	assert.Equal(t, []string{civ.Fire}, dragon.Civs)
 	assert.True(t, dragon.HasFamily(family.ArmoredDragon))
 
 	moved, err := player.Player.MoveCard(dragon.ID, match.HAND, match.BATTLEZONE, "gaulezal_dragon_test_setup")

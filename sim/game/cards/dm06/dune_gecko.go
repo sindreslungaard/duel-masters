@@ -13,7 +13,7 @@ func LegionnaireLizard(c *match.Card) {
 
 	c.Name = "Legionnaire Lizard"
 	c.Power = 4000
-	c.Civ = civ.Fire
+	c.Civs = []string{civ.Fire}
 	c.Family = []string{family.DuneGecko}
 	c.ManaCost = 6
 	c.ManaRequirement = []string{civ.Fire}
@@ -36,7 +36,7 @@ func BadlandsLizard(c *match.Card) {
 
 	c.Name = "Badlands Lizard"
 	c.Power = 3000
-	c.Civ = civ.Fire
+	c.Civs = []string{civ.Fire}
 	c.Family = []string{family.DuneGecko}
 	c.ManaCost = 5
 	c.ManaRequirement = []string{civ.Fire}

@@ -14,7 +14,7 @@ func RimuelCloudbreakElemental(c *match.Card) {
 
 	c.Name = "Rimuel, Cloudbreak Elemental"
 	c.Power = 6000
-	c.Civ = civ.Light
+	c.Civs = []string{civ.Light}
 	c.Family = []string{family.AngelCommand}
 	c.ManaCost = 8
 	c.ManaRequirement = []string{civ.Light}
@@ -24,7 +24,7 @@ func RimuelCloudbreakElemental(c *match.Card) {
 		lightMana := len(fx.FindFilter(
 			card.Player,
 			match.MANAZONE,
-			func(x *match.Card) bool { return x.Civ == civ.Light && !x.Tapped },
+			func(x *match.Card) bool { return x.HasCiv(civ.Light) && !x.Tapped },
 		))
 
 		nrCreaturesOpp := len(fx.FindFilter(
@@ -60,7 +60,7 @@ func AlcadeiasLordOfSpirits(c *match.Card) {
 
 	c.Name = "Alcadeias, Lord of Spirits"
 	c.Power = 12500
-	c.Civ = civ.Light
+	c.Civs = []string{civ.Light}
 	c.Family = []string{family.AngelCommand}
 	c.ManaCost = 6
 	c.ManaRequirement = []string{civ.Light}
@@ -71,7 +71,7 @@ func AlcadeiasLordOfSpirits(c *match.Card) {
 			return
 		}
 
-		fx.FilterShieldTriggers(ctx, func(x *match.Card) bool { return x.Civ == civ.Light || !x.HasCondition(cnd.Spell) })
+		fx.FilterShieldTriggers(ctx, func(x *match.Card) bool { return x.HasCiv(civ.Light) || !x.HasCondition(cnd.Spell) })
 
 		if event, ok := ctx.Event.(*match.PlayCardEvent); ok {
 
@@ -82,7 +82,7 @@ func AlcadeiasLordOfSpirits(c *match.Card) {
 			if err != nil || !playedCard.HasCondition(cnd.Spell) {
 				return
 			}
-			if playedCard.Civ != civ.Light {
+			if !playedCard.HasCiv(civ.Light) {
 				ctx.Match.WarnPlayer(ctx.Match.Opponent(card.Player), "Only light spells may be cast while Alcadeias, Lord of Spirits is in the battle zone")
 				ctx.InterruptFlow()
 			}
@@ -96,7 +96,7 @@ func AerisFlightElemental(c *match.Card) {
 
 	c.Name = "Aeris, Flight Elemental"
 	c.Power = 9000
-	c.Civ = civ.Light
+	c.Civs = []string{civ.Light}
 	c.Family = []string{family.AngelCommand}
 	c.ManaCost = 5
 	c.ManaRequirement = []string{civ.Light}
@@ -113,7 +113,7 @@ func AerisFlightElemental(c *match.Card) {
 			ctx.Match.Opponent(card.Player),
 			match.BATTLEZONE,
 			func(x *match.Card) bool {
-				return x.Civ == civ.Darkness && !x.Tapped
+				return x.HasCiv(civ.Darkness) && !x.Tapped
 			},
 		).Map(func(x *match.Card) {
 			// don't add if already in the list of attackable creatures

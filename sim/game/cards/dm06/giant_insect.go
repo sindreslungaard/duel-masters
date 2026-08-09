@@ -11,7 +11,7 @@ func UltraMantisScourgeOfFate(c *match.Card) {
 
 	c.Name = "Ultra Mantis, Scourge of Fate"
 	c.Power = 9000
-	c.Civ = civ.Nature
+	c.Civs = []string{civ.Nature}
 	c.Family = []string{family.GiantInsect}
 	c.ManaCost = 6
 	c.ManaRequirement = []string{civ.Nature}
@@ -23,7 +23,7 @@ func SplinterclawWasp(c *match.Card) {
 
 	c.Name = "Splinterclaw Wasp"
 	c.Power = 4000
-	c.Civ = civ.Nature
+	c.Civs = []string{civ.Nature}
 	c.Family = []string{family.GiantInsect}
 	c.ManaCost = 7
 	c.ManaRequirement = []string{civ.Nature}
@@ -35,7 +35,7 @@ func TrenchScarab(c *match.Card) {
 
 	c.Name = "Trench Scarab"
 	c.Power = 4000
-	c.Civ = civ.Nature
+	c.Civs = []string{civ.Nature}
 	c.Family = []string{family.GiantInsect}
 	c.ManaCost = 3
 	c.ManaRequirement = []string{civ.Nature}

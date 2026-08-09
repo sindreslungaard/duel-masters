@@ -11,7 +11,7 @@ func SkyCrushertheAgitator(c *match.Card) {
 
 	c.Name = "Sky Crusher, the Agitator"
 	c.Power = 4000
-	c.Civ = civ.Fire
+	c.Civs = []string{civ.Fire}
 	c.Family = []string{family.Dragonoid}
 	c.ManaCost = 7
 	c.ManaRequirement = []string{civ.Fire}

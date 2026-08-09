@@ -12,7 +12,7 @@ func MigaloVizierOfSpycraft(c *match.Card) {
 
 	c.Name = "Migalo, Vizier of Spycraft"
 	c.Power = 1500
-	c.Civ = civ.Light
+	c.Civs = []string{civ.Light}
 	c.Family = []string{family.Initiate}
 	c.ManaCost = 2
 	c.ManaRequirement = []string{civ.Light}

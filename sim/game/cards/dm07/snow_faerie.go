@@ -11,7 +11,7 @@ func PoppleFlowerpetalDancer(c *match.Card) {
 
 	c.Name = "Popple, Flowerpetal Dancer"
 	c.Power = 2000
-	c.Civ = civ.Nature
+	c.Civs = []string{civ.Nature}
 	c.Family = []string{family.SnowFaerie}
 	c.ManaCost = 4
 	c.ManaRequirement = []string{civ.Nature}

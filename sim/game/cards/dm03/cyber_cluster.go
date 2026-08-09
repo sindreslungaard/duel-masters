@@ -12,14 +12,14 @@ func AnglerCluster(c *match.Card) {
 
 	c.Name = "Angler Cluster"
 	c.Power = 3000
-	c.Civ = civ.Water
+	c.Civs = []string{civ.Water}
 	c.Family = []string{family.CyberCluster}
 	c.ManaCost = 3
 	c.ManaRequirement = []string{civ.Water}
 
 	c.PowerModifier = func(m *match.Match, attacking bool) int {
 
-		if match.ContainerHas(c.Player, match.MANAZONE, func(x *match.Card) bool { return x.Civ != civ.Water }) {
+		if match.ContainerHas(c.Player, match.MANAZONE, func(x *match.Card) bool { return !x.HasCiv(civ.Water) }) {
 			return 0
 		}
 

@@ -11,7 +11,7 @@ func KiposContraption(c *match.Card) {
 
 	c.Name = "Kipo's Contraption"
 	c.Power = 3000
-	c.Civ = civ.Fire
+	c.Civs = []string{civ.Fire}
 	c.Family = []string{family.Xenoparts}
 	c.ManaCost = 6
 	c.ManaRequirement = []string{civ.Fire}

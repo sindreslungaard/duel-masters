@@ -85,7 +85,7 @@ func Creature(card *match.Card, ctx *match.Context) {
 				untappedMana,
 				manaCost,
 				manaCost,
-				fmt.Sprintf("Select %v cards from your manazone to play %v. You must select at least 1 %v, civilization card.", manaCost, card.Name, card.Civ),
+				fmt.Sprintf("Select %v cards from your manazone to play %v. You must select at least %v civilization card(s).", manaCost, card.Name, ManaRequirementText(card)),
 				true,
 			)
 

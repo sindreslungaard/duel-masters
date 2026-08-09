@@ -39,7 +39,7 @@ func TestKingOquanos(t *testing.T) {
 	assert.Equal(t, "King Oquanos", king.Name)
 	assert.Equal(t, 2000, king.Power)
 	assert.Equal(t, 8, king.ManaCost)
-	assert.Equal(t, civ.Water, king.Civ)
+	assert.Equal(t, []string{civ.Water}, king.Civs)
 	assert.True(t, king.HasFamily(family.Leviathan))
 	assert.Equal(t, 2000, scn.Match.GetPower(king, false))
 	assert.False(t, king.HasCondition(cnd.DoubleBreaker))

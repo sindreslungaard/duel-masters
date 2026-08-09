@@ -12,7 +12,7 @@ func ArmoredGroblav(c *match.Card) {
 
 	c.Name = "Armored Groblav"
 	c.Power = 6000
-	c.Civ = civ.Fire
+	c.Civs = []string{civ.Fire}
 	c.Family = []string{family.Human}
 	c.ManaCost = 5
 	c.ManaRequirement = []string{civ.Fire}
@@ -26,7 +26,7 @@ func ArmoredGroblav(c *match.Card) {
 			fx.FindFilter(
 				c.Player,
 				match.BATTLEZONE,
-				func(x *match.Card) bool { return x.Civ == civ.Fire && x != c },
+				func(x *match.Card) bool { return x.HasCiv(civ.Fire) && x != c },
 			).Map(func(x *match.Card) {
 				power += 1000
 			})

@@ -38,7 +38,7 @@ func TestTerradragonCusdalf(t *testing.T) {
 		assert.Equal(t, "Terradragon Cusdalf", cusdalf.Name)
 		assert.Equal(t, 7000, cusdalf.Power)
 		assert.Equal(t, 5, cusdalf.ManaCost)
-		assert.Equal(t, civ.Nature, cusdalf.Civ)
+		assert.Equal(t, []string{civ.Nature}, cusdalf.Civs)
 		assert.True(t, cusdalf.HasFamily(family.EarthDragon))
 
 		require.NoError(t, scn.ActionEndTurn(owner))

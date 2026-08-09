@@ -13,7 +13,7 @@ func MihailCelestialElemental(c *match.Card) {
 
 	c.Name = "Mihail, Celestial Elemental"
 	c.Power = 4000
-	c.Civ = civ.Light
+	c.Civs = []string{civ.Light}
 	c.Family = []string{family.AngelCommand}
 	c.ManaCost = 8
 	c.ManaRequirement = []string{civ.Light}

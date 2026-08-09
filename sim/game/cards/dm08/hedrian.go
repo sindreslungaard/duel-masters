@@ -12,7 +12,7 @@ func MotorcycleMutant(c *match.Card) {
 
 	c.Name = "Motorcycle Mutant"
 	c.Power = 6000
-	c.Civ = civ.Darkness
+	c.Civs = []string{civ.Darkness}
 	c.Family = []string{family.Hedrian}
 	c.ManaCost = 4
 	c.ManaRequirement = []string{civ.Darkness}

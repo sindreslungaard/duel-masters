@@ -12,7 +12,7 @@ func ShockTrooperMykee(c *match.Card) {
 
 	c.Name = "Shock Trooper Mykee"
 	c.Power = 1000
-	c.Civ = civ.Fire
+	c.Civs = []string{civ.Fire}
 	c.Family = []string{family.Human}
 	c.ManaCost = 6
 	c.ManaRequirement = []string{civ.Fire}

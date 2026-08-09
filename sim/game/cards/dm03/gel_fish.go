@@ -12,7 +12,7 @@ func ChaosFish(c *match.Card) {
 
 	c.Name = "Chaos Fish"
 	c.Power = 1000
-	c.Civ = civ.Water
+	c.Civs = []string{civ.Water}
 	c.Family = []string{family.GelFish}
 	c.ManaCost = 7
 	c.ManaRequirement = []string{civ.Water}
@@ -45,7 +45,7 @@ func getWaterCardsInYourBattleZone(card *match.Card) int {
 	count := 0
 
 	for _, battleZoneCard := range battleZone {
-		if battleZoneCard.Civ == civ.Water {
+		if battleZoneCard.HasCiv(civ.Water) {
 			count++
 		}
 	}

@@ -14,7 +14,7 @@ func VreemahFreakyMojoTotem(c *match.Card) {
 
 	c.Name = "Vreemah, Freaky Mojo Totem"
 	c.Power = 4000
-	c.Civ = civ.Nature
+	c.Civs = []string{civ.Nature}
 	c.Family = []string{family.MysteryTotem}
 	c.ManaCost = 5
 	c.ManaRequirement = []string{civ.Nature}
@@ -65,7 +65,7 @@ func WhisperingTotem(c *match.Card) {
 
 	c.Name = "Whispering Totem"
 	c.Power = 2000
-	c.Civ = civ.Nature
+	c.Civs = []string{civ.Nature}
 	c.Family = []string{family.MysteryTotem}
 	c.ManaCost = 4
 	c.ManaRequirement = []string{civ.Nature}

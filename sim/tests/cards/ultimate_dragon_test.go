@@ -28,7 +28,7 @@ func TestUltimateDragon(t *testing.T) {
 		assert.Equal(t, "Ultimate Dragon", ultimate.Name)
 		assert.Equal(t, 5000, ultimate.Power)
 		assert.Equal(t, 6, ultimate.ManaCost)
-		assert.Equal(t, civ.Fire, ultimate.Civ)
+		assert.Equal(t, []string{civ.Fire}, ultimate.Civs)
 		assert.True(t, ultimate.HasFamily(family.ArmoredDragon))
 
 		assert.Equal(t, 5000, scn.Match.GetPower(ultimate, false))

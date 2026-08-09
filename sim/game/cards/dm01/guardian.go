@@ -12,7 +12,7 @@ func DiaNorkMoonlightGuardian(c *match.Card) {
 
 	c.Name = "Dia Nork, Moonlight Guardian"
 	c.Power = 5000
-	c.Civ = civ.Light
+	c.Civs = []string{civ.Light}
 	c.Family = []string{family.Guardian}
 	c.ManaCost = 4
 	c.ManaRequirement = []string{civ.Light}
@@ -26,7 +26,7 @@ func GranGureSpaceGuardian(c *match.Card) {
 
 	c.Name = "Gran Gure, Space Guardian"
 	c.Power = 9000
-	c.Civ = civ.Light
+	c.Civs = []string{civ.Light}
 	c.Family = []string{family.Guardian}
 	c.ManaCost = 6
 	c.ManaRequirement = []string{civ.Light}
@@ -40,7 +40,7 @@ func LaUraGigaSkyGuardian(c *match.Card) {
 
 	c.Name = "La Ura Giga, Sky Guardian"
 	c.Power = 2000
-	c.Civ = civ.Light
+	c.Civs = []string{civ.Light}
 	c.Family = []string{family.Guardian}
 	c.ManaCost = 1
 	c.ManaRequirement = []string{civ.Light}
@@ -54,7 +54,7 @@ func SzubsKinTwilightGuardian(c *match.Card) {
 
 	c.Name = "Szubs Kin, Twilight Guardian"
 	c.Power = 6000
-	c.Civ = civ.Light
+	c.Civs = []string{civ.Light}
 	c.Family = []string{family.Guardian}
 	c.ManaCost = 5
 	c.ManaRequirement = []string{civ.Light}

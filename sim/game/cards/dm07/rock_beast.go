@@ -13,7 +13,7 @@ func ValkrowzerUltraRockBeast(c *match.Card) {
 
 	c.Name = "Valkrowzer, Ultra Rock Beast"
 	c.Power = 9000
-	c.Civ = civ.Fire
+	c.Civs = []string{civ.Fire}
 	c.Family = []string{family.RockBeast}
 	c.ManaCost = 6
 	c.ManaRequirement = []string{civ.Fire}
@@ -24,7 +24,7 @@ func ValkrowzerUltraRockBeast(c *match.Card) {
 func Cratersaur(c *match.Card) {
 	c.Name = "Cratersaur"
 	c.Power = 2000
-	c.Civ = civ.Fire
+	c.Civs = []string{civ.Fire}
 	c.Family = []string{family.RockBeast}
 	c.ManaCost = 3
 	c.ManaRequirement = []string{civ.Fire}

@@ -14,7 +14,7 @@ func KingNeptas(c *match.Card) {
 
 	c.Name = "King Neptas"
 	c.Power = 5000
-	c.Civ = civ.Water
+	c.Civs = []string{civ.Water}
 	c.Family = []string{family.Leviathan}
 	c.ManaCost = 6
 	c.ManaRequirement = []string{civ.Water}
@@ -67,7 +67,7 @@ func KingPonitas(c *match.Card) {
 
 	c.Name = "King Ponitas"
 	c.Power = 4000
-	c.Civ = civ.Water
+	c.Civs = []string{civ.Water}
 	c.Family = []string{family.Leviathan}
 	c.ManaCost = 8
 	c.ManaRequirement = []string{civ.Water}
@@ -78,7 +78,7 @@ func KingPonitas(c *match.Card) {
 			card,
 			ctx,
 			1,
-			func(x *match.Card) bool { return x.Civ == civ.Water },
+			func(x *match.Card) bool { return x.HasCiv(civ.Water) },
 			"water card",
 		)
 	}))
@@ -89,7 +89,7 @@ func LegendaryBynor(c *match.Card) {
 
 	c.Name = "Legendary Bynor"
 	c.Power = 8000
-	c.Civ = civ.Water
+	c.Civs = []string{civ.Water}
 	c.Family = []string{family.Leviathan}
 	c.ManaCost = 6
 	c.ManaRequirement = []string{civ.Water}
@@ -118,7 +118,7 @@ func legendaryBynorSpecial(card *match.Card, ctx *match.Context) {
 			return
 		}
 
-		if creature.Civ != civ.Water || creature.ID == card.ID {
+		if !creature.HasCiv(civ.Water) || creature.ID == card.ID {
 			return
 		}
 

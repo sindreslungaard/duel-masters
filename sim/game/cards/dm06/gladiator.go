@@ -12,7 +12,7 @@ func KanesillTheExplorer(c *match.Card) {
 
 	c.Name = "Kanesill, the Explorer"
 	c.Power = 4000
-	c.Civ = civ.Light
+	c.Civs = []string{civ.Light}
 	c.Family = []string{family.Gladiator}
 	c.ManaCost = 3
 	c.ManaRequirement = []string{civ.Light}
@@ -24,7 +24,7 @@ func TelitolTheExplorer(c *match.Card) {
 
 	c.Name = "Telitol, the Explorer"
 	c.Power = 3000
-	c.Civ = civ.Light
+	c.Civs = []string{civ.Light}
 	c.Family = []string{family.Gladiator}
 	c.ManaCost = 4
 	c.ManaRequirement = []string{civ.Light}

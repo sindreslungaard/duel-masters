@@ -12,7 +12,7 @@ func VampireSilphy(c *match.Card) {
 
 	c.Name = "Vampire Silphy"
 	c.Power = 4000
-	c.Civ = civ.Darkness
+	c.Civs = []string{civ.Darkness}
 	c.Family = []string{family.DarkLord}
 	c.ManaCost = 8
 	c.ManaRequirement = []string{civ.Darkness}

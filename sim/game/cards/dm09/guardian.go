@@ -13,7 +13,7 @@ func GlenaVueleTheHypnotic(c *match.Card) {
 
 	c.Name = "Glena Vuele, the Hypnotic"
 	c.Power = 8500
-	c.Civ = civ.Light
+	c.Civs = []string{civ.Light}
 	c.Family = []string{family.Guardian}
 	c.ManaCost = 5
 	c.ManaRequirement = []string{civ.Light}
@@ -50,7 +50,7 @@ func JilWarkaTimeGuardian(c *match.Card) {
 
 	c.Name = "Jil Warka, Time Guardian"
 	c.Power = 2000
-	c.Civ = civ.Light
+	c.Civs = []string{civ.Light}
 	c.Family = []string{family.Guardian}
 	c.ManaCost = 3
 	c.ManaRequirement = []string{civ.Light}
@@ -80,7 +80,7 @@ func TraRionPenumbraGuardian(c *match.Card) {
 
 	c.Name = "Tra Rion, Penumbra Guardian"
 	c.Power = 5500
-	c.Civ = civ.Light
+	c.Civs = []string{civ.Light}
 	c.Family = []string{family.Guardian}
 	c.ManaCost = 6
 	c.ManaRequirement = []string{civ.Light}

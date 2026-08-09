@@ -13,7 +13,7 @@ func FuReilSeekerOfStorms(c *match.Card) {
 
 	c.Name = "Fu Reil, Seeker of Storms"
 	c.Power = 5000
-	c.Civ = civ.Light
+	c.Civs = []string{civ.Light}
 	c.Family = []string{family.MechaThunder}
 	c.ManaCost = 6
 	c.ManaRequirement = []string{civ.Light}
@@ -24,7 +24,7 @@ func FuReilSeekerOfStorms(c *match.Card) {
 			return
 		}
 
-		fx.FilterShieldTriggers(ctx, func(x *match.Card) bool { return x.Civ != civ.Darkness })
+		fx.FilterShieldTriggers(ctx, func(x *match.Card) bool { return !x.HasCiv(civ.Darkness) })
 	})
 
 }
@@ -34,7 +34,7 @@ func ReBilSeekerOfArchery(c *match.Card) {
 
 	c.Name = "Re Bil, Seeker of Archery"
 	c.Power = 6000
-	c.Civ = civ.Light
+	c.Civs = []string{civ.Light}
 	c.Family = []string{family.MechaThunder}
 	c.ManaCost = 7
 	c.ManaRequirement = []string{civ.Light}
@@ -60,7 +60,7 @@ func getLightCreatures(card *match.Card, ctx *match.Context) fx.CardCollection {
 	lightCreatures := fx.FindFilter(
 		card.Player,
 		match.BATTLEZONE,
-		func(x *match.Card) bool { return x.Civ == civ.Light && x.ID != card.ID },
+		func(x *match.Card) bool { return x.HasCiv(civ.Light) && x.ID != card.ID },
 	)
 
 	lightCreatures = append(lightCreatures,
@@ -68,7 +68,7 @@ func getLightCreatures(card *match.Card, ctx *match.Context) fx.CardCollection {
 		fx.FindFilter(
 			ctx.Match.Opponent(card.Player),
 			match.BATTLEZONE,
-			func(x *match.Card) bool { return x.Civ == civ.Light && x.ID != card.ID },
+			func(x *match.Card) bool { return x.HasCiv(civ.Light) && x.ID != card.ID },
 		)...,
 	)
 

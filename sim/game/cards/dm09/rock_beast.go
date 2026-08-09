@@ -12,7 +12,7 @@ func Quakesaur(c *match.Card) {
 
 	c.Name = "Quakesaur"
 	c.Power = 3000
-	c.Civ = civ.Fire
+	c.Civs = []string{civ.Fire}
 	c.Family = []string{family.RockBeast}
 	c.ManaCost = 5
 	c.ManaRequirement = []string{civ.Fire}

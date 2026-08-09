@@ -30,7 +30,7 @@ func TestHawkeyeLunatron(t *testing.T) {
 		assert.Equal(t, "Hawkeye Lunatron", hawkeye.Name)
 		assert.Equal(t, 6000, hawkeye.Power)
 		assert.Equal(t, 8, hawkeye.ManaCost)
-		assert.Equal(t, civ.Water, hawkeye.Civ)
+		assert.Equal(t, []string{civ.Water}, hawkeye.Civs)
 		assert.True(t, hawkeye.HasFamily(family.CyberMoon))
 
 		promptStart, err := scn.MessageCount(player)

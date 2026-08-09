@@ -27,7 +27,7 @@ func TestGabzagulWarlordOfPain(t *testing.T) {
 		assert.Equal(t, "Gabzagul, Warlord of Pain", gabzagul.Name)
 		assert.Equal(t, 5000, gabzagul.Power)
 		assert.Equal(t, 6, gabzagul.ManaCost)
-		assert.Equal(t, civ.Darkness, gabzagul.Civ)
+		assert.Equal(t, []string{civ.Darkness}, gabzagul.Civs)
 		assert.True(t, gabzagul.HasFamily(family.DarkLord))
 
 		require.NoError(t, scn.ActionEndTurn(owner))

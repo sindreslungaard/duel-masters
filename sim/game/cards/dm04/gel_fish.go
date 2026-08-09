@@ -13,7 +13,7 @@ func SmileAngler(c *match.Card) {
 
 	c.Name = "Smile Angler"
 	c.Power = 3000
-	c.Civ = civ.Water
+	c.Civs = []string{civ.Water}
 	c.Family = []string{family.GelFish}
 	c.ManaCost = 6
 	c.ManaRequirement = []string{civ.Water}

@@ -12,7 +12,7 @@ func CutthroatSkyterror(c *match.Card) {
 
 	c.Name = "Cutthroat Skyterror"
 	c.Power = 5000
-	c.Civ = civ.Fire
+	c.Civs = []string{civ.Fire}
 	c.Family = []string{family.ArmoredWyvern}
 	c.ManaCost = 3
 	c.ManaRequirement = []string{civ.Fire}

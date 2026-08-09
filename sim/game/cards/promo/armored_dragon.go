@@ -12,7 +12,7 @@ func StarCryDragon(c *match.Card) {
 
 	c.Name = "Star-Cry Dragon"
 	c.Power = 8000
-	c.Civ = civ.Fire
+	c.Civs = []string{civ.Fire}
 	c.Family = []string{family.ArmoredDragon}
 	c.ManaCost = 7
 	c.ManaRequirement = []string{civ.Fire}

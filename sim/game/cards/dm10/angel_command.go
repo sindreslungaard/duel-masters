@@ -11,7 +11,7 @@ import (
 func ElixiaPurebladeElemental(c *match.Card) {
 	c.Name = "Elixia, Pureblade Elemental"
 	c.Power = 1000
-	c.Civ = civ.Light
+	c.Civs = []string{civ.Light}
 	c.Family = []string{family.AngelCommand}
 	c.ManaCost = 6
 	c.ManaRequirement = []string{civ.Light}
@@ -22,10 +22,12 @@ func ElixiaPurebladeElemental(c *match.Card) {
 		}
 
 		// Each civilization counts once no matter how many cards of it are in
-		// the mana zone.
+		// the mana zone. A multicolored card contributes every civilization on it.
 		civilizations := make(map[string]struct{})
 		for _, manaCard := range fx.Find(c.Player, match.MANAZONE) {
-			civilizations[manaCard.Civ] = struct{}{}
+			for _, civilization := range manaCard.Civs {
+				civilizations[civilization] = struct{}{}
+			}
 		}
 
 		return len(civilizations) * 3000

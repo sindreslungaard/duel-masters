@@ -11,7 +11,7 @@ func SinisterGeneralDamudo(c *match.Card) {
 
 	c.Name = "Sinister General Damudo"
 	c.Power = 5000
-	c.Civ = civ.Darkness
+	c.Civs = []string{civ.Darkness}
 	c.Family = []string{family.DarkLord}
 	c.ManaCost = 6
 	c.ManaRequirement = []string{civ.Darkness}

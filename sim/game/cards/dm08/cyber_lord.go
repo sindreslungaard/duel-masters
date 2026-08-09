@@ -12,7 +12,7 @@ func EmperorQuazla(c *match.Card) {
 
 	c.Name = "Emperor Quazla"
 	c.Power = 5000
-	c.Civ = civ.Water
+	c.Civs = []string{civ.Water}
 	c.Family = []string{family.CyberLord}
 	c.ManaCost = 6
 	c.ManaRequirement = []string{civ.Water}

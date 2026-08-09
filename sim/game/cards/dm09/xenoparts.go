@@ -14,7 +14,7 @@ func GigiosHammer(c *match.Card) {
 
 	c.Name = "Gigio's Hammer"
 	c.Power = 2000
-	c.Civ = civ.Fire
+	c.Civs = []string{civ.Fire}
 	c.Family = []string{family.Xenoparts}
 	c.ManaCost = 3
 	c.ManaRequirement = []string{civ.Fire}

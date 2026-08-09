@@ -14,7 +14,7 @@ func BatDoctorShadowOfUndeath(c *match.Card) {
 
 	c.Name = "Bat Doctor, Shadow of Undeath"
 	c.Power = 2000
-	c.Civ = civ.Darkness
+	c.Civs = []string{civ.Darkness}
 	c.Family = []string{family.Ghost}
 	c.ManaCost = 3
 	c.ManaRequirement = []string{civ.Darkness}
@@ -48,7 +48,7 @@ func IceVaporShadowOfAnguish(c *match.Card) {
 
 	c.Name = "Ice Vapor, Shadow of Anguish"
 	c.Power = 1000
-	c.Civ = civ.Darkness
+	c.Civs = []string{civ.Darkness}
 	c.Family = []string{family.Ghost}
 	c.ManaCost = 5
 	c.ManaRequirement = []string{civ.Darkness}

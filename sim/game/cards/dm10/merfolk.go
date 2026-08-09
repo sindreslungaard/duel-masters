@@ -12,7 +12,7 @@ func TidePatroller(c *match.Card) {
 
 	c.Name = "Tide Patroller"
 	c.Power = 2000
-	c.Civ = civ.Water
+	c.Civs = []string{civ.Water}
 	c.Family = []string{family.Merfolk}
 	c.ManaCost = 4
 	c.ManaRequirement = []string{civ.Water}

@@ -35,7 +35,7 @@ func TestRyudmilaChannelerOfSuns(t *testing.T) {
 	assert.Equal(t, "Ryudmila, Channeler of Suns", ryudmila.Name)
 	assert.Equal(t, 2000, ryudmila.Power)
 	assert.Equal(t, 5, ryudmila.ManaCost)
-	assert.Equal(t, civ.Light, ryudmila.Civ)
+	assert.Equal(t, []string{civ.Light}, ryudmila.Civs)
 	assert.True(t, ryudmila.HasFamily(family.MechaDelSol))
 	assert.Equal(t, 6000, scn.Match.GetPower(ryudmila, false), "non-creature cards must not contribute")
 

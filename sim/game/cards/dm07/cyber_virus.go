@@ -11,7 +11,7 @@ func CosmicNebula(c *match.Card) {
 
 	c.Name = "Cosmic Nebula"
 	c.Power = 3000
-	c.Civ = civ.Water
+	c.Civs = []string{civ.Water}
 	c.Family = []string{family.CyberVirus}
 	c.ManaCost = 5
 	c.ManaRequirement = []string{civ.Water}
@@ -28,7 +28,7 @@ func CuriousEye(c *match.Card) {
 
 	c.Name = "Curious Eye"
 	c.Power = 1000
-	c.Civ = civ.Water
+	c.Civs = []string{civ.Water}
 	c.Family = []string{family.CyberVirus}
 	c.ManaCost = 3
 	c.ManaRequirement = []string{civ.Water}

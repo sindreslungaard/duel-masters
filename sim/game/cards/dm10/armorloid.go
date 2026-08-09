@@ -14,7 +14,7 @@ func ExplosiveTrooperZalmez(c *match.Card) {
 
 	c.Name = "Explosive Trooper Zalmez"
 	c.Power = 2000
-	c.Civ = civ.Fire
+	c.Civs = []string{civ.Fire}
 	c.Family = []string{family.Armorloid}
 	c.ManaCost = 3
 	c.ManaRequirement = []string{civ.Fire}
@@ -49,7 +49,7 @@ func SiegeRollerBagash(c *match.Card) {
 
 	c.Name = "Siege Roller Bagash"
 	c.Power = 3000
-	c.Civ = civ.Fire
+	c.Civs = []string{civ.Fire}
 	c.Family = []string{family.Armorloid}
 	c.ManaCost = 4
 	c.ManaRequirement = []string{civ.Fire}
@@ -77,7 +77,7 @@ func SmashWarriorStagrandu(c *match.Card) {
 
 	c.Name = "Smash Warrior Stagrandu"
 	c.Power = 1000
-	c.Civ = civ.Fire
+	c.Civs = []string{civ.Fire}
 	c.Family = []string{family.Armorloid}
 	c.ManaCost = 2
 	c.ManaRequirement = []string{civ.Fire}

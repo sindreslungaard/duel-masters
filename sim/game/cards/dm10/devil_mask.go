@@ -12,7 +12,7 @@ func NightmareInvader(c *match.Card) {
 
 	c.Name = "Nightmare Invader"
 	c.Power = 3000
-	c.Civ = civ.Darkness
+	c.Civs = []string{civ.Darkness}
 	c.Family = []string{family.DevilMask}
 	c.ManaCost = 4
 	c.ManaRequirement = []string{civ.Darkness}

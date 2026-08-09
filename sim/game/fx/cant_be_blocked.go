@@ -40,13 +40,13 @@ func CantBeBlockedWhileAttackingACreature(card *match.Card, ctx *match.Context) 
 
 func CantBeBlockedByDarkness(card *match.Card, ctx *match.Context) {
 	filterBlocker(card, ctx, func(blocker *match.Card) bool {
-		return blocker.Civ != civ.Darkness
+		return !blocker.HasCiv(civ.Darkness)
 	})
 }
 
 func CantBeBlockedByLight(card *match.Card, ctx *match.Context) {
 	filterBlocker(card, ctx, func(blocker *match.Card) bool {
-		return blocker.Civ != civ.Light
+		return !blocker.HasCiv(civ.Light)
 	})
 }
 

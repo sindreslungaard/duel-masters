@@ -12,7 +12,7 @@ import (
 func AuraBlast(c *match.Card) {
 
 	c.Name = "Aura Blast"
-	c.Civ = civ.Nature
+	c.Civs = []string{civ.Nature}
 	c.ManaCost = 4
 	c.ManaRequirement = []string{civ.Nature}
 
@@ -32,7 +32,7 @@ func AuraBlast(c *match.Card) {
 func BrainSerum(c *match.Card) {
 
 	c.Name = "Brain Serum"
-	c.Civ = civ.Water
+	c.Civs = []string{civ.Water}
 	c.ManaCost = 4
 	c.ManaRequirement = []string{civ.Water}
 
@@ -44,7 +44,7 @@ func BrainSerum(c *match.Card) {
 func BurningPower(c *match.Card) {
 
 	c.Name = "Burning Power"
-	c.Civ = civ.Fire
+	c.Civs = []string{civ.Fire}
 	c.ManaCost = 1
 	c.ManaRequirement = []string{civ.Fire}
 
@@ -70,7 +70,7 @@ func BurningPower(c *match.Card) {
 func ChaosStrike(c *match.Card) {
 
 	c.Name = "Chaos Strike"
-	c.Civ = civ.Fire
+	c.Civs = []string{civ.Fire}
 	c.ManaCost = 2
 	c.ManaRequirement = []string{civ.Fire}
 
@@ -101,7 +101,7 @@ func ChaosStrike(c *match.Card) {
 func CreepingPlague(c *match.Card) {
 
 	c.Name = "Creeping Plague"
-	c.Civ = civ.Darkness
+	c.Civs = []string{civ.Darkness}
 	c.ManaCost = 1
 	c.ManaRequirement = []string{civ.Darkness}
 
@@ -136,7 +136,7 @@ func CreepingPlague(c *match.Card) {
 func CrimsonHammer(c *match.Card) {
 
 	c.Name = "Crimson Hammer"
-	c.Civ = civ.Fire
+	c.Civs = []string{civ.Fire}
 	c.ManaCost = 2
 	c.ManaRequirement = []string{civ.Fire}
 
@@ -148,7 +148,7 @@ func CrimsonHammer(c *match.Card) {
 func CrystalMemory(c *match.Card) {
 
 	c.Name = "Crystal Memory"
-	c.Civ = civ.Water
+	c.Civs = []string{civ.Water}
 	c.ManaCost = 4
 	c.ManaRequirement = []string{civ.Water}
 
@@ -179,7 +179,7 @@ func CrystalMemory(c *match.Card) {
 func DarkReversal(c *match.Card) {
 
 	c.Name = "Dark Reversal"
-	c.Civ = civ.Darkness
+	c.Civs = []string{civ.Darkness}
 	c.ManaCost = 2
 	c.ManaRequirement = []string{civ.Darkness}
 
@@ -207,7 +207,7 @@ func DarkReversal(c *match.Card) {
 func DeathSmoke(c *match.Card) {
 
 	c.Name = "Death Smoke"
-	c.Civ = civ.Darkness
+	c.Civs = []string{civ.Darkness}
 	c.ManaCost = 4
 	c.ManaRequirement = []string{civ.Darkness}
 
@@ -234,7 +234,7 @@ func DeathSmoke(c *match.Card) {
 func DimensionGate(c *match.Card) {
 
 	c.Name = "Dimension Gate"
-	c.Civ = civ.Nature
+	c.Civs = []string{civ.Nature}
 	c.ManaCost = 3
 	c.ManaRequirement = []string{civ.Nature}
 
@@ -246,7 +246,7 @@ func DimensionGate(c *match.Card) {
 func GhostTouch(c *match.Card) {
 
 	c.Name = "Ghost Touch"
-	c.Civ = civ.Darkness
+	c.Civs = []string{civ.Darkness}
 	c.ManaCost = 2
 	c.ManaRequirement = []string{civ.Darkness}
 
@@ -258,7 +258,7 @@ func GhostTouch(c *match.Card) {
 func HolyAwe(c *match.Card) {
 
 	c.Name = "Holy Awe"
-	c.Civ = civ.Light
+	c.Civs = []string{civ.Light}
 	c.ManaCost = 6
 	c.ManaRequirement = []string{civ.Light}
 
@@ -278,7 +278,7 @@ func HolyAwe(c *match.Card) {
 func LaserWing(c *match.Card) {
 
 	c.Name = "Laser Wing"
-	c.Civ = civ.Light
+	c.Civs = []string{civ.Light}
 	c.ManaCost = 5
 	c.ManaRequirement = []string{civ.Light}
 
@@ -304,7 +304,7 @@ func LaserWing(c *match.Card) {
 func MagmaGazer(c *match.Card) {
 
 	c.Name = "Magma Gazer"
-	c.Civ = civ.Fire
+	c.Civs = []string{civ.Fire}
 	c.ManaCost = 3
 	c.ManaRequirement = []string{civ.Fire}
 
@@ -331,7 +331,7 @@ func MagmaGazer(c *match.Card) {
 func MoonlightFlash(c *match.Card) {
 
 	c.Name = "Moonlight Flash"
-	c.Civ = civ.Light
+	c.Civs = []string{civ.Light}
 	c.ManaCost = 4
 	c.ManaRequirement = []string{civ.Light}
 
@@ -357,7 +357,7 @@ func MoonlightFlash(c *match.Card) {
 func NaturalSnare(c *match.Card) {
 
 	c.Name = "Natural Snare"
-	c.Civ = civ.Nature
+	c.Civs = []string{civ.Nature}
 	c.ManaCost = 6
 	c.ManaRequirement = []string{civ.Nature}
 
@@ -384,7 +384,7 @@ func NaturalSnare(c *match.Card) {
 func PangaeasSong(c *match.Card) {
 
 	c.Name = "Pangaea's Song"
-	c.Civ = civ.Nature
+	c.Civs = []string{civ.Nature}
 	c.ManaCost = 1
 	c.ManaRequirement = []string{civ.Nature}
 
@@ -395,7 +395,7 @@ func PangaeasSong(c *match.Card) {
 func SolarRay(c *match.Card) {
 
 	c.Name = "Solar Ray"
-	c.Civ = civ.Light
+	c.Civs = []string{civ.Light}
 	c.ManaCost = 2
 	c.ManaRequirement = []string{civ.Light}
 
@@ -407,7 +407,7 @@ func SolarRay(c *match.Card) {
 func SonicWing(c *match.Card) {
 
 	c.Name = "Sonic Wing"
-	c.Civ = civ.Light
+	c.Civs = []string{civ.Light}
 	c.ManaCost = 3
 	c.ManaRequirement = []string{civ.Light}
 
@@ -419,7 +419,7 @@ func SonicWing(c *match.Card) {
 func SpiralGate(c *match.Card) {
 
 	c.Name = "Spiral Gate"
-	c.Civ = civ.Water
+	c.Civs = []string{civ.Water}
 	c.ManaCost = 2
 	c.ManaRequirement = []string{civ.Water}
 
@@ -431,7 +431,7 @@ func SpiralGate(c *match.Card) {
 func Teleportation(c *match.Card) {
 
 	c.Name = "Teleportation"
-	c.Civ = civ.Water
+	c.Civs = []string{civ.Water}
 	c.ManaCost = 5
 	c.ManaRequirement = []string{civ.Water}
 
@@ -486,7 +486,7 @@ func Teleportation(c *match.Card) {
 func TerrorPit(c *match.Card) {
 
 	c.Name = "Terror Pit"
-	c.Civ = civ.Darkness
+	c.Civs = []string{civ.Darkness}
 	c.ManaCost = 6
 	c.ManaRequirement = []string{civ.Darkness}
 
@@ -497,7 +497,7 @@ func TerrorPit(c *match.Card) {
 func TornadoFlame(c *match.Card) {
 
 	c.Name = "Tornado Flame"
-	c.Civ = civ.Fire
+	c.Civs = []string{civ.Fire}
 	c.ManaCost = 5
 	c.ManaRequirement = []string{civ.Fire}
 
@@ -524,7 +524,7 @@ func TornadoFlame(c *match.Card) {
 func UltimateForce(c *match.Card) {
 
 	c.Name = "Ultimate Force"
-	c.Civ = civ.Nature
+	c.Civs = []string{civ.Nature}
 	c.ManaCost = 5
 	c.ManaRequirement = []string{civ.Nature}
 
@@ -536,7 +536,7 @@ func UltimateForce(c *match.Card) {
 func VirtualTripwire(c *match.Card) {
 
 	c.Name = "Virtual Tripwire"
-	c.Civ = civ.Water
+	c.Civs = []string{civ.Water}
 	c.ManaCost = 3
 	c.ManaRequirement = []string{civ.Water}
 

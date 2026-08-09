@@ -13,7 +13,7 @@ func Draglide(c *match.Card) {
 
 	c.Name = "Draglide"
 	c.Power = 5000
-	c.Civ = civ.Fire
+	c.Civs = []string{civ.Fire}
 	c.Family = []string{family.ArmoredWyvern}
 	c.ManaCost = 5
 	c.ManaRequirement = []string{civ.Fire}
@@ -27,7 +27,7 @@ func GatlingSkyterror(c *match.Card) {
 
 	c.Name = "Gatling Skyterror"
 	c.Power = 7000
-	c.Civ = civ.Fire
+	c.Civs = []string{civ.Fire}
 	c.Family = []string{family.ArmoredWyvern}
 	c.ManaCost = 7
 	c.ManaRequirement = []string{civ.Fire}
@@ -41,7 +41,7 @@ func ScarletSkyterror(c *match.Card) {
 
 	c.Name = "Scarlet Skyterror"
 	c.Power = 3000
-	c.Civ = civ.Fire
+	c.Civs = []string{civ.Fire}
 	c.Family = []string{family.ArmoredWyvern}
 	c.ManaCost = 8
 	c.ManaRequirement = []string{civ.Fire}

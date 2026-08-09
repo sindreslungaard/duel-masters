@@ -11,7 +11,7 @@ import (
 func ProtectiveForce(c *match.Card) {
 
 	c.Name = "Protective Force"
-	c.Civ = civ.Light
+	c.Civs = []string{civ.Light}
 	c.ManaCost = 1
 	c.ManaRequirement = []string{civ.Light}
 
@@ -40,7 +40,7 @@ func ProtectiveForce(c *match.Card) {
 func InvincibleAura(c *match.Card) {
 
 	c.Name = "Invincible Aura"
-	c.Civ = civ.Light
+	c.Civs = []string{civ.Light}
 	c.ManaCost = 13
 	c.ManaRequirement = []string{civ.Light}
 
@@ -57,7 +57,7 @@ func InvincibleAura(c *match.Card) {
 func InvincibleTechnology(c *match.Card) {
 
 	c.Name = "Invincible Technology"
-	c.Civ = civ.Water
+	c.Civs = []string{civ.Water}
 	c.ManaCost = 13
 	c.ManaRequirement = []string{civ.Water}
 
@@ -77,7 +77,7 @@ func InvincibleTechnology(c *match.Card) {
 func InvincibleAbyss(c *match.Card) {
 
 	c.Name = "Invincible Abyss"
-	c.Civ = civ.Darkness
+	c.Civs = []string{civ.Darkness}
 	c.ManaCost = 13
 	c.ManaRequirement = []string{civ.Darkness}
 
@@ -98,7 +98,7 @@ func InvincibleAbyss(c *match.Card) {
 func InvincibleCataclysm(c *match.Card) {
 
 	c.Name = "Invincible Cataclysm"
-	c.Civ = civ.Fire
+	c.Civs = []string{civ.Fire}
 	c.ManaCost = 13
 	c.ManaRequirement = []string{civ.Fire}
 
@@ -122,7 +122,7 @@ func InvincibleCataclysm(c *match.Card) {
 func InvincibleUnity(c *match.Card) {
 
 	c.Name = "Invincible Unity"
-	c.Civ = civ.Nature
+	c.Civs = []string{civ.Nature}
 	c.ManaCost = 13
 	c.ManaRequirement = []string{civ.Nature}
 
@@ -147,7 +147,7 @@ func InvincibleUnity(c *match.Card) {
 func SphereOfWonder(c *match.Card) {
 
 	c.Name = "Sphere of Wonder"
-	c.Civ = civ.Light
+	c.Civs = []string{civ.Light}
 	c.ManaCost = 4
 	c.ManaRequirement = []string{civ.Light}
 
@@ -167,7 +167,7 @@ func SphereOfWonder(c *match.Card) {
 func MysticDreamscape(c *match.Card) {
 
 	c.Name = "Mystic Dreamscape"
-	c.Civ = civ.Water
+	c.Civs = []string{civ.Water}
 	c.ManaCost = 4
 	c.ManaRequirement = []string{civ.Water}
 
@@ -193,7 +193,7 @@ func MysticDreamscape(c *match.Card) {
 func FutureSlash(c *match.Card) {
 
 	c.Name = "Future Slash"
-	c.Civ = civ.Darkness
+	c.Civs = []string{civ.Darkness}
 	c.ManaCost = 7
 	c.ManaRequirement = []string{civ.Darkness}
 
@@ -224,7 +224,7 @@ func FutureSlash(c *match.Card) {
 func ProclamationOfDeath(c *match.Card) {
 
 	c.Name = "Proclamation of Death"
-	c.Civ = civ.Darkness
+	c.Civs = []string{civ.Darkness}
 	c.ManaCost = 4
 	c.ManaRequirement = []string{civ.Darkness}
 
@@ -248,7 +248,7 @@ func ProclamationOfDeath(c *match.Card) {
 func PhantomDragonsFlame(c *match.Card) {
 
 	c.Name = "Phantom Dragon's Flame"
-	c.Civ = civ.Fire
+	c.Civs = []string{civ.Fire}
 	c.ManaCost = 3
 	c.ManaRequirement = []string{civ.Fire}
 
@@ -258,7 +258,7 @@ func PhantomDragonsFlame(c *match.Card) {
 func SpasticMissile(c *match.Card) {
 
 	c.Name = "Spastic Missile"
-	c.Civ = civ.Fire
+	c.Civs = []string{civ.Fire}
 	c.ManaCost = 3
 	c.ManaRequirement = []string{civ.Fire}
 
@@ -283,7 +283,7 @@ func SpasticMissile(c *match.Card) {
 func MysticTreasureChest(c *match.Card) {
 
 	c.Name = "Mystic Treasure Chest"
-	c.Civ = civ.Nature
+	c.Civs = []string{civ.Nature}
 	c.ManaCost = 3
 	c.ManaRequirement = []string{civ.Nature}
 
@@ -293,7 +293,7 @@ func MysticTreasureChest(c *match.Card) {
 			card,
 			ctx,
 			1,
-			func(x *match.Card) bool { return x.Civ != civ.Nature },
+			func(x *match.Card) bool { return !x.HasCiv(civ.Nature) },
 			"non-nature card",
 		)
 
@@ -303,7 +303,7 @@ func MysticTreasureChest(c *match.Card) {
 func PangaeasWill(c *match.Card) {
 
 	c.Name = "Pangaea's Will"
-	c.Civ = civ.Nature
+	c.Civs = []string{civ.Nature}
 	c.ManaCost = 3
 	c.ManaRequirement = []string{civ.Nature}
 
@@ -342,7 +342,7 @@ func PangaeasWill(c *match.Card) {
 func FaerieLife(c *match.Card) {
 
 	c.Name = "Faerie Life"
-	c.Civ = civ.Nature
+	c.Civs = []string{civ.Nature}
 	c.ManaCost = 2
 	c.ManaRequirement = []string{civ.Nature}
 
@@ -352,7 +352,7 @@ func FaerieLife(c *match.Card) {
 func BondsOfJustice(c *match.Card) {
 
 	c.Name = "Bonds of Justice"
-	c.Civ = civ.Light
+	c.Civs = []string{civ.Light}
 	c.ManaCost = 4
 	c.ManaRequirement = []string{civ.Light}
 
@@ -394,7 +394,7 @@ func BondsOfJustice(c *match.Card) {
 func EnergyStream(c *match.Card) {
 
 	c.Name = "Energy Stream"
-	c.Civ = civ.Water
+	c.Civs = []string{civ.Water}
 	c.ManaCost = 3
 	c.ManaRequirement = []string{civ.Water}
 
@@ -407,7 +407,7 @@ func EnergyStream(c *match.Card) {
 func RainOfArrows(c *match.Card) {
 
 	c.Name = "Rain of Arrows"
-	c.Civ = civ.Light
+	c.Civs = []string{civ.Light}
 	c.ManaCost = 2
 	c.ManaRequirement = []string{civ.Light}
 
@@ -432,7 +432,7 @@ func RainOfArrows(c *match.Card) {
 		)
 
 		for _, c := range opponentHand {
-			if c.Civ == civ.Darkness && c.HasCondition(cnd.Spell) {
+			if c.HasCiv(civ.Darkness) && c.HasCondition(cnd.Spell) {
 				c.Player.MoveCard(c.ID, match.HAND, match.GRAVEYARD, card.ID)
 				ctx.Match.ReportActionInChat(ctx.Match.Opponent(card.Player), fmt.Sprintf("%s was moved to %s's graveyard by %s", c.Name, c.Player.Username(), card.Name))
 			}
@@ -446,7 +446,7 @@ func RainOfArrows(c *match.Card) {
 func CometMissile(c *match.Card) {
 
 	c.Name = "Comet Missile"
-	c.Civ = civ.Fire
+	c.Civs = []string{civ.Fire}
 	c.ManaCost = 1
 	c.ManaRequirement = []string{civ.Fire}
 
@@ -479,7 +479,7 @@ func CometMissile(c *match.Card) {
 func CrisisBoulder(c *match.Card) {
 
 	c.Name = "Crisis Boulder"
-	c.Civ = civ.Fire
+	c.Civs = []string{civ.Fire}
 	c.ManaCost = 4
 	c.ManaRequirement = []string{civ.Fire}
 
@@ -514,7 +514,7 @@ func CrisisBoulder(c *match.Card) {
 func IntenseEvil(c *match.Card) {
 
 	c.Name = "Intense Evil"
-	c.Civ = civ.Darkness
+	c.Civs = []string{civ.Darkness}
 	c.ManaCost = 3
 	c.ManaRequirement = []string{civ.Darkness}
 
@@ -554,7 +554,7 @@ func IntenseEvil(c *match.Card) {
 func ShockHurricane(c *match.Card) {
 
 	c.Name = "Shock Hurricane"
-	c.Civ = civ.Water
+	c.Civs = []string{civ.Water}
 	c.ManaCost = 5
 	c.ManaRequirement = []string{civ.Water}
 

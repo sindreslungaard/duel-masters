@@ -11,7 +11,7 @@ import (
 func BalzaSeekerOfHyperpearls(c *match.Card) {
 	c.Name = "Balza, Seeker of Hyperpearls"
 	c.Power = 4000
-	c.Civ = civ.Light
+	c.Civs = []string{civ.Light}
 	c.Family = []string{family.MechaThunder}
 	c.ManaCost = 8
 	c.ManaRequirement = []string{civ.Light}

@@ -13,7 +13,7 @@ func DeadlyFighterBraidClaw(c *match.Card) {
 
 	c.Name = "Deadly Fighter Braid Claw"
 	c.Power = 1000
-	c.Civ = civ.Fire
+	c.Civs = []string{civ.Fire}
 	c.Family = []string{family.Dragonoid}
 	c.ManaCost = 1
 	c.ManaRequirement = []string{civ.Fire}
@@ -27,7 +27,7 @@ func ExplosiveFighterUcarn(c *match.Card) {
 
 	c.Name = "Explosive Fighter Ucarn"
 	c.Power = 9000
-	c.Civ = civ.Fire
+	c.Civs = []string{civ.Fire}
 	c.Family = []string{family.Dragonoid}
 	c.ManaCost = 5
 	c.ManaRequirement = []string{civ.Fire}
@@ -55,7 +55,7 @@ func FireSweeperBurningHellion(c *match.Card) {
 
 	c.Name = "Fire Sweeper Burning Hellion"
 	c.Power = 3000
-	c.Civ = civ.Fire
+	c.Civs = []string{civ.Fire}
 	c.Family = []string{family.Dragonoid}
 	c.ManaCost = 4
 	c.ManaRequirement = []string{civ.Fire}
@@ -69,7 +69,7 @@ func OnslaughterTriceps(c *match.Card) {
 
 	c.Name = "Onslaughter Triceps"
 	c.Power = 5000
-	c.Civ = civ.Fire
+	c.Civs = []string{civ.Fire}
 	c.Family = []string{family.Dragonoid}
 	c.ManaCost = 3
 	c.ManaRequirement = []string{civ.Fire}
@@ -97,7 +97,7 @@ func SuperExplosiveVolcanodon(c *match.Card) {
 
 	c.Name = "Super Explosive Volcanodon"
 	c.Power = 2000
-	c.Civ = civ.Fire
+	c.Civs = []string{civ.Fire}
 	c.Family = []string{family.Dragonoid}
 	c.ManaCost = 4
 	c.ManaRequirement = []string{civ.Fire}

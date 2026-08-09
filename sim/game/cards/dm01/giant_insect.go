@@ -12,7 +12,7 @@ func DeathbladeBeetle(c *match.Card) {
 
 	c.Name = "Deathblade Beetle"
 	c.Power = 3000
-	c.Civ = civ.Nature
+	c.Civs = []string{civ.Nature}
 	c.Family = []string{family.GiantInsect}
 	c.ManaCost = 5
 	c.ManaRequirement = []string{civ.Nature}
@@ -26,7 +26,7 @@ func ForestHornet(c *match.Card) {
 
 	c.Name = "Forest Hornet"
 	c.Power = 4000
-	c.Civ = civ.Nature
+	c.Civs = []string{civ.Nature}
 	c.Family = []string{family.GiantInsect}
 	c.ManaCost = 4
 	c.ManaRequirement = []string{civ.Nature}
@@ -40,7 +40,7 @@ func RedEyeScorpion(c *match.Card) {
 
 	c.Name = "Red-Eye Scorpion"
 	c.Power = 4000
-	c.Civ = civ.Nature
+	c.Civs = []string{civ.Nature}
 	c.Family = []string{family.GiantInsect}
 	c.ManaCost = 5
 	c.ManaRequirement = []string{civ.Nature}

@@ -33,7 +33,7 @@ func TestNecrodragonBryzenaga(t *testing.T) {
 		assert.Equal(t, "Necrodragon Bryzenaga", bryzenaga.Name)
 		assert.Equal(t, 9000, bryzenaga.Power)
 		assert.Equal(t, 6, bryzenaga.ManaCost)
-		assert.Equal(t, civ.Darkness, bryzenaga.Civ)
+		assert.Equal(t, []string{civ.Darkness}, bryzenaga.Civs)
 		assert.True(t, bryzenaga.HasFamily(family.ZombieDragon))
 
 		for _, shield := range shields {

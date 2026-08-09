@@ -13,7 +13,7 @@ func PyrofighterMagnus(c *match.Card) {
 
 	c.Name = "Pyrofighter Magnus"
 	c.Power = 3000
-	c.Civ = civ.Fire
+	c.Civs = []string{civ.Fire}
 	c.Family = []string{family.Dragonoid}
 	c.ManaCost = 3
 	c.ManaRequirement = []string{civ.Fire}
@@ -32,7 +32,7 @@ func Torchclencher(c *match.Card) {
 
 	c.Name = "Torchclencher"
 	c.Power = 2000
-	c.Civ = civ.Fire
+	c.Civs = []string{civ.Fire}
 	c.Family = []string{family.Dragonoid}
 	c.ManaCost = 3
 	c.ManaRequirement = []string{civ.Fire}
@@ -43,7 +43,7 @@ func Torchclencher(c *match.Card) {
 
 		power := 0
 
-		if attacking && match.ContainerHas(c.Player, match.BATTLEZONE, func(x *match.Card) bool { return x != c && x.Civ == civ.Fire }) {
+		if attacking && match.ContainerHas(c.Player, match.BATTLEZONE, func(x *match.Card) bool { return x != c && x.HasCiv(civ.Fire) }) {
 			power += 3000
 		}
 
@@ -56,7 +56,7 @@ func LavaWalkerExecuto(c *match.Card) {
 
 	c.Name = "Lava Walker Executo"
 	c.Power = 5000
-	c.Civ = civ.Fire
+	c.Civs = []string{civ.Fire}
 	c.Family = []string{family.Dragonoid}
 	c.ManaCost = 4
 	c.ManaRequirement = []string{civ.Fire}
@@ -68,7 +68,7 @@ func LavaWalkerExecuto(c *match.Card) {
 			fx.GiveTapAbilityToAllies(
 				card,
 				ctx,
-				func(x *match.Card) bool { return x.ID != card.ID && x.Civ == civ.Fire },
+				func(x *match.Card) bool { return x.ID != card.ID && x.HasCiv(civ.Fire) },
 				lavaWalkerExecutoTapAbility,
 			)
 
@@ -87,7 +87,7 @@ func lavaWalkerExecutoTapAbility(card *match.Card, ctx *match.Context) {
 		1,
 		1,
 		false,
-		func(x *match.Card) bool { return x.Civ == civ.Fire },
+		func(x *match.Card) bool { return x.HasCiv(civ.Fire) },
 		false,
 	)
 	for _, creature := range creatures {

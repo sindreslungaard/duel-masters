@@ -12,7 +12,7 @@ func HunterFish(c *match.Card) {
 
 	c.Name = "Hunter Fish"
 	c.Power = 3000
-	c.Civ = civ.Water
+	c.Civs = []string{civ.Water}
 	c.Family = []string{family.Fish}
 	c.ManaCost = 2
 	c.ManaRequirement = []string{civ.Water}
@@ -26,7 +26,7 @@ func Seamine(c *match.Card) {
 
 	c.Name = "Seamine"
 	c.Power = 4000
-	c.Civ = civ.Water
+	c.Civs = []string{civ.Water}
 	c.Family = []string{family.Fish}
 	c.ManaCost = 6
 	c.ManaRequirement = []string{civ.Water}
@@ -40,7 +40,7 @@ func UnicornFish(c *match.Card) {
 
 	c.Name = "Unicorn Fish"
 	c.Power = 1000
-	c.Civ = civ.Water
+	c.Civs = []string{civ.Water}
 	c.Family = []string{family.Fish}
 	c.ManaCost = 4
 	c.ManaRequirement = []string{civ.Water}

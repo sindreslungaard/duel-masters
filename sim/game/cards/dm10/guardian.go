@@ -13,7 +13,7 @@ func MessaBahnaExpanseGuardian(c *match.Card) {
 
 	c.Name = "Messa Bahna, Expanse Guardian"
 	c.Power = 5000
-	c.Civ = civ.Light
+	c.Civs = []string{civ.Light}
 	c.Family = []string{family.Guardian}
 	c.ManaCost = 3
 	c.ManaRequirement = []string{civ.Light}
@@ -27,7 +27,7 @@ func PalaOlesisMorningGuardian(c *match.Card) {
 
 	c.Name = "Pala Olesis, Morning Guardian"
 	c.Power = 2500
-	c.Civ = civ.Light
+	c.Civs = []string{civ.Light}
 	c.Family = []string{family.Guardian}
 	c.ManaCost = 3
 	c.ManaRequirement = []string{civ.Light}

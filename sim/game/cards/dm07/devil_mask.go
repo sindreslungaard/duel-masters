@@ -11,7 +11,7 @@ func ThreeFacedAshuraFang(c *match.Card) {
 
 	c.Name = "Three-Faced Ashura Fang"
 	c.Power = 4000
-	c.Civ = civ.Darkness
+	c.Civs = []string{civ.Darkness}
 	c.Family = []string{family.DevilMask}
 	c.ManaCost = 4
 	c.ManaRequirement = []string{civ.Darkness}

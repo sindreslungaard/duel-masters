@@ -27,7 +27,7 @@ func TestSimianWarriorGrash(t *testing.T) {
 		assert.Equal(t, "Simian Warrior Grash", grash.Name)
 		assert.Equal(t, 3000, grash.Power)
 		assert.Equal(t, 4, grash.ManaCost)
-		assert.Equal(t, civ.Fire, grash.Civ)
+		assert.Equal(t, []string{civ.Fire}, grash.Civs)
 		assert.True(t, grash.HasFamily(family.Armorloid))
 
 		resolveSimianWarriorGrashTestDestruction(t, scn, owner, opponent, spell, target, opponentMana, true)

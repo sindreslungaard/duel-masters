@@ -7,10 +7,23 @@ import (
 	"fmt"
 	"slices"
 	"strconv"
+	"strings"
 )
 
 // CardCollection is a slice of cards with a mapping function
 type CardCollection []*match.Card
+
+// ManaRequirementText describes the civilizations that must appear among the
+// mana paid for a card. A multicolored card needs one of each, so its prompt has
+// to name all of them.
+func ManaRequirementText(card *match.Card) string {
+	requirements := make([]string, 0, len(card.ManaRequirement))
+	for _, civilization := range card.ManaRequirement {
+		requirements = append(requirements, fmt.Sprintf("1 %s", civilization))
+	}
+
+	return strings.Join(requirements, " and ")
+}
 
 // Map iterates through cards in the collection and executes the function on them
 func (c CardCollection) Map(h func(x *match.Card)) CardCollection {

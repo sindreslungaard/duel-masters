@@ -37,7 +37,7 @@ func TestHurricaneCrawler(t *testing.T) {
 		assert.Equal(t, "Hurricane Crawler", crawler.Name)
 		assert.Equal(t, 4000, crawler.Power)
 		assert.Equal(t, 5, crawler.ManaCost)
-		assert.Equal(t, civ.Water, crawler.Civ)
+		assert.Equal(t, []string{civ.Water}, crawler.Civs)
 		assert.True(t, crawler.HasFamily(family.EarthEater))
 
 		promptStart, err := scn.MessageCount(player)

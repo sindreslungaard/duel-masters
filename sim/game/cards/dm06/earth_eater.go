@@ -11,7 +11,7 @@ func HazardCrawler(c *match.Card) {
 
 	c.Name = "Hazard Crawler"
 	c.Power = 6000
-	c.Civ = civ.Water
+	c.Civs = []string{civ.Water}
 	c.Family = []string{family.EarthEater}
 	c.ManaCost = 5
 	c.ManaRequirement = []string{civ.Water}
@@ -23,7 +23,7 @@ func MidnightCrawler(c *match.Card) {
 
 	c.Name = "Midnight Crawler"
 	c.Power = 6000
-	c.Civ = civ.Water
+	c.Civs = []string{civ.Water}
 	c.Family = []string{family.EarthEater}
 	c.ManaCost = 8
 	c.ManaRequirement = []string{civ.Water}
@@ -35,7 +35,7 @@ func ThrashCrawler(c *match.Card) {
 
 	c.Name = "Thrash Crawler"
 	c.Power = 5000
-	c.Civ = civ.Water
+	c.Civs = []string{civ.Water}
 	c.Family = []string{family.EarthEater}
 	c.ManaCost = 4
 	c.ManaRequirement = []string{civ.Water}

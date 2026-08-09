@@ -12,7 +12,7 @@ func BarkwhipTheSmasher(c *match.Card) {
 
 	c.Name = "Barkwhip, the Smasher"
 	c.Power = 5000
-	c.Civ = civ.Nature
+	c.Civs = []string{civ.Nature}
 	c.Family = []string{family.BeastFolk}
 	c.ManaCost = 2
 	c.ManaRequirement = []string{civ.Nature}
@@ -40,7 +40,7 @@ func FighterDualFang(c *match.Card) {
 
 	c.Name = "Fighter Dual Fang"
 	c.Power = 8000
-	c.Civ = civ.Nature
+	c.Civs = []string{civ.Nature}
 	c.Family = []string{family.BeastFolk}
 	c.ManaCost = 6
 	c.ManaRequirement = []string{civ.Nature}
@@ -54,7 +54,7 @@ func SilverAxe(c *match.Card) {
 
 	c.Name = "Silver Axe"
 	c.Power = 1000
-	c.Civ = civ.Nature
+	c.Civs = []string{civ.Nature}
 	c.Family = []string{family.BeastFolk}
 	c.ManaCost = 3
 	c.ManaRequirement = []string{civ.Nature}
@@ -68,7 +68,7 @@ func SilverFist(c *match.Card) {
 
 	c.Name = "Silver Fist"
 	c.Power = 3000
-	c.Civ = civ.Nature
+	c.Civs = []string{civ.Nature}
 	c.Family = []string{family.BeastFolk}
 	c.ManaCost = 4
 	c.ManaRequirement = []string{civ.Nature}

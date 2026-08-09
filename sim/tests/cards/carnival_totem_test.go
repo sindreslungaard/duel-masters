@@ -42,7 +42,7 @@ func TestCarnivalTotem(t *testing.T) {
 	assert.Equal(t, "Carnival Totem", carnival.Name)
 	assert.Equal(t, 7000, carnival.Power)
 	assert.Equal(t, 6, carnival.ManaCost)
-	assert.Equal(t, civ.Nature, carnival.Civ)
+	assert.Equal(t, []string{civ.Nature}, carnival.Civs)
 	assert.True(t, carnival.HasFamily(family.MysteryTotem))
 
 	require.NoError(t, scn.ActionPlayCard(player, carnival.ID))

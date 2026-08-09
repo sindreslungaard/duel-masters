@@ -12,7 +12,7 @@ func LothRix(c *match.Card) {
 
 	c.Name = "Loth Rix, the Iridescent"
 	c.Power = 4000
-	c.Civ = civ.Light
+	c.Civs = []string{civ.Light}
 	c.Family = []string{family.Guardian}
 	c.ManaCost = 6
 	c.ManaRequirement = []string{civ.Light}

@@ -13,7 +13,7 @@ func TankMutant(c *match.Card) {
 
 	c.Name = "Tank Mutant"
 	c.Power = 6000
-	c.Civ = civ.Darkness
+	c.Civs = []string{civ.Darkness}
 	c.Family = []string{family.Hedrian}
 	c.ManaCost = 9
 	c.ManaRequirement = []string{civ.Darkness}
@@ -44,7 +44,7 @@ func BazookaMutant(c *match.Card) {
 
 	c.Name = "Bazooka Mutant"
 	c.Power = 8000
-	c.Civ = civ.Darkness
+	c.Civs = []string{civ.Darkness}
 	c.Family = []string{family.Hedrian}
 	c.ManaCost = 4
 	c.ManaRequirement = []string{civ.Darkness}

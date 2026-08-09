@@ -12,7 +12,7 @@ func BetraleTheExplorer(c *match.Card) {
 
 	c.Name = "Betrale, the Explorer"
 	c.Power = 5000
-	c.Civ = civ.Light
+	c.Civs = []string{civ.Light}
 	c.Family = []string{family.Gladiator}
 	c.ManaCost = 5
 	c.ManaRequirement = []string{civ.Light}

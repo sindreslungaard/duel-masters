@@ -12,7 +12,7 @@ func BlastoExplosiveSoldier(c *match.Card) {
 
 	c.Name = "Blasto, Explosive Soldier"
 	c.Power = 2000
-	c.Civ = civ.Fire
+	c.Civs = []string{civ.Fire}
 	c.Family = []string{family.Dragonoid}
 	c.ManaCost = 3
 	c.ManaRequirement = []string{civ.Fire}
@@ -21,7 +21,7 @@ func BlastoExplosiveSoldier(c *match.Card) {
 
 		power := 0
 
-		if match.ContainerHas(c.Player, match.BATTLEZONE, func(x *match.Card) bool { return x.Civ == civ.Darkness }) {
+		if match.ContainerHas(c.Player, match.BATTLEZONE, func(x *match.Card) bool { return x.HasCiv(civ.Darkness) }) {
 			power += 2000
 		}
 

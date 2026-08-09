@@ -13,7 +13,7 @@ func ArmoredDecimatorValkaizer(c *match.Card) {
 
 	c.Name = "Armored Decimator Valkaizer"
 	c.Power = 5000
-	c.Civ = civ.Fire
+	c.Civs = []string{civ.Fire}
 	c.Family = []string{family.Human}
 	c.ManaCost = 5
 	c.ManaRequirement = []string{civ.Fire}
@@ -41,7 +41,7 @@ func MigasaAdeptOfChaos(c *match.Card) {
 
 	c.Name = "Migasa, Adept of Chaos"
 	c.Power = 2000
-	c.Civ = civ.Fire
+	c.Civs = []string{civ.Fire}
 	c.Family = []string{family.Human}
 	c.ManaCost = 3
 	c.ManaRequirement = []string{civ.Fire}
@@ -56,7 +56,7 @@ func MigasaAdeptOfChaos(c *match.Card) {
 			1,
 			1,
 			false,
-			func(x *match.Card) bool { return x.Civ == civ.Fire },
+			func(x *match.Card) bool { return x.HasCiv(civ.Fire) },
 			false,
 		).Map(func(x *match.Card) {
 			x.AddCondition(cnd.DoubleBreaker, true, card.ID)
@@ -72,7 +72,7 @@ func ChoyaTheUnheeding(c *match.Card) {
 
 	c.Name = "Choya, the Unheeding"
 	c.Power = 1000
-	c.Civ = civ.Fire
+	c.Civs = []string{civ.Fire}
 	c.Family = []string{family.Human}
 	c.ManaCost = 2
 	c.ManaRequirement = []string{civ.Fire}

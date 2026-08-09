@@ -12,7 +12,7 @@ func DogarnTheMarauder(c *match.Card) {
 
 	c.Name = "Dogarn, the Marauder"
 	c.Power = 2000
-	c.Civ = civ.Fire
+	c.Civs = []string{civ.Fire}
 	c.Family = []string{family.Armorloid}
 	c.ManaCost = 3
 	c.ManaRequirement = []string{civ.Fire}

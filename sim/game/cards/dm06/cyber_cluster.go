@@ -12,7 +12,7 @@ func NeonCluster(c *match.Card) {
 
 	c.Name = "Neon Cluster"
 	c.Power = 4000
-	c.Civ = civ.Water
+	c.Civs = []string{civ.Water}
 	c.Family = []string{family.CyberCluster}
 	c.ManaCost = 7
 	c.ManaRequirement = []string{civ.Water}
@@ -28,7 +28,7 @@ func OverloadCluster(c *match.Card) {
 
 	c.Name = "Overload Cluster"
 	c.Power = 4000
-	c.Civ = civ.Water
+	c.Civs = []string{civ.Water}
 	c.Family = []string{family.CyberCluster}
 	c.ManaCost = 5
 	c.ManaRequirement = []string{civ.Water}
@@ -91,7 +91,7 @@ func FortMegacluster(c *match.Card) {
 
 	c.Name = "Fort Megacluster"
 	c.Power = 5000
-	c.Civ = civ.Water
+	c.Civs = []string{civ.Water}
 	c.Family = []string{family.CyberCluster}
 	c.ManaCost = 5
 	c.ManaRequirement = []string{civ.Water}
@@ -103,7 +103,7 @@ func FortMegacluster(c *match.Card) {
 			fx.GiveTapAbilityToAllies(
 				card,
 				ctx,
-				func(x *match.Card) bool { return x.ID != card.ID && x.Civ == civ.Water },
+				func(x *match.Card) bool { return x.ID != card.ID && x.HasCiv(civ.Water) },
 				fortMegaclusterTapAbility,
 			)
 

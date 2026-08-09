@@ -14,7 +14,7 @@ func KyrstronLairDelver(c *match.Card) {
 
 	c.Name = "Kyrstron, Lair Delver"
 	c.Power = 1000
-	c.Civ = civ.Fire
+	c.Civs = []string{civ.Fire}
 	c.Family = []string{family.Dragonoid}
 	c.ManaCost = 5
 	c.ManaRequirement = []string{civ.Fire}
@@ -44,7 +44,7 @@ func MissileSoldierUltimo(c *match.Card) {
 
 	c.Name = "Missile Soldier Ultimo"
 	c.Power = 2000
-	c.Civ = civ.Fire
+	c.Civs = []string{civ.Fire}
 	c.Family = []string{family.Dragonoid}
 	c.ManaCost = 3
 	c.ManaRequirement = []string{civ.Fire}
@@ -68,7 +68,7 @@ func SlaphappySoldierGalback(c *match.Card) {
 
 	c.Name = "Slaphappy Soldier Galback"
 	c.Power = 3000
-	c.Civ = civ.Fire
+	c.Civs = []string{civ.Fire}
 	c.Family = []string{family.Dragonoid}
 	c.ManaCost = 4
 	c.ManaRequirement = []string{civ.Fire}

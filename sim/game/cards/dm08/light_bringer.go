@@ -14,7 +14,7 @@ func NarielTheOracle(c *match.Card) {
 
 	c.Name = "Nariel, the Oracle"
 	c.Power = 1000
-	c.Civ = civ.Light
+	c.Civs = []string{civ.Light}
 	c.Family = []string{family.LightBringer}
 	c.ManaCost = 4
 	c.ManaRequirement = []string{civ.Light}

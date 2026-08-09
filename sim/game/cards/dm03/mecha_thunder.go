@@ -14,7 +14,7 @@ func RaVuSeekerOfLightning(c *match.Card) {
 
 	c.Name = "Ra Vu, Seeker of Lightning"
 	c.Power = 4000
-	c.Civ = civ.Light
+	c.Civs = []string{civ.Light}
 	c.Family = []string{family.MechaThunder}
 	c.ManaCost = 6
 	c.ManaRequirement = []string{civ.Light}
@@ -29,7 +29,7 @@ func RaVuSeekerOfLightning(c *match.Card) {
 			1,
 			1,
 			true,
-			func(x *match.Card) bool { return x.HasCondition(cnd.Spell) && x.Civ == civ.Light },
+			func(x *match.Card) bool { return x.HasCondition(cnd.Spell) && x.HasCiv(civ.Light) },
 			false,
 		).Map(func(x *match.Card) {
 			x.Player.MoveCard(x.ID, match.GRAVEYARD, match.HAND, card.ID)
@@ -44,14 +44,14 @@ func UrPaleSeekerOfSunlight(c *match.Card) {
 
 	c.Name = "Ur Pale, Seeker of Sunlight"
 	c.Power = 2500
-	c.Civ = civ.Light
+	c.Civs = []string{civ.Light}
 	c.Family = []string{family.MechaThunder}
 	c.ManaCost = 4
 	c.ManaRequirement = []string{civ.Light}
 
 	c.PowerModifier = func(m *match.Match, attacking bool) int {
 
-		if match.ContainerHas(c.Player, match.MANAZONE, func(x *match.Card) bool { return x.Civ != civ.Light }) {
+		if match.ContainerHas(c.Player, match.MANAZONE, func(x *match.Card) bool { return !x.HasCiv(civ.Light) }) {
 			return 0
 		}
 

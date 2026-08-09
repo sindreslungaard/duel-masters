@@ -14,7 +14,7 @@ func Flametropus(c *match.Card) {
 
 	c.Name = "Flametropus"
 	c.Power = 3000
-	c.Civ = civ.Fire
+	c.Civs = []string{civ.Fire}
 	c.Family = []string{family.RockBeast}
 	c.ManaCost = 4
 	c.ManaRequirement = []string{civ.Fire}

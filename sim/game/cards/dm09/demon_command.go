@@ -12,7 +12,7 @@ func StallobTheLifequasher(c *match.Card) {
 
 	c.Name = "Stallob, the Lifequasher"
 	c.Power = 6000
-	c.Civ = civ.Darkness
+	c.Civs = []string{civ.Darkness}
 	c.Family = []string{family.DemonCommand}
 	c.ManaCost = 8
 	c.ManaRequirement = []string{civ.Darkness}

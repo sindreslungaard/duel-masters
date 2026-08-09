@@ -13,7 +13,7 @@ func SkeletonThiefTheRevealer(c *match.Card) {
 
 	c.Name = "Skeleton Thief, the Revealer"
 	c.Power = 2000
-	c.Civ = civ.Darkness
+	c.Civs = []string{civ.Darkness}
 	c.Family = []string{family.LivingDead}
 	c.ManaCost = 4
 	c.ManaRequirement = []string{civ.Darkness}

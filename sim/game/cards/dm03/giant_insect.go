@@ -13,7 +13,7 @@ func Gigamantis(c *match.Card) {
 
 	c.Name = "Gigamantis"
 	c.Power = 5000
-	c.Civ = civ.Nature
+	c.Civs = []string{civ.Nature}
 	c.Family = []string{family.GiantInsect}
 	c.ManaCost = 4
 	c.ManaRequirement = []string{civ.Nature}
@@ -27,7 +27,7 @@ func Gigamantis(c *match.Card) {
 		if event, ok := ctx.Event.(*match.CreatureDestroyed); ok &&
 			event.Card.ID != card.ID &&
 			event.Card.Player == card.Player &&
-			event.Card.Civ == civ.Nature {
+			event.Card.HasCiv(civ.Nature) {
 
 			fx.SelectFilter(
 				card.Player,
@@ -58,7 +58,7 @@ func SniperMosquito(c *match.Card) {
 
 	c.Name = "Sniper Mosquito"
 	c.Power = 2000
-	c.Civ = civ.Nature
+	c.Civs = []string{civ.Nature}
 	c.Family = []string{family.GiantInsect}
 	c.ManaCost = 1
 	c.ManaRequirement = []string{civ.Nature}
@@ -86,7 +86,7 @@ func SwordButterfly(c *match.Card) {
 
 	c.Name = "Sword Butterfly"
 	c.Power = 2000
-	c.Civ = civ.Nature
+	c.Civs = []string{civ.Nature}
 	c.Family = []string{family.GiantInsect}
 	c.ManaCost = 3
 	c.ManaRequirement = []string{civ.Nature}

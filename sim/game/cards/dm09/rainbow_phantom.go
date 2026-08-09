@@ -12,7 +12,7 @@ func CyclolinkSpectralKnight(c *match.Card) {
 
 	c.Name = "Cyclolink, Spectral Knight"
 	c.Power = 3000
-	c.Civ = civ.Light
+	c.Civs = []string{civ.Light}
 	c.Family = []string{family.RainbowPhantom}
 	c.ManaCost = 4
 	c.ManaRequirement = []string{civ.Light}

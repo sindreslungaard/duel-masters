@@ -14,14 +14,19 @@ import (
 
 // CardInfo describes the card catalog exposed by the simulator API.
 type CardInfo struct {
-	UID          string   `json:"uid"`
-	Name         string   `json:"name"`
-	Civilization string   `json:"civilization"`
-	Family       []string `json:"family"`
-	ManaCost     int      `json:"manaCost"`
-	Set          string   `json:"set"`
-	Type         string   `json:"type"`
-	Text         string   `json:"text"`
+	UID  string `json:"uid"`
+	Name string `json:"name"`
+	// Civilizations lists every civilization printed on the card. Multicolored
+	// cards have more than one and count as a card of each of them.
+	Civilizations []string `json:"civilizations"`
+	// ManaRequirement lists the civilizations that must all be present among the
+	// mana paid for the card, one card of each.
+	ManaRequirement []string `json:"manaRequirement"`
+	Family          []string `json:"family"`
+	ManaCost        int      `json:"manaCost"`
+	Set             string   `json:"set"`
+	Type            string   `json:"type"`
+	Text            string   `json:"text"`
 }
 
 // Register holds all the card info
@@ -46,12 +51,13 @@ func CreateCardCache() {
 			c(card)
 
 			entry := CardInfo{
-				UID:          uid,
-				Name:         card.Name,
-				Civilization: card.Civ,
-				Set:          setID,
-				ManaCost:     card.ManaCost,
-				Type:         "Creature",
+				UID:             uid,
+				Name:            card.Name,
+				Civilizations:   card.Civs,
+				ManaRequirement: card.ManaRequirement,
+				Set:             setID,
+				ManaCost:        card.ManaCost,
+				Type:            "Creature",
 			}
 
 			if len(card.Family) > 0 {

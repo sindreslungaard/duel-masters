@@ -29,7 +29,7 @@ func TestZeroNemesisShadowOfPanic(t *testing.T) {
 		assert.Equal(t, "Zero Nemesis, Shadow of Panic", zeroNemesis.Name)
 		assert.Equal(t, 6000, zeroNemesis.Power)
 		assert.Equal(t, 6, zeroNemesis.ManaCost)
-		assert.Equal(t, civ.Darkness, zeroNemesis.Civ)
+		assert.Equal(t, []string{civ.Darkness}, zeroNemesis.Civs)
 		assert.Equal(t, []string{civ.Darkness}, zeroNemesis.ManaRequirement)
 		assert.True(t, zeroNemesis.HasFamily(family.Ghost))
 

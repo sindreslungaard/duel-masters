@@ -36,7 +36,7 @@ func TestHourglassMutant(t *testing.T) {
 		assert.Equal(t, "Hourglass Mutant", hourglass.Name)
 		assert.Equal(t, 2000, hourglass.Power)
 		assert.Equal(t, 3, hourglass.ManaCost)
-		assert.Equal(t, civ.Darkness, hourglass.Civ)
+		assert.Equal(t, []string{civ.Darkness}, hourglass.Civs)
 		assert.True(t, hourglass.HasFamily(family.Hedrian))
 
 		assert.True(t, ownWater.HasCondition(cnd.Slayer))

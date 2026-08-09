@@ -12,7 +12,7 @@ import (
 func RyudmilaChannelerOfSuns(c *match.Card) {
 	c.Name = "Ryudmila, Channeler of Suns"
 	c.Power = 2000
-	c.Civ = civ.Light
+	c.Civs = []string{civ.Light}
 	c.Family = []string{family.MechaDelSol}
 	c.ManaCost = 5
 	c.ManaRequirement = []string{civ.Light}
@@ -43,7 +43,7 @@ func BerochikaChannelerOfSuns(c *match.Card) {
 
 	c.Name = "Berochika, Channeler of Suns"
 	c.Power = 5000
-	c.Civ = civ.Light
+	c.Civs = []string{civ.Light}
 	c.Family = []string{family.MechaDelSol}
 	c.ManaCost = 5
 	c.ManaRequirement = []string{civ.Light}

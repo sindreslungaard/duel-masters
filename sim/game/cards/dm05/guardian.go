@@ -14,7 +14,7 @@ func SnorkLaShrineGuardian(c *match.Card) {
 
 	c.Name = "Snork La, Shrine Guardian"
 	c.Power = 3000
-	c.Civ = civ.Light
+	c.Civs = []string{civ.Light}
 	c.Family = []string{family.Guardian}
 	c.ManaCost = 3
 	c.ManaRequirement = []string{civ.Light}
@@ -56,7 +56,7 @@ func GalliaZohlIronGuardianQ(c *match.Card) {
 
 	c.Name = "Gallia Zohl, Iron Guardian Q"
 	c.Power = 2000
-	c.Civ = civ.Light
+	c.Civs = []string{civ.Light}
 	c.Family = []string{family.Guardian, family.Survivor}
 	c.ManaCost = 5
 	c.ManaRequirement = []string{civ.Light}

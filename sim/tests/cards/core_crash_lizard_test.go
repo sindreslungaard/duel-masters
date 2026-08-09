@@ -25,7 +25,7 @@ func TestCoreCrashLizard(t *testing.T) {
 		assert.Equal(t, "Core-Crash Lizard", lizard.Name)
 		assert.Equal(t, 6000, lizard.Power)
 		assert.Equal(t, 7, lizard.ManaCost)
-		assert.Equal(t, civ.Fire, lizard.Civ)
+		assert.Equal(t, []string{civ.Fire}, lizard.Civs)
 		assert.True(t, lizard.HasFamily(family.MeltWarrior))
 
 		shields, err := opponent.Player.Container(match.SHIELDZONE)

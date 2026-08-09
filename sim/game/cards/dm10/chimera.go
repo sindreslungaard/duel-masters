@@ -13,7 +13,7 @@ func Gigandura(c *match.Card) {
 
 	c.Name = "Gigandura"
 	c.Power = 3000
-	c.Civ = civ.Darkness
+	c.Civs = []string{civ.Darkness}
 	c.Family = []string{family.Chimera}
 	c.ManaCost = 5
 	c.ManaRequirement = []string{civ.Darkness}
