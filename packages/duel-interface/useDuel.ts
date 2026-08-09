@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import {
   ActionMessage,
   ActionType,
@@ -217,13 +217,13 @@ export function useDuel({
     };
   }, [duelId, duelToken, hostUrl]);
 
-  const send = (data: any) => {
+  const send = useCallback((data: any) => {
     if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN) {
       wsRef.current.send(JSON.stringify(data));
     } else {
       console.error("WebSocket is not connected");
     }
-  };
+  }, []);
 
   const sendJoinMatch = () => {
     send({ header: "join_match" });
@@ -261,9 +261,9 @@ export function useDuel({
     send({ header: "action", ...data });
   };
 
-  const sendChat = (message: string) => {
+  const sendChat = useCallback((message: string) => {
     send({ header: "chat", message });
-  };
+  }, [send]);
 
   return {
     connected,
