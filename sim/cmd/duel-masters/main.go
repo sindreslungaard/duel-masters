@@ -9,7 +9,6 @@ import (
 	"time"
 
 	"duel-masters/api"
-	"duel-masters/game"
 	"duel-masters/game/cards"
 	"duel-masters/game/match"
 
@@ -58,28 +57,21 @@ func main() {
 
 	match.InitDecks()
 
-	lobby := game.NewLobby()
-	go lobby.StartTicker()
-
-	matchSystem := match.NewSystem(lobby.Broadcast)
+	matchSystem := match.NewSystem()
 	go matchSystem.StartTicker()
 
-	game.Matchmaker.Initialize(lobby.Broadcast, matchSystem)
-
-	lobby.SetMatchesFunc(func() []*match.Match { return matchSystem.Matches.Iter() })
-
 	// Setup API
-	API := api.New(lobby, matchSystem)
+	API := api.New(matchSystem)
 
 	api.CreateCardCache()
 
-	go checkForAutoRestart(lobby)
+	go checkForAutoRestart()
 
 	API.Start(os.Getenv("port"))
 
 }
 
-func checkForAutoRestart(lobby *game.Lobby) {
+func checkForAutoRestart() {
 
 	if os.Getenv("restart_after") == "" {
 		logrus.Debug("No autorestart policy found")
@@ -97,8 +89,6 @@ func checkForAutoRestart(lobby *game.Lobby) {
 	ticker := time.NewTicker(5 * time.Second)
 	defer ticker.Stop()
 
-	notified := false
-
 	logrus.Info(fmt.Sprintf("Scheduled to shutdown %s", d.Format("2 Jan 2006 15:04")))
 
 	for range ticker.C {
@@ -106,13 +96,6 @@ func checkForAutoRestart(lobby *game.Lobby) {
 		if time.Now().After(d) {
 			logrus.Info("Performing scheduled shutdown")
 			os.Exit(0)
-		}
-
-		// less than 2 hours until restart and have not yet notified
-		if time.Now().Add(2*time.Hour).After(d) && !notified {
-			notified = true
-
-			lobby.PinMessage(fmt.Sprintf("Scheduled restart in time:%v", d.Unix()))
 		}
 
 	}

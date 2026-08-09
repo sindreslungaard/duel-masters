@@ -49,6 +49,9 @@ type Match struct {
 
 	eventloop *EventLoop
 	system    *MatchSystem
+
+	hostUsername  string
+	guestUsername string
 }
 
 // Name just returns "match", obligatory for a hub
@@ -95,8 +98,6 @@ func (m *Match) Dispose() {
 	m.system.Matches.Remove(m.ID)
 
 	logrus.Debugf("Closed match with id %s", m.ID)
-
-	m.system.UpdateMatchList()
 
 }
 
@@ -1044,8 +1045,6 @@ func (m *Match) Start() {
 	m.Started = true
 	m.startedAt = time.Now().Unix()
 
-	m.system.UpdateMatchList()
-
 	m.Player1.Player.ShuffleDeck()
 	m.Player2.Player.ShuffleDeck()
 
@@ -1509,8 +1508,6 @@ func (m *Match) Parse(s *server.Socket, data []byte) {
 
 			}
 
-			m.system.UpdateMatchList()
-
 		}, ParallelEvent)
 
 	case "chat":
@@ -1965,7 +1962,6 @@ func (m *Match) OnSocketClose(s *server.Socket) {
 		m.TossOutcome = 0
 		m.TossPrediction = 0
 
-		m.system.UpdateMatchList()
 	} */
 
 	if p == nil {

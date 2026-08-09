@@ -9,7 +9,8 @@ import {
   type DuelChatUserTriggerProps,
 } from "../../packages/duel-interface";
 
-const DUEL_TOKEN_SECRET = new TextEncoder().encode("duel-secret");
+const SECRET_VALUE = "duel-secret";
+const SECRET = new TextEncoder().encode(SECRET_VALUE);
 const DECK_SIZE = 40;
 const UNIQUE_CARDS_PER_DECK = 10;
 
@@ -283,8 +284,10 @@ function App() {
 
       const payload = {
         hostId: "1",
+        hostUsername: "Player1",
         hostDeck: buildDeck(availableCards, 0),
         guestId: "2",
+        guestUsername: "Player2",
         guestDeck: buildDeck(availableCards, UNIQUE_CARDS_PER_DECK),
         name: "Test Match",
         visibility: "public",
@@ -295,6 +298,7 @@ function App() {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${SECRET_VALUE}`,
         },
         body: JSON.stringify(payload),
       });
@@ -307,16 +311,16 @@ function App() {
 
       const hostToken = await new SignJWT({ id: "1", username: "Player1" })
         .setProtectedHeader({ alg: "HS256" })
-        .sign(DUEL_TOKEN_SECRET);
+        .sign(SECRET);
       const guestToken = await new SignJWT({ id: "2", username: "Player2" })
         .setProtectedHeader({ alg: "HS256" })
-        .sign(DUEL_TOKEN_SECRET);
+        .sign(SECRET);
       const spectatorToken = await new SignJWT({
         id: "3",
         username: "Spectator",
       })
         .setProtectedHeader({ alg: "HS256" })
-        .sign(DUEL_TOKEN_SECRET);
+        .sign(SECRET);
 
       setHostDuelToken(hostToken);
       setGuestDuelToken(guestToken);

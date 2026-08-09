@@ -129,87 +129,11 @@ type WaitMessage struct {
 	Message string `json:"message"`
 }
 
-// LobbyChatMessage is used to store chat messages
-type LobbyChatMessage struct {
-	Username  string `json:"username"`
-	Color     string `json:"color"`
-	Message   string `json:"message"`
-	Timestamp int    `json:"timestamp"`
-	Removed   bool
-}
-
-// LobbyChatMessages is used to store chat messages
-type LobbyChatMessages struct {
-	Header   string             `json:"header"`
-	Messages []LobbyChatMessage `json:"messages"`
-}
-
-// UserMessage holds information about users
-type UserMessage struct {
-	Username    string   `json:"username"`
-	Color       string   `json:"color"`
-	Hub         string   `json:"hub"`
-	Permissions []string `json:"permissions"`
-}
-
-// UserListMessage is used to send a list of online users
-type UserListMessage struct {
-	Header string        `json:"header"`
-	Users  []UserMessage `json:"users"`
-}
-
-// MatchMessage holds information about a match
-type MatchMessage struct {
-	ID          string `json:"id"`
-	P1          string `json:"p1"`
-	P1color     string `json:"p1color"`
-	P2          string `json:"p2"`
-	P2color     string `json:"p2color"`
-	Name        string `json:"name"`
-	Started     bool   `json:"spectate"`
-	Matchmaking bool   `json:"matchmaking"`
-	Format      string `json:"format"`
-}
-
-// MatchesListMessage is used to list open matches
-type MatchesListMessage struct {
-	Header  string         `json:"header"`
-	Matches []MatchMessage `json:"matches"`
-}
-
-type MatchRequestMessage struct {
-	ID         string `json:"id"`
-	Name       string `json:"name"`
-	HostID     string `json:"host_id"`
-	HostName   string `json:"host_name"`
-	HostColor  string `json:"host_color"`
-	GuestID    string `json:"guest_id"`
-	GuestName  string `json:"guest_name"`
-	GuestColor string `json:"guest_color"`
-	Format     string `json:"format"`
-	LinkCode   string `json:"link_code"`
-}
-
-type MatchReuestsListMessage struct {
-	Header   string                `json:"header"`
-	Requests []MatchRequestMessage `json:"requests"`
-}
-
-type MatchForwardMessage struct {
-	Header string `json:"header"`
-	ID     string `json:"id"`
-}
-
 // ShowCardsMessage is used to show the user n cards without an action to perform
 type ShowCardsMessage struct {
 	Header  string   `json:"header"`
 	Message string   `json:"message"`
 	Cards   []string `json:"cards"`
-}
-
-type PinnedMessages struct {
-	Header   string   `json:"header"`
-	Messages []string `json:"messages"`
 }
 
 type PlaySoundMessage struct {

@@ -60,8 +60,8 @@ func registerSpawnCardTestConstructor() {
 }
 
 func newSpawnCardTestMatch() *Match {
-	system := NewSystem(func(interface{}) {})
-	m := system.NewMatch("spawn-card-test", "host", nil, "", nil, true, true, RegularFormat)
+	system := NewSystem()
+	m := system.NewMatch("spawn-card-test", "host", "Player 1", nil, "", "Player 2", nil, true, true, RegularFormat)
 
 	player1 := NewPlayer(m, 1)
 	player2 := NewPlayer(m, 2)

@@ -1,7 +1,6 @@
 package api
 
 import (
-	"duel-masters/game"
 	"duel-masters/game/match"
 	"encoding/json"
 	"net"
@@ -17,16 +16,14 @@ type API struct {
 	mux        *http.ServeMux
 	middleware []func(http.Handler) http.Handler
 
-	lobby       *game.Lobby
 	matchSystem *match.MatchSystem
 }
 
-func New(lobby *game.Lobby, matchSystem *match.MatchSystem) *API {
+func New(matchSystem *match.MatchSystem) *API {
 	return &API{
 		mux:        http.NewServeMux(),
 		middleware: []func(http.Handler) http.Handler{},
 
-		lobby:       lobby,
 		matchSystem: matchSystem,
 	}
 }
@@ -57,6 +54,7 @@ func (api *API) Start(port string) {
 	api.HandleFunc("GET /ws/{hub}", api.websocketHandler)
 	api.HandleFunc("GET /api/cards", api.getCardsHandler)
 	api.HandleFunc("POST /api/match", api.createMatchHandler)
+	api.HandleFunc("GET /api/matches", api.getMatchesHandler)
 
 	// webapp
 	/* 	dist := http.FileServer(http.Dir(path.Join(dir, "webapp", "dist")))

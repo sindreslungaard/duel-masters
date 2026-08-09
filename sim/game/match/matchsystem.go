@@ -2,7 +2,6 @@ package match
 
 import (
 	"duel-masters/internal"
-	"duel-masters/server"
 	"time"
 
 	"github.com/google/uuid"
@@ -11,14 +10,27 @@ import (
 )
 
 type MatchSystem struct {
-	Matches        internal.ConcurrentDictionary[Match]
-	LobbyBroadcast func(msg interface{})
+	Matches internal.ConcurrentDictionary[Match]
 }
 
-func NewSystem(lobbyBroadcastFunc func(msg interface{})) *MatchSystem {
+// MatchSummary is the server-to-server representation of a live match. It
+// deliberately excludes decks, card state, sockets, and other private state.
+type MatchSummary struct {
+	ID            string `json:"id"`
+	Name          string `json:"name"`
+	Format        string `json:"format"`
+	HostID        string `json:"hostId"`
+	HostUsername  string `json:"hostUsername"`
+	GuestID       string `json:"guestId"`
+	GuestUsername string `json:"guestUsername"`
+	Visible       bool   `json:"visible"`
+	Matchmaking   bool   `json:"matchmaking"`
+	CreatedAt     int64  `json:"createdAt"`
+}
+
+func NewSystem() *MatchSystem {
 	return &MatchSystem{
-		Matches:        internal.NewConcurrentDictionary[Match](),
-		LobbyBroadcast: lobbyBroadcastFunc,
+		Matches: internal.NewConcurrentDictionary[Match](),
 	}
 }
 
@@ -57,7 +69,7 @@ func ProcessMatch(m *Match) {
 }
 
 // New returns a new match object
-func (s *MatchSystem) NewMatch(matchName string, hostID string, hostDeck []string, guestID string, guestDeck []string, visible bool, matchmaking bool, format Format) *Match {
+func (s *MatchSystem) NewMatch(matchName string, hostID string, hostUsername string, hostDeck []string, guestID string, guestUsername string, guestDeck []string, visible bool, matchmaking bool, format Format) *Match {
 
 	id, err := shortid.Generate()
 
@@ -93,6 +105,9 @@ func (s *MatchSystem) NewMatch(matchName string, hostID string, hostDeck []strin
 		eventloop: NewEventLoop(),
 
 		system: s,
+
+		hostUsername:  hostUsername,
+		guestUsername: guestUsername,
 	}
 
 	go m.eventloop.start()
@@ -105,59 +120,31 @@ func (s *MatchSystem) NewMatch(matchName string, hostID string, hostDeck []strin
 
 }
 
-func (s *MatchSystem) UpdateMatchList() {
-	s.LobbyBroadcast(MatchList(s.Matches.Iter()))
+// MatchSummaries returns point-in-time copies of every match currently owned
+// by the match system.
+func (s *MatchSystem) MatchSummaries() []MatchSummary {
+	matches := s.Matches.Iter()
+	summaries := make([]MatchSummary, 0, len(matches))
+
+	for _, m := range matches {
+		summaries = append(summaries, m.Summary())
+	}
+
+	return summaries
 }
 
-func MatchList(matches []*Match) server.MatchesListMessage {
-
-	matchesMessage := make([]server.MatchMessage, 0)
-
-	for _, match := range matches {
-
-		if !match.Visible {
-			continue
-		}
-
-		if match.ending {
-			continue
-		}
-
-		if match.Matchmaking && !match.Started {
-			continue
-		}
-
-		if match.Player1 == nil {
-			continue
-		}
-
-		if match.Player1 != nil && match.Player2 != nil && !match.Started {
-			continue
-		}
-
-		matchMessage := server.MatchMessage{
-			ID:          match.ID,
-			P1:          match.Player1.Username,
-			P1color:     match.Player1.Color,
-			Name:        match.MatchName,
-			Started:     match.Started,
-			Matchmaking: match.Matchmaking,
-			Format:      string(match.Format),
-		}
-
-		if match.Player2 != nil {
-			matchMessage.P2 = match.Player2.Username
-			matchMessage.P2color = match.Player2.Color
-		}
-
-		matchesMessage = append(matchesMessage, matchMessage)
+// Summary returns the server-to-server representation of the match.
+func (m *Match) Summary() MatchSummary {
+	return MatchSummary{
+		ID:            m.ID,
+		Name:          m.MatchName,
+		Format:        string(m.Format),
+		HostID:        m.HostID,
+		HostUsername:  m.hostUsername,
+		GuestID:       m.GuestID,
+		GuestUsername: m.guestUsername,
+		Visible:       m.Visible,
+		Matchmaking:   m.Matchmaking,
+		CreatedAt:     m.created,
 	}
-
-	matchlist := server.MatchesListMessage{
-		Header:  "matches",
-		Matches: matchesMessage,
-	}
-
-	return matchlist
-
 }

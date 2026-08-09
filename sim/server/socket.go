@@ -6,10 +6,8 @@ import (
 
 	"duel-masters/internal"
 
-	"github.com/google/uuid"
 	"github.com/gorilla/websocket"
 	"github.com/sirupsen/logrus"
-	"github.com/ventu-io/go-shortid"
 )
 
 const (
@@ -18,8 +16,6 @@ const (
 	pingPeriod     = (pongWait * 9) / 10
 	maxMessageSize = 512
 )
-
-var Sockets = internal.NewConcurrentDictionary[Socket]()
 
 type Connection interface {
 	SetReadLimit(int64)
@@ -34,7 +30,6 @@ type Connection interface {
 
 // Socket links a ws connection to a user id and handles safe reading and writing of data
 type Socket struct {
-	UID    string
 	conn   Connection
 	User   User
 	hub    Hub
@@ -44,32 +39,13 @@ type Socket struct {
 	lost   bool
 }
 
-// Finds by **user** uid
-func FindByUserUID(uid string) (*Socket, bool) {
-	for _, s := range Sockets.Iter() {
-		if s.User.UID == uid {
-			return s, true
-		}
-	}
-
-	return nil, false
-}
-
 // NewSocket creates and returns a new Socket instance
 func NewSocket(c Connection, hub Hub, userID string, username string) *Socket {
-
-	id, err := shortid.Generate()
-
-	if err != nil {
-		id = uuid.New().String()
-	}
-
 	var user User
 	user.UID = userID
 	user.Username = username
 
 	s := &Socket{
-		UID:    id,
 		conn:   c,
 		hub:    hub,
 		ready:  true,
@@ -78,8 +54,6 @@ func NewSocket(c Connection, hub Hub, userID string, username string) *Socket {
 		lost:   false,
 		User:   user,
 	}
-
-	Sockets.Add(id, s)
 
 	logrus.Debugf("Opened a connection")
 
@@ -185,8 +159,6 @@ func (s *Socket) Close() {
 
 	s.closed = true
 
-	Sockets.Remove(s.UID)
-
 	s.hub.OnSocketClose(s)
 
 	if s.conn != nil {
@@ -199,47 +171,6 @@ func (s *Socket) Close() {
 
 func (s *Socket) IsClosed() bool {
 	return s.closed
-}
-
-// GetUserList returns a list of users currently online
-func GetUserList() UserListMessage {
-
-	usersMap := make(map[string]UserMessage)
-
-	for _, s := range Sockets.Iter() {
-
-		userEntry := UserMessage{
-			Username:    s.User.Username,
-			Color:       s.User.Color,
-			Hub:         s.hub.Name(),
-			Permissions: s.User.Permissions,
-		}
-
-		if _, ok := usersMap[s.User.Username]; ok {
-
-			// Replace if this socket is in a match because the client shows
-			// an icon for if the player is in a match or just the lobby
-			if userEntry.Hub == "match" {
-				usersMap[s.User.Username] = userEntry
-			}
-
-		} else {
-			usersMap[s.User.Username] = userEntry
-		}
-
-	}
-
-	users := make([]UserMessage, 0)
-
-	for _, user := range usersMap {
-		users = append(users, user)
-	}
-
-	return UserListMessage{
-		Header: "users",
-		Users:  users,
-	}
-
 }
 
 func (s *Socket) Warn(msg string) {
