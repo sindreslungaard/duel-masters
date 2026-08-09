@@ -113,7 +113,7 @@ export function useDuel({
             );
 
             reconnectAttemptsRef.current++;
-            reconnectTimeoutRef.current = setTimeout(connect, delay);
+            reconnectTimeoutRef.current = window.setTimeout(connect, delay);
           } else {
             setReconnecting(false);
             setError("Connection lost. Max reconnection attempts reached.");
