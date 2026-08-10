@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"strings"
 	"sync"
 
 	"github.com/sirupsen/logrus"
@@ -68,7 +69,10 @@ func CreateCardCache() {
 
 			if _, ok := cardsFromJsonMap[card.Name]; ok {
 				entry.Text = cardsFromJsonMap[card.Name].Text
-			} else {
+			} else if len(cardsFromJsonMap) > 0 {
+				// Only worth reporting per card when the catalog did load.
+				// readFromJson has already reported the file being missing, and
+				// repeating it for every card buries that one line.
 				logrus.Warnf("Card '%s' not found in json file", card.Name)
 			}
 
@@ -128,8 +132,39 @@ type PrintingsFromJson struct {
 	Illustrator string `json:"illustrator"`
 }
 
+// cardCatalogCandidates are the locations the card catalog is looked for, in
+// order. The card data sits next to the Go module, so where it is relative to
+// the working directory depends on how the server was started: the container
+// image flattens the module into the working directory, running the server the
+// way the README describes puts the working directory inside the module, and
+// running it from the repository root leaves the module in a subdirectory.
+var cardCatalogCandidates = []string{
+	"DuelMastersCards.json",
+	"sim/DuelMastersCards.json",
+	"../DuelMastersCards.json",
+}
+
+// resolveCardCatalog returns the first candidate path that exists.
+func resolveCardCatalog() (string, bool) {
+	for _, candidate := range cardCatalogCandidates {
+		if info, err := os.Stat(candidate); err == nil && !info.IsDir() {
+			return candidate, true
+		}
+	}
+
+	return "", false
+}
+
 func readFromJson() map[string]CardFromJson {
-	jsonFileName := "./sim/DuelMastersCards.json"
+	jsonFileName, found := resolveCardCatalog()
+	if !found {
+		logrus.Errorf(
+			"Could not find the card catalog; cards will have no rules text. Looked for %s relative to the working directory",
+			strings.Join(cardCatalogCandidates, ", "),
+		)
+		return nil
+	}
+
 	jsonFile, err := os.Open(jsonFileName)
 	if err != nil {
 		logrus.Error(fmt.Sprintf("Error loading %s", jsonFileName), err)
