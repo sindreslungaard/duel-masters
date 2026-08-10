@@ -92,6 +92,7 @@ type Player struct {
 
 	ActionState PlayerActionState
 	Action      chan PlayerAction
+	disposeOnce sync.Once
 
 	HasChargedMana bool
 	CanChargeMana  bool
@@ -879,7 +880,55 @@ func (p *Player) Username() string {
 	return p.match.PlayerRef(p).Socket.User.Username
 }
 
+// matchDisposed aborts the effect in progress when the match is disposed while
+// it is waiting for a player. It is not an error: it is how an effect stops when
+// the game it belongs to no longer exists. The match event loop recovers it.
+type matchDisposed struct{}
+
+// IsMatchDisposed reports whether a recovered value is the abort raised by
+// NextAction when the match was disposed while a prompt was open. Any recover
+// that can sit between a prompt and the match event loop must let it through, or
+// re-raise it, rather than reporting it as a failure.
+func IsMatchDisposed(recovered any) bool {
+	_, ok := recovered.(matchDisposed)
+	return ok
+}
+
+// NextAction blocks until the player answers the prompt that is currently open
+// for them.
+//
+// It does not return if the match is disposed while it waits. Disposal closes the
+// action channel, and a receive from a closed channel yields the zero
+// PlayerAction immediately and forever, so there is no answer to report and no
+// honest value to return: a returned zero value is indistinguishable from the
+// player declining, and callers would go on to resolve an effect for a game that
+// no longer exists. Instead it aborts the effect in progress, which unwinds to
+// the match event loop and stops every enclosing prompt, loop, and card handler
+// on the way.
+//
+// Always read player answers through this method rather than receiving from
+// Player.Action directly.
+func (p *Player) NextAction() PlayerAction {
+
+	// The match may already have been disposed before the prompt was opened, in
+	// which case there is nobody left to answer it.
+	if p.match.IsClosed() {
+		panic(matchDisposed{})
+	}
+
+	action, ok := <-p.Action
+
+	if !ok {
+		panic(matchDisposed{})
+	}
+
+	return action
+
+}
+
 // Dispose clears out references in the player object
 func (p *Player) Dispose() {
-	close(p.Action)
+	p.disposeOnce.Do(func() {
+		close(p.Action)
+	})
 }

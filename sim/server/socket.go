@@ -2,6 +2,7 @@ package server
 
 import (
 	"sync"
+	"sync/atomic"
 	"time"
 
 	"duel-masters/internal"
@@ -30,13 +31,16 @@ type Connection interface {
 
 // Socket links a ws connection to a user id and handles safe reading and writing of data
 type Socket struct {
-	conn   Connection
-	User   User
-	hub    Hub
-	ready  bool
-	mutex  *sync.Mutex
-	closed bool
-	lost   bool
+	conn  Connection
+	User  User
+	hub   Hub
+	ready bool
+	mutex *sync.Mutex
+	// closed and lost are written when the connection goes away, which happens
+	// on the socket's own goroutine while other goroutines are still sending on
+	// it, so they must be race free.
+	closed atomic.Bool
+	lost   atomic.Bool
 }
 
 // NewSocket creates and returns a new Socket instance
@@ -46,13 +50,11 @@ func NewSocket(c Connection, hub Hub, userID string, username string) *Socket {
 	user.Username = username
 
 	s := &Socket{
-		conn:   c,
-		hub:    hub,
-		ready:  true,
-		mutex:  &sync.Mutex{},
-		closed: false,
-		lost:   false,
-		User:   user,
+		conn:  c,
+		hub:   hub,
+		ready: true,
+		mutex: &sync.Mutex{},
+		User:  user,
 	}
 
 	logrus.Debugf("Opened a connection")
@@ -103,7 +105,7 @@ func (s *Socket) handlePing() {
 
 	for {
 
-		if s.closed || s.lost {
+		if s.isGone() {
 			return
 		}
 
@@ -115,7 +117,7 @@ func (s *Socket) handlePing() {
 			s.mutex.Unlock()
 
 			if err != nil {
-				if !s.closed && !s.lost {
+				if !s.isGone() {
 					s.conn.Close()
 				}
 				return
@@ -128,7 +130,7 @@ func (s *Socket) handlePing() {
 // Send sends a struct v to the client
 func (s *Socket) Send(v any) {
 
-	if s.closed || s.lost {
+	if s.isGone() {
 		return
 	}
 
@@ -153,11 +155,9 @@ func (s *Socket) Close() {
 
 	defer internal.Recover()
 
-	if s.closed {
+	if s.closed.Swap(true) {
 		return
 	}
-
-	s.closed = true
 
 	s.hub.OnSocketClose(s)
 
@@ -170,7 +170,12 @@ func (s *Socket) Close() {
 }
 
 func (s *Socket) IsClosed() bool {
-	return s.closed
+	return s.closed.Load()
+}
+
+// isGone reports whether the connection can no longer carry messages.
+func (s *Socket) isGone() bool {
+	return s.closed.Load() || s.lost.Load()
 }
 
 func (s *Socket) Warn(msg string) {

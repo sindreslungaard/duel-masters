@@ -169,7 +169,7 @@ func SelectCount(p *match.Player, m *match.Match, text string, min int, max int)
 
 	for {
 
-		action := <-p.Action
+		action := p.NextAction()
 
 		if action.Count < min || action.Count > max {
 			m.ActionWarning(p, "The amount selected does not match the requirements")
@@ -195,7 +195,7 @@ func BinaryQuestion(p *match.Player, m *match.Match, text string) bool {
 		defer m.EndWait(m.Opponent(p))
 	}
 
-	action := <-p.Action
+	action := p.NextAction()
 
 	return !action.Cancel
 }
@@ -226,7 +226,7 @@ func OrderCards(p *match.Player, m *match.Match, cards []*match.Card, text strin
 
 	for {
 
-		action := <-p.Action
+		action := p.NextAction()
 
 		if len(action.Cards) != len(cards) {
 			m.ActionWarning(p, "You must arrange the cards in the desired order")
@@ -234,14 +234,14 @@ func OrderCards(p *match.Player, m *match.Match, cards []*match.Card, text strin
 		}
 
 		// check if all the cards specified by the client are expected
-		ok := true
+		expected := true
 		for _, cardId := range action.Cards {
 			if !slices.Contains(cardsIds, cardId) {
-				ok = false
+				expected = false
 			}
 		}
 
-		if !ok {
+		if !expected {
 			m.ActionWarning(p, "The cards don't meet the requirements")
 			continue
 		}
@@ -267,7 +267,7 @@ func MultipleChoiceQuestion(p *match.Player, m *match.Match, text string, option
 
 	for {
 
-		action := <-p.Action
+		action := p.NextAction()
 
 		if action.Count >= len(options) || action.Count < 0 {
 			m.ActionWarning(p, "The option selected doesn't exist")
@@ -299,7 +299,7 @@ func MultipleChoiceSearchable(p *match.Player, m *match.Match, text string, opti
 
 	for {
 
-		action := <-p.Action
+		action := p.NextAction()
 
 		if action.Count >= len(options) || action.Count < 0 {
 			m.ActionWarning(p, "The option selected doesn't exist")
@@ -383,7 +383,7 @@ func SelectFilter(p *match.Player, m *match.Match, containerOwner *match.Player,
 
 	for {
 
-		action := <-p.Action
+		action := p.NextAction()
 
 		if cancellable && action.Cancel {
 			break
@@ -503,7 +503,7 @@ func selectMultipartBase(p *match.Player, m *match.Match, cards map[string][]*ma
 
 	for {
 
-		action := <-p.Action
+		action := p.NextAction()
 
 		if cancellable && action.Cancel {
 			break
@@ -585,7 +585,7 @@ func SelectBacksideFilter(p *match.Player, m *match.Match, containerOwner *match
 
 	for {
 
-		action := <-p.Action
+		action := p.NextAction()
 
 		if cancellable && action.Cancel {
 			break

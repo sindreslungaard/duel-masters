@@ -80,7 +80,7 @@ func Spell(card *match.Card, ctx *match.Context) {
 
 			for {
 
-				action := <-card.Player.Action
+				action := card.Player.NextAction()
 
 				if action.Cancel {
 					ctx.Match.CloseAction(card.Player)

@@ -98,7 +98,6 @@ func (s *MatchSystem) NewMatch(matchName string, hostID string, hostUsername str
 
 		Matchmaking: matchmaking,
 		created:     time.Now().Unix(),
-		ending:      false,
 		isFirstTurn: true,
 		turnsPlayed: 0,
 
