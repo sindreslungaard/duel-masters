@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useDuel } from "./useDuel";
 import {
   ActionMessage,
@@ -65,6 +65,7 @@ export interface DuelProps {
     activePlayer: "host" | "guest" | "spectator";
     onPlayerSwitch: (player: "host" | "guest" | "spectator") => void;
   };
+  onNewTurn?: (myTurn: boolean) => void;
   onLeaveDuel?: () => void;
   onDuelFinished?: (message: DuelFinishedMessage) => void;
 }
@@ -134,6 +135,7 @@ export function Duel({
   devTools,
   onLeaveDuel,
   onDuelFinished,
+  onNewTurn,
 }: DuelProps) {
   const [action, setAction] = useState<ActionMessage | null>(null);
   const [actionRevision, setActionRevision] = useState(0);
@@ -182,10 +184,7 @@ export function Duel({
       setActionError(null);
     },
     onChat: (data) => {
-      setChatMessages((prev) => [
-        ...prev,
-        { ...data, receivedAt: Date.now() },
-      ]);
+      setChatMessages((prev) => [...prev, { ...data, receivedAt: Date.now() }]);
     },
     onWarning: (data) => {
       setWarningMessage(data.message);
@@ -197,6 +196,29 @@ export function Duel({
       setWait("");
     },
   });
+
+  // Whose turn it is only reaches the client as part of the match state, so a
+  // new turn is the turn changing from the one previously seen rather than an
+  // event of its own.
+  const myTurn = state?.myTurn;
+  const previousMyTurnRef = useRef<boolean | null>(null);
+
+  useEffect(() => {
+    if (myTurn === undefined) {
+      return;
+    }
+
+    const previousMyTurn = previousMyTurnRef.current;
+    previousMyTurnRef.current = myTurn;
+
+    // The first state of the connection describes the turn already in progress,
+    // whether the duel just started or the player reconnected mid-duel.
+    if (previousMyTurn === null || previousMyTurn === myTurn) {
+      return;
+    }
+
+    onNewTurn?.(myTurn);
+  }, [myTurn, onNewTurn]);
 
   useEffect(() => {
     if (!duelFinished) {
