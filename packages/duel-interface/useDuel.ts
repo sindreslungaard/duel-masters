@@ -56,6 +56,10 @@ export function useDuel({
     isUnmountingRef.current = false;
 
     const connect = () => {
+      if (isUnmountingRef.current || duelFinishedRef.current) {
+        return;
+      }
+
       // Clear any existing reconnect timeout
       if (reconnectTimeoutRef.current) {
         clearTimeout(reconnectTimeoutRef.current);
@@ -67,6 +71,11 @@ export function useDuel({
       wsRef.current = ws;
 
       ws.onopen = () => {
+        if (isUnmountingRef.current || wsRef.current !== ws) {
+          ws.close(1000, "Leaving duel");
+          return;
+        }
+
         console.log("WebSocket connected");
         setConnected(true);
         setError(null);
@@ -75,56 +84,59 @@ export function useDuel({
       };
 
       ws.onerror = (event) => {
+        if (isUnmountingRef.current || wsRef.current !== ws) return;
         console.error("WebSocket error:", event);
         setError("WebSocket connection error");
       };
 
       ws.onclose = () => {
+        if (wsRef.current !== ws) return;
+        wsRef.current = null;
+
         console.log("WebSocket closed");
         setConnected(false);
 
-        if (duelFinishedRef.current) {
+        if (duelFinishedRef.current || isUnmountingRef.current) {
           setReconnecting(false);
           return;
         }
 
         setReconnecting(true);
 
-        // Only attempt to reconnect if we're not unmounting
-        if (!isUnmountingRef.current) {
-          const maxReconnectAttempts = 20;
-          const baseDelay = 1000; // Start with 1 second
-          const maxDelay = 5000; // Max 5 seconds
+        const maxReconnectAttempts = 20;
+        const baseDelay = 1000; // Start with 1 second
+        const maxDelay = 5000; // Max 5 seconds
 
-          if (reconnectAttemptsRef.current < maxReconnectAttempts) {
-            // First attempt is immediate, then exponential backoff with cap
-            const delay =
-              reconnectAttemptsRef.current === 0
-                ? 0
-                : Math.min(
-                    baseDelay * Math.pow(2, reconnectAttemptsRef.current - 1),
-                    maxDelay,
-                  );
+        if (reconnectAttemptsRef.current < maxReconnectAttempts) {
+          // First attempt is immediate, then exponential backoff with cap
+          const delay =
+            reconnectAttemptsRef.current === 0
+              ? 0
+              : Math.min(
+                  baseDelay * Math.pow(2, reconnectAttemptsRef.current - 1),
+                  maxDelay,
+                );
 
-            console.log(
-              `Reconnecting in ${delay}ms (attempt ${
-                reconnectAttemptsRef.current + 1
-              }/${maxReconnectAttempts})`,
-            );
+          console.log(
+            `Reconnecting in ${delay}ms (attempt ${
+              reconnectAttemptsRef.current + 1
+            }/${maxReconnectAttempts})`,
+          );
 
-            reconnectAttemptsRef.current++;
-            reconnectTimeoutRef.current = window.setTimeout(connect, delay);
-          } else {
-            setReconnecting(false);
-            setError("Connection lost. Max reconnection attempts reached.");
-            alert(
-              "Connection lost. Max reconnection attempts reached. Please refresh the page or go back to the lobby.",
-            );
-          }
+          reconnectAttemptsRef.current++;
+          reconnectTimeoutRef.current = window.setTimeout(connect, delay);
+        } else {
+          setReconnecting(false);
+          setError("Connection lost. Max reconnection attempts reached.");
+          alert(
+            "Connection lost. Max reconnection attempts reached. Please refresh the page or go back to the lobby.",
+          );
         }
       };
 
       ws.onmessage = (event) => {
+        if (isUnmountingRef.current || wsRef.current !== ws) return;
+
         try {
           const data = JSON.parse(event.data);
 
@@ -197,23 +209,39 @@ export function useDuel({
       };
     };
 
-    // Start the initial connection
-    connect();
-
-    // Cleanup on unmount
-    return () => {
+    const disconnect = () => {
       isUnmountingRef.current = true;
 
-      // Clear any pending reconnect timeout
-      if (reconnectTimeoutRef.current) {
+      if (reconnectTimeoutRef.current !== null) {
         clearTimeout(reconnectTimeoutRef.current);
         reconnectTimeoutRef.current = null;
       }
 
-      // Close the WebSocket if it's open
-      if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN) {
-        wsRef.current.close();
+      const ws = wsRef.current;
+      wsRef.current = null;
+      if (ws && ws.readyState < WebSocket.CLOSING) {
+        ws.close(1000, "Leaving duel");
       }
+    };
+
+    const handlePageShow = (event: PageTransitionEvent) => {
+      if (!event.persisted || duelFinishedRef.current) return;
+      isUnmountingRef.current = false;
+      connect();
+    };
+
+    // Start the initial connection
+    connect();
+    window.addEventListener("popstate", disconnect);
+    window.addEventListener("pagehide", disconnect);
+    window.addEventListener("pageshow", handlePageShow);
+
+    // Cleanup on unmount
+    return () => {
+      window.removeEventListener("popstate", disconnect);
+      window.removeEventListener("pagehide", disconnect);
+      window.removeEventListener("pageshow", handlePageShow);
+      disconnect();
     };
   }, [duelId, duelToken, hostUrl]);
 
