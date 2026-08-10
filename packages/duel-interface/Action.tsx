@@ -57,46 +57,43 @@ export function Action({
     maxSelections = cards ? cards.length : 0;
   }
 
-  const [ready, setReady] = useState(false);
   const [selectedCardsObjectKey, setSelectedCardsObjectKey] = useState<
     string | null
   >(cardsObject ? Object.keys(cardsObject)[0] : null);
   const [selectedCardIds, setSelectedCardIds] = useState(new Set<string>());
   const [count, setCount] = useState(minSelections);
   const [isBrushing, setIsBrushing] = useState(false);
-  const [brushedCards, setBrushedCards] = useState(new Set<string>());
   const [selectedSearchValue, setSelectedSearchValue] = useState("-1");
+  const brushedCardIdsRef = useRef(new Set<string>());
   const touchInProgressRef = useRef(false);
 
   const handleBrushEnd = () => {
     setIsBrushing(false);
-    setBrushedCards(new Set());
+    brushedCardIdsRef.current.clear();
     // Reset touch flag after a delay to ensure mouse events are blocked
-    setTimeout(() => {
+    window.setTimeout(() => {
       touchInProgressRef.current = false;
     }, 300);
   };
 
   const toggleCard = (cardId: string) => {
     // Only toggle each card once per brush session
-    if (brushedCards.has(cardId)) return;
+    if (brushedCardIdsRef.current.has(cardId)) return;
 
-    setBrushedCards((prev) => new Set(prev).add(cardId));
+    brushedCardIdsRef.current.add(cardId);
 
-    // Toggle the card
-    if (selectedCardIds.has(cardId)) {
+    setSelectedCardIds((previous) => {
+      const next = new Set(previous);
+
       // Always allow deselection
-      setSelectedCardIds((prev) => {
-        const next = new Set(prev);
+      if (next.has(cardId)) {
         next.delete(cardId);
-        return next;
-      });
-    } else {
-      // Only allow selection if under max
-      if (selectedCardIds.size < maxSelections) {
-        setSelectedCardIds((prev) => new Set(prev).add(cardId));
+      } else if (next.size < maxSelections) {
+        next.add(cardId);
       }
-    }
+
+      return next;
+    });
   };
 
   const handleCardMouseDown = (
@@ -151,58 +148,60 @@ export function Action({
     }
   };
 
-  const [cardCount, setCardCount] = useState(0);
-  const [gridCols, setGridCols] = useState(6);
-  useEffect(() => {
-    if (cardsObject) {
-      const c = cardsObject[selectedCardsObjectKey || ""];
-      setCardCount(c?.length || 0);
-    } else if (showCards) {
-      setCardCount(showCards.cards.length);
-    } else {
-      setCardCount((cards?.length || 0) + (unselectableCards?.length || 0));
-    }
-  }, [selectedCardsObjectKey]);
+  const selectedCardsObjectCards =
+    cardsObject?.[selectedCardsObjectKey || ""] || [];
+  const cardCount = cardsObject
+    ? selectedCardsObjectCards.length
+    : showCards
+      ? showCards.cards.length
+      : (cards?.length || 0) + (unselectableCards?.length || 0);
+  const gridCols = Math.max(3, Math.min(cardCount, 6));
 
-  useEffect(() => {
-    setGridCols(Math.max(3, Math.min(cardCount, 6)));
-    if (!ready) {
-      setTimeout(() => setReady(true), 1);
-    }
-  }, [cardCount]);
+  const currentSelectableCardIds = new Set(
+    (cardsObject ? Object.values(cardsObject).flat() : cards || []).map(
+      (card) => card.virtualId,
+    ),
+  );
+  const selectedCurrentCardIds = [...selectedCardIds].filter((cardId) =>
+    currentSelectableCardIds.has(cardId),
+  );
 
-  /* This is a bit of a mess in order to accomodate for the legacy system */
+  const cardGridStyle = {
+    gridTemplateColumns: `repeat(${gridCols}, minmax(0, 1fr))`,
+  };
+  const isCardSelection = actionType === ActionType.None || !actionType;
 
   return (
     <Popup
       title={title}
-      visible={visible && ready}
+      visible={visible}
       showCloseButton={showCards ? true : cancellable}
       zIndex={1000}
       closeOnOutsideClick={false}
+      contentClassName="flex min-h-0 flex-1 overflow-hidden"
       onClose={showCards ? onDismiss : onClose}
     >
-      <div className="px-6 py-6 pt-4 select-none" onTouchMove={handleTouchMove}>
-        {/* Show cards action */}
-        {actionType === ActionType.ShowCards && (
-          <>
-            <div className="text-sm text-gray-100">{text}</div>
+      <div className="flex min-h-0 flex-1 flex-col select-none">
+        <div
+          className="custom-scrollbar min-h-0 flex-1 overflow-y-auto px-6 py-4"
+          onTouchMove={handleTouchMove}
+        >
+          <div className="text-sm text-gray-100">{text}</div>
 
+          {actionType === ActionType.ShowCards && (
             <div
-              className="grid gap-2 p-2 mt-4 bg-black/30 rounded-md w-fit"
-              style={{
-                gridTemplateColumns: `repeat(${gridCols}, minmax(0, 1fr))`,
-              }}
+              className="mt-4 grid w-fit gap-2 rounded-md bg-black/30 p-2"
+              style={cardGridStyle}
             >
               {showCards?.cards.map((imageId, index) => (
                 <div key={index} className="w-full">
                   <img
-                    onContextMenu={(e) => {
-                      e.preventDefault();
+                    onContextMenu={(event) => {
+                      event.preventDefault();
                       onCardRightClick?.(imageId, "");
                     }}
                     draggable={false}
-                    className={`rounded-md`}
+                    className="rounded-md"
                     src={`https://scans.shobu.io/${imageId}.jpg`}
                     alt="Card preview"
                     style={{ borderRadius: "5%" }}
@@ -210,132 +209,197 @@ export function Action({
                 </div>
               ))}
             </div>
+          )}
 
-            <div className="flex mt-4">
+          {isCardSelection && (
+            <>
+              {cardsObject && (
+                <div className="mt-4 flex gap-4">
+                  <select
+                    className="bg-gray-800 text-white pl-2 pr-8 py-[0.4rem] rounded border border-gray-700 focus:outline-none focus:border-blue-500 text-xs appearance-none bg-[url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2212%22%20height%3D%2212%22%20viewBox%3D%220%200%2012%2012%22%3E%3Cpath%20fill%3D%22%23ffffff%22%20d%3D%22M6%209L1%204h10z%22%2F%3E%3C%2Fsvg%3E')] bg-[length:12px_12px] bg-[position:right_0.5rem_center] bg-no-repeat"
+                    id="action-card-group-selector"
+                    value={selectedCardsObjectKey || ""}
+                    onChange={(event) =>
+                      setSelectedCardsObjectKey(event.target.value)
+                    }
+                  >
+                    {Object.keys(cardsObject).map((key) => (
+                      <option key={key} value={key}>
+                        {key}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              )}
+
+              <div
+                className="mt-4 grid w-fit gap-2 rounded-md bg-black/30 p-2"
+                style={cardGridStyle}
+              >
+                {cardsObject &&
+                  selectedCardsObjectCards.map((card) => (
+                    <div
+                      key={card.virtualId}
+                      className="w-full"
+                      data-card-id={card.virtualId}
+                      onMouseEnter={() => handleCardHover(card.virtualId)}
+                      onMouseDown={(event) =>
+                        handleCardMouseDown(card.virtualId, event)
+                      }
+                      onTouchStart={(event) =>
+                        handleCardMouseDown(card.virtualId, event)
+                      }
+                    >
+                      <img
+                        onContextMenu={(event) => {
+                          event.preventDefault();
+                          if (onCardRightClick && card.uid) {
+                            onCardRightClick(card.uid, card.name);
+                          }
+                        }}
+                        onDragStart={(event) => event.preventDefault()}
+                        draggable={false}
+                        className={`rounded-md ${
+                          selectedCardIds.has(card.virtualId)
+                            ? "ring-1 ring-blue-100"
+                            : ""
+                        }`}
+                        src={`https://scans.shobu.io/${card.uid}.jpg`}
+                        alt={card.name}
+                        style={{ borderRadius: "5%" }}
+                      />
+                    </div>
+                  ))}
+
+                {cardsObject && !selectedCardsObjectCards.length && (
+                  <div className="text-sm text-gray-400">No cards to show</div>
+                )}
+
+                {!cardsObject &&
+                  cards?.map((card) => (
+                    <div
+                      key={card.virtualId}
+                      className="w-full"
+                      data-card-id={card.virtualId}
+                      onMouseEnter={() => handleCardHover(card.virtualId)}
+                      onMouseDown={(event) =>
+                        handleCardMouseDown(card.virtualId, event)
+                      }
+                      onTouchStart={(event) =>
+                        handleCardMouseDown(card.virtualId, event)
+                      }
+                    >
+                      <img
+                        onContextMenu={(event) => {
+                          event.preventDefault();
+                          if (onCardRightClick && card.uid) {
+                            onCardRightClick(card.uid, card.name);
+                          }
+                        }}
+                        onDragStart={(event) => event.preventDefault()}
+                        draggable={false}
+                        className={`rounded-md ${
+                          selectedCardIds.has(card.virtualId)
+                            ? "ring-1 ring-blue-100"
+                            : ""
+                        }`}
+                        src={`https://scans.shobu.io/${card.uid}.jpg`}
+                        alt={card.name}
+                        style={{ borderRadius: "5%" }}
+                      />
+                    </div>
+                  ))}
+
+                {!cardsObject &&
+                  unselectableCards?.map((card) => (
+                    <div key={card.virtualId} className="w-full">
+                      <img
+                        onContextMenu={(event) => {
+                          event.preventDefault();
+                          if (onCardRightClick && card.uid) {
+                            onCardRightClick(card.uid, card.name);
+                          }
+                        }}
+                        draggable={false}
+                        className="cursor-not-allowed rounded-md opacity-50 grayscale"
+                        src={`https://scans.shobu.io/${card.uid}.jpg`}
+                        alt={card.name}
+                        style={{ borderRadius: "5%" }}
+                      />
+                    </div>
+                  ))}
+              </div>
+            </>
+          )}
+
+          {actionType === ActionType.Order && (
+            <div
+              className="mt-4 grid w-fit gap-2 rounded-md bg-black/30 p-2"
+              style={cardGridStyle}
+            >
+              {cards?.map((card) => {
+                const orderNumber =
+                  [...selectedCardIds].indexOf(card.virtualId) + 1;
+                const isSelected = selectedCardIds.has(card.virtualId);
+
+                return (
+                  <div
+                    key={card.virtualId}
+                    className="relative w-full"
+                    data-card-id={card.virtualId}
+                    onMouseEnter={() => handleCardHover(card.virtualId)}
+                    onMouseDown={(event) =>
+                      handleCardMouseDown(card.virtualId, event)
+                    }
+                    onTouchStart={(event) =>
+                      handleCardMouseDown(card.virtualId, event)
+                    }
+                  >
+                    <img
+                      onContextMenu={(event) => {
+                        event.preventDefault();
+                        if (onCardRightClick && card.uid) {
+                          onCardRightClick(card.uid, card.name);
+                        }
+                      }}
+                      onDragStart={(event) => event.preventDefault()}
+                      draggable={false}
+                      className={`rounded-md ${
+                        isSelected ? "ring-1 ring-blue-100" : ""
+                      }`}
+                      src={`https://scans.shobu.io/${card.uid}.jpg`}
+                      alt={card.name}
+                      style={{ borderRadius: "5%" }}
+                    />
+                    {isSelected && (
+                      <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
+                        <div className="text-6xl font-bold text-white drop-shadow-[0_0_8px_rgba(0,0,0,0.9)]">
+                          {orderNumber}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </div>
+
+        <div className="shrink-0 border-t border-gray-800 bg-gray-900 px-6 py-4">
+          {actionType === ActionType.ShowCards && (
+            <div className="flex">
               <Button onClick={() => onDismiss?.()}>
                 Acknowledge and Close
               </Button>
             </div>
-          </>
-        )}
+          )}
 
-        {/* Normal card selection */}
-        {(actionType === ActionType.None || !actionType) && (
-          <>
-            <div className="text-sm text-gray-100">{text}</div>
-            {cardsObject && (
-              <div className="mt-4 flex gap-4">
-                <select
-                  className="bg-gray-800 text-white pl-2 pr-8 py-[0.4rem] rounded border border-gray-700 focus:outline-none focus:border-blue-500 text-xs appearance-none bg-[url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2212%22%20height%3D%2212%22%20viewBox%3D%220%200%2012%2012%22%3E%3Cpath%20fill%3D%22%23ffffff%22%20d%3D%22M6%209L1%204h10z%22%2F%3E%3C%2Fsvg%3E')] bg-[length:12px_12px] bg-[position:right_0.5rem_center] bg-no-repeat"
-                  id="action-searchable-selector"
-                  value={selectedCardsObjectKey || ""}
-                  onChange={(e) => setSelectedCardsObjectKey(e.target.value)}
-                >
-                  {Object.keys(cardsObject).map((key, i) => (
-                    <option key={i} value={key}>
-                      {key}
-                    </option>
-                  ))}
-                </select>
-              </div>
-            )}
-            <div
-              className="grid gap-2 p-2 mt-4 bg-black/30 rounded-md w-fit"
-              style={{
-                gridTemplateColumns: `repeat(${gridCols}, minmax(0, 1fr))`,
-              }}
-            >
-              {cardsObject &&
-                cardsObject[selectedCardsObjectKey || ""].map((card, index) => (
-                  <div
-                    key={index}
-                    className="w-full"
-                    data-card-id={card.virtualId}
-                    onMouseEnter={() => handleCardHover(card.virtualId)}
-                    onMouseDown={(e) => handleCardMouseDown(card.virtualId, e)}
-                    onTouchStart={(e) => handleCardMouseDown(card.virtualId, e)}
-                  >
-                    <img
-                      onContextMenu={(e) => {
-                        e.preventDefault();
-                        if (onCardRightClick && card.uid) {
-                          onCardRightClick(card.uid, card.name);
-                        }
-                      }}
-                      onDragStart={(e) => e.preventDefault()}
-                      draggable={false}
-                      className={`rounded-md ${
-                        selectedCardIds.has(card.virtualId)
-                          ? "ring-1 ring-blue-100"
-                          : ""
-                      }`}
-                      src={`https://scans.shobu.io/${card.uid}.jpg`}
-                      alt={card.name}
-                      style={{ borderRadius: "5%" }}
-                    />
-                  </div>
-                ))}
-
-              {cardsObject &&
-                !cardsObject[selectedCardsObjectKey || ""].length && (
-                  <div className="text-gray-400 text-sm">No cards to show</div>
-                )}
-
-              {!cardsObject &&
-                cards?.map((card, index) => (
-                  <div
-                    key={index}
-                    className="w-full"
-                    data-card-id={card.virtualId}
-                    onMouseEnter={() => handleCardHover(card.virtualId)}
-                    onMouseDown={(e) => handleCardMouseDown(card.virtualId, e)}
-                    onTouchStart={(e) => handleCardMouseDown(card.virtualId, e)}
-                  >
-                    <img
-                      onContextMenu={(e) => {
-                        e.preventDefault();
-                        if (onCardRightClick && card.uid) {
-                          onCardRightClick(card.uid, card.name);
-                        }
-                      }}
-                      onDragStart={(e) => e.preventDefault()}
-                      draggable={false}
-                      className={`rounded-md ${
-                        selectedCardIds.has(card.virtualId)
-                          ? "ring-1 ring-blue-100"
-                          : ""
-                      }`}
-                      src={`https://scans.shobu.io/${card.uid}.jpg`}
-                      alt={card.name}
-                      style={{ borderRadius: "5%" }}
-                    />
-                  </div>
-                ))}
-
-              {!cardsObject &&
-                unselectableCards?.map((card, index) => (
-                  <div key={index} className="w-full">
-                    <img
-                      onContextMenu={(e) => {
-                        e.preventDefault();
-                        if (onCardRightClick && card.uid) {
-                          onCardRightClick(card.uid, card.name);
-                        }
-                      }}
-                      draggable={false}
-                      className={`rounded-md opacity-50 grayscale cursor-not-allowed`}
-                      src={`https://scans.shobu.io/${card.uid}.jpg`}
-                      alt={card.name}
-                      style={{ borderRadius: "5%" }}
-                    />
-                  </div>
-                ))}
-            </div>
-            <div className="flex items-center gap-4 mt-4">
+          {(isCardSelection || actionType === ActionType.Order) && (
+            <div className="flex items-center gap-4">
               <Button
                 onClick={() =>
                   onChoose({
-                    cards: [...selectedCardIds],
+                    cards: selectedCurrentCardIds,
                     cancel: false,
                     count: 0,
                   })
@@ -348,25 +412,20 @@ export function Action({
                   Close
                 </Button>
               )}
-              <div className="flex-1 text-right text-xs text-gray-300 italic">
+              <div className="flex-1 text-right text-xs italic text-gray-300">
                 Click and drag to (de)select faster
               </div>
             </div>
-          </>
-        )}
+          )}
 
-        {/* Question action */}
-        {actionType === ActionType.Question && (
-          <>
-            <div className="text-sm text-gray-100">{text}</div>
-            {choices && choices.length > 0 ? (
-              <div className="gap-4 mt-6 flex flex-wrap">
-                {choices.map((choice, i) => (
-                  <div className="flex-1">
+          {actionType === ActionType.Question &&
+            (choices && choices.length > 0 ? (
+              <div className="flex flex-wrap gap-4">
+                {choices.map((choice, index) => (
+                  <div key={index} className="flex-1">
                     <Button
-                      key={i}
                       onClick={() =>
-                        onChoose({ cards: [], cancel: false, count: i })
+                        onChoose({ cards: [], cancel: false, count: index })
                       }
                     >
                       {choice}
@@ -375,7 +434,7 @@ export function Action({
                 ))}
               </div>
             ) : (
-              <div className="gap-4 mt-6 flex flex-wrap">
+              <div className="flex flex-wrap gap-4">
                 <div className="flex-1">
                   <Button
                     onClick={() => onChoose({ cards: [], cancel: false })}
@@ -383,7 +442,6 @@ export function Action({
                     Yes
                   </Button>
                 </div>
-
                 <div className="flex-1">
                   <Button
                     variant="gray"
@@ -393,15 +451,10 @@ export function Action({
                   </Button>
                 </div>
               </div>
-            )}
-          </>
-        )}
+            ))}
 
-        {/* Count action */}
-        {actionType === ActionType.Count && (
-          <>
-            <div className="text-sm text-gray-100">{text}</div>
-            <div className="mt-6 flex gap-4">
+          {actionType === ActionType.Count && (
+            <div className="flex gap-4">
               <CountInput
                 value={count}
                 onChange={setCount}
@@ -414,32 +467,29 @@ export function Action({
                 Choose
               </Button>
             </div>
-          </>
-        )}
+          )}
 
-        {/* Searchable action */}
-        {actionType === ActionType.Searchable &&
-          choices &&
-          choices.length > 0 && (
-            <>
-              <div className="text-sm text-gray-100">{text}</div>
-              <div className="mt-6 flex gap-4">
+          {actionType === ActionType.Searchable &&
+            choices &&
+            choices.length > 0 && (
+              <div className="flex gap-4">
                 <select
                   className="bg-gray-800 text-white pl-2 pr-8 py-[0.4rem] rounded border border-gray-700 focus:outline-none focus:border-blue-500 text-xs appearance-none bg-[url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2212%22%20height%3D%2212%22%20viewBox%3D%220%200%2012%2012%22%3E%3Cpath%20fill%3D%22%23ffffff%22%20d%3D%22M6%209L1%204h10z%22%2F%3E%3C%2Fsvg%3E')] bg-[length:12px_12px] bg-[position:right_0.5rem_center] bg-no-repeat"
                   id="action-searchable-selector"
                   value={selectedSearchValue}
-                  onChange={(e) => setSelectedSearchValue(e.target.value)}
+                  onChange={(event) =>
+                    setSelectedSearchValue(event.target.value)
+                  }
                 >
                   <option value="-1" disabled>
                     Search and select
                   </option>
-                  {choices?.map((choice, i) => (
-                    <option key={i} value={`${i}`}>
+                  {choices.map((choice, index) => (
+                    <option key={index} value={`${index}`}>
                       {choice}
                     </option>
                   ))}
                 </select>
-
                 <Button
                   disabled={selectedSearchValue === "-1"}
                   onClick={() => {
@@ -455,101 +505,26 @@ export function Action({
                   Choose
                 </Button>
               </div>
-            </>
-          )}
+            )}
 
-        {/* Order card selection */}
-        {actionType === ActionType.Order && (
-          <>
-            <div className="text-sm text-gray-100">{text}</div>
-            <div
-              className="grid gap-2 p-2 mt-4 bg-black/30 rounded-md w-fit"
-              style={{
-                gridTemplateColumns: `repeat(${gridCols}, minmax(0, 1fr))`,
-              }}
-            >
-              {cards?.map((card, index) => {
-                const orderNumber =
-                  [...selectedCardIds].indexOf(card.virtualId) + 1;
-                const isSelected = selectedCardIds.has(card.virtualId);
-
-                return (
-                  <div
-                    key={index}
-                    className="w-full relative"
-                    data-card-id={card.virtualId}
-                    onMouseEnter={() => handleCardHover(card.virtualId)}
-                    onMouseDown={(e) => handleCardMouseDown(card.virtualId, e)}
-                    onTouchStart={(e) => handleCardMouseDown(card.virtualId, e)}
-                  >
-                    <img
-                      onContextMenu={(e) => {
-                        e.preventDefault();
-                        if (onCardRightClick && card.uid) {
-                          onCardRightClick(card.uid, card.name);
-                        }
-                      }}
-                      onDragStart={(e) => e.preventDefault()}
-                      draggable={false}
-                      className={`rounded-md ${
-                        isSelected ? "ring-1 ring-blue-100" : ""
-                      }`}
-                      src={`https://scans.shobu.io/${card.uid}.jpg`}
-                      alt={card.name}
-                      style={{ borderRadius: "5%" }}
-                    />
-                    {isSelected && (
-                      <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                        <div className="text-white text-6xl font-bold drop-shadow-[0_0_8px_rgba(0,0,0,0.9)]">
-                          {orderNumber}
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                );
-              })}
-            </div>
-            <div className="flex items-center gap-4 mt-4">
-              <Button
-                onClick={() =>
-                  onChoose({
-                    cards: [...selectedCardIds],
-                    cancel: false,
-                    count: 0,
-                  })
-                }
+          {error && (
+            <div className="mt-3 flex items-center gap-2 text-sm text-red-500">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 20 20"
+                fill="currentColor"
+                className="h-5 w-5 shrink-0"
               >
-                Choose
-              </Button>
-              {cancellable && (
-                <Button variant="gray" onClick={onClose}>
-                  Close
-                </Button>
-              )}
-              <div className="flex-1 text-right text-xs text-gray-300 italic">
-                Click and drag to (de)select faster
-              </div>
+                <path
+                  fillRule="evenodd"
+                  d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-5a.75.75 0 01.75.75v4.5a.75.75 0 01-1.5 0v-4.5A.75.75 0 0110 5zm0 10a1 1 0 100-2 1 1 0 000 2z"
+                  clipRule="evenodd"
+                />
+              </svg>
+              {error}
             </div>
-          </>
-        )}
-
-        {error && (
-          <div className="mt-4 flex items-center gap-2 text-sm text-red-500">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 20 20"
-              fill="currentColor"
-              className="w-5 h-5 flex-shrink-0"
-            >
-              <path
-                fillRule="evenodd"
-                d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-5a.75.75 0 01.75.75v4.5a.75.75 0 01-1.5 0v-4.5A.75.75 0 0110 5zm0 10a1 1 0 100-2 1 1 0 000 2z"
-                clipRule="evenodd"
-              />
-            </svg>
-            {error}
-          </div>
-        )}
+          )}
+        </div>
       </div>
     </Popup>
   );

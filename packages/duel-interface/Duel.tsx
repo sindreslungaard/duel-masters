@@ -136,6 +136,7 @@ export function Duel({
   onDuelFinished,
 }: DuelProps) {
   const [action, setAction] = useState<ActionMessage | null>(null);
+  const [actionRevision, setActionRevision] = useState(0);
   const [actionError, setActionError] = useState<ActionWarningMessage | null>(
     null,
   );
@@ -170,7 +171,11 @@ export function Duel({
     hostUrl,
     duelId,
     duelToken,
-    onActionMessage: setAction,
+    onActionMessage: (nextAction) => {
+      setAction(nextAction);
+      setActionError(null);
+      setActionRevision((revision) => revision + 1);
+    },
     onActionError: setActionError,
     onActionClose: () => {
       setAction(null);
@@ -1181,6 +1186,7 @@ export function Duel({
 
       {action && (
         <Action
+          key={actionRevision}
           title={action.showCards ? "Card Preview" : "Action Required"}
           visible={true}
           error={actionError ? actionError.message : undefined}
