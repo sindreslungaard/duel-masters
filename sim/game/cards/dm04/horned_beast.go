@@ -13,7 +13,7 @@ func NiofaHornedProtector(c *match.Card) {
 
 	c.Name = "Niofa, Horned Protector"
 	c.Power = 9000
-	c.Civ = civ.Nature
+	c.Civs = []string{civ.Nature}
 	c.Family = []string{family.HornedBeast}
 	c.ManaCost = 6
 	c.ManaRequirement = []string{civ.Nature}
@@ -24,7 +24,7 @@ func NiofaHornedProtector(c *match.Card) {
 			card,
 			ctx,
 			1,
-			func(x *match.Card) bool { return x.HasCondition(cnd.Creature) && x.Civ == civ.Nature },
+			func(x *match.Card) bool { return x.HasCondition(cnd.Creature) && x.HasCiv(civ.Nature) },
 			"nature creature",
 		)
 

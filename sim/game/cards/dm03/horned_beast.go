@@ -13,14 +13,14 @@ func RagingDashHorn(c *match.Card) {
 
 	c.Name = "Raging Dash-Horn"
 	c.Power = 4000
-	c.Civ = civ.Nature
+	c.Civs = []string{civ.Nature}
 	c.Family = []string{family.HornedBeast}
 	c.ManaCost = 5
 	c.ManaRequirement = []string{civ.Nature}
 
 	c.PowerModifier = func(m *match.Match, attacking bool) int {
 
-		if match.ContainerHas(c.Player, match.MANAZONE, func(x *match.Card) bool { return x.Civ != civ.Nature }) {
+		if match.ContainerHas(c.Player, match.MANAZONE, func(x *match.Card) bool { return !x.HasCiv(civ.Nature) }) {
 			return 0
 		}
 
@@ -29,7 +29,7 @@ func RagingDashHorn(c *match.Card) {
 
 	c.Use(fx.Creature, fx.When(fx.Attacking, func(card *match.Card, ctx *match.Context) {
 
-		if match.ContainerHas(card.Player, match.MANAZONE, func(x *match.Card) bool { return x.Civ != civ.Nature }) {
+		if match.ContainerHas(card.Player, match.MANAZONE, func(x *match.Card) bool { return !x.HasCiv(civ.Nature) }) {
 			card.RemoveCondition(cnd.DoubleBreaker)
 		} else {
 			card.AddCondition(cnd.DoubleBreaker, nil, card.ID)

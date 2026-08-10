@@ -13,7 +13,7 @@ func IllusionaryMerfolk(c *match.Card) {
 
 	c.Name = "Illusionary Merfolk"
 	c.Power = 4000
-	c.Civ = civ.Water
+	c.Civs = []string{civ.Water}
 	c.Family = []string{family.GelFish}
 	c.ManaCost = 5
 	c.ManaRequirement = []string{civ.Water}
@@ -33,7 +33,7 @@ func PhantomFish(c *match.Card) {
 
 	c.Name = "Phantom Fish"
 	c.Power = 4000
-	c.Civ = civ.Water
+	c.Civs = []string{civ.Water}
 	c.Family = []string{family.GelFish}
 	c.ManaCost = 3
 	c.ManaRequirement = []string{civ.Water}
@@ -47,7 +47,7 @@ func RevolverFish(c *match.Card) {
 
 	c.Name = "Revolver Fish"
 	c.Power = 5000
-	c.Civ = civ.Water
+	c.Civs = []string{civ.Water}
 	c.Family = []string{family.GelFish}
 	c.ManaCost = 4
 	c.ManaRequirement = []string{civ.Water}
@@ -61,7 +61,7 @@ func SaucerHeadShark(c *match.Card) {
 
 	c.Name = "Saucer-Head Shark"
 	c.Power = 3000
-	c.Civ = civ.Water
+	c.Civs = []string{civ.Water}
 	c.Family = []string{family.GelFish}
 	c.ManaCost = 5
 	c.ManaRequirement = []string{civ.Water}

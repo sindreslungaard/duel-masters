@@ -12,7 +12,7 @@ func IllusoryBerry(c *match.Card) {
 
 	c.Name = "Illusory Berry"
 	c.Power = 3000
-	c.Civ = civ.Nature
+	c.Civs = []string{civ.Nature}
 	c.Family = []string{family.TreeFolk}
 	c.ManaCost = 3
 	c.ManaRequirement = []string{civ.Nature}

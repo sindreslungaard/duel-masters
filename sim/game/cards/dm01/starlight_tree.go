@@ -12,7 +12,7 @@ func EmeraldGrass(c *match.Card) {
 
 	c.Name = "Emerald Grass"
 	c.Power = 3000
-	c.Civ = civ.Light
+	c.Civs = []string{civ.Light}
 	c.Family = []string{family.StarlightTree}
 	c.ManaCost = 2
 	c.ManaRequirement = []string{civ.Light}
@@ -26,7 +26,7 @@ func RubyGrass(c *match.Card) {
 
 	c.Name = "Ruby Grass"
 	c.Power = 3000
-	c.Civ = civ.Light
+	c.Civs = []string{civ.Light}
 	c.Family = []string{family.StarlightTree}
 	c.ManaCost = 3
 	c.ManaRequirement = []string{civ.Light}
@@ -40,7 +40,7 @@ func SenatineJadeTree(c *match.Card) {
 
 	c.Name = "Senatine Jade Tree"
 	c.Power = 4000
-	c.Civ = civ.Light
+	c.Civs = []string{civ.Light}
 	c.Family = []string{family.StarlightTree}
 	c.ManaCost = 3
 	c.ManaRequirement = []string{civ.Light}

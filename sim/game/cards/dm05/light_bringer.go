@@ -11,7 +11,7 @@ func LeQuistTheOracle(c *match.Card) {
 
 	c.Name = "Le Quist, the Oracle"
 	c.Power = 1500
-	c.Civ = civ.Light
+	c.Civs = []string{civ.Light}
 	c.Family = []string{family.LightBringer}
 	c.ManaCost = 2
 	c.ManaRequirement = []string{civ.Light}

@@ -36,7 +36,7 @@ func TestTwitchHornTheAggressor(t *testing.T) {
 	assert.Equal(t, "Twitch Horn, the Aggressor", twitchHorn.Name)
 	assert.Equal(t, 2000, twitchHorn.Power)
 	assert.Equal(t, 6, twitchHorn.ManaCost)
-	assert.Equal(t, civ.Nature, twitchHorn.Civ)
+	assert.Equal(t, []string{civ.Nature}, twitchHorn.Civs)
 	assert.True(t, twitchHorn.HasFamily(family.HornedBeast))
 	assert.Equal(t, 2000, scn.Match.GetPower(twitchHorn, false))
 	assert.Equal(t, 6000, scn.Match.GetPower(twitchHorn, true))

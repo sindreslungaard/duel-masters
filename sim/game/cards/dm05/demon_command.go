@@ -12,7 +12,7 @@ func DeathCruzerTheAnnihilator(c *match.Card) {
 
 	c.Name = "Death Cruzer, the Annihilator"
 	c.Power = 13000
-	c.Civ = civ.Darkness
+	c.Civs = []string{civ.Darkness}
 	c.Family = []string{family.DemonCommand}
 	c.ManaCost = 7
 	c.ManaRequirement = []string{civ.Darkness}
@@ -36,7 +36,7 @@ func VashunaSwordDancer(c *match.Card) {
 
 	c.Name = "Vashuna, Sword Dancer"
 	c.Power = 7000
-	c.Civ = civ.Darkness
+	c.Civs = []string{civ.Darkness}
 	c.Family = []string{family.DemonCommand}
 	c.ManaCost = 5
 	c.ManaRequirement = []string{civ.Darkness}

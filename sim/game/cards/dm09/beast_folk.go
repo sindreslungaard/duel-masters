@@ -14,7 +14,7 @@ func SilvermoonTrailblazer(c *match.Card) {
 
 	c.Name = "Silvermoon Trailblazer"
 	c.Power = 3000
-	c.Civ = civ.Nature
+	c.Civs = []string{civ.Nature}
 	c.Family = []string{family.BeastFolk}
 	c.ManaCost = 4
 	c.ManaRequirement = []string{civ.Nature}
@@ -52,7 +52,7 @@ func StormWranglerTheFurious(c *match.Card) {
 
 	c.Name = "Storm Wrangler, the Furious"
 	c.Power = 5000
-	c.Civ = civ.Nature
+	c.Civs = []string{civ.Nature}
 	c.Family = []string{family.BeastFolk}
 	c.ManaCost = 4
 	c.ManaRequirement = []string{civ.Nature}
@@ -143,7 +143,7 @@ func CavernRaider(c *match.Card) {
 
 	c.Name = "Cavern Raider"
 	c.Power = 2000
-	c.Civ = civ.Nature
+	c.Civs = []string{civ.Nature}
 	c.Family = []string{family.BeastFolk}
 	c.ManaCost = 3
 	c.ManaRequirement = []string{civ.Nature}

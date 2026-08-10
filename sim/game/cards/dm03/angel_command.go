@@ -12,7 +12,7 @@ func MiarCometElemental(c *match.Card) {
 
 	c.Name = "Miar, Comet Elemental"
 	c.Power = 11500
-	c.Civ = civ.Light
+	c.Civs = []string{civ.Light}
 	c.Family = []string{family.AngelCommand}
 	c.ManaCost = 8
 	c.ManaRequirement = []string{civ.Light}

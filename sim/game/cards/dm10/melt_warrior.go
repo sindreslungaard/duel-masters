@@ -12,7 +12,7 @@ func CoreCrashLizard(c *match.Card) {
 
 	c.Name = "Core-Crash Lizard"
 	c.Power = 6000
-	c.Civ = civ.Fire
+	c.Civs = []string{civ.Fire}
 	c.Family = []string{family.MeltWarrior}
 	c.ManaCost = 7
 	c.ManaRequirement = []string{civ.Fire}

@@ -13,7 +13,7 @@ func Psyshroom(c *match.Card) {
 
 	c.Name = "Psyshroom"
 	c.Power = 2000
-	c.Civ = civ.Nature
+	c.Civs = []string{civ.Nature}
 	c.Family = []string{family.BalloonMushroom}
 	c.ManaCost = 4
 	c.ManaRequirement = []string{civ.Nature}
@@ -29,7 +29,7 @@ func Psyshroom(c *match.Card) {
 			0,
 			1,
 			true,
-			func(x *match.Card) bool { return x.Civ == civ.Nature },
+			func(x *match.Card) bool { return x.HasCiv(civ.Nature) },
 			false,
 		).Map(func(x *match.Card) {
 			card.Player.MoveCard(x.ID, match.GRAVEYARD, match.MANAZONE, card.ID)

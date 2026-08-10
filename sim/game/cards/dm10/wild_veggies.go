@@ -12,7 +12,7 @@ import (
 func ScowlingTomato(c *match.Card) {
 	c.Name = "Scowling Tomato"
 	c.Power = 2000
-	c.Civ = civ.Nature
+	c.Civs = []string{civ.Nature}
 	c.Family = []string{family.WildVeggies}
 	c.ManaCost = 2
 	c.ManaRequirement = []string{civ.Nature}
@@ -24,7 +24,7 @@ func ScowlingTomato(c *match.Card) {
 func ShamanBroccoli(c *match.Card) {
 	c.Name = "Shaman Broccoli"
 	c.Power = 1000
-	c.Civ = civ.Nature
+	c.Civs = []string{civ.Nature}
 	c.Family = []string{family.WildVeggies}
 	c.ManaCost = 2
 	c.ManaRequirement = []string{civ.Nature}
@@ -37,7 +37,7 @@ func KaratePotato(c *match.Card) {
 
 	c.Name = "Karate Potato"
 	c.Power = 1000
-	c.Civ = civ.Nature
+	c.Civs = []string{civ.Nature}
 	c.Family = []string{family.WildVeggies}
 	c.ManaCost = 4
 	c.ManaRequirement = []string{civ.Nature}

@@ -13,7 +13,7 @@ func BuoyantBlowfish(c *match.Card) {
 
 	c.Name = "Buoyant Blowfish"
 	c.Power = 1000
-	c.Civ = civ.Water
+	c.Civs = []string{civ.Water}
 	c.Family = []string{family.GelFish}
 	c.ManaCost = 5
 	c.ManaRequirement = []string{civ.Water}
@@ -43,7 +43,7 @@ func FluorogillManta(c *match.Card) {
 
 	c.Name = "Fluorogill Manta"
 	c.Power = 1000
-	c.Civ = civ.Water
+	c.Civs = []string{civ.Water}
 	c.Family = []string{family.GelFish}
 	c.ManaCost = 6
 	c.ManaRequirement = []string{civ.Water}
@@ -55,7 +55,7 @@ func FluorogillManta(c *match.Card) {
 					card.Player,
 					match.BATTLEZONE,
 					func(x *match.Card) bool {
-						return x.HasCondition(cnd.Creature) && (x.Civ == civ.Light || x.Civ == civ.Darkness)
+						return x.HasCondition(cnd.Creature) && (x.HasCiv(civ.Light) || x.HasCiv(civ.Darkness))
 					},
 				).Map(func(x *match.Card) {
 					x.RemoveConditionBySource(card.ID)
@@ -69,7 +69,7 @@ func FluorogillManta(c *match.Card) {
 				card.Player,
 				match.BATTLEZONE,
 				func(x *match.Card) bool {
-					return x.HasCondition(cnd.Creature) && (x.Civ == civ.Light || x.Civ == civ.Darkness)
+					return x.HasCondition(cnd.Creature) && (x.HasCiv(civ.Light) || x.HasCiv(civ.Darkness))
 				},
 			).Map(func(x *match.Card) {
 				x.AddUniqueSourceCondition(cnd.CantBeBlocked, true, card.ID)

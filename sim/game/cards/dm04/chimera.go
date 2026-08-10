@@ -12,7 +12,7 @@ func Gigabolver(c *match.Card) {
 
 	c.Name = "Gigabolver"
 	c.Power = 3000
-	c.Civ = civ.Darkness
+	c.Civs = []string{civ.Darkness}
 	c.Family = []string{family.Chimera}
 	c.ManaCost = 4
 	c.ManaRequirement = []string{civ.Darkness}
@@ -23,7 +23,7 @@ func Gigabolver(c *match.Card) {
 			return
 		}
 
-		fx.FilterShieldTriggers(ctx, func(x *match.Card) bool { return x.Civ != civ.Light })
+		fx.FilterShieldTriggers(ctx, func(x *match.Card) bool { return !x.HasCiv(civ.Light) })
 	})
 
 }

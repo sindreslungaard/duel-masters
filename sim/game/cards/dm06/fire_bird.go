@@ -12,7 +12,7 @@ func CoccoLupia(c *match.Card) {
 
 	c.Name = "Cocco Lupia"
 	c.Power = 1000
-	c.Civ = civ.Fire
+	c.Civs = []string{civ.Fire}
 	c.Family = []string{family.FireBird}
 	c.ManaCost = 3
 	c.ManaRequirement = []string{civ.Fire}

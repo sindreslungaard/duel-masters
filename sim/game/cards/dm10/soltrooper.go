@@ -13,7 +13,7 @@ func IkazTheSpydroid(c *match.Card) {
 
 	c.Name = "Ikaz, The Spydroid"
 	c.Power = 4000
-	c.Civ = civ.Light
+	c.Civs = []string{civ.Light}
 	c.Family = []string{family.Soltrooper}
 	c.ManaCost = 4
 	c.ManaRequirement = []string{civ.Light}
@@ -49,7 +49,7 @@ func PoltalesterTheSpydroid(c *match.Card) {
 
 	c.Name = "Poltalester, the Spydroid"
 	c.Power = 2000
-	c.Civ = civ.Light
+	c.Civs = []string{civ.Light}
 	c.Family = []string{family.Soltrooper}
 	c.ManaCost = 5
 	c.ManaRequirement = []string{civ.Light}

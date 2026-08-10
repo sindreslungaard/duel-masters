@@ -13,7 +13,7 @@ func CarrierShell(c *match.Card) {
 
 	c.Name = "Carrier Shell"
 	c.Power = 2000
-	c.Civ = civ.Nature
+	c.Civs = []string{civ.Nature}
 	c.Family = []string{family.ColonyBeetle}
 	c.ManaCost = 3
 	c.ManaRequirement = []string{civ.Nature}
@@ -25,7 +25,7 @@ func SlumberShell(c *match.Card) {
 
 	c.Name = "Slumber Shell"
 	c.Power = 2000
-	c.Civ = civ.Nature
+	c.Civs = []string{civ.Nature}
 	c.Family = []string{family.ColonyBeetle}
 	c.ManaCost = 2
 	c.ManaRequirement = []string{civ.Nature}
@@ -37,7 +37,7 @@ func FactoryShellQ(c *match.Card) {
 
 	c.Name = "Factory Shell Q"
 	c.Power = 2000
-	c.Civ = civ.Nature
+	c.Civs = []string{civ.Nature}
 	c.Family = []string{family.ColonyBeetle, family.Survivor}
 	c.ManaCost = 6
 	c.ManaRequirement = []string{civ.Nature}
@@ -60,7 +60,7 @@ func LivingCitadelVosh(c *match.Card) {
 
 	c.Name = "Living Citadel Vosh"
 	c.Power = 5000
-	c.Civ = civ.Nature
+	c.Civs = []string{civ.Nature}
 	c.Family = []string{family.ColonyBeetle}
 	c.ManaCost = 5
 	c.ManaRequirement = []string{civ.Nature}
@@ -72,7 +72,7 @@ func LivingCitadelVosh(c *match.Card) {
 			fx.GiveTapAbilityToAllies(
 				card,
 				ctx,
-				func(x *match.Card) bool { return x.ID != card.ID && x.Civ == civ.Nature },
+				func(x *match.Card) bool { return x.ID != card.ID && x.HasCiv(civ.Nature) },
 				livingCitadelVoshTapAbility,
 			)
 

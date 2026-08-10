@@ -11,7 +11,7 @@ func StingerHornTheDelver(c *match.Card) {
 
 	c.Name = "Stinger Horn, the Delver"
 	c.Power = 3000
-	c.Civ = civ.Nature
+	c.Civs = []string{civ.Nature}
 	c.Family = []string{family.HornedBeast}
 	c.ManaCost = 4
 	c.ManaRequirement = []string{civ.Nature}

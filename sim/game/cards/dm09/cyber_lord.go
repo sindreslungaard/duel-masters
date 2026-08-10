@@ -13,7 +13,7 @@ func EmperorMaroll(c *match.Card) {
 
 	c.Name = "Emperor Maroll"
 	c.Power = 5000
-	c.Civ = civ.Water
+	c.Civs = []string{civ.Water}
 	c.Family = []string{family.CyberLord}
 	c.ManaCost = 3
 	c.ManaRequirement = []string{civ.Water}
@@ -53,7 +53,7 @@ func Hokira(c *match.Card) {
 
 	c.Name = "Hokira"
 	c.Power = 3000
-	c.Civ = civ.Water
+	c.Civs = []string{civ.Water}
 	c.Family = []string{family.CyberLord}
 	c.ManaCost = 4
 	c.ManaRequirement = []string{civ.Water}

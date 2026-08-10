@@ -13,7 +13,7 @@ func TwinCannonSkyterror(c *match.Card) {
 
 	c.Name = "Twin-Cannon Skyterror"
 	c.Power = 7000
-	c.Civ = civ.Fire
+	c.Civs = []string{civ.Fire}
 	c.Family = []string{family.ArmoredWyvern}
 	c.ManaCost = 7
 	c.ManaRequirement = []string{civ.Fire}
@@ -27,7 +27,7 @@ func BladerushSkyterrorQ(c *match.Card) {
 
 	c.Name = "Bladerush Skyterror Q"
 	c.Power = 5000
-	c.Civ = civ.Fire
+	c.Civs = []string{civ.Fire}
 	c.Family = []string{family.ArmoredWyvern, family.Survivor}
 	c.ManaCost = 7
 	c.ManaRequirement = []string{civ.Fire}
@@ -64,7 +64,7 @@ func RuthlessSkyterror(c *match.Card) {
 
 	c.Name = "Ruthless Skyterror"
 	c.Power = 6000
-	c.Civ = civ.Fire
+	c.Civs = []string{civ.Fire}
 	c.Family = []string{family.ArmoredWyvern}
 	c.ManaCost = 4
 	c.ManaRequirement = []string{civ.Fire}
@@ -81,7 +81,7 @@ func RuthlessSkyterror(c *match.Card) {
 			ctx.Match.Opponent(card.Player),
 			match.BATTLEZONE,
 			func(x *match.Card) bool {
-				return x.Civ == civ.Water && !x.Tapped
+				return x.HasCiv(civ.Water) && !x.Tapped
 			},
 		).Map(func(x *match.Card) {
 			// don't add if already in the list of attackable creatures

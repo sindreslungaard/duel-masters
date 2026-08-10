@@ -12,7 +12,7 @@ func PurplePiercer(c *match.Card) {
 
 	c.Name = "Purple Piercer"
 	c.Power = 2000
-	c.Civ = civ.Darkness
+	c.Civs = []string{civ.Darkness}
 	c.Family = []string{family.BrainJacker}
 	c.ManaCost = 3
 	c.ManaRequirement = []string{civ.Darkness}
@@ -21,7 +21,7 @@ func PurplePiercer(c *match.Card) {
 		fx.Creature,
 		fx.CantBeBlockedByLight,
 		fx.CantBeAttackedIf(func(attacker *match.Card) bool {
-			return attacker.Civ == civ.Light
+			return attacker.HasCiv(civ.Light)
 		}),
 	)
 

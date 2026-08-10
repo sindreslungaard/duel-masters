@@ -13,7 +13,7 @@ func SmashHornQ(c *match.Card) {
 
 	c.Name = "Smash Horn Q"
 	c.Power = 2000
-	c.Civ = civ.Nature
+	c.Civs = []string{civ.Nature}
 	c.Family = []string{family.HornedBeast, family.Survivor}
 	c.ManaCost = 3
 	c.ManaRequirement = []string{civ.Nature}
@@ -50,14 +50,14 @@ func MoonHorn(c *match.Card) {
 
 	c.Name = "Moon Horn"
 	c.Power = 6000
-	c.Civ = civ.Nature
+	c.Civs = []string{civ.Nature}
 	c.Family = []string{family.HornedBeast}
 	c.ManaCost = 6
 	c.ManaRequirement = []string{civ.Nature}
 
 	c.PowerModifier = func(m *match.Match, attacking bool) int {
 
-		cards := fx.FindFilter(m.Opponent(c.Player), match.BATTLEZONE, func(x *match.Card) bool { return x.Civ == civ.Water || x.Civ == civ.Darkness })
+		cards := fx.FindFilter(m.Opponent(c.Player), match.BATTLEZONE, func(x *match.Card) bool { return x.HasCiv(civ.Water) || x.HasCiv(civ.Darkness) })
 
 		return len(cards) * 1000
 

@@ -11,7 +11,7 @@ import (
 func BazagazealDragon(c *match.Card) {
 	c.Name = "Bazagazeal Dragon"
 	c.Power = 8000
-	c.Civ = civ.Fire
+	c.Civs = []string{civ.Fire}
 	c.Family = []string{family.ArmoredDragon}
 	c.ManaCost = 8
 	c.ManaRequirement = []string{civ.Fire}
@@ -32,7 +32,7 @@ func BazagazealDragon(c *match.Card) {
 func BolmeteusSteelDragon(c *match.Card) {
 	c.Name = "Bolmeteus Steel Dragon"
 	c.Power = 7000
-	c.Civ = civ.Fire
+	c.Civs = []string{civ.Fire}
 	c.Family = []string{family.ArmoredDragon}
 	c.ManaCost = 7
 	c.ManaRequirement = []string{civ.Fire}

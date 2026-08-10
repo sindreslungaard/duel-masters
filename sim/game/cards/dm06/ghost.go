@@ -13,7 +13,7 @@ func FrostSpecterShadowOfAge(c *match.Card) {
 
 	c.Name = "Frost Specter, Shadow of Age"
 	c.Power = 5000
-	c.Civ = civ.Darkness
+	c.Civs = []string{civ.Darkness}
 	c.Family = []string{family.Ghost}
 	c.ManaCost = 3
 	c.ManaRequirement = []string{civ.Darkness}
@@ -52,7 +52,7 @@ func GrimSoulShadowOfReversal(c *match.Card) {
 
 	c.Name = "Grim Soul, Shadow of Reversal"
 	c.Power = 3000
-	c.Civ = civ.Darkness
+	c.Civs = []string{civ.Darkness}
 	c.Family = []string{family.Ghost}
 	c.ManaCost = 5
 	c.ManaRequirement = []string{civ.Darkness}
@@ -66,7 +66,7 @@ func GrimSoulShadowOfReversal(c *match.Card) {
 			1,
 			1,
 			true,
-			func(x *match.Card) bool { return x.Civ == civ.Darkness && x.HasCondition(cnd.Creature) },
+			func(x *match.Card) bool { return x.HasCiv(civ.Darkness) && x.HasCondition(cnd.Creature) },
 			false,
 		).Map(func(x *match.Card) {
 			card.Player.MoveCard(x.ID, match.GRAVEYARD, match.HAND, card.ID)
@@ -82,7 +82,7 @@ func LoneTearShadowOfSolitude(c *match.Card) {
 
 	c.Name = "Lone Tear, Shadow of Solitude"
 	c.Power = 2000
-	c.Civ = civ.Darkness
+	c.Civs = []string{civ.Darkness}
 	c.Family = []string{family.Ghost}
 	c.ManaCost = 1
 	c.ManaRequirement = []string{civ.Darkness}

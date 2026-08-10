@@ -11,7 +11,7 @@ func LightningGrass(c *match.Card) {
 
 	c.Name = "Lightning Grass"
 	c.Power = 3000
-	c.Civ = civ.Light
+	c.Civs = []string{civ.Light}
 	c.Family = []string{family.StarlightTree}
 	c.ManaCost = 3
 	c.ManaRequirement = []string{civ.Light}
@@ -23,7 +23,7 @@ func RazorpineTree(c *match.Card) {
 
 	c.Name = "Razorpine Tree"
 	c.Power = 1000
-	c.Civ = civ.Light
+	c.Civs = []string{civ.Light}
 	c.Family = []string{family.StarlightTree}
 	c.ManaCost = 5
 	c.ManaRequirement = []string{civ.Light}

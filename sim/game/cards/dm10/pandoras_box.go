@@ -14,7 +14,7 @@ func BenzoTheHiddenFury(c *match.Card) {
 
 	c.Name = "Benzo, the Hidden Fury"
 	c.Power = 2000
-	c.Civ = civ.Darkness
+	c.Civs = []string{civ.Darkness}
 	c.Family = []string{family.PandorasBox}
 	c.ManaCost = 4
 	c.ManaRequirement = []string{civ.Darkness}
@@ -71,7 +71,7 @@ func DedreenTheHiddenCorrupter(c *match.Card) {
 
 	c.Name = "Dedreen, the Hidden Corrupter"
 	c.Power = 4000
-	c.Civ = civ.Darkness
+	c.Civs = []string{civ.Darkness}
 	c.Family = []string{family.PandorasBox}
 	c.ManaCost = 5
 	c.ManaRequirement = []string{civ.Darkness}

@@ -12,7 +12,7 @@ func CarboniteScarab(c *match.Card) {
 
 	c.Name = "Carbonite Scarab"
 	c.Power = 3000
-	c.Civ = civ.Nature
+	c.Civs = []string{civ.Nature}
 	c.Family = []string{family.GiantInsect}
 	c.ManaCost = 4
 	c.ManaRequirement = []string{civ.Nature}

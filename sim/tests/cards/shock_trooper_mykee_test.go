@@ -30,7 +30,7 @@ func TestShockTrooperMykee(t *testing.T) {
 		assert.Equal(t, "Shock Trooper Mykee", mykee.Name)
 		assert.Equal(t, 1000, mykee.Power)
 		assert.Equal(t, 6, mykee.ManaCost)
-		assert.Equal(t, civ.Fire, mykee.Civ)
+		assert.Equal(t, []string{civ.Fire}, mykee.Civs)
 		assert.True(t, mykee.HasFamily(family.Human))
 		assert.True(t, mykee.HasCondition(cnd.SpeedAttacker))
 

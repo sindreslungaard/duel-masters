@@ -11,7 +11,7 @@ func VessTheOracle(c *match.Card) {
 
 	c.Name = "Vess, the Oracle"
 	c.Power = 2000
-	c.Civ = civ.Light
+	c.Civs = []string{civ.Light}
 	c.Family = []string{family.LightBringer}
 	c.ManaCost = 1
 	c.ManaRequirement = []string{civ.Light}
@@ -23,7 +23,7 @@ func YulukTheOracle(c *match.Card) {
 
 	c.Name = "Yuluk, the Oracle"
 	c.Power = 2500
-	c.Civ = civ.Light
+	c.Civs = []string{civ.Light}
 	c.Family = []string{family.LightBringer}
 	c.ManaCost = 1
 	c.ManaRequirement = []string{civ.Light}
@@ -57,7 +57,7 @@ func AdomisTheOracle(c *match.Card) {
 
 	c.Name = "Adomis, the Oracle"
 	c.Power = 2000
-	c.Civ = civ.Light
+	c.Civs = []string{civ.Light}
 	c.Family = []string{family.LightBringer}
 	c.ManaCost = 3
 	c.ManaRequirement = []string{civ.Light}

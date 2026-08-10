@@ -12,7 +12,7 @@ func Tekorax(c *match.Card) {
 
 	c.Name = "Tekorax"
 	c.Power = 3000
-	c.Civ = civ.Water
+	c.Civs = []string{civ.Water}
 	c.Family = []string{family.SeaHacker}
 	c.ManaCost = 5
 	c.ManaRequirement = []string{civ.Water}

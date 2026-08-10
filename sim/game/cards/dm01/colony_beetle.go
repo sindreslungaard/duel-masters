@@ -13,7 +13,7 @@ func DomeShell(c *match.Card) {
 
 	c.Name = "Dome Shell"
 	c.Power = 3000
-	c.Civ = civ.Nature
+	c.Civs = []string{civ.Nature}
 	c.Family = []string{family.ColonyBeetle}
 	c.ManaCost = 4
 	c.ManaRequirement = []string{civ.Nature}
@@ -27,7 +27,7 @@ func StormShell(c *match.Card) {
 
 	c.Name = "Storm Shell"
 	c.Power = 2000
-	c.Civ = civ.Nature
+	c.Civs = []string{civ.Nature}
 	c.Family = []string{family.ColonyBeetle}
 	c.ManaCost = 7
 	c.ManaRequirement = []string{civ.Nature}
@@ -74,7 +74,7 @@ func TowerShell(c *match.Card) {
 
 	c.Name = "Tower Shell"
 	c.Power = 5000
-	c.Civ = civ.Nature
+	c.Civs = []string{civ.Nature}
 	c.Family = []string{family.ColonyBeetle}
 	c.ManaCost = 6
 	c.ManaRequirement = []string{civ.Nature}

@@ -13,7 +13,7 @@ func TentacleCluster(c *match.Card) {
 
 	c.Name = "Tentacle Cluster"
 	c.Power = 2000
-	c.Civ = civ.Water
+	c.Civs = []string{civ.Water}
 	c.Family = []string{family.CyberCluster}
 	c.ManaCost = 5
 	c.ManaRequirement = []string{civ.Water}
@@ -27,7 +27,7 @@ func ScoutCluster(c *match.Card) {
 
 	c.Name = "Scout Cluster"
 	c.Power = 4000
-	c.Civ = civ.Water
+	c.Civs = []string{civ.Water}
 	c.Family = []string{family.CyberCluster}
 	c.ManaCost = 3
 	c.ManaRequirement = []string{civ.Water}

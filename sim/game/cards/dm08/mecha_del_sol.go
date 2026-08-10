@@ -13,7 +13,7 @@ func MishaChannelerOfSuns(c *match.Card) {
 
 	c.Name = "Misha, Channeler of Suns"
 	c.Power = 5000
-	c.Civ = civ.Light
+	c.Civs = []string{civ.Light}
 	c.Family = []string{family.MechaDelSol}
 	c.ManaCost = 5
 	c.ManaRequirement = []string{civ.Light}
@@ -28,7 +28,7 @@ func SashaChannelerOfSuns(c *match.Card) {
 
 	c.Name = "Sasha, Channeler of Suns"
 	c.Power = 9500
-	c.Civ = civ.Light
+	c.Civs = []string{civ.Light}
 	c.Family = []string{family.MechaDelSol}
 	c.ManaCost = 8
 	c.ManaRequirement = []string{civ.Light}
@@ -51,7 +51,7 @@ func SashaChannelerOfSuns(c *match.Card) {
 func NastashaChannelerOfSuns(c *match.Card) {
 	c.Name = "Nastasha, Channeler of Suns"
 	c.Power = 6000
-	c.Civ = civ.Light
+	c.Civs = []string{civ.Light}
 	c.Family = []string{family.MechaDelSol}
 	c.ManaCost = 7
 	c.ManaRequirement = []string{civ.Light}

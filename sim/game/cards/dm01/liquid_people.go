@@ -13,7 +13,7 @@ func AquaHulcus(c *match.Card) {
 
 	c.Name = "Aqua Hulcus"
 	c.Power = 2000
-	c.Civ = civ.Water
+	c.Civs = []string{civ.Water}
 	c.Family = []string{family.LiquidPeople}
 	c.ManaCost = 3
 	c.ManaRequirement = []string{civ.Water}
@@ -27,7 +27,7 @@ func AquaKnight(c *match.Card) {
 
 	c.Name = "Aqua Knight"
 	c.Power = 4000
-	c.Civ = civ.Water
+	c.Civs = []string{civ.Water}
 	c.Family = []string{family.LiquidPeople}
 	c.ManaCost = 5
 	c.ManaRequirement = []string{civ.Water}
@@ -41,7 +41,7 @@ func AquaSniper(c *match.Card) {
 
 	c.Name = "Aqua Sniper"
 	c.Power = 5000
-	c.Civ = civ.Water
+	c.Civs = []string{civ.Water}
 	c.Family = []string{family.LiquidPeople}
 	c.ManaCost = 8
 	c.ManaRequirement = []string{civ.Water}
@@ -100,7 +100,7 @@ func AquaSoldier(c *match.Card) {
 
 	c.Name = "Aqua Soldier"
 	c.Power = 1000
-	c.Civ = civ.Water
+	c.Civs = []string{civ.Water}
 	c.Family = []string{family.LiquidPeople}
 	c.ManaCost = 3
 	c.ManaRequirement = []string{civ.Water}
@@ -114,7 +114,7 @@ func AquaVehicle(c *match.Card) {
 
 	c.Name = "Aqua Vehicle"
 	c.Power = 1000
-	c.Civ = civ.Water
+	c.Civs = []string{civ.Water}
 	c.Family = []string{family.LiquidPeople}
 	c.ManaCost = 2
 	c.ManaRequirement = []string{civ.Water}

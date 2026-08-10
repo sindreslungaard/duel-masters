@@ -11,7 +11,7 @@ func BexTheOracle(c *match.Card) {
 
 	c.Name = "Bex, the Oracle"
 	c.Power = 2500
-	c.Civ = civ.Light
+	c.Civs = []string{civ.Light}
 	c.Family = []string{family.LightBringer}
 	c.ManaCost = 3
 	c.ManaRequirement = []string{civ.Light}

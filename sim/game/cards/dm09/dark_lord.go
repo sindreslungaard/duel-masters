@@ -13,7 +13,7 @@ func AzaghastTyrantOfShadows(c *match.Card) {
 
 	c.Name = "Azaghast, Tyrant of Shadows"
 	c.Power = 9000
-	c.Civ = civ.Darkness
+	c.Civs = []string{civ.Darkness}
 	c.Family = []string{family.DarkLord}
 	c.ManaCost = 7
 	c.ManaRequirement = []string{civ.Darkness}
@@ -45,7 +45,7 @@ func GabzagulWarlordOfPain(c *match.Card) {
 
 	c.Name = "Gabzagul, Warlord of Pain"
 	c.Power = 5000
-	c.Civ = civ.Darkness
+	c.Civs = []string{civ.Darkness}
 	c.Family = []string{family.DarkLord}
 	c.ManaCost = 6
 	c.ManaRequirement = []string{civ.Darkness}

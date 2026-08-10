@@ -12,7 +12,7 @@ func TyrantWorm(c *match.Card) {
 
 	c.Name = "Tyrant Worm"
 	c.Power = 2000
-	c.Civ = civ.Darkness
+	c.Civs = []string{civ.Darkness}
 	c.Family = []string{family.ParasiteWorm}
 	c.ManaCost = 1
 	c.ManaRequirement = []string{civ.Darkness}

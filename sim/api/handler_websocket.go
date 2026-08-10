@@ -25,7 +25,7 @@ type DuelSession struct {
 func (api *API) websocketHandler(w http.ResponseWriter, r *http.Request) {
 	hubID := r.PathValue("hub")
 
-	secret := os.Getenv("duel_token_secret")
+	secret := os.Getenv("secret")
 
 	if secret == "" {
 		write(w, http.StatusInternalServerError, Json{"message": "Server is misconfigured"})

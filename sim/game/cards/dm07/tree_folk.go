@@ -11,7 +11,7 @@ func WorldTreeRootOfLife(c *match.Card) {
 
 	c.Name = "World Tree, Root of Life"
 	c.Power = 7000
-	c.Civ = civ.Nature
+	c.Civs = []string{civ.Nature}
 	c.Family = []string{family.TreeFolk}
 	c.ManaCost = 6
 	c.ManaRequirement = []string{civ.Nature}

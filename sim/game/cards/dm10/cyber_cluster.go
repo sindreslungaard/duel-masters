@@ -12,7 +12,7 @@ func BatteryCluster(c *match.Card) {
 
 	c.Name = "Battery Cluster"
 	c.Power = 3000
-	c.Civ = civ.Water
+	c.Civs = []string{civ.Water}
 	c.Family = []string{family.CyberCluster}
 	c.ManaCost = 2
 	c.ManaRequirement = []string{civ.Water}
@@ -26,7 +26,7 @@ func TorpedoCluster(c *match.Card) {
 
 	c.Name = "Torpedo Cluster"
 	c.Power = 3000
-	c.Civ = civ.Water
+	c.Civs = []string{civ.Water}
 	c.Family = []string{family.CyberCluster}
 	c.ManaCost = 3
 	c.ManaRequirement = []string{civ.Water}

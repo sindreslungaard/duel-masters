@@ -13,7 +13,7 @@ func GarkagoDragon(c *match.Card) {
 
 	c.Name = "Garkago Dragon"
 	c.Power = 6000
-	c.Civ = civ.Fire
+	c.Civs = []string{civ.Fire}
 	c.Family = []string{family.ArmoredDragon}
 	c.ManaCost = 7
 	c.ManaRequirement = []string{civ.Fire}
@@ -31,7 +31,7 @@ func BoltailDragon(c *match.Card) {
 
 	c.Name = "Boltail Dragon"
 	c.Power = 9000
-	c.Civ = civ.Fire
+	c.Civs = []string{civ.Fire}
 	c.Family = []string{family.ArmoredDragon}
 	c.ManaCost = 7
 	c.ManaRequirement = []string{civ.Fire}
@@ -44,7 +44,7 @@ func UberdragonJabaha(c *match.Card) {
 
 	c.Name = "Uberdragon Jabaha"
 	c.Power = 11000
-	c.Civ = civ.Fire
+	c.Civs = []string{civ.Fire}
 	c.Family = []string{family.ArmoredDragon}
 	c.ManaCost = 7
 	c.ManaRequirement = []string{civ.Fire}
@@ -75,7 +75,7 @@ func uberDragonJabahaSpecial(card *match.Card, ctx *match.Context, cardID string
 		return
 	}
 
-	if creature.Civ != civ.Fire || creature.ID == card.ID {
+	if !creature.HasCiv(civ.Fire) || creature.ID == card.ID {
 		return
 	}
 
@@ -97,7 +97,7 @@ func getFireCardsInYourBattleZone(card *match.Card) int {
 	count := 0
 
 	for _, battleZoneCard := range battleZone {
-		if battleZoneCard.Civ == civ.Fire {
+		if battleZoneCard.HasCiv(civ.Fire) {
 			count++
 		}
 	}

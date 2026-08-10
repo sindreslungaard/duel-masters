@@ -13,7 +13,7 @@ func HourglassMutant(c *match.Card) {
 
 	c.Name = "Hourglass Mutant"
 	c.Power = 2000
-	c.Civ = civ.Darkness
+	c.Civs = []string{civ.Darkness}
 	c.Family = []string{family.Hedrian}
 	c.ManaCost = 3
 	c.ManaRequirement = []string{civ.Darkness}
@@ -47,7 +47,7 @@ func HourglassMutant(c *match.Card) {
 				card.Player,
 				match.BATTLEZONE,
 				func(x *match.Card) bool {
-					return x.HasCondition(cnd.Creature) && (x.Civ == civ.Water || x.Civ == civ.Fire)
+					return x.HasCondition(cnd.Creature) && (x.HasCiv(civ.Water) || x.HasCiv(civ.Fire))
 				},
 			).Map(func(x *match.Card) {
 				x.AddUniqueSourceCondition(cnd.Slayer, true, card.ID)

@@ -12,7 +12,7 @@ func AngryMaple(c *match.Card) {
 
 	c.Name = "Angry Maple"
 	c.Power = 1000
-	c.Civ = civ.Nature
+	c.Civs = []string{civ.Nature}
 	c.Family = []string{family.TreeFolk}
 	c.ManaCost = 3
 	c.ManaRequirement = []string{civ.Nature}

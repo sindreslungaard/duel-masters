@@ -12,7 +12,7 @@ func ZeppelinCrawler(c *match.Card) {
 
 	c.Name = "Zeppelin Crawler"
 	c.Power = 4000
-	c.Civ = civ.Water
+	c.Civs = []string{civ.Water}
 	c.Family = []string{family.EarthEater}
 	c.ManaCost = 5
 	c.ManaRequirement = []string{civ.Water}

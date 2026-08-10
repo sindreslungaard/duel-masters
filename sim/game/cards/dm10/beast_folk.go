@@ -12,7 +12,7 @@ import (
 func AdventureBoar(c *match.Card) {
 
 	c.Name = "Adventure Boar"
-	c.Civ = civ.Nature
+	c.Civs = []string{civ.Nature}
 	c.Power = 1000
 	c.Family = []string{family.BeastFolk}
 	c.ManaCost = 2
@@ -27,7 +27,7 @@ func EarthRipperTalonOfRage(c *match.Card) {
 
 	c.Name = "Earth Ripper, Talon of Rage"
 	c.Power = 6000
-	c.Civ = civ.Nature
+	c.Civs = []string{civ.Nature}
 	c.Family = []string{family.BeastFolk}
 	c.ManaCost = 4
 	c.ManaRequirement = []string{civ.Nature}

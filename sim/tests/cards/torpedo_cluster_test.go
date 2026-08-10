@@ -23,7 +23,7 @@ func TestTorpedoCluster(t *testing.T) {
 		assert.Equal(t, "Torpedo Cluster", torpedo.Name)
 		assert.Equal(t, 3000, torpedo.Power)
 		assert.Equal(t, 3, torpedo.ManaCost)
-		assert.Equal(t, civ.Water, torpedo.Civ)
+		assert.Equal(t, []string{civ.Water}, torpedo.Civs)
 		assert.True(t, torpedo.HasFamily(family.CyberCluster))
 
 		promptStart, err := scn.MessageCount(player)

@@ -14,7 +14,7 @@ func BloodwingMantis(c *match.Card) {
 
 	c.Name = "Bloodwing Mantis"
 	c.Power = 6000
-	c.Civ = civ.Nature
+	c.Civs = []string{civ.Nature}
 	c.Family = []string{family.GiantInsect}
 	c.ManaCost = 5
 	c.ManaRequirement = []string{civ.Nature}
@@ -44,7 +44,7 @@ func ScissorScarab(c *match.Card) {
 
 	c.Name = "Scissor Scarab"
 	c.Power = 5000
-	c.Civ = civ.Nature
+	c.Civs = []string{civ.Nature}
 	c.Family = []string{family.GiantInsect}
 	c.ManaCost = 7
 	c.ManaRequirement = []string{civ.Nature}
@@ -68,7 +68,7 @@ func AmbushScorpion(c *match.Card) {
 
 	c.Name = "Ambush Scorpion"
 	c.Power = 3000
-	c.Civ = civ.Nature
+	c.Civs = []string{civ.Nature}
 	c.Family = []string{family.GiantInsect}
 	c.ManaCost = 5
 	c.ManaRequirement = []string{civ.Nature}
@@ -97,7 +97,7 @@ func ObsidianScarab(c *match.Card) {
 
 	c.Name = "Obsidian Scarab"
 	c.Power = 5000
-	c.Civ = civ.Nature
+	c.Civs = []string{civ.Nature}
 	c.Family = []string{family.GiantInsect}
 	c.ManaCost = 6
 	c.ManaRequirement = []string{civ.Nature}

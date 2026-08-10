@@ -14,7 +14,7 @@ func BrigadeShellQ(c *match.Card) {
 
 	c.Name = "Brigade Shell Q"
 	c.Power = 1000
-	c.Civ = civ.Nature
+	c.Civs = []string{civ.Nature}
 	c.Family = []string{family.ColonyBeetle, family.Survivor}
 	c.ManaCost = 3
 	c.ManaRequirement = []string{civ.Nature}

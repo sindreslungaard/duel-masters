@@ -12,7 +12,7 @@ import (
 func TerradragonCusdalf(c *match.Card) {
 	c.Name = "Terradragon Cusdalf"
 	c.Power = 7000
-	c.Civ = civ.Nature
+	c.Civs = []string{civ.Nature}
 	c.Family = []string{family.EarthDragon}
 	c.ManaCost = 5
 	c.ManaRequirement = []string{civ.Nature}
@@ -35,7 +35,7 @@ func TerradragonCusdalf(c *match.Card) {
 func TerradragonDakmaBalgarow(c *match.Card) {
 	c.Name = "Terradragon Dakma Balgarow"
 	c.Power = 1000
-	c.Civ = civ.Nature
+	c.Civs = []string{civ.Nature}
 	c.Family = []string{family.EarthDragon}
 	c.ManaCost = 7
 	c.ManaRequirement = []string{civ.Nature}
@@ -57,7 +57,7 @@ func TerradragonDakmaBalgarow(c *match.Card) {
 func UltimateDragon(c *match.Card) {
 	c.Name = "Ultimate Dragon"
 	c.Power = 5000
-	c.Civ = civ.Fire
+	c.Civs = []string{civ.Fire}
 	c.Family = []string{family.ArmoredDragon}
 	c.ManaCost = 6
 	c.ManaRequirement = []string{civ.Fire}

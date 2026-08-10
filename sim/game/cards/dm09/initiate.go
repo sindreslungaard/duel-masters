@@ -13,7 +13,7 @@ func KaluteVizierOfEternity(c *match.Card) {
 
 	c.Name = "Kalute, Vizier of Eternity"
 	c.Power = 1000
-	c.Civ = civ.Light
+	c.Civs = []string{civ.Light}
 	c.Family = []string{family.Initiate}
 	c.ManaCost = 2
 	c.ManaRequirement = []string{civ.Light}

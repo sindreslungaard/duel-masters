@@ -11,7 +11,7 @@ import (
 func GaulezalDragon(c *match.Card) {
 	c.Name = "Gaulezal Dragon"
 	c.Power = 11000
-	c.Civ = civ.Fire
+	c.Civs = []string{civ.Fire}
 	c.Family = []string{family.ArmoredDragon}
 	c.ManaCost = 9
 	c.ManaRequirement = []string{civ.Fire}

@@ -13,7 +13,7 @@ func KingTsunami(c *match.Card) {
 
 	c.Name = "King Tsunami"
 	c.Power = 12000
-	c.Civ = civ.Water
+	c.Civs = []string{civ.Water}
 	c.Family = []string{family.Leviathan}
 	c.ManaCost = 12
 	c.ManaRequirement = []string{civ.Water}
@@ -38,7 +38,7 @@ func KingMazelan(c *match.Card) {
 
 	c.Name = "King Mazelan"
 	c.Power = 7000
-	c.Civ = civ.Water
+	c.Civs = []string{civ.Water}
 	c.Family = []string{family.Leviathan}
 	c.ManaCost = 8
 	c.ManaRequirement = []string{civ.Water}

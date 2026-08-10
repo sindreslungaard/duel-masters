@@ -11,7 +11,7 @@ func GarielElementalOfSunbeams(c *match.Card) {
 
 	c.Name = "Gariel, Elemental of Sunbeams"
 	c.Power = 7500
-	c.Civ = civ.Light
+	c.Civs = []string{civ.Light}
 	c.Family = []string{family.AngelCommand}
 	c.ManaCost = 5
 	c.ManaRequirement = []string{civ.Light}

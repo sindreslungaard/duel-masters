@@ -12,7 +12,7 @@ func RocketdiveSkyterror(c *match.Card) {
 
 	c.Name = "Rocketdive Skyterror"
 	c.Power = 5000
-	c.Civ = civ.Fire
+	c.Civs = []string{civ.Fire}
 	c.Family = []string{family.ArmoredWyvern}
 	c.ManaCost = 4
 	c.ManaRequirement = []string{civ.Fire}
@@ -25,7 +25,7 @@ func TorpedoSkyterror(c *match.Card) {
 
 	c.Name = "Torpedo Skyterror"
 	c.Power = 4000
-	c.Civ = civ.Fire
+	c.Civs = []string{civ.Fire}
 	c.Family = []string{family.ArmoredWyvern}
 	c.ManaCost = 5
 	c.ManaRequirement = []string{civ.Fire}

@@ -12,7 +12,7 @@ func WhipScorpion(c *match.Card) {
 
 	c.Name = "Whip Scorpion"
 	c.Power = 2000
-	c.Civ = civ.Nature
+	c.Civs = []string{civ.Nature}
 	c.Family = []string{family.GiantInsect}
 	c.ManaCost = 5
 	c.ManaRequirement = []string{civ.Nature}

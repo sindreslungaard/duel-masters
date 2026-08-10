@@ -28,7 +28,7 @@ func TestBodaciousGiant(t *testing.T) {
 		assert.Equal(t, "Bodacious Giant", giant.Name)
 		assert.Equal(t, 12000, giant.Power)
 		assert.Equal(t, 8, giant.ManaCost)
-		assert.Equal(t, civ.Nature, giant.Civ)
+		assert.Equal(t, []string{civ.Nature}, giant.Civs)
 		assert.True(t, giant.HasFamily(family.Giant))
 		assert.True(t, giant.HasCondition(cnd.DoubleBreaker))
 	})

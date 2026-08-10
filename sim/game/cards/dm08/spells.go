@@ -12,7 +12,7 @@ import (
 // CorpseCharger ...
 func CorpseCharger(c *match.Card) {
 	c.Name = "Corpse Charger"
-	c.Civ = civ.Darkness
+	c.Civs = []string{civ.Darkness}
 	c.ManaCost = 4
 	c.ManaRequirement = []string{civ.Darkness}
 
@@ -22,7 +22,7 @@ func CorpseCharger(c *match.Card) {
 // CraniumClamp ...
 func CraniumClamp(c *match.Card) {
 	c.Name = "Cranium Clamp"
-	c.Civ = civ.Darkness
+	c.Civs = []string{civ.Darkness}
 	c.ManaCost = 4
 	c.ManaRequirement = []string{civ.Darkness}
 
@@ -33,7 +33,7 @@ func CraniumClamp(c *match.Card) {
 func VolcanoCharger(c *match.Card) {
 
 	c.Name = "Volcano Charger"
-	c.Civ = civ.Fire
+	c.Civs = []string{civ.Fire}
 	c.ManaCost = 4
 	c.ManaRequirement = []string{civ.Fire}
 
@@ -44,7 +44,7 @@ func VolcanoCharger(c *match.Card) {
 func EurekaCharger(c *match.Card) {
 
 	c.Name = "Eureka Charger"
-	c.Civ = civ.Water
+	c.Civs = []string{civ.Water}
 	c.ManaCost = 4
 	c.ManaRequirement = []string{civ.Water}
 
@@ -55,7 +55,7 @@ func EurekaCharger(c *match.Card) {
 func MuscleCharger(c *match.Card) {
 
 	c.Name = "Muscle Charger"
-	c.Civ = civ.Nature
+	c.Civs = []string{civ.Nature}
 	c.ManaCost = 3
 	c.ManaRequirement = []string{civ.Nature}
 
@@ -74,7 +74,7 @@ func MuscleCharger(c *match.Card) {
 func Dracobarrier(c *match.Card) {
 
 	c.Name = "Dracobarrier"
-	c.Civ = civ.Light
+	c.Civs = []string{civ.Light}
 	c.ManaCost = 3
 	c.ManaRequirement = []string{civ.Light}
 
@@ -105,7 +105,7 @@ func Dracobarrier(c *match.Card) {
 func LaserWhip(c *match.Card) {
 
 	c.Name = "Laser Whip"
-	c.Civ = civ.Light
+	c.Civs = []string{civ.Light}
 	c.ManaCost = 4
 	c.ManaRequirement = []string{civ.Light}
 
@@ -159,7 +159,7 @@ func LaserWhip(c *match.Card) {
 func LunarCharger(c *match.Card) {
 
 	c.Name = "Lunar Charger"
-	c.Civ = civ.Light
+	c.Civs = []string{civ.Light}
 	c.ManaCost = 3
 	c.ManaRequirement = []string{civ.Light}
 
@@ -203,7 +203,7 @@ func LunarCharger(c *match.Card) {
 func RootCharger(c *match.Card) {
 
 	c.Name = "Root Charger"
-	c.Civ = civ.Nature
+	c.Civs = []string{civ.Nature}
 	c.ManaCost = 3
 	c.ManaRequirement = []string{civ.Nature}
 
@@ -230,7 +230,7 @@ func RootCharger(c *match.Card) {
 func MarineScramble(c *match.Card) {
 
 	c.Name = "Marine Scramble"
-	c.Civ = civ.Water
+	c.Civs = []string{civ.Water}
 	c.ManaCost = 7
 	c.ManaRequirement = []string{civ.Water}
 
@@ -258,7 +258,7 @@ func MarineScramble(c *match.Card) {
 func WaveLance(c *match.Card) {
 
 	c.Name = "Wave Lance"
-	c.Civ = civ.Water
+	c.Civs = []string{civ.Water}
 	c.ManaCost = 3
 	c.ManaRequirement = []string{civ.Water}
 
@@ -304,7 +304,7 @@ func WaveLance(c *match.Card) {
 func FuriousOnslaught(c *match.Card) {
 
 	c.Name = "Furious Onslaught"
-	c.Civ = civ.Fire
+	c.Civs = []string{civ.Fire}
 	c.ManaCost = 4
 	c.ManaRequirement = []string{civ.Fire}
 
@@ -328,7 +328,7 @@ func DimensionSplitter(c *match.Card) {
 
 	c.Name = "Dimension Splitter"
 	c.Power = 1000
-	c.Civ = civ.Darkness
+	c.Civs = []string{civ.Darkness}
 	c.Family = []string{family.BrainJacker}
 	c.ManaCost = 3
 	c.ManaRequirement = []string{civ.Darkness}

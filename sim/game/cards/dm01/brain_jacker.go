@@ -12,7 +12,7 @@ func BloodySquito(c *match.Card) {
 
 	c.Name = "Bloody Squito"
 	c.Power = 4000
-	c.Civ = civ.Darkness
+	c.Civs = []string{civ.Darkness}
 	c.Family = []string{family.BrainJacker}
 	c.ManaCost = 2
 	c.ManaRequirement = []string{civ.Darkness}
@@ -26,7 +26,7 @@ func DarkClown(c *match.Card) {
 
 	c.Name = "Dark Clown"
 	c.Power = 6000
-	c.Civ = civ.Darkness
+	c.Civs = []string{civ.Darkness}
 	c.Family = []string{family.BrainJacker}
 	c.ManaCost = 4
 	c.ManaRequirement = []string{civ.Darkness}

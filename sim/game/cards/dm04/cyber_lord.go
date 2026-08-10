@@ -13,7 +13,7 @@ func Marinomancer(c *match.Card) {
 
 	c.Name = "Marinomancer"
 	c.Power = 2000
-	c.Civ = civ.Water
+	c.Civs = []string{civ.Water}
 	c.Family = []string{family.CyberLord}
 	c.ManaCost = 5
 	c.ManaRequirement = []string{civ.Water}
@@ -24,7 +24,7 @@ func Marinomancer(c *match.Card) {
 
 		for _, toMove := range cards {
 
-			if toMove.Civ == civ.Light || toMove.Civ == civ.Darkness {
+			if toMove.HasCiv(civ.Light) || toMove.HasCiv(civ.Darkness) {
 				card.Player.MoveCard(toMove.ID, match.DECK, match.HAND, card.ID)
 				ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s put %s into the hand from the top of their deck", card.Player.Username(), toMove.Name))
 			} else {

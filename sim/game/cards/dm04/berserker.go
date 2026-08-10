@@ -13,7 +13,7 @@ func MilieusTheDaystretcher(c *match.Card) {
 
 	c.Name = "Milieus, the Daystretcher"
 	c.Power = 2500
-	c.Civ = civ.Light
+	c.Civs = []string{civ.Light}
 	c.Family = []string{family.Berserker}
 	c.ManaCost = 5
 	c.ManaRequirement = []string{civ.Light}
@@ -34,7 +34,7 @@ func MilieusTheDaystretcher(c *match.Card) {
 				return
 			}
 
-			if playedCard.Civ != civ.Darkness {
+			if !playedCard.HasCiv(civ.Darkness) {
 				return
 			}
 

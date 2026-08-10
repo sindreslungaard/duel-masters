@@ -11,7 +11,7 @@ import (
 func GajirabuteVileCenturion(c *match.Card) {
 	c.Name = "Gajirabute, Vile Centurion"
 	c.Power = 3000
-	c.Civ = civ.Darkness
+	c.Civs = []string{civ.Darkness}
 	c.Family = []string{family.DemonCommand}
 	c.ManaCost = 6
 	c.ManaRequirement = []string{civ.Darkness}

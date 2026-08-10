@@ -12,7 +12,7 @@ func SparkleFlower(c *match.Card) {
 
 	c.Name = "Sparkle Flower"
 	c.Power = 3000
-	c.Civ = civ.Light
+	c.Civs = []string{civ.Light}
 	c.Family = []string{family.StarlightTree}
 	c.ManaCost = 4
 	c.ManaRequirement = []string{civ.Light}
@@ -30,7 +30,7 @@ func SparkleFlower(c *match.Card) {
 					return
 				}
 
-				if match.ContainerHas(card.Player, match.MANAZONE, func(x *match.Card) bool { return x.Civ != civ.Light }) {
+				if match.ContainerHas(card.Player, match.MANAZONE, func(x *match.Card) bool { return !x.HasCiv(civ.Light) }) {
 					card.RemoveConditionBySource(card.ID)
 				} else {
 					fx.ForceBlocker(card, ctx2, card.ID)

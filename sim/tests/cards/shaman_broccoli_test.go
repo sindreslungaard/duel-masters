@@ -23,7 +23,7 @@ func TestShamanBroccoli(t *testing.T) {
 	assert.Equal(t, "Shaman Broccoli", broccoli.Name)
 	assert.Equal(t, 1000, broccoli.Power)
 	assert.Equal(t, 2, broccoli.ManaCost)
-	assert.Equal(t, civ.Nature, broccoli.Civ)
+	assert.Equal(t, []string{civ.Nature}, broccoli.Civs)
 	assert.True(t, broccoli.HasFamily(family.WildVeggies))
 
 	scn.Match.Destroy(broccoli, source, match.DestroyedByMiscAbility)

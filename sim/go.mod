@@ -11,7 +11,6 @@ require (
 	github.com/sindreslungaard/assert v0.1.1
 	github.com/sirupsen/logrus v1.5.0
 	github.com/stretchr/testify v1.4.0
-	github.com/teris-io/shortid v0.0.0-20171029131806-771a37caa5cf
 	github.com/ventu-io/go-shortid v0.0.0-20171029131806-771a37caa5cf
 )
 

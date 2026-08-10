@@ -13,7 +13,7 @@ func BallusDogfightEnforcerQ(c *match.Card) {
 
 	c.Name = "Ballus, Dogfight Enforcer Q"
 	c.Power = 3000
-	c.Civ = civ.Light
+	c.Civs = []string{civ.Light}
 	c.Family = []string{family.Berserker, family.Survivor}
 	c.ManaCost = 5
 	c.ManaRequirement = []string{civ.Light}
@@ -42,7 +42,7 @@ func KulusSoulshineEnforcer(c *match.Card) {
 
 	c.Name = "Kulus, Soulshine Enforcer"
 	c.Power = 3500
-	c.Civ = civ.Light
+	c.Civs = []string{civ.Light}
 	c.Family = []string{family.Berserker}
 	c.ManaCost = 4
 	c.ManaRequirement = []string{civ.Light}

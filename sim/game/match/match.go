@@ -12,6 +12,7 @@ import (
 	"runtime/debug"
 	"strconv"
 	"strings"
+	"sync/atomic"
 	"time"
 
 	"github.com/sirupsen/logrus"
@@ -41,14 +42,19 @@ type Match struct {
 
 	Matchmaking bool
 	created     int64
-	ending      bool
-	closed      bool
+	// ending and closed are read by the match event loop and written by socket
+	// goroutines when a player disconnects, so they must be race free.
+	ending      atomic.Bool
+	closed      atomic.Bool
 	isFirstTurn bool
 	startedAt   int64
 	turnsPlayed int
 
 	eventloop *EventLoop
 	system    *MatchSystem
+
+	hostUsername  string
+	guestUsername string
 }
 
 // Name just returns "match", obligatory for a hub
@@ -56,14 +62,37 @@ func (m *Match) Name() string {
 	return "match"
 }
 
+// IsClosed returns true once the match has been disposed. Effects that wait for
+// a player's response use it to abandon their prompt instead of asking a player
+// that can no longer answer.
+func (m *Match) IsClosed() bool {
+	return m != nil && m.closed.Load()
+}
+
+// IsEnding returns true once the match has started ending or has been disposed.
+func (m *Match) IsEnding() bool {
+	return m != nil && (m.ending.Load() || m.closed.Load())
+}
+
+// EventLoopStopped reports whether the match's event loop goroutine has exited.
+// A disposed match whose loop is still running is stuck in, or spinning on, an
+// event that never finished.
+func (m *Match) EventLoopStopped() bool {
+	return m != nil && !m.eventloop.isRunning()
+}
+
 // Dispose closes the match, disconnects the clients and removes all references to it
 func (m *Match) Dispose() {
 
-	if m.closed {
+	if m.closed.Swap(true) {
 		return
 	}
 
-	m.closed = true
+	// Stop the event loop from resolving anything further. Disposing the players
+	// below closes their action channels, which releases the event loop from any
+	// prompt it is currently waiting on, and it must unwind without resolving
+	// more of the game.
+	m.ending.Store(true)
 
 	logrus.Debugf("Disposing match %s", m.ID)
 
@@ -95,8 +124,6 @@ func (m *Match) Dispose() {
 	m.system.Matches.Remove(m.ID)
 
 	logrus.Debugf("Closed match with id %s", m.ID)
-
-	m.system.UpdateMatchList()
 
 }
 
@@ -352,7 +379,7 @@ func (m *Match) ResolveShieldTriggers(shieldTriggers []*Card, source *Card) {
 
 		for {
 
-			action := <-player.Action
+			action := player.NextAction()
 
 			if action.Cancel {
 				m.CloseAction(player)
@@ -416,12 +443,10 @@ func (m *Match) End(winner *Player, winnerStr string) {
 
 	logrus.Debugf("Attempting to end match %s", m.ID)
 
-	if m.ending {
+	if m.ending.Swap(true) {
 		logrus.Debugf("Cannot end match, %s is already ending", m.ID)
 		return
 	}
-
-	m.ending = true
 
 	if m.Started {
 		duel, matchResultGenerated := m.SaveMatchHistory(winner, false)
@@ -695,7 +720,7 @@ func (m *Match) DefaultActionWarning(p *Player) {
 
 // HandleFx ...
 func (m *Match) HandleFx(ctx *Context) {
-	if m == nil || m.ending {
+	if m == nil || m.IsEnding() {
 		return
 	}
 
@@ -729,7 +754,7 @@ func (m *Match) HandleFx(ctx *Context) {
 
 	// Handle persistent effects
 	for _, fx := range m.persistentEffects {
-		if m.ending {
+		if m.IsEnding() {
 			return
 		}
 		fx.effect(ctx, fx.exit)
@@ -740,7 +765,7 @@ func (m *Match) HandleFx(ctx *Context) {
 
 		for _, h := range card.handlers {
 
-			if ctx.cancel || m.ending {
+			if ctx.cancel || m.IsEnding() {
 				return
 			}
 
@@ -753,7 +778,7 @@ func (m *Match) HandleFx(ctx *Context) {
 	// Handle ctx.ScheduleAfter effects
 	for _, h := range ctx.postFxs {
 
-		if ctx.cancel || m.ending {
+		if ctx.cancel || m.IsEnding() {
 			return
 		}
 
@@ -1000,7 +1025,7 @@ func (m *Match) ShowCardsNonDismissible(p *Player, message string, cards []strin
 	defer m.CloseAction(p)
 
 	for {
-		action := <-p.Action
+		action := p.NextAction()
 
 		if action.Cancel {
 			break
@@ -1043,8 +1068,6 @@ func (m *Match) Start() {
 
 	m.Started = true
 	m.startedAt = time.Now().Unix()
-
-	m.system.UpdateMatchList()
 
 	m.Player1.Player.ShuffleDeck()
 	m.Player2.Player.ShuffleDeck()
@@ -1509,8 +1532,6 @@ func (m *Match) Parse(s *server.Socket, data []byte) {
 
 			}
 
-			m.system.UpdateMatchList()
-
 		}, ParallelEvent)
 
 	case "chat":
@@ -1788,12 +1809,23 @@ func (m *Match) Parse(s *server.Socket, data []byte) {
 				}
 			}
 
+			// The player's action channel is closed when the match is disposed, and
+			// a receive from a closed channel is always ready, so draining it would
+			// spin forever. Sending to it would panic. There is nothing to answer
+			// once the match is gone.
+			if m.IsClosed() {
+				return
+			}
+
 			// Drain the player action channel to prevent malicious exhaustion of goroutines
 			// as the msg is sent to the channel in a new grouroutine for every event
 		Drain:
 			for {
 				select {
-				case <-p.Player.Action:
+				case _, open := <-p.Player.Action:
+					if !open {
+						return
+					}
 				default:
 					break Drain
 				}
@@ -1900,7 +1932,7 @@ func (m *Match) Parse(s *server.Socket, data []byte) {
 // OnSocketClose is called when a socket disconnects
 func (m *Match) OnSocketClose(s *server.Socket) {
 
-	if m.closed {
+	if m.IsClosed() {
 		return
 	}
 
@@ -1965,7 +1997,6 @@ func (m *Match) OnSocketClose(s *server.Socket) {
 		m.TossOutcome = 0
 		m.TossPrediction = 0
 
-		m.system.UpdateMatchList()
 	} */
 
 	if p == nil {

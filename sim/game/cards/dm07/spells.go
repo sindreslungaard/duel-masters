@@ -11,7 +11,7 @@ import (
 func JusticeJamming(c *match.Card) {
 
 	c.Name = "Justice Jamming"
-	c.Civ = civ.Light
+	c.Civs = []string{civ.Light}
 	c.ManaCost = 3
 	c.ManaRequirement = []string{civ.Light}
 
@@ -31,13 +31,13 @@ func JusticeJamming(c *match.Card) {
 		}
 
 		fx.Find(card.Player, match.BATTLEZONE).Map(func(x *match.Card) {
-			if x.Civ == civToTap && !x.Tapped {
+			if x.HasCiv(civToTap) && !x.Tapped {
 				x.Tapped = true
 				ctx.Match.ReportActionInChat(x.Player, fmt.Sprintf("%s was tapped", x.Name))
 			}
 		})
 		fx.Find(ctx.Match.Opponent(card.Player), match.BATTLEZONE).Map(func(x *match.Card) {
-			if x.Civ == civToTap && !x.Tapped {
+			if x.HasCiv(civToTap) && !x.Tapped {
 				x.Tapped = true
 				ctx.Match.ReportActionInChat(x.Player, fmt.Sprintf("%s was tapped", x.Name))
 			}
@@ -50,7 +50,7 @@ func JusticeJamming(c *match.Card) {
 func ApocalypseVise(c *match.Card) {
 
 	c.Name = "Apocalypse Vise"
-	c.Civ = civ.Fire
+	c.Civs = []string{civ.Fire}
 	c.ManaCost = 7
 	c.ManaRequirement = []string{civ.Fire}
 
@@ -95,7 +95,7 @@ func ApocalypseVise(c *match.Card) {
 
 func HopelessVortex(c *match.Card) {
 	c.Name = "Hopeless Vortex"
-	c.Civ = civ.Darkness
+	c.Civs = []string{civ.Darkness}
 	c.ManaCost = 5
 	c.ManaRequirement = []string{civ.Darkness}
 
@@ -105,7 +105,7 @@ func HopelessVortex(c *match.Card) {
 func FreezingIcehammer(c *match.Card) {
 
 	c.Name = "Freezing Icehammer"
-	c.Civ = civ.Nature
+	c.Civs = []string{civ.Nature}
 	c.ManaCost = 3
 	c.ManaRequirement = []string{civ.Nature}
 
@@ -120,7 +120,7 @@ func FreezingIcehammer(c *match.Card) {
 			1,
 			1,
 			false,
-			func(x *match.Card) bool { return x.Civ == civ.Water || x.Civ == civ.Darkness },
+			func(x *match.Card) bool { return x.HasCiv(civ.Water) || x.HasCiv(civ.Darkness) },
 			false,
 		).Map(func(x *match.Card) {
 			x.Player.MoveCard(x.ID, match.BATTLEZONE, match.MANAZONE, card.ID)
@@ -134,7 +134,7 @@ func FreezingIcehammer(c *match.Card) {
 func FruitOfEternity(c *match.Card) {
 
 	c.Name = "Fruit of Eternity"
-	c.Civ = civ.Nature
+	c.Civs = []string{civ.Nature}
 	c.ManaCost = 4
 	c.ManaRequirement = []string{civ.Nature}
 
@@ -159,7 +159,7 @@ func FruitOfEternity(c *match.Card) {
 func VacuumGel(c *match.Card) {
 
 	c.Name = "Vacuum Gel"
-	c.Civ = civ.Darkness
+	c.Civs = []string{civ.Darkness}
 	c.ManaCost = 4
 	c.ManaRequirement = []string{civ.Darkness}
 
@@ -174,7 +174,7 @@ func VacuumGel(c *match.Card) {
 			1,
 			1,
 			false,
-			func(x *match.Card) bool { return !x.Tapped && (x.Civ == civ.Light || x.Civ == civ.Nature) },
+			func(x *match.Card) bool { return !x.Tapped && (x.HasCiv(civ.Light) || x.HasCiv(civ.Nature)) },
 			false,
 		).Map(func(x *match.Card) {
 			ctx.Match.Destroy(x, card, match.DestroyedBySpell)
@@ -186,7 +186,7 @@ func VacuumGel(c *match.Card) {
 func MiraclePortal(c *match.Card) {
 
 	c.Name = "Miracle Portal"
-	c.Civ = civ.Light
+	c.Civs = []string{civ.Light}
 	c.ManaCost = 4
 	c.ManaRequirement = []string{civ.Light}
 
@@ -222,7 +222,7 @@ func MiraclePortal(c *match.Card) {
 
 func VenomCharger(c *match.Card) {
 	c.Name = "Venom Charger"
-	c.Civ = civ.Darkness
+	c.Civs = []string{civ.Darkness}
 	c.ManaCost = 3
 	c.ManaRequirement = []string{civ.Darkness}
 
@@ -239,7 +239,7 @@ func VenomCharger(c *match.Card) {
 
 func EnergyCharger(c *match.Card) {
 	c.Name = "Energy Charger"
-	c.Civ = civ.Fire
+	c.Civs = []string{civ.Fire}
 	c.ManaCost = 3
 	c.ManaRequirement = []string{civ.Fire}
 
@@ -256,7 +256,7 @@ func EnergyCharger(c *match.Card) {
 
 func RiptideCharger(c *match.Card) {
 	c.Name = "Riptide Charger"
-	c.Civ = civ.Water
+	c.Civs = []string{civ.Water}
 	c.ManaCost = 5
 	c.ManaRequirement = []string{civ.Water}
 
@@ -265,7 +265,7 @@ func RiptideCharger(c *match.Card) {
 
 func MulchCharger(c *match.Card) {
 	c.Name = "Mulch Charger"
-	c.Civ = civ.Nature
+	c.Civs = []string{civ.Nature}
 	c.ManaCost = 3
 	c.ManaRequirement = []string{civ.Nature}
 
@@ -274,7 +274,7 @@ func MulchCharger(c *match.Card) {
 
 func LightningCharger(c *match.Card) {
 	c.Name = "Lightning Charger"
-	c.Civ = civ.Light
+	c.Civs = []string{civ.Light}
 	c.ManaCost = 4
 	c.ManaRequirement = []string{civ.Light}
 

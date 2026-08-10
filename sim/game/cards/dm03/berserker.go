@@ -12,7 +12,7 @@ func AlekSolidityEnforcer(c *match.Card) {
 
 	c.Name = "Alek, Solidity Enforcer"
 	c.Power = 4000
-	c.Civ = civ.Light
+	c.Civs = []string{civ.Light}
 	c.Family = []string{family.Berserker}
 	c.ManaCost = 7
 	c.ManaRequirement = []string{civ.Light}
@@ -37,7 +37,7 @@ func getLightCardsInYourBattleZone(card *match.Card) int {
 	count := 0
 
 	for _, battleZoneCard := range battleZone {
-		if battleZoneCard.Civ == civ.Light {
+		if battleZoneCard.HasCiv(civ.Light) {
 			count++
 		}
 	}

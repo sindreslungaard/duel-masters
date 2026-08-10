@@ -12,7 +12,7 @@ func HeadlongGiant(c *match.Card) {
 
 	c.Name = "Headlong Giant"
 	c.Power = 14000
-	c.Civ = civ.Nature
+	c.Civs = []string{civ.Nature}
 	c.Family = []string{family.Giant}
 	c.ManaCost = 9
 	c.ManaRequirement = []string{civ.Nature}

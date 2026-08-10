@@ -12,7 +12,7 @@ func FonchTheOracle(c *match.Card) {
 
 	c.Name = "Fonch, the Oracle"
 	c.Power = 2000
-	c.Civ = civ.Light
+	c.Civs = []string{civ.Light}
 	c.Family = []string{family.LightBringer}
 	c.ManaCost = 4
 	c.ManaRequirement = []string{civ.Light}
@@ -26,7 +26,7 @@ func WynTheOracle(c *match.Card) {
 
 	c.Name = "Wyn, the Oracle"
 	c.Power = 1500
-	c.Civ = civ.Light
+	c.Civs = []string{civ.Light}
 	c.Family = []string{family.LightBringer}
 	c.ManaCost = 2
 	c.ManaRequirement = []string{civ.Light}

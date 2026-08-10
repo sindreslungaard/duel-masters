@@ -14,7 +14,7 @@ func VenomWorm(c *match.Card) {
 
 	c.Name = "Venom Worm"
 	c.Power = 1000
-	c.Civ = civ.Darkness
+	c.Civs = []string{civ.Darkness}
 	c.Family = []string{family.ParasiteWorm}
 	c.ManaCost = 3
 	c.ManaRequirement = []string{civ.Darkness}

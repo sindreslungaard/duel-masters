@@ -28,7 +28,7 @@ func TestTerradragonDakmaBalgarow(t *testing.T) {
 		assert.Equal(t, "Terradragon Dakma Balgarow", terradragon.Name)
 		assert.Equal(t, 1000, terradragon.Power)
 		assert.Equal(t, 7, terradragon.ManaCost)
-		assert.Equal(t, civ.Nature, terradragon.Civ)
+		assert.Equal(t, []string{civ.Nature}, terradragon.Civs)
 		assert.True(t, terradragon.HasFamily(family.EarthDragon))
 
 		assert.Equal(t, 1000, scn.Match.GetPower(terradragon, false))

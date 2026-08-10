@@ -24,7 +24,7 @@ func TestSirenConcerto(t *testing.T) {
 
 		assert.Equal(t, "Siren Concerto", spell.Name)
 		assert.Equal(t, 1, spell.ManaCost)
-		assert.Equal(t, civ.Water, spell.Civ)
+		assert.Equal(t, []string{civ.Water}, spell.Civs)
 
 		require.NoError(t, scn.ActionEndTurn(player))
 		assert.True(t, spell.HasCondition(cnd.Spell))

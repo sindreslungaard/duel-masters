@@ -11,7 +11,7 @@ func PulsarTree(c *match.Card) {
 
 	c.Name = "Pulsar Tree"
 	c.Power = 1000
-	c.Civ = civ.Light
+	c.Civs = []string{civ.Light}
 	c.Family = []string{family.StarlightTree}
 	c.ManaCost = 5
 	c.ManaRequirement = []string{civ.Light}

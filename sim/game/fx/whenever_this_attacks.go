@@ -14,7 +14,7 @@ func WheneverThisAttacksReturnCardFromMZToHand() match.HandlerFunc {
 
 func WheneverThisAttacksMayTapDorFCreature() match.HandlerFunc {
 	return When(AttackConfirmed, func(c *match.Card, ctx *match.Context) {
-		filter := func(x *match.Card) bool { return x.Civ == civ.Fire || x.Civ == civ.Darkness }
+		filter := func(x *match.Card) bool { return x.HasCiv(civ.Fire) || x.HasCiv(civ.Darkness) }
 		cards := make(map[string][]*match.Card)
 		cards["Your creatures"] = FindFilter(c.Player, match.BATTLEZONE, filter)
 		cards["Opponent's creatures"] = FindFilter(ctx.Match.Opponent(c.Player), match.BATTLEZONE, filter)

@@ -11,7 +11,7 @@ func LaunchLocust(c *match.Card) {
 
 	c.Name = "Launch Locust"
 	c.Power = 2000
-	c.Civ = civ.Nature
+	c.Civs = []string{civ.Nature}
 	c.Family = []string{family.GiantInsect}
 	c.ManaCost = 3
 	c.ManaRequirement = []string{civ.Nature}

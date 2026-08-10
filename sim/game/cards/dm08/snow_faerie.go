@@ -14,7 +14,7 @@ func KachuaKeeperOfTheIcegate(c *match.Card) {
 
 	c.Name = "Kachua, Keeper of the Icegate"
 	c.Power = 3000
-	c.Civ = civ.Nature
+	c.Civs = []string{civ.Nature}
 	c.Family = []string{family.SnowFaerie}
 	c.ManaCost = 7
 	c.ManaRequirement = []string{civ.Nature}

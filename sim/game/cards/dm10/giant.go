@@ -14,7 +14,7 @@ func BodaciousGiant(c *match.Card) {
 
 	c.Name = "Bodacious Giant"
 	c.Power = 12000
-	c.Civ = civ.Nature
+	c.Civs = []string{civ.Nature}
 	c.Family = []string{family.Giant}
 	c.ManaCost = 8
 	c.ManaRequirement = []string{civ.Nature}

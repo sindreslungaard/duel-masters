@@ -12,7 +12,7 @@ func GalklifeDragon(c *match.Card) {
 
 	c.Name = "Galklife Dragon"
 	c.Power = 6000
-	c.Civ = civ.Fire
+	c.Civs = []string{civ.Fire}
 	c.Family = []string{family.ArmoredDragon}
 	c.ManaCost = 7
 	c.ManaRequirement = []string{civ.Fire}
@@ -22,7 +22,7 @@ func GalklifeDragon(c *match.Card) {
 		fx.FindFilter(
 			card.Player,
 			match.BATTLEZONE,
-			func(x *match.Card) bool { return ctx.Match.GetPower(x, false) <= 4000 && x.Civ == civ.Light },
+			func(x *match.Card) bool { return ctx.Match.GetPower(x, false) <= 4000 && x.HasCiv(civ.Light) },
 		).Map(func(x *match.Card) {
 			ctx.Match.Destroy(x, card, match.DestroyedByMiscAbility)
 		})
@@ -30,7 +30,7 @@ func GalklifeDragon(c *match.Card) {
 		fx.FindFilter(
 			ctx.Match.Opponent(card.Player),
 			match.BATTLEZONE,
-			func(x *match.Card) bool { return ctx.Match.GetPower(x, false) <= 4000 && x.Civ == civ.Light },
+			func(x *match.Card) bool { return ctx.Match.GetPower(x, false) <= 4000 && x.HasCiv(civ.Light) },
 		).Map(func(x *match.Card) {
 			ctx.Match.Destroy(x, card, match.DestroyedByMiscAbility)
 		})

@@ -12,7 +12,7 @@ func Gigagrax(c *match.Card) {
 
 	c.Name = "Gigagrax"
 	c.Power = 5000
-	c.Civ = civ.Darkness
+	c.Civs = []string{civ.Darkness}
 	c.Family = []string{family.Chimera}
 	c.ManaCost = 8
 	c.ManaRequirement = []string{civ.Darkness}

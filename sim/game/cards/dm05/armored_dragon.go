@@ -12,7 +12,7 @@ func BolgashDragon(c *match.Card) {
 
 	c.Name = "Bolgash Dragon"
 	c.Power = 4000
-	c.Civ = civ.Fire
+	c.Civs = []string{civ.Fire}
 	c.Family = []string{family.ArmoredDragon}
 	c.ManaCost = 8
 	c.ManaRequirement = []string{civ.Fire}
@@ -26,7 +26,7 @@ func BillionDegreeDragon(c *match.Card) {
 
 	c.Name = "Billion-Degree Dragon"
 	c.Power = 15000
-	c.Civ = civ.Fire
+	c.Civs = []string{civ.Fire}
 	c.Family = []string{family.ArmoredDragon}
 	c.ManaCost = 10
 	c.ManaRequirement = []string{civ.Fire}

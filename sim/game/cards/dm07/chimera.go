@@ -11,7 +11,7 @@ func PhantasmalHorrorGigazabal(c *match.Card) {
 
 	c.Name = "Phantasmal Horror Gigazabal"
 	c.Power = 9000
-	c.Civ = civ.Darkness
+	c.Civs = []string{civ.Darkness}
 	c.Family = []string{family.Chimera}
 	c.ManaCost = 5
 	c.ManaRequirement = []string{civ.Darkness}
@@ -23,7 +23,7 @@ func Gigabuster(c *match.Card) {
 
 	c.Name = "Gigabuster"
 	c.Power = 5000
-	c.Civ = civ.Darkness
+	c.Civs = []string{civ.Darkness}
 	c.Family = []string{family.Chimera}
 	c.ManaCost = 5
 	c.ManaRequirement = []string{civ.Darkness}

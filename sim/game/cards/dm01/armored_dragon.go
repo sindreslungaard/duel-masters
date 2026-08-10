@@ -13,7 +13,7 @@ func AstrocometDragon(c *match.Card) {
 
 	c.Name = "Astrocomet Dragon"
 	c.Power = 6000
-	c.Civ = civ.Fire
+	c.Civs = []string{civ.Fire}
 	c.Family = []string{family.ArmoredDragon}
 	c.ManaCost = 7
 	c.ManaRequirement = []string{civ.Fire}
@@ -27,7 +27,7 @@ func BolshackDragon(c *match.Card) {
 
 	c.Name = "Bolshack Dragon"
 	c.Power = 6000
-	c.Civ = civ.Fire
+	c.Civs = []string{civ.Fire}
 	c.Family = []string{family.ArmoredDragon}
 	c.ManaCost = 6
 	c.ManaRequirement = []string{civ.Fire}
@@ -66,7 +66,7 @@ func bolshackSpecial(card *match.Card) {
 	power := 0
 
 	for _, graveyardCard := range graveyard {
-		if graveyardCard.Civ == civ.Fire {
+		if graveyardCard.HasCiv(civ.Fire) {
 			power += 1000
 		}
 	}

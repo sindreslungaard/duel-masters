@@ -38,7 +38,7 @@ func TestElixiaPurebladeElemental(t *testing.T) {
 		assert.Equal(t, "Elixia, Pureblade Elemental", elixia.Name)
 		assert.Equal(t, 1000, elixia.Power)
 		assert.Equal(t, 6, elixia.ManaCost)
-		assert.Equal(t, civ.Light, elixia.Civ)
+		assert.Equal(t, []string{civ.Light}, elixia.Civs)
 		assert.True(t, elixia.HasFamily(family.AngelCommand))
 
 		assert.Equal(t, 1000, scn.Match.GetPower(elixia, false))

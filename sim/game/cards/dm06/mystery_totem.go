@@ -14,7 +14,7 @@ func BlissTotemAvatarOfLuck(c *match.Card) {
 
 	c.Name = "Bliss Totem, Avatar of Luck"
 	c.Power = 5000
-	c.Civ = civ.Nature
+	c.Civs = []string{civ.Nature}
 	c.Family = []string{family.MysteryTotem}
 	c.ManaCost = 6
 	c.ManaRequirement = []string{civ.Nature}
@@ -42,7 +42,7 @@ func ClobberTotem(c *match.Card) {
 
 	c.Name = "Clobber Totem"
 	c.Power = 4000
-	c.Civ = civ.Nature
+	c.Civs = []string{civ.Nature}
 	c.Family = []string{family.MysteryTotem}
 	c.ManaCost = 6
 	c.ManaRequirement = []string{civ.Nature}
@@ -55,7 +55,7 @@ func ForbiddingTotem(c *match.Card) {
 
 	c.Name = "Forbidding Totem"
 	c.Power = 4000
-	c.Civ = civ.Nature
+	c.Civs = []string{civ.Nature}
 	c.Family = []string{family.MysteryTotem}
 	c.ManaCost = 5
 	c.ManaRequirement = []string{civ.Nature}

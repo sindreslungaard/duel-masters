@@ -11,7 +11,7 @@ func CrystalJouster(c *match.Card) {
 
 	c.Name = "Crystal Jouster"
 	c.Power = 7000
-	c.Civ = civ.Water
+	c.Civs = []string{civ.Water}
 	c.Family = []string{family.LiquidPeople}
 	c.ManaCost = 7
 	c.ManaRequirement = []string{civ.Water}
@@ -24,7 +24,7 @@ func AquaRider(c *match.Card) {
 
 	c.Name = "Aqua Rider"
 	c.Power = 2000
-	c.Civ = civ.Water
+	c.Civs = []string{civ.Water}
 	c.Family = []string{family.LiquidPeople}
 	c.ManaCost = 4
 	c.ManaRequirement = []string{civ.Water}

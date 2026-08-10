@@ -12,7 +12,7 @@ import (
 func TwitchHornTheAggressor(c *match.Card) {
 	c.Name = "Twitch Horn, the Aggressor"
 	c.Power = 2000
-	c.Civ = civ.Nature
+	c.Civs = []string{civ.Nature}
 	c.Family = []string{family.HornedBeast}
 	c.ManaCost = 6
 	c.ManaRequirement = []string{civ.Nature}
@@ -36,7 +36,7 @@ func TwitchHornTheAggressor(c *match.Card) {
 func AncientHornTheWatcher(c *match.Card) {
 
 	c.Name = "Ancient Horn, the Watcher"
-	c.Civ = civ.Nature
+	c.Civs = []string{civ.Nature}
 	c.Power = 5000
 	c.Family = []string{family.HornedBeast}
 	c.ManaCost = 5

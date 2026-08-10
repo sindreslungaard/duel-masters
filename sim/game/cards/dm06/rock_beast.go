@@ -11,7 +11,7 @@ import (
 func RumblesaurQ(c *match.Card) {
 	c.Name = "Rumblesaur Q"
 	c.Power = 3000
-	c.Civ = civ.Fire
+	c.Civs = []string{civ.Fire}
 	c.Family = []string{family.RockBeast, family.Survivor}
 	c.ManaCost = 6
 	c.ManaRequirement = []string{civ.Fire}

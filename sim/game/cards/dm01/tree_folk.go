@@ -14,7 +14,7 @@ func CoilingVines(c *match.Card) {
 
 	c.Name = "Coiling Vines"
 	c.Power = 3000
-	c.Civ = civ.Nature
+	c.Civs = []string{civ.Nature}
 	c.Family = []string{family.TreeFolk}
 	c.ManaCost = 4
 	c.ManaRequirement = []string{civ.Nature}
@@ -28,7 +28,7 @@ func PoisonousDahlia(c *match.Card) {
 
 	c.Name = "Poisonous Dahlia"
 	c.Power = 5000
-	c.Civ = civ.Nature
+	c.Civs = []string{civ.Nature}
 	c.Family = []string{family.TreeFolk}
 	c.ManaCost = 4
 	c.ManaRequirement = []string{civ.Nature}
@@ -42,7 +42,7 @@ func ThornyMandra(c *match.Card) {
 
 	c.Name = "Thorny Mandra"
 	c.Power = 4000
-	c.Civ = civ.Nature
+	c.Civs = []string{civ.Nature}
 	c.Family = []string{family.TreeFolk}
 	c.ManaCost = 5
 	c.ManaRequirement = []string{civ.Nature}

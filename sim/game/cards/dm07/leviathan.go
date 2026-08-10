@@ -12,7 +12,7 @@ func KingBenthos(c *match.Card) {
 
 	c.Name = "King Benthos"
 	c.Power = 6000
-	c.Civ = civ.Water
+	c.Civs = []string{civ.Water}
 	c.Family = []string{family.Leviathan}
 	c.ManaCost = 8
 	c.ManaRequirement = []string{civ.Water}
@@ -20,7 +20,7 @@ func KingBenthos(c *match.Card) {
 		fx.FindFilter(
 			card.Player,
 			match.BATTLEZONE,
-			func(card *match.Card) bool { return card.Civ == civ.Water },
+			func(card *match.Card) bool { return card.HasCiv(civ.Water) },
 		).Map(func(x *match.Card) {
 			x.AddUniqueSourceCondition(cnd.CantBeBlocked, nil, card.ID)
 		})

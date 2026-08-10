@@ -13,7 +13,7 @@ func ProwlingElephish(c *match.Card) {
 
 	c.Name = "Prowling Elephish"
 	c.Power = 2000
-	c.Civ = civ.Water
+	c.Civs = []string{civ.Water}
 	c.Family = []string{family.GelFish}
 	c.ManaCost = 4
 	c.ManaRequirement = []string{civ.Water}
@@ -26,7 +26,7 @@ func IllusionFish(c *match.Card) {
 
 	c.Name = "Illusion Fish"
 	c.Power = 3000
-	c.Civ = civ.Water
+	c.Civs = []string{civ.Water}
 	c.Family = []string{family.GelFish}
 	c.ManaCost = 4
 	c.ManaRequirement = []string{civ.Water}

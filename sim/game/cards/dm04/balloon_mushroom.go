@@ -13,7 +13,7 @@ func DewMushroom(c *match.Card) {
 
 	c.Name = "Dew Mushroom"
 	c.Power = 1000
-	c.Civ = civ.Nature
+	c.Civs = []string{civ.Nature}
 	c.Family = []string{family.BalloonMushroom}
 	c.ManaCost = 3
 	c.ManaRequirement = []string{civ.Nature}
@@ -25,7 +25,7 @@ func DewMushroom(c *match.Card) {
 		}
 
 		if event, ok := ctx.Event.(*match.PlayCardEvent); ok {
-			
+
 			p := ctx.Match.CurrentPlayer()
 
 			playedCard, err := p.Player.GetCard(event.CardID, match.HAND)
@@ -34,7 +34,7 @@ func DewMushroom(c *match.Card) {
 				return
 			}
 
-			if playedCard.Civ != civ.Darkness {
+			if !playedCard.HasCiv(civ.Darkness) {
 				return
 			}
 

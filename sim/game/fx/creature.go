@@ -85,13 +85,13 @@ func Creature(card *match.Card, ctx *match.Context) {
 				untappedMana,
 				manaCost,
 				manaCost,
-				fmt.Sprintf("Select %v cards from your manazone to play %v. You must select at least 1 %v, civilization card.", manaCost, card.Name, card.Civ),
+				fmt.Sprintf("Select %v cards from your manazone to play %v. You must select at least %v civilization card(s).", manaCost, card.Name, ManaRequirementText(card)),
 				true,
 			)
 
 			for {
 
-				action := <-card.Player.Action
+				action := card.Player.NextAction()
 
 				if action.Cancel {
 					ctx.Match.CloseAction(card.Player)
@@ -264,7 +264,7 @@ func Creature(card *match.Card, ctx *match.Context) {
 
 			for {
 
-				action := <-card.Player.Action
+				action := card.Player.NextAction()
 
 				if action.Cancel {
 					ctx.InterruptFlow()
@@ -334,7 +334,7 @@ func Creature(card *match.Card, ctx *match.Context) {
 					ctx.Match.NewAction(opponent, event.Blockers, 1, 1, fmt.Sprintf("%s (%v) is attacking you. Choose a creature to block the attack with or close to not block the attack.", card.Name, ctx.Match.GetPower(card, true)), true)
 
 					for {
-						action := <-opponent.Action
+						action := opponent.NextAction()
 
 						if action.Cancel {
 							ctx.Match.EndWait(card.Player)
@@ -415,7 +415,7 @@ func Creature(card *match.Card, ctx *match.Context) {
 					ctx.Match.NewAction(opponent, event.Blockers, 1, 1, fmt.Sprintf("%s (%v) is attacking %s (%v). Choose a creature to block the attack with or close to not block the attack.", card.Name, ctx.Match.GetPower(card, true), attackedCard.Name, ctx.Match.GetPower(attackedCard, false)), true)
 
 					for {
-						action := <-opponent.Action
+						action := opponent.NextAction()
 
 						if action.Cancel {
 							ctx.Match.EndWait(card.Player)
@@ -534,7 +534,7 @@ func Creature(card *match.Card, ctx *match.Context) {
 
 				for {
 
-					action := <-card.Player.Action
+					action := card.Player.NextAction()
 
 					if action.Cancel {
 						ctx.InterruptFlow()
@@ -698,7 +698,7 @@ func SelectAndReturnShields(card *match.Card, ctx *match.Context, cancellable bo
 	ctx.Match.NewBacksideAction(card.Player, shieldzone, noOfShields, noOfShields, fmt.Sprintf("Select %v shield(s) to break", noOfShields), cancellable)
 
 	for {
-		action := <-card.Player.Action
+		action := card.Player.NextAction()
 
 		if action.Cancel {
 			ctx.InterruptFlow()

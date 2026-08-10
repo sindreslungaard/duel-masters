@@ -14,7 +14,7 @@ func ScreamSlicerShadowOfFear(c *match.Card) {
 
 	c.Name = "Scream Slicer, Shadow of Fear"
 	c.Power = 4000
-	c.Civ = civ.Darkness
+	c.Civs = []string{civ.Darkness}
 	c.Family = []string{family.Ghost}
 	c.ManaCost = 6
 	c.ManaRequirement = []string{civ.Darkness}

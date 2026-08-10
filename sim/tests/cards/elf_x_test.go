@@ -42,7 +42,7 @@ func TestElfX(t *testing.T) {
 		assert.Equal(t, "Elf-X", elfX.Name)
 		assert.Equal(t, 2000, elfX.Power)
 		assert.Equal(t, 4, elfX.ManaCost)
-		assert.Equal(t, civ.Nature, elfX.Civ)
+		assert.Equal(t, []string{civ.Nature}, elfX.Civs)
 		assert.Equal(t, []string{civ.Nature}, elfX.ManaRequirement)
 		assert.True(t, elfX.HasFamily(family.TreeFolk))
 

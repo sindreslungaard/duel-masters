@@ -27,7 +27,7 @@ func TestIceVaporShadowOfAnguish(t *testing.T) {
 		assert.Equal(t, "Ice Vapor, Shadow of Anguish", iceVapor.Name)
 		assert.Equal(t, 1000, iceVapor.Power)
 		assert.Equal(t, 5, iceVapor.ManaCost)
-		assert.Equal(t, civ.Darkness, iceVapor.Civ)
+		assert.Equal(t, []string{civ.Darkness}, iceVapor.Civs)
 		assert.True(t, iceVapor.HasFamily(family.Ghost))
 
 		require.NoError(t, scn.ActionEndTurn(owner))

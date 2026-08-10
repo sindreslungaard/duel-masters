@@ -12,7 +12,7 @@ func KuukaiFinderOfKarma(c *match.Card) {
 
 	c.Name = "Kuukai, Finder of Karma"
 	c.Power = 10500
-	c.Civ = civ.Light
+	c.Civs = []string{civ.Light}
 	c.Family = []string{family.MechaThunder}
 	c.ManaCost = 5
 	c.ManaRequirement = []string{civ.Light}

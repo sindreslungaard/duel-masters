@@ -11,7 +11,7 @@ func BroodShell(c *match.Card) {
 
 	c.Name = "Brood Shell"
 	c.Power = 3000
-	c.Civ = civ.Nature
+	c.Civs = []string{civ.Nature}
 	c.Family = []string{family.ColonyBeetle}
 	c.ManaCost = 4
 	c.ManaRequirement = []string{civ.Nature}

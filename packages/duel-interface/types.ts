@@ -1,3 +1,5 @@
+import type { ReactNode } from "react";
+
 // Message is the default message struct
 export interface Message {
   header: string;
@@ -25,6 +27,30 @@ export interface ChatMessage {
   sender: string;
   color: string;
 }
+
+export interface DuelChatUser {
+  username: string;
+  avatarUrl?: string | null;
+}
+
+/**
+ * Starts a non-critical lookup for an unknown sender. Duel calls it at most
+ * once per normalized username and renders without waiting for it.
+ */
+export type DuelChatUserResolver = (
+  username: string,
+) => Promise<DuelChatUser | null | undefined>;
+
+export interface DuelChatUserTriggerProps {
+  user: DuelChatUser;
+  children: ReactNode;
+  className: string;
+}
+
+/** Synchronously wraps an avatar or username; do not perform lookups here. */
+export type DuelChatUserTriggerRenderer = (
+  props: DuelChatUserTriggerProps,
+) => ReactNode;
 
 export const TAPPED_FLAG = 1;
 export const PLAYABLE_FLAG = 2;

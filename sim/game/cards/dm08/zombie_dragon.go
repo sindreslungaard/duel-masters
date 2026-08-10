@@ -13,7 +13,7 @@ func NecrodragonGiland(c *match.Card) {
 
 	c.Name = "Necrodragon Giland"
 	c.Power = 6000
-	c.Civ = civ.Darkness
+	c.Civs = []string{civ.Darkness}
 	c.Family = []string{family.ZombieDragon}
 	c.ManaCost = 4
 	c.ManaRequirement = []string{civ.Darkness}
@@ -26,7 +26,7 @@ func NecrodragonGiland(c *match.Card) {
 func NecrodragonGalbazeek(c *match.Card) {
 	c.Name = "Necrodragon Galbazeek"
 	c.Power = 9000
-	c.Civ = civ.Darkness
+	c.Civs = []string{civ.Darkness}
 	c.Family = []string{family.ZombieDragon}
 	c.ManaCost = 6
 	c.ManaRequirement = []string{civ.Darkness}
@@ -52,7 +52,7 @@ func SuperNecrodragonAbzoDolba(c *match.Card) {
 
 	c.Name = "Super Necrodragon Abzo Dolba"
 	c.Power = 11000
-	c.Civ = civ.Darkness
+	c.Civs = []string{civ.Darkness}
 	c.Family = []string{family.ZombieDragon}
 	c.ManaCost = 6
 	c.ManaRequirement = []string{civ.Darkness}

@@ -13,7 +13,7 @@ func PicorasWrench(c *match.Card) {
 
 	c.Name = "Picora's Wrench"
 	c.Power = 2000
-	c.Civ = civ.Fire
+	c.Civs = []string{civ.Fire}
 	c.Family = []string{family.Xenoparts}
 	c.ManaCost = 2
 	c.ManaRequirement = []string{civ.Fire}
@@ -25,7 +25,7 @@ func RikabusScrewdriver(c *match.Card) {
 
 	c.Name = "Rikabu's Screwdriver"
 	c.Power = 1000
-	c.Civ = civ.Fire
+	c.Civs = []string{civ.Fire}
 	c.Family = []string{family.Xenoparts}
 	c.ManaCost = 2
 	c.ManaRequirement = []string{civ.Fire}

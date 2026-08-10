@@ -12,7 +12,7 @@ func SolidHorn(c *match.Card) {
 
 	c.Name = "Solid Horn"
 	c.Power = 5000
-	c.Civ = civ.Nature
+	c.Civs = []string{civ.Nature}
 	c.Family = []string{family.HornedBeast}
 	c.ManaCost = 6
 	c.ManaRequirement = []string{civ.Nature}

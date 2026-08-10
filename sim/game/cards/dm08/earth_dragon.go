@@ -13,7 +13,7 @@ func TerradragonRegarion(c *match.Card) {
 
 	c.Name = "Terradragon Regarion"
 	c.Power = 4000
-	c.Civ = civ.Nature
+	c.Civs = []string{civ.Nature}
 	c.Family = []string{family.EarthDragon}
 	c.ManaCost = 5
 	c.ManaRequirement = []string{civ.Nature}
@@ -26,7 +26,7 @@ func TerradragonGamiratar(c *match.Card) {
 
 	c.Name = "Terradragon Gamiratar"
 	c.Power = 6000
-	c.Civ = civ.Nature
+	c.Civs = []string{civ.Nature}
 	c.Family = []string{family.EarthDragon}
 	c.ManaCost = 4
 	c.ManaRequirement = []string{civ.Nature}
@@ -57,7 +57,7 @@ func SuperTerradragonBailasGale(c *match.Card) {
 
 	c.Name = "Super Terradragon Bailas Gale"
 	c.Power = 9000
-	c.Civ = civ.Nature
+	c.Civs = []string{civ.Nature}
 	c.Family = []string{family.EarthDragon}
 	c.ManaCost = 5
 	c.ManaRequirement = []string{civ.Nature}

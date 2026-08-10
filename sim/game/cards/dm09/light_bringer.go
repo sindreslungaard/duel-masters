@@ -13,7 +13,7 @@ func MicuteTheOracle(c *match.Card) {
 
 	c.Name = "Micute, the Oracle"
 	c.Power = 4000
-	c.Civ = civ.Light
+	c.Civs = []string{civ.Light}
 	c.Family = []string{family.LightBringer}
 	c.ManaCost = 5
 	c.ManaRequirement = []string{civ.Light}

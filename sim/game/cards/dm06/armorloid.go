@@ -12,7 +12,7 @@ func ValiantWarriorExorious(c *match.Card) {
 
 	c.Name = "Valiant Warrior Exorious"
 	c.Power = 4000
-	c.Civ = civ.Fire
+	c.Civs = []string{civ.Fire}
 	c.Family = []string{family.Armorloid}
 	c.ManaCost = 6
 	c.ManaRequirement = []string{civ.Fire}
@@ -25,7 +25,7 @@ func AutomatedWeaponmasterMachai(c *match.Card) {
 
 	c.Name = "Automated Weaponmaster Machai"
 	c.Power = 4000
-	c.Civ = civ.Fire
+	c.Civs = []string{civ.Fire}
 	c.Family = []string{family.Armorloid}
 	c.ManaCost = 4
 	c.ManaRequirement = []string{civ.Fire}
@@ -38,7 +38,7 @@ func ArmoredScoutGestuchar(c *match.Card) {
 
 	c.Name = "Armored Scout Gestuchar"
 	c.Power = 4000
-	c.Civ = civ.Fire
+	c.Civs = []string{civ.Fire}
 	c.Family = []string{family.Armorloid}
 	c.ManaCost = 5
 	c.ManaRequirement = []string{civ.Fire}
@@ -60,7 +60,7 @@ func ArmoredScoutGestuchar(c *match.Card) {
 				fireCreatures := fx.FindFilter(
 					c.Player,
 					match.BATTLEZONE,
-					func(card *match.Card) bool { return card.Civ == civ.Fire },
+					func(card *match.Card) bool { return card.HasCiv(civ.Fire) },
 				)
 
 				if len(fireCreatures) == 1 {

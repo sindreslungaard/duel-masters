@@ -11,7 +11,7 @@ func Gigagriff(c *match.Card) {
 
 	c.Name = "Gigagriff"
 	c.Power = 4000
-	c.Civ = civ.Darkness
+	c.Civs = []string{civ.Darkness}
 	c.Family = []string{family.Chimera}
 	c.ManaCost = 6
 	c.ManaRequirement = []string{civ.Darkness}
@@ -23,7 +23,7 @@ func PhantasmalHorrorGigazald(c *match.Card) {
 
 	c.Name = "Phantasmal Horror Gigazald"
 	c.Power = 5000
-	c.Civ = civ.Darkness
+	c.Civs = []string{civ.Darkness}
 	c.Family = []string{family.Chimera}
 	c.ManaCost = 5
 	c.ManaRequirement = []string{civ.Darkness}
@@ -35,7 +35,7 @@ func PhantasmalHorrorGigazald(c *match.Card) {
 			fx.GiveTapAbilityToAllies(
 				card,
 				ctx,
-				func(x *match.Card) bool { return x.ID != card.ID && x.Civ == civ.Darkness },
+				func(x *match.Card) bool { return x.ID != card.ID && x.HasCiv(civ.Darkness) },
 				fx.OpponentDiscardsRandomCard,
 			)
 

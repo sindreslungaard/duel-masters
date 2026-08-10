@@ -41,9 +41,9 @@ func (m *Match) sendMatchResultWebhook(duel DuelRecord) {
 		return
 	}
 
-	auth := os.Getenv("duel_token_secret")
+	auth := os.Getenv("secret")
 	if auth == "" {
-		logrus.Warn("duel_result_webhook_url is set, but duel_token_secret is missing; skipping match result webhook")
+		logrus.Warn("duel_result_webhook_url is set, but secret is missing; skipping match result webhook")
 		return
 	}
 

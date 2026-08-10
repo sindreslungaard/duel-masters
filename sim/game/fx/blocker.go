@@ -44,20 +44,20 @@ func DragonBlocker() func(*match.Card, *match.Context) {
 
 func DarknessBlocker() func(*match.Card, *match.Context) {
 	return Blocker(func(event *match.SelectBlockers) bool {
-		return event.Attacker.Civ == civ.Darkness
+		return event.Attacker.HasCiv(civ.Darkness)
 	})
 }
 
 func LightBlocker() func(*match.Card, *match.Context) {
 	return Blocker(func(event *match.SelectBlockers) bool {
-		return event.Attacker.Civ == civ.Light
+		return event.Attacker.HasCiv(civ.Light)
 	})
 }
 
 func FireAndNatureBlocker() func(*match.Card, *match.Context) {
 	return Blocker(func(event *match.SelectBlockers) bool {
-		return event.Attacker.Civ == civ.Fire ||
-			event.Attacker.Civ == civ.Nature
+		return event.Attacker.HasCiv(civ.Fire) ||
+			event.Attacker.HasCiv(civ.Nature)
 	})
 }
 

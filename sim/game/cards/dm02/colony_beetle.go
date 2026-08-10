@@ -13,7 +13,7 @@ func FortressShell(c *match.Card) {
 
 	c.Name = "Fortress Shell"
 	c.Power = 5000
-	c.Civ = civ.Nature
+	c.Civs = []string{civ.Nature}
 	c.Family = []string{family.ColonyBeetle}
 	c.ManaCost = 9
 	c.ManaRequirement = []string{civ.Nature}

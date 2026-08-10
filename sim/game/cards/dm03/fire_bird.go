@@ -12,14 +12,14 @@ func BabyZoppe(c *match.Card) {
 
 	c.Name = "Baby Zoppe"
 	c.Power = 2000
-	c.Civ = civ.Fire
+	c.Civs = []string{civ.Fire}
 	c.Family = []string{family.FireBird}
 	c.ManaCost = 3
 	c.ManaRequirement = []string{civ.Fire}
 
 	c.PowerModifier = func(m *match.Match, attacking bool) int {
 
-		if match.ContainerHas(c.Player, match.MANAZONE, func(x *match.Card) bool { return x.Civ != civ.Fire }) {
+		if match.ContainerHas(c.Player, match.MANAZONE, func(x *match.Card) bool { return !x.HasCiv(civ.Fire) }) {
 			return 0
 		}
 

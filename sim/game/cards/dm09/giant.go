@@ -12,7 +12,7 @@ func StratosphereGiant(c *match.Card) {
 
 	c.Name = "Stratosphere Giant"
 	c.Power = 13000
-	c.Civ = civ.Nature
+	c.Civs = []string{civ.Nature}
 	c.Family = []string{family.Giant}
 	c.ManaCost = 8
 	c.ManaRequirement = []string{civ.Nature}

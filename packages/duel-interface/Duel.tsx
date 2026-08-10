@@ -5,7 +5,8 @@ import {
   ActionWarningMessage,
   cardHasFlag,
   CardState,
-  ChatMessage,
+  DuelChatUserResolver,
+  DuelChatUserTriggerRenderer,
   DuelFinishedMessage,
   MatchState,
   PLAYABLE_FLAG,
@@ -17,7 +18,7 @@ import { Card } from "./Card";
 import { Button } from "./Button";
 import { Popup } from "./Popup";
 import { Action } from "./Action";
-import { Chat } from "./Chat";
+import { Chat, type ReceivedChatMessage } from "./Chat";
 import { CardPreview } from "./CardPreview";
 import { MultiCardPreview } from "./MultiCardPreview";
 
@@ -47,11 +48,18 @@ const scrollbarStyles = `
   }
 `;
 
-interface DuelProps {
+export interface DuelProps {
   hostUrl: string;
   duelId: string;
   duelToken: string;
   playmat?: string;
+  resolveChatUser?: DuelChatUserResolver;
+  renderChatUserTrigger?: DuelChatUserTriggerRenderer;
+  /**
+   * Current usernames whose user-authored chat messages should be hidden.
+   * Existing history is retained and re-filtered when this list changes.
+   */
+  blockedChatUsers?: readonly string[];
   devTools?: {
     cards: { uid: string; name: string }[];
     activePlayer: "host" | "guest" | "spectator";
@@ -120,15 +128,19 @@ export function Duel({
   duelToken,
   hostUrl,
   playmat,
+  resolveChatUser,
+  renderChatUserTrigger,
+  blockedChatUsers,
   devTools,
   onLeaveDuel,
   onDuelFinished,
 }: DuelProps) {
   const [action, setAction] = useState<ActionMessage | null>(null);
+  const [actionRevision, setActionRevision] = useState(0);
   const [actionError, setActionError] = useState<ActionWarningMessage | null>(
     null,
   );
-  const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
+  const [chatMessages, setChatMessages] = useState<ReceivedChatMessage[]>([]);
   const [wait, setWait] = useState("");
   const [warningMessage, setWarningMessage] = useState("");
   const [dots, setDots] = useState<"." | ".." | "...">(".");
@@ -159,14 +171,21 @@ export function Duel({
     hostUrl,
     duelId,
     duelToken,
-    onActionMessage: setAction,
+    onActionMessage: (nextAction) => {
+      setAction(nextAction);
+      setActionError(null);
+      setActionRevision((revision) => revision + 1);
+    },
     onActionError: setActionError,
     onActionClose: () => {
       setAction(null);
       setActionError(null);
     },
     onChat: (data) => {
-      setChatMessages((prev) => [...prev, data]);
+      setChatMessages((prev) => [
+        ...prev,
+        { ...data, receivedAt: Date.now() },
+      ]);
     },
     onWarning: (data) => {
       setWarningMessage(data.message);
@@ -599,7 +618,13 @@ export function Duel({
 
           {/* Chat */}
           <div className="flex-1 bg-black/30 rounded-md overflow-hidden">
-            <Chat messages={chatMessages} onSendMessage={sendChat} />
+            <Chat
+              messages={chatMessages}
+              onSendMessage={sendChat}
+              resolveUser={resolveChatUser}
+              renderUserTrigger={renderChatUserTrigger}
+              blockedUsers={blockedChatUsers}
+            />
           </div>
 
           {/* Actions */}
@@ -1161,6 +1186,7 @@ export function Duel({
 
       {action && (
         <Action
+          key={actionRevision}
           title={action.showCards ? "Card Preview" : "Action Required"}
           visible={true}
           error={actionError ? actionError.message : undefined}

@@ -13,7 +13,7 @@ func JackViperShadowofDoom(c *match.Card) {
 
 	c.Name = "Jack Viper, Shadow of Doom"
 	c.Power = 4000
-	c.Civ = civ.Darkness
+	c.Civs = []string{civ.Darkness}
 	c.Family = []string{family.Ghost}
 	c.ManaCost = 3
 	c.ManaRequirement = []string{civ.Darkness}
@@ -26,7 +26,7 @@ func JackViperShadowofDoom(c *match.Card) {
 		if event, ok := ctx.Event.(*match.CreatureDestroyed); ok &&
 			event.Card.ID != card.ID &&
 			event.Card.Player == card.Player &&
-			event.Card.Civ == civ.Darkness {
+			event.Card.HasCiv(civ.Darkness) {
 
 			fx.SelectFilter(
 				card.Player,
@@ -55,7 +55,7 @@ func WailingShadowBelbetphlo(c *match.Card) {
 
 	c.Name = "Wailing Shadow Belbetphlo"
 	c.Power = 1000
-	c.Civ = civ.Darkness
+	c.Civs = []string{civ.Darkness}
 	c.Family = []string{family.Ghost}
 	c.ManaCost = 3
 	c.ManaRequirement = []string{civ.Darkness}

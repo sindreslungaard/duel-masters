@@ -13,7 +13,7 @@ func SeniaOrchardAvenger(c *match.Card) {
 
 	c.Name = "Senia, Orchard Avenger"
 	c.Power = 3000
-	c.Civ = civ.Nature
+	c.Civs = []string{civ.Nature}
 	c.Family = []string{family.TreeFolk}
 	c.ManaCost = 4
 	c.ManaRequirement = []string{civ.Nature}

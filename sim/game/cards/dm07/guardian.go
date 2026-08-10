@@ -11,7 +11,7 @@ func RodiGaleNightGuardian(c *match.Card) {
 
 	c.Name = "Rodi Gale, Night Guardian"
 	c.Power = 3500
-	c.Civ = civ.Light
+	c.Civs = []string{civ.Light}
 	c.Family = []string{family.Guardian}
 	c.ManaCost = 4
 	c.ManaRequirement = []string{civ.Light}

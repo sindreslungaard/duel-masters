@@ -12,7 +12,7 @@ func MarrowOozeTheTwister(c *match.Card) {
 
 	c.Name = "Marrow Ooze, the Twister"
 	c.Power = 1000
-	c.Civ = civ.Darkness
+	c.Civs = []string{civ.Darkness}
 	c.Family = []string{family.LivingDead}
 	c.ManaCost = 1
 	c.ManaRequirement = []string{civ.Darkness}

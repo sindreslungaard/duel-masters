@@ -12,7 +12,7 @@ func ClearloGraceEnforcer(c *match.Card) {
 
 	c.Name = "Clearlo, Grace Enforcer"
 	c.Power = 1000
-	c.Civ = civ.Light
+	c.Civs = []string{civ.Light}
 	c.Family = []string{family.Berserker}
 	c.ManaCost = 3
 	c.ManaRequirement = []string{civ.Light}

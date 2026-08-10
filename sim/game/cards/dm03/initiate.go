@@ -14,7 +14,7 @@ func LenaVizierOfBrilliance(c *match.Card) {
 
 	c.Name = "Lena, Vizier of Brilliance"
 	c.Power = 2000
-	c.Civ = civ.Light
+	c.Civs = []string{civ.Light}
 	c.Family = []string{family.Initiate}
 	c.ManaCost = 4
 	c.ManaRequirement = []string{civ.Light}
@@ -44,7 +44,7 @@ func SiegBaliculaTheIntense(c *match.Card) {
 
 	c.Name = "Sieg Balicula, the Intense"
 	c.Power = 5000
-	c.Civ = civ.Light
+	c.Civs = []string{civ.Light}
 	c.Family = []string{family.Initiate}
 	c.ManaCost = 3
 	c.ManaRequirement = []string{civ.Light}
@@ -68,7 +68,7 @@ func SiegBaliculaTheIntense(c *match.Card) {
 			fx.FindFilter(
 				card.Player,
 				match.BATTLEZONE,
-				func(x *match.Card) bool { return x.ID != card.ID && x.Civ == civ.Light },
+				func(x *match.Card) bool { return x.ID != card.ID && x.HasCiv(civ.Light) },
 			).Map(func(x *match.Card) {
 				fx.ForceBlocker(x, ctx2, card.ID)
 			})

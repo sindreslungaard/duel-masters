@@ -13,7 +13,7 @@ func CosmogoldSpectralKnight(c *match.Card) {
 
 	c.Name = "Cosmogold, Spectral Knight"
 	c.Power = 3000
-	c.Civ = civ.Light
+	c.Civs = []string{civ.Light}
 	c.Family = []string{family.RainbowPhantom}
 	c.ManaCost = 4
 	c.ManaRequirement = []string{civ.Light}
@@ -43,7 +43,7 @@ func MoontearSpectralKnight(c *match.Card) {
 
 	c.Name = "Moontear, Spectral Knight"
 	c.Power = 3500
-	c.Civ = civ.Light
+	c.Civs = []string{civ.Light}
 	c.Family = []string{family.RainbowPhantom}
 	c.ManaCost = 2
 	c.ManaRequirement = []string{civ.Light}

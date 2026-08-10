@@ -12,7 +12,7 @@ import (
 func BoomerangComet(c *match.Card) {
 
 	c.Name = "Boomerang Comet"
-	c.Civ = civ.Light
+	c.Civs = []string{civ.Light}
 	c.ManaCost = 6
 	c.ManaRequirement = []string{civ.Light}
 
@@ -40,7 +40,7 @@ func BoomerangComet(c *match.Card) {
 func LogicSphere(c *match.Card) {
 
 	c.Name = "Logic Sphere"
-	c.Civ = civ.Light
+	c.Civs = []string{civ.Light}
 	c.ManaCost = 3
 	c.ManaRequirement = []string{civ.Light}
 
@@ -68,7 +68,7 @@ func LogicSphere(c *match.Card) {
 func SundropArmor(c *match.Card) {
 
 	c.Name = "Sundrop Armor"
-	c.Civ = civ.Light
+	c.Civs = []string{civ.Light}
 	c.ManaCost = 4
 	c.ManaRequirement = []string{civ.Light}
 
@@ -95,7 +95,7 @@ func SundropArmor(c *match.Card) {
 func FloodValve(c *match.Card) {
 
 	c.Name = "Flood Valve"
-	c.Civ = civ.Water
+	c.Civs = []string{civ.Water}
 	c.ManaCost = 2
 	c.ManaRequirement = []string{civ.Water}
 
@@ -106,7 +106,7 @@ func FloodValve(c *match.Card) {
 func LiquidScope(c *match.Card) {
 
 	c.Name = "Liquid Scope"
-	c.Civ = civ.Water
+	c.Civs = []string{civ.Water}
 	c.ManaCost = 4
 	c.ManaRequirement = []string{civ.Water}
 
@@ -146,7 +146,7 @@ func LiquidScope(c *match.Card) {
 func PsychicShaper(c *match.Card) {
 
 	c.Name = "Psychic Shaper"
-	c.Civ = civ.Water
+	c.Civs = []string{civ.Water}
 	c.ManaCost = 6
 	c.ManaRequirement = []string{civ.Water}
 
@@ -155,7 +155,7 @@ func PsychicShaper(c *match.Card) {
 
 		for _, toMove := range cards {
 
-			if toMove.Civ == civ.Water {
+			if toMove.HasCiv(civ.Water) {
 				card.Player.MoveCard(toMove.ID, match.DECK, match.HAND, card.ID)
 				ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s put %s into the hand from the top of their deck", card.Player.Username(), toMove.Name))
 			} else {
@@ -170,7 +170,7 @@ func PsychicShaper(c *match.Card) {
 func EldritchPoison(c *match.Card) {
 
 	c.Name = "Eldritch Poison"
-	c.Civ = civ.Darkness
+	c.Civs = []string{civ.Darkness}
 	c.ManaCost = 1
 	c.ManaRequirement = []string{civ.Darkness}
 
@@ -184,7 +184,7 @@ func EldritchPoison(c *match.Card) {
 			1,
 			1,
 			true,
-			func(x *match.Card) bool { return x.Civ == civ.Darkness },
+			func(x *match.Card) bool { return x.HasCiv(civ.Darkness) },
 			false,
 		).Map(func(x *match.Card) {
 			ctx.Match.Destroy(x, card, match.DestroyedBySpell)
@@ -198,7 +198,7 @@ func EldritchPoison(c *match.Card) {
 func GhastlyDrain(c *match.Card) {
 
 	c.Name = "Ghastly Drain"
-	c.Civ = civ.Darkness
+	c.Civs = []string{civ.Darkness}
 	c.ManaCost = 3
 	c.ManaRequirement = []string{civ.Darkness}
 
@@ -228,7 +228,7 @@ func GhastlyDrain(c *match.Card) {
 func SnakeAttack(c *match.Card) {
 
 	c.Name = "Snake Attack"
-	c.Civ = civ.Darkness
+	c.Civs = []string{civ.Darkness}
 	c.ManaCost = 4
 	c.ManaRequirement = []string{civ.Darkness}
 
@@ -264,12 +264,12 @@ func SnakeAttack(c *match.Card) {
 func BlazeCannon(c *match.Card) {
 
 	c.Name = "Blaze Cannon"
-	c.Civ = civ.Fire
+	c.Civs = []string{civ.Fire}
 	c.ManaCost = 7
 	c.ManaRequirement = []string{civ.Fire}
 
 	c.Use(fx.Spell, fx.When(fx.SpellCast, func(card *match.Card, ctx *match.Context) {
-		if match.ContainerHas(c.Player, match.MANAZONE, func(x *match.Card) bool { return x.Civ != civ.Fire }) {
+		if match.ContainerHas(c.Player, match.MANAZONE, func(x *match.Card) bool { return !x.HasCiv(civ.Fire) }) {
 			return
 		}
 
@@ -289,7 +289,7 @@ func BlazeCannon(c *match.Card) {
 func SearingWave(c *match.Card) {
 
 	c.Name = "Searing Wave"
-	c.Civ = civ.Fire
+	c.Civs = []string{civ.Fire}
 	c.ManaCost = 5
 	c.ManaRequirement = []string{civ.Fire}
 
@@ -324,7 +324,7 @@ func SearingWave(c *match.Card) {
 func VolcanicArrows(c *match.Card) {
 
 	c.Name = "Volcanic Arrows"
-	c.Civ = civ.Fire
+	c.Civs = []string{civ.Fire}
 	c.ManaCost = 2
 	c.ManaRequirement = []string{civ.Fire}
 
@@ -363,7 +363,7 @@ func VolcanicArrows(c *match.Card) {
 func AuroraOfReversal(c *match.Card) {
 
 	c.Name = "Aurora of Reversal"
-	c.Civ = civ.Nature
+	c.Civs = []string{civ.Nature}
 	c.ManaCost = 5
 	c.ManaRequirement = []string{civ.Nature}
 
@@ -394,7 +394,7 @@ func AuroraOfReversal(c *match.Card) {
 func ManaNexus(c *match.Card) {
 
 	c.Name = "Mana Nexus"
-	c.Civ = civ.Nature
+	c.Civs = []string{civ.Nature}
 	c.ManaCost = 4
 	c.ManaRequirement = []string{civ.Nature}
 
@@ -419,7 +419,7 @@ func ManaNexus(c *match.Card) {
 func RoarOfTheEarth(c *match.Card) {
 
 	c.Name = "Roar of the Earth"
-	c.Civ = civ.Nature
+	c.Civs = []string{civ.Nature}
 	c.ManaCost = 2
 	c.ManaRequirement = []string{civ.Nature}
 

@@ -20,7 +20,7 @@ func TestGajirabuteVileCenturion(t *testing.T) {
 		assert.Equal(t, "Gajirabute, Vile Centurion", gajirabute.Name)
 		assert.Equal(t, 3000, gajirabute.Power)
 		assert.Equal(t, 6, gajirabute.ManaCost)
-		assert.Equal(t, civ.Darkness, gajirabute.Civ)
+		assert.Equal(t, []string{civ.Darkness}, gajirabute.Civs)
 		assert.True(t, gajirabute.HasFamily(family.DemonCommand))
 
 		messageStart, err := scn.MessageCount(player)

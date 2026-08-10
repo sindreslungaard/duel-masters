@@ -13,7 +13,7 @@ func GlaisMejiculaTheExtreme(c *match.Card) {
 
 	c.Name = "Glais Mejicula, the Extreme"
 	c.Power = 5500
-	c.Civ = civ.Light
+	c.Civs = []string{civ.Light}
 	c.Family = []string{family.Initiate}
 	c.ManaCost = 2
 	c.ManaRequirement = []string{civ.Light}
@@ -89,7 +89,7 @@ func LemikVizierOfThought(c *match.Card) {
 
 	c.Name = "Lemik, Vizier of Thought"
 	c.Power = 3000
-	c.Civ = civ.Light
+	c.Civs = []string{civ.Light}
 	c.Family = []string{family.Initiate}
 	c.ManaCost = 5
 	c.ManaRequirement = []string{civ.Light}
@@ -111,7 +111,7 @@ func LemikVizierOfThought(c *match.Card) {
 			fx.FindFilter(
 				card.Player,
 				match.BATTLEZONE,
-				func(x *match.Card) bool { return x.Civ == civ.Water || x.Civ == civ.Nature },
+				func(x *match.Card) bool { return x.HasCiv(civ.Water) || x.HasCiv(civ.Nature) },
 			).Map(func(x *match.Card) {
 				fx.ForceBlocker(x, ctx2, card.ID)
 			})

@@ -13,7 +13,7 @@ func SpinalParasite(c *match.Card) {
 
 	c.Name = "Spinal Parasite"
 	c.Power = 2000
-	c.Civ = civ.Darkness
+	c.Civs = []string{civ.Darkness}
 	c.Family = []string{family.BrainJacker}
 	c.ManaCost = 5
 	c.ManaRequirement = []string{civ.Darkness}

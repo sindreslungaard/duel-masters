@@ -11,7 +11,7 @@ import (
 func TauntingSkyterror(c *match.Card) {
 
 	c.Name = "Taunting Skyterror"
-	c.Civ = civ.Fire
+	c.Civs = []string{civ.Fire}
 	c.Power = 3000
 	c.Family = []string{family.ArmoredWyvern}
 	c.ManaCost = 5

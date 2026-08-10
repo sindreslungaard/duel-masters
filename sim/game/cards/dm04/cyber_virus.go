@@ -12,7 +12,7 @@ func AstralWarper(c *match.Card) {
 
 	c.Name = "Astral Warper"
 	c.Power = 5000
-	c.Civ = civ.Water
+	c.Civs = []string{civ.Water}
 	c.Family = []string{family.CyberVirus}
 	c.ManaCost = 6
 	c.ManaRequirement = []string{civ.Water}
@@ -25,7 +25,7 @@ func KeeperOfTheSunlitAbyss(c *match.Card) {
 
 	c.Name = "Keeper of the Sunlit Abyss"
 	c.Power = 2000
-	c.Civ = civ.Water
+	c.Civs = []string{civ.Water}
 	c.Family = []string{family.CyberVirus}
 	c.ManaCost = 4
 	c.ManaRequirement = []string{civ.Water}
@@ -38,7 +38,7 @@ func KeeperOfTheSunlitAbyss(c *match.Card) {
 
 		if event, ok := ctx.Event.(*match.GetPowerEvent); ok {
 
-			if event.Card.Civ == civ.Light || event.Card.Civ == civ.Darkness {
+			if event.Card.HasCiv(civ.Light) || event.Card.HasCiv(civ.Darkness) {
 				event.Power += 1000
 			}
 		}

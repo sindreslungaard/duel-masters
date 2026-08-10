@@ -12,7 +12,7 @@ func ArdentLunatron(c *match.Card) {
 
 	c.Name = "Ardent Lunatron"
 	c.Power = 5000
-	c.Civ = civ.Water
+	c.Civs = []string{civ.Water}
 	c.Family = []string{family.CyberMoon}
 	c.ManaCost = 3
 	c.ManaRequirement = []string{civ.Water}
@@ -26,7 +26,7 @@ func HawkeyeLunatron(c *match.Card) {
 
 	c.Name = "Hawkeye Lunatron"
 	c.Power = 6000
-	c.Civ = civ.Water
+	c.Civs = []string{civ.Water}
 	c.Family = []string{family.CyberMoon}
 	c.ManaCost = 8
 	c.ManaRequirement = []string{civ.Water}

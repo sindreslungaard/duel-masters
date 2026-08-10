@@ -12,7 +12,7 @@ import (
 func EnchantedSoil(c *match.Card) {
 
 	c.Name = "Enchanted Soil"
-	c.Civ = civ.Nature
+	c.Civs = []string{civ.Nature}
 	c.ManaCost = 4
 	c.ManaRequirement = []string{civ.Nature}
 
@@ -42,7 +42,7 @@ func EnchantedSoil(c *match.Card) {
 func SchemingHands(c *match.Card) {
 
 	c.Name = "Scheming Hands"
-	c.Civ = civ.Darkness
+	c.Civs = []string{civ.Darkness}
 	c.ManaCost = 5
 	c.ManaRequirement = []string{civ.Darkness}
 
@@ -68,7 +68,7 @@ func SchemingHands(c *match.Card) {
 func CyclonePanic(c *match.Card) {
 
 	c.Name = "Cyclone Panic"
-	c.Civ = civ.Fire
+	c.Civs = []string{civ.Fire}
 	c.ManaCost = 3
 	c.ManaRequirement = []string{civ.Fire}
 
@@ -107,7 +107,7 @@ func CyclonePanic(c *match.Card) {
 func GlorySnow(c *match.Card) {
 
 	c.Name = "Glory Snow"
-	c.Civ = civ.Light
+	c.Civs = []string{civ.Light}
 	c.ManaCost = 4
 	c.ManaRequirement = []string{civ.Light}
 
@@ -128,7 +128,7 @@ func GlorySnow(c *match.Card) {
 func SlimeVeil(c *match.Card) {
 
 	c.Name = "Slime Veil"
-	c.Civ = civ.Darkness
+	c.Civs = []string{civ.Darkness}
 	c.ManaCost = 1
 	c.ManaRequirement = []string{civ.Darkness}
 
@@ -175,7 +175,7 @@ func SlimeVeil(c *match.Card) {
 func BrutalCharge(c *match.Card) {
 
 	c.Name = "Brutal Charge"
-	c.Civ = civ.Nature
+	c.Civs = []string{civ.Nature}
 	c.ManaCost = 2
 	c.ManaRequirement = []string{civ.Nature}
 
@@ -219,7 +219,7 @@ func BrutalCharge(c *match.Card) {
 func MiracleQuest(c *match.Card) {
 
 	c.Name = "Miracle Quest"
-	c.Civ = civ.Water
+	c.Civs = []string{civ.Water}
 	c.ManaCost = 3
 	c.ManaRequirement = []string{civ.Water}
 
@@ -258,7 +258,7 @@ func MiracleQuest(c *match.Card) {
 func DivineRiptide(c *match.Card) {
 
 	c.Name = "Divine Riptide"
-	c.Civ = civ.Water
+	c.Civs = []string{civ.Water}
 	c.ManaCost = 9
 	c.ManaRequirement = []string{civ.Water}
 
@@ -276,14 +276,14 @@ func DivineRiptide(c *match.Card) {
 func CataclysmicEruption(c *match.Card) {
 
 	c.Name = "Cataclysmic Eruption"
-	c.Civ = civ.Fire
+	c.Civs = []string{civ.Fire}
 	c.ManaCost = 8
 	c.ManaRequirement = []string{civ.Fire}
 
 	c.Use(fx.Spell, fx.When(fx.SpellCast, func(card *match.Card, ctx *match.Context) {
 
 		// No. of nature creatures
-		n := len(fx.FindFilter(card.Player, match.BATTLEZONE, func(card *match.Card) bool { return card.Civ == civ.Nature }))
+		n := len(fx.FindFilter(card.Player, match.BATTLEZONE, func(card *match.Card) bool { return card.HasCiv(civ.Nature) }))
 
 		fx.Select(
 			card.Player,
@@ -307,14 +307,14 @@ func CataclysmicEruption(c *match.Card) {
 func ThunderNet(c *match.Card) {
 
 	c.Name = "Thunder Net"
-	c.Civ = civ.Light
+	c.Civs = []string{civ.Light}
 	c.ManaCost = 2
 	c.ManaRequirement = []string{civ.Light}
 
 	c.Use(fx.Spell, fx.When(fx.SpellCast, func(card *match.Card, ctx *match.Context) {
 
 		// No. of water creatures
-		n := len(fx.FindFilter(card.Player, match.BATTLEZONE, func(card *match.Card) bool { return card.Civ == civ.Water }))
+		n := len(fx.FindFilter(card.Player, match.BATTLEZONE, func(card *match.Card) bool { return card.HasCiv(civ.Water) }))
 
 		fx.Select(
 			card.Player,

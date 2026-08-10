@@ -13,7 +13,7 @@ func DracodanceTotem(c *match.Card) {
 
 	c.Name = "Dracodance Totem"
 	c.Power = 1000
-	c.Civ = civ.Nature
+	c.Civs = []string{civ.Nature}
 	c.Family = []string{family.MysteryTotem}
 	c.ManaCost = 2
 	c.ManaRequirement = []string{civ.Nature}

@@ -12,7 +12,7 @@ func GulanRiasSpeedGuardian(c *match.Card) {
 
 	c.Name = "Gulan Rias, Speed Guardian"
 	c.Power = 2000
-	c.Civ = civ.Light
+	c.Civs = []string{civ.Light}
 	c.Family = []string{family.Guardian}
 	c.ManaCost = 3
 	c.ManaRequirement = []string{civ.Light}
@@ -21,7 +21,7 @@ func GulanRiasSpeedGuardian(c *match.Card) {
 		fx.Creature,
 		fx.CantBeBlockedByDarkness,
 		fx.CantBeAttackedIf(func(attacker *match.Card) bool {
-			return attacker.Civ == civ.Darkness
+			return attacker.HasCiv(civ.Darkness)
 		}),
 	)
 }
@@ -31,7 +31,7 @@ func MistRiasSonicGuardian(c *match.Card) {
 
 	c.Name = "Mist Rias, Sonic Guardian"
 	c.Power = 2000
-	c.Civ = civ.Light
+	c.Civs = []string{civ.Light}
 	c.Family = []string{family.Guardian}
 	c.ManaCost = 5
 	c.ManaRequirement = []string{civ.Light}

@@ -13,7 +13,7 @@ func SupportingTulip(c *match.Card) {
 
 	c.Name = "Supporting Tulip"
 	c.Power = 4000
-	c.Civ = civ.Nature
+	c.Civs = []string{civ.Nature}
 	c.Family = []string{family.TreeFolk}
 	c.ManaCost = 5
 	c.ManaRequirement = []string{civ.Nature}
@@ -60,14 +60,14 @@ func ExplodingCactus(c *match.Card) {
 
 	c.Name = "Exploding Cactus"
 	c.Power = 2000
-	c.Civ = civ.Nature
+	c.Civs = []string{civ.Nature}
 	c.Family = []string{family.TreeFolk}
 	c.ManaCost = 3
 	c.ManaRequirement = []string{civ.Nature}
 
 	c.PowerModifier = func(m *match.Match, attacking bool) int {
 
-		if match.ContainerHas(c.Player, match.BATTLEZONE, func(x *match.Card) bool { return x.Civ == civ.Light }) {
+		if match.ContainerHas(c.Player, match.BATTLEZONE, func(x *match.Card) bool { return x.HasCiv(civ.Light) }) {
 			return 2000
 		}
 

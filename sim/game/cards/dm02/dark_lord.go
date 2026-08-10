@@ -12,7 +12,7 @@ func GeneralDarkFiend(c *match.Card) {
 
 	c.Name = "General Dark Fiend"
 	c.Power = 6000
-	c.Civ = civ.Darkness
+	c.Civs = []string{civ.Darkness}
 	c.Family = []string{family.DarkLord}
 	c.ManaCost = 5
 	c.ManaRequirement = []string{civ.Darkness}

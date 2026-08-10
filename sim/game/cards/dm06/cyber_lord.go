@@ -13,7 +13,7 @@ func Sopian(c *match.Card) {
 
 	c.Name = "Sopian"
 	c.Power = 2000
-	c.Civ = civ.Water
+	c.Civs = []string{civ.Water}
 	c.Family = []string{family.CyberLord}
 	c.ManaCost = 4
 	c.ManaRequirement = []string{civ.Water}
@@ -26,7 +26,7 @@ func Kyuroro(c *match.Card) {
 
 	c.Name = "Kyuroro"
 	c.Power = 2000
-	c.Civ = civ.Water
+	c.Civs = []string{civ.Water}
 	c.Family = []string{family.CyberLord}
 	c.ManaCost = 6
 	c.ManaRequirement = []string{civ.Water}

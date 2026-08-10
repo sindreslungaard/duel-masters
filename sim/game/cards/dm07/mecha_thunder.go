@@ -12,7 +12,7 @@ func GandarSeekerofExplosions(c *match.Card) {
 
 	c.Name = "Gandar, Seeker of Explosions"
 	c.Power = 6500
-	c.Civ = civ.Light
+	c.Civs = []string{civ.Light}
 	c.Family = []string{family.MechaThunder}
 	c.ManaCost = 7
 	c.ManaRequirement = []string{civ.Light}
@@ -23,7 +23,7 @@ func GandarSeekerofExplosions(c *match.Card) {
 					card.Player,
 					match.BATTLEZONE,
 				).Map(func(x *match.Card) {
-					if x.Tapped && x.Civ == civ.Light {
+					if x.Tapped && x.HasCiv(civ.Light) {
 						x.Tapped = false
 						ctx2.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s was untapped by %s's effect", x.Name, card.Name))
 					}

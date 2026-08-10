@@ -13,7 +13,7 @@ func MissileBoy(c *match.Card) {
 
 	c.Name = "Missile Boy"
 	c.Power = 1000
-	c.Civ = civ.Fire
+	c.Civs = []string{civ.Fire}
 	c.Family = []string{family.Human}
 	c.ManaCost = 3
 	c.ManaRequirement = []string{civ.Fire}
@@ -25,7 +25,7 @@ func MissileBoy(c *match.Card) {
 		}
 
 		if event, ok := ctx.Event.(*match.PlayCardEvent); ok {
-			
+
 			p := ctx.Match.CurrentPlayer()
 
 			playedCard, err := p.Player.GetCard(event.CardID, match.HAND)
@@ -34,7 +34,7 @@ func MissileBoy(c *match.Card) {
 				return
 			}
 
-			if playedCard.Civ != civ.Light {
+			if !playedCard.HasCiv(civ.Light) {
 				return
 			}
 

@@ -13,7 +13,7 @@ func MykeesPliers(c *match.Card) {
 
 	c.Name = "Mykee's Pliers"
 	c.Power = 2000
-	c.Civ = civ.Fire
+	c.Civs = []string{civ.Fire}
 	c.Family = []string{family.Xenoparts}
 	c.ManaCost = 4
 	c.ManaRequirement = []string{civ.Fire}
@@ -25,7 +25,7 @@ func MykeesPliers(c *match.Card) {
 					card.Player,
 					match.BATTLEZONE,
 					func(x *match.Card) bool {
-						return x.Civ == civ.Darkness || x.Civ == civ.Nature
+						return x.HasCiv(civ.Darkness) || x.HasCiv(civ.Nature)
 					},
 				).Map(func(x *match.Card) {
 					x.RemoveConditionBySource(card.ID)
@@ -39,7 +39,7 @@ func MykeesPliers(c *match.Card) {
 				card.Player,
 				match.BATTLEZONE,
 				func(x *match.Card) bool {
-					return x.Civ == civ.Darkness || x.Civ == civ.Nature
+					return x.HasCiv(civ.Darkness) || x.HasCiv(civ.Nature)
 				},
 			).Map(func(x *match.Card) {
 				x.AddUniqueSourceCondition(cnd.SpeedAttacker, true, card.ID)

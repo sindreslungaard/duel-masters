@@ -13,7 +13,7 @@ func UberdragonBajula(c *match.Card) {
 
 	c.Name = "Überdragon Bajula"
 	c.Power = 13000
-	c.Civ = civ.Fire
+	c.Civs = []string{civ.Fire}
 	c.Family = []string{family.ArmoredDragon}
 	c.ManaCost = 7
 	c.ManaRequirement = []string{civ.Fire}
@@ -26,7 +26,7 @@ func BruiserDragon(c *match.Card) {
 
 	c.Name = "Bruiser Dragon"
 	c.Power = 5000
-	c.Civ = civ.Fire
+	c.Civs = []string{civ.Fire}
 	c.Family = []string{family.ArmoredDragon}
 	c.ManaCost = 5
 	c.ManaRequirement = []string{civ.Fire}

@@ -13,7 +13,7 @@ func MightyBanditAceOfThieves(c *match.Card) {
 
 	c.Name = "Mighty Bandit, Ace of Thieves"
 	c.Power = 2000
-	c.Civ = civ.Nature
+	c.Civs = []string{civ.Nature}
 	c.Family = []string{family.BeastFolk}
 	c.ManaCost = 3
 	c.ManaRequirement = []string{civ.Nature}
@@ -44,7 +44,7 @@ func InnocentHunterBladeOfAll(c *match.Card) {
 
 	c.Name = "Innocent Hunter, Blade of All"
 	c.Power = 1000
-	c.Civ = civ.Nature
+	c.Civs = []string{civ.Nature}
 	c.Family = []string{family.BeastFolk}
 	c.ManaCost = 4
 	c.ManaRequirement = []string{civ.Nature}

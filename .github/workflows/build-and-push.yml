@@ -1,11 +1,19 @@
 name: Publish Docker image
+
 on:
   push:
     branches:
       - production
+  workflow_dispatch:
+
 jobs:
+  # An image is only worth publishing if the suite passed on the same commit.
+  test:
+    uses: ./.github/workflows/build-and-test.yml
+
   push_to_registry:
     name: Push Docker image to GitHub Packages
+    needs: test
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -13,15 +21,28 @@ jobs:
     steps:
       - name: Check out the repo
         uses: actions/checkout@v4
+
+      - name: Set up Buildx
+        uses: docker/setup-buildx-action@v3
+
       - name: Log in to GitHub Container Registry
         uses: docker/login-action@v3
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Build and push
         uses: docker/build-push-action@v6
         with:
+          # The Dockerfile copies ./sim, so the build context is the repository
+          # root. This is the same path a Dokploy application builds from.
           context: .
           push: true
-          tags: ghcr.io/sindreslungaard/duel-masters/production:latest
+          # The commit tag is what makes a deployment identifiable and lets a
+          # bad release be rolled back to a specific build.
+          tags: |
+            ghcr.io/sindreslungaard/duel-masters/production:latest
+            ghcr.io/sindreslungaard/duel-masters/production:${{ github.sha }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max

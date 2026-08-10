@@ -34,9 +34,12 @@ type Card struct {
 	ShieldFaceUp bool
 	Zone         string
 
-	Name            string
-	Power           int
-	Civ             string
+	Name  string
+	Power int
+	// Civs holds every civilization printed on the card. Multicolored cards have
+	// more than one and count as a card of each of them. Use HasCiv rather than
+	// comparing entries directly.
+	Civs            []string
 	Family          []string
 	ManaCost        int
 	ManaRequirement []string
@@ -69,7 +72,7 @@ func NewCard(p *Player, image string) (*Card, error) {
 		Zone:            DECK,
 		Name:            "undefined_card",
 		Power:           0,
-		Civ:             "undefind_civ",
+		Civs:            []string{"undefind_civ"},
 		Family:          []string{"undefined_family"},
 		ManaCost:        1,
 		ManaRequirement: make([]string, 0),
@@ -287,6 +290,35 @@ func (c *Card) SharesAllFamilies(families []string) bool {
 	return ok
 }
 
+// HasCiv returns true if the card belongs to the given civilization. A
+// multicolored card belongs to every civilization printed on it, so it answers
+// true for each of them.
+func (c *Card) HasCiv(civ string) bool {
+	for _, cardCiv := range c.Civs {
+		if cardCiv == civ {
+			return true
+		}
+	}
+
+	return false
+}
+
+// IsMulticolored returns true if the card has more than one civilization.
+func (c *Card) IsMulticolored() bool {
+	return len(c.Civs) > 1
+}
+
+// PrimaryCiv returns the first civilization printed on the card. It exists for
+// presentation only, where a single value is required; rules logic must use
+// HasCiv so that every civilization of a multicolored card is honoured.
+func (c *Card) PrimaryCiv() string {
+	if len(c.Civs) < 1 {
+		return ""
+	}
+
+	return c.Civs[0]
+}
+
 // StealthActive returns true if the card has stealth
 // and the opponent has a card in manazone that matches the stealth civ
 func (c *Card) StealthActive(ctx *Context) bool {
@@ -298,10 +330,16 @@ func (c *Card) StealthActive(ctx *Context) bool {
 		if cond.ID != cnd.Stealth {
 			continue
 		}
+
+		stealthCiv, ok := cond.Val.(string)
+		if !ok {
+			continue
+		}
+
 		if ContainerHas(
 			ctx.Match.Opponent(c.Player),
 			MANAZONE,
-			func(x *Card) bool { return x.Civ == cond.Val },
+			func(x *Card) bool { return x.HasCiv(stealthCiv) },
 		) {
 			return true
 		}

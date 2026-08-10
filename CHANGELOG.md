@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+- Added support for multicolored cards
+- New card "Gonta, the Warrior Savage"
+- New card "Melnia, the Aqua Shadow"
 - New card "Blizzard of Spears" (thanks @dilawer007)
 - New card "Torpedo Cluster"
 - New card "Pierr, Psycho Doll"

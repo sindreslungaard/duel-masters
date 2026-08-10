@@ -12,7 +12,7 @@ func MarchingMotherboard(c *match.Card) {
 
 	c.Name = "Marching Motherboard"
 	c.Power = 2000
-	c.Civ = civ.Water
+	c.Civs = []string{civ.Water}
 	c.Family = []string{family.CyberVirus}
 	c.ManaCost = 6
 	c.ManaRequirement = []string{civ.Water}
@@ -28,7 +28,7 @@ func KelpCandle(c *match.Card) {
 
 	c.Name = "Kelp Candle"
 	c.Power = 1000
-	c.Civ = civ.Water
+	c.Civs = []string{civ.Water}
 	c.Family = []string{family.CyberVirus}
 	c.ManaCost = 2
 	c.ManaRequirement = []string{civ.Water}

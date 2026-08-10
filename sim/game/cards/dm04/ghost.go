@@ -13,7 +13,7 @@ func ShadowMoonCursedShade(c *match.Card) {
 
 	c.Name = "Shadow Moon, Cursed Shade"
 	c.Power = 3000
-	c.Civ = civ.Darkness
+	c.Civs = []string{civ.Darkness}
 	c.Family = []string{family.Ghost}
 	c.ManaCost = 4
 	c.ManaRequirement = []string{civ.Darkness}
@@ -49,7 +49,7 @@ func getDarknessCreatures(card *match.Card, ctx *match.Context) fx.CardCollectio
 	darknessCreatures := fx.FindFilter(
 		card.Player,
 		match.BATTLEZONE,
-		func(x *match.Card) bool { return x.Civ == civ.Darkness && x.ID != card.ID },
+		func(x *match.Card) bool { return x.HasCiv(civ.Darkness) && x.ID != card.ID },
 	)
 
 	darknessCreatures = append(darknessCreatures,
@@ -57,7 +57,7 @@ func getDarknessCreatures(card *match.Card, ctx *match.Context) fx.CardCollectio
 		fx.FindFilter(
 			ctx.Match.Opponent(card.Player),
 			match.BATTLEZONE,
-			func(x *match.Card) bool { return x.Civ == civ.Darkness && x.ID != card.ID },
+			func(x *match.Card) bool { return x.HasCiv(civ.Darkness) && x.ID != card.ID },
 		)...,
 	)
 
@@ -69,7 +69,7 @@ func VolcanoSmogDeceptiveShade(c *match.Card) {
 
 	c.Name = "Volcano Smog, Deceptive Shade"
 	c.Power = 5000
-	c.Civ = civ.Darkness
+	c.Civs = []string{civ.Darkness}
 	c.Family = []string{family.Ghost}
 	c.ManaCost = 6
 	c.ManaRequirement = []string{civ.Darkness}
@@ -90,7 +90,7 @@ func VolcanoSmogDeceptiveShade(c *match.Card) {
 				return
 			}
 
-			if playedCard.Civ != civ.Light {
+			if !playedCard.HasCiv(civ.Light) {
 				return
 			}
 

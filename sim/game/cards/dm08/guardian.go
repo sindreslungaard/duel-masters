@@ -13,7 +13,7 @@ func SolGallaHaloGuardian(c *match.Card) {
 
 	c.Name = "Sol Galla, Halo Guardian"
 	c.Power = 1000
-	c.Civ = civ.Light
+	c.Civs = []string{civ.Light}
 	c.Family = []string{family.Guardian}
 	c.ManaCost = 2
 	c.ManaRequirement = []string{civ.Light}
@@ -37,7 +37,7 @@ func SolGallaHaloGuardian(c *match.Card) {
 func ThrumissZephyrGuardian(c *match.Card) {
 	c.Name = "Thrumiss, Zephyr Guardian"
 	c.Power = 3000
-	c.Civ = civ.Light
+	c.Civs = []string{civ.Light}
 	c.Family = []string{family.Guardian}
 	c.ManaCost = 6
 	c.ManaRequirement = []string{civ.Light}

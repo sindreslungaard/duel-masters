@@ -7,6 +7,7 @@ interface PopupProps {
   closeOnOutsideClick?: boolean;
   maxWidth?: string;
   maxHeight?: string;
+  contentClassName?: string;
   zIndex?: number;
   title?: string;
   children: React.ReactNode;
@@ -19,6 +20,7 @@ export function Popup({
   closeOnOutsideClick = false,
   maxWidth = "600px",
   maxHeight = "80vh",
+  contentClassName = "overflow-y-auto flex-1",
   zIndex = 1000,
   title,
   children,
@@ -171,7 +173,7 @@ export function Popup({
         )}
 
         {/* Content */}
-        <div className="overflow-y-auto flex-1">{children}</div>
+        <div className={contentClassName}>{children}</div>
       </div>
     </div>
   );

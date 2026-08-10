@@ -27,7 +27,7 @@ func TestPierrPsychoDoll(t *testing.T) {
 		assert.Equal(t, "Pierr, Psycho Doll", pierr.Name)
 		assert.Equal(t, 1000, pierr.Power)
 		assert.Equal(t, 2, pierr.ManaCost)
-		assert.Equal(t, civ.Darkness, pierr.Civ)
+		assert.Equal(t, []string{civ.Darkness}, pierr.Civs)
 		assert.True(t, pierr.HasFamily(family.DeathPuppet))
 		assert.True(t, pierr.HasCondition(cnd.Blocker))
 		assert.True(t, pierr.HasCondition(cnd.Slayer))

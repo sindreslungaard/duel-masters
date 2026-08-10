@@ -14,7 +14,7 @@ func PetrovaChannelerOfSuns(c *match.Card) {
 
 	c.Name = "Petrova, Channeler of Suns"
 	c.Power = 3500
-	c.Civ = civ.Light
+	c.Civs = []string{civ.Light}
 	c.Family = []string{family.MechaDelSol}
 	c.ManaCost = 5
 	c.ManaRequirement = []string{civ.Light}

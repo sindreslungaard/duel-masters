@@ -11,7 +11,7 @@ func CrypticTotem(c *match.Card) {
 
 	c.Name = "Cryptic Totem"
 	c.Power = 6000
-	c.Civ = civ.Nature
+	c.Civs = []string{civ.Nature}
 	c.Family = []string{family.MysteryTotem}
 	c.ManaCost = 6
 	c.ManaRequirement = []string{civ.Nature}
@@ -25,7 +25,7 @@ func SpinningTotem(c *match.Card) {
 
 	c.Name = "Spinning Totem"
 	c.Power = 4000
-	c.Civ = civ.Nature
+	c.Civs = []string{civ.Nature}
 	c.Family = []string{family.MysteryTotem}
 	c.ManaCost = 5
 	c.ManaRequirement = []string{civ.Nature}
@@ -36,7 +36,7 @@ func SpinningTotem(c *match.Card) {
 					return
 				}
 
-				if event.Attacker.Civ != civ.Nature {
+				if !event.Attacker.HasCiv(civ.Nature) {
 					return
 				}
 

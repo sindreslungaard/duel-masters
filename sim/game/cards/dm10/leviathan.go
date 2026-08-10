@@ -11,7 +11,7 @@ import (
 func KingOquanos(c *match.Card) {
 	c.Name = "King Oquanos"
 	c.Power = 2000
-	c.Civ = civ.Water
+	c.Civs = []string{civ.Water}
 	c.Family = []string{family.Leviathan}
 	c.ManaCost = 8
 	c.ManaRequirement = []string{civ.Water}

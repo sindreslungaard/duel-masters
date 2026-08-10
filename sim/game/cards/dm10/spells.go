@@ -11,7 +11,7 @@ import (
 // Soulswap ...
 func Soulswap(c *match.Card) {
 	c.Name = "Soulswap"
-	c.Civ = civ.Nature
+	c.Civs = []string{civ.Nature}
 	c.ManaCost = 3
 	c.ManaRequirement = []string{civ.Nature}
 
@@ -76,7 +76,7 @@ func Soulswap(c *match.Card) {
 // ThirstForTheHunt ...
 func ThirstForTheHunt(c *match.Card) {
 	c.Name = "Thirst for the Hunt"
-	c.Civ = civ.Nature
+	c.Civs = []string{civ.Nature}
 	c.ManaCost = 1
 	c.ManaRequirement = []string{civ.Nature}
 
@@ -91,7 +91,7 @@ func ThirstForTheHunt(c *match.Card) {
 func RapidReincarnation(c *match.Card) {
 
 	c.Name = "Rapid Reincarnation"
-	c.Civ = civ.Light
+	c.Civs = []string{civ.Light}
 	c.ManaCost = 3
 	c.ManaRequirement = []string{civ.Light}
 
@@ -139,7 +139,7 @@ func RapidReincarnation(c *match.Card) {
 func StaticWarp(c *match.Card) {
 
 	c.Name = "Static Warp"
-	c.Civ = civ.Light
+	c.Civs = []string{civ.Light}
 	c.ManaCost = 2
 	c.ManaRequirement = []string{civ.Light}
 
@@ -180,7 +180,7 @@ func StaticWarp(c *match.Card) {
 func SirenConcerto(c *match.Card) {
 
 	c.Name = "Siren Concerto"
-	c.Civ = civ.Water
+	c.Civs = []string{civ.Water}
 	c.ManaCost = 1
 	c.ManaRequirement = []string{civ.Water}
 
@@ -226,7 +226,7 @@ func SirenConcerto(c *match.Card) {
 func Transmogrify(c *match.Card) {
 
 	c.Name = "Transmogrify"
-	c.Civ = civ.Water
+	c.Civs = []string{civ.Water}
 	c.ManaCost = 3
 	c.ManaRequirement = []string{civ.Water}
 
@@ -288,7 +288,7 @@ func Transmogrify(c *match.Card) {
 func InfernalCommand(c *match.Card) {
 
 	c.Name = "Infernal Command"
-	c.Civ = civ.Darkness
+	c.Civs = []string{civ.Darkness}
 	c.ManaCost = 1
 	c.ManaRequirement = []string{civ.Darkness}
 
@@ -342,7 +342,7 @@ func InfernalCommand(c *match.Card) {
 func Upheaval(c *match.Card) {
 
 	c.Name = "Upheaval"
-	c.Civ = civ.Darkness
+	c.Civs = []string{civ.Darkness}
 	c.ManaCost = 6
 	c.ManaRequirement = []string{civ.Darkness}
 
@@ -359,7 +359,7 @@ func Upheaval(c *match.Card) {
 func ColossusBoost(c *match.Card) {
 
 	c.Name = "Colossus Boost"
-	c.Civ = civ.Fire
+	c.Civs = []string{civ.Fire}
 	c.ManaCost = 1
 	c.ManaRequirement = []string{civ.Fire}
 
@@ -398,7 +398,7 @@ func ColossusBoost(c *match.Card) {
 func ForcedFrenzy(c *match.Card) {
 
 	c.Name = "Forced Frenzy"
-	c.Civ = civ.Fire
+	c.Civs = []string{civ.Fire}
 	c.ManaCost = 3
 	c.ManaRequirement = []string{civ.Fire}
 
@@ -429,7 +429,7 @@ func ForcedFrenzy(c *match.Card) {
 func SupersonicJetpack(c *match.Card) {
 
 	c.Name = "Supersonic Jetpack"
-	c.Civ = civ.Fire
+	c.Civs = []string{civ.Fire}
 	c.ManaCost = 1
 	c.ManaRequirement = []string{civ.Fire}
 

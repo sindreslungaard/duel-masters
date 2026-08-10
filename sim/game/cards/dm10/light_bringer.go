@@ -11,7 +11,7 @@ import (
 func TulkTheOracle(c *match.Card) {
 
 	c.Name = "Tulk, the Oracle"
-	c.Civ = civ.Light
+	c.Civs = []string{civ.Light}
 	c.Power = 500
 	c.Family = []string{family.LightBringer}
 	c.ManaCost = 1

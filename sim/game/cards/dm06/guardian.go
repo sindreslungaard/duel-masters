@@ -13,7 +13,7 @@ func ForbosSanctumGuardianQ(c *match.Card) {
 
 	c.Name = "Forbos, Sanctum Guardian Q"
 	c.Power = 4000
-	c.Civ = civ.Light
+	c.Civs = []string{civ.Light}
 	c.Family = []string{family.Guardian, family.Survivor}
 	c.ManaCost = 6
 	c.ManaRequirement = []string{civ.Light}
@@ -26,7 +26,7 @@ func LuGilaSilverRiftGuardian(c *match.Card) {
 
 	c.Name = "Lu Gila, Silver Rift Guardian"
 	c.Power = 4000
-	c.Civ = civ.Light
+	c.Civs = []string{civ.Light}
 	c.Family = []string{family.Guardian}
 	c.ManaCost = 5
 	c.ManaRequirement = []string{civ.Light}
@@ -68,7 +68,7 @@ func ArcBinetheAstounding(c *match.Card) {
 
 	c.Name = "Arc Bine, the Astounding"
 	c.Power = 5000
-	c.Civ = civ.Light
+	c.Civs = []string{civ.Light}
 	c.Family = []string{family.Guardian}
 	c.ManaCost = 5
 	c.ManaRequirement = []string{civ.Light}
@@ -80,7 +80,7 @@ func ArcBinetheAstounding(c *match.Card) {
 			fx.GiveTapAbilityToAllies(
 				card,
 				ctx,
-				func(x *match.Card) bool { return x.ID != card.ID && x.Civ == civ.Light },
+				func(x *match.Card) bool { return x.ID != card.ID && x.HasCiv(civ.Light) },
 				fx.TapOpCreature,
 			)
 
