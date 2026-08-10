@@ -19,7 +19,7 @@ import (
 func init() {
 	err := godotenv.Load()
 	if err != nil {
-		logrus.Warn("Failed to load .env file")
+		logrus.Debug("Failed to load .env file")
 	}
 
 	logrus.SetFormatter(&logrus.TextFormatter{})
