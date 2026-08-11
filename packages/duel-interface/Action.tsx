@@ -171,6 +171,18 @@ export function Action({
   };
   const isCardSelection = actionType === ActionType.None || !actionType;
 
+  // A non-dismissable preview (show_cards_non_dismissible) blocks the match
+  // event loop until the player answers it, so acknowledging one has to reach
+  // the server. A dismissable preview (show_cards) is fire and forget, and
+  // answering it would leave a stray action for the next prompt to consume.
+  const acknowledgeShowCards = () => {
+    if (showCards && !showCards.dismissable) {
+      onClose();
+    }
+
+    onDismiss?.();
+  };
+
   return (
     <Popup
       title={title}
@@ -179,7 +191,7 @@ export function Action({
       zIndex={1000}
       closeOnOutsideClick={false}
       contentClassName="flex min-h-0 flex-1 overflow-hidden"
-      onClose={showCards ? onDismiss : onClose}
+      onClose={showCards ? acknowledgeShowCards : onClose}
     >
       <div className="flex min-h-0 flex-1 flex-col select-none">
         <div
@@ -388,7 +400,7 @@ export function Action({
         <div className="shrink-0 border-t border-gray-800 bg-gray-900 px-6 py-4">
           {actionType === ActionType.ShowCards && (
             <div className="flex">
-              <Button onClick={() => onDismiss?.()}>
+              <Button onClick={acknowledgeShowCards}>
                 Acknowledge and Close
               </Button>
             </div>
