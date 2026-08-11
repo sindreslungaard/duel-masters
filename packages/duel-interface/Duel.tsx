@@ -54,9 +54,9 @@ export interface DuelProps {
   duelToken: string;
   playmat?: string;
   /**
-   * Whether the opponent's cards are rendered upside down, the way they would
-   * face across a physical table. Defaults to true. Set to false to show them
-   * the right way up for the player looking at the screen.
+   * Whether the opponent's cards are flipped from their natural orientation
+   * towards the player looking at the screen. Defaults to false, which orients
+   * them towards the opponent the way they would face across a physical table.
    */
   flipOpponentCards?: boolean;
   resolveChatUser?: DuelChatUserResolver;
@@ -135,7 +135,7 @@ export function Duel({
   duelToken,
   hostUrl,
   playmat,
-  flipOpponentCards = true,
+  flipOpponentCards = false,
   resolveChatUser,
   renderChatUserTrigger,
   blockedChatUsers,
@@ -760,7 +760,7 @@ export function Duel({
               <div className="inline-flex w-max justify-start gap-5 h-full pb-1">
                 {state.opponent.manazone.map(
                   CreateCard({
-                    flipped: flipOpponentCards,
+                    flipped: !flipOpponentCards,
                     dragState,
                     zone: "opponentManazone",
                     onRightClick: (imageId, name) =>
@@ -788,7 +788,7 @@ export function Duel({
               <div className="inline-flex w-max justify-start gap-5 h-full p-1">
                 {state.opponent.shieldzone.map(
                   CreateCard({
-                    flipped: flipOpponentCards,
+                    flipped: !flipOpponentCards,
                     dragState,
                     zone: "opponentShieldzone",
                     onRightClick: (imageId, name) =>
@@ -816,7 +816,7 @@ export function Duel({
               <div className="inline-flex w-max justify-start gap-5 h-full p-1">
                 {state.opponent.playzone.map(
                   CreateCard({
-                    flipped: flipOpponentCards,
+                    flipped: !flipOpponentCards,
                     dragState,
                     zone: "opponentPlayzone",
                     onRightClick: (imageId, name) =>
