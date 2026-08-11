@@ -15,7 +15,7 @@ func Zaltan(c *match.Card) {
 	c.Power = 3000
 	c.Civs = []string{civ.Water}
 	c.Family = []string{family.CyberLord}
-	c.ManaCost = 3
+	c.ManaCost = 5
 	c.ManaRequirement = []string{civ.Water}
 
 	c.Use(fx.Creature, fx.When(fx.AnotherOwnCyberVirusSummoned, func(card *match.Card, ctx *match.Context) {

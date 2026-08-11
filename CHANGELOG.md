@@ -32,6 +32,7 @@
 - New card "Terradragon Cusdalf" (thanks @DragosIonita23)
 - New card "Thirst for the Hunt" (thanks @DragosIonita23)
 - New card "Twitch Horn, the Aggressor" (thanks @DragosIonita23)
+- Fixed an issue where "Zaltan" would cost 3 mana instead of 5
 - Fixed a loophole that allowed "Grinning Hunger" to avoid its mandatory effect by choosing an empty zone (thanks @DragosIonita23)
 - Updated multipart card selections to automatically resolve mandatory selections with only one possible outcome (thanks @DragosIonita23)
 - Fixed an issue where "Simian Warrior Grash" would not trigger when it was destroyed (thanks @DragosIonita23)
