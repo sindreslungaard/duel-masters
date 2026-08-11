@@ -281,6 +281,10 @@ export function useDuel({
     send({ header: "tap_ability", virtualId });
   };
 
+  const sendResign = () => {
+    send({ header: "resign" });
+  };
+
   const sendAction = (data: {
     cards: string[];
     cancel: boolean;
@@ -308,6 +312,7 @@ export function useDuel({
     sendAttackPlayer,
     sendAttackCreature,
     sendTapAbility,
+    sendResign,
     sendAction,
     sendChat,
   };

@@ -53,6 +53,12 @@ export interface DuelProps {
   duelId: string;
   duelToken: string;
   playmat?: string;
+  /**
+   * Whether the opponent's cards are rendered upside down, the way they would
+   * face across a physical table. Defaults to true. Set to false to show them
+   * the right way up for the player looking at the screen.
+   */
+  flipOpponentCards?: boolean;
   resolveChatUser?: DuelChatUserResolver;
   renderChatUserTrigger?: DuelChatUserTriggerRenderer;
   /**
@@ -129,6 +135,7 @@ export function Duel({
   duelToken,
   hostUrl,
   playmat,
+  flipOpponentCards = true,
   resolveChatUser,
   renderChatUserTrigger,
   blockedChatUsers,
@@ -151,6 +158,7 @@ export function Duel({
   >(null);
   const [duelFinishedRedirectFailed, setDuelFinishedRedirectFailed] =
     useState(false);
+  const [confirmForfeit, setConfirmForfeit] = useState(false);
 
   const {
     connected,
@@ -164,6 +172,7 @@ export function Duel({
     sendAttackPlayer,
     sendAttackCreature,
     sendTapAbility,
+    sendResign,
     sendAction,
     sendChat,
     state,
@@ -229,6 +238,7 @@ export function Duel({
     setWait("");
     setAction(null);
     setActionError(null);
+    setConfirmForfeit(false);
     setDuelFinishedCountdown(5);
     setDuelFinishedRedirectFailed(false);
 
@@ -750,7 +760,7 @@ export function Duel({
               <div className="inline-flex w-max justify-start gap-5 h-full pb-1">
                 {state.opponent.manazone.map(
                   CreateCard({
-                    flipped: true,
+                    flipped: flipOpponentCards,
                     dragState,
                     zone: "opponentManazone",
                     onRightClick: (imageId, name) =>
@@ -778,6 +788,7 @@ export function Duel({
               <div className="inline-flex w-max justify-start gap-5 h-full p-1">
                 {state.opponent.shieldzone.map(
                   CreateCard({
+                    flipped: flipOpponentCards,
                     dragState,
                     zone: "opponentShieldzone",
                     onRightClick: (imageId, name) =>
@@ -805,7 +816,7 @@ export function Duel({
               <div className="inline-flex w-max justify-start gap-5 h-full p-1">
                 {state.opponent.playzone.map(
                   CreateCard({
-                    flipped: true,
+                    flipped: flipOpponentCards,
                     dragState,
                     zone: "opponentPlayzone",
                     onRightClick: (imageId, name) =>
@@ -937,6 +948,13 @@ export function Duel({
             )}
           </div>
         </div>
+
+        {/* Forfeit - Top Right */}
+        {!isSpectating && (
+          <div className="fixed right-[0.5vw] top-[0.5vh] w-[7vw] min-w-[70px] max-w-[100px] z-30">
+            <Button onClick={() => setConfirmForfeit(true)}>Forfeit</Button>
+          </div>
+        )}
 
         {/* Player Info Panel - Right Side */}
         <div className="fixed right-[0.5vw] top-1/2 -translate-y-2/3 w-[12vw] min-w-[100px] max-w-[160px] flex flex-col gap-[0.5vh] md:gap-[5vh] z-20">
@@ -1124,6 +1142,35 @@ export function Duel({
               Failed to redirect, please close the page manually
             </p>
           )}
+        </div>
+      </Popup>
+
+      <Popup
+        visible={confirmForfeit}
+        onClose={() => setConfirmForfeit(false)}
+        title="Forfeit"
+        maxWidth="500px"
+        closeOnOutsideClick={true}
+      >
+        <div className="p-6 text-white">
+          <p>
+            Are you sure you want to forfeit? Your opponent wins the duel
+            immediately.
+          </p>
+          <div className="flex gap-3 mt-6">
+            <Button variant="gray" onClick={() => setConfirmForfeit(false)}>
+              Cancel
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={() => {
+                setConfirmForfeit(false);
+                sendResign();
+              }}
+            >
+              Forfeit
+            </Button>
+          </div>
         </div>
       </Popup>
 
