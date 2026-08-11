@@ -119,3 +119,20 @@ func LemikVizierOfThought(c *match.Card) {
 	}))
 
 }
+
+// EstolVizierOfAqua ...
+func EstolVizierOfAqua(c *match.Card) {
+
+	c.Name = "Estol, Vizier of Aqua"
+	c.Power = 2000
+	c.Civs = []string{civ.Light, civ.Water}
+	c.Family = []string{family.Initiate, family.LiquidPeople}
+	c.ManaCost = 5
+	c.ManaRequirement = []string{civ.Light, civ.Water}
+
+	c.Use(fx.Creature, fx.When(fx.Summoned, func(card *match.Card, ctx *match.Context) {
+		fx.TopCardToShield(card, ctx)
+		fx.ShowXShields(1, false)(card, ctx)
+	}))
+
+}

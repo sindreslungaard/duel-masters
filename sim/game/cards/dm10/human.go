@@ -64,3 +64,20 @@ func GontaTheWarriorSavage(c *match.Card) {
 	c.Use(fx.Creature)
 
 }
+
+// WindAxeTheWarriorSavage ...
+func WindAxeTheWarriorSavage(c *match.Card) {
+
+	c.Name = "Wind Axe, the Warrior Savage"
+	c.Power = 2000
+	c.Civs = []string{civ.Fire, civ.Nature}
+	c.Family = []string{family.Human, family.BeastFolk}
+	c.ManaCost = 5
+	c.ManaRequirement = []string{civ.Fire, civ.Nature}
+
+	c.Use(fx.Creature, fx.When(fx.Summoned, func(card *match.Card, ctx *match.Context) {
+		fx.DestroyOpBlocker(card, ctx)
+		fx.Draw1ToMana(card, ctx)
+	}))
+
+}

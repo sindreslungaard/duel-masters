@@ -48,3 +48,20 @@ func MelniaTheAquaShadow(c *match.Card) {
 	c.Use(fx.Creature, fx.CantBeBlocked, fx.Slayer)
 
 }
+
+// PointaTheAquaShadow ...
+func PointaTheAquaShadow(c *match.Card) {
+
+	c.Name = "Pointa, the Aqua Shadow"
+	c.Power = 2000
+	c.Civs = []string{civ.Water, civ.Darkness}
+	c.Family = []string{family.LiquidPeople, family.Ghost}
+	c.ManaCost = 5
+	c.ManaRequirement = []string{civ.Water, civ.Darkness}
+
+	c.Use(fx.Creature, fx.When(fx.Summoned, func(card *match.Card, ctx *match.Context) {
+		fx.ShowXShields(1, false)(card, ctx)
+		fx.OpponentDiscardsRandomCard(card, ctx)
+	}))
+
+}

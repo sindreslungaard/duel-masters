@@ -1,5 +1,15 @@
 # Changelog
 
+## Unreleased
+
+- New card "Skysword, the Savage Vizier"
+- New card "Estol, Vizier of Aqua"
+- New card "Pointa, the Aqua Shadow"
+- New card "Galek, the Shadow Warrior"
+- New card "Wind Axe, the Warrior Savage"
+- New card "Lukia Lex, Pinnacle Guardian"
+- New card "Tagtapp, the Retaliator"
+
 ## 11/08/2026
 
 - Added support for multicolored cards

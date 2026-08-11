@@ -1,6 +1,7 @@
 package fx
 
 import (
+	"duel-masters/game/cnd"
 	"duel-masters/game/match"
 	"fmt"
 )
@@ -150,6 +151,26 @@ func DestroyOpponentCreature(cancellable bool, destroyType match.CreatureDestroy
 		})
 	}
 
+}
+
+// DestroyOpBlocker destroys one of the opponent's creatures that has "blocker".
+// The choice is mandatory, and no prompt is opened when the opponent controls no
+// blocker at all.
+func DestroyOpBlocker(card *match.Card, ctx *match.Context) {
+	SelectFilter(
+		card.Player,
+		ctx.Match,
+		ctx.Match.Opponent(card.Player),
+		match.BATTLEZONE,
+		fmt.Sprintf("%s's effect: Choose one of your opponent's creatures that has \"blocker\" and destroy it.", card.Name),
+		1,
+		1,
+		false,
+		func(x *match.Card) bool { return x.HasCondition(cnd.Blocker) },
+		false,
+	).Map(func(x *match.Card) {
+		ctx.Match.Destroy(x, card, match.DestroyedByMiscAbility)
+	})
 }
 
 func OpponentChoosesAndDestroysCreature(card *match.Card, ctx *match.Context) {

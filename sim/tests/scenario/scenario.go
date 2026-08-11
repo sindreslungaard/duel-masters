@@ -169,7 +169,8 @@ func (s *TestScenario) ActionEndTurn(player *match.PlayerReference) error {
 	// A successful turn transition broadcasts once before untap/start/draw and
 	// again after draw. Wait for the second update so tests cannot observe the
 	// event loop halfway through the new turn. A prevented transition sends a
-	// warning instead.
+	// warning instead, and an end step effect may suspend the transition on a
+	// prompt that the caller has to answer before the turn can finish.
 	if err := s.waitFor(func() bool {
 		stateUpdates := 0
 		for _, raw := range conn.JSONMessagesSince(messageCount) {
@@ -179,7 +180,7 @@ func (s *TestScenario) ActionEndTurn(player *match.PlayerReference) error {
 			}
 
 			switch header.Header {
-			case "warn":
+			case "warn", "action", "wait":
 				return true
 			case "state_update":
 				stateUpdates++

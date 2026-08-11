@@ -272,8 +272,10 @@ func OpDiscardsXCards(x int) match.HandlerFunc {
 	}
 }
 
-// Look at opponent's x shields
-func ShowXShields(x int) match.HandlerFunc {
+// ShowXShields lets the card's controller look at up to x of the opponent's
+// shields. Pass cancellable for a printed "you may look at", and false when the
+// card makes looking mandatory. The shields stay where they are.
+func ShowXShields(x int, cancellable bool) match.HandlerFunc {
 	return func(card *match.Card, ctx *match.Context) {
 
 		shieldsID := []string{}
@@ -286,10 +288,16 @@ func ShowXShields(x int) match.HandlerFunc {
 			fmt.Sprintf("%s: Select %d of your opponent's shields that will be shown to you", card.Name, x),
 			1,
 			x,
-			true,
+			cancellable,
 		).Map(func(shields *match.Card) {
 			shieldsID = append(shieldsID, shields.ImageID)
 		})
+
+		// Nothing was chosen, either because the opponent has no shields or
+		// because an optional look was declined.
+		if len(shieldsID) < 1 {
+			return
+		}
 
 		ctx.Match.ShowCards(
 			card.Player,

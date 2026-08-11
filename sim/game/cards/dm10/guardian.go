@@ -72,3 +72,17 @@ func PalaOlesisMorningGuardian(c *match.Card) {
 		}))
 
 }
+
+// LukiaLexPinnacleGuardian ...
+func LukiaLexPinnacleGuardian(c *match.Card) {
+
+	c.Name = "Lukia Lex, Pinnacle Guardian"
+	c.Power = 2500
+	c.Civs = []string{civ.Light, civ.Nature}
+	c.Family = []string{family.Guardian}
+	c.ManaCost = 3
+	c.ManaRequirement = []string{civ.Light, civ.Nature}
+
+	c.Use(fx.Creature, fx.PowerAttacker3000, fx.When(fx.EndOfMyTurnCreatureBZ, fx.MayUntapSelf))
+
+}

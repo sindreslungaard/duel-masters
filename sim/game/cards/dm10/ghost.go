@@ -52,3 +52,20 @@ func ZeroNemesisShadowOfPanic(c *match.Card) {
 	c.Use(fx.Creature, fx.Evolution, fx.Doublebreaker, fx.WheneverOneOfMyCreaturesAttacksOppDiscardsRandom())
 
 }
+
+// GalekTheShadowWarrior ...
+func GalekTheShadowWarrior(c *match.Card) {
+
+	c.Name = "Galek, the Shadow Warrior"
+	c.Power = 2000
+	c.Civs = []string{civ.Darkness, civ.Fire}
+	c.Family = []string{family.Ghost, family.Human}
+	c.ManaCost = 5
+	c.ManaRequirement = []string{civ.Darkness, civ.Fire}
+
+	c.Use(fx.Creature, fx.When(fx.Summoned, func(card *match.Card, ctx *match.Context) {
+		fx.DestroyOpBlocker(card, ctx)
+		fx.OpponentDiscardsRandomCard(card, ctx)
+	}))
+
+}
