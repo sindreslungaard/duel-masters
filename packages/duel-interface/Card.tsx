@@ -6,6 +6,8 @@ export interface CardProps {
   imageId?: string;
   rotated?: boolean;
   flipped?: boolean;
+  /** Small index drawn in the card's top right corner, used to number shields. */
+  number?: number;
   interactable?: boolean;
   canAddToBattlezone?: boolean;
   canAddToManazone?: boolean;
@@ -26,6 +28,7 @@ export function Card({
   imageId,
   rotated = false,
   flipped = false,
+  number,
   interactable = false,
   selected = false,
   canAddToBattlezone = true,
@@ -108,6 +111,14 @@ export function Card({
             marginRight: rotated ? horizontalMargin : undefined,
           }}
         />
+
+        {/* Kept upright and in the same screen corner even when the card is
+            flipped, so a shield's number stays readable from either side. */}
+        {number !== undefined && (
+          <span className="pointer-events-none absolute top-[2%] right-[10%] text-[clamp(0.55rem,1.1vh,0.8rem)] leading-none text-white drop-shadow-[0_1px_2px_rgba(0,0,0,0.9)]">
+            {number}
+          </span>
+        )}
       </div>
     </>
   );

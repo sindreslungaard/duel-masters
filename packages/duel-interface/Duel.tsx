@@ -789,6 +789,7 @@ export function Duel({
                 {state.opponent.shieldzone.map(
                   CreateCard({
                     flipped: !flipOpponentCards,
+                    shieldMap: state.opponent.shieldMap,
                     dragState,
                     zone: "opponentShieldzone",
                     onRightClick: (imageId, name) =>
@@ -866,6 +867,7 @@ export function Duel({
               <div className="inline-flex w-max justify-start gap-5 h-full p-1">
                 {state.me.shieldzone.map(
                   CreateCard({
+                    shieldMap: state.me.shieldMap,
                     dragState,
                     zone: "myShieldzone",
                     onRightClick: (imageId, name) =>
@@ -1290,6 +1292,8 @@ function CreateCard(
     interactable?: boolean;
     canAddToManazone?: boolean;
     flipped?: boolean;
+    /** virtualId -> shield number, as sent by the server in the match state. */
+    shieldMap?: Record<string, number>;
     selected?: (virtualId: string) => boolean;
     onAddToBattlezone?: (virtualId: string) => void;
     onAddToManazone?: (virtualId: string) => void;
@@ -1320,6 +1324,7 @@ function CreateCard(
         imageId={card.uid}
         key={index}
         rotated={rotated}
+        number={options.shieldMap?.[card.virtualId]}
         selected={options.selected ? options.selected(card.virtualId) : false}
         interactable={options.interactable}
         canAddToBattlezone={cardHasFlag(card.flags, PLAYABLE_FLAG)}
