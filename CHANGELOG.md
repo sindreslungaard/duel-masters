@@ -1,11 +1,10 @@
 # Changelog
 
-## Unreleased
+## 11/08/2026
 
 - Added support for multicolored cards
 - New card "Gonta, the Warrior Savage"
 - New card "Melnia, the Aqua Shadow"
-- New card "Blizzard of Spears" (thanks @dilawer007)
 - New card "Torpedo Cluster"
 - New card "Pierr, Psycho Doll"
 - New card "Hurricane Crawler"
@@ -20,6 +19,7 @@
 - New card "Ultimate Dragon"
 - New card "Necrodragon Bryzenaga"
 - New card "Bodacious Giant"
+- New card "Blizzard of Spears" (thanks @dilawer007)
 - New card "Balza, Seeker of Hyperpearls" (thanks @DragosIonita23)
 - New card "Ryudmila, Channeler of Suns" (thanks @DragosIonita23)
 - New card "King Oquanos" (thanks @DragosIonita23)
