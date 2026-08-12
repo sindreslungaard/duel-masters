@@ -1910,7 +1910,7 @@ func (m *Match) Parse(s *server.Socket, data []byte) {
 
 			m.End(m.Opponent(p.Player), fmt.Sprintf("%s won by opponent resigning.", m.Opponent(p.Player).Username()))
 
-		}, SequentialEvent)
+		}, ParallelEvent)
 
 	default:
 		logrus.Debugf("Received message in incorrect format: %v", string(data))
