@@ -4,6 +4,11 @@
 
 - Fixed "Q-tronic Gargantua" losing its own "survivor" and "evolution" abilities for the rest of the turn after attacking a player, and leaving a stale crew breaker behind when an attack was cancelled
 - Fixed "King Triumphant", "Storm Wrangler, the Furious" and "Smash Warrior Stagrandu" removing more of their own abilities than intended when cleaning up a temporary effect
+- New card "Tajimal, Vizier of Aqua"
+- New card "Aqua Skydiver"
+- New card "Techno Totem"
+- New card "Tanzanyte, the Awakener"
+- New card "Dolmarks, the Shadow Warrior"
 - New card "Skysword, the Savage Vizier"
 - New card "Estol, Vizier of Aqua"
 - New card "Pointa, the Aqua Shadow"

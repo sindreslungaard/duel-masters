@@ -83,6 +83,6 @@ func LukiaLexPinnacleGuardian(c *match.Card) {
 	c.ManaCost = 3
 	c.ManaRequirement = []string{civ.Light, civ.Nature}
 
-	c.Use(fx.Creature, fx.PowerAttacker3000, fx.When(fx.EndOfMyTurnCreatureBZ, fx.MayUntapSelf))
+	c.Use(fx.Creature, fx.PutIntoManaZoneTapped, fx.PowerAttacker3000, fx.When(fx.EndOfMyTurnCreatureBZ, fx.MayUntapSelf))
 
 }

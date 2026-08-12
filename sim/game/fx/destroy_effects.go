@@ -173,6 +173,41 @@ func DestroyOpBlocker(card *match.Card, ctx *match.Context) {
 	})
 }
 
+// OwnChoosesAndDestroysCreature makes the card's controller choose one of their
+// own creatures and destroy it.
+func OwnChoosesAndDestroysCreature(card *match.Card, ctx *match.Context) {
+	Select(
+		card.Player,
+		ctx.Match,
+		card.Player,
+		match.BATTLEZONE,
+		fmt.Sprintf("%s: Select 1 creature from your battlezone that will be sent to your graveyard", card.Name),
+		1,
+		1,
+		false,
+	).Map(func(x *match.Card) {
+		ctx.Match.Destroy(x, card, match.DestroyedByMiscAbility)
+	})
+}
+
+// OwnChoosesManaBurn makes the card's controller choose a card in their own mana
+// zone and put it into their graveyard.
+func OwnChoosesManaBurn(card *match.Card, ctx *match.Context) {
+	Select(
+		card.Player,
+		ctx.Match,
+		card.Player,
+		match.MANAZONE,
+		fmt.Sprintf("%s effect: Select 1 card from your manazone that will be sent to your graveyard", card.Name),
+		1,
+		1,
+		false,
+	).Map(func(manaCard *match.Card) {
+		card.Player.MoveCard(manaCard.ID, match.MANAZONE, match.GRAVEYARD, card.ID)
+		ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s effect: %s moved from MZ to GY", card.Name, manaCard.Name))
+	})
+}
+
 func OpponentChoosesAndDestroysCreature(card *match.Card, ctx *match.Context) {
 	Select(
 		ctx.Match.Opponent(card.Player),

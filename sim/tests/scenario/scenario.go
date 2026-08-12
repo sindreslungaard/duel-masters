@@ -328,6 +328,65 @@ func (s *TestScenario) ActionAttackCreature(player *match.PlayerReference, attac
 	})
 }
 
+// ActionUseTapAbility taps a creature to use its tap ability and waits until it
+// has resolved. It returns early when the ability opens a prompt for its
+// controller, which the caller then answers.
+func (s *TestScenario) ActionUseTapAbility(player *match.PlayerReference, cardID string) error {
+	conn, err := s.connectionFor(player)
+	if err != nil {
+		return err
+	}
+
+	if _, err := player.Player.GetCard(cardID, match.BATTLEZONE); err != nil {
+		return err
+	}
+
+	messageCount := conn.JSONWriteCount()
+	if err := s.send(player, struct {
+		Header string `json:"header"`
+		ID     string `json:"virtualId"`
+	}{
+		Header: "tap_ability",
+		ID:     cardID,
+	}); err != nil {
+		return err
+	}
+
+	if err := s.waitFor(func() bool {
+		for _, raw := range conn.JSONMessagesSince(messageCount) {
+			var header server.Message
+			if err := json.Unmarshal([]byte(raw), &header); err != nil {
+				continue
+			}
+
+			switch header.Header {
+			case "state_update", "action", "wait", "warn":
+				return true
+			}
+		}
+
+		return false
+	}); err != nil {
+		return err
+	}
+
+	// A rejected tap ability answers with a warning and nothing else.
+	headers, err := s.MessageHeaders(player, messageCount)
+	if err != nil {
+		return err
+	}
+	for _, header := range headers {
+		if header == "action" || header == "wait" {
+			return nil
+		}
+		if header == "warn" {
+			return fmt.Errorf("the tap ability was rejected")
+		}
+	}
+
+	return s.WaitForEventLoop()
+}
+
 // ActionAttackPlayer attacks the opponent directly and returns the shield
 // selection prompt the attacker receives, without answering it. The caller must
 // always answer that prompt through ResolveAttack or CancelAction so the

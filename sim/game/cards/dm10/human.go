@@ -61,7 +61,7 @@ func GontaTheWarriorSavage(c *match.Card) {
 
 	// Being put into the mana zone tapped is a rule of every multicolored card
 	// and is handled by the engine, so there is nothing else to implement.
-	c.Use(fx.Creature)
+	c.Use(fx.Creature, fx.PutIntoManaZoneTapped)
 
 }
 
@@ -75,7 +75,7 @@ func WindAxeTheWarriorSavage(c *match.Card) {
 	c.ManaCost = 5
 	c.ManaRequirement = []string{civ.Fire, civ.Nature}
 
-	c.Use(fx.Creature, fx.When(fx.Summoned, func(card *match.Card, ctx *match.Context) {
+	c.Use(fx.Creature, fx.PutIntoManaZoneTapped, fx.When(fx.Summoned, func(card *match.Card, ctx *match.Context) {
 		fx.DestroyOpBlocker(card, ctx)
 		fx.Draw1ToMana(card, ctx)
 	}))

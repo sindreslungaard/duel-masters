@@ -45,7 +45,7 @@ func MelniaTheAquaShadow(c *match.Card) {
 	c.ManaCost = 2
 	c.ManaRequirement = []string{civ.Water, civ.Darkness}
 
-	c.Use(fx.Creature, fx.CantBeBlocked, fx.Slayer)
+	c.Use(fx.Creature, fx.PutIntoManaZoneTapped, fx.CantBeBlocked, fx.Slayer)
 
 }
 
@@ -59,9 +59,23 @@ func PointaTheAquaShadow(c *match.Card) {
 	c.ManaCost = 5
 	c.ManaRequirement = []string{civ.Water, civ.Darkness}
 
-	c.Use(fx.Creature, fx.When(fx.Summoned, func(card *match.Card, ctx *match.Context) {
+	c.Use(fx.Creature, fx.PutIntoManaZoneTapped, fx.When(fx.Summoned, func(card *match.Card, ctx *match.Context) {
 		fx.ShowXShields(1, false)(card, ctx)
 		fx.OpponentDiscardsRandomCard(card, ctx)
 	}))
+
+}
+
+// AquaSkydiver ...
+func AquaSkydiver(c *match.Card) {
+
+	c.Name = "Aqua Skydiver"
+	c.Power = 1000
+	c.Civs = []string{civ.Light, civ.Water}
+	c.Family = []string{family.LiquidPeople}
+	c.ManaCost = 4
+	c.ManaRequirement = []string{civ.Light, civ.Water}
+
+	c.Use(fx.Creature, fx.PutIntoManaZoneTapped, fx.ShieldTrigger, fx.Blocker(), fx.When(fx.WouldBeDestroyed, fx.ReturnToHand))
 
 }

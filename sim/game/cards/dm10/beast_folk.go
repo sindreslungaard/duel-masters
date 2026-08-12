@@ -61,7 +61,7 @@ func SkyswordTheSavageVizier(c *match.Card) {
 	c.ManaRequirement = []string{civ.Light, civ.Nature}
 
 	// Two separate top cards: the first goes to mana, the next to the shields.
-	c.Use(fx.Creature, fx.When(fx.Summoned, func(card *match.Card, ctx *match.Context) {
+	c.Use(fx.Creature, fx.PutIntoManaZoneTapped, fx.When(fx.Summoned, func(card *match.Card, ctx *match.Context) {
 		fx.Draw1ToMana(card, ctx)
 		fx.TopCardToShield(card, ctx)
 	}))
