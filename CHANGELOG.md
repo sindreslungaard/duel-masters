@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 12/08/2026
 
 - Improved the duel experience on mobile
 - Added support for creating custom formats & banlists
