@@ -11,6 +11,7 @@ import (
 	"duel-masters/game/cards/dm08"
 	"duel-masters/game/cards/dm09"
 	"duel-masters/game/cards/dm10"
+	"duel-masters/game/cards/dm11"
 	"duel-masters/game/cards/promo"
 	"duel-masters/game/match"
 )
@@ -27,6 +28,7 @@ var Sets = map[string]*map[string]match.CardConstructor{
 	"dm-08": &DM08,
 	"dm-09": &DM09,
 	"dm-10": &DM10,
+	"dm-11": &DM11,
 	"promo": &Promo,
 }
 
@@ -830,6 +832,30 @@ var DM10 = map[string]match.CardConstructor{
 	"ad428b55-4b0b-4a63-b48b-dfc1541b8b81": dm10.SanfistTheSavageVizier,
 	"a808b98c-2de7-412b-970c-a3b925bf43c2": dm10.DeklowazTheTerminator,
 	"c94b8b0a-5406-4d24-9ac9-333c5c077ccd": dm10.BombazarDragonOfDestiny,
+}
+
+// DM11 is a map with all the card id's in the game and corresponding CardConstructor for dm11
+var DM11 = map[string]match.CardConstructor{
+
+	"49373744-6cbe-4247-8ae4-12fcc0f62201": dm11.BradsCutter,
+	"d2936cbe-a710-45ff-bc6a-6601fd40f91e": dm11.JabahasAutomaton,
+	"b12e23f7-70cc-4aad-b78f-e71dde4f783e": dm11.BairaTheHiddenLunatic,
+	"fb598a3b-7153-4a66-93de-0c7b7157b5ea": dm11.BeratchaTheHiddenGlutton,
+	"6d65304b-30ab-4943-a88d-dbcd8a204c2c": dm11.MelodicHunter,
+	"23c905d3-a554-4d45-b8d7-1b46fe8d117f": dm11.TimeScout,
+	"af369960-c65f-49f8-bb21-aa6190d0b3b4": dm11.FantasyFish,
+	"08d2dcbc-e643-4576-9745-1317bfa7968e": dm11.EngbeltTheSpydroid,
+	"e255f07a-4b76-40a6-8441-faf8c7b6cd41": dm11.YulianaChannelerOfSuns,
+	"4247022f-f630-4e8b-9e9f-9afaf5c61107": dm11.NialVizierOfDexterity,
+	"e1bd40c0-3c76-4854-a967-302e6a6706b3": dm11.WarlordAilzonius,
+	"e9edcaed-0434-4e97-b058-bc4fe955ac08": dm11.HysteriaLizard,
+	"5bcab12f-5a17-4ade-b938-1c08a6290047": dm11.SpinningTerrorTheWretched,
+	"ffbfa50c-bda4-408d-a2b0-64f940f0c305": dm11.QuillspikeRumbler,
+	"71b80172-8b18-4140-99bf-d8bc4201e07e": dm11.LuckyBall,
+	"e67f1a65-476f-4bf9-8ea7-35afe19a877d": dm11.SolarTrap,
+	"7dbd2f0a-f53f-4c1b-aeaf-6840984c19b6": dm11.TenTonCrunch,
+	"7b95be5c-d378-4af4-98ce-dc18d2e3d172": dm11.MorbidMedicine,
+	"ddf7ccd6-48e1-46f6-9800-367bf36ec29b": dm11.EmergencyTyphoon,
 }
 
 // Promo is a map with all the card id's in the game and corresponding CardConstructor for promotional exclusive cards

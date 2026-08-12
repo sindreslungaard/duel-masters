@@ -53,6 +53,33 @@ func FilterShieldTriggers(ctx *match.Context, filter func(*match.Card) bool) {
 
 }
 
+// DiscardOwnXCards makes the card's controller choose x cards from their own
+// hand and discard them. A hand holding fewer than x simply loses what is
+// there, because the selection is clamped to the cards that exist, and an empty
+// hand opens no prompt at all.
+func DiscardOwnXCards(x int) match.HandlerFunc {
+	return func(card *match.Card, ctx *match.Context) {
+		Select(
+			card.Player,
+			ctx.Match,
+			card.Player,
+			match.HAND,
+			fmt.Sprintf("%s's effect: Choose %d card(s) from your hand to discard.", card.Name, x),
+			x,
+			x,
+			false,
+		).Map(func(discarded *match.Card) {
+			moved, err := card.Player.MoveCard(discarded.ID, match.HAND, match.GRAVEYARD, card.ID)
+
+			if err != nil || moved.Zone != match.GRAVEYARD {
+				return
+			}
+
+			ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s was discarded from %s's hand by %s", discarded.Name, card.Player.Username(), card.Name))
+		})
+	}
+}
+
 func PlayerDiscardsRandomCard(card *match.Card, ctx *match.Context) {
 
 	hand, err := card.Player.Container(match.HAND)
