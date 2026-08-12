@@ -608,7 +608,11 @@ export function Duel({
       <div className={compact ? "flex items-center gap-2" : "flex flex-col gap-2"}>
         <div
           className={`overflow-hidden text-ellipsis whitespace-nowrap text-xs ${
-            compact ? "max-w-[8rem] shrink-0" : "flex-1"
+            compact
+              ? // The board already highlights the selected card, so on a phone
+                // the name yields to the buttons rather than squeezing them.
+                "hidden min-w-0 shrink sm:block sm:max-w-[8rem]"
+              : "flex-1"
           }`}
         >
           {selectedCard.name}
@@ -1098,6 +1102,29 @@ export function Duel({
             </button>
 
             <div className="min-w-0 flex-1">{renderControls(true)}</div>
+
+            {/* Forfeit sits here rather than in the top corner so every control
+                a player needs is along one edge, within thumb reach. */}
+            <button
+              type="button"
+              onClick={() => setConfirmForfeit(true)}
+              aria-label="Forfeit"
+              title="Forfeit"
+              className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md bg-gray-800 text-red-500"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-5 w-5"
+                viewBox="0 0 20 20"
+                fill="currentColor"
+              >
+                <path
+                  fillRule="evenodd"
+                  d="M3 3a1 1 0 00-1 1v12a1 1 0 102 0V4a1 1 0 00-1-1zm10.293 9.293a1 1 0 001.414 1.414l3-3a1 1 0 000-1.414l-3-3a1 1 0 10-1.414 1.414L14.586 9H7a1 1 0 100 2h7.586l-1.293 1.293z"
+                  clipRule="evenodd"
+                />
+              </svg>
+            </button>
           </div>
         )}
 
@@ -1124,9 +1151,10 @@ export function Duel({
           </button>
         )}
 
-        {/* Forfeit - Top Right */}
-        {!isSpectating && (
-          <div className="fixed right-[0.5vw] top-[0.5vh] w-[16vw] min-w-[56px] max-w-[80px] min-[1200px]:w-[7vw] min-[1200px]:min-w-[70px] min-[1200px]:max-w-[100px] z-30">
+        {/* Forfeit - Top Right. On a narrow screen it lives in the bottom bar
+            instead, beside End turn. */}
+        {!isSpectating && !isCompact && (
+          <div className="fixed right-[0.5vw] top-[0.5vh] w-[7vw] min-w-[70px] max-w-[100px] z-30">
             <Button onClick={() => setConfirmForfeit(true)}>Forfeit</Button>
           </div>
         )}
