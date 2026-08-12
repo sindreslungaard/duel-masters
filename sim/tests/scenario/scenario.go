@@ -214,9 +214,16 @@ func (s *TestScenario) ActionEndTurn(player *match.PlayerReference) error {
 			}
 		}
 
-		return stateUpdates >= 2 || openedPrompt()
+		// An end of turn effect can finish the game rather than start the next
+		// turn, in which case the broadcasts a turn transition would have sent
+		// never arrive.
+		return stateUpdates >= 2 || openedPrompt() || s.Match.IsClosed()
 	}); err != nil {
 		return err
+	}
+
+	if s.Match.IsClosed() {
+		return nil
 	}
 
 	// An end-of-turn effect may have opened a prompt, in which case the event

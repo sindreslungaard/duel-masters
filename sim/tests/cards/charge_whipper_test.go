@@ -52,8 +52,8 @@ func TestChargeWhipper(t *testing.T) {
 		takenShield := shieldsBefore[0]
 
 		useSilentSkill(t, scn, player)
-		require.NoError(t, scn.SubmitAction(player, fromHand.ID))
-		require.NoError(t, scn.SubmitAction(player, takenShield.ID))
+		answerInTurn(t, scn, player, fromHand.ID)
+		answerInTurn(t, scn, player, takenShield.ID)
 		settleTurn(t, scn)
 
 		assert.Equal(t, match.SHIELDZONE, fromHand.Zone)
@@ -92,8 +92,8 @@ func TestChargeWhipper(t *testing.T) {
 		require.NoError(t, err)
 
 		useSilentSkill(t, scn, player)
-		require.NoError(t, scn.SubmitAction(player, fromHand.ID))
-		require.NoError(t, scn.SubmitAction(player, trigger.ID))
+		answerInTurn(t, scn, player, fromHand.ID)
+		answerInTurn(t, scn, player, trigger.ID)
 		settleTurn(t, scn)
 
 		assert.Equal(t, match.HAND, trigger.Zone)
@@ -119,7 +119,7 @@ func TestChargeWhipper(t *testing.T) {
 		require.NoError(t, err)
 
 		useSilentSkill(t, scn, player)
-		require.NoError(t, scn.CancelAction(player))
+		cancelInTurn(t, scn, player)
 		settleTurn(t, scn)
 
 		shields, err := player.Player.Container(match.SHIELDZONE)

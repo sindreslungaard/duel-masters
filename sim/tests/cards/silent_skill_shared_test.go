@@ -87,3 +87,33 @@ func settleTurn(t *testing.T, scn *scenario.TestScenario) {
 
 	require.NoError(t, scn.WaitForEventLoop())
 }
+
+// answerInTurn answers one prompt and waits for the engine's reply, so a
+// follow-up answer is never sent while the previous one is still in flight.
+//
+// This matters because the parallel action handler drains Player.Action before
+// writing to it, to stop a client flooding the match with goroutines. An answer
+// that has not been picked up yet is thrown away by the next answer's drain, so
+// two answers sent back to back can lose the first one and leave the event loop
+// waiting on a prompt nobody will answer again. A real client cannot do this,
+// because it only ever shows one prompt at a time.
+func answerInTurn(t *testing.T, scn *scenario.TestScenario, player *match.PlayerReference, cardIDs ...string) {
+	t.Helper()
+
+	start, err := scn.MessageCount(player)
+	require.NoError(t, err)
+
+	require.NoError(t, scn.SubmitAction(player, cardIDs...))
+	require.NoError(t, scn.WaitForMessage(player, start, "action", "action_error", "warn", "wait", "state_update"))
+}
+
+// cancelInTurn is answerInTurn for a cancellation.
+func cancelInTurn(t *testing.T, scn *scenario.TestScenario, player *match.PlayerReference) {
+	t.Helper()
+
+	start, err := scn.MessageCount(player)
+	require.NoError(t, err)
+
+	require.NoError(t, scn.CancelAction(player))
+	require.NoError(t, scn.WaitForMessage(player, start, "action", "action_error", "warn", "wait", "state_update"))
+}

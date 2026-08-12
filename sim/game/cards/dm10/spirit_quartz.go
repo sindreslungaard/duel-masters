@@ -92,3 +92,59 @@ func SoderlightTheColdBlade(c *match.Card) {
 	c.Use(fx.Creature, fx.PutIntoManaZoneTapped, fx.CantBeBlocked, fx.SilentSkill(fx.OpponentChoosesAndDestroysCreature))
 
 }
+
+// DeklowazTheTerminator ...
+func DeklowazTheTerminator(c *match.Card) {
+
+	c.Name = "Deklowaz, the Terminator"
+	c.Power = 5000
+	c.Civs = []string{civ.Darkness, civ.Fire}
+	c.Family = []string{family.SpiritQuartz}
+	c.ManaCost = 6
+	c.ManaRequirement = []string{civ.Darkness, civ.Fire}
+
+	c.TapAbility = func(card *match.Card, ctx *match.Context) {
+
+		fx.DestroyAllCreaturesXPowerOrLess(3000, match.DestroyedByMiscAbility)(card, ctx)
+
+		opponent := ctx.Match.Opponent(card.Player)
+
+		// Snapshot the hand before anything leaves it, and read power from the
+		// snapshot too: a card in hand has no battle zone modifiers, but the
+		// engine still owns that calculation.
+		hand := fx.Find(opponent, match.HAND)
+
+		if len(hand) < 1 {
+			return
+		}
+
+		revealed := make([]string, 0, len(hand))
+		for _, x := range hand {
+			revealed = append(revealed, x.ImageID)
+		}
+
+		ctx.Match.ShowCards(card.Player, fmt.Sprintf("%s's effect: your opponent's hand", card.Name), revealed)
+
+		discarded := 0
+		for _, x := range hand {
+			if !x.HasCondition(cnd.Creature) || ctx.Match.GetPower(x, false) > 3000 {
+				continue
+			}
+
+			moved, err := opponent.MoveCard(x.ID, match.HAND, match.GRAVEYARD, card.ID)
+
+			if err != nil || moved.Zone != match.GRAVEYARD {
+				continue
+			}
+
+			discarded++
+		}
+
+		if discarded > 0 {
+			ctx.Match.ReportActionInChat(opponent, fmt.Sprintf("%s discarded %d creature(s) with power 3000 or less because of %s", opponent.Username(), discarded, card.Name))
+		}
+	}
+
+	c.Use(fx.Creature, fx.PutIntoManaZoneTapped, fx.TapAbility)
+
+}

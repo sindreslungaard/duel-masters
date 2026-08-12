@@ -109,8 +109,8 @@ func TestPinpointLunatron(t *testing.T) {
 
 		// Cancelling is refused, so the prompt stays open until a real
 		// selection arrives.
-		require.NoError(t, scn.CancelAction(player))
-		require.NoError(t, scn.SubmitAction(player, theirs.ID))
+		cancelInTurn(t, scn, player)
+		answerInTurn(t, scn, player, theirs.ID)
 		settleTurn(t, scn)
 
 		assert.Equal(t, match.HAND, theirs.Zone)

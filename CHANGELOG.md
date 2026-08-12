@@ -21,6 +21,8 @@
 - New card "Pinpoint Lunatron"
 - New card "Charge Whipper"
 - New card "Sanfist, the Savage Vizier"
+- New card "Deklowaz, the Terminator"
+- New card "Bombazar, Dragon of Destiny"
 
 ## 12/08/2026
 
