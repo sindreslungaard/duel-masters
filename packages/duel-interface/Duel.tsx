@@ -148,6 +148,33 @@ function useCompactViewport() {
   return isCompact;
 }
 
+/** Leaving the duel, shown the same way on every screen size: a door with an
+ * arrow heading out, in red because it forfeits the match. */
+function ForfeitButton({ onClick }: { onClick: () => void }) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      aria-label="Forfeit"
+      title="Forfeit"
+      className="flex h-9 w-9 shrink-0 cursor-pointer items-center justify-center rounded-md bg-gray-800 text-red-500 transition-colors hover:bg-gray-700 hover:text-red-400"
+    >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        className="h-5 w-5"
+        viewBox="0 0 20 20"
+        fill="currentColor"
+      >
+        <path
+          fillRule="evenodd"
+          d="M3 3a1 1 0 00-1 1v12a1 1 0 102 0V4a1 1 0 00-1-1zm10.293 9.293a1 1 0 001.414 1.414l3-3a1 1 0 000-1.414l-3-3a1 1 0 10-1.414 1.414L14.586 9H7a1 1 0 100 2h7.586l-1.293 1.293z"
+          clipRule="evenodd"
+        />
+      </svg>
+    </button>
+  );
+}
+
 function DevToolSection({
   title,
   children,
@@ -734,7 +761,7 @@ export function Duel({
                 type="button"
                 onClick={() => setChatOpen(false)}
                 aria-label="Close chat"
-                className="flex h-8 w-8 items-center justify-center rounded-full bg-gray-800 text-gray-300"
+                className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-full bg-gray-800 text-gray-300 transition-colors hover:bg-gray-700"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -1085,7 +1112,7 @@ export function Duel({
               type="button"
               onClick={() => setChatOpen(true)}
               aria-label="Open chat"
-              className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md bg-gray-800 text-gray-200"
+              className="flex h-9 w-9 shrink-0 cursor-pointer items-center justify-center rounded-md bg-gray-800 text-gray-200 transition-colors hover:bg-gray-700"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -1105,26 +1132,7 @@ export function Duel({
 
             {/* Forfeit sits here rather than in the top corner so every control
                 a player needs is along one edge, within thumb reach. */}
-            <button
-              type="button"
-              onClick={() => setConfirmForfeit(true)}
-              aria-label="Forfeit"
-              title="Forfeit"
-              className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md bg-gray-800 text-red-500"
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-5 w-5"
-                viewBox="0 0 20 20"
-                fill="currentColor"
-              >
-                <path
-                  fillRule="evenodd"
-                  d="M3 3a1 1 0 00-1 1v12a1 1 0 102 0V4a1 1 0 00-1-1zm10.293 9.293a1 1 0 001.414 1.414l3-3a1 1 0 000-1.414l-3-3a1 1 0 10-1.414 1.414L14.586 9H7a1 1 0 100 2h7.586l-1.293 1.293z"
-                  clipRule="evenodd"
-                />
-              </svg>
-            </button>
+            <ForfeitButton onClick={() => setConfirmForfeit(true)} />
           </div>
         )}
 
@@ -1134,7 +1142,7 @@ export function Duel({
             type="button"
             onClick={() => setChatOpen(true)}
             aria-label="Open chat"
-            className="fixed bottom-2 left-2 z-30 flex h-10 w-10 items-center justify-center rounded-full bg-gray-800 text-gray-200 shadow-lg"
+            className="fixed bottom-2 left-2 z-30 flex h-10 w-10 cursor-pointer items-center justify-center rounded-full bg-gray-800 text-gray-200 shadow-lg transition-colors hover:bg-gray-700"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -1154,8 +1162,8 @@ export function Duel({
         {/* Forfeit - Top Right. On a narrow screen it lives in the bottom bar
             instead, beside End turn. */}
         {!isSpectating && !isCompact && (
-          <div className="fixed right-[0.5vw] top-[0.5vh] w-[7vw] min-w-[70px] max-w-[100px] z-30">
-            <Button onClick={() => setConfirmForfeit(true)}>Forfeit</Button>
+          <div className="fixed right-[0.5vw] top-[0.5vh] z-30">
+            <ForfeitButton onClick={() => setConfirmForfeit(true)} />
           </div>
         )}
 
