@@ -856,6 +856,18 @@ var DM11 = map[string]match.CardConstructor{
 	"7dbd2f0a-f53f-4c1b-aeaf-6840984c19b6": dm11.TenTonCrunch,
 	"7b95be5c-d378-4af4-98ce-dc18d2e3d172": dm11.MorbidMedicine,
 	"ddf7ccd6-48e1-46f6-9800-367bf36ec29b": dm11.EmergencyTyphoon,
+	"8ed1afbb-c05e-46c0-949b-7cc4b9bf7cee": dm11.BelixTheExplorer,
+	"7b3480ab-57fb-413e-bd93-7ffdfeb2d73f": dm11.BaraidTheExplorer,
+	"3a071f56-5ad3-445d-b223-6f76685d843a": dm11.RainbowGate,
+	"3d4863c7-9586-4e9a-af76-9ce1b5b332e2": dm11.MiraculousSnare,
+	"2072f6de-c78c-492c-b026-4d94b148e8a2": dm11.HideAndSeek,
+	"dac86d1e-f00c-43a5-a2bc-cc8b9ac377c1": dm11.ReapAndSow,
+	"e663f082-c6a0-4c07-a19d-4f8287f1bbc7": dm11.GankloakRogueCommando,
+	"6a668bef-98c8-4b55-9412-414f25e914e9": dm11.DiamondiaTheBlizzardRider,
+	"479cfe64-5fed-4afb-9d64-b8de738de8d2": dm11.GazerEyesShadowOfSecrets,
+	"e278e681-ee2d-4865-be34-9933dca3d470": dm11.RollickingTotem,
+	"89304216-4cf9-4bb0-903f-55e7248655df": dm11.RoyalDurian,
+	"c3380f40-8a9c-49f7-9c6b-e00ae2212481": dm11.SquawkingLunatron,
 }
 
 // Promo is a map with all the card id's in the game and corresponding CardConstructor for promotional exclusive cards

@@ -42,6 +42,18 @@
 - New card "Melodic Hunter"
 - New card "Warlord Ailzonius"
 - New card "Fantasy Fish"
+- New card "Belix, the Explorer"
+- New card "Rainbow Gate"
+- New card "Diamondia, the Blizzard Rider"
+- New card "Gankloak, Rogue Commando"
+- New card "Miraculous Snare"
+- New card "Gazer Eyes, Shadow of Secrets"
+- New card "Hide and Seek"
+- New card "Baraid, the Explorer"
+- New card "Reap and Sow"
+- New card "Rollicking Totem"
+- New card "Royal Durian"
+- New card "Squawking Lunatron"
 
 ## 12/08/2026
 
