@@ -115,6 +115,39 @@ interface PreviewCards {
 
 interface Action {}
 
+/** How far a pointer may travel before a press counts as a drag rather than a
+ * tap. A finger is much less precise than a mouse and always wobbles a little,
+ * so touch needs more slack or every tap would be read as a drag. */
+const MOUSE_DRAG_THRESHOLD = 5;
+const TOUCH_DRAG_THRESHOLD = 12;
+
+/** Below this the fixed 300px side column leaves too little room for the board,
+ * so the chat moves into a drawer and the controls into a bar along the bottom.
+ * Covers large phones in landscape and tablets in portrait, while laptops from
+ * 1280 up keep the side column. Kept in step with the min-[1200px] classes that
+ * size the floating overlays. */
+const COMPACT_VIEWPORT_QUERY = "(max-width: 1199px)";
+
+function useCompactViewport() {
+  const [isCompact, setIsCompact] = useState(() =>
+    typeof window === "undefined"
+      ? false
+      : window.matchMedia(COMPACT_VIEWPORT_QUERY).matches,
+  );
+
+  useEffect(() => {
+    const query = window.matchMedia(COMPACT_VIEWPORT_QUERY);
+    const update = () => setIsCompact(query.matches);
+
+    update();
+    query.addEventListener("change", update);
+
+    return () => query.removeEventListener("change", update);
+  }, []);
+
+  return isCompact;
+}
+
 function DevToolSection({
   title,
   children,
@@ -273,6 +306,17 @@ export function Duel({
       ? `Redirecting in ${duelFinishedCountdown}...`
       : "Redirecting...";
 
+  const isCompact = useCompactViewport();
+  const [chatOpen, setChatOpen] = useState(false);
+
+  // The drawer only exists on narrow screens; leaving it "open" while resizing
+  // to desktop would otherwise strand the state.
+  useEffect(() => {
+    if (!isCompact) {
+      setChatOpen(false);
+    }
+  }, [isCompact]);
+
   const [previewCard, setPreviewCard] = useState<PreviewCard | null>(null);
   const [multiCardView, setMultiCardView] = useState<{
     cards: { imageId: string; name: string }[];
@@ -339,9 +383,8 @@ export function Duel({
     name?: string;
     sourceZone: DragZone;
     rotated: boolean;
+    threshold: number;
   } | null>(null);
-
-  const DRAG_THRESHOLD = 5; // pixels
 
   const handleCardDragStart = (
     virtualId: string,
@@ -349,38 +392,41 @@ export function Duel({
     name: string | undefined,
     sourceZone: DragZone,
     rotated: boolean,
-    e: React.MouseEvent | React.TouchEvent,
+    e: React.PointerEvent,
   ) => {
     // Ignore right clicks
-    if ("button" in e && e.button === 2) {
+    if (e.button === 2) {
       return;
     }
 
-    const clientX = "touches" in e ? e.touches[0].clientX : e.clientX;
-    const clientY = "touches" in e ? e.touches[0].clientY : e.clientY;
-
     // Record start position but don't start dragging yet
     setDragStartPosition({
-      x: clientX,
-      y: clientY,
+      x: e.clientX,
+      y: e.clientY,
       virtualId,
       imageId,
       name,
       sourceZone,
       rotated,
+      // A finger is far less precise than a mouse, so it needs more slack
+      // before a tap counts as a drag.
+      threshold: e.pointerType === "mouse" ? MOUSE_DRAG_THRESHOLD : TOUCH_DRAG_THRESHOLD,
     });
   };
 
-  const handleMouseMove = (e: MouseEvent | TouchEvent) => {
-    const clientX = "touches" in e ? e.touches[0].clientX : e.clientX;
-    const clientY = "touches" in e ? e.touches[0].clientY : e.clientY;
+  const handleMouseMove = (e: PointerEvent) => {
+    const clientX = e.clientX;
+    const clientY = e.clientY;
 
     // Check if we should start dragging based on threshold
     if (dragStartPosition && !dragState) {
       const deltaX = Math.abs(clientX - dragStartPosition.x);
       const deltaY = Math.abs(clientY - dragStartPosition.y);
 
-      if (deltaX > DRAG_THRESHOLD || deltaY > DRAG_THRESHOLD) {
+      if (
+        deltaX > dragStartPosition.threshold ||
+        deltaY > dragStartPosition.threshold
+      ) {
         // Start dragging
         setDragState({
           virtualId: dragStartPosition.virtualId,
@@ -466,18 +512,25 @@ export function Duel({
     setDragStartPosition(null);
   };
 
+  const handlePointerCancel = () => {
+    setDragState(null);
+    setDropZone(null);
+    setDragStartPosition(null);
+  };
+
   useEffect(() => {
     if (dragState || dragStartPosition) {
-      window.addEventListener("mousemove", handleMouseMove);
-      window.addEventListener("touchmove", handleMouseMove);
-      window.addEventListener("mouseup", handleMouseUp);
-      window.addEventListener("touchend", handleMouseUp);
+      window.addEventListener("pointermove", handleMouseMove);
+      window.addEventListener("pointerup", handleMouseUp);
+      // A pointer can be taken away mid gesture, by the system or by a browser
+      // scroll gesture winning. Without this the card would stay stuck to the
+      // cursor with no way to drop it.
+      window.addEventListener("pointercancel", handlePointerCancel);
 
       return () => {
-        window.removeEventListener("mousemove", handleMouseMove);
-        window.removeEventListener("touchmove", handleMouseMove);
-        window.removeEventListener("mouseup", handleMouseUp);
-        window.removeEventListener("touchend", handleMouseUp);
+        window.removeEventListener("pointermove", handleMouseMove);
+        window.removeEventListener("pointerup", handleMouseUp);
+        window.removeEventListener("pointercancel", handlePointerCancel);
       };
     }
   }, [dragState, dropZone, dragStartPosition]);
@@ -543,12 +596,116 @@ export function Duel({
     return "green";
   };
 
+  /** The card actions and End turn button. On a narrow screen these move out of
+   * the side column into a bar along the bottom, because they are the controls a
+   * player needs constantly and the column itself is hidden there. */
+  const renderControls = (compact: boolean) => {
+    if (isSpectating) {
+      return null;
+    }
+
+    const cardActions = selectedCard && state.myTurn && (
+      <div className={compact ? "flex items-center gap-2" : "flex flex-col gap-2"}>
+        <div
+          className={`overflow-hidden text-ellipsis whitespace-nowrap text-xs ${
+            compact ? "max-w-[8rem] shrink-0" : "flex-1"
+          }`}
+        >
+          {selectedCard.name}
+        </div>
+        {selectedCard.zone === "hand" && (
+          <div className="flex flex-1 gap-2">
+            <div className="flex-1 min-w-0">
+              <Button
+                onClick={() => sendAddToBattlezone(selectedCard.virtualId)}
+                disabled={!selectedCard.canPlay}
+              >
+                Summon
+              </Button>
+            </div>
+            <div className="flex-1 min-w-0">
+              <Button
+                onClick={() => sendAddToManazone(selectedCard.virtualId)}
+                disabled={state.hasAddedManaThisRound}
+              >
+                {compact ? "Mana" : "Add to manazone"}
+              </Button>
+            </div>
+          </div>
+        )}
+
+        {selectedCard.zone === "battlezone" && (
+          <div className="flex flex-1 gap-2">
+            <div className="flex-1 min-w-0">
+              <Button
+                onClick={() => sendAttackPlayer(selectedCard.virtualId)}
+              >
+                {compact ? "Attack" : "Attack Player"}
+              </Button>
+            </div>
+            <div className="flex-1 min-w-0">
+              <Button
+                onClick={() => sendAttackCreature(selectedCard.virtualId)}
+              >
+                {compact ? "Battle" : "Attack Creature"}
+              </Button>
+            </div>
+            {selectedCard.hasTapAbility && (
+              <div className="flex-1 min-w-0">
+                <Button
+                  onClick={() => sendTapAbility(selectedCard.virtualId)}
+                >
+                  {compact ? "Tap" : "Tap Ability"}
+                </Button>
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+    );
+
+    if (compact) {
+      return (
+        <div className="flex items-center gap-2">
+          <div className="min-w-0 flex-1">{cardActions}</div>
+          <div className="w-[6.5rem] shrink-0">
+            <Button
+              onClick={sendEndTurn}
+              disabled={!state.myTurn}
+              disabledTooltip="It's not your turn"
+            >
+              End turn
+            </Button>
+          </div>
+        </div>
+      );
+    }
+
+    return (
+      <>
+        <div className="bg-black/50 p-2 rounded-md h-[72px] text-gray-400">
+          {cardActions}
+        </div>
+        <div className="bg-black/30 p-2 rounded-md">
+          <Button
+            onClick={sendEndTurn}
+            disabled={!state.myTurn}
+            disabledTooltip="It's not your turn"
+          >
+            End turn
+          </Button>
+        </div>
+      </>
+    );
+  };
+
   return (
     <>
       <style>{scrollbarStyles}</style>
       <div
         className="w-full h-screen text-white flex bg-[linear-gradient(45deg,rgb(29,33,42),rgb(20,16,21))] bg-cover bg-no-repeat gap-2 p-1 custom-scrollbar"
         style={{
+          height: "100dvh",
           ...(playmat && {
             backgroundImage: `url(${JSON.stringify(playmat)}), linear-gradient(45deg, rgb(29, 33, 42), rgb(20, 16, 21))`,
             backgroundPosition: "center",
@@ -556,7 +713,41 @@ export function Duel({
           ...(dragState && { cursor: "grabbing" }),
         }}
       >
-        <div className="w-[300px] flex flex-col gap-2">
+        {/* On a narrow screen this column is replaced by a chat drawer and a
+            bottom control bar, so the board can use the full width. */}
+        <div
+          className={
+            isCompact
+              ? "fixed inset-y-0 left-0 z-40 flex w-[86vw] max-w-[340px] flex-col gap-2 bg-[rgb(20,16,21)] p-2 shadow-2xl transition-transform duration-200" +
+                (chatOpen ? " translate-x-0" : " -translate-x-full")
+              : "w-[300px] flex flex-col gap-2"
+          }
+        >
+          {isCompact && (
+            <div className="flex shrink-0 items-center justify-between">
+              <span className="text-sm font-semibold">Chat</span>
+              <button
+                type="button"
+                onClick={() => setChatOpen(false)}
+                aria-label="Close chat"
+                className="flex h-8 w-8 items-center justify-center rounded-full bg-gray-800 text-gray-300"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-5 w-5"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+                    clipRule="evenodd"
+                  />
+                </svg>
+              </button>
+            </div>
+          )}
+
           {/* Devtools */}
           {devTools && (
             <div className="bg-black/30 rounded-md overflow-hidden p-3 text-sm">
@@ -659,92 +850,23 @@ export function Duel({
             />
           </div>
 
-          {/* Actions */}
-          {!isSpectating && (
-            <div className="bg-black/50 p-2 rounded-md h-[72px] text-gray-400">
-              {!isSpectating && selectedCard && state.myTurn && (
-                <div className="flex flex-col gap-2">
-                  <div className="flex-1 text-xs whitespace-nowrap overflow-hidden text-ellipsis">
-                    {selectedCard.name}
-                  </div>
-                  {selectedCard.zone === "hand" && (
-                    <div className="flex gap-2">
-                      {/* Hand zone */}
-                      <div className="flex-1 min-w-0">
-                        <Button
-                          onClick={() =>
-                            sendAddToBattlezone(selectedCard.virtualId)
-                          }
-                          disabled={!selectedCard.canPlay}
-                        >
-                          Summon
-                        </Button>
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <Button
-                          onClick={() =>
-                            sendAddToManazone(selectedCard.virtualId)
-                          }
-                          disabled={state.hasAddedManaThisRound}
-                        >
-                          Add to manazone
-                        </Button>
-                      </div>
-                    </div>
-                  )}
-
-                  {selectedCard.zone === "battlezone" && (
-                    <div className="flex gap-2">
-                      <div className="flex-1 min-w-0">
-                        <Button
-                          onClick={() =>
-                            sendAttackPlayer(selectedCard.virtualId)
-                          }
-                        >
-                          Attack Player
-                        </Button>
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <Button
-                          onClick={() =>
-                            sendAttackCreature(selectedCard.virtualId)
-                          }
-                        >
-                          Attack Creature
-                        </Button>
-                      </div>
-                      {selectedCard.hasTapAbility && (
-                        <div className="flex-1 min-w-0">
-                          <Button
-                            onClick={() =>
-                              sendTapAbility(selectedCard.virtualId)
-                            }
-                          >
-                            Tap Ability
-                          </Button>
-                        </div>
-                      )}
-                    </div>
-                  )}
-                </div>
-              )}
-            </div>
-          )}
-
-          {/* End turn / forfeit */}
-          {!isSpectating && (
-            <div className="bg-black/30 p-2 rounded-md">
-              <Button
-                onClick={sendEndTurn}
-                disabled={!state.myTurn}
-                disabledTooltip="It's not your turn"
-              >
-                End turn
-              </Button>
-            </div>
-          )}
+          {/* Card actions and End turn, unless a narrow screen has moved
+              them to the bottom bar */}
+          {!isCompact && renderControls(false)}
         </div>
-        <div className="flex flex-1 flex-col h-full w-full">
+
+        {/* Tapping the dimmed board closes the drawer */}
+        {isCompact && chatOpen && (
+          <div
+            className="fixed inset-0 z-30 bg-black/60"
+            onClick={() => setChatOpen(false)}
+          />
+        )}
+
+        <div
+          className="flex flex-1 flex-col h-full w-full"
+          style={isCompact && !isSpectating ? { paddingBottom: "3.25rem" } : undefined}
+        >
           <div className="h-[10%] relative" data-dropzone="opponentManazone">
             <div
               className="absolute inset-0 z-0"
@@ -951,15 +1073,66 @@ export function Duel({
           </div>
         </div>
 
+        {/* Bottom control bar, narrow screens only. The board reserves room for
+            it so it never covers the hand. */}
+        {isCompact && !isSpectating && (
+          <div className="fixed inset-x-0 bottom-0 z-30 flex h-[3.25rem] items-center gap-2 border-t border-white/10 bg-[rgb(20,16,21)]/95 px-2">
+            <button
+              type="button"
+              onClick={() => setChatOpen(true)}
+              aria-label="Open chat"
+              className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md bg-gray-800 text-gray-200"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-5 w-5"
+                viewBox="0 0 20 20"
+                fill="currentColor"
+              >
+                <path
+                  fillRule="evenodd"
+                  d="M18 10c0 3.866-3.582 7-8 7a8.84 8.84 0 01-4.083-.98L2 17l1.338-3.123C2.493 12.767 2 11.434 2 10c0-3.866 3.582-7 8-7s8 3.134 8 7z"
+                  clipRule="evenodd"
+                />
+              </svg>
+            </button>
+
+            <div className="min-w-0 flex-1">{renderControls(true)}</div>
+          </div>
+        )}
+
+        {/* Spectators get the chat toggle without the control bar */}
+        {isCompact && isSpectating && (
+          <button
+            type="button"
+            onClick={() => setChatOpen(true)}
+            aria-label="Open chat"
+            className="fixed bottom-2 left-2 z-30 flex h-10 w-10 items-center justify-center rounded-full bg-gray-800 text-gray-200 shadow-lg"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-5 w-5"
+              viewBox="0 0 20 20"
+              fill="currentColor"
+            >
+              <path
+                fillRule="evenodd"
+                d="M18 10c0 3.866-3.582 7-8 7a8.84 8.84 0 01-4.083-.98L2 17l1.338-3.123C2.493 12.767 2 11.434 2 10c0-3.866 3.582-7 8-7s8 3.134 8 7z"
+                clipRule="evenodd"
+              />
+            </svg>
+          </button>
+        )}
+
         {/* Forfeit - Top Right */}
         {!isSpectating && (
-          <div className="fixed right-[0.5vw] top-[0.5vh] w-[7vw] min-w-[70px] max-w-[100px] z-30">
+          <div className="fixed right-[0.5vw] top-[0.5vh] w-[16vw] min-w-[56px] max-w-[80px] min-[1200px]:w-[7vw] min-[1200px]:min-w-[70px] min-[1200px]:max-w-[100px] z-30">
             <Button onClick={() => setConfirmForfeit(true)}>Forfeit</Button>
           </div>
         )}
 
         {/* Player Info Panel - Right Side */}
-        <div className="fixed right-[0.5vw] top-1/2 -translate-y-2/3 w-[12vw] min-w-[100px] max-w-[160px] flex flex-col gap-[0.5vh] md:gap-[5vh] z-20">
+        <div className="fixed right-[0.5vw] top-1/2 -translate-y-2/3 w-[16vw] min-w-[56px] max-w-[80px] min-[1200px]:w-[12vw] min-[1200px]:min-w-[100px] min-[1200px]:max-w-[160px] flex flex-col gap-[0.5vh] md:gap-[5vh] z-20">
           {/* Opponent Section */}
           <div className="rounded-lg flex flex-col gap-[1vh]">
             {/* Opponent Hand Count */}
@@ -974,7 +1147,7 @@ export function Duel({
               <p className="text-[clamp(0.6rem,1.2vh,0.85rem)] text-white mb-[0.5vh] text-center">
                 Deck [{state.opponent.deck}]
               </p>
-              <div className="relative h-[12vh] min-h-[60px] max-h-[110px] flex items-center justify-center">
+              <div className="relative h-[12vh] min-h-[40px] max-h-[70px] min-[1200px]:min-h-[60px] min-[1200px]:max-h-[110px] flex items-center justify-center">
                 <img
                   src="https://scans.shobu.io/backside.jpg"
                   alt="Deck back"
@@ -989,7 +1162,7 @@ export function Duel({
               <p className="text-[clamp(0.6rem,1.2vh,0.85rem)] text-white mb-[0.5vh] text-center">
                 Graveyard [{state.opponent.graveyard.length}]
               </p>
-              <div className="relative h-[12vh] min-h-[60px] max-h-[110px] flex items-center justify-center">
+              <div className="relative h-[12vh] min-h-[40px] max-h-[70px] min-[1200px]:min-h-[60px] min-[1200px]:max-h-[110px] flex items-center justify-center">
                 {state.opponent.graveyard.length > 0 ? (
                   <img
                     src={`https://scans.shobu.io/${
@@ -1047,7 +1220,7 @@ export function Duel({
               <p className="text-[clamp(0.6rem,1.2vh,0.85rem)] text-white mb-[0.5vh] text-center">
                 Graveyard [{state.me.graveyard.length}]
               </p>
-              <div className="relative h-[12vh] min-h-[60px] max-h-[110px] flex items-center justify-center">
+              <div className="relative h-[12vh] min-h-[40px] max-h-[70px] min-[1200px]:min-h-[60px] min-[1200px]:max-h-[110px] flex items-center justify-center">
                 {state.me.graveyard.length > 0 ? (
                   <img
                     src={`https://scans.shobu.io/${
@@ -1092,7 +1265,7 @@ export function Duel({
               <p className="text-[clamp(0.6rem,1.2vh,0.85rem)] text-white mb-[0.5vh] text-center">
                 Deck [{state.me.deck}]
               </p>
-              <div className="relative h-[12vh] min-h-[60px] max-h-[110px] flex items-center justify-center">
+              <div className="relative h-[12vh] min-h-[40px] max-h-[70px] min-[1200px]:min-h-[60px] min-[1200px]:max-h-[110px] flex items-center justify-center">
                 <img
                   src="https://scans.shobu.io/backside.jpg"
                   alt="Deck back"
@@ -1307,7 +1480,7 @@ function CreateCard(
       name: string | undefined,
       sourceZone: DragZone,
       rotated: boolean,
-      e: React.MouseEvent | React.TouchEvent,
+      e: React.PointerEvent,
     ) => void;
     onRightClick?: (imageId: string, name?: string) => void;
   } = {},

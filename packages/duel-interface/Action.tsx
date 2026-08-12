@@ -65,15 +65,10 @@ export function Action({
   const [isBrushing, setIsBrushing] = useState(false);
   const [selectedSearchValue, setSelectedSearchValue] = useState("-1");
   const brushedCardIdsRef = useRef(new Set<string>());
-  const touchInProgressRef = useRef(false);
 
   const handleBrushEnd = () => {
     setIsBrushing(false);
     brushedCardIdsRef.current.clear();
-    // Reset touch flag after a delay to ensure mouse events are blocked
-    window.setTimeout(() => {
-      touchInProgressRef.current = false;
-    }, 300);
   };
 
   const toggleCard = (cardId: string) => {
@@ -96,19 +91,10 @@ export function Action({
     });
   };
 
-  const handleCardMouseDown = (
-    cardId: string,
-    e?: React.MouseEvent | React.TouchEvent
-  ) => {
-    // Ignore mouse events if a touch is in progress
-    if (e && !("touches" in e) && touchInProgressRef.current) {
-      return;
-    }
-
-    if (e && "touches" in e) {
-      touchInProgressRef.current = true;
-    }
-
+  // One pointer stream for mouse, touch and pen. Binding mouse and touch
+  // separately meant a tap ran both paths, because a touch is followed by
+  // compatibility mouse events, and the second toggle undid the first.
+  const handleCardPointerDown = (cardId: string) => {
     setIsBrushing(true);
     toggleCard(cardId);
   };
@@ -120,24 +106,23 @@ export function Action({
 
   useEffect(() => {
     if (isBrushing) {
-      const handleMouseUp = () => handleBrushEnd();
-      const handleTouchEnd = () => handleBrushEnd();
-
-      window.addEventListener("mouseup", handleMouseUp);
-      window.addEventListener("touchend", handleTouchEnd);
+      window.addEventListener("pointerup", handleBrushEnd);
+      window.addEventListener("pointercancel", handleBrushEnd);
 
       return () => {
-        window.removeEventListener("mouseup", handleMouseUp);
-        window.removeEventListener("touchend", handleTouchEnd);
+        window.removeEventListener("pointerup", handleBrushEnd);
+        window.removeEventListener("pointercancel", handleBrushEnd);
       };
     }
   }, [isBrushing]);
 
-  const handleTouchMove = (e: React.TouchEvent) => {
-    if (!isBrushing) return;
+  // A touch pointer is implicitly captured by the element it started on, so
+  // pointerenter never fires for the cards it is dragged across. Hit testing the
+  // coordinates is what makes brushing work with a finger.
+  const handlePointerMove = (e: React.PointerEvent) => {
+    if (!isBrushing || e.pointerType === "mouse") return;
 
-    const touch = e.touches[0];
-    const element = document.elementFromPoint(touch.clientX, touch.clientY);
+    const element = document.elementFromPoint(e.clientX, e.clientY);
     const cardElement = element?.closest("[data-card-id]") as HTMLElement;
 
     if (cardElement) {
@@ -155,7 +140,11 @@ export function Action({
     : showCards
       ? showCards.cards.length
       : (cards?.length || 0) + (unselectableCards?.length || 0);
-  const gridCols = Math.max(3, Math.min(cardCount, 6));
+  // The grid used a fixed column count at natural card width, which overflowed
+  // the popup horizontally on a phone with no way to scroll to the cards that
+  // fell off the edge. Auto-fitting to a minimum card width instead means the
+  // column count follows the space actually available.
+  const gridColumnCount = Math.max(3, Math.min(cardCount, 6));
 
   const currentSelectableCardIds = new Set(
     (cardsObject ? Object.values(cardsObject).flat() : cards || []).map(
@@ -167,7 +156,10 @@ export function Action({
   );
 
   const cardGridStyle = {
-    gridTemplateColumns: `repeat(${gridCols}, minmax(0, 1fr))`,
+    // auto-fit keeps cards from ever being pushed outside the popup: columns
+    // shrink to the 5rem floor and then wrap onto the next row.
+    gridTemplateColumns: `repeat(auto-fit, minmax(5rem, 1fr))`,
+    maxWidth: `${gridColumnCount * 8}rem`,
   };
   const isCardSelection = actionType === ActionType.None || !actionType;
 
@@ -190,19 +182,22 @@ export function Action({
       showCloseButton={showCards ? true : cancellable}
       zIndex={1000}
       closeOnOutsideClick={false}
+      // Prompts that show cards earn the extra room on a large monitor, where
+      // the old fixed 600px left the cards needlessly small.
+      maxWidth={cardCount > 0 ? "min(96vw, 900px)" : "min(96vw, 600px)"}
       contentClassName="flex min-h-0 flex-1 overflow-hidden"
       onClose={showCards ? acknowledgeShowCards : onClose}
     >
       <div className="flex min-h-0 flex-1 flex-col select-none">
         <div
-          className="custom-scrollbar min-h-0 flex-1 overflow-y-auto px-6 py-4"
-          onTouchMove={handleTouchMove}
+          className="custom-scrollbar min-h-0 flex-1 overflow-y-auto px-4 py-4 sm:px-6"
+          onPointerMove={handlePointerMove}
         >
           <div className="text-sm text-gray-100">{text}</div>
 
           {actionType === ActionType.ShowCards && (
             <div
-              className="mt-4 grid w-fit gap-2 rounded-md bg-black/30 p-2"
+              className="mt-4 grid w-full gap-2 rounded-md bg-black/30 p-2"
               style={cardGridStyle}
             >
               {showCards?.cards.map((imageId, index) => (
@@ -245,7 +240,7 @@ export function Action({
               )}
 
               <div
-                className="mt-4 grid w-fit gap-2 rounded-md bg-black/30 p-2"
+                className="mt-4 grid w-full gap-2 rounded-md bg-black/30 p-2"
                 style={cardGridStyle}
               >
                 {cardsObject &&
@@ -254,13 +249,8 @@ export function Action({
                       key={card.virtualId}
                       className="w-full"
                       data-card-id={card.virtualId}
-                      onMouseEnter={() => handleCardHover(card.virtualId)}
-                      onMouseDown={(event) =>
-                        handleCardMouseDown(card.virtualId, event)
-                      }
-                      onTouchStart={(event) =>
-                        handleCardMouseDown(card.virtualId, event)
-                      }
+                      onPointerEnter={() => handleCardHover(card.virtualId)}
+                      onPointerDown={() => handleCardPointerDown(card.virtualId)}
                     >
                       <img
                         onContextMenu={(event) => {
@@ -293,13 +283,8 @@ export function Action({
                       key={card.virtualId}
                       className="w-full"
                       data-card-id={card.virtualId}
-                      onMouseEnter={() => handleCardHover(card.virtualId)}
-                      onMouseDown={(event) =>
-                        handleCardMouseDown(card.virtualId, event)
-                      }
-                      onTouchStart={(event) =>
-                        handleCardMouseDown(card.virtualId, event)
-                      }
+                      onPointerEnter={() => handleCardHover(card.virtualId)}
+                      onPointerDown={() => handleCardPointerDown(card.virtualId)}
                     >
                       <img
                         onContextMenu={(event) => {
@@ -346,7 +331,7 @@ export function Action({
 
           {actionType === ActionType.Order && (
             <div
-              className="mt-4 grid w-fit gap-2 rounded-md bg-black/30 p-2"
+              className="mt-4 grid w-full gap-2 rounded-md bg-black/30 p-2"
               style={cardGridStyle}
             >
               {cards?.map((card) => {
@@ -359,13 +344,8 @@ export function Action({
                     key={card.virtualId}
                     className="relative w-full"
                     data-card-id={card.virtualId}
-                    onMouseEnter={() => handleCardHover(card.virtualId)}
-                    onMouseDown={(event) =>
-                      handleCardMouseDown(card.virtualId, event)
-                    }
-                    onTouchStart={(event) =>
-                      handleCardMouseDown(card.virtualId, event)
-                    }
+                    onPointerEnter={() => handleCardHover(card.virtualId)}
+                    onPointerDown={() => handleCardPointerDown(card.virtualId)}
                   >
                     <img
                       onContextMenu={(event) => {
@@ -397,7 +377,7 @@ export function Action({
           )}
         </div>
 
-        <div className="shrink-0 border-t border-gray-800 bg-gray-900 px-6 py-4">
+        <div className="shrink-0 border-t border-gray-800 bg-gray-900 px-4 py-3 sm:px-6 sm:py-4">
           {actionType === ActionType.ShowCards && (
             <div className="flex">
               <Button onClick={acknowledgeShowCards}>
@@ -424,7 +404,7 @@ export function Action({
                   Close
                 </Button>
               )}
-              <div className="flex-1 text-right text-xs italic text-gray-300">
+              <div className="hidden flex-1 text-right text-xs italic text-gray-300 sm:block">
                 Click and drag to (de)select faster
               </div>
             </div>

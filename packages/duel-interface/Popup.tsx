@@ -19,7 +19,7 @@ export function Popup({
   showCloseButton = true,
   closeOnOutsideClick = false,
   maxWidth = "600px",
-  maxHeight = "80vh",
+  maxHeight = "85vh",
   contentClassName = "overflow-y-auto flex-1",
   zIndex = 1000,
   title,
@@ -37,39 +37,62 @@ export function Popup({
     }
   }, [visible]);
 
-  const handlePointerDown = (e: React.MouseEvent | React.TouchEvent) => {
+  /** Keeps the popup reachable: it may hang off an edge, but never so far that
+   * there is nothing left to grab or read. Without this a popup dragged off
+   * screen, or left offset when the window shrank, could not be recovered and
+   * the prompt behind it could not be answered. */
+  const clampToViewport = (next: { x: number; y: number }) => {
+    const popup = popupRef.current;
+    if (!popup) return next;
+
+    // offsetLeft/offsetTop ignore the transform, so they describe where the
+    // centred popup sits before any drag offset. Measuring from the transformed
+    // rect instead would need the current offset, which is not reliably in scope
+    // while a drag is in flight.
+    const restLeft = popup.offsetLeft;
+    const restTop = popup.offsetTop;
+    const width = popup.offsetWidth;
+
+    // Always leave this much of the popup on screen in each direction.
+    const margin = 64;
+
+    return {
+      x: Math.min(
+        Math.max(next.x, margin - restLeft - width),
+        window.innerWidth - margin - restLeft,
+      ),
+      // The header must stay reachable, so the popup may never go above the top
+      // edge, and never so far down that the header scrolls out of sight.
+      y: Math.min(
+        Math.max(next.y, -restTop),
+        window.innerHeight - margin - restTop,
+      ),
+    };
+  };
+
+  const handlePointerDown = (e: React.PointerEvent) => {
     // Don't start dragging if clicking on the close button
     if ((e.target as HTMLElement).closest("button")) {
       return;
     }
 
-    const clientX = "touches" in e ? e.touches[0].clientX : e.clientX;
-    const clientY = "touches" in e ? e.touches[0].clientY : e.clientY;
-
     setIsDragging(true);
     setDragStart({
-      x: clientX - position.x,
-      y: clientY - position.y,
+      x: e.clientX - position.x,
+      y: e.clientY - position.y,
     });
   };
 
   useEffect(() => {
-    const handleMouseMove = (e: MouseEvent) => {
+    const handlePointerMove = (e: PointerEvent) => {
       if (!isDragging) return;
 
-      setPosition({
-        x: e.clientX - dragStart.x,
-        y: e.clientY - dragStart.y,
-      });
-    };
-
-    const handleTouchMove = (e: TouchEvent) => {
-      if (!isDragging) return;
-
-      setPosition({
-        x: e.touches[0].clientX - dragStart.x,
-        y: e.touches[0].clientY - dragStart.y,
-      });
+      setPosition(
+        clampToViewport({
+          x: e.clientX - dragStart.x,
+          y: e.clientY - dragStart.y,
+        }),
+      );
     };
 
     const handleEnd = () => {
@@ -77,19 +100,32 @@ export function Popup({
     };
 
     if (isDragging) {
-      document.addEventListener("mousemove", handleMouseMove);
-      document.addEventListener("mouseup", handleEnd);
-      document.addEventListener("touchmove", handleTouchMove);
-      document.addEventListener("touchend", handleEnd);
+      document.addEventListener("pointermove", handlePointerMove);
+      document.addEventListener("pointerup", handleEnd);
+      document.addEventListener("pointercancel", handleEnd);
     }
 
     return () => {
-      document.removeEventListener("mousemove", handleMouseMove);
-      document.removeEventListener("mouseup", handleEnd);
-      document.removeEventListener("touchmove", handleTouchMove);
-      document.removeEventListener("touchend", handleEnd);
+      document.removeEventListener("pointermove", handlePointerMove);
+      document.removeEventListener("pointerup", handleEnd);
+      document.removeEventListener("pointercancel", handleEnd);
     };
   }, [isDragging, dragStart]);
+
+  // A resize or an orientation change can leave an offset popup off screen.
+  useEffect(() => {
+    if (!visible) return;
+
+    const handleResize = () => setPosition((current) => clampToViewport(current));
+
+    window.addEventListener("resize", handleResize);
+    window.addEventListener("orientationchange", handleResize);
+
+    return () => {
+      window.removeEventListener("resize", handleResize);
+      window.removeEventListener("orientationchange", handleResize);
+    };
+  }, [visible]);
 
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
@@ -125,7 +161,7 @@ export function Popup({
 
   return (
     <div
-      className="fixed inset-0 bg-black/60 flex items-center justify-center p-4"
+      className="fixed inset-0 bg-black/60 flex items-center justify-center p-2 sm:p-4"
       style={{ zIndex }}
       onClick={handleOverlayClick}
     >
@@ -142,11 +178,13 @@ export function Popup({
         {/* Header */}
         {title && (
           <div
-            className="flex-shrink-0 px-6 py-4 border-b border-gray-800 cursor-move select-none"
-            onMouseDown={handlePointerDown}
-            onTouchStart={handlePointerDown}
+            className="flex-shrink-0 px-4 py-3 sm:px-6 sm:py-4 border-b border-gray-800 cursor-move select-none"
+            style={{ touchAction: "none" }}
+            onPointerDown={handlePointerDown}
           >
-            <h2 className="text-xl font-semibold text-white pr-8">{title}</h2>
+            <h2 className="pr-10 text-base font-semibold text-white sm:text-xl">
+              {title}
+            </h2>
           </div>
         )}
 

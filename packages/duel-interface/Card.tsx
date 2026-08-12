@@ -18,7 +18,7 @@ export interface CardProps {
   onTapAbility?: (virtualId: string) => void;
   isDragging?: boolean;
   draggable?: boolean;
-  onDragStart?: (e: React.MouseEvent | React.TouchEvent) => void;
+  onDragStart?: (e: React.PointerEvent) => void;
   onRightClick?: () => void;
 }
 
@@ -61,15 +61,17 @@ export function Card({
     return () => window.removeEventListener("resize", updateMargin);
   }, [rotated]);
 
-  const handleMouseDown = (e: React.MouseEvent | React.TouchEvent) => {
-    if (draggable && onDragStart) {
-      e.preventDefault();
-      // Prevent context menu on touch devices
-      if ("touches" in e) {
-        e.stopPropagation();
-      }
-      onDragStart(e);
+  // Pointer events give one stream for mouse, touch and pen. Binding mouse and
+  // touch separately made a tap fire both paths, because the browser follows a
+  // touch with compatibility mouse events, and the second path immediately
+  // undid the selection the first one made.
+  const handlePointerDown = (e: React.PointerEvent) => {
+    if (!draggable || !onDragStart) {
+      return;
     }
+
+    e.preventDefault();
+    onDragStart(e);
   };
 
   const handleContextMenu = (e: React.MouseEvent) => {
@@ -101,11 +103,15 @@ export function Card({
           } ${isDragging ? "opacity-0" : ""} ${
             selected ? "ring-1 ring-blue-100" : ""
           }`}
-          onMouseDown={handleMouseDown}
-          onTouchStart={handleMouseDown}
+          onPointerDown={handlePointerDown}
           onContextMenu={handleContextMenu}
           style={{
-            touchAction: "none",
+            // Draggable cards keep the gesture entirely, which is what makes
+            // dragging them reliable. Cards that cannot be dragged have nothing
+            // to protect, so they hand the gesture back and their row becomes
+            // scrollable by touching the cards themselves rather than only the
+            // gaps between them.
+            touchAction: draggable ? "none" : "auto",
             borderRadius: "5%",
             marginLeft: rotated ? horizontalMargin : undefined,
             marginRight: rotated ? horizontalMargin : undefined,
