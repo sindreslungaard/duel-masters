@@ -65,13 +65,15 @@ func answerSilentSkillPrompt(t *testing.T, scn *scenario.TestScenario, player *m
 		require.NoError(t, scn.CancelAction(player))
 	}
 
-	require.NoError(t, scn.WaitForMessage(player, start, "action", "state_update"))
+	require.NoError(t, scn.WaitForMessage(player, start, "action", "wait", "state_update"))
 
 	// The ability may have opened a prompt of its own, and the event loop stays
-	// blocked until that one is answered, so there is nothing to settle yet.
+	// blocked until that one is answered, so there is nothing to settle yet. A
+	// "wait" means the prompt went to the opponent instead, which blocks the
+	// loop just the same.
 	headers, err := scn.MessageHeaders(player, start)
 	require.NoError(t, err)
-	if slices.Contains(headers, "action") {
+	if slices.Contains(headers, "action") || slices.Contains(headers, "wait") {
 		return
 	}
 

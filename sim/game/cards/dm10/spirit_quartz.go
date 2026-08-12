@@ -78,3 +78,17 @@ func TanzanyteTheAwakener(c *match.Card) {
 	c.Use(fx.Creature, fx.PutIntoManaZoneTapped, fx.Doublebreaker, fx.TapAbility)
 
 }
+
+// SoderlightTheColdBlade ...
+func SoderlightTheColdBlade(c *match.Card) {
+
+	c.Name = "Soderlight, the Cold Blade"
+	c.Power = 4000
+	c.Civs = []string{civ.Water, civ.Darkness}
+	c.Family = []string{family.SpiritQuartz}
+	c.ManaCost = 4
+	c.ManaRequirement = []string{civ.Water, civ.Darkness}
+
+	c.Use(fx.Creature, fx.PutIntoManaZoneTapped, fx.CantBeBlocked, fx.SilentSkill(fx.OpponentChoosesAndDestroysCreature))
+
+}

@@ -10,6 +10,12 @@
 - New card "Gigamente"
 - New card "Vorg's Engine"
 - New card "Minelord Skyterror"
+- New card "Venom Capsule"
+- New card "Kejila, the Hidden Horror"
+- New card "Brad, Super Kickin' Dynamo"
+- New card "Flohdani, the Spydroid"
+- New card "Sporeblast Erengi"
+- New card "Soderlight, the Cold Blade"
 
 ## 12/08/2026
 

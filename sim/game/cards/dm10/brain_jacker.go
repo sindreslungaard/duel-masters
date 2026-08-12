@@ -52,3 +52,17 @@ func SpinalParasite(c *match.Card) {
 	})
 
 }
+
+// VenomCapsule ...
+func VenomCapsule(c *match.Card) {
+
+	c.Name = "Venom Capsule"
+	c.Power = 1000
+	c.Civs = []string{civ.Darkness}
+	c.Family = []string{family.BrainJacker}
+	c.ManaCost = 2
+	c.ManaRequirement = []string{civ.Darkness}
+
+	c.Use(fx.Creature, fx.SilentSkill(fx.BreakXOpShields(1)))
+
+}

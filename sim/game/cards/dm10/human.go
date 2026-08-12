@@ -81,3 +81,17 @@ func WindAxeTheWarriorSavage(c *match.Card) {
 	}))
 
 }
+
+// BradSuperKickinDynamo ...
+func BradSuperKickinDynamo(c *match.Card) {
+
+	c.Name = "Brad, Super Kickin' Dynamo"
+	c.Power = 2000
+	c.Civs = []string{civ.Fire}
+	c.Family = []string{family.Human}
+	c.ManaCost = 3
+	c.ManaRequirement = []string{civ.Fire}
+
+	c.Use(fx.Creature, fx.SilentSkill(fx.DestroyOpBlocker))
+
+}

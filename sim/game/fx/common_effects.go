@@ -202,22 +202,40 @@ func RotateShields(card *match.Card, ctx *match.Context, max int) {
 }
 
 func DestroyOpShield(card *match.Card, ctx *match.Context) {
-	opponent := ctx.Match.Opponent(card.Player)
+	BreakXOpShields(1)(card, ctx)
+}
 
-	ctx.Match.BreakShields(SelectBackside(
-		card.Player,
-		ctx.Match,
-		opponent,
-		match.SHIELDZONE,
-		fmt.Sprintf("%s effect: select shield to break", card.Name),
-		1,
-		1,
-		false,
-	), card)
+// BreakXOpShields breaks x of the opponent's shields, chosen face down by the
+// card's controller. Breaking is not attacking: the shields go to the
+// opponent's hand and their shield triggers are offered, but nothing blocks and
+// no creature is tapped.
+//
+// An opponent holding fewer than x shields simply loses the ones they have,
+// because the selection is clamped to what is in the shield zone.
+func BreakXOpShields(x int) match.HandlerFunc {
+	return func(card *match.Card, ctx *match.Context) {
+		opponent := ctx.Match.Opponent(card.Player)
 
-	ctx.Match.ReportActionInChat(ctx.Match.Opponent(card.Player),
-		fmt.Sprintf("%s effect broke one of %s's shields", card.Name, opponent.Username()))
+		shields := SelectBackside(
+			card.Player,
+			ctx.Match,
+			opponent,
+			match.SHIELDZONE,
+			fmt.Sprintf("%s effect: select %d shield(s) to break", card.Name, x),
+			x,
+			x,
+			false,
+		)
 
+		if len(shields) < 1 {
+			return
+		}
+
+		ctx.Match.BreakShields(shields, card)
+
+		ctx.Match.ReportActionInChat(opponent,
+			fmt.Sprintf("%s effect broke %d of %s's shields", card.Name, len(shields), opponent.Username()))
+	}
 }
 
 // PutOpShieldIntoGraveyard lets the card's controller choose one of the
