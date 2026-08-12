@@ -91,13 +91,13 @@ func SmashWarriorStagrandu(c *match.Card) {
 					// This creature gets +9000 Power until the end of the turn
 					ctx.Match.ApplyPersistentEffect(func(ctx2 *match.Context, exit func()) {
 						if card.Zone != match.BATTLEZONE {
-							card.RemoveConditionBySource(card.ID)
+							card.RemoveSpecificConditionBySource(cnd.PowerAmplifier, card.ID)
 							exit()
 							return
 						}
 
 						if _, ok := ctx2.Event.(*match.EndOfTurnStep); ok {
-							card.RemoveConditionBySource(card.ID)
+							card.RemoveSpecificConditionBySource(cnd.PowerAmplifier, card.ID)
 							exit()
 							return
 						}

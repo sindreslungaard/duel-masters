@@ -41,20 +41,20 @@ func TestUltimateDragon(t *testing.T) {
 
 		firstDragon := putUltimateDragonTestCardInBattlezone(t, scn, player.Player, ultimateDragonDragonUID)
 		assert.Equal(t, 10000, scn.Match.GetPower(ultimate, false))
-		assert.Equal(t, 1, ultimateDragonTestShieldBreakModifier(t, ultimate))
+		assert.Equal(t, 1, shieldBreakModifierOf(t, ultimate))
 
 		// A second Ultimate Dragon is an Armored Dragon, so each counts the other.
 		secondUltimate := putUltimateDragonTestCardInBattlezone(t, scn, player.Player, ultimateDragonUID)
 		assert.Equal(t, 15000, scn.Match.GetPower(ultimate, false))
-		assert.Equal(t, 2, ultimateDragonTestShieldBreakModifier(t, ultimate))
+		assert.Equal(t, 2, shieldBreakModifierOf(t, ultimate))
 		assert.Equal(t, 15000, scn.Match.GetPower(secondUltimate, false))
-		assert.Equal(t, 2, ultimateDragonTestShieldBreakModifier(t, secondUltimate))
+		assert.Equal(t, 2, shieldBreakModifierOf(t, secondUltimate))
 
 		moved, err := player.Player.MoveCard(firstDragon.ID, match.BATTLEZONE, match.GRAVEYARD, ultimateDragonSetupSrc)
 		require.NoError(t, err)
 		require.Equal(t, match.GRAVEYARD, moved.Zone)
 		assert.Equal(t, 10000, scn.Match.GetPower(ultimate, false), "the bonus shrinks with the battle zone")
-		assert.Equal(t, 1, ultimateDragonTestShieldBreakModifier(t, ultimate))
+		assert.Equal(t, 1, shieldBreakModifierOf(t, ultimate))
 	})
 
 	t.Run("ignores non-dragons, dragonoids and the opponent's dragons", func(t *testing.T) {
@@ -115,7 +115,7 @@ func TestUltimateDragon(t *testing.T) {
 		scn, player, _ := setupUltimateDragonTest(t)
 		ultimate := putUltimateDragonTestCardInBattlezone(t, scn, player.Player, ultimateDragonUID)
 		putUltimateDragonTestCardInBattlezone(t, scn, player.Player, ultimateDragonDragonUID)
-		require.Equal(t, 1, ultimateDragonTestShieldBreakModifier(t, ultimate))
+		require.Equal(t, 1, shieldBreakModifierOf(t, ultimate))
 
 		moved, err := player.Player.MoveCard(ultimate.ID, match.BATTLEZONE, match.GRAVEYARD, ultimateDragonSetupSrc)
 		require.NoError(t, err)
@@ -146,21 +146,4 @@ func putUltimateDragonTestCardInBattlezone(t *testing.T, scn *scenario.TestScena
 	require.NoError(t, err)
 	require.Equal(t, match.BATTLEZONE, moved.Zone)
 	return moved
-}
-
-func ultimateDragonTestShieldBreakModifier(t *testing.T, card *match.Card) int {
-	t.Helper()
-
-	total := 0
-	for _, condition := range card.Conditions() {
-		if condition.ID != cnd.ShieldBreakModifier {
-			continue
-		}
-
-		val, ok := condition.Val.(int)
-		require.True(t, ok, "shield break modifier must carry an int value")
-		total += val
-	}
-
-	return total
 }

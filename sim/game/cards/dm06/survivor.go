@@ -2,7 +2,6 @@ package dm06
 
 import (
 	"duel-masters/game/civ"
-	"duel-masters/game/cnd"
 	"duel-masters/game/family"
 	"duel-masters/game/fx"
 	"duel-masters/game/match"
@@ -41,18 +40,11 @@ func QTronicGargantua(c *match.Card) {
 	c.ManaCost = 6
 	c.ManaRequirement = []string{civ.Fire}
 
-	c.Use(fx.Creature, fx.Evolution, fx.Survivor, fx.When(fx.AttackingPlayer, func(card *match.Card, ctx *match.Context) {
-
-		mysurvivors := len(fx.FindFilter(card.Player, match.BATTLEZONE, func(card *match.Card) bool { return card.HasFamily(family.Survivor) }))
-
-		if mysurvivors < 1 {
-			return
-		}
-
-		card.AddUniqueSourceCondition(cnd.ShieldBreakModifier, mysurvivors-1, card.ID)
-		ctx.ScheduleAfter(func() {
-			card.RemoveConditionBySource(card.ID)
-		})
-
-	}))
+	// Crew breaker - Survivor
+	c.Use(
+		fx.Creature,
+		fx.Evolution,
+		fx.Survivor,
+		fx.CrewBreaker(fx.CountOtherOwnCreaturesWithFamily([]string{family.Survivor})),
+	)
 }

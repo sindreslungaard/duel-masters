@@ -260,6 +260,7 @@ func (p *Player) SpawnCard(id string, zone string) (*Card, error) {
 	}
 
 	c.Zone = zone
+	c.Tapped = enteringManaZoneTapped(c, zone)
 
 	switch zone {
 	case HAND:
