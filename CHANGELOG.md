@@ -4,6 +4,8 @@
 
 - Improved the duel experience on mobile
 - Added support for creating custom formats & banlists
+- Added sort options to the deck builder
+- Fixed an issue where a duel could not be forfeited while pending a player action to be made
 - New card "Tajimal, Vizier of Aqua"
 - New card "Aqua Skydiver"
 - New card "Techno Totem"
