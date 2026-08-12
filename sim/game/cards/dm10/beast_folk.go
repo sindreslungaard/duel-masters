@@ -67,3 +67,40 @@ func SkyswordTheSavageVizier(c *match.Card) {
 	}))
 
 }
+
+// SanfistTheSavageVizier ...
+func SanfistTheSavageVizier(c *match.Card) {
+
+	c.Name = "Sanfist, the Savage Vizier"
+	c.Power = 3000
+	c.Civs = []string{civ.Light, civ.Nature}
+	c.Family = []string{family.BeastFolk, family.Initiate}
+	c.ManaCost = 3
+	c.ManaRequirement = []string{civ.Light, civ.Nature}
+
+	c.Use(fx.Creature, fx.PutIntoManaZoneTapped, fx.Blocker(), func(card *match.Card, ctx *match.Context) {
+
+		// "When this creature would be discarded from your hand during your
+		// opponent's turn, you may put it into the battle zone instead."
+		event, ok := ctx.Event.(*match.MoveCard)
+
+		if !ok ||
+			event.CardID != card.ID ||
+			event.From != match.HAND ||
+			event.To != match.GRAVEYARD ||
+			ctx.Match.IsPlayerTurn(card.Player) {
+			return
+		}
+
+		if !fx.BinaryQuestion(card.Player, ctx.Match, fmt.Sprintf("Do you want to put %s into the battle zone instead of discarding it?", card.Name)) {
+			return
+		}
+
+		// Cancelling the pending move is what replaces the discard; the card is
+		// then put into play from the hand it never left.
+		ctx.InterruptFlow()
+
+		fx.ForcePutCreatureIntoBZ(ctx, card, match.HAND, card)
+	})
+
+}

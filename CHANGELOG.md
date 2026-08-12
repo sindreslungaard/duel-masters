@@ -16,6 +16,11 @@
 - New card "Flohdani, the Spydroid"
 - New card "Sporeblast Erengi"
 - New card "Soderlight, the Cold Blade"
+- New card "Burnwisp Lizard"
+- New card "Mystic Magician"
+- New card "Pinpoint Lunatron"
+- New card "Charge Whipper"
+- New card "Sanfist, the Savage Vizier"
 
 ## 12/08/2026
 
