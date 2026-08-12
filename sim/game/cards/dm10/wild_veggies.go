@@ -62,3 +62,17 @@ func KaratePotato(c *match.Card) {
 	}))
 
 }
+
+// HustleBerry ...
+func HustleBerry(c *match.Card) {
+
+	c.Name = "Hustle Berry"
+	c.Power = 1000
+	c.Civs = []string{civ.Nature}
+	c.Family = []string{family.WildVeggies}
+	c.ManaCost = 2
+	c.ManaRequirement = []string{civ.Nature}
+
+	c.Use(fx.Creature, fx.SilentSkill(fx.Draw1ToMana))
+
+}

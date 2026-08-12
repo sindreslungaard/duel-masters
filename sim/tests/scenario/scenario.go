@@ -158,6 +158,33 @@ func (s *TestScenario) ActionEndTurn(player *match.PlayerReference) error {
 
 	messageCount := conn.JSONWriteCount()
 
+	// The turn being started belongs to the opponent, so a start-of-turn effect
+	// such as silent skill prompts them rather than the player ending the turn.
+	// That prompt blocks the transition just as an end step prompt does, and it
+	// never reaches this player's connection, so both sides have to be watched.
+	opponent := s.Match.PlayerRef(s.Match.Opponent(player.Player))
+	opponentConn, err := s.connectionFor(opponent)
+	if err != nil {
+		return err
+	}
+
+	opponentMessageCount := opponentConn.JSONWriteCount()
+
+	openedPrompt := func() bool {
+		for _, raw := range opponentConn.JSONMessagesSince(opponentMessageCount) {
+			var header server.Message
+			if err := json.Unmarshal([]byte(raw), &header); err != nil {
+				continue
+			}
+
+			if header.Header == "action" {
+				return true
+			}
+		}
+
+		return false
+	}
+
 	if err := s.send(player, struct {
 		Header string `json:"header"`
 	}{
@@ -187,7 +214,7 @@ func (s *TestScenario) ActionEndTurn(player *match.PlayerReference) error {
 			}
 		}
 
-		return stateUpdates >= 2
+		return stateUpdates >= 2 || openedPrompt()
 	}); err != nil {
 		return err
 	}
@@ -202,6 +229,10 @@ func (s *TestScenario) ActionEndTurn(player *match.PlayerReference) error {
 		if header == "action" || header == "wait" {
 			return nil
 		}
+	}
+
+	if openedPrompt() {
+		return nil
 	}
 
 	// A turn transition keeps running past its last state broadcast, so the test

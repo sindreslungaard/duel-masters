@@ -197,17 +197,41 @@ func PutOwnCreatureFromBZToMZ(card *match.Card, ctx *match.Context) {
 	})
 }
 
+// ReturnXCreaturesFromGraveToHand returns up to x creatures of the player's
+// choice from their own graveyard, and lets them return none at all.
 func ReturnXCreaturesFromGraveToHand(x int) match.HandlerFunc {
+	return ReturnCreaturesFromGraveToHand(x, true)
+}
+
+// ReturnCreaturesFromGraveToHand returns creatures the player chooses from
+// their own graveyard to their hand.
+//
+// With may set the effect is the printed "up to x", which the player may
+// decline entirely. Without it the player must return exactly x, though a
+// graveyard holding fewer creatures than that simply returns what is there:
+// the selection is clamped to the cards that exist, so a mandatory effect
+// cannot deadlock on an empty graveyard.
+func ReturnCreaturesFromGraveToHand(x int, may bool) match.HandlerFunc {
 	return func(card *match.Card, ctx *match.Context) {
+		text := fmt.Sprintf("%s: Return %d creature(s) from your graveyard to your hand", card.Name, x)
+		if may {
+			text = fmt.Sprintf("%s: Return up to %d creature(s) from your graveyard to your hand", card.Name, x)
+		}
+
+		minimum := x
+		if may {
+			minimum = 1
+		}
+
 		SelectFilter(
 			card.Player,
 			ctx.Match,
 			card.Player,
 			match.GRAVEYARD,
-			fmt.Sprintf("%s: Return up to %d creature(s) from your graveyard to your hand", card.Name, x),
-			1,
+			text,
+			minimum,
 			x,
-			true,
+			may,
 			func(x *match.Card) bool { return x.HasCondition(cnd.Creature) },
 			true,
 		).Map(func(x *match.Card) {

@@ -1,5 +1,16 @@
 # Changelog
 
+## Unreleased
+
+- Added support for the "silent skill" ability
+- New card "Hustle Berry"
+- New card "Milporo"
+- New card "Kaemira, the Oracle"
+- New card "Bulgluf, the Spydroid"
+- New card "Gigamente"
+- New card "Vorg's Engine"
+- New card "Minelord Skyterror"
+
 ## 12/08/2026
 
 - Improved the duel experience on mobile

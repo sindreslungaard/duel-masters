@@ -37,3 +37,17 @@ func Zaltan(c *match.Card) {
 	}))
 
 }
+
+// Milporo ...
+func Milporo(c *match.Card) {
+
+	c.Name = "Milporo"
+	c.Power = 3000
+	c.Civs = []string{civ.Water}
+	c.Family = []string{family.CyberLord}
+	c.ManaCost = 4
+	c.ManaRequirement = []string{civ.Water}
+
+	c.Use(fx.Creature, fx.SilentSkill(fx.Draw1))
+
+}
