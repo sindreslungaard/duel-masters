@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 13/08/2026
 
 - Added lobby chat embeds for deck links
 - Added username tagging in lobby chat
