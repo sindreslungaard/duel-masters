@@ -31,14 +31,14 @@ func tapOpCreatureWithOptin(card *match.Card, ctx *match.Context, optional bool)
 		1,
 		optional,
 	).Map(func(creature *match.Card) {
-		reportTapped(creature, ctx, card)
+		TapCreature(creature, ctx, card)
 	})
 }
 
-// reportTapped taps a creature and says so in the chat. Tapping is otherwise
+// TapCreature taps a creature and says so in the chat. Tapping is otherwise
 // silent, which leaves the affected player guessing at what just happened to
 // their board.
-func reportTapped(creature *match.Card, ctx *match.Context, source *match.Card) {
+func TapCreature(creature *match.Card, ctx *match.Context, source *match.Card) {
 	creature.Tapped = true
 
 	ctx.Match.ReportActionInChat(creature.Player, fmt.Sprintf("%s was tapped by %s", creature.Name, source.Name))
@@ -67,7 +67,7 @@ func TapUpToXOpCreatures(x int) match.HandlerFunc {
 			x,
 			true,
 		).Map(func(creature *match.Card) {
-			reportTapped(creature, ctx, card)
+			TapCreature(creature, ctx, card)
 		})
 	}
 }

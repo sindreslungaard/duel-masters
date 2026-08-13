@@ -126,6 +126,17 @@
 - New card "Hydrooze, the Mutant Emperor"
 - New card "Phantomach, the Gigatrooper"
 - New card "Nemonex, Bajula's Robomantis"
+- New card "Pincer Scarab"
+- New card "Cloned Spike-Horn"
+- New card "Cloned Blade"
+- New card "Cloned Deflector"
+- New card "Cloned Nightmare"
+- New card "Cloned Spiral"
+- New card "Copper Locust"
+- New card "Turtle Horn, the Imposing"
+- New card "Wingeye Moth"
+- New card "Ularus, Punishment Elemental"
+- New card "Gigavrand"
 
 ## 12/08/2026
 

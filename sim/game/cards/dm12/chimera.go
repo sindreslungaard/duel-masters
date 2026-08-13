@@ -85,3 +85,60 @@ func Gigarayze(c *match.Card) {
 	}))
 
 }
+
+// gigavrandDrawThreshold is how many cards the opponent has to have drawn during
+// a turn for Gigavrand to empty their hand at the end of it.
+const gigavrandDrawThreshold = 2
+
+// Gigavrand ...
+func Gigavrand(c *match.Card) {
+
+	c.Name = "Gigavrand"
+	c.Power = 3000
+	c.Civs = []string{civ.Darkness}
+	c.Family = []string{family.Chimera}
+	c.ManaCost = 6
+	c.ManaRequirement = []string{civ.Darkness}
+
+	// Nothing in the engine remembers how much was drawn, so Gigavrand counts
+	// for itself. The tally runs whatever zone this card is in, because the
+	// printed condition asks about the whole turn rather than about the part of
+	// it Gigavrand was in play for; only the punishment needs the battle zone.
+	drawnThisTurn := 0
+
+	c.Use(fx.Creature, func(card *match.Card, ctx *match.Context) {
+		switch ctx.Event.(type) {
+
+		case *match.CardMoved:
+			event := ctx.Event.(*match.CardMoved)
+
+			// Player.DrawCards is the only thing that tags a move this way, so
+			// searching a card out of the deck is not drawing it.
+			if event.Source != "draw" || event.From != match.DECK || event.To != match.HAND {
+				return
+			}
+
+			drawer := ctx.Match.Player1.Player
+			if event.MatchPlayerID != 1 {
+				drawer = ctx.Match.Player2.Player
+			}
+
+			if drawer == ctx.Match.Opponent(card.Player) {
+				drawnThisTurn++
+			}
+
+		case *match.EndStep:
+			if card.Zone != match.BATTLEZONE || drawnThisTurn < gigavrandDrawThreshold {
+				return
+			}
+
+			fx.OpponentDiscardsHand(card, ctx)
+
+		case *match.EndOfTurnStep:
+			// Reset after the end step has had its look, so the next turn starts
+			// counting from nothing.
+			drawnThisTurn = 0
+		}
+	})
+
+}

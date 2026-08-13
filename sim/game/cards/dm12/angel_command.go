@@ -6,6 +6,7 @@ import (
 	"duel-masters/game/family"
 	"duel-masters/game/fx"
 	"duel-masters/game/match"
+	"fmt"
 )
 
 // ValkyerStarstormElemental ...
@@ -53,5 +54,57 @@ func KilstineNebulaElemental(c *match.Card) {
 			fx.ForceBlocker(x, ctx, card.ID)
 		})
 	})
+
+}
+
+// UlarusPunishmentElemental ...
+func UlarusPunishmentElemental(c *match.Card) {
+
+	c.Name = "Ularus, Punishment Elemental"
+	c.Power = 4500
+	c.Civs = []string{civ.Light}
+	c.Family = []string{family.AngelCommand}
+	c.ManaCost = 5
+	c.ManaRequirement = []string{civ.Light}
+
+	c.Use(fx.Creature, fx.When(fx.Summoned, func(card *match.Card, ctx *match.Context) {
+		// Ularus is in the battle zone by now, so it counts towards its own
+		// allowance.
+		allowance := len(fx.Find(card.Player, match.BATTLEZONE))
+
+		if allowance < 1 {
+			return
+		}
+
+		opponent := ctx.Match.Opponent(card.Player)
+		faceDown := func(x *match.Card) bool { return !x.ShieldFaceUp }
+
+		// "A shield" names no owner, so either shield zone is fair game. They
+		// are offered backside only: a shield the caster has not turned face up
+		// yet must stay hidden.
+		shields := map[string][]*match.Card{
+			"Your shields":            fx.FindFilter(card.Player, match.SHIELDZONE, faceDown),
+			"Your opponent's shields": fx.FindFilter(opponent, match.SHIELDZONE, faceDown),
+		}
+
+		turned := fx.SelectMultipartBackside(
+			card.Player,
+			ctx.Match,
+			shields,
+			fmt.Sprintf("%s's effect: You may turn up to %d shields face up, one for each creature you have in the battle zone.", card.Name, allowance),
+			1,
+			allowance,
+			true,
+		)
+
+		turned.Map(func(shield *match.Card) {
+			shield.ShieldFaceUp = true
+			ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("A shield of %s was turned face up by %s", shield.Player.Username(), card.Name))
+		})
+
+		if len(turned) > 0 {
+			ctx.Match.BroadcastState()
+		}
+	}))
 
 }

@@ -946,6 +946,17 @@ var DM12 = map[string]match.CardConstructor{
 	"5ccf0dd9-4dd3-4094-ab00-62c4f265cfd1": dm12.HydroozeTheMutantEmperor,
 	"6a5fc9ec-17c2-4e3f-92ce-5f67344895a0": dm12.PhantomachTheGigatrooper,
 	"8b9ed1f7-70d7-4932-9381-25040dc69d6e": dm12.NemonexBajulasRobomantis,
+	"7df9100a-a893-45ea-ab1a-8312b4232b65": dm12.PincerScarab,
+	"3bd89f19-36f5-4f39-ab3c-4ecc3a4204a0": dm12.ClonedSpikeHorn,
+	"b760d56c-b6cc-4af3-aa97-fb3c04c232ff": dm12.ClonedBlade,
+	"192b1952-e079-4fe2-be03-25d6b655c044": dm12.ClonedDeflector,
+	"060ee9a8-f238-41f3-9e46-3b467c487a5e": dm12.ClonedNightmare,
+	"55367300-8226-4abf-bdce-061549630013": dm12.ClonedSpiral,
+	"2b5cb952-39ea-4264-8f73-92b912102021": dm12.CopperLocust,
+	"1c6e6c4a-9108-4e88-9730-a9a12ddb2dbd": dm12.TurtleHornTheImposing,
+	"02f11a2f-ff50-4e0d-80bd-2995be9d3dd8": dm12.WingeyeMoth,
+	"05c5496d-e5fa-4691-8542-2d6c6919f402": dm12.UlarusPunishmentElemental,
+	"76310adb-f7c2-4545-8b71-2332b36fbb83": dm12.Gigavrand,
 }
 
 // Promo is a map with all the card id's in the game and corresponding CardConstructor for promotional exclusive cards

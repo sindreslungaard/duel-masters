@@ -919,6 +919,19 @@ func MySurvivorSummoned(card *match.Card, ctx *match.Context) bool {
 	return true
 }
 
+// CreatureEvolved returns true when either player has put an evolution creature
+// on one of their creatures.
+//
+// The evolution is already complete by the time this fires, so the base is in
+// the hidden zone and the evolution card is not in the battle zone yet. A card
+// that is itself the base therefore fails an ordinary battle zone guard, which
+// is usually what its printed text wants.
+func CreatureEvolved(card *match.Card, ctx *match.Context) bool {
+	_, ok := ctx.Event.(*match.EvolutionEvent)
+
+	return ok
+}
+
 // AnotherCreatureSummoned returns true if another card was summoned
 //
 // Does not activate if this current card is summoned.

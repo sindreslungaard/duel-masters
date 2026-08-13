@@ -87,8 +87,8 @@ func TestEnigmaticCascade(t *testing.T) {
 		}
 
 		// Emptied down to the spell, which is gone from the hand by the time its
-		// own effect resolves. Snapshotted first, because moving cards out of a
-		// zone rewrites the slice being ranged over.
+		// own effect resolves. Snapshotted first, as the repository asks of
+		// anything that moves several cards out of one zone.
 		hand, err := player.Player.Container(match.HAND)
 		require.NoError(t, err)
 
