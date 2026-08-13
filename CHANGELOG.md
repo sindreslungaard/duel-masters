@@ -2,7 +2,6 @@
 
 ## Unreleased
 
-- Added support for the "silent skill" ability
 - New card "Hustle Berry"
 - New card "Milporo"
 - New card "Kaemira, the Oracle"
@@ -54,6 +53,21 @@
 - New card "Rollicking Totem"
 - New card "Royal Durian"
 - New card "Squawking Lunatron"
+- New card "Aqua Trickster"
+- New card "Asra, Vizier of Safety"
+- New card "Bonfire Lizard"
+- New card "Eviscerating Warrior Lumez"
+- New card "Hazaria, Duke of Thorns"
+- New card "Jagila, the Hidden Pillager"
+- New card "Klujadras"
+- New card "Lamiel, Destiny Enforcer"
+- New card "Macho Melon"
+- New card "Merlee, the Oracle"
+- New card "Ninja Pumpkin"
+- New card "Revival Soldier"
+- New card "Saliva Worm"
+- New card "Sapian Tark, Flame Dervish"
+- New card "Skyscraper Shell"
 
 ## 12/08/2026
 

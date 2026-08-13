@@ -868,6 +868,21 @@ var DM11 = map[string]match.CardConstructor{
 	"e278e681-ee2d-4865-be34-9933dca3d470": dm11.RollickingTotem,
 	"89304216-4cf9-4bb0-903f-55e7248655df": dm11.RoyalDurian,
 	"c3380f40-8a9c-49f7-9c6b-e00ae2212481": dm11.SquawkingLunatron,
+	"5d09f6bb-3b6a-48ee-be64-0c9017a02708": dm11.AquaTrickster,
+	"9856078c-0319-4867-a190-427e02c043bb": dm11.AsraVizierOfSafety,
+	"aa0688bf-5a62-4a62-a613-0b4880c159de": dm11.BonfireLizard,
+	"ad3e67c6-5f09-4602-8586-53cc80813555": dm11.EvisceratingWarriorLumez,
+	"73af7f15-12fc-4ae7-a7c3-08d7141ad818": dm11.HazariaDukeOfThorns,
+	"e69f512c-86a5-4afa-b76f-77e70ed103b6": dm11.JagilaTheHiddenPillager,
+	"89eddde4-a2fe-45c3-ad47-813c87ac6d37": dm11.Klujadras,
+	"e34eb3e3-f4b1-429a-90da-c5cf96a767da": dm11.LamielDestinyEnforcer,
+	"fa987e39-2955-4074-bcf2-b7888ae27319": dm11.MachoMelon,
+	"9ec241a3-57e9-4054-8680-aff2c1a7b45b": dm11.MerleeTheOracle,
+	"0b99b1d5-240b-4a4a-b505-e446df330c40": dm11.NinjaPumpkin,
+	"ee2ae2d8-1ad3-4864-86ba-ce3c2fdb8ad5": dm11.RevivalSoldier,
+	"2ea5870b-6f0f-4980-89de-c5c2d50c798f": dm11.SalivaWorm,
+	"61854910-584d-4d41-a125-61efe3c67a53": dm11.SapianTarkFlameDervish,
+	"9c8b4458-dc55-407d-a42a-a29a26bc5d99": dm11.SkyscraperShell,
 }
 
 // Promo is a map with all the card id's in the game and corresponding CardConstructor for promotional exclusive cards

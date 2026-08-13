@@ -365,3 +365,13 @@ func OpponentDiscardsHand(card *match.Card, ctx *match.Context) {
 	ctx.Match.ReportActionInChat(ctx.Match.Opponent(card.Player), fmt.Sprintf("%s's hand was discarded by %s", ctx.Match.Opponent(card.Player).Username(), card.Name))
 
 }
+
+// OpponentDiscardsXRandomCards makes the opponent discard x cards at random. A
+// hand holding fewer simply loses what is there.
+func OpponentDiscardsXRandomCards(x int) match.HandlerFunc {
+	return func(card *match.Card, ctx *match.Context) {
+		for range x {
+			OpponentDiscardsRandomCard(card, ctx)
+		}
+	}
+}

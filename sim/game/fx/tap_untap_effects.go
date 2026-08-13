@@ -26,13 +26,22 @@ func tapOpCreatureWithOptin(card *match.Card, ctx *match.Context, optional bool)
 		ctx.Match,
 		ctx.Match.Opponent(card.Player),
 		match.BATTLEZONE,
-		"Select 1 of your opponent's creature and tap it.",
+		fmt.Sprintf("%s's effect: Select 1 of your opponent's creatures and tap it.", card.Name),
 		1,
 		1,
 		optional,
 	).Map(func(creature *match.Card) {
-		creature.Tapped = true
+		reportTapped(creature, ctx, card)
 	})
+}
+
+// reportTapped taps a creature and says so in the chat. Tapping is otherwise
+// silent, which leaves the affected player guessing at what just happened to
+// their board.
+func reportTapped(creature *match.Card, ctx *match.Context, source *match.Card) {
+	creature.Tapped = true
+
+	ctx.Match.ReportActionInChat(creature.Player, fmt.Sprintf("%s was tapped by %s", creature.Name, source.Name))
 }
 
 func TapOpCreature(card *match.Card, ctx *match.Context) {
@@ -58,7 +67,7 @@ func TapUpToXOpCreatures(x int) match.HandlerFunc {
 			x,
 			true,
 		).Map(func(creature *match.Card) {
-			creature.Tapped = true
+			reportTapped(creature, ctx, card)
 		})
 	}
 }

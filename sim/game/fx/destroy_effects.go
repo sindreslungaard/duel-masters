@@ -238,3 +238,50 @@ func OpponentChoosesManaBurn(card *match.Card, ctx *match.Context) {
 		ctx.Match.ReportActionInChat(ctx.Match.Opponent(card.Player), fmt.Sprintf("%s effect: %s moved from MZ to GY", card.Name, manaCard.Name))
 	})
 }
+
+// DestroyUpToXOpBlockers destroys up to x of the opponent's creatures that have
+// "blocker". The choice can be declined entirely, and no prompt is opened when
+// the opponent controls no blocker at all.
+func DestroyUpToXOpBlockers(x int) match.HandlerFunc {
+	return func(card *match.Card, ctx *match.Context) {
+		SelectFilter(
+			card.Player,
+			ctx.Match,
+			ctx.Match.Opponent(card.Player),
+			match.BATTLEZONE,
+			fmt.Sprintf("%s's effect: Destroy up to %d of your opponent's creatures that have \"blocker\".", card.Name, x),
+			1,
+			x,
+			true,
+			func(creature *match.Card) bool { return creature.HasCondition(cnd.Blocker) },
+			false,
+		).Map(func(blocker *match.Card) {
+			ctx.Match.Destroy(blocker, card, match.DestroyedByMiscAbility)
+		})
+	}
+}
+
+// OpponentChoosesCreatureToMana makes the opponent choose one of their own
+// creatures and put it into their mana zone.
+func OpponentChoosesCreatureToMana(card *match.Card, ctx *match.Context) {
+	opponent := ctx.Match.Opponent(card.Player)
+
+	Select(
+		opponent,
+		ctx.Match,
+		opponent,
+		match.BATTLEZONE,
+		fmt.Sprintf("%s: Choose one of your creatures and put it into your mana zone", card.Name),
+		1,
+		1,
+		false,
+	).Map(func(creature *match.Card) {
+		moved, err := opponent.MoveCard(creature.ID, match.BATTLEZONE, match.MANAZONE, card.ID)
+
+		if err != nil || moved.Zone != match.MANAZONE {
+			return
+		}
+
+		ctx.Match.ReportActionInChat(opponent, fmt.Sprintf("%s was put into %s's mana zone by %s", creature.Name, opponent.Username(), card.Name))
+	})
+}

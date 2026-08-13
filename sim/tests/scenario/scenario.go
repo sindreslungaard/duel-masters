@@ -352,12 +352,22 @@ func (s *TestScenario) ActionAttackCreature(player *match.PlayerReference, attac
 
 	// Confirming an attack broadcasts once after tapping the attacker and the
 	// outer AttackCreature action broadcasts again after all nested effects and
-	// battle processing have returned.
+	// battle processing have returned. A nested effect may instead open a prompt
+	// for either player, in which case the loop is blocked until the caller
+	// answers it and the second broadcast never arrives; a prompt for the
+	// defender reaches this player as a wait.
 	return s.waitFor(func() bool {
 		stateUpdates := 0
 		for _, raw := range conn.JSONMessagesSince(completionStart) {
 			var header server.Message
-			if err := json.Unmarshal([]byte(raw), &header); err == nil && header.Header == "state_update" {
+			if err := json.Unmarshal([]byte(raw), &header); err != nil {
+				continue
+			}
+
+			switch header.Header {
+			case "action", "wait":
+				return true
+			case "state_update":
 				stateUpdates++
 			}
 		}
@@ -576,6 +586,31 @@ func (s *TestScenario) Warnings(player *match.PlayerReference, since int) ([]str
 	}
 
 	return warnings, nil
+}
+
+// ChatMessages returns the text of every chat message the player received since
+// position since. Effects report what they did through the chat, so this is how
+// a test asserts that something was announced and not only performed.
+func (s *TestScenario) ChatMessages(player *match.PlayerReference, since int) ([]string, error) {
+	conn, err := s.connectionFor(player)
+	if err != nil {
+		return nil, err
+	}
+
+	messages := make([]string, 0)
+	for _, raw := range conn.JSONMessagesSince(since) {
+		var header server.Message
+		if err := json.Unmarshal([]byte(raw), &header); err != nil || header.Header != "chat" {
+			continue
+		}
+
+		message := &server.ChatMessage{}
+		if err := json.Unmarshal([]byte(raw), message); err == nil {
+			messages = append(messages, message.Message)
+		}
+	}
+
+	return messages, nil
 }
 
 // MessageCount returns the number of JSON messages the server has sent to the player so far.

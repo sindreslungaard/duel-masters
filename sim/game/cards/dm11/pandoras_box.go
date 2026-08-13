@@ -36,3 +36,17 @@ func BeratchaTheHiddenGlutton(c *match.Card) {
 	c.Use(fx.Creature, fx.Slayer)
 
 }
+
+// JagilaTheHiddenPillager ...
+func JagilaTheHiddenPillager(c *match.Card) {
+
+	c.Name = "Jagila, the Hidden Pillager"
+	c.Power = 3000
+	c.Civs = []string{civ.Darkness}
+	c.Family = []string{family.PandorasBox}
+	c.ManaCost = 5
+	c.ManaRequirement = []string{civ.Darkness}
+
+	c.Use(fx.Creature, fx.WaveStriker, fx.WhileWaveStriker(fx.When(fx.Summoned, fx.OpponentDiscardsXRandomCards(3))))
+
+}

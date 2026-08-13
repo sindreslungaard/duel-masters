@@ -49,3 +49,19 @@ func TimeScout(c *match.Card) {
 	}))
 
 }
+
+// RevivalSoldier ...
+func RevivalSoldier(c *match.Card) {
+
+	c.Name = "Revival Soldier"
+	c.Power = 2000
+	c.Civs = []string{civ.Water}
+	c.Family = []string{family.Merfolk}
+	c.ManaCost = 3
+	c.ManaRequirement = []string{civ.Water}
+
+	c.PowerModifier = fx.WaveStrikerPower(c, 4000)
+
+	c.Use(fx.Creature, fx.WaveStriker, fx.WhileWaveStriker(fx.When(fx.WouldBeDestroyed, fx.ReturnToHand)))
+
+}

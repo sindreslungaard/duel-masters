@@ -35,4 +35,5 @@ const (
 	TreatedAsTapped           = "treated_as_tapped"
 	SilentSkill               = "silent_skill"
 	SilentSkillReady          = "silent_skill_ready"
+	WaveStriker               = "wave_striker"
 )

@@ -28,7 +28,7 @@ func WheneverThisAttacksMayTapDorFCreature() match.HandlerFunc {
 			1,
 			true,
 		).Map(func(x *match.Card) {
-			x.Tapped = true
+			reportTapped(x, ctx, c)
 		})
 
 	})
