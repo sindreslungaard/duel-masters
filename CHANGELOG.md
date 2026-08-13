@@ -106,6 +106,15 @@
 - New card "Extreme Crawler"
 - New card "Typhoon Crawler"
 - New card "Wily Carpenter"
+- New card "Uncanny Turnip"
+- New card "Steamroller Mutant"
+- New card "Flame Trooper Goliac"
+- New card "Kilstine, Nebula Elemental"
+- New card "Gigarayze"
+- New card "Bingole, the Explorer"
+- New card "Terradragon Arque Delacerna"
+- New card "Whirling Warrior Malian"
+- New card "Gandaval's Stapler"
 
 ## 12/08/2026
 

@@ -303,3 +303,22 @@ func PlayerChoosesAndDestroysOwnCreature(player *match.Player, card *match.Card,
 		ctx.Match.Destroy(creature, card, match.DestroyedByMiscAbility)
 	})
 }
+
+// DestroyAllCreatures destroys every creature in the battle zone, on both
+// sides, sparing nothing. The full set is decided before anything is destroyed,
+// so a destruction that changes the board cannot change who is caught.
+func DestroyAllCreatures(destroyType match.CreatureDestroyedContext) match.HandlerFunc {
+	return func(card *match.Card, ctx *match.Context) {
+		toDestroy := make([]*match.Card, 0)
+
+		for _, player := range []*match.Player{card.Player, ctx.Match.Opponent(card.Player)} {
+			Find(player, match.BATTLEZONE).Map(func(creature *match.Card) {
+				toDestroy = append(toDestroy, creature)
+			})
+		}
+
+		for _, creature := range toDestroy {
+			ctx.Match.Destroy(creature, card, destroyType)
+		}
+	}
+}

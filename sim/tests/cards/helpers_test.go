@@ -233,3 +233,48 @@ func summonWithOwnMana(t *testing.T, scn *scenario.TestScenario, player *match.P
 
 	return card
 }
+
+// discardTriggerUID is a creature whose summon makes the opponent discard a
+// card at random, which is how a test triggers a discard replacement.
+const discardTriggerUID = "ba955ab0-5bb3-4aaf-82f3-293522e65a9c" // Locomotiver
+
+// discardTriggerManaUID pays for it.
+const discardTriggerManaUID = "e2b992ee-91a3-49d3-8228-7be60a0b9ec5" // Writhing Bone Ghoul (darkness)
+
+// setupDiscardReplacementTest leaves the opponent on turn with a creature ready
+// to summon that discards a random card, and the card under test as the only
+// card in the other player's hand so the discard can only hit that.
+func setupDiscardReplacementTest(t *testing.T, uid string) (*scenario.TestScenario, *match.PlayerReference, *match.PlayerReference, *match.Card) {
+	t.Helper()
+
+	scn, player, opponent := setupDuel(t)
+
+	for range 4 {
+		_, err := opponent.Player.SpawnCard(discardTriggerManaUID, match.MANAZONE)
+		require.NoError(t, err)
+	}
+
+	_, err := opponent.Player.SpawnCard(discardTriggerUID, match.HAND)
+	require.NoError(t, err)
+
+	require.NoError(t, scn.ActionEndTurn(player))
+	require.True(t, scn.Match.IsPlayerTurn(opponent.Player))
+
+	// Emptied last so the drawn opening hand cannot be discarded instead.
+	emptyHand(t, player, sharedTestSrc)
+
+	card, err := player.Player.SpawnCard(uid, match.HAND)
+	require.NoError(t, err)
+
+	return scn, player, opponent, card
+}
+
+// discardTriggerCard finds the creature setupDiscardReplacementTest prepared.
+func discardTriggerCard(t *testing.T, scn *scenario.TestScenario, opponent *match.PlayerReference) string {
+	t.Helper()
+
+	card, err := scn.FindCard(opponent.Player, match.HAND, discardTriggerUID)
+	require.NoError(t, err)
+
+	return card.ID
+}

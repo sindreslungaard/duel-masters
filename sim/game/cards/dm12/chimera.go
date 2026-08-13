@@ -2,9 +2,11 @@ package dm12
 
 import (
 	"duel-masters/game/civ"
+	"duel-masters/game/cnd"
 	"duel-masters/game/family"
 	"duel-masters/game/fx"
 	"duel-masters/game/match"
+	"fmt"
 )
 
 // Gigaslug ...
@@ -46,5 +48,40 @@ func GigappiPonto(c *match.Card) {
 	c.ManaRequirement = []string{civ.Darkness, civ.Fire}
 
 	c.Use(fx.Creature, fx.PutIntoManaZoneTapped)
+
+}
+
+// Gigarayze ...
+func Gigarayze(c *match.Card) {
+
+	c.Name = "Gigarayze"
+	c.Power = 2000
+	c.Civs = []string{civ.Darkness}
+	c.Family = []string{family.Chimera}
+	c.ManaCost = 4
+	c.ManaRequirement = []string{civ.Darkness}
+
+	c.Use(fx.Creature, fx.When(fx.Summoned, func(card *match.Card, ctx *match.Context) {
+		fx.SelectFilter(
+			card.Player,
+			ctx.Match,
+			card.Player,
+			match.GRAVEYARD,
+			fmt.Sprintf("%s's effect: You may return a water or fire creature from your graveyard to your hand.", card.Name),
+			1,
+			1,
+			true,
+			func(x *match.Card) bool {
+				return x.HasCondition(cnd.Creature) && (x.HasCiv(civ.Water) || x.HasCiv(civ.Fire))
+			},
+			true,
+		).Map(func(chosen *match.Card) {
+			moved, err := card.Player.MoveCard(chosen.ID, match.GRAVEYARD, match.HAND, card.ID)
+
+			if err == nil && moved.Zone == match.HAND {
+				ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s was returned to %s's hand by %s", chosen.Name, card.Player.Username(), card.Name))
+			}
+		})
+	}))
 
 }

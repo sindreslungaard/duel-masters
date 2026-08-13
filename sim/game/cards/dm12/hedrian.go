@@ -20,3 +20,20 @@ func WindmillMutant(c *match.Card) {
 	c.Use(fx.Creature, fx.When(fx.AttackConfirmed, fx.OpponentDiscardsRandomCard))
 
 }
+
+// SteamrollerMutant ...
+func SteamrollerMutant(c *match.Card) {
+
+	c.Name = "Steamroller Mutant"
+	c.Power = 3000
+	c.Civs = []string{civ.Darkness}
+	c.Family = []string{family.Hedrian}
+	c.ManaCost = 4
+	c.ManaRequirement = []string{civ.Darkness}
+
+	// "Destroy all creatures" spares nothing, Steamroller Mutant included, and
+	// the wave strikers that switched its ability on go with it.
+	c.Use(fx.Creature, fx.WaveStriker, fx.WhileWaveStriker(fx.When(fx.Summoned,
+		fx.DestroyAllCreatures(match.DestroyedByMiscAbility))))
+
+}

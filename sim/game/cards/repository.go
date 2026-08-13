@@ -926,6 +926,15 @@ var DM12 = map[string]match.CardConstructor{
 	"899e15d3-ed0d-4f13-adf9-54e2db77736d": dm12.MizoyTheOracle,
 	"f98787f3-2962-4f55-80d1-da295cbfede7": dm12.ExtremeCrawler,
 	"aeaaf98d-938f-46d1-a271-49a86f668ae6": dm12.TyphoonCrawler,
+	"a6bd38a4-734f-4242-bbd2-93942396d1cb": dm12.UncannyTurnip,
+	"6250a4d5-c34e-4585-9c3c-cda7b0b094d3": dm12.SteamrollerMutant,
+	"34ab516c-6a28-4743-a572-6c1140b1792d": dm12.FlameTrooperGoliac,
+	"af2e10ca-da3c-48ee-8064-d12c400ff1f9": dm12.KilstineNebulaElemental,
+	"5ead68c2-dce0-4e8e-b718-02f2cce5dfa0": dm12.Gigarayze,
+	"ba6ad07e-eed3-49b9-8830-2df794b13066": dm12.BingoleTheExplorer,
+	"dd02d138-9915-4204-856f-d20427072339": dm12.TerradragonArqueDelacerna,
+	"a328f1ed-12b9-467e-b621-19f676e75714": dm12.WhirlingWarriorMalian,
+	"d0429aea-e222-482e-a23a-49db1df89c98": dm12.GandavalsStapler,
 }
 
 // Promo is a map with all the card id's in the game and corresponding CardConstructor for promotional exclusive cards

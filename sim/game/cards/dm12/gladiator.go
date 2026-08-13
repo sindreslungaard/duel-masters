@@ -34,3 +34,17 @@ func ElectroExplorerSyrion(c *match.Card) {
 	c.Use(fx.Creature, fx.PutIntoManaZoneTapped)
 
 }
+
+// BingoleTheExplorer ...
+func BingoleTheExplorer(c *match.Card) {
+
+	c.Name = "Bingole, the Explorer"
+	c.Power = 4000
+	c.Civs = []string{civ.Light}
+	c.Family = []string{family.Gladiator}
+	c.ManaCost = 4
+	c.ManaRequirement = []string{civ.Light}
+
+	c.Use(fx.Creature, fx.PutIntoBattleZoneInsteadOfDiscard)
+
+}

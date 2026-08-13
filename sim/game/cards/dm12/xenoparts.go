@@ -20,3 +20,17 @@ func MuramasasKnife(c *match.Card) {
 	c.Use(fx.Creature, fx.AttackUntapped)
 
 }
+
+// GandavalsStapler ...
+func GandavalsStapler(c *match.Card) {
+
+	c.Name = "Gandaval's Stapler"
+	c.Power = 3000
+	c.Civs = []string{civ.Fire}
+	c.Family = []string{family.Xenoparts}
+	c.ManaCost = 2
+	c.ManaRequirement = []string{civ.Fire}
+
+	c.Use(fx.Creature, fx.TapSelfWhenAnotherCreatureArrives)
+
+}
