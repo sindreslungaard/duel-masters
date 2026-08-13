@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Added lobby chat embeds for deck links
+- Added @username tagging in lobby chat
 - New card "Hustle Berry"
 - New card "Milporo"
 - New card "Kaemira, the Oracle"
