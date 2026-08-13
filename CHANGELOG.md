@@ -75,6 +75,12 @@
 - New card "Rise and Shine"
 - New card "Roulette of Ruin"
 - New card "Heavyweight Dragon"
+- New card "Live and Breathe"
+- New card "Slash and Burn"
+- New card "Miraculous Truce"
+- New card "Miraculous Meltdown"
+- New card "Miraculous Rebirth"
+- New card "Miraculous Plague"
 
 ## 12/08/2026
 
