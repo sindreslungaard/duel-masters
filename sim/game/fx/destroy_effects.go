@@ -285,3 +285,21 @@ func OpponentChoosesCreatureToMana(card *match.Card, ctx *match.Context) {
 		ctx.Match.ReportActionInChat(opponent, fmt.Sprintf("%s was put into %s's mana zone by %s", creature.Name, opponent.Username(), card.Name))
 	})
 }
+
+// PlayerChoosesAndDestroysOwnCreature makes the given player pick one of their
+// own creatures and destroy it. Unlike OwnChoosesAndDestroysCreature the chooser
+// is passed in, which is what an effect that fires on both players' turns needs.
+func PlayerChoosesAndDestroysOwnCreature(player *match.Player, card *match.Card, ctx *match.Context) {
+	Select(
+		player,
+		ctx.Match,
+		player,
+		match.BATTLEZONE,
+		fmt.Sprintf("%s: Choose one of your creatures and destroy it.", card.Name),
+		1,
+		1,
+		false,
+	).Map(func(creature *match.Card) {
+		ctx.Match.Destroy(creature, card, match.DestroyedByMiscAbility)
+	})
+}

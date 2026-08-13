@@ -36,4 +36,5 @@ const (
 	SilentSkill               = "silent_skill"
 	SilentSkillReady          = "silent_skill_ready"
 	WaveStriker               = "wave_striker"
+	DoesntUntap               = "doesnt_untap"
 )

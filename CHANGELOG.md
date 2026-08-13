@@ -81,6 +81,9 @@
 - New card "Miraculous Meltdown"
 - New card "Miraculous Rebirth"
 - New card "Miraculous Plague"
+- New card "Evil Incarnate"
+- New card "Warped Lunatron"
+- New card "Lockdown Lizard"
 
 ## 12/08/2026
 

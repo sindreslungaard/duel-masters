@@ -894,6 +894,9 @@ var DM11 = map[string]match.CardConstructor{
 	"3713abe0-27bb-475d-b94e-35d2c2fd3f79": dm11.MiraculousMeltdown,
 	"a45f2208-2b9a-462e-86a2-4e1d004ae3a1": dm11.MiraculousRebirth,
 	"c912b52a-6d6b-4997-ba2d-49468e18eb65": dm11.MiraculousPlague,
+	"b888a7a8-d8c0-458a-8cf6-0b675ab9123e": dm11.EvilIncarnate,
+	"fccd4a14-6b55-42bf-8dac-8ac311fc4571": dm11.WarpedLunatron,
+	"5369887a-6aaa-489a-8aa2-543e74162832": dm11.LockdownLizard,
 }
 
 // Promo is a map with all the card id's in the game and corresponding CardConstructor for promotional exclusive cards
