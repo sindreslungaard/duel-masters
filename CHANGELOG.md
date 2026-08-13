@@ -1,6 +1,60 @@
 # Changelog
 
-## [Unreleased]
+## Unreleased
+
+- Added support for multicolored cards
+- New card "Gonta, the Warrior Savage"
+- New card "Melnia, the Aqua Shadow"
+- New card "Blizzard of Spears" (thanks @dilawer007)
+- New card "Torpedo Cluster"
+- New card "Pierr, Psycho Doll"
+- New card "Hurricane Crawler"
+- New card "Hawkeye Lunatron"
+- New card "Hourglass Mutant"
+- New card "Terradragon Dakma Balgarow"
+- New card "Gabzagul, Warlord of Pain"
+- New card "Ice Vapor, Shadow of Anguish"
+- New card "Shock Trooper Mykee"
+- New card "Core-Crash Lizard"
+- New card "Elixia, Pureblade Elemental"
+- New card "Ultimate Dragon"
+- New card "Necrodragon Bryzenaga"
+- New card "Bodacious Giant"
+- New card "Balza, Seeker of Hyperpearls" (thanks @DragosIonita23)
+- New card "Ryudmila, Channeler of Suns" (thanks @DragosIonita23)
+- New card "King Oquanos" (thanks @DragosIonita23)
+- New card "Gajirabute, Vile Centurion" (thanks @DragosIonita23)
+- New card "Gaulezal Dragon" (thanks @DragosIonita23)
+- New card "Carnival Totem" (thanks @DragosIonita23)
+- New card "Scowling Tomato" (thanks @DragosIonita23)
+- New card "Shaman Broccoli" (thanks @DragosIonita23)
+- New card "Soulswap" (thanks @DragosIonita23)
+- New card "Terradragon Cusdalf" (thanks @DragosIonita23)
+- New card "Thirst for the Hunt" (thanks @DragosIonita23)
+- New card "Twitch Horn, the Aggressor" (thanks @DragosIonita23)
+- Fixed a loophole that allowed "Grinning Hunger" to avoid its mandatory effect by choosing an empty zone (thanks @DragosIonita23)
+- Updated multipart card selections to automatically resolve mandatory selections with only one possible outcome (thanks @DragosIonita23)
+- Fixed an issue where "Simian Warrior Grash" would not trigger when it was destroyed (thanks @DragosIonita23)
+- Fixed "Siren Concerto" being able to select itself with its effect and added its missing shield trigger (thanks @Vladdudu12)
+- Fixed "Zero Nemesis, Shadow of Panic" triggering its discard effect from outside the battle zone (thanks @Vladdudu12)
+- Fixed "Elf-X" applying its creature cost reduction one turn late (thanks @Shahrukh95)
+- Brand new website
+- Added support for playing as a guest without registering an account
+- Added email verification for new users
+- Added support for drag and dropping cards on mobile
+- Updated duel interface to make use of more space to increase card sizes
+- Added support for press and drag to select and deselect action popup cards on mobile
+- Added smooth scroll when new chat messages appear both in duels and the lobby
+- Updated all action popups to be more coherent and mobile friendly
+- Added ESC keyboard shortcut to close cancellable popups
+- Added user profiles
+- Added support for scheduled matches, to be used for tournaments
+- Added moderation and user management tools
+- Added chat restrictions and requirements
+- Added post-duel view with mactch summary, chat and rematch options
+- Made it possible for the website to support multiple different simulators/rule engines for multi-environment purposes and future plans to overhaul the current rule engine
+
+## 02/01/2026
 
 - Fixed an issue where "Elf-X" and "Cocco Lupia"'s cost reduction effect would not immediately make the add to battlezone button be visibly clickable (thanks @DragosIonita23)
 - Fixed an issue where some creatures with 0 power could not die (thanks @DragosIonita23)
@@ -57,6 +111,7 @@
 - New card "Karate Potato" (thanks @DragosIonita23)
 - New card "Legacy Shell" (thanks @DragosIonita23)
 - New card "Sabermask Scarab" (thanks @DragosIonita23)
+- Fixed an issue where too much information about each players shieldzone could be seen by inspecting network traffic
 
 ## 26/10/2025
 
@@ -81,7 +136,6 @@
 - New card "Glena Vuele, the Hypnotic" (thanks @DragosIonita23)
 - New card "Jil Warka, Time Guardian" (thanks @DragosIonita23)
 - Improve popup for selecting card race (thanks @DragosIonita23)
-- Fixed an issue where "Simian Warrior Grash" would not correctly handle destruction of Armorloids (thanks @DragosIonita23)
 
 ## 21/09/2025
 

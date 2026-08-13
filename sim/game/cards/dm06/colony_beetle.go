@@ -1,0 +1,92 @@
+package dm06
+
+import (
+	"duel-masters/game/civ"
+	"duel-masters/game/cnd"
+	"duel-masters/game/family"
+	"duel-masters/game/fx"
+	"duel-masters/game/match"
+	"fmt"
+)
+
+func CarrierShell(c *match.Card) {
+
+	c.Name = "Carrier Shell"
+	c.Power = 2000
+	c.Civs = []string{civ.Nature}
+	c.Family = []string{family.ColonyBeetle}
+	c.ManaCost = 3
+	c.ManaRequirement = []string{civ.Nature}
+
+	c.Use(fx.Creature, fx.PowerAttacker3000)
+}
+
+func SlumberShell(c *match.Card) {
+
+	c.Name = "Slumber Shell"
+	c.Power = 2000
+	c.Civs = []string{civ.Nature}
+	c.Family = []string{family.ColonyBeetle}
+	c.ManaCost = 2
+	c.ManaRequirement = []string{civ.Nature}
+
+	c.Use(fx.Creature)
+}
+
+func FactoryShellQ(c *match.Card) {
+
+	c.Name = "Factory Shell Q"
+	c.Power = 2000
+	c.Civs = []string{civ.Nature}
+	c.Family = []string{family.ColonyBeetle, family.Survivor}
+	c.ManaCost = 6
+	c.ManaRequirement = []string{civ.Nature}
+
+	c.Use(fx.Creature, fx.Survivor, fx.When(fx.MySurvivorSummoned, func(card *match.Card, ctx *match.Context) {
+
+		fx.SearchDeckTakeCards(
+			card,
+			ctx,
+			1,
+			func(x *match.Card) bool { return x.HasCondition(cnd.Survivor) },
+			"survivor",
+		)
+
+	}))
+
+}
+
+func LivingCitadelVosh(c *match.Card) {
+
+	c.Name = "Living Citadel Vosh"
+	c.Power = 5000
+	c.Civs = []string{civ.Nature}
+	c.Family = []string{family.ColonyBeetle}
+	c.ManaCost = 5
+	c.ManaRequirement = []string{civ.Nature}
+	c.TapAbility = livingCitadelVoshTapAbility
+
+	c.Use(fx.Creature, fx.Evolution, fx.TapAbility,
+		fx.When(fx.InTheBattlezone, func(card *match.Card, ctx *match.Context) {
+
+			fx.GiveTapAbilityToAllies(
+				card,
+				ctx,
+				func(x *match.Card) bool { return x.ID != card.ID && x.HasCiv(civ.Nature) },
+				livingCitadelVoshTapAbility,
+			)
+
+		}),
+	)
+}
+
+func livingCitadelVoshTapAbility(card *match.Card, ctx *match.Context) {
+	cards := card.Player.PeekDeck(1)
+
+	for _, toMove := range cards {
+
+		card.Player.MoveCard(toMove.ID, match.DECK, match.MANAZONE, card.ID)
+		ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s put %s into the manazone from the top of their deck", card.Player.Username(), toMove.Name))
+
+	}
+}
