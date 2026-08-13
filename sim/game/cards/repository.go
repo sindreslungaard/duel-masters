@@ -935,6 +935,17 @@ var DM12 = map[string]match.CardConstructor{
 	"dd02d138-9915-4204-856f-d20427072339": dm12.TerradragonArqueDelacerna,
 	"a328f1ed-12b9-467e-b621-19f676e75714": dm12.WhirlingWarriorMalian,
 	"d0429aea-e222-482e-a23a-49db1df89c98": dm12.GandavalsStapler,
+	"9359a337-0c7e-46a4-acd2-a5f6fc44e2ff": dm12.PharziTheOracle,
+	"2e9096a9-dd85-46f4-9159-aa73abe30165": dm12.EnigmaticCascade,
+	"9f9c1e23-687d-4f8d-a466-5227b45dce40": dm12.PunchTrooperBronks,
+	"adddbc05-e53f-485b-be16-f94a7c5ddd88": dm12.TropicCrawler,
+	"6dcc11be-ceab-4a72-8d00-937b1f43bbd6": dm12.MechadragonsBreath,
+	"5c9e07c1-681c-41f6-975e-0608ff90ab6b": dm12.FeverNuts,
+	"d2cda920-585e-449e-834f-af6e84b573da": dm12.AgiraTheWarlordCrawler,
+	"6da6ae55-baf5-45a6-b5a2-6b36acd4afa4": dm12.CometEyeTheSpectralSpud,
+	"5ccf0dd9-4dd3-4094-ab00-62c4f265cfd1": dm12.HydroozeTheMutantEmperor,
+	"6a5fc9ec-17c2-4e3f-92ce-5f67344895a0": dm12.PhantomachTheGigatrooper,
+	"8b9ed1f7-70d7-4932-9381-25040dc69d6e": dm12.NemonexBajulasRobomantis,
 }
 
 // Promo is a map with all the card id's in the game and corresponding CardConstructor for promotional exclusive cards

@@ -2,6 +2,7 @@ package dm12
 
 import (
 	"duel-masters/game/civ"
+	"duel-masters/game/cnd"
 	"duel-masters/game/family"
 	"duel-masters/game/fx"
 	"duel-masters/game/match"
@@ -38,6 +39,43 @@ func MizoyTheOracle(c *match.Card) {
 		).Map(func(chosen *match.Card) {
 			chosen.Tapped = true
 			ctx.Match.ReportActionInChat(chosen.Player, fmt.Sprintf("%s was tapped by %s", chosen.Name, card.Name))
+		})
+	}))
+
+}
+
+// PharziTheOracle ...
+func PharziTheOracle(c *match.Card) {
+
+	c.Name = "Pharzi, the Oracle"
+	c.Power = 1000
+	c.Civs = []string{civ.Light}
+	c.Family = []string{family.LightBringer}
+	c.ManaCost = 2
+	c.ManaRequirement = []string{civ.Light}
+
+	// Destroyed is the post-destruction observation, so the graveyard it looks
+	// through already holds this creature. A spell is what it wants, though, so
+	// it can never fish itself back out. Unselectable cards are left out of the
+	// offer so a graveyard without a single spell opens no prompt at all.
+	c.Use(fx.Creature, fx.When(fx.Destroyed, func(card *match.Card, ctx *match.Context) {
+		fx.SelectFilter(
+			card.Player,
+			ctx.Match,
+			card.Player,
+			match.GRAVEYARD,
+			fmt.Sprintf("%s's effect: You may return a spell from your graveyard to your hand.", card.Name),
+			1,
+			1,
+			true,
+			func(x *match.Card) bool { return x.HasCondition(cnd.Spell) },
+			false,
+		).Map(func(spell *match.Card) {
+			moved, err := card.Player.MoveCard(spell.ID, match.GRAVEYARD, match.HAND, card.ID)
+
+			if err == nil && moved.Zone == match.HAND {
+				ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s was returned to %s's hand by %s", spell.Name, card.Player.Username(), card.Name))
+			}
 		})
 	}))
 

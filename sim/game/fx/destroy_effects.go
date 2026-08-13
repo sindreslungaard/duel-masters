@@ -322,3 +322,84 @@ func DestroyAllCreatures(destroyType match.CreatureDestroyedContext) match.Handl
 		}
 	}
 }
+
+// DestroyLowestPowerCreature destroys the creature with the lowest power in the
+// battle zone, counting both players. A tie is broken by the card's controller
+// choosing from among the tied creatures.
+func DestroyLowestPowerCreature(card *match.Card, ctx *match.Context) {
+	candidates := make([]*match.Card, 0)
+
+	for _, player := range []*match.Player{card.Player, ctx.Match.Opponent(card.Player)} {
+		Find(player, match.BATTLEZONE).Map(func(creature *match.Card) {
+			candidates = append(candidates, creature)
+		})
+	}
+
+	if len(candidates) < 1 {
+		return
+	}
+
+	lowest := ctx.Match.GetPower(candidates[0], false)
+	for _, creature := range candidates[1:] {
+		if power := ctx.Match.GetPower(creature, false); power < lowest {
+			lowest = power
+		}
+	}
+
+	tied := make([]*match.Card, 0, len(candidates))
+	for _, creature := range candidates {
+		if ctx.Match.GetPower(creature, false) == lowest {
+			tied = append(tied, creature)
+		}
+	}
+
+	if len(tied) == 1 {
+		ctx.Match.Destroy(tied[0], card, match.DestroyedByMiscAbility)
+		return
+	}
+
+	// The tie is broken by this card's controller, and the tied creatures can
+	// belong to either player, so they are offered as one group.
+	byID := make(map[string]bool, len(tied))
+	for _, creature := range tied {
+		byID[creature.ID] = true
+	}
+
+	choices := map[string][]*match.Card{
+		"Your creatures":            FindFilter(card.Player, match.BATTLEZONE, func(x *match.Card) bool { return byID[x.ID] }),
+		"Your opponent's creatures": FindFilter(ctx.Match.Opponent(card.Player), match.BATTLEZONE, func(x *match.Card) bool { return byID[x.ID] }),
+	}
+
+	SelectMultipart(
+		card.Player,
+		ctx.Match,
+		choices,
+		fmt.Sprintf("%s's effect: Several creatures are tied for the lowest power. Choose one to destroy.", card.Name),
+		1,
+		1,
+		false,
+	).Map(func(chosen *match.Card) {
+		ctx.Match.Destroy(chosen, card, match.DestroyedByMiscAbility)
+	})
+}
+
+// DestroyAllCreaturesWithExactPower destroys every creature whose effective
+// power is exactly the given figure, on both sides. The set is decided before
+// anything is destroyed.
+func DestroyAllCreaturesWithExactPower(power int, destroyType match.CreatureDestroyedContext) func(*match.Card, *match.Context) {
+	return func(card *match.Card, ctx *match.Context) {
+		toDestroy := make([]*match.Card, 0)
+
+		for _, player := range []*match.Player{card.Player, ctx.Match.Opponent(card.Player)} {
+			FindFilter(player, match.BATTLEZONE, func(x *match.Card) bool {
+				return ctx.Match.GetPower(x, false) == power
+			}).Map(func(creature *match.Card) {
+				toDestroy = append(toDestroy, creature)
+			})
+		}
+
+		for _, creature := range toDestroy {
+			ctx.Match.Destroy(creature, card, destroyType)
+		}
+	}
+}

@@ -81,3 +81,28 @@ func OpponentKeepsOneOfTheseAndLosesTheOther(card *match.Card, ctx *match.Contex
 		lose(c)
 	}
 }
+
+// OpponentChoosesOwnCreatureToHand makes the opponent choose one of their own
+// creatures and return it to their hand.
+func OpponentChoosesOwnCreatureToHand(card *match.Card, ctx *match.Context) {
+	opponent := ctx.Match.Opponent(card.Player)
+
+	Select(
+		opponent,
+		ctx.Match,
+		opponent,
+		match.BATTLEZONE,
+		fmt.Sprintf("%s: Choose one of your creatures and return it to your hand.", card.Name),
+		1,
+		1,
+		false,
+	).Map(func(creature *match.Card) {
+		moved, err := opponent.MoveCard(creature.ID, match.BATTLEZONE, match.HAND, card.ID)
+
+		if err != nil || moved.Zone != match.HAND {
+			return
+		}
+
+		ctx.Match.ReportActionInChat(opponent, fmt.Sprintf("%s was returned to %s's hand by %s", creature.Name, opponent.Username(), card.Name))
+	})
+}

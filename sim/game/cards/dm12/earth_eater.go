@@ -80,3 +80,18 @@ func TyphoonCrawler(c *match.Card) {
 	})
 
 }
+
+// TropicCrawler ...
+func TropicCrawler(c *match.Card) {
+
+	c.Name = "Tropic Crawler"
+	c.Power = 3000
+	c.Civs = []string{civ.Water}
+	c.Family = []string{family.EarthEater}
+	c.ManaCost = 4
+	c.ManaRequirement = []string{civ.Water}
+
+	c.Use(fx.Creature, fx.Blocker(), fx.CantAttackCreatures, fx.CantAttackPlayers,
+		fx.When(fx.Blocks, fx.OpponentChoosesOwnCreatureToHand))
+
+}

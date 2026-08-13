@@ -49,3 +49,19 @@ func FlameTrooperGoliac(c *match.Card) {
 		fx.DestroyOpCreatureXPowerOrLess(5000, false, match.DestroyedByMiscAbility))))
 
 }
+
+// PunchTrooperBronks ...
+func PunchTrooperBronks(c *match.Card) {
+
+	c.Name = "Punch Trooper Bronks"
+	c.Power = 3000
+	c.Civs = []string{civ.Fire}
+	c.Family = []string{family.Armorloid}
+	c.ManaCost = 4
+	c.ManaRequirement = []string{civ.Fire}
+
+	// It is in the battle zone by the time this resolves, so a board of nothing
+	// bigger leaves it destroying itself.
+	c.Use(fx.Creature, fx.When(fx.Summoned, fx.DestroyLowestPowerCreature))
+
+}

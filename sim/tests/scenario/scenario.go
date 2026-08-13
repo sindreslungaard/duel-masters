@@ -256,15 +256,19 @@ func (s *TestScenario) ActionEndTurn(player *match.PlayerReference) error {
 // action, because an action can return while the engine is still executing the
 // steps that follow its last state broadcast.
 func (s *TestScenario) WaitForEventLoop() error {
-	player := s.Match.CurrentPlayer()
-
-	conn, err := s.connectionFor(player)
-	if err != nil {
-		return err
-	}
-
 	deadline := time.Now().Add(actionTimeout)
 	for time.Now().Before(deadline) {
+		// Resolved on every attempt, because the work being waited on may be a
+		// turn transition. An attack sent by whoever is no longer the turn
+		// player is dropped without a warning, so a probe aimed at the player
+		// the turn started with would never be answered.
+		player := s.Match.CurrentPlayer()
+
+		conn, err := s.connectionFor(player)
+		if err != nil {
+			return err
+		}
+
 		start := conn.JSONWriteCount()
 
 		// An attack declared with an id no card can have is rejected with a

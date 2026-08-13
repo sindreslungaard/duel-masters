@@ -115,6 +115,17 @@
 - New card "Terradragon Arque Delacerna"
 - New card "Whirling Warrior Malian"
 - New card "Gandaval's Stapler"
+- New card "Pharzi, the Oracle"
+- New card "Enigmatic Cascade"
+- New card "Punch Trooper Bronks"
+- New card "Tropic Crawler"
+- New card "Mechadragon's Breath"
+- New card "Fever Nuts"
+- New card "Agira, the Warlord Crawler"
+- New card "Comet Eye, The Spectral Spud"
+- New card "Hydrooze, the Mutant Emperor"
+- New card "Phantomach, the Gigatrooper"
+- New card "Nemonex, Bajula's Robomantis"
 
 ## 12/08/2026
 
