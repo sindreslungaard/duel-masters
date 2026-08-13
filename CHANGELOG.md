@@ -4,6 +4,7 @@
 
 - Added lobby chat embeds for deck links
 - Added username tagging in lobby chat
+- Added site statistics page
 - New card "Hustle Berry"
 - New card "Milporo"
 - New card "Kaemira, the Oracle"
