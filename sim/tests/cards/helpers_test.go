@@ -212,3 +212,24 @@ func countHeaders(headers []string, wanted string) int {
 
 	return count
 }
+
+// summonWithOwnMana puts a card in hand with enough copies of itself in the
+// mana zone to pay for it, then summons it through the event loop. A card whose
+// arrival opens a prompt has to be summoned this way rather than moved with
+// putIntoPlay, which would leave the test goroutine blocked on a prompt only it
+// could answer.
+func summonWithOwnMana(t *testing.T, scn *scenario.TestScenario, player *match.PlayerReference, uid string) *match.Card {
+	t.Helper()
+
+	card, err := player.Player.SpawnCard(uid, match.HAND)
+	require.NoError(t, err)
+
+	for range card.ManaCost {
+		_, err := player.Player.SpawnCard(uid, match.MANAZONE)
+		require.NoError(t, err)
+	}
+
+	require.NoError(t, scn.ActionPlayCard(player, card.ID))
+
+	return card
+}

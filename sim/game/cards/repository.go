@@ -12,6 +12,7 @@ import (
 	"duel-masters/game/cards/dm09"
 	"duel-masters/game/cards/dm10"
 	"duel-masters/game/cards/dm11"
+	"duel-masters/game/cards/dm12"
 	"duel-masters/game/cards/promo"
 	"duel-masters/game/match"
 )
@@ -29,6 +30,7 @@ var Sets = map[string]*map[string]match.CardConstructor{
 	"dm-09": &DM09,
 	"dm-10": &DM10,
 	"dm-11": &DM11,
+	"dm-12": &DM12,
 	"promo": &Promo,
 }
 
@@ -897,6 +899,33 @@ var DM11 = map[string]match.CardConstructor{
 	"b888a7a8-d8c0-458a-8cf6-0b675ab9123e": dm11.EvilIncarnate,
 	"fccd4a14-6b55-42bf-8dac-8ac311fc4571": dm11.WarpedLunatron,
 	"5369887a-6aaa-489a-8aa2-543e74162832": dm11.LockdownLizard,
+}
+
+// DM12 is a map with all the card id's in the game and corresponding CardConstructor for dm12
+var DM12 = map[string]match.CardConstructor{
+
+	"124aff9d-aaca-4c88-b40b-2529127a1214": dm12.BuzzBetocchi,
+	"83f689d5-5653-4306-84c7-c43d3dd390a7": dm12.ElectroExplorerSyrion,
+	"bb3a1ebc-2b0f-4b7e-8c44-aa3bf1e66931": dm12.GigappiPonto,
+	"854a1e8c-cebb-4d19-b22c-d40fa3761bf1": dm12.SeaMutantDormel,
+	"709b4470-2bad-453d-b0db-1cc218952403": dm12.SpectralHornGlitalis,
+	"ce3863f2-5810-40da-9c55-297affdd5787": dm12.PeppiPepper,
+	"aec7a0eb-a16a-4a8a-bd18-e9adb8970432": dm12.RadioactiveHornTheStrange,
+	"7f2e9361-2399-4ec1-a2b2-af1c88288833": dm12.MuramasasKnife,
+	"a1e3713b-21f2-4fff-adf0-1bdabf4292d1": dm12.Gigaslug,
+	"2f6d65f6-6ec7-4ee5-8c8f-732938b8eeb6": dm12.Gigabalza,
+	"2622d460-6424-4410-9662-f0f4cd9c08b0": dm12.HypersprintWariorUzesol,
+	"51ce0197-7d12-498a-a874-17e60a0d3f21": dm12.ValkyerStarstormElemental,
+	"8558c3cc-b2ef-4d54-aec8-a4b5bde0b904": dm12.NecrodragonJagraveen,
+	"c17bd6a6-c5ae-4235-b0b1-b5e8321d3a06": dm12.NecrodragonZalva,
+	"d0b9d738-bd33-4dd1-b6dc-234897f52266": dm12.BelmolTheExplorer,
+	"88435ced-6e13-4084-ba0e-21cac66808e9": dm12.WindmillMutant,
+	"3b11f35d-0e89-49f9-bcc8-0fa91a19097d": dm12.FunkyWizard,
+	"8a362a6e-8fd8-41e7-ad6c-bf27be952698": dm12.FranticChieftain,
+	"6fefa2b0-3d88-4420-88b3-9896b6ac4ce5": dm12.WilyCarpenter,
+	"899e15d3-ed0d-4f13-adf9-54e2db77736d": dm12.MizoyTheOracle,
+	"f98787f3-2962-4f55-80d1-da295cbfede7": dm12.ExtremeCrawler,
+	"aeaaf98d-938f-46d1-a271-49a86f668ae6": dm12.TyphoonCrawler,
 }
 
 // Promo is a map with all the card id's in the game and corresponding CardConstructor for promotional exclusive cards

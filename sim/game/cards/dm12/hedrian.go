@@ -1,0 +1,22 @@
+package dm12
+
+import (
+	"duel-masters/game/civ"
+	"duel-masters/game/family"
+	"duel-masters/game/fx"
+	"duel-masters/game/match"
+)
+
+// WindmillMutant ...
+func WindmillMutant(c *match.Card) {
+
+	c.Name = "Windmill Mutant"
+	c.Power = 2000
+	c.Civs = []string{civ.Darkness}
+	c.Family = []string{family.Hedrian}
+	c.ManaCost = 3
+	c.ManaRequirement = []string{civ.Darkness}
+
+	c.Use(fx.Creature, fx.When(fx.AttackConfirmed, fx.OpponentDiscardsRandomCard))
+
+}

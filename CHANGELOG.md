@@ -3,7 +3,7 @@
 ## Unreleased
 
 - Added lobby chat embeds for deck links
-- Added @username tagging in lobby chat
+- Added username tagging in lobby chat
 - New card "Hustle Berry"
 - New card "Milporo"
 - New card "Kaemira, the Oracle"
@@ -84,6 +84,28 @@
 - New card "Evil Incarnate"
 - New card "Warped Lunatron"
 - New card "Lockdown Lizard"
+- New card "Buzz Betocchi"
+- New card "Electro Explorer Syrion"
+- New card "Gigappi Ponto"
+- New card "Sea Mutant Dormel"
+- New card "Spectral Horn Glitalis"
+- New card "Peppi Pepper"
+- New card "Radioactive Horn, the Strange"
+- New card "Muramasa's Knife"
+- New card "Gigaslug"
+- New card "Hypersprint Warior Uzesol"
+- New card "Valkyer, Starstorm Elemental"
+- New card "Necrodragon Jagraveen"
+- New card "Belmol, the Explorer"
+- New card "Windmill Mutant"
+- New card "Funky Wizard"
+- New card "Gigabalza"
+- New card "Necrodragon Zalva"
+- New card "Mizoy, the Oracle"
+- New card "Frantic Chieftain"
+- New card "Extreme Crawler"
+- New card "Typhoon Crawler"
+- New card "Wily Carpenter"
 
 ## 12/08/2026
 
