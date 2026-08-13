@@ -68,6 +68,21 @@ type CardMoved struct {
 	MatchPlayerID byte
 }
 
+// EvolutionEvent is fired when a player puts an evolution creature on top of
+// one of their creatures, after the base has been moved to the hidden zone and
+// attached to the evolution card, and before the evolution card itself enters
+// the battle zone.
+//
+// This is a notification rather than a decision point: the evolution has already
+// happened by the time it is dispatched, and cancelling its context only stops
+// the remaining handlers for this event. Interrupt the surrounding
+// CardPlayedEvent instead to prevent an evolution outright.
+type EvolutionEvent struct {
+	CardID        string // the evolution creature being put into the battle zone
+	BaseID        string // the creature it was put on, now in the hidden zone
+	MatchPlayerID byte   // the player who evolved; both cards are theirs
+}
+
 // SpellCast is fired when a spell is cast, either from being played or from shield triggers
 type SpellCast struct {
 	CardID        string

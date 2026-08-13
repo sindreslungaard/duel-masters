@@ -119,6 +119,20 @@ func handleEvolutionEvents(card *match.Card, ctx *match.Context, evolvableCreatu
 		card.Tapped = creature.Tapped
 		card.Player.MoveCard(creature.ID, match.BATTLEZONE, match.HIDDENZONE, card.ID)
 		card.Attach(creature)
+
+		// Announced once the pile is whole, so anything watching for an
+		// evolution sees a finished one rather than having to recognise the
+		// base's move to the hidden zone for itself.
+		matchPlayerID := byte(2)
+		if card.Player == ctx.Match.Player1.Player {
+			matchPlayerID = 1
+		}
+
+		ctx.Match.HandleFx(match.NewContext(ctx.Match, &match.EvolutionEvent{
+			CardID:        card.ID,
+			BaseID:        creature.ID,
+			MatchPlayerID: matchPlayerID,
+		}))
 	}
 
 	// Card moved

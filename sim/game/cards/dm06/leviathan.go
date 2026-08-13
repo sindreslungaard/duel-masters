@@ -2,6 +2,7 @@ package dm06
 
 import (
 	"duel-masters/game/civ"
+	"duel-masters/game/cnd"
 	"duel-masters/game/family"
 	"duel-masters/game/fx"
 	"duel-masters/game/match"
@@ -24,7 +25,9 @@ func KingTriumphant(c *match.Card) {
 		fx.When(fx.EndOfTurn,
 			func(c *match.Card, ctx *match.Context) {
 				isBlocker = false
-				c.RemoveConditionBySource(c.ID)
+				// Only the granted blocker is removed; a blanket removal by this
+				// source would also take away the card's own double breaker.
+				c.RemoveSpecificConditionBySource(cnd.Blocker, c.ID)
 			}),
 		fx.When(func(c *match.Card, ctx *match.Context) bool { return isBlocker },
 			func(c *match.Card, ctx *match.Context) {

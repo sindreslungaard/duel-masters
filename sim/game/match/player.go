@@ -228,55 +228,6 @@ func (p *Player) CreateDeck(deck []string) {
 
 }
 
-func (p *Player) CreateRandomDeck() {
-	p.mutex.Lock()
-	defer p.mutex.Unlock()
-
-	cards := GetCardImages()
-	cardsAddedToDeck := make(map[string]int)
-
-	recursions := 0
-	var addRandomCardToDeck func()
-	addRandomCardToDeck = func() {
-		recursions++
-
-		// sanity check
-		if recursions > 1000 {
-			logrus.Error("Max recursions reached in CreateRandomDeck")
-			return
-		}
-
-		cardToAdd := cards[rand.Intn(len(cards))]
-
-		n, ok := cardsAddedToDeck[cardToAdd]
-
-		if !ok {
-			cardsAddedToDeck[cardToAdd] = 1
-		}
-
-		// max limit of this card reached
-		if n >= 4 {
-			addRandomCardToDeck()
-			return
-		}
-
-		cardsAddedToDeck[cardToAdd] = n + 1
-
-		c, err := NewCard(p, cardToAdd)
-
-		if err != nil {
-			logrus.Warnf("Failed to create card with id %s", cardToAdd)
-			return
-		}
-
-		p.deck = append(p.deck, c)
-	}
-
-	for i := 0; i < 40; i++ {
-		addRandomCardToDeck()
-	}
-}
-
 func (p *Player) deckString() string {
 	p.mutex.Lock()
 	defer p.mutex.Unlock()
@@ -457,13 +408,6 @@ func (p *Player) GetCard(id string, container string) (*Card, error) {
 
 }
 
-// enteringManaZoneTapped returns the tap state a card takes on when it arrives
-// in a zone. A move always untaps a card, except that a multicolored card is
-// put into the mana zone tapped.
-func enteringManaZoneTapped(card *Card, to string) bool {
-	return to == MANAZONE && card.IsMulticolored()
-}
-
 // MoveCard tries to move a card from container a to container b
 func (p *Player) MoveCard(cardID string, from string, to string, source string) (*Card, error) {
 	c, err := p.GetCard(cardID, from)
@@ -521,7 +465,7 @@ func (p *Player) MoveCard(cardID string, from string, to string, source string) 
 	*cTo = temp2
 
 	ref.Zone = to
-	ref.Tapped = enteringManaZoneTapped(ref, to)
+	ref.Tapped = false
 
 	if to == SHIELDZONE {
 		p.ShieldCounter = p.ShieldCounter + 1
@@ -599,7 +543,7 @@ func (p *Player) MoveCardToFront(cardID string, from string, to string, source s
 	*cTo = temp2
 
 	ref.Zone = to
-	ref.Tapped = enteringManaZoneTapped(ref, to)
+	ref.Tapped = false
 
 	p.mutex.Unlock()
 

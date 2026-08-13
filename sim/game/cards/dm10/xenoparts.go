@@ -48,3 +48,17 @@ func MykeesPliers(c *match.Card) {
 	}))
 
 }
+
+// VorgsEngine ...
+func VorgsEngine(c *match.Card) {
+
+	c.Name = "Vorg's Engine"
+	c.Power = 2000
+	c.Civs = []string{civ.Fire}
+	c.Family = []string{family.Xenoparts}
+	c.ManaCost = 2
+	c.ManaRequirement = []string{civ.Fire}
+
+	c.Use(fx.Creature, fx.SilentSkill(fx.DestroyAllCreaturesXPowerOrLess(2000, match.DestroyedByMiscAbility)))
+
+}

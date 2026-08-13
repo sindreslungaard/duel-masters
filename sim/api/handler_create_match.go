@@ -56,6 +56,11 @@ func (api *API) createMatchHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	if body.HostDeck == nil || body.GuestDeck == nil {
+		write(w, http.StatusBadRequest, Json{"message": "hostDeck and guestDeck are required"})
+		return
+	}
+
 	name, err := assert.Is(body.Name).MaxLen(50).String()
 
 	if err != nil {

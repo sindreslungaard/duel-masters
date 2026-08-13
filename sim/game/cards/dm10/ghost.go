@@ -52,3 +52,41 @@ func ZeroNemesisShadowOfPanic(c *match.Card) {
 	c.Use(fx.Creature, fx.Evolution, fx.Doublebreaker, fx.WheneverOneOfMyCreaturesAttacksOppDiscardsRandom())
 
 }
+
+// GalekTheShadowWarrior ...
+func GalekTheShadowWarrior(c *match.Card) {
+
+	c.Name = "Galek, the Shadow Warrior"
+	c.Power = 2000
+	c.Civs = []string{civ.Darkness, civ.Fire}
+	c.Family = []string{family.Ghost, family.Human}
+	c.ManaCost = 5
+	c.ManaRequirement = []string{civ.Darkness, civ.Fire}
+
+	c.Use(fx.Creature, fx.PutIntoManaZoneTapped, fx.When(fx.Summoned, func(card *match.Card, ctx *match.Context) {
+		fx.DestroyOpBlocker(card, ctx)
+		fx.OpponentDiscardsRandomCard(card, ctx)
+	}))
+
+}
+
+// DolmarksTheShadowWarrior ...
+func DolmarksTheShadowWarrior(c *match.Card) {
+
+	c.Name = "Dolmarks, the Shadow Warrior"
+	c.Power = 4000
+	c.Civs = []string{civ.Darkness, civ.Fire}
+	c.Family = []string{family.Ghost, family.Human}
+	c.ManaCost = 4
+	c.ManaRequirement = []string{civ.Darkness, civ.Fire}
+
+	// Each half is mandatory and each player chooses from their own zones, in the
+	// printed order: the controller pays first, then the opponent.
+	c.Use(fx.Creature, fx.PutIntoManaZoneTapped, fx.When(fx.Summoned, func(card *match.Card, ctx *match.Context) {
+		fx.OwnChoosesAndDestroysCreature(card, ctx)
+		fx.OwnChoosesManaBurn(card, ctx)
+		fx.OpponentChoosesAndDestroysCreature(card, ctx)
+		fx.OpponentChoosesManaBurn(card, ctx)
+	}))
+
+}

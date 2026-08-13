@@ -19,6 +19,7 @@ var upgrader = websocket.Upgrader{
 type DuelSession struct {
 	ID       string `json:"id"`
 	Username string `json:"username"`
+	MatchID  string `json:"matchId"`
 	jwt.RegisteredClaims
 }
 
@@ -47,7 +48,7 @@ func (api *API) websocketHandler(w http.ResponseWriter, r *http.Request) {
 		}
 		// Return the secret key used for signing
 		return []byte(secret), nil
-	})
+	}, jwt.WithValidMethods([]string{"HS256"}), jwt.WithExpirationRequired())
 
 	if err != nil || !token.Valid {
 		write(w, http.StatusUnauthorized, Json{"message": "Invalid duelToken"})
@@ -58,6 +59,10 @@ func (api *API) websocketHandler(w http.ResponseWriter, r *http.Request) {
 	duelSession, ok := token.Claims.(*DuelSession)
 	if !ok {
 		write(w, http.StatusUnauthorized, Json{"message": "Invalid token claims"})
+		return
+	}
+	if duelSession.MatchID != hubID {
+		write(w, http.StatusUnauthorized, Json{"message": "Token does not belong to this match"})
 		return
 	}
 

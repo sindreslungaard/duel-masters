@@ -38,3 +38,17 @@ func TauntingSkyterror(c *match.Card) {
 	}))
 
 }
+
+// MinelordSkyterror ...
+func MinelordSkyterror(c *match.Card) {
+
+	c.Name = "Minelord Skyterror"
+	c.Power = 3000
+	c.Civs = []string{civ.Fire}
+	c.Family = []string{family.ArmoredWyvern}
+	c.ManaCost = 4
+	c.ManaRequirement = []string{civ.Fire}
+
+	c.Use(fx.Creature, fx.SilentSkill(fx.DestroyAllCreaturesXPowerOrLess(3000, match.DestroyedByMiscAbility)))
+
+}

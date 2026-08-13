@@ -12,7 +12,7 @@ import {
 const SECRET_VALUE = "duel-secret";
 const SECRET = new TextEncoder().encode(SECRET_VALUE);
 const DECK_SIZE = 40;
-const UNIQUE_CARDS_PER_DECK = 10;
+const MAX_COPIES_PER_CARD = 4;
 
 type CardSummary = {
   uid: string;
@@ -233,27 +233,26 @@ const renderDevProfilePreview = (props: DuelChatUserTriggerProps) => (
   <DevProfilePreviewTrigger {...props} />
 );
 
-const buildDeck = (availableCards: CardSummary[], offset = 0): string[] => {
-  if (availableCards.length === 0) {
-    return [];
-  }
-
-  const uniqueCards = Array.from(
-    { length: Math.min(UNIQUE_CARDS_PER_DECK, availableCards.length) },
-    (_, index) => availableCards[(offset + index) % availableCards.length].uid,
+const buildRandomDeck = (availableCards: CardSummary[]): string[] => {
+  const cardPool = availableCards.flatMap((card) =>
+    Array.from({ length: MAX_COPIES_PER_CARD }, () => card.uid),
   );
 
-  const deck: string[] = [];
-  while (deck.length < DECK_SIZE) {
-    for (const uid of uniqueCards) {
-      deck.push(uid);
-      if (deck.length === DECK_SIZE) {
-        break;
-      }
-    }
+  if (cardPool.length < DECK_SIZE) {
+    throw new Error(
+      `The simulator exposed too few cards to build a ${DECK_SIZE}-card deck`,
+    );
   }
 
-  return deck;
+  for (let index = cardPool.length - 1; index > 0; index -= 1) {
+    const randomIndex = Math.floor(Math.random() * (index + 1));
+    [cardPool[index], cardPool[randomIndex]] = [
+      cardPool[randomIndex],
+      cardPool[index],
+    ];
+  }
+
+  return cardPool.slice(0, DECK_SIZE);
 };
 
 function App() {
@@ -285,13 +284,13 @@ function App() {
       const payload = {
         hostId: "1",
         hostUsername: "Player1",
-        hostDeck: buildDeck(availableCards, 0),
+        hostDeck: buildRandomDeck(availableCards),
         guestId: "2",
         guestUsername: "Player2",
-        guestDeck: buildDeck(availableCards, UNIQUE_CARDS_PER_DECK),
+        guestDeck: buildRandomDeck(availableCards),
         name: "Test Match",
         visibility: "public",
-        format: "regular",
+        format: "random",
       };
 
       const matchRes = await fetch("/api/match", {
@@ -309,17 +308,32 @@ function App() {
 
       const match = (await matchRes.json()) as DevDuel;
 
-      const hostToken = await new SignJWT({ id: "1", username: "Player1" })
+      const hostToken = await new SignJWT({
+        id: "1",
+        username: "Player1",
+        matchId: match.id,
+      })
         .setProtectedHeader({ alg: "HS256" })
+        .setIssuedAt()
+        .setExpirationTime("10m")
         .sign(SECRET);
-      const guestToken = await new SignJWT({ id: "2", username: "Player2" })
+      const guestToken = await new SignJWT({
+        id: "2",
+        username: "Player2",
+        matchId: match.id,
+      })
         .setProtectedHeader({ alg: "HS256" })
+        .setIssuedAt()
+        .setExpirationTime("10m")
         .sign(SECRET);
       const spectatorToken = await new SignJWT({
         id: "3",
         username: "Spectator",
+        matchId: match.id,
       })
         .setProtectedHeader({ alg: "HS256" })
+        .setIssuedAt()
+        .setExpirationTime("10m")
         .sign(SECRET);
 
       setHostDuelToken(hostToken);

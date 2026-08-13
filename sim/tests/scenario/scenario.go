@@ -158,6 +158,33 @@ func (s *TestScenario) ActionEndTurn(player *match.PlayerReference) error {
 
 	messageCount := conn.JSONWriteCount()
 
+	// The turn being started belongs to the opponent, so a start-of-turn effect
+	// such as silent skill prompts them rather than the player ending the turn.
+	// That prompt blocks the transition just as an end step prompt does, and it
+	// never reaches this player's connection, so both sides have to be watched.
+	opponent := s.Match.PlayerRef(s.Match.Opponent(player.Player))
+	opponentConn, err := s.connectionFor(opponent)
+	if err != nil {
+		return err
+	}
+
+	opponentMessageCount := opponentConn.JSONWriteCount()
+
+	openedPrompt := func() bool {
+		for _, raw := range opponentConn.JSONMessagesSince(opponentMessageCount) {
+			var header server.Message
+			if err := json.Unmarshal([]byte(raw), &header); err != nil {
+				continue
+			}
+
+			if header.Header == "action" {
+				return true
+			}
+		}
+
+		return false
+	}
+
 	if err := s.send(player, struct {
 		Header string `json:"header"`
 	}{
@@ -169,7 +196,8 @@ func (s *TestScenario) ActionEndTurn(player *match.PlayerReference) error {
 	// A successful turn transition broadcasts once before untap/start/draw and
 	// again after draw. Wait for the second update so tests cannot observe the
 	// event loop halfway through the new turn. A prevented transition sends a
-	// warning instead.
+	// warning instead, and an end step effect may suspend the transition on a
+	// prompt that the caller has to answer before the turn can finish.
 	if err := s.waitFor(func() bool {
 		stateUpdates := 0
 		for _, raw := range conn.JSONMessagesSince(messageCount) {
@@ -179,16 +207,23 @@ func (s *TestScenario) ActionEndTurn(player *match.PlayerReference) error {
 			}
 
 			switch header.Header {
-			case "warn":
+			case "warn", "action", "wait":
 				return true
 			case "state_update":
 				stateUpdates++
 			}
 		}
 
-		return stateUpdates >= 2
+		// An end of turn effect can finish the game rather than start the next
+		// turn, in which case the broadcasts a turn transition would have sent
+		// never arrive.
+		return stateUpdates >= 2 || openedPrompt() || s.Match.IsClosed()
 	}); err != nil {
 		return err
+	}
+
+	if s.Match.IsClosed() {
+		return nil
 	}
 
 	// An end-of-turn effect may have opened a prompt, in which case the event
@@ -201,6 +236,10 @@ func (s *TestScenario) ActionEndTurn(player *match.PlayerReference) error {
 		if header == "action" || header == "wait" {
 			return nil
 		}
+	}
+
+	if openedPrompt() {
+		return nil
 	}
 
 	// A turn transition keeps running past its last state broadcast, so the test
@@ -217,15 +256,19 @@ func (s *TestScenario) ActionEndTurn(player *match.PlayerReference) error {
 // action, because an action can return while the engine is still executing the
 // steps that follow its last state broadcast.
 func (s *TestScenario) WaitForEventLoop() error {
-	player := s.Match.CurrentPlayer()
-
-	conn, err := s.connectionFor(player)
-	if err != nil {
-		return err
-	}
-
 	deadline := time.Now().Add(actionTimeout)
 	for time.Now().Before(deadline) {
+		// Resolved on every attempt, because the work being waited on may be a
+		// turn transition. An attack sent by whoever is no longer the turn
+		// player is dropped without a warning, so a probe aimed at the player
+		// the turn started with would never be answered.
+		player := s.Match.CurrentPlayer()
+
+		conn, err := s.connectionFor(player)
+		if err != nil {
+			return err
+		}
+
 		start := conn.JSONWriteCount()
 
 		// An attack declared with an id no card can have is rejected with a
@@ -313,18 +356,87 @@ func (s *TestScenario) ActionAttackCreature(player *match.PlayerReference, attac
 
 	// Confirming an attack broadcasts once after tapping the attacker and the
 	// outer AttackCreature action broadcasts again after all nested effects and
-	// battle processing have returned.
+	// battle processing have returned. A nested effect may instead open a prompt
+	// for either player, in which case the loop is blocked until the caller
+	// answers it and the second broadcast never arrives; a prompt for the
+	// defender reaches this player as a wait.
 	return s.waitFor(func() bool {
 		stateUpdates := 0
 		for _, raw := range conn.JSONMessagesSince(completionStart) {
 			var header server.Message
-			if err := json.Unmarshal([]byte(raw), &header); err == nil && header.Header == "state_update" {
+			if err := json.Unmarshal([]byte(raw), &header); err != nil {
+				continue
+			}
+
+			switch header.Header {
+			case "action", "wait":
+				return true
+			case "state_update":
 				stateUpdates++
 			}
 		}
 
 		return stateUpdates >= 2
 	})
+}
+
+// ActionUseTapAbility taps a creature to use its tap ability and waits until it
+// has resolved. It returns early when the ability opens a prompt for its
+// controller, which the caller then answers.
+func (s *TestScenario) ActionUseTapAbility(player *match.PlayerReference, cardID string) error {
+	conn, err := s.connectionFor(player)
+	if err != nil {
+		return err
+	}
+
+	if _, err := player.Player.GetCard(cardID, match.BATTLEZONE); err != nil {
+		return err
+	}
+
+	messageCount := conn.JSONWriteCount()
+	if err := s.send(player, struct {
+		Header string `json:"header"`
+		ID     string `json:"virtualId"`
+	}{
+		Header: "tap_ability",
+		ID:     cardID,
+	}); err != nil {
+		return err
+	}
+
+	if err := s.waitFor(func() bool {
+		for _, raw := range conn.JSONMessagesSince(messageCount) {
+			var header server.Message
+			if err := json.Unmarshal([]byte(raw), &header); err != nil {
+				continue
+			}
+
+			switch header.Header {
+			case "state_update", "action", "wait", "warn":
+				return true
+			}
+		}
+
+		return false
+	}); err != nil {
+		return err
+	}
+
+	// A rejected tap ability answers with a warning and nothing else.
+	headers, err := s.MessageHeaders(player, messageCount)
+	if err != nil {
+		return err
+	}
+	for _, header := range headers {
+		if header == "action" || header == "wait" {
+			return nil
+		}
+		if header == "warn" {
+			return fmt.Errorf("the tap ability was rejected")
+		}
+	}
+
+	return s.WaitForEventLoop()
 }
 
 // ActionAttackPlayer attacks the opponent directly and returns the shield
@@ -412,6 +524,22 @@ func (s *TestScenario) SubmitAction(player *match.PlayerReference, cardIDs ...st
 }
 
 // SubmitChoice answers a multiple-choice action using its zero-based option index.
+// SubmitCount answers a prompt that asks for a number rather than for cards,
+// such as fx.SelectCount.
+func (s *TestScenario) SubmitCount(player *match.PlayerReference, count int) error {
+	return s.send(player, struct {
+		Header string   `json:"header"`
+		Cards  []string `json:"cards"`
+		Count  int      `json:"count"`
+		Cancel bool     `json:"cancel"`
+	}{
+		Header: "action",
+		Cards:  []string{},
+		Count:  count,
+		Cancel: false,
+	})
+}
+
 func (s *TestScenario) SubmitChoice(player *match.PlayerReference, choice int) error {
 	return s.send(player, struct {
 		Header string `json:"header"`
@@ -478,6 +606,31 @@ func (s *TestScenario) Warnings(player *match.PlayerReference, since int) ([]str
 	}
 
 	return warnings, nil
+}
+
+// ChatMessages returns the text of every chat message the player received since
+// position since. Effects report what they did through the chat, so this is how
+// a test asserts that something was announced and not only performed.
+func (s *TestScenario) ChatMessages(player *match.PlayerReference, since int) ([]string, error) {
+	conn, err := s.connectionFor(player)
+	if err != nil {
+		return nil, err
+	}
+
+	messages := make([]string, 0)
+	for _, raw := range conn.JSONMessagesSince(since) {
+		var header server.Message
+		if err := json.Unmarshal([]byte(raw), &header); err != nil || header.Header != "chat" {
+			continue
+		}
+
+		message := &server.ChatMessage{}
+		if err := json.Unmarshal([]byte(raw), message); err == nil {
+			messages = append(messages, message.Message)
+		}
+	}
+
+	return messages, nil
 }
 
 // MessageCount returns the number of JSON messages the server has sent to the player so far.

@@ -57,3 +57,31 @@ func PoltalesterTheSpydroid(c *match.Card) {
 	c.Use(fx.Creature, fx.Blocker(), fx.ShieldTrigger, fx.CantAttackPlayers)
 
 }
+
+// BulglufTheSpydroid ...
+func BulglufTheSpydroid(c *match.Card) {
+
+	c.Name = "Bulgluf, the Spydroid"
+	c.Power = 4000
+	c.Civs = []string{civ.Light}
+	c.Family = []string{family.Soltrooper}
+	c.ManaCost = 6
+	c.ManaRequirement = []string{civ.Light}
+
+	c.Use(fx.Creature, fx.SilentSkill(fx.TopCardToShield))
+
+}
+
+// FlohdaniTheSpydroid ...
+func FlohdaniTheSpydroid(c *match.Card) {
+
+	c.Name = "Flohdani, the Spydroid"
+	c.Power = 4000
+	c.Civs = []string{civ.Light}
+	c.Family = []string{family.Soltrooper}
+	c.ManaCost = 4
+	c.ManaRequirement = []string{civ.Light}
+
+	c.Use(fx.Creature, fx.SilentSkill(fx.TapUpToXOpCreatures(2)))
+
+}

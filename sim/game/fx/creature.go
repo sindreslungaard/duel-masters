@@ -23,7 +23,10 @@ func Creature(card *match.Card, ctx *match.Context) {
 
 		card.AddCondition(cnd.Creature, nil, nil)
 
-		if ctx.Match.IsPlayerTurn(card.Player) && card.Zone != match.MANAZONE {
+		// cnd.DoesntUntap is granted by persistent effects, which run before
+		// any card handler in the same context, so a creature held down by one
+		// already carries the condition by the time it would untap here.
+		if ctx.Match.IsPlayerTurn(card.Player) && card.Zone != match.MANAZONE && !card.HasCondition(cnd.DoesntUntap) {
 			card.Tapped = false
 		}
 

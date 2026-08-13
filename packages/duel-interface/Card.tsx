@@ -6,6 +6,8 @@ export interface CardProps {
   imageId?: string;
   rotated?: boolean;
   flipped?: boolean;
+  /** Small index drawn in the card's top right corner, used to number shields. */
+  number?: number;
   interactable?: boolean;
   canAddToBattlezone?: boolean;
   canAddToManazone?: boolean;
@@ -16,7 +18,7 @@ export interface CardProps {
   onTapAbility?: (virtualId: string) => void;
   isDragging?: boolean;
   draggable?: boolean;
-  onDragStart?: (e: React.MouseEvent | React.TouchEvent) => void;
+  onDragStart?: (e: React.PointerEvent) => void;
   onRightClick?: () => void;
 }
 
@@ -26,6 +28,7 @@ export function Card({
   imageId,
   rotated = false,
   flipped = false,
+  number,
   interactable = false,
   selected = false,
   canAddToBattlezone = true,
@@ -58,15 +61,17 @@ export function Card({
     return () => window.removeEventListener("resize", updateMargin);
   }, [rotated]);
 
-  const handleMouseDown = (e: React.MouseEvent | React.TouchEvent) => {
-    if (draggable && onDragStart) {
-      e.preventDefault();
-      // Prevent context menu on touch devices
-      if ("touches" in e) {
-        e.stopPropagation();
-      }
-      onDragStart(e);
+  // Pointer events give one stream for mouse, touch and pen. Binding mouse and
+  // touch separately made a tap fire both paths, because the browser follows a
+  // touch with compatibility mouse events, and the second path immediately
+  // undid the selection the first one made.
+  const handlePointerDown = (e: React.PointerEvent) => {
+    if (!draggable || !onDragStart) {
+      return;
     }
+
+    e.preventDefault();
+    onDragStart(e);
   };
 
   const handleContextMenu = (e: React.MouseEvent) => {
@@ -98,16 +103,28 @@ export function Card({
           } ${isDragging ? "opacity-0" : ""} ${
             selected ? "ring-1 ring-blue-100" : ""
           }`}
-          onMouseDown={handleMouseDown}
-          onTouchStart={handleMouseDown}
+          onPointerDown={handlePointerDown}
           onContextMenu={handleContextMenu}
           style={{
-            touchAction: "none",
+            // Draggable cards keep the gesture entirely, which is what makes
+            // dragging them reliable. Cards that cannot be dragged have nothing
+            // to protect, so they hand the gesture back and their row becomes
+            // scrollable by touching the cards themselves rather than only the
+            // gaps between them.
+            touchAction: draggable ? "none" : "auto",
             borderRadius: "5%",
             marginLeft: rotated ? horizontalMargin : undefined,
             marginRight: rotated ? horizontalMargin : undefined,
           }}
         />
+
+        {/* Kept upright and in the same screen corner even when the card is
+            flipped, so a shield's number stays readable from either side. */}
+        {number !== undefined && (
+          <span className="pointer-events-none absolute top-[2%] right-[10%] text-[clamp(0.55rem,1.1vh,0.8rem)] leading-none text-white drop-shadow-[0_1px_2px_rgba(0,0,0,0.9)]">
+            {number}
+          </span>
+        )}
       </div>
     </>
   );

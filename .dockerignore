@@ -1,0 +1,14 @@
+# The image is built from the Go module and nothing else: the Dockerfile does
+# `COPY ./sim .`. Everything outside sim is excluded so it is not uploaded to the
+# Docker daemon on every build, which otherwise means sending the whole git
+# history and the duel interface package for an image that uses neither.
+#
+# If the Dockerfile ever needs more than sim, add it as another exception here.
+*
+!sim
+
+# Developer files that live inside sim. The multi-stage build already keeps these
+# out of the final image, which only receives the build directory, but they have
+# no business being uploaded or landing in the build cache either.
+sim/.env*
+sim/**/__debug_*

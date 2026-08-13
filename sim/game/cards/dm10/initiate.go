@@ -119,3 +119,46 @@ func LemikVizierOfThought(c *match.Card) {
 	}))
 
 }
+
+// EstolVizierOfAqua ...
+func EstolVizierOfAqua(c *match.Card) {
+
+	c.Name = "Estol, Vizier of Aqua"
+	c.Power = 2000
+	c.Civs = []string{civ.Light, civ.Water}
+	c.Family = []string{family.Initiate, family.LiquidPeople}
+	c.ManaCost = 5
+	c.ManaRequirement = []string{civ.Light, civ.Water}
+
+	c.Use(fx.Creature, fx.PutIntoManaZoneTapped, fx.When(fx.Summoned, func(card *match.Card, ctx *match.Context) {
+		fx.TopCardToShield(card, ctx)
+		fx.ShowXShields(1, false)(card, ctx)
+	}))
+
+}
+
+// TajimalVizierOfAqua ...
+func TajimalVizierOfAqua(c *match.Card) {
+
+	c.Name = "Tajimal, Vizier of Aqua"
+	c.Power = 4000
+	c.Civs = []string{civ.Light, civ.Water}
+	c.Family = []string{family.Initiate, family.LiquidPeople}
+	c.ManaCost = 3
+	c.ManaRequirement = []string{civ.Light, civ.Water}
+
+	c.Use(fx.Creature, fx.PutIntoManaZoneTapped, fx.Blocker(), fx.CantAttackPlayers, func(card *match.Card, ctx *match.Context) {
+
+		// Battle captures both powers on the event, so a battle-only bonus has to
+		// change the captured value rather than the card's power.
+		if event, ok := ctx.Event.(*match.Battle); ok {
+			if event.Attacker == card && event.Defender.HasCiv(civ.Fire) {
+				event.AttackerPower += 4000
+			} else if event.Defender == card && event.Attacker.HasCiv(civ.Fire) {
+				event.DefenderPower += 4000
+			}
+		}
+
+	})
+
+}

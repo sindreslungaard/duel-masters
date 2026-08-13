@@ -1,6 +1,7 @@
 package fx
 
 import (
+	"duel-masters/game/cnd"
 	"duel-masters/game/match"
 	"fmt"
 )
@@ -152,6 +153,61 @@ func DestroyOpponentCreature(cancellable bool, destroyType match.CreatureDestroy
 
 }
 
+// DestroyOpBlocker destroys one of the opponent's creatures that has "blocker".
+// The choice is mandatory, and no prompt is opened when the opponent controls no
+// blocker at all.
+func DestroyOpBlocker(card *match.Card, ctx *match.Context) {
+	SelectFilter(
+		card.Player,
+		ctx.Match,
+		ctx.Match.Opponent(card.Player),
+		match.BATTLEZONE,
+		fmt.Sprintf("%s's effect: Choose one of your opponent's creatures that has \"blocker\" and destroy it.", card.Name),
+		1,
+		1,
+		false,
+		func(x *match.Card) bool { return x.HasCondition(cnd.Blocker) },
+		false,
+	).Map(func(x *match.Card) {
+		ctx.Match.Destroy(x, card, match.DestroyedByMiscAbility)
+	})
+}
+
+// OwnChoosesAndDestroysCreature makes the card's controller choose one of their
+// own creatures and destroy it.
+func OwnChoosesAndDestroysCreature(card *match.Card, ctx *match.Context) {
+	Select(
+		card.Player,
+		ctx.Match,
+		card.Player,
+		match.BATTLEZONE,
+		fmt.Sprintf("%s: Select 1 creature from your battlezone that will be sent to your graveyard", card.Name),
+		1,
+		1,
+		false,
+	).Map(func(x *match.Card) {
+		ctx.Match.Destroy(x, card, match.DestroyedByMiscAbility)
+	})
+}
+
+// OwnChoosesManaBurn makes the card's controller choose a card in their own mana
+// zone and put it into their graveyard.
+func OwnChoosesManaBurn(card *match.Card, ctx *match.Context) {
+	Select(
+		card.Player,
+		ctx.Match,
+		card.Player,
+		match.MANAZONE,
+		fmt.Sprintf("%s effect: Select 1 card from your manazone that will be sent to your graveyard", card.Name),
+		1,
+		1,
+		false,
+	).Map(func(manaCard *match.Card) {
+		card.Player.MoveCard(manaCard.ID, match.MANAZONE, match.GRAVEYARD, card.ID)
+		ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s effect: %s moved from MZ to GY", card.Name, manaCard.Name))
+	})
+}
+
 func OpponentChoosesAndDestroysCreature(card *match.Card, ctx *match.Context) {
 	Select(
 		ctx.Match.Opponent(card.Player),
@@ -181,4 +237,169 @@ func OpponentChoosesManaBurn(card *match.Card, ctx *match.Context) {
 		ctx.Match.Opponent(card.Player).MoveCard(manaCard.ID, match.MANAZONE, match.GRAVEYARD, card.ID)
 		ctx.Match.ReportActionInChat(ctx.Match.Opponent(card.Player), fmt.Sprintf("%s effect: %s moved from MZ to GY", card.Name, manaCard.Name))
 	})
+}
+
+// DestroyUpToXOpBlockers destroys up to x of the opponent's creatures that have
+// "blocker". The choice can be declined entirely, and no prompt is opened when
+// the opponent controls no blocker at all.
+func DestroyUpToXOpBlockers(x int) match.HandlerFunc {
+	return func(card *match.Card, ctx *match.Context) {
+		SelectFilter(
+			card.Player,
+			ctx.Match,
+			ctx.Match.Opponent(card.Player),
+			match.BATTLEZONE,
+			fmt.Sprintf("%s's effect: Destroy up to %d of your opponent's creatures that have \"blocker\".", card.Name, x),
+			1,
+			x,
+			true,
+			func(creature *match.Card) bool { return creature.HasCondition(cnd.Blocker) },
+			false,
+		).Map(func(blocker *match.Card) {
+			ctx.Match.Destroy(blocker, card, match.DestroyedByMiscAbility)
+		})
+	}
+}
+
+// OpponentChoosesCreatureToMana makes the opponent choose one of their own
+// creatures and put it into their mana zone.
+func OpponentChoosesCreatureToMana(card *match.Card, ctx *match.Context) {
+	opponent := ctx.Match.Opponent(card.Player)
+
+	Select(
+		opponent,
+		ctx.Match,
+		opponent,
+		match.BATTLEZONE,
+		fmt.Sprintf("%s: Choose one of your creatures and put it into your mana zone", card.Name),
+		1,
+		1,
+		false,
+	).Map(func(creature *match.Card) {
+		moved, err := opponent.MoveCard(creature.ID, match.BATTLEZONE, match.MANAZONE, card.ID)
+
+		if err != nil || moved.Zone != match.MANAZONE {
+			return
+		}
+
+		ctx.Match.ReportActionInChat(opponent, fmt.Sprintf("%s was put into %s's mana zone by %s", creature.Name, opponent.Username(), card.Name))
+	})
+}
+
+// PlayerChoosesAndDestroysOwnCreature makes the given player pick one of their
+// own creatures and destroy it. Unlike OwnChoosesAndDestroysCreature the chooser
+// is passed in, which is what an effect that fires on both players' turns needs.
+func PlayerChoosesAndDestroysOwnCreature(player *match.Player, card *match.Card, ctx *match.Context) {
+	Select(
+		player,
+		ctx.Match,
+		player,
+		match.BATTLEZONE,
+		fmt.Sprintf("%s: Choose one of your creatures and destroy it.", card.Name),
+		1,
+		1,
+		false,
+	).Map(func(creature *match.Card) {
+		ctx.Match.Destroy(creature, card, match.DestroyedByMiscAbility)
+	})
+}
+
+// DestroyAllCreatures destroys every creature in the battle zone, on both
+// sides, sparing nothing. The full set is decided before anything is destroyed,
+// so a destruction that changes the board cannot change who is caught.
+func DestroyAllCreatures(destroyType match.CreatureDestroyedContext) match.HandlerFunc {
+	return func(card *match.Card, ctx *match.Context) {
+		toDestroy := make([]*match.Card, 0)
+
+		for _, player := range []*match.Player{card.Player, ctx.Match.Opponent(card.Player)} {
+			Find(player, match.BATTLEZONE).Map(func(creature *match.Card) {
+				toDestroy = append(toDestroy, creature)
+			})
+		}
+
+		for _, creature := range toDestroy {
+			ctx.Match.Destroy(creature, card, destroyType)
+		}
+	}
+}
+
+// DestroyLowestPowerCreature destroys the creature with the lowest power in the
+// battle zone, counting both players. A tie is broken by the card's controller
+// choosing from among the tied creatures.
+func DestroyLowestPowerCreature(card *match.Card, ctx *match.Context) {
+	candidates := make([]*match.Card, 0)
+
+	for _, player := range []*match.Player{card.Player, ctx.Match.Opponent(card.Player)} {
+		Find(player, match.BATTLEZONE).Map(func(creature *match.Card) {
+			candidates = append(candidates, creature)
+		})
+	}
+
+	if len(candidates) < 1 {
+		return
+	}
+
+	lowest := ctx.Match.GetPower(candidates[0], false)
+	for _, creature := range candidates[1:] {
+		if power := ctx.Match.GetPower(creature, false); power < lowest {
+			lowest = power
+		}
+	}
+
+	tied := make([]*match.Card, 0, len(candidates))
+	for _, creature := range candidates {
+		if ctx.Match.GetPower(creature, false) == lowest {
+			tied = append(tied, creature)
+		}
+	}
+
+	if len(tied) == 1 {
+		ctx.Match.Destroy(tied[0], card, match.DestroyedByMiscAbility)
+		return
+	}
+
+	// The tie is broken by this card's controller, and the tied creatures can
+	// belong to either player, so they are offered as one group.
+	byID := make(map[string]bool, len(tied))
+	for _, creature := range tied {
+		byID[creature.ID] = true
+	}
+
+	choices := map[string][]*match.Card{
+		"Your creatures":            FindFilter(card.Player, match.BATTLEZONE, func(x *match.Card) bool { return byID[x.ID] }),
+		"Your opponent's creatures": FindFilter(ctx.Match.Opponent(card.Player), match.BATTLEZONE, func(x *match.Card) bool { return byID[x.ID] }),
+	}
+
+	SelectMultipart(
+		card.Player,
+		ctx.Match,
+		choices,
+		fmt.Sprintf("%s's effect: Several creatures are tied for the lowest power. Choose one to destroy.", card.Name),
+		1,
+		1,
+		false,
+	).Map(func(chosen *match.Card) {
+		ctx.Match.Destroy(chosen, card, match.DestroyedByMiscAbility)
+	})
+}
+
+// DestroyAllCreaturesWithExactPower destroys every creature whose effective
+// power is exactly the given figure, on both sides. The set is decided before
+// anything is destroyed.
+func DestroyAllCreaturesWithExactPower(power int, destroyType match.CreatureDestroyedContext) func(*match.Card, *match.Context) {
+	return func(card *match.Card, ctx *match.Context) {
+		toDestroy := make([]*match.Card, 0)
+
+		for _, player := range []*match.Player{card.Player, ctx.Match.Opponent(card.Player)} {
+			FindFilter(player, match.BATTLEZONE, func(x *match.Card) bool {
+				return ctx.Match.GetPower(x, false) == power
+			}).Map(func(creature *match.Card) {
+				toDestroy = append(toDestroy, creature)
+			})
+		}
+
+		for _, creature := range toDestroy {
+			ctx.Match.Destroy(creature, card, destroyType)
+		}
+	}
 }

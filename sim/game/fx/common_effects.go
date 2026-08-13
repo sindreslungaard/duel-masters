@@ -53,6 +53,33 @@ func FilterShieldTriggers(ctx *match.Context, filter func(*match.Card) bool) {
 
 }
 
+// DiscardOwnXCards makes the card's controller choose x cards from their own
+// hand and discard them. A hand holding fewer than x simply loses what is
+// there, because the selection is clamped to the cards that exist, and an empty
+// hand opens no prompt at all.
+func DiscardOwnXCards(x int) match.HandlerFunc {
+	return func(card *match.Card, ctx *match.Context) {
+		Select(
+			card.Player,
+			ctx.Match,
+			card.Player,
+			match.HAND,
+			fmt.Sprintf("%s's effect: Choose %d card(s) from your hand to discard.", card.Name, x),
+			x,
+			x,
+			false,
+		).Map(func(discarded *match.Card) {
+			moved, err := card.Player.MoveCard(discarded.ID, match.HAND, match.GRAVEYARD, card.ID)
+
+			if err != nil || moved.Zone != match.GRAVEYARD {
+				return
+			}
+
+			ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s was discarded from %s's hand by %s", discarded.Name, card.Player.Username(), card.Name))
+		})
+	}
+}
+
 func PlayerDiscardsRandomCard(card *match.Card, ctx *match.Context) {
 
 	hand, err := card.Player.Container(match.HAND)
@@ -202,22 +229,40 @@ func RotateShields(card *match.Card, ctx *match.Context, max int) {
 }
 
 func DestroyOpShield(card *match.Card, ctx *match.Context) {
-	opponent := ctx.Match.Opponent(card.Player)
+	BreakXOpShields(1)(card, ctx)
+}
 
-	ctx.Match.BreakShields(SelectBackside(
-		card.Player,
-		ctx.Match,
-		opponent,
-		match.SHIELDZONE,
-		fmt.Sprintf("%s effect: select shield to break", card.Name),
-		1,
-		1,
-		false,
-	), card)
+// BreakXOpShields breaks x of the opponent's shields, chosen face down by the
+// card's controller. Breaking is not attacking: the shields go to the
+// opponent's hand and their shield triggers are offered, but nothing blocks and
+// no creature is tapped.
+//
+// An opponent holding fewer than x shields simply loses the ones they have,
+// because the selection is clamped to what is in the shield zone.
+func BreakXOpShields(x int) match.HandlerFunc {
+	return func(card *match.Card, ctx *match.Context) {
+		opponent := ctx.Match.Opponent(card.Player)
 
-	ctx.Match.ReportActionInChat(ctx.Match.Opponent(card.Player),
-		fmt.Sprintf("%s effect broke one of %s's shields", card.Name, opponent.Username()))
+		shields := SelectBackside(
+			card.Player,
+			ctx.Match,
+			opponent,
+			match.SHIELDZONE,
+			fmt.Sprintf("%s effect: select %d shield(s) to break", card.Name, x),
+			x,
+			x,
+			false,
+		)
 
+		if len(shields) < 1 {
+			return
+		}
+
+		ctx.Match.BreakShields(shields, card)
+
+		ctx.Match.ReportActionInChat(opponent,
+			fmt.Sprintf("%s effect broke %d of %s's shields", card.Name, len(shields), opponent.Username()))
+	}
 }
 
 // PutOpShieldIntoGraveyard lets the card's controller choose one of the
@@ -272,8 +317,10 @@ func OpDiscardsXCards(x int) match.HandlerFunc {
 	}
 }
 
-// Look at opponent's x shields
-func ShowXShields(x int) match.HandlerFunc {
+// ShowXShields lets the card's controller look at up to x of the opponent's
+// shields. Pass cancellable for a printed "you may look at", and false when the
+// card makes looking mandatory. The shields stay where they are.
+func ShowXShields(x int, cancellable bool) match.HandlerFunc {
 	return func(card *match.Card, ctx *match.Context) {
 
 		shieldsID := []string{}
@@ -286,10 +333,16 @@ func ShowXShields(x int) match.HandlerFunc {
 			fmt.Sprintf("%s: Select %d of your opponent's shields that will be shown to you", card.Name, x),
 			1,
 			x,
-			true,
+			cancellable,
 		).Map(func(shields *match.Card) {
 			shieldsID = append(shieldsID, shields.ImageID)
 		})
+
+		// Nothing was chosen, either because the opponent has no shields or
+		// because an optional look was declined.
+		if len(shieldsID) < 1 {
+			return
+		}
 
 		ctx.Match.ShowCards(
 			card.Player,
@@ -311,4 +364,14 @@ func OpponentDiscardsHand(card *match.Card, ctx *match.Context) {
 
 	ctx.Match.ReportActionInChat(ctx.Match.Opponent(card.Player), fmt.Sprintf("%s's hand was discarded by %s", ctx.Match.Opponent(card.Player).Username(), card.Name))
 
+}
+
+// OpponentDiscardsXRandomCards makes the opponent discard x cards at random. A
+// hand holding fewer simply loses what is there.
+func OpponentDiscardsXRandomCards(x int) match.HandlerFunc {
+	return func(card *match.Card, ctx *match.Context) {
+		for range x {
+			OpponentDiscardsRandomCard(card, ctx)
+		}
+	}
 }

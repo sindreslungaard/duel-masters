@@ -1,11 +1,15 @@
 package cards
 
 import (
+	"duel-masters/game/cards"
 	"duel-masters/game/civ"
 	"duel-masters/game/cnd"
 	"duel-masters/game/family"
 	"duel-masters/game/match"
 	"duel-masters/tests/scenario"
+	"encoding/json"
+	"os"
+	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -222,6 +226,109 @@ func TestMulticoloredCards(t *testing.T) {
 		assert.True(t, melnia.HasCondition(cnd.CantBeBlocked))
 		assert.True(t, melnia.HasCondition(cnd.Slayer))
 	})
+}
+
+// TestEveryRegisteredCardMatchesItsCatalogCivilizations walks the whole card
+// registry rather than a hand picked sample, so a card registered with the wrong
+// civilizations, or a multicolored card that forgot fx.PutIntoManaZoneTapped,
+// fails here without needing its own test.
+func TestEveryRegisteredCardMatchesItsCatalogCivilizations(t *testing.T) {
+	catalog := readCatalogCivilizations(t)
+
+	scn := scenario.New()
+	player := scn.Match.CurrentPlayer()
+
+	multicoloredUIDs := make([]string, 0)
+	checked := 0
+
+	for setID, set := range cards.Sets {
+		for uid, constructor := range *set {
+			if constructor == nil {
+				continue
+			}
+
+			expected, ok := catalog[uid]
+			require.True(t, ok, "%s card %s is registered but missing from the card catalog", setID, uid)
+
+			// Spawning into the hand dispatches no events, so the whole registry
+			// can be classified cheaply in one match.
+			card, err := player.Player.SpawnCard(uid, match.HAND)
+			require.NoError(t, err)
+
+			assert.Equal(t, len(expected), len(card.Civs), "%s (%s) civilization count", card.Name, uid)
+			for _, civilization := range expected {
+				assert.True(t, card.HasCiv(civilization), "%s (%s) should be a %s card", card.Name, uid, civilization)
+			}
+			assert.Equal(t, len(expected) > 1, card.IsMulticolored(), "%s (%s) multicolored", card.Name, uid)
+
+			checked++
+			if len(expected) > 1 {
+				multicoloredUIDs = append(multicoloredUIDs, uid)
+			}
+		}
+	}
+
+	t.Logf("checked %d registered cards, %d of them multicolored", checked, len(multicoloredUIDs))
+	require.NotEmpty(t, multicoloredUIDs, "the sweep must actually cover multicolored cards")
+
+	// Each card is moved in its own match so that no other card can react to the
+	// move, and through MoveCard so the CardMoved event really is what taps it.
+	for _, uid := range multicoloredUIDs {
+		card := moveIntoManaZone(t, uid)
+		assert.True(t, card.Tapped, "%s (%s) must be put into the mana zone tapped", card.Name, uid)
+	}
+
+	mono := moveIntoManaZone(t, multicolorFireUID)
+	assert.False(t, mono.Tapped, "a mono coloured card is not tapped on arrival")
+}
+
+// moveIntoManaZone charges a single card into an otherwise empty mana zone.
+func moveIntoManaZone(t *testing.T, uid string) *match.Card {
+	t.Helper()
+
+	scn := scenario.New()
+	player := scn.Match.CurrentPlayer()
+
+	spawned, err := player.Player.SpawnCard(uid, match.HAND)
+	require.NoError(t, err)
+
+	moved, err := player.Player.MoveCard(spawned.ID, match.HAND, match.MANAZONE, multicolorSetupSrc)
+	require.NoError(t, err)
+	require.Equal(t, match.MANAZONE, moved.Zone)
+
+	return moved
+}
+
+// readCatalogCivilizations maps every catalog card id to its civilizations,
+// lowercased to match the civ package constants.
+func readCatalogCivilizations(t *testing.T) map[string][]string {
+	t.Helper()
+
+	data, err := os.ReadFile("../../DuelMastersCards.json")
+	require.NoError(t, err)
+
+	var parsed struct {
+		Cards []struct {
+			ID            string   `json:"id"`
+			Civilizations []string `json:"civilizations"`
+		} `json:"cards"`
+	}
+	require.NoError(t, json.Unmarshal(data, &parsed))
+
+	civilizations := make(map[string][]string, len(parsed.Cards))
+	for _, card := range parsed.Cards {
+		if card.ID == "" {
+			continue
+		}
+
+		lowered := make([]string, 0, len(card.Civilizations))
+		for _, civilization := range card.Civilizations {
+			lowered = append(lowered, strings.ToLower(civilization))
+		}
+		civilizations[card.ID] = lowered
+	}
+
+	return civilizations
 }
 
 func spawnMulticolorTestMana(t *testing.T, scn *scenario.TestScenario, player *match.PlayerReference, uid string, count int) []*match.Card {

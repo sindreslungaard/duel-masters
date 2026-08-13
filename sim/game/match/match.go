@@ -1498,35 +1498,25 @@ func (m *Match) Parse(s *server.Socket, data []byte) {
 			// If both players have joined, prompt them to choose their decks
 			if m.Player1 != nil && m.Player2 != nil {
 
-				m.Chat("Server", fmt.Sprintf("%s started the game", m.Player1.Username))
+				m.Chat("Server", fmt.Sprintf("%s joined the game", m.Player1.Username))
 				m.Chat("Server", fmt.Sprintf("%s joined the game", m.Player2.Username))
 
 				hostDeck := m.HostDeck
 				guestDeck := m.GuestDeck
 
-				if m.Format == RandomFormat || len(hostDeck) == 0 || len(guestDeck) == 0 {
-					m.Player1.Player.CreateRandomDeck()
-					m.Player2.Player.CreateRandomDeck()
-					m.Player1.DeckStr = m.Player1.Player.deckString()
-					m.Player2.DeckStr = m.Player2.Player.deckString()
+				m.Player1.DeckStr = strings.Join(hostDeck, ",")
+				m.Player2.DeckStr = strings.Join(guestDeck, ",")
 
-					m.Chat("Server", fmt.Sprintf("%s has received a randomly generated deck", m.Player1.Username))
-					m.Chat("Server", fmt.Sprintf("%s has received a randomly generated deck", m.Player2.Username))
-				} else {
-					m.Player1.DeckStr = strings.Join(hostDeck, ",")
-					m.Player2.DeckStr = strings.Join(guestDeck, ",")
-
-					m.Player1.Player.CreateDeck(hostDeck)
-					m.Player2.Player.CreateDeck(guestDeck)
-
-					m.Chat("Server", fmt.Sprintf("%s's deck loaded", m.Player1.Username))
-					m.Chat("Server", fmt.Sprintf("%s's deck loaded", m.Player2.Username))
-				}
+				m.Player1.Player.CreateDeck(hostDeck)
+				m.Player2.Player.CreateDeck(guestDeck)
 
 				m.Player1.Player.Ready = true
 				m.Player2.Player.Ready = true
 
 				m.Turn = 0
+
+				m.Chat("Server", "Duel has begun!")
+
 				m.Start()
 				return
 
@@ -1920,7 +1910,7 @@ func (m *Match) Parse(s *server.Socket, data []byte) {
 
 			m.End(m.Opponent(p.Player), fmt.Sprintf("%s won by opponent resigning.", m.Opponent(p.Player).Username()))
 
-		}, SequentialEvent)
+		}, ParallelEvent)
 
 	default:
 		logrus.Debugf("Received message in incorrect format: %v", string(data))

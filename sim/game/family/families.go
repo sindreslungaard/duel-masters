@@ -52,6 +52,7 @@ const (
 	SeaHacker       = "Sea Hacker"
 	SnowFaerie      = "Snow Faerie"
 	Soltrooper      = "Soltrooper"
+	SpiritQuartz    = "Spirit Quartz"
 	StarlightTree   = "Starlight Tree"
 	Survivor        = "Survivor"
 	TreeFolk        = "Tree Folk"
@@ -113,6 +114,7 @@ var Families = []string{
 	SeaHacker,
 	SnowFaerie,
 	Soltrooper,
+	SpiritQuartz,
 	StarlightTree,
 	Survivor,
 	TreeFolk,

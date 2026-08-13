@@ -20,3 +20,17 @@ func TulkTheOracle(c *match.Card) {
 	c.Use(fx.Creature)
 
 }
+
+// KaemiraTheOracle ...
+func KaemiraTheOracle(c *match.Card) {
+
+	c.Name = "Kaemira, the Oracle"
+	c.Power = 1000
+	c.Civs = []string{civ.Light}
+	c.Family = []string{family.LightBringer}
+	c.ManaCost = 4
+	c.ManaRequirement = []string{civ.Light}
+
+	c.Use(fx.Creature, fx.SilentSkill(fx.TopCardToShield))
+
+}

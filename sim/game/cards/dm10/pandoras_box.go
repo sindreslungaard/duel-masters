@@ -85,3 +85,17 @@ func DedreenTheHiddenCorrupter(c *match.Card) {
 	}))
 
 }
+
+// KejilaTheHiddenHorror ...
+func KejilaTheHiddenHorror(c *match.Card) {
+
+	c.Name = "Kejila, the Hidden Horror"
+	c.Power = 6000
+	c.Civs = []string{civ.Darkness}
+	c.Family = []string{family.PandorasBox}
+	c.ManaCost = 6
+	c.ManaRequirement = []string{civ.Darkness}
+
+	c.Use(fx.Creature, fx.Doublebreaker, fx.SilentSkill(fx.BreakXOpShields(2)))
+
+}
