@@ -19,7 +19,7 @@ const (
 
 func TestHustleBerry(t *testing.T) {
 	t.Run("printed characteristics", func(t *testing.T) {
-		scn, player, opponent := setupSilentSkillTest(t)
+		scn, player, opponent := setupDuel(t)
 		berry := putCardInBattlezone(t, scn, player.Player, hustleBerryUID, hustleBerrySetupSrc)
 		passTurnToSelf(t, scn, player, opponent)
 
@@ -33,7 +33,7 @@ func TestHustleBerry(t *testing.T) {
 	})
 
 	t.Run("puts the top card of the deck into the mana zone", func(t *testing.T) {
-		scn, player, opponent := setupSilentSkillTest(t)
+		scn, player, opponent := setupDuel(t)
 		berry := putCardInBattlezone(t, scn, player.Player, hustleBerryUID, hustleBerrySetupSrc)
 		berry.Tapped = true
 
@@ -61,7 +61,7 @@ func TestHustleBerry(t *testing.T) {
 	})
 
 	t.Run("declining leaves the deck and mana zone alone", func(t *testing.T) {
-		scn, player, opponent := setupSilentSkillTest(t)
+		scn, player, opponent := setupDuel(t)
 		berry := putCardInBattlezone(t, scn, player.Player, hustleBerryUID, hustleBerrySetupSrc)
 		berry.Tapped = true
 
@@ -78,7 +78,7 @@ func TestHustleBerry(t *testing.T) {
 	})
 
 	t.Run("takes only the opponent's turn off, not their deck", func(t *testing.T) {
-		scn, player, opponent := setupSilentSkillTest(t)
+		scn, player, opponent := setupDuel(t)
 		berry := putCardInBattlezone(t, scn, player.Player, hustleBerryUID, hustleBerrySetupSrc)
 		berry.Tapped = true
 

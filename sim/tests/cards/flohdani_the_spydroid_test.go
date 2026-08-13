@@ -19,7 +19,7 @@ const (
 
 func TestFlohdaniTheSpydroid(t *testing.T) {
 	t.Run("printed characteristics", func(t *testing.T) {
-		scn, player, opponent := setupSilentSkillTest(t)
+		scn, player, opponent := setupDuel(t)
 		flohdani := putCardInBattlezone(t, scn, player.Player, flohdaniTheSpydroidUID, flohdaniTheSpydroidSetupSrc)
 		passTurnToSelf(t, scn, player, opponent)
 
@@ -33,7 +33,7 @@ func TestFlohdaniTheSpydroid(t *testing.T) {
 	})
 
 	t.Run("taps two of the opponent's creatures", func(t *testing.T) {
-		scn, player, opponent := setupSilentSkillTest(t)
+		scn, player, opponent := setupDuel(t)
 		flohdani := putCardInBattlezone(t, scn, player.Player, flohdaniTheSpydroidUID, flohdaniTheSpydroidSetupSrc)
 		flohdani.Tapped = true
 
@@ -54,7 +54,7 @@ func TestFlohdaniTheSpydroid(t *testing.T) {
 	})
 
 	t.Run("up to means one is allowed", func(t *testing.T) {
-		scn, player, opponent := setupSilentSkillTest(t)
+		scn, player, opponent := setupDuel(t)
 		flohdani := putCardInBattlezone(t, scn, player.Player, flohdaniTheSpydroidUID, flohdaniTheSpydroidSetupSrc)
 		flohdani.Tapped = true
 
@@ -72,7 +72,7 @@ func TestFlohdaniTheSpydroid(t *testing.T) {
 	})
 
 	t.Run("up to means none is allowed", func(t *testing.T) {
-		scn, player, opponent := setupSilentSkillTest(t)
+		scn, player, opponent := setupDuel(t)
 		flohdani := putCardInBattlezone(t, scn, player.Player, flohdaniTheSpydroidUID, flohdaniTheSpydroidSetupSrc)
 		flohdani.Tapped = true
 
@@ -89,7 +89,7 @@ func TestFlohdaniTheSpydroid(t *testing.T) {
 	})
 
 	t.Run("an empty opposing battle zone opens no prompt", func(t *testing.T) {
-		scn, player, opponent := setupSilentSkillTest(t)
+		scn, player, opponent := setupDuel(t)
 		flohdani := putCardInBattlezone(t, scn, player.Player, flohdaniTheSpydroidUID, flohdaniTheSpydroidSetupSrc)
 		flohdani.Tapped = true
 
@@ -104,7 +104,7 @@ func TestFlohdaniTheSpydroid(t *testing.T) {
 	})
 
 	t.Run("it does not tap its controller's own creatures", func(t *testing.T) {
-		scn, player, opponent := setupSilentSkillTest(t)
+		scn, player, opponent := setupDuel(t)
 		flohdani := putCardInBattlezone(t, scn, player.Player, flohdaniTheSpydroidUID, flohdaniTheSpydroidSetupSrc)
 		flohdani.Tapped = true
 

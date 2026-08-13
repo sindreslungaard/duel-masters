@@ -18,7 +18,7 @@ const (
 
 func TestVenomCapsule(t *testing.T) {
 	t.Run("printed characteristics", func(t *testing.T) {
-		scn, player, opponent := setupSilentSkillTest(t)
+		scn, player, opponent := setupDuel(t)
 		capsule := putCardInBattlezone(t, scn, player.Player, venomCapsuleUID, venomCapsuleSetupSrc)
 		passTurnToSelf(t, scn, player, opponent)
 
@@ -32,7 +32,7 @@ func TestVenomCapsule(t *testing.T) {
 	})
 
 	t.Run("breaks one of the opponent's shields", func(t *testing.T) {
-		scn, player, opponent := setupSilentSkillTest(t)
+		scn, player, opponent := setupDuel(t)
 		capsule := putCardInBattlezone(t, scn, player.Player, venomCapsuleUID, venomCapsuleSetupSrc)
 		capsule.Tapped = true
 
@@ -64,7 +64,7 @@ func TestVenomCapsule(t *testing.T) {
 	})
 
 	t.Run("breaking is not attacking, so it cannot win the game", func(t *testing.T) {
-		scn, player, opponent := setupSilentSkillTest(t)
+		scn, player, opponent := setupDuel(t)
 		capsule := putCardInBattlezone(t, scn, player.Player, venomCapsuleUID, venomCapsuleSetupSrc)
 		capsule.Tapped = true
 
@@ -85,7 +85,7 @@ func TestVenomCapsule(t *testing.T) {
 	})
 
 	t.Run("declining leaves the shields alone", func(t *testing.T) {
-		scn, player, opponent := setupSilentSkillTest(t)
+		scn, player, opponent := setupDuel(t)
 		capsule := putCardInBattlezone(t, scn, player.Player, venomCapsuleUID, venomCapsuleSetupSrc)
 		capsule.Tapped = true
 

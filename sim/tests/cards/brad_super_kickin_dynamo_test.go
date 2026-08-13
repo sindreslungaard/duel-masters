@@ -20,7 +20,7 @@ const (
 
 func TestBradSuperKickinDynamo(t *testing.T) {
 	t.Run("printed characteristics", func(t *testing.T) {
-		scn, player, opponent := setupSilentSkillTest(t)
+		scn, player, opponent := setupDuel(t)
 		brad := putCardInBattlezone(t, scn, player.Player, bradSuperKickinDynamoUID, bradSuperKickinDynamoSetupSrc)
 		passTurnToSelf(t, scn, player, opponent)
 
@@ -34,7 +34,7 @@ func TestBradSuperKickinDynamo(t *testing.T) {
 	})
 
 	t.Run("destroys an opposing blocker", func(t *testing.T) {
-		scn, player, opponent := setupSilentSkillTest(t)
+		scn, player, opponent := setupDuel(t)
 		brad := putCardInBattlezone(t, scn, player.Player, bradSuperKickinDynamoUID, bradSuperKickinDynamoSetupSrc)
 		brad.Tapped = true
 
@@ -54,7 +54,7 @@ func TestBradSuperKickinDynamo(t *testing.T) {
 	})
 
 	t.Run("asks which blocker when there are several", func(t *testing.T) {
-		scn, player, opponent := setupSilentSkillTest(t)
+		scn, player, opponent := setupDuel(t)
 		brad := putCardInBattlezone(t, scn, player.Player, bradSuperKickinDynamoUID, bradSuperKickinDynamoSetupSrc)
 		brad.Tapped = true
 
@@ -72,7 +72,7 @@ func TestBradSuperKickinDynamo(t *testing.T) {
 	})
 
 	t.Run("no blocker means nothing happens", func(t *testing.T) {
-		scn, player, opponent := setupSilentSkillTest(t)
+		scn, player, opponent := setupDuel(t)
 		brad := putCardInBattlezone(t, scn, player.Player, bradSuperKickinDynamoUID, bradSuperKickinDynamoSetupSrc)
 		brad.Tapped = true
 
@@ -86,7 +86,7 @@ func TestBradSuperKickinDynamo(t *testing.T) {
 	})
 
 	t.Run("it cannot destroy its controller's own blocker", func(t *testing.T) {
-		scn, player, opponent := setupSilentSkillTest(t)
+		scn, player, opponent := setupDuel(t)
 		brad := putCardInBattlezone(t, scn, player.Player, bradSuperKickinDynamoUID, bradSuperKickinDynamoSetupSrc)
 		brad.Tapped = true
 

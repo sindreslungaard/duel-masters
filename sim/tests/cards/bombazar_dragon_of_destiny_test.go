@@ -5,7 +5,6 @@ import (
 	"duel-masters/game/cnd"
 	"duel-masters/game/family"
 	"duel-masters/game/match"
-	"duel-masters/tests/scenario"
 	"testing"
 	"time"
 
@@ -22,7 +21,7 @@ const (
 
 func TestBombazarDragonOfDestiny(t *testing.T) {
 	t.Run("printed characteristics", func(t *testing.T) {
-		scn, player, opponent := setupSilentSkillTest(t)
+		scn, player, opponent := setupDuel(t)
 
 		// Kept in hand: putting it into play arms the extra turn, which would
 		// take this test somewhere it does not need to go. The keywords are
@@ -45,7 +44,7 @@ func TestBombazarDragonOfDestiny(t *testing.T) {
 	})
 
 	t.Run("it enters the mana zone tapped", func(t *testing.T) {
-		_, player, _ := setupSilentSkillTest(t)
+		_, player, _ := setupDuel(t)
 
 		card, err := player.Player.SpawnCard(bombazarUID, match.HAND)
 		require.NoError(t, err)
@@ -57,7 +56,7 @@ func TestBombazarDragonOfDestiny(t *testing.T) {
 	})
 
 	t.Run("entering play destroys every other creature with exactly 6000 power", func(t *testing.T) {
-		scn, player, opponent := setupSilentSkillTest(t)
+		scn, player, opponent := setupDuel(t)
 
 		ownSix := putCardInBattlezone(t, scn, player.Player, bombazarSixThousandID, bombazarSetupSrc)
 		theirSix := putCardInBattlezone(t, scn, opponent.Player, bombazarSixThousandID, bombazarSetupSrc)
@@ -73,7 +72,7 @@ func TestBombazarDragonOfDestiny(t *testing.T) {
 	})
 
 	t.Run("its controller takes an extra turn and then loses at the end of it", func(t *testing.T) {
-		scn, player, _ := setupSilentSkillTest(t)
+		scn, player, _ := setupDuel(t)
 
 		bombazar := putCardInBattlezone(t, scn, player.Player, bombazarUID, bombazarSetupSrc)
 		require.NoError(t, scn.WaitForEventLoop())
@@ -93,7 +92,7 @@ func TestBombazarDragonOfDestiny(t *testing.T) {
 	})
 
 	t.Run("the loss still happens if Bombazar has left the battle zone", func(t *testing.T) {
-		scn, player, opponent := setupSilentSkillTest(t)
+		scn, player, _ := setupDuel(t)
 
 		bombazar := putCardInBattlezone(t, scn, player.Player, bombazarUID, bombazarSetupSrc)
 		require.NoError(t, scn.WaitForEventLoop())
@@ -111,12 +110,10 @@ func TestBombazarDragonOfDestiny(t *testing.T) {
 
 		require.Eventually(t, scn.Match.IsClosed, 2*time.Second, 10*time.Millisecond,
 			"leaving play does not call the loss off")
-
-		_ = opponent
 	})
 
 	t.Run("the opponent is the winner", func(t *testing.T) {
-		scn, player, opponent := setupSilentSkillTest(t)
+		scn, player, opponent := setupDuel(t)
 
 		putCardInBattlezone(t, scn, player.Player, bombazarUID, bombazarSetupSrc)
 		require.NoError(t, scn.WaitForEventLoop())
@@ -135,7 +132,7 @@ func TestBombazarDragonOfDestiny(t *testing.T) {
 	})
 
 	t.Run("only one extra turn is taken", func(t *testing.T) {
-		scn, player, opponent := setupSilentSkillTest(t)
+		scn, player, _ := setupDuel(t)
 
 		putCardInBattlezone(t, scn, player.Player, bombazarUID, bombazarSetupSrc)
 		require.NoError(t, scn.WaitForEventLoop())
@@ -146,9 +143,5 @@ func TestBombazarDragonOfDestiny(t *testing.T) {
 		require.NoError(t, scn.ActionEndTurn(player))
 		require.Eventually(t, scn.Match.IsClosed, 2*time.Second, 10*time.Millisecond,
 			"the second end of turn ends the game rather than granting another turn")
-
-		_ = opponent
 	})
 }
-
-var _ = scenario.New

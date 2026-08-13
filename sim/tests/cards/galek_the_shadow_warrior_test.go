@@ -142,16 +142,3 @@ func prepareGalek(t *testing.T, scn *scenario.TestScenario, player *match.Player
 
 	return galek, promptStart
 }
-
-// putCardInBattlezone is shared by the multicolored card tests.
-func putCardInBattlezone(t *testing.T, scn *scenario.TestScenario, player *match.Player, uid string, source string) *match.Card {
-	t.Helper()
-
-	player.SpawnCard(uid, match.HAND)
-	card, err := scn.FindCard(player, match.HAND, uid)
-	require.NoError(t, err)
-	moved, err := player.MoveCard(card.ID, match.HAND, match.BATTLEZONE, source)
-	require.NoError(t, err)
-	require.Equal(t, match.BATTLEZONE, moved.Zone)
-	return moved
-}

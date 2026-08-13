@@ -21,7 +21,7 @@ const (
 
 func TestBurnwispLizard(t *testing.T) {
 	t.Run("printed characteristics", func(t *testing.T) {
-		scn, player, opponent := setupSilentSkillTest(t)
+		scn, player, opponent := setupDuel(t)
 		lizard := putCardInBattlezone(t, scn, player.Player, burnwispLizardUID, burnwispLizardTestSetupName)
 		passTurnToSelf(t, scn, player, opponent)
 
@@ -34,7 +34,7 @@ func TestBurnwispLizard(t *testing.T) {
 	})
 
 	t.Run("gives speed attacker to its controller's silent skill creatures", func(t *testing.T) {
-		scn, player, opponent := setupSilentSkillTest(t)
+		scn, player, opponent := setupDuel(t)
 		putCardInBattlezone(t, scn, player.Player, burnwispLizardUID, burnwispLizardTestSetupName)
 
 		silent := putCardInBattlezone(t, scn, player.Player, burnwispLizardSilentUID, burnwispLizardTestSetupName)
@@ -49,7 +49,7 @@ func TestBurnwispLizard(t *testing.T) {
 	})
 
 	t.Run("a silent skill creature summoned this turn can attack", func(t *testing.T) {
-		scn, player, opponent := setupSilentSkillTest(t)
+		scn, player, opponent := setupDuel(t)
 		putCardInBattlezone(t, scn, player.Player, burnwispLizardUID, burnwispLizardTestSetupName)
 
 		for range 4 {
@@ -87,7 +87,7 @@ func TestBurnwispLizard(t *testing.T) {
 	})
 
 	t.Run("the grant is removed when it leaves the battle zone", func(t *testing.T) {
-		scn, player, opponent := setupSilentSkillTest(t)
+		scn, player, opponent := setupDuel(t)
 		lizard := putCardInBattlezone(t, scn, player.Player, burnwispLizardUID, burnwispLizardTestSetupName)
 		silent := putCardInBattlezone(t, scn, player.Player, burnwispLizardSilentUID, burnwispLizardTestSetupName)
 
@@ -102,7 +102,7 @@ func TestBurnwispLizard(t *testing.T) {
 	})
 
 	t.Run("two copies each grant their own, and removing one keeps the other", func(t *testing.T) {
-		scn, player, opponent := setupSilentSkillTest(t)
+		scn, player, opponent := setupDuel(t)
 		first := putCardInBattlezone(t, scn, player.Player, burnwispLizardUID, burnwispLizardTestSetupName)
 		putCardInBattlezone(t, scn, player.Player, burnwispLizardUID, burnwispLizardTestSetupName)
 		silent := putCardInBattlezone(t, scn, player.Player, burnwispLizardSilentUID, burnwispLizardTestSetupName)
@@ -118,7 +118,7 @@ func TestBurnwispLizard(t *testing.T) {
 	})
 
 	t.Run("a silent skill creature that arrives later is covered too", func(t *testing.T) {
-		scn, player, opponent := setupSilentSkillTest(t)
+		scn, player, opponent := setupDuel(t)
 		putCardInBattlezone(t, scn, player.Player, burnwispLizardUID, burnwispLizardTestSetupName)
 
 		waiting, err := player.Player.SpawnCard(burnwispLizardSilentUID, match.HAND)

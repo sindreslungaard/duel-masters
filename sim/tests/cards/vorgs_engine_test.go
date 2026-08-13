@@ -20,7 +20,7 @@ const (
 
 func TestVorgsEngine(t *testing.T) {
 	t.Run("printed characteristics", func(t *testing.T) {
-		scn, player, opponent := setupSilentSkillTest(t)
+		scn, player, opponent := setupDuel(t)
 		engine := putCardInBattlezone(t, scn, player.Player, vorgsEngineUID, vorgsEngineSetupSrc)
 		passTurnToSelf(t, scn, player, opponent)
 
@@ -34,7 +34,7 @@ func TestVorgsEngine(t *testing.T) {
 	})
 
 	t.Run("destroys every creature with power 2000 or less, its own side included", func(t *testing.T) {
-		scn, player, opponent := setupSilentSkillTest(t)
+		scn, player, opponent := setupDuel(t)
 		engine := putCardInBattlezone(t, scn, player.Player, vorgsEngineUID, vorgsEngineSetupSrc)
 		engine.Tapped = true
 
@@ -53,7 +53,7 @@ func TestVorgsEngine(t *testing.T) {
 	})
 
 	t.Run("declining destroys nothing", func(t *testing.T) {
-		scn, player, opponent := setupSilentSkillTest(t)
+		scn, player, opponent := setupDuel(t)
 		engine := putCardInBattlezone(t, scn, player.Player, vorgsEngineUID, vorgsEngineSetupSrc)
 		engine.Tapped = true
 
@@ -68,7 +68,7 @@ func TestVorgsEngine(t *testing.T) {
 	})
 
 	t.Run("an empty battle zone opposite is not a problem", func(t *testing.T) {
-		scn, player, opponent := setupSilentSkillTest(t)
+		scn, player, opponent := setupDuel(t)
 		engine := putCardInBattlezone(t, scn, player.Player, vorgsEngineUID, vorgsEngineSetupSrc)
 		engine.Tapped = true
 

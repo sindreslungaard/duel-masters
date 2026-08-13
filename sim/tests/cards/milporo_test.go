@@ -18,7 +18,7 @@ const (
 
 func TestMilporo(t *testing.T) {
 	t.Run("printed characteristics", func(t *testing.T) {
-		scn, player, opponent := setupSilentSkillTest(t)
+		scn, player, opponent := setupDuel(t)
 		milporo := putCardInBattlezone(t, scn, player.Player, milporoUID, milporoSetupSrc)
 		passTurnToSelf(t, scn, player, opponent)
 
@@ -32,7 +32,7 @@ func TestMilporo(t *testing.T) {
 	})
 
 	t.Run("draws a card on top of the draw step", func(t *testing.T) {
-		scn, player, opponent := setupSilentSkillTest(t)
+		scn, player, opponent := setupDuel(t)
 		milporo := putCardInBattlezone(t, scn, player.Player, milporoUID, milporoSetupSrc)
 		milporo.Tapped = true
 
@@ -49,7 +49,7 @@ func TestMilporo(t *testing.T) {
 	})
 
 	t.Run("declining draws only for the draw step", func(t *testing.T) {
-		scn, player, opponent := setupSilentSkillTest(t)
+		scn, player, opponent := setupDuel(t)
 		milporo := putCardInBattlezone(t, scn, player.Player, milporoUID, milporoSetupSrc)
 		milporo.Tapped = true
 

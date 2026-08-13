@@ -21,7 +21,7 @@ const (
 
 func TestSanfistTheSavageVizier(t *testing.T) {
 	t.Run("printed characteristics", func(t *testing.T) {
-		scn, player, opponent := setupSilentSkillTest(t)
+		scn, player, opponent := setupDuel(t)
 		sanfist := putCardInBattlezone(t, scn, player.Player, sanfistTheSavageVizierUID, sanfistTheSavageVizierSetupSrc)
 		passTurnToSelf(t, scn, player, opponent)
 
@@ -37,7 +37,7 @@ func TestSanfistTheSavageVizier(t *testing.T) {
 	})
 
 	t.Run("it enters the mana zone tapped", func(t *testing.T) {
-		_, player, _ := setupSilentSkillTest(t)
+		_, player, _ := setupDuel(t)
 
 		card, err := player.Player.SpawnCard(sanfistTheSavageVizierUID, match.HAND)
 		require.NoError(t, err)
@@ -83,7 +83,7 @@ func TestSanfistTheSavageVizier(t *testing.T) {
 	})
 
 	t.Run("a discard on its controller's own turn is not replaced", func(t *testing.T) {
-		scn, player, _ := setupSilentSkillTest(t)
+		scn, player, _ := setupDuel(t)
 
 		sanfist, err := player.Player.SpawnCard(sanfistTheSavageVizierUID, match.HAND)
 		require.NoError(t, err)
@@ -103,7 +103,7 @@ func TestSanfistTheSavageVizier(t *testing.T) {
 	})
 
 	t.Run("moving it out of hand for another reason is not a discard", func(t *testing.T) {
-		scn, player, _ := setupSilentSkillTest(t)
+		scn, player, _ := setupDuel(t)
 
 		sanfist, err := player.Player.SpawnCard(sanfistTheSavageVizierUID, match.HAND)
 		require.NoError(t, err)

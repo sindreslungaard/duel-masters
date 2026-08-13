@@ -174,3 +174,30 @@ func ReapAndSow(c *match.Card) {
 	}))
 
 }
+
+// RiseAndShine ...
+func RiseAndShine(c *match.Card) {
+
+	c.Name = "Rise and Shine"
+	c.Civs = []string{civ.Light, civ.Water}
+	c.ManaCost = 4
+	c.ManaRequirement = []string{civ.Light, civ.Water}
+
+	c.Use(fx.Spell, fx.ShieldTrigger, fx.PutIntoManaZoneTapped, fx.When(fx.SpellCast,
+		fx.RevealTopXTake1ReorderRestOnBottom(4, func(x *match.Card) bool {
+			return x.HasCondition(cnd.Blocker)
+		}, "card that has \"blocker\"")))
+
+}
+
+// RouletteOfRuin ...
+func RouletteOfRuin(c *match.Card) {
+
+	c.Name = "Roulette of Ruin"
+	c.Civs = []string{civ.Darkness}
+	c.ManaCost = 5
+	c.ManaRequirement = []string{civ.Darkness}
+
+	c.Use(fx.Spell, fx.ShieldTrigger, fx.When(fx.SpellCast, fx.ChooseANumberAndDiscardByCost))
+
+}

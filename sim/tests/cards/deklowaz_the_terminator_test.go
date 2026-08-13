@@ -22,7 +22,7 @@ const (
 
 func TestDeklowazTheTerminator(t *testing.T) {
 	t.Run("printed characteristics", func(t *testing.T) {
-		scn, player, opponent := setupSilentSkillTest(t)
+		scn, player, opponent := setupDuel(t)
 		deklowaz := putCardInBattlezone(t, scn, player.Player, deklowazTheTerminatorUID, deklowazTheTerminatorSetupSrc)
 		passTurnToSelf(t, scn, player, opponent)
 
@@ -37,7 +37,7 @@ func TestDeklowazTheTerminator(t *testing.T) {
 	})
 
 	t.Run("it enters the mana zone tapped", func(t *testing.T) {
-		_, player, _ := setupSilentSkillTest(t)
+		_, player, _ := setupDuel(t)
 
 		card, err := player.Player.SpawnCard(deklowazTheTerminatorUID, match.HAND)
 		require.NoError(t, err)
@@ -49,7 +49,7 @@ func TestDeklowazTheTerminator(t *testing.T) {
 	})
 
 	t.Run("the tap ability sweeps the battle zone of everything at 3000 or less", func(t *testing.T) {
-		scn, player, opponent := setupSilentSkillTest(t)
+		scn, player, opponent := setupDuel(t)
 		deklowaz := putCardInBattlezone(t, scn, player.Player, deklowazTheTerminatorUID, deklowazTheTerminatorSetupSrc)
 
 		ownSmall := putCardInBattlezone(t, scn, player.Player, deklowazSmallCreatureUID, deklowazTheTerminatorSetupSrc)
@@ -68,7 +68,7 @@ func TestDeklowazTheTerminator(t *testing.T) {
 	})
 
 	t.Run("the opponent discards the small creatures in their hand", func(t *testing.T) {
-		scn, player, opponent := setupSilentSkillTest(t)
+		scn, player, opponent := setupDuel(t)
 		deklowaz := putCardInBattlezone(t, scn, player.Player, deklowazTheTerminatorUID, deklowazTheTerminatorSetupSrc)
 
 		small, edge, big, spell := deklowazSeedHand(t, opponent)
@@ -87,7 +87,7 @@ func TestDeklowazTheTerminator(t *testing.T) {
 	})
 
 	t.Run("it does not discard from its controller's own hand", func(t *testing.T) {
-		scn, player, opponent := setupSilentSkillTest(t)
+		scn, player, opponent := setupDuel(t)
 		deklowaz := putCardInBattlezone(t, scn, player.Player, deklowazTheTerminatorUID, deklowazTheTerminatorSetupSrc)
 
 		ownSmall, _, _, _ := deklowazSeedHand(t, player)
@@ -100,7 +100,7 @@ func TestDeklowazTheTerminator(t *testing.T) {
 	})
 
 	t.Run("an empty opposing hand is not a problem", func(t *testing.T) {
-		scn, player, opponent := setupSilentSkillTest(t)
+		scn, player, opponent := setupDuel(t)
 		deklowaz := putCardInBattlezone(t, scn, player.Player, deklowazTheTerminatorUID, deklowazTheTerminatorSetupSrc)
 
 		passTurnToSelf(t, scn, player, opponent)
@@ -120,7 +120,7 @@ func TestDeklowazTheTerminator(t *testing.T) {
 	})
 
 	t.Run("a tapped creature cannot use the ability again", func(t *testing.T) {
-		scn, player, opponent := setupSilentSkillTest(t)
+		scn, player, opponent := setupDuel(t)
 		deklowaz := putCardInBattlezone(t, scn, player.Player, deklowazTheTerminatorUID, deklowazTheTerminatorSetupSrc)
 
 		passTurnToSelf(t, scn, player, opponent)

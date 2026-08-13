@@ -21,7 +21,7 @@ const (
 
 func TestMysticMagician(t *testing.T) {
 	t.Run("printed characteristics", func(t *testing.T) {
-		scn, player, opponent := setupSilentSkillTest(t)
+		scn, player, opponent := setupDuel(t)
 		magician := putCardInBattlezone(t, scn, player.Player, mysticMagicianUID, mysticMagicianSetupSrc)
 		passTurnToSelf(t, scn, player, opponent)
 
@@ -34,7 +34,7 @@ func TestMysticMagician(t *testing.T) {
 	})
 
 	t.Run("its controller's silent skill creatures enter the battle zone tapped", func(t *testing.T) {
-		scn, player, opponent := setupSilentSkillTest(t)
+		scn, player, opponent := setupDuel(t)
 		putCardInBattlezone(t, scn, player.Player, mysticMagicianUID, mysticMagicianSetupSrc)
 
 		silent, ordinary := mysticMagicianPreparedPair(t, player)
@@ -48,7 +48,7 @@ func TestMysticMagician(t *testing.T) {
 	})
 
 	t.Run("it does not tap the opponent's silent skill creatures", func(t *testing.T) {
-		scn, player, opponent := setupSilentSkillTest(t)
+		scn, player, opponent := setupDuel(t)
 		putCardInBattlezone(t, scn, player.Player, mysticMagicianUID, mysticMagicianSetupSrc)
 
 		theirs, err := opponent.Player.SpawnCard(mysticMagicianSilentUID, match.HAND)
@@ -63,7 +63,7 @@ func TestMysticMagician(t *testing.T) {
 	})
 
 	t.Run("a silent skill creature goes to its owner's hand instead of being destroyed", func(t *testing.T) {
-		scn, player, opponent := setupSilentSkillTest(t)
+		scn, player, opponent := setupDuel(t)
 		magician := putCardInBattlezone(t, scn, player.Player, mysticMagicianUID, mysticMagicianSetupSrc)
 
 		silent, ordinary := mysticMagicianPreparedPair(t, player)
@@ -81,7 +81,7 @@ func TestMysticMagician(t *testing.T) {
 	})
 
 	t.Run("it does not save the opponent's silent skill creatures", func(t *testing.T) {
-		scn, player, opponent := setupSilentSkillTest(t)
+		scn, player, opponent := setupDuel(t)
 		magician := putCardInBattlezone(t, scn, player.Player, mysticMagicianUID, mysticMagicianSetupSrc)
 
 		theirs, err := opponent.Player.SpawnCard(mysticMagicianSilentUID, match.HAND)
@@ -97,7 +97,7 @@ func TestMysticMagician(t *testing.T) {
 	})
 
 	t.Run("it does not save itself", func(t *testing.T) {
-		scn, player, opponent := setupSilentSkillTest(t)
+		scn, player, opponent := setupDuel(t)
 		magician := putCardInBattlezone(t, scn, player.Player, mysticMagicianUID, mysticMagicianSetupSrc)
 		passTurnToSelf(t, scn, player, opponent)
 
@@ -110,7 +110,7 @@ func TestMysticMagician(t *testing.T) {
 	})
 
 	t.Run("neither half works once it has left the battle zone", func(t *testing.T) {
-		scn, player, opponent := setupSilentSkillTest(t)
+		scn, player, opponent := setupDuel(t)
 		magician := putCardInBattlezone(t, scn, player.Player, mysticMagicianUID, mysticMagicianSetupSrc)
 
 		silent, err := player.Player.SpawnCard(mysticMagicianSilentUID, match.HAND)
@@ -132,7 +132,7 @@ func TestMysticMagician(t *testing.T) {
 	})
 
 	t.Run("two copies still return the creature exactly once", func(t *testing.T) {
-		scn, player, opponent := setupSilentSkillTest(t)
+		scn, player, opponent := setupDuel(t)
 		magician := putCardInBattlezone(t, scn, player.Player, mysticMagicianUID, mysticMagicianSetupSrc)
 		putCardInBattlezone(t, scn, player.Player, mysticMagicianUID, mysticMagicianSetupSrc)
 

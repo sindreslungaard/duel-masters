@@ -47,3 +47,17 @@ func DiamondiaTheBlizzardRider(c *match.Card) {
 	}))
 
 }
+
+// HeartyCapnPolligon ...
+func HeartyCapnPolligon(c *match.Card) {
+
+	c.Name = "Hearty Cap'n Polligon"
+	c.Power = 2000
+	c.Civs = []string{civ.Nature}
+	c.Family = []string{family.SnowFaerie}
+	c.ManaCost = 1
+	c.ManaRequirement = []string{civ.Nature}
+
+	c.Use(fx.Creature, fx.ReturnToHandIfItBrokeShields())
+
+}

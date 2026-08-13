@@ -20,7 +20,7 @@ const (
 
 func TestSporeblastErengi(t *testing.T) {
 	t.Run("printed characteristics", func(t *testing.T) {
-		scn, player, opponent := setupSilentSkillTest(t)
+		scn, player, opponent := setupDuel(t)
 		erengi := putCardInBattlezone(t, scn, player.Player, sporeblastErengiUID, sporeblastErengiSetupSrc)
 		passTurnToSelf(t, scn, player, opponent)
 
@@ -34,7 +34,7 @@ func TestSporeblastErengi(t *testing.T) {
 	})
 
 	t.Run("takes a creature out of the deck", func(t *testing.T) {
-		scn, player, opponent := setupSilentSkillTest(t)
+		scn, player, opponent := setupDuel(t)
 		erengi := putCardInBattlezone(t, scn, player.Player, sporeblastErengiUID, sporeblastErengiSetupSrc)
 		erengi.Tapped = true
 
@@ -67,7 +67,7 @@ func TestSporeblastErengi(t *testing.T) {
 	})
 
 	t.Run("the search may be declined", func(t *testing.T) {
-		scn, player, opponent := setupSilentSkillTest(t)
+		scn, player, opponent := setupDuel(t)
 		erengi := putCardInBattlezone(t, scn, player.Player, sporeblastErengiUID, sporeblastErengiSetupSrc)
 		erengi.Tapped = true
 
@@ -87,7 +87,7 @@ func TestSporeblastErengi(t *testing.T) {
 	})
 
 	t.Run("a deck without creatures yields nothing", func(t *testing.T) {
-		scn, player, opponent := setupSilentSkillTest(t)
+		scn, player, opponent := setupDuel(t)
 		erengi := putCardInBattlezone(t, scn, player.Player, sporeblastErengiUID, sporeblastErengiSetupSrc)
 		erengi.Tapped = true
 
@@ -115,7 +115,7 @@ func TestSporeblastErengi(t *testing.T) {
 	})
 
 	t.Run("it cannot search the opponent's deck", func(t *testing.T) {
-		scn, player, opponent := setupSilentSkillTest(t)
+		scn, player, opponent := setupDuel(t)
 		erengi := putCardInBattlezone(t, scn, player.Player, sporeblastErengiUID, sporeblastErengiSetupSrc)
 		erengi.Tapped = true
 

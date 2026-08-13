@@ -19,7 +19,7 @@ const (
 
 func TestBulglufTheSpydroid(t *testing.T) {
 	t.Run("printed characteristics", func(t *testing.T) {
-		scn, player, opponent := setupSilentSkillTest(t)
+		scn, player, opponent := setupDuel(t)
 		bulgluf := putCardInBattlezone(t, scn, player.Player, bulglufTheSpydroidUID, bulglufTheSpydroidSetupSrc)
 		passTurnToSelf(t, scn, player, opponent)
 
@@ -33,7 +33,7 @@ func TestBulglufTheSpydroid(t *testing.T) {
 	})
 
 	t.Run("adds the top card of the deck to the shields", func(t *testing.T) {
-		scn, player, opponent := setupSilentSkillTest(t)
+		scn, player, opponent := setupDuel(t)
 		bulgluf := putCardInBattlezone(t, scn, player.Player, bulglufTheSpydroidUID, bulglufTheSpydroidSetupSrc)
 		bulgluf.Tapped = true
 
@@ -60,7 +60,7 @@ func TestBulglufTheSpydroid(t *testing.T) {
 	})
 
 	t.Run("the new shield is a real shield the opponent can break", func(t *testing.T) {
-		scn, player, opponent := setupSilentSkillTest(t)
+		scn, player, opponent := setupDuel(t)
 		bulgluf := putCardInBattlezone(t, scn, player.Player, bulglufTheSpydroidUID, bulglufTheSpydroidSetupSrc)
 		bulgluf.Tapped = true
 

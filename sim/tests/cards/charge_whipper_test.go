@@ -20,7 +20,7 @@ const (
 
 func TestChargeWhipper(t *testing.T) {
 	t.Run("printed characteristics", func(t *testing.T) {
-		scn, player, opponent := setupSilentSkillTest(t)
+		scn, player, opponent := setupDuel(t)
 		whipper := putCardInBattlezone(t, scn, player.Player, chargeWhipperUID, chargeWhipperSetupSrc)
 		passTurnToSelf(t, scn, player, opponent)
 
@@ -34,7 +34,7 @@ func TestChargeWhipper(t *testing.T) {
 	})
 
 	t.Run("swaps a card from hand for one of the shields", func(t *testing.T) {
-		scn, player, opponent := setupSilentSkillTest(t)
+		scn, player, opponent := setupDuel(t)
 		whipper := putCardInBattlezone(t, scn, player.Player, chargeWhipperUID, chargeWhipperSetupSrc)
 		whipper.Tapped = true
 
@@ -69,7 +69,7 @@ func TestChargeWhipper(t *testing.T) {
 	})
 
 	t.Run("the shield taken back never offers its shield trigger", func(t *testing.T) {
-		scn, player, opponent := setupSilentSkillTest(t)
+		scn, player, opponent := setupDuel(t)
 		whipper := putCardInBattlezone(t, scn, player.Player, chargeWhipperUID, chargeWhipperSetupSrc)
 		whipper.Tapped = true
 
@@ -106,7 +106,7 @@ func TestChargeWhipper(t *testing.T) {
 	})
 
 	t.Run("declining the first half skips the second", func(t *testing.T) {
-		scn, player, opponent := setupSilentSkillTest(t)
+		scn, player, opponent := setupDuel(t)
 		whipper := putCardInBattlezone(t, scn, player.Player, chargeWhipperUID, chargeWhipperSetupSrc)
 		whipper.Tapped = true
 
@@ -129,7 +129,7 @@ func TestChargeWhipper(t *testing.T) {
 	})
 
 	t.Run("an empty hand means nothing is swapped", func(t *testing.T) {
-		scn, player, opponent := setupSilentSkillTest(t)
+		scn, player, opponent := setupDuel(t)
 		whipper := putCardInBattlezone(t, scn, player.Player, chargeWhipperUID, chargeWhipperSetupSrc)
 		whipper.Tapped = true
 
@@ -154,15 +154,4 @@ func TestChargeWhipper(t *testing.T) {
 		assert.Len(t, shields, len(shieldsBefore))
 		assert.True(t, whipper.Tapped)
 	})
-}
-
-func countHeaders(headers []string, wanted string) int {
-	count := 0
-	for _, header := range headers {
-		if header == wanted {
-			count++
-		}
-	}
-
-	return count
 }

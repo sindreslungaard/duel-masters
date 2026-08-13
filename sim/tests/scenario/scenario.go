@@ -520,6 +520,22 @@ func (s *TestScenario) SubmitAction(player *match.PlayerReference, cardIDs ...st
 }
 
 // SubmitChoice answers a multiple-choice action using its zero-based option index.
+// SubmitCount answers a prompt that asks for a number rather than for cards,
+// such as fx.SelectCount.
+func (s *TestScenario) SubmitCount(player *match.PlayerReference, count int) error {
+	return s.send(player, struct {
+		Header string   `json:"header"`
+		Cards  []string `json:"cards"`
+		Count  int      `json:"count"`
+		Cancel bool     `json:"cancel"`
+	}{
+		Header: "action",
+		Cards:  []string{},
+		Count:  count,
+		Cancel: false,
+	})
+}
+
 func (s *TestScenario) SubmitChoice(player *match.PlayerReference, choice int) error {
 	return s.send(player, struct {
 		Header string `json:"header"`

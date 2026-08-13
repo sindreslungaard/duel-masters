@@ -18,7 +18,7 @@ const (
 
 func TestKejilaTheHiddenHorror(t *testing.T) {
 	t.Run("printed characteristics", func(t *testing.T) {
-		scn, player, opponent := setupSilentSkillTest(t)
+		scn, player, opponent := setupDuel(t)
 		kejila := putCardInBattlezone(t, scn, player.Player, kejilaTheHiddenHorrorUID, kejilaTheHiddenHorrorSetupSrc)
 		passTurnToSelf(t, scn, player, opponent)
 
@@ -33,7 +33,7 @@ func TestKejilaTheHiddenHorror(t *testing.T) {
 	})
 
 	t.Run("breaks two of the opponent's shields", func(t *testing.T) {
-		scn, player, opponent := setupSilentSkillTest(t)
+		scn, player, opponent := setupDuel(t)
 		kejila := putCardInBattlezone(t, scn, player.Player, kejilaTheHiddenHorrorUID, kejilaTheHiddenHorrorSetupSrc)
 		kejila.Tapped = true
 
@@ -62,7 +62,7 @@ func TestKejilaTheHiddenHorror(t *testing.T) {
 	})
 
 	t.Run("a single remaining shield is broken on its own", func(t *testing.T) {
-		scn, player, opponent := setupSilentSkillTest(t)
+		scn, player, opponent := setupDuel(t)
 		kejila := putCardInBattlezone(t, scn, player.Player, kejilaTheHiddenHorrorUID, kejilaTheHiddenHorrorSetupSrc)
 		kejila.Tapped = true
 
@@ -92,7 +92,7 @@ func TestKejilaTheHiddenHorror(t *testing.T) {
 	})
 
 	t.Run("declining leaves the shields alone", func(t *testing.T) {
-		scn, player, opponent := setupSilentSkillTest(t)
+		scn, player, opponent := setupDuel(t)
 		kejila := putCardInBattlezone(t, scn, player.Player, kejilaTheHiddenHorrorUID, kejilaTheHiddenHorrorSetupSrc)
 		kejila.Tapped = true
 

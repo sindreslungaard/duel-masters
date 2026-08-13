@@ -883,6 +883,11 @@ var DM11 = map[string]match.CardConstructor{
 	"2ea5870b-6f0f-4980-89de-c5c2d50c798f": dm11.SalivaWorm,
 	"61854910-584d-4d41-a125-61efe3c67a53": dm11.SapianTarkFlameDervish,
 	"9c8b4458-dc55-407d-a42a-a29a26bc5d99": dm11.SkyscraperShell,
+	"2967d4cc-b4da-4511-b9e7-95b4844216f9": dm11.HeartyCapnPolligon,
+	"999a432e-d38a-4f76-9bb7-d0dd54a3f9ad": dm11.HazardHopper,
+	"47abe92b-a677-4c6a-b9da-033b28bcf374": dm11.RiseAndShine,
+	"c447753f-ca24-4482-8db0-837dd6f7d31b": dm11.RouletteOfRuin,
+	"c2970e00-4951-421c-837a-119a3bf564d8": dm11.HeavyweightDragon,
 }
 
 // Promo is a map with all the card id's in the game and corresponding CardConstructor for promotional exclusive cards

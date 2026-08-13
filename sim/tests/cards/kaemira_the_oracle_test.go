@@ -19,7 +19,7 @@ const (
 
 func TestKaemiraTheOracle(t *testing.T) {
 	t.Run("printed characteristics", func(t *testing.T) {
-		scn, player, opponent := setupSilentSkillTest(t)
+		scn, player, opponent := setupDuel(t)
 		kaemira := putCardInBattlezone(t, scn, player.Player, kaemiraTheOracleUID, kaemiraTheOracleSetupSrc)
 		passTurnToSelf(t, scn, player, opponent)
 
@@ -33,7 +33,7 @@ func TestKaemiraTheOracle(t *testing.T) {
 	})
 
 	t.Run("adds the top card of the deck to the shields", func(t *testing.T) {
-		scn, player, opponent := setupSilentSkillTest(t)
+		scn, player, opponent := setupDuel(t)
 		kaemira := putCardInBattlezone(t, scn, player.Player, kaemiraTheOracleUID, kaemiraTheOracleSetupSrc)
 		kaemira.Tapped = true
 
@@ -60,7 +60,7 @@ func TestKaemiraTheOracle(t *testing.T) {
 	})
 
 	t.Run("declining leaves the shields alone", func(t *testing.T) {
-		scn, player, opponent := setupSilentSkillTest(t)
+		scn, player, opponent := setupDuel(t)
 		kaemira := putCardInBattlezone(t, scn, player.Player, kaemiraTheOracleUID, kaemiraTheOracleSetupSrc)
 		kaemira.Tapped = true
 

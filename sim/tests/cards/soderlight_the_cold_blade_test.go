@@ -19,7 +19,7 @@ const (
 
 func TestSoderlightTheColdBlade(t *testing.T) {
 	t.Run("printed characteristics", func(t *testing.T) {
-		scn, player, opponent := setupSilentSkillTest(t)
+		scn, player, opponent := setupDuel(t)
 		soderlight := putCardInBattlezone(t, scn, player.Player, soderlightTheColdBladeUID, soderlightTheColdBladeSetupSrc)
 		passTurnToSelf(t, scn, player, opponent)
 
@@ -35,7 +35,7 @@ func TestSoderlightTheColdBlade(t *testing.T) {
 	})
 
 	t.Run("it enters the mana zone tapped", func(t *testing.T) {
-		_, player, _ := setupSilentSkillTest(t)
+		_, player, _ := setupDuel(t)
 
 		card, err := player.Player.SpawnCard(soderlightTheColdBladeUID, match.HAND)
 		require.NoError(t, err)
@@ -48,7 +48,7 @@ func TestSoderlightTheColdBlade(t *testing.T) {
 	})
 
 	t.Run("the opponent chooses which of their creatures dies", func(t *testing.T) {
-		scn, player, opponent := setupSilentSkillTest(t)
+		scn, player, opponent := setupDuel(t)
 		soderlight := putCardInBattlezone(t, scn, player.Player, soderlightTheColdBladeUID, soderlightTheColdBladeSetupSrc)
 		soderlight.Tapped = true
 
@@ -68,7 +68,7 @@ func TestSoderlightTheColdBlade(t *testing.T) {
 	})
 
 	t.Run("a single creature is destroyed without asking", func(t *testing.T) {
-		scn, player, opponent := setupSilentSkillTest(t)
+		scn, player, opponent := setupDuel(t)
 		soderlight := putCardInBattlezone(t, scn, player.Player, soderlightTheColdBladeUID, soderlightTheColdBladeSetupSrc)
 		soderlight.Tapped = true
 
@@ -81,7 +81,7 @@ func TestSoderlightTheColdBlade(t *testing.T) {
 	})
 
 	t.Run("an opponent with no creatures loses nothing", func(t *testing.T) {
-		scn, player, opponent := setupSilentSkillTest(t)
+		scn, player, opponent := setupDuel(t)
 		soderlight := putCardInBattlezone(t, scn, player.Player, soderlightTheColdBladeUID, soderlightTheColdBladeSetupSrc)
 		soderlight.Tapped = true
 
@@ -100,7 +100,7 @@ func TestSoderlightTheColdBlade(t *testing.T) {
 	})
 
 	t.Run("declining destroys nothing", func(t *testing.T) {
-		scn, player, opponent := setupSilentSkillTest(t)
+		scn, player, opponent := setupDuel(t)
 		soderlight := putCardInBattlezone(t, scn, player.Player, soderlightTheColdBladeUID, soderlightTheColdBladeSetupSrc)
 		soderlight.Tapped = true
 

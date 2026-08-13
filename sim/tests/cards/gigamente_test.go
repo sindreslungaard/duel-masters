@@ -20,7 +20,7 @@ const (
 
 func TestGigamente(t *testing.T) {
 	t.Run("printed characteristics", func(t *testing.T) {
-		scn, player, opponent := setupSilentSkillTest(t)
+		scn, player, opponent := setupDuel(t)
 		gigamente := putCardInBattlezone(t, scn, player.Player, gigamenteUID, gigamenteTestSetupSrc)
 		passTurnToSelf(t, scn, player, opponent)
 
@@ -34,7 +34,7 @@ func TestGigamente(t *testing.T) {
 	})
 
 	t.Run("returns the chosen creature from the graveyard", func(t *testing.T) {
-		scn, player, opponent := setupSilentSkillTest(t)
+		scn, player, opponent := setupDuel(t)
 		gigamente := putCardInBattlezone(t, scn, player.Player, gigamenteUID, gigamenteTestSetupSrc)
 		gigamente.Tapped = true
 
@@ -55,7 +55,7 @@ func TestGigamente(t *testing.T) {
 	})
 
 	t.Run("a single creature returns without asking", func(t *testing.T) {
-		scn, player, opponent := setupSilentSkillTest(t)
+		scn, player, opponent := setupDuel(t)
 		gigamente := putCardInBattlezone(t, scn, player.Player, gigamenteUID, gigamenteTestSetupSrc)
 		gigamente.Tapped = true
 
@@ -71,7 +71,7 @@ func TestGigamente(t *testing.T) {
 	})
 
 	t.Run("a graveyard without creatures returns nothing", func(t *testing.T) {
-		scn, player, opponent := setupSilentSkillTest(t)
+		scn, player, opponent := setupDuel(t)
 		gigamente := putCardInBattlezone(t, scn, player.Player, gigamenteUID, gigamenteTestSetupSrc)
 		gigamente.Tapped = true
 
@@ -93,7 +93,7 @@ func TestGigamente(t *testing.T) {
 	})
 
 	t.Run("an empty graveyard returns nothing", func(t *testing.T) {
-		scn, player, opponent := setupSilentSkillTest(t)
+		scn, player, opponent := setupDuel(t)
 		gigamente := putCardInBattlezone(t, scn, player.Player, gigamenteUID, gigamenteTestSetupSrc)
 		gigamente.Tapped = true
 
@@ -114,7 +114,7 @@ func TestGigamente(t *testing.T) {
 	})
 
 	t.Run("it cannot pull a creature out of the opponent's graveyard", func(t *testing.T) {
-		scn, player, opponent := setupSilentSkillTest(t)
+		scn, player, opponent := setupDuel(t)
 		gigamente := putCardInBattlezone(t, scn, player.Player, gigamenteUID, gigamenteTestSetupSrc)
 		gigamente.Tapped = true
 

@@ -68,6 +68,11 @@
 - New card "Saliva Worm"
 - New card "Sapian Tark, Flame Dervish"
 - New card "Skyscraper Shell"
+- New card "Hearty Cap'n Polligon"
+- New card "Hazard Hopper"
+- New card "Rise and Shine"
+- New card "Roulette of Ruin"
+- New card "Heavyweight Dragon"
 
 ## 12/08/2026
 

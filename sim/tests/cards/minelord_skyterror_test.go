@@ -21,7 +21,7 @@ const (
 
 func TestMinelordSkyterror(t *testing.T) {
 	t.Run("printed characteristics", func(t *testing.T) {
-		scn, player, opponent := setupSilentSkillTest(t)
+		scn, player, opponent := setupDuel(t)
 		minelord := putCardInBattlezone(t, scn, player.Player, minelordSkyterrorUID, minelordSkyterrorSetupSrc)
 		passTurnToSelf(t, scn, player, opponent)
 
@@ -35,7 +35,7 @@ func TestMinelordSkyterror(t *testing.T) {
 	})
 
 	t.Run("destroys every creature with power 3000 or less on both sides", func(t *testing.T) {
-		scn, player, opponent := setupSilentSkillTest(t)
+		scn, player, opponent := setupDuel(t)
 		minelord := putCardInBattlezone(t, scn, player.Player, minelordSkyterrorUID, minelordSkyterrorSetupSrc)
 		minelord.Tapped = true
 
@@ -55,7 +55,7 @@ func TestMinelordSkyterror(t *testing.T) {
 	})
 
 	t.Run("declining destroys nothing", func(t *testing.T) {
-		scn, player, opponent := setupSilentSkillTest(t)
+		scn, player, opponent := setupDuel(t)
 		minelord := putCardInBattlezone(t, scn, player.Player, minelordSkyterrorUID, minelordSkyterrorSetupSrc)
 		minelord.Tapped = true
 
@@ -69,7 +69,7 @@ func TestMinelordSkyterror(t *testing.T) {
 	})
 
 	t.Run("it measures current power, not printed power", func(t *testing.T) {
-		scn, player, opponent := setupSilentSkillTest(t)
+		scn, player, opponent := setupDuel(t)
 		minelord := putCardInBattlezone(t, scn, player.Player, minelordSkyterrorUID, minelordSkyterrorSetupSrc)
 		minelord.Tapped = true
 

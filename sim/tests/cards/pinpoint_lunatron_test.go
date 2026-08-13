@@ -19,7 +19,7 @@ const (
 
 func TestPinpointLunatron(t *testing.T) {
 	t.Run("printed characteristics", func(t *testing.T) {
-		scn, player, opponent := setupSilentSkillTest(t)
+		scn, player, opponent := setupDuel(t)
 		lunatron := putCardInBattlezone(t, scn, player.Player, pinpointLunatronUID, pinpointLunatronSetupSrc)
 		passTurnToSelf(t, scn, player, opponent)
 
@@ -33,7 +33,7 @@ func TestPinpointLunatron(t *testing.T) {
 	})
 
 	t.Run("returns an opposing creature to its owner's hand", func(t *testing.T) {
-		scn, player, opponent := setupSilentSkillTest(t)
+		scn, player, opponent := setupDuel(t)
 		lunatron := putCardInBattlezone(t, scn, player.Player, pinpointLunatronUID, pinpointLunatronSetupSrc)
 		lunatron.Tapped = true
 
@@ -51,7 +51,7 @@ func TestPinpointLunatron(t *testing.T) {
 	})
 
 	t.Run("returns a card from the opponent's mana zone", func(t *testing.T) {
-		scn, player, opponent := setupSilentSkillTest(t)
+		scn, player, opponent := setupDuel(t)
 		lunatron := putCardInBattlezone(t, scn, player.Player, pinpointLunatronUID, pinpointLunatronSetupSrc)
 		lunatron.Tapped = true
 
@@ -68,7 +68,7 @@ func TestPinpointLunatron(t *testing.T) {
 	})
 
 	t.Run("it can return a card from its controller's own mana zone", func(t *testing.T) {
-		scn, player, opponent := setupSilentSkillTest(t)
+		scn, player, opponent := setupDuel(t)
 		lunatron := putCardInBattlezone(t, scn, player.Player, pinpointLunatronUID, pinpointLunatronSetupSrc)
 		lunatron.Tapped = true
 
@@ -85,7 +85,7 @@ func TestPinpointLunatron(t *testing.T) {
 	})
 
 	t.Run("it can return itself", func(t *testing.T) {
-		scn, player, opponent := setupSilentSkillTest(t)
+		scn, player, opponent := setupDuel(t)
 		lunatron := putCardInBattlezone(t, scn, player.Player, pinpointLunatronUID, pinpointLunatronSetupSrc)
 		lunatron.Tapped = true
 
@@ -98,7 +98,7 @@ func TestPinpointLunatron(t *testing.T) {
 	})
 
 	t.Run("the choice is mandatory", func(t *testing.T) {
-		scn, player, opponent := setupSilentSkillTest(t)
+		scn, player, opponent := setupDuel(t)
 		lunatron := putCardInBattlezone(t, scn, player.Player, pinpointLunatronUID, pinpointLunatronSetupSrc)
 		lunatron.Tapped = true
 
@@ -117,7 +117,7 @@ func TestPinpointLunatron(t *testing.T) {
 	})
 
 	t.Run("declining the silent skill returns nothing", func(t *testing.T) {
-		scn, player, opponent := setupSilentSkillTest(t)
+		scn, player, opponent := setupDuel(t)
 		lunatron := putCardInBattlezone(t, scn, player.Player, pinpointLunatronUID, pinpointLunatronSetupSrc)
 		lunatron.Tapped = true
 
