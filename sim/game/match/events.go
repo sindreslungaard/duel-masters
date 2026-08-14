@@ -93,12 +93,20 @@ type SpellCast struct {
 // AttackPlayer is fired when the player attempts to use a creature to attack the player
 type AttackPlayer struct {
 	CardID string
+	// Confirmed reports that the attack cleared validation, shield selection and the
+	// AttackConfirmed event. The attempt alone does not begin the attack step, because
+	// shield selection is cancellable on its own context, so only this tells the match
+	// whether the attack actually happened.
+	Confirmed bool
 }
 
 // AttackCreature is fired when the player attempts to use a creature to attack the player
 type AttackCreature struct {
 	CardID              string
 	AttackableCreatures []*Card // list of cards that can be attacked
+	// Confirmed reports that the attack cleared validation, target selection and the
+	// AttackConfirmed event. See AttackPlayer.Confirmed.
+	Confirmed bool
 }
 
 // AttackConfirmed is fired when either attacking a player or creature, but **after** the attack is validated
@@ -172,9 +180,8 @@ type GetPowerEvent struct {
 // TapAbility is fired when the user activates a cards tap ability instead of attacking
 type TapAbility struct {
 	CardID string
-}
-
-// TapAbility is fired right before the tap ability is executed
-type ActivatesTapAbility struct {
-	CardID string
+	// Confirmed reports that a tap effect was actually resolved. Selecting between
+	// several tap abilities is cancellable, so the attempt alone does not begin the
+	// attack step. See AttackPlayer.Confirmed.
+	Confirmed bool
 }

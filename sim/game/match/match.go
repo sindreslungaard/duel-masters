@@ -1283,11 +1283,16 @@ func (m *Match) AttackPlayer(p *PlayerReference, cardID string) {
 		return
 	}
 
-	ctx := NewContext(m, &AttackPlayer{
+	event := &AttackPlayer{
 		CardID: cardID,
-	})
+	}
 
-	m.HandleFx(ctx)
+	m.HandleFx(NewContext(m, event))
+
+	if event.Confirmed {
+		m.Step = &AttackStep{}
+		p.Player.CanChargeMana = false
+	}
 
 	m.BroadcastState()
 
@@ -1303,12 +1308,17 @@ func (m *Match) AttackCreature(p *PlayerReference, cardID string) {
 		return
 	}
 
-	ctx := NewContext(m, &AttackCreature{
+	event := &AttackCreature{
 		CardID:              cardID,
 		AttackableCreatures: make([]*Card, 0),
-	})
+	}
 
-	m.HandleFx(ctx)
+	m.HandleFx(NewContext(m, event))
+
+	if event.Confirmed {
+		m.Step = &AttackStep{}
+		p.Player.CanChargeMana = false
+	}
 
 	m.BroadcastState()
 
@@ -1322,11 +1332,18 @@ func (m *Match) TapAbility(p *PlayerReference, cardID string) {
 		return
 	}
 
-	ctx := NewContext(m, &TapAbility{
+	event := &TapAbility{
 		CardID: cardID,
-	})
+	}
 
-	m.HandleFx(ctx)
+	m.HandleFx(NewContext(m, event))
+
+	if event.Confirmed {
+		// Tap abilities can only be used during the attack step
+		// https://duelmasters.fandom.com/wiki/Step#Step_7_(Attack_step)
+		m.Step = &AttackStep{}
+		p.Player.CanChargeMana = false
+	}
 
 	m.BroadcastState()
 }
