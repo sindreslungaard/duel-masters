@@ -14,7 +14,7 @@ import (
 )
 
 const (
-	velyrikaDragonUID       = "0559379a-e0c5-4b59-bad6-c4bd07d73816"
+	velyrikaDragonUID       = "6c562252-75d9-4723-8316-e3dc4a303e3d"
 	velyrikaDragonTargetUID = "91db2302-6794-4aa4-b17b-6637d356e9ac" // Astrocomet Dragon (Armored Dragon)
 )
 
