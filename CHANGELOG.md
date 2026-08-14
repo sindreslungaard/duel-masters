@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+
+- Added the option to select a max deck size in custom formats
+- Added SpellResolved event to fix an issue with "Ice Vapor, Shadow of Anguish" and similar cards (thanks @DragosIonita23)
+
 ## 13/08/2026
 
 - Added lobby chat embeds for deck links
