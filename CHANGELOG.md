@@ -1,6 +1,221 @@
 # Changelog
 
-## [Unreleased]
+## 13/08/2026
+
+- Added lobby chat embeds for deck links
+- Added username tagging in lobby chat
+- Added site statistics page
+- New card "Hustle Berry"
+- New card "Milporo"
+- New card "Kaemira, the Oracle"
+- New card "Bulgluf, the Spydroid"
+- New card "Gigamente"
+- New card "Vorg's Engine"
+- New card "Minelord Skyterror"
+- New card "Venom Capsule"
+- New card "Kejila, the Hidden Horror"
+- New card "Brad, Super Kickin' Dynamo"
+- New card "Flohdani, the Spydroid"
+- New card "Sporeblast Erengi"
+- New card "Soderlight, the Cold Blade"
+- New card "Burnwisp Lizard"
+- New card "Mystic Magician"
+- New card "Pinpoint Lunatron"
+- New card "Charge Whipper"
+- New card "Sanfist, the Savage Vizier"
+- New card "Deklowaz, the Terminator"
+- New card "Bombazar, Dragon of Destiny"
+- New card "Solar Trap"
+- New card "Brad's Cutter"
+- New card "Emergency Typhoon"
+- New card "Spinning Terror, the Wretched"
+- New card "Time Scout"
+- New card "Baira, the Hidden Lunatic"
+- New card "Nial, Vizier of Dexterity"
+- New card "Yuliana, Channeler of Suns"
+- New card "Engbelt, the Spydroid"
+- New card "Hysteria Lizard"
+- New card "Lucky Ball"
+- New card "Morbid Medicine"
+- New card "Quillspike Rumbler"
+- New card "Ten-Ton Crunch"
+- New card "Beratcha, the Hidden Glutton"
+- New card "Jabaha's Automaton"
+- New card "Melodic Hunter"
+- New card "Warlord Ailzonius"
+- New card "Fantasy Fish"
+- New card "Belix, the Explorer"
+- New card "Rainbow Gate"
+- New card "Diamondia, the Blizzard Rider"
+- New card "Gankloak, Rogue Commando"
+- New card "Miraculous Snare"
+- New card "Gazer Eyes, Shadow of Secrets"
+- New card "Hide and Seek"
+- New card "Baraid, the Explorer"
+- New card "Reap and Sow"
+- New card "Rollicking Totem"
+- New card "Royal Durian"
+- New card "Squawking Lunatron"
+- New card "Aqua Trickster"
+- New card "Asra, Vizier of Safety"
+- New card "Bonfire Lizard"
+- New card "Eviscerating Warrior Lumez"
+- New card "Hazaria, Duke of Thorns"
+- New card "Jagila, the Hidden Pillager"
+- New card "Klujadras"
+- New card "Lamiel, Destiny Enforcer"
+- New card "Macho Melon"
+- New card "Merlee, the Oracle"
+- New card "Ninja Pumpkin"
+- New card "Revival Soldier"
+- New card "Saliva Worm"
+- New card "Sapian Tark, Flame Dervish"
+- New card "Skyscraper Shell"
+- New card "Hearty Cap'n Polligon"
+- New card "Hazard Hopper"
+- New card "Rise and Shine"
+- New card "Roulette of Ruin"
+- New card "Heavyweight Dragon"
+- New card "Live and Breathe"
+- New card "Slash and Burn"
+- New card "Miraculous Truce"
+- New card "Miraculous Meltdown"
+- New card "Miraculous Rebirth"
+- New card "Miraculous Plague"
+- New card "Evil Incarnate"
+- New card "Warped Lunatron"
+- New card "Lockdown Lizard"
+- New card "Buzz Betocchi"
+- New card "Electro Explorer Syrion"
+- New card "Gigappi Ponto"
+- New card "Sea Mutant Dormel"
+- New card "Spectral Horn Glitalis"
+- New card "Peppi Pepper"
+- New card "Radioactive Horn, the Strange"
+- New card "Muramasa's Knife"
+- New card "Gigaslug"
+- New card "Hypersprint Warior Uzesol"
+- New card "Valkyer, Starstorm Elemental"
+- New card "Necrodragon Jagraveen"
+- New card "Belmol, the Explorer"
+- New card "Windmill Mutant"
+- New card "Funky Wizard"
+- New card "Gigabalza"
+- New card "Necrodragon Zalva"
+- New card "Mizoy, the Oracle"
+- New card "Frantic Chieftain"
+- New card "Extreme Crawler"
+- New card "Typhoon Crawler"
+- New card "Wily Carpenter"
+- New card "Uncanny Turnip"
+- New card "Steamroller Mutant"
+- New card "Flame Trooper Goliac"
+- New card "Kilstine, Nebula Elemental"
+- New card "Gigarayze"
+- New card "Bingole, the Explorer"
+- New card "Terradragon Arque Delacerna"
+- New card "Whirling Warrior Malian"
+- New card "Gandaval's Stapler"
+- New card "Pharzi, the Oracle"
+- New card "Enigmatic Cascade"
+- New card "Punch Trooper Bronks"
+- New card "Tropic Crawler"
+- New card "Mechadragon's Breath"
+- New card "Fever Nuts"
+- New card "Agira, the Warlord Crawler"
+- New card "Comet Eye, The Spectral Spud"
+- New card "Hydrooze, the Mutant Emperor"
+- New card "Phantomach, the Gigatrooper"
+- New card "Nemonex, Bajula's Robomantis"
+- New card "Pincer Scarab"
+- New card "Cloned Spike-Horn"
+- New card "Cloned Blade"
+- New card "Cloned Deflector"
+- New card "Cloned Nightmare"
+- New card "Cloned Spiral"
+- New card "Copper Locust"
+- New card "Turtle Horn, the Imposing"
+- New card "Wingeye Moth"
+- New card "Ularus, Punishment Elemental"
+- New card "Gigavrand"
+
+## 12/08/2026
+
+- Improved the duel experience on mobile
+- Added support for creating custom formats & banlists
+- Added sort options to the deck builder
+- Fixed an issue where a duel could not be forfeited while pending a player action to be made
+- New card "Tajimal, Vizier of Aqua"
+- New card "Aqua Skydiver"
+- New card "Techno Totem"
+- New card "Tanzanyte, the Awakener"
+- New card "Dolmarks, the Shadow Warrior"
+- New card "Skysword, the Savage Vizier"
+- New card "Estol, Vizier of Aqua"
+- New card "Pointa, the Aqua Shadow"
+- New card "Galek, the Shadow Warrior"
+- New card "Wind Axe, the Warrior Savage"
+- New card "Lukia Lex, Pinnacle Guardian"
+- New card "Tagtapp, the Retaliator"
+- Fixed "Q-tronic Gargantua" losing its own "survivor" and "evolution" abilities for the rest of the turn after attacking a player, and leaving a stale crew breaker behind when an attack was cancelled
+- Fixed "King Triumphant", "Storm Wrangler, the Furious" and "Smash Warrior Stagrandu" removing more of their own abilities than intended when cleaning up a temporary effect
+
+## 11/08/2026
+
+- Added support for multicolored cards
+- New card "Gonta, the Warrior Savage"
+- New card "Melnia, the Aqua Shadow"
+- New card "Torpedo Cluster"
+- New card "Pierr, Psycho Doll"
+- New card "Hurricane Crawler"
+- New card "Hawkeye Lunatron"
+- New card "Hourglass Mutant"
+- New card "Terradragon Dakma Balgarow"
+- New card "Gabzagul, Warlord of Pain"
+- New card "Ice Vapor, Shadow of Anguish"
+- New card "Shock Trooper Mykee"
+- New card "Core-Crash Lizard"
+- New card "Elixia, Pureblade Elemental"
+- New card "Ultimate Dragon"
+- New card "Necrodragon Bryzenaga"
+- New card "Bodacious Giant"
+- New card "Blizzard of Spears" (thanks @dilawer007)
+- New card "Balza, Seeker of Hyperpearls" (thanks @DragosIonita23)
+- New card "Ryudmila, Channeler of Suns" (thanks @DragosIonita23)
+- New card "King Oquanos" (thanks @DragosIonita23)
+- New card "Gajirabute, Vile Centurion" (thanks @DragosIonita23)
+- New card "Gaulezal Dragon" (thanks @DragosIonita23)
+- New card "Carnival Totem" (thanks @DragosIonita23)
+- New card "Scowling Tomato" (thanks @DragosIonita23)
+- New card "Shaman Broccoli" (thanks @DragosIonita23)
+- New card "Soulswap" (thanks @DragosIonita23)
+- New card "Terradragon Cusdalf" (thanks @DragosIonita23)
+- New card "Thirst for the Hunt" (thanks @DragosIonita23)
+- New card "Twitch Horn, the Aggressor" (thanks @DragosIonita23)
+- Fixed an issue where "Zaltan" would cost 3 mana instead of 5
+- Fixed a loophole that allowed "Grinning Hunger" to avoid its mandatory effect by choosing an empty zone (thanks @DragosIonita23)
+- Updated multipart card selections to automatically resolve mandatory selections with only one possible outcome (thanks @DragosIonita23)
+- Fixed an issue where "Simian Warrior Grash" would not trigger when it was destroyed (thanks @DragosIonita23)
+- Fixed "Siren Concerto" being able to select itself with its effect and added its missing shield trigger (thanks @Vladdudu12)
+- Fixed "Zero Nemesis, Shadow of Panic" triggering its discard effect from outside the battle zone (thanks @Vladdudu12)
+- Fixed "Elf-X" applying its creature cost reduction one turn late (thanks @Shahrukh95)
+- Brand new website
+- Added support for playing as a guest without registering an account
+- Added email verification for new users
+- Added support for drag and dropping cards on mobile
+- Updated duel interface to make use of more space to increase card sizes
+- Added support for press and drag to select and deselect action popup cards on mobile
+- Added smooth scroll when new chat messages appear both in duels and the lobby
+- Updated all action popups to be more coherent and mobile friendly
+- Added ESC keyboard shortcut to close cancellable popups
+- Added user profiles
+- Added support for scheduled matches, to be used for tournaments
+- Added moderation and user management tools
+- Added chat restrictions and requirements
+- Added post-duel view with mactch summary, chat and rematch options
+- Made it possible for the website to support multiple different simulators/rule engines for multi-environment purposes and future plans to overhaul the current rule engine
+
+## 02/01/2026
 
 - Fixed an issue where "Elf-X" and "Cocco Lupia"'s cost reduction effect would not immediately make the add to battlezone button be visibly clickable (thanks @DragosIonita23)
 - Fixed an issue where some creatures with 0 power could not die (thanks @DragosIonita23)
@@ -57,6 +272,7 @@
 - New card "Karate Potato" (thanks @DragosIonita23)
 - New card "Legacy Shell" (thanks @DragosIonita23)
 - New card "Sabermask Scarab" (thanks @DragosIonita23)
+- Fixed an issue where too much information about each players shieldzone could be seen by inspecting network traffic
 
 ## 26/10/2025
 
@@ -81,7 +297,6 @@
 - New card "Glena Vuele, the Hypnotic" (thanks @DragosIonita23)
 - New card "Jil Warka, Time Guardian" (thanks @DragosIonita23)
 - Improve popup for selecting card race (thanks @DragosIonita23)
-- Fixed an issue where "Simian Warrior Grash" would not correctly handle destruction of Armorloids (thanks @DragosIonita23)
 
 ## 21/09/2025
 

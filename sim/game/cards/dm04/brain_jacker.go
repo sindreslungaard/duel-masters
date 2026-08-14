@@ -1,0 +1,28 @@
+package dm04
+
+import (
+	"duel-masters/game/civ"
+	"duel-masters/game/family"
+	"duel-masters/game/fx"
+	"duel-masters/game/match"
+)
+
+// PurplePiercer ...
+func PurplePiercer(c *match.Card) {
+
+	c.Name = "Purple Piercer"
+	c.Power = 2000
+	c.Civs = []string{civ.Darkness}
+	c.Family = []string{family.BrainJacker}
+	c.ManaCost = 3
+	c.ManaRequirement = []string{civ.Darkness}
+
+	c.Use(
+		fx.Creature,
+		fx.CantBeBlockedByLight,
+		fx.CantBeAttackedIf(func(attacker *match.Card) bool {
+			return attacker.HasCiv(civ.Light)
+		}),
+	)
+
+}

@@ -1,23 +1,15 @@
-FROM golang:1.22-alpine as build
+FROM golang:1.22-alpine AS build
 
 WORKDIR /tmp/duel-masters
-ENV NODE_OPTIONS=--openssl-legacy-provider
-RUN apk add --update git nodejs npm
-COPY . .
-RUN cd ./webapp \
-    && npm install \
-    && npm run build \
-    && cd ..
-RUN go get -d -v ./... \
+COPY ./sim .
+
+RUN go mod download \
     && go build -o app ./cmd/duel-masters/main.go \
     && mkdir ./build \
     && mv ./app ./build/app \
-    && mv ./DuelMastersCards.json ./build/DuelMastersCards.json \
-    && mkdir ./build/webapp \
-    && mv ./webapp/dist ./build/webapp
+    && mv ./DuelMastersCards.json ./build/DuelMastersCards.json
 
-
-FROM golang:1.22-alpine
+FROM alpine:3
 
 WORKDIR /go/src/duel-masters
 COPY --from=build /tmp/duel-masters/build .

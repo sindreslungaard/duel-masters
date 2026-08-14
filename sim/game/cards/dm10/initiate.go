@@ -1,0 +1,164 @@
+package dm10
+
+import (
+	"duel-masters/game/civ"
+	"duel-masters/game/family"
+	"duel-masters/game/fx"
+	"duel-masters/game/match"
+	"fmt"
+)
+
+// GlaisMejiculaTheExtreme ...
+func GlaisMejiculaTheExtreme(c *match.Card) {
+
+	c.Name = "Glais Mejicula, the Extreme"
+	c.Power = 5500
+	c.Civs = []string{civ.Light}
+	c.Family = []string{family.Initiate}
+	c.ManaCost = 2
+	c.ManaRequirement = []string{civ.Light}
+
+	c.Use(fx.Creature, fx.Evolution, fx.When(fx.BreakShield, func(card *match.Card, ctx *match.Context) {
+
+		event, ok := ctx.Event.(*match.BreakShieldEvent)
+		if !ok {
+			return
+		}
+
+		if len(event.Cards) < 1 || event.Cards[0].Player != card.Player {
+			return
+		}
+
+		cardsInHand, err := card.Player.Container(match.HAND)
+
+		if err != nil || len(cardsInHand) < 2 {
+			return
+		}
+
+		maxShields := min(len(event.Cards), len(cardsInHand)/2)
+
+		// Adding ScheduleAfter so it works well with cards that interrupt the event
+		ctx.ScheduleAfter(func() {
+			fx.SelectBacksideFilter(card.Player, ctx.Match, card.Player, match.SHIELDZONE,
+				fmt.Sprintf("Those shields are about to be broken. You may choose up to %v shields to protect and discard 2 cards from your hand instead, for each shield chosen.", maxShields),
+				1, maxShields, true, func(x *match.Card) bool {
+					for _, shield := range event.Cards {
+						if shield == x {
+							return true
+						}
+					}
+					return false
+				},
+			).Map(func(x *match.Card) {
+				if len(event.Cards) < 2 {
+					ctx.InterruptFlow()
+				} else {
+					var validShields []*match.Card
+					for _, shield := range event.Cards {
+						if shield != x {
+							validShields = append(validShields, shield)
+						}
+					}
+					event.Cards = validShields
+				}
+
+				fx.Select(
+					card.Player,
+					ctx.Match,
+					card.Player,
+					match.HAND,
+					"Select 2 cards from your hand to discard.",
+					2,
+					2,
+					false,
+				).Map(func(x *match.Card) {
+					_, err := x.Player.MoveCard(x.ID, match.HAND, match.GRAVEYARD, card.ID)
+
+					if err == nil {
+						ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s discarded %s from his hand to protect a shield.", card.Player.Username(), x.Name))
+					}
+				})
+			})
+		})
+	}))
+
+}
+
+// LemikVizierOfThought ...
+func LemikVizierOfThought(c *match.Card) {
+
+	c.Name = "Lemik, Vizier of Thought"
+	c.Power = 3000
+	c.Civs = []string{civ.Light}
+	c.Family = []string{family.Initiate}
+	c.ManaCost = 5
+	c.ManaRequirement = []string{civ.Light}
+
+	c.Use(fx.Creature, fx.When(fx.InTheBattlezone, func(card *match.Card, ctx *match.Context) {
+		ctx.Match.ApplyPersistentEffect(func(ctx2 *match.Context, exit func()) {
+			if card.Zone != match.BATTLEZONE {
+				fx.Find(
+					card.Player,
+					match.BATTLEZONE,
+				).Map(func(x *match.Card) {
+					x.RemoveConditionBySource(card.ID)
+				})
+
+				exit()
+				return
+			}
+
+			fx.FindFilter(
+				card.Player,
+				match.BATTLEZONE,
+				func(x *match.Card) bool { return x.HasCiv(civ.Water) || x.HasCiv(civ.Nature) },
+			).Map(func(x *match.Card) {
+				fx.ForceBlocker(x, ctx2, card.ID)
+			})
+		})
+	}))
+
+}
+
+// EstolVizierOfAqua ...
+func EstolVizierOfAqua(c *match.Card) {
+
+	c.Name = "Estol, Vizier of Aqua"
+	c.Power = 2000
+	c.Civs = []string{civ.Light, civ.Water}
+	c.Family = []string{family.Initiate, family.LiquidPeople}
+	c.ManaCost = 5
+	c.ManaRequirement = []string{civ.Light, civ.Water}
+
+	c.Use(fx.Creature, fx.PutIntoManaZoneTapped, fx.When(fx.Summoned, func(card *match.Card, ctx *match.Context) {
+		fx.TopCardToShield(card, ctx)
+		fx.ShowXShields(1, false)(card, ctx)
+	}))
+
+}
+
+// TajimalVizierOfAqua ...
+func TajimalVizierOfAqua(c *match.Card) {
+
+	c.Name = "Tajimal, Vizier of Aqua"
+	c.Power = 4000
+	c.Civs = []string{civ.Light, civ.Water}
+	c.Family = []string{family.Initiate, family.LiquidPeople}
+	c.ManaCost = 3
+	c.ManaRequirement = []string{civ.Light, civ.Water}
+
+	c.Use(fx.Creature, fx.PutIntoManaZoneTapped, fx.Blocker(), fx.CantAttackPlayers, func(card *match.Card, ctx *match.Context) {
+
+		// Battle captures both powers on the event, so a battle-only bonus has to
+		// change the captured value rather than the card's power.
+		if event, ok := ctx.Event.(*match.Battle); ok {
+			if event.Attacker == card && event.Defender.HasCiv(civ.Fire) {
+				event.AttackerPower += 4000
+			} else if event.Defender == card && event.Attacker.HasCiv(civ.Fire) {
+				event.DefenderPower += 4000
+			}
+		}
+
+	})
+
+}

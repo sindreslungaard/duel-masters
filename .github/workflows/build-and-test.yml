@@ -1,32 +1,57 @@
 name: Go
-on: [push, pull_request]
+
+on:
+  push:
+    # production is deliberately absent: the publish workflow runs this suite
+    # for that branch before it builds an image, so listing it here would run
+    # everything twice.
+    branches:
+      - main
+      - master
+  pull_request:
+  # Lets the publish workflow reuse this suite instead of duplicating it.
+  workflow_call:
+
+# A newer commit on the same branch or pull request makes an in-flight run
+# obsolete.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v3
-      - name: Setup Go
-        uses: actions/setup-go@v4
-        with:
-          go-version: '1.22.x'
-      - name: Install dependencies
-        run: go get ./...
-      - name: Build
-        run: go build -v ./cmd/duel-masters
-      - name: Test with the Go CLI
-        run: go test ./tests
   test:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./sim
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
+
       - name: Setup Go
-        uses: actions/setup-go@v4
+        uses: actions/setup-go@v5
         with:
-          go-version: '1.22.x'
+          go-version: "1.22.x"
+          # setup-go looks for go.sum relative to the repository root, which
+          # defaults.run.working-directory does not affect. The module lives in
+          # sim, so without this the build cache never resolves.
+          cache-dependency-path: sim/go.sum
+
       - name: Install dependencies
-        run: go get ./...
-      - name: Test with the Go CLI
-        run: go test ./tests
+        run: go mod download
+
+      - name: Build
+        run: go build -v ./cmd/duel-masters
+
+      - name: Vet
+        run: go vet ./...
+
+      - name: Test
+        run: go test ./... -count=1 -timeout 120s
+
+      # The engine resolves cards on a single event loop goroutine while sockets
+      # disconnect and dispose matches from their own. Races and prompts that
+      # never return are correctness failures there, not flakiness, so the suite
+      # runs again under the race detector.
+      - name: Test with the race detector
+        run: go test -race ./... -count=1 -timeout 300s
