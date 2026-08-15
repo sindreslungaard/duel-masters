@@ -8,6 +8,7 @@
 - Added SpellResolved event to fix an issue with "Ice Vapor, Shadow of Anguish" and similar cards (thanks @DragosIonita23)
 - Fixed an issue where duel formats sometimes would show up as "constructed"
 - Fixed an issue where cancelling an attack would move you into the AttackStep and prevent summoning/mana (thanks @DragosIonita23)
+- Fixed an issue where "Emergency Typhoon" could discard itself (thanks @DragosIonita23)
 
 ## 13/08/2026
 
