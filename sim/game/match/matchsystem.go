@@ -18,7 +18,8 @@ type MatchSystem struct {
 type MatchSummary struct {
 	ID            string `json:"id"`
 	Name          string `json:"name"`
-	Format        string `json:"format"`
+	FormatID      string `json:"formatId"`
+	FormatName    string `json:"formatName"`
 	HostID        string `json:"hostId"`
 	HostUsername  string `json:"hostUsername"`
 	GuestID       string `json:"guestId"`
@@ -69,7 +70,7 @@ func ProcessMatch(m *Match) {
 }
 
 // New returns a new match object
-func (s *MatchSystem) NewMatch(matchName string, hostID string, hostUsername string, hostDeck []string, guestID string, guestUsername string, guestDeck []string, visible bool, matchmaking bool, format Format) *Match {
+func (s *MatchSystem) NewMatch(matchName string, hostID string, hostUsername string, hostDeck []string, guestID string, guestUsername string, guestDeck []string, visible bool, matchmaking bool, format FormatDescriptor) *Match {
 
 	id, err := shortid.Generate()
 
@@ -80,7 +81,8 @@ func (s *MatchSystem) NewMatch(matchName string, hostID string, hostUsername str
 	m := &Match{
 		ID:                id,
 		MatchName:         matchName,
-		Format:            format,
+		FormatID:          format.ID,
+		FormatName:        format.Name,
 		HostID:            hostID,
 		HostDeck:          hostDeck,
 		GuestID:           guestID,
@@ -137,7 +139,8 @@ func (m *Match) Summary() MatchSummary {
 	return MatchSummary{
 		ID:            m.ID,
 		Name:          m.MatchName,
-		Format:        string(m.Format),
+		FormatID:      m.FormatID,
+		FormatName:    m.FormatName,
 		HostID:        m.HostID,
 		HostUsername:  m.hostUsername,
 		GuestID:       m.GuestID,

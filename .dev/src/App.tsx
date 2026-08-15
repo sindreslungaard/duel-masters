@@ -290,7 +290,6 @@ function App() {
         guestDeck: buildRandomDeck(availableCards),
         name: "Test Match",
         visibility: "public",
-        format: "random",
       };
 
       const matchRes = await fetch("/api/match", {

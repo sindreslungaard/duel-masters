@@ -22,7 +22,8 @@ type duelResultWebhookPlayer struct {
 type duelResultWebhookPayload struct {
 	MatchID         string                   `json:"matchId"`
 	MatchName       string                   `json:"matchName,omitempty"`
-	Format          string                   `json:"format"`
+	FormatID        string                   `json:"formatId,omitempty"`
+	FormatName      string                   `json:"formatName,omitempty"`
 	StartedAt       string                   `json:"startedAt"`
 	EndedAt         string                   `json:"endedAt"`
 	DurationSeconds int64                    `json:"durationSeconds"`
@@ -50,7 +51,7 @@ func (m *Match) sendMatchResultWebhook(duel DuelRecord) {
 	payload := m.newDuelResultWebhookPayload(duel)
 	logger := logrus.WithFields(logrus.Fields{
 		"match_id":         payload.MatchID,
-		"format":           payload.Format,
+		"format_id":        payload.FormatID,
 		"duration_seconds": payload.DurationSeconds,
 	})
 
@@ -81,7 +82,8 @@ func (m *Match) newDuelResultWebhookPayload(duel DuelRecord) duelResultWebhookPa
 	return duelResultWebhookPayload{
 		MatchID:         duel.UID,
 		MatchName:       m.MatchName,
-		Format:          duel.Format,
+		FormatID:        m.FormatID,
+		FormatName:      m.FormatName,
 		StartedAt:       time.Unix(duel.Started, 0).UTC().Format(time.RFC3339),
 		EndedAt:         time.Unix(duel.Ended, 0).UTC().Format(time.RFC3339),
 		DurationSeconds: durationSeconds,
