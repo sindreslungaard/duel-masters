@@ -18,6 +18,7 @@ const (
 	bodaciousGiantAttackerUID  = "af3bc221-1cc2-4f58-83ea-2673ac2c66c5" // Immortal Baron, Vorg
 	bodaciousGiantDecoyUID     = "abe034cb-5b1b-4a9f-9519-0af2bfcc4796" // Cragsaur
 	bodaciousGiantCantAttackID = "a15ddc75-f015-42b6-be15-eb17e1da2779" // Battery Cluster (can attack nothing)
+	bodaciousGiantTapperUID    = "a808b98c-2de7-412b-970c-a3b925bf43c2" // Deklowaz, the Terminator (tap ability, no target needed)
 	bodaciousGiantSetupSrc     = "bodacious_giant_test_setup"
 )
 
@@ -156,6 +157,26 @@ func TestBodaciousGiant(t *testing.T) {
 			}
 		}
 		assert.Equal(t, 1, mustAttack)
+	})
+
+	t.Run("a taunted creature cannot use a tap ability instead of attacking", func(t *testing.T) {
+		scn, defender, attacker, giant, attackers := setupTauntingBodaciousGiant(t, bodaciousGiantTapperUID)
+		tapper := attackers[0]
+
+		require.True(t, tapper.HasCondition(cnd.TapAbility), "the attacker's own untap step already ran")
+
+		// Official ruling (Slime Veil, the same "attacks if able" wording):
+		// "when you have the option either to attack with your creature or to
+		// use its tap ability... you must attack with it."
+		require.Error(t, scn.ActionUseTapAbility(attacker, tapper.ID), "the tap ability should be refused")
+		assert.False(t, tapper.Tapped, "a refused ability does not tap the creature")
+
+		require.NoError(t, scn.ActionAttackCreature(attacker, tapper.ID, giant.ID))
+		assert.Equal(t, match.GRAVEYARD, tapper.Zone, "5000 power loses to 12000")
+		assert.Equal(t, match.BATTLEZONE, giant.Zone)
+
+		require.NoError(t, scn.ActionEndTurn(attacker))
+		assert.True(t, scn.Match.IsPlayerTurn(defender.Player), "attacking satisfied the requirement")
 	})
 
 	t.Run("ignores creatures that could never attack it", func(t *testing.T) {

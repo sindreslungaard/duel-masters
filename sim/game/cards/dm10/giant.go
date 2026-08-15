@@ -52,23 +52,28 @@ func BodaciousGiant(c *match.Card) {
 
 			opponent := ctx.Match.Opponent(card.Player)
 
-			switch event := ctx.Event.(type) {
-
-			case *match.EndTurnEvent:
-				// Only creatures that could actually attack this one are held back.
-				for _, creature := range fx.Find(opponent, match.BATTLEZONE) {
-					if ctx.Cancelled() {
-						// Another creature already blocked the end of the turn;
-						// warning again for each of them would spam the player.
-						return
-					}
-
-					if !bodaciousGiantCanBeAttackedBy(card, creature) {
-						continue
-					}
-
-					fx.ForceAttack(creature, ctx)
+			// fx.ForceAttack only acts on EndTurnEvent and TapAbility and is a
+			// no-op for every other event, so running it unconditionally here
+			// both holds up the end of the turn and, per the official Slime
+			// Veil ruling for "attacks if able" effects, blocks a taunted
+			// creature from using a tap ability instead of attacking.
+			//
+			// Only creatures that could actually attack this one are held back.
+			for _, creature := range fx.Find(opponent, match.BATTLEZONE) {
+				if ctx.Cancelled() {
+					// Another creature already blocked the end of the turn;
+					// warning again for each of them would spam the player.
+					return
 				}
+
+				if !bodaciousGiantCanBeAttackedBy(card, creature) {
+					continue
+				}
+
+				fx.ForceAttack(creature, ctx)
+			}
+
+			switch event := ctx.Event.(type) {
 
 			case *match.AttackCreature:
 				// fx.Creature fills AttackableCreatures while handling this event
