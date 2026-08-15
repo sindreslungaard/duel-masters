@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- New card "Velyrika Dragon" (thanks @DragosIonita23)
+- New card "Cosmic Darts" (thanks @DragosIonita23)
 - Added the option to select a max deck size in custom formats
 - Added SpellResolved event to fix an issue with "Ice Vapor, Shadow of Anguish" and similar cards (thanks @DragosIonita23)
 - Fixed an issue where duel formats sometimes would show up as "constructed"
