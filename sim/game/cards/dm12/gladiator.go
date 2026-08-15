@@ -39,7 +39,7 @@ func ElectroExplorerSyrion(c *match.Card) {
 func BingoleTheExplorer(c *match.Card) {
 
 	c.Name = "Bingole, the Explorer"
-	c.Power = 4000
+	c.Power = 3000
 	c.Civs = []string{civ.Light}
 	c.Family = []string{family.Gladiator}
 	c.ManaCost = 4
