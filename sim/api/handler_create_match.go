@@ -20,7 +20,11 @@ type matchReqBody struct {
 	GuestDeck     []string `json:"guestDeck" binding:"required"`
 	Name          string   `json:"name" binding:"max=50"`
 	Visibility    string   `json:"visibility" binding:"required"`
-	Format        string   `json:"format"`
+	// FormatID and FormatName are opaque to the simulator. It stores them on
+	// the match and reports them back in match summaries and the duel result
+	// webhook so the caller can identify the match's format.
+	FormatID   string `json:"formatId" binding:"max=100"`
+	FormatName string `json:"formatName" binding:"max=80"`
 }
 
 var defaultMatchNames = []string{
@@ -68,6 +72,20 @@ func (api *API) createMatchHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	formatID, err := assert.Is(strings.TrimSpace(body.FormatID)).MaxLen(100).String()
+
+	if err != nil {
+		write(w, http.StatusBadRequest, Json{"message": err.Error()})
+		return
+	}
+
+	formatName, err := assert.Is(strings.TrimSpace(body.FormatName)).MaxLen(80).String()
+
+	if err != nil {
+		write(w, http.StatusBadRequest, Json{"message": err.Error()})
+		return
+	}
+
 	visible := true
 	if body.Visibility == "private" {
 		visible = false
@@ -77,7 +95,10 @@ func (api *API) createMatchHandler(w http.ResponseWriter, r *http.Request) {
 		name = defaultMatchNames[rand.Intn(len(defaultMatchNames))]
 	}
 
-	format := match.FormatFromStr(body.Format)
+	format := match.FormatDescriptor{
+		ID:   formatID,
+		Name: formatName,
+	}
 
 	m := api.matchSystem.NewMatch(
 		name,

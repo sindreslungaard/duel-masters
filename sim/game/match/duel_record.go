@@ -2,7 +2,6 @@ package match
 
 type DuelRecord struct {
 	UID             string
-	Format          string
 	Host            string
 	HostDeck        string
 	Guest           string

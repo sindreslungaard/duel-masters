@@ -601,15 +601,22 @@ export function Duel({
       );
 
       if (zone === "myPlayzone") {
-        // Check if card can be played
-        return draggedCard && cardHasFlag(draggedCard.flags, PLAYABLE_FLAG)
+        // Check if card can be played. Attacking or using a tap ability moves
+        // the match into the attack step, after which nothing can be summoned.
+        return draggedCard &&
+          cardHasFlag(draggedCard.flags, PLAYABLE_FLAG) &&
+          !state?.hasAttackedThisRound
           ? "green"
           : "red";
       }
 
       if (zone === "myManazone") {
         // Check if mana can be added
-        return state?.hasAddedManaThisRound ? "red" : "green";
+        return !state?.hasAddedManaThisRound &&
+          !state?.hasAttackedThisRound &&
+          state?.canChargeManaThisRound
+          ? "green"
+          : "red";
       }
     }
 
@@ -631,6 +638,25 @@ export function Duel({
       return null;
     }
 
+    // Attacking or activating a tap ability moves the match into the attack
+    // step, and the server refuses summons, casts and mana charging from there
+    // on. Disabling the buttons blocks the click outright, so the reason the
+    // server would have replied with is surfaced as a tooltip instead.
+    const cantSummon = state.hasAttackedThisRound;
+    const summonDisabledTooltip = cantSummon
+      ? "You can't summon creatures after attacking or using a tap ability"
+      : "You don't have enough mana to play this card";
+
+    const cantChargeMana =
+      state.hasAddedManaThisRound ||
+      state.hasAttackedThisRound ||
+      !state.canChargeManaThisRound;
+    const chargeManaDisabledTooltip = state.hasAddedManaThisRound
+      ? "You've already added mana to your manazone this turn"
+      : state.hasAttackedThisRound
+        ? "You can't charge mana after attacking or using a tap ability"
+        : "You can't charge mana after playing creatures or spells";
+
     const cardActions = selectedCard && state.myTurn && (
       <div className={compact ? "flex items-center gap-2" : "flex flex-col gap-2"}>
         <div
@@ -649,7 +675,8 @@ export function Duel({
             <div className="flex-1 min-w-0">
               <Button
                 onClick={() => sendAddToBattlezone(selectedCard.virtualId)}
-                disabled={!selectedCard.canPlay}
+                disabled={!selectedCard.canPlay || cantSummon}
+                disabledTooltip={summonDisabledTooltip}
               >
                 Summon
               </Button>
@@ -657,7 +684,8 @@ export function Duel({
             <div className="flex-1 min-w-0">
               <Button
                 onClick={() => sendAddToManazone(selectedCard.virtualId)}
-                disabled={state.hasAddedManaThisRound}
+                disabled={cantChargeMana}
+                disabledTooltip={chargeManaDisabledTooltip}
               >
                 {compact ? "Mana" : "Add to manazone"}
               </Button>
@@ -1079,7 +1107,10 @@ export function Duel({
                       CreateCard({
                         selected: (id: string) => id === selectedCardId,
                         interactable: state?.myTurn,
-                        canAddToManazone: !state.hasAddedManaThisRound,
+                        canAddToManazone:
+                          !state.hasAddedManaThisRound &&
+                          !state.hasAttackedThisRound &&
+                          state.canChargeManaThisRound,
                         onAddToBattlezone: (virtualId) => {
                           sendAddToBattlezone(virtualId);
                         },
