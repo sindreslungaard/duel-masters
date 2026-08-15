@@ -90,4 +90,22 @@ func TestBaleskBajTheTimeburner(t *testing.T) {
 		assert.Equal(t, match.HAND, attacker.Zone)
 		assert.False(t, scn.Match.IsPlayerTurn(player.Player))
 	})
+
+	t.Run("the granted extra turn does not itself grant another one", func(t *testing.T) {
+		scn, player, _ := setupDuel(t)
+		attacker := putCardInBattlezone(t, scn, player.Player, baleskBajUID, baleskBajSetupSrc)
+
+		action, err := scn.ActionAttackPlayer(player, attacker.ID)
+		require.NoError(t, err)
+		require.NoError(t, scn.ResolveAttack(player, action.Cards[0].CardID))
+
+		require.NoError(t, scn.ActionEndTurn(player))
+		require.True(t, scn.Match.IsPlayerTurn(player.Player), "the extra turn was granted")
+
+		// On the granted extra turn itself, Balesk Baj already left the
+		// battle zone and does not attack again, so ending it must hand the
+		// turn over normally rather than granting a second extra turn.
+		require.NoError(t, scn.ActionEndTurn(player))
+		assert.False(t, scn.Match.IsPlayerTurn(player.Player), "the flag must not leak into the extra turn itself")
+	})
 }
