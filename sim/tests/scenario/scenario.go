@@ -57,7 +57,7 @@ func New(options ...Option) *TestScenario {
 	}
 
 	matchSystem := match.NewSystem()
-	m := matchSystem.NewMatch("test-scenario", "test-host", "Player1", []string{}, "", "Player2", []string{}, true, true, match.RegularFormat)
+	m := matchSystem.NewMatch("test-scenario", "test-host", "Player1", []string{}, "", "Player2", []string{}, true, true, match.FormatDescriptor{})
 
 	config := scenarioConfig{deck: defaultDeck()}
 	for _, option := range options {
@@ -468,6 +468,82 @@ func (s *TestScenario) ActionAttackPlayer(player *match.PlayerReference, attacke
 	}
 
 	return s.waitForAttackPrompt(player, messageCount)
+}
+
+// ActionAttackCreaturePrompt attacks with a creature and returns the target
+// selection prompt without answering it, for tests that need to cancel it. The
+// caller must always answer that prompt through SubmitAction or CancelAction so
+// the sequential event loop is never left waiting on a response.
+//
+// Use ActionAttackCreature instead when the attack is meant to go through.
+func (s *TestScenario) ActionAttackCreaturePrompt(player *match.PlayerReference, attackerID string) (*server.ActionMessage, error) {
+	conn, err := s.connectionFor(player)
+	if err != nil {
+		return nil, err
+	}
+
+	if _, err := player.Player.GetCard(attackerID, match.BATTLEZONE); err != nil {
+		return nil, err
+	}
+
+	messageCount := conn.JSONWriteCount()
+	if err := s.send(player, struct {
+		Header string `json:"header"`
+		ID     string `json:"virtualId"`
+	}{
+		Header: "attack_creature",
+		ID:     attackerID,
+	}); err != nil {
+		return nil, err
+	}
+
+	return s.waitForAttackPrompt(player, messageCount)
+}
+
+// ActionChargeMana puts a card from the player's hand into their manazone and
+// waits for the engine to answer, either with the resulting state broadcast or
+// with the warning that explains why the charge was refused. Inspect the hand
+// and manazone afterwards to tell the two apart.
+func (s *TestScenario) ActionChargeMana(player *match.PlayerReference, cardID string) error {
+	conn, err := s.connectionFor(player)
+	if err != nil {
+		return err
+	}
+
+	if _, err := player.Player.GetCard(cardID, match.HAND); err != nil {
+		return err
+	}
+
+	messageCount := conn.JSONWriteCount()
+	if err := s.send(player, struct {
+		Header string `json:"header"`
+		ID     string `json:"virtualId"`
+	}{
+		Header: "add_to_manazone",
+		ID:     cardID,
+	}); err != nil {
+		return err
+	}
+
+	if err := s.waitFor(func() bool {
+		for _, raw := range conn.JSONMessagesSince(messageCount) {
+			var header server.Message
+			if err := json.Unmarshal([]byte(raw), &header); err != nil {
+				continue
+			}
+
+			switch header.Header {
+			case "state_update", "warn":
+				return true
+			}
+		}
+
+		return false
+	}); err != nil {
+		return err
+	}
+
+	return s.WaitForEventLoop()
 }
 
 // ResolveAttack answers the attacker's pending shield selection with the given

@@ -21,7 +21,8 @@ func TestNewDuelResultWebhookPayload(t *testing.T) {
 	m := &Match{
 		ID:          "duel-123",
 		MatchName:   "Ranked Duel",
-		Format:      RegularFormat,
+		FormatID:    "standard:11111111-1111-4111-8111-111111111111",
+		FormatName:  "Classic",
 		turnsPlayed: 14,
 		Player1:     &PlayerReference{UID: "host-1", Username: "Alice", DeckStr: "card-a,card-b"},
 		Player2:     &PlayerReference{UID: "guest-2", Username: "Bob", DeckStr: "card-c,card-d"},
@@ -29,7 +30,6 @@ func TestNewDuelResultWebhookPayload(t *testing.T) {
 
 	duel := DuelRecord{
 		UID:             "duel-123",
-		Format:          string(RegularFormat),
 		Host:            "host-1",
 		HostDeck:        "card-a,card-b",
 		Guest:           "guest-2",
@@ -45,6 +45,11 @@ func TestNewDuelResultWebhookPayload(t *testing.T) {
 
 	if payload.MatchID != "duel-123" {
 		t.Fatalf("expected match id to be preserved, got %q", payload.MatchID)
+	}
+
+	if payload.FormatID != "standard:11111111-1111-4111-8111-111111111111" ||
+		payload.FormatName != "Classic" {
+		t.Fatalf("expected the format descriptor to be reported, got %+v", payload)
 	}
 
 	if payload.DurationSeconds != 90 {
