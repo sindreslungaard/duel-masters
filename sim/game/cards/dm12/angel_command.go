@@ -36,10 +36,13 @@ func KilstineNebulaElemental(c *match.Card) {
 	c.Use(fx.Creature, fx.WaveStriker, func(card *match.Card, ctx *match.Context) {
 		active := fx.WaveStrikerActive(card, ctx.Match)
 
+		// The printed text says "each of your creatures", with no "other"
+		// exclusion, so Kilstine grants itself the bonus too.
+		//
 		// Swept across every zone when inactive, so a creature that left the
 		// battle zone cannot carry a stale bonus back into it.
 		fx.FindMultiple(card.Player, []string{match.BATTLEZONE, match.HAND, match.GRAVEYARD, match.MANAZONE, match.SHIELDZONE, match.HIDDENZONE}).Map(func(x *match.Card) {
-			if !active || x.Zone != match.BATTLEZONE || x.ID == card.ID {
+			if !active || x.Zone != match.BATTLEZONE {
 				x.RemoveSpecificConditionBySource(cnd.PowerAmplifier, card.ID)
 				x.RemoveSpecificConditionBySource(cnd.DoubleBreaker, card.ID)
 				x.RemoveSpecificConditionBySource(cnd.Blocker, card.ID)

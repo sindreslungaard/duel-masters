@@ -12409,7 +12409,7 @@
       "subtypes": [
         "Angel Command"
       ],
-      "text": "Wave striker (While 2 or more other creatures in the battle zone have \"wave striker,\" this creature has its Wave striker ability.) : Each of your other creatures in battle zone gets +5000 power and has \"blocker\" and \"double breaker\".",
+      "text": "Wave striker (While 2 or more other creatures in the battle zone have \"wave striker,\" this creature has its Wave striker ability.) : Each of your creatures in the battle zone gets +5000 power and has \"blocker\" and \"double breaker\".",
       "type": "Creature"
     },
     {
