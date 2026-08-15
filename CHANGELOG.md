@@ -9,6 +9,7 @@
 - Fixed an issue where duel formats sometimes would show up as "constructed"
 - Fixed an issue where cancelling an attack would move you into the AttackStep and prevent summoning/mana (thanks @DragosIonita23)
 - Fixed an issue where "Emergency Typhoon" could discard itself (thanks @DragosIonita23)
+- Fixed an issue where "Kilstine, Nebula Elemental" would only buff other creatures and not itself (thanks @DragosIonita23)
 
 ## 13/08/2026
 
