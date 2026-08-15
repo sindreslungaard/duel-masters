@@ -67,8 +67,11 @@ func StormWranglerTheFurious(c *match.Card) {
 				}
 
 				if _, ok := ctx2.Event.(*match.EndOfTurnStep); ok {
+					// Only the +3000 bonus is "until the end of the turn"; the
+					// ability to gain it whenever this creature becomes blocked
+					// lasts as long as it's in the battle zone, so this must not
+					// exit the persistent effect itself.
 					card.RemoveSpecificConditionBySource(cnd.PowerAmplifier, card.ID)
-					exit()
 					return
 				}
 
