@@ -95,6 +95,8 @@ export interface PlayerState {
 export interface MatchState {
   myTurn: boolean;
   hasAddedManaThisRound: boolean;
+  hasAttackedThisRound: boolean;
+  canChargeManaThisRound: boolean;
   me: PlayerState;
   opponent: PlayerState;
   spectator: boolean;

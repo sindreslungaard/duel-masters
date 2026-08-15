@@ -65,7 +65,10 @@ func TestGetMatchesHandlerReturnsAllCurrentMatches(t *testing.T) {
 		[]string{"secret-guest-card"},
 		false,
 		false,
-		match.RegularFormat,
+		match.FormatDescriptor{
+			ID:     "standard:11111111-1111-4111-8111-111111111111",
+			Name:   "Classic",
+		},
 	)
 	defer m.Dispose()
 
@@ -103,8 +106,12 @@ func TestGetMatchesHandlerReturnsAllCurrentMatches(t *testing.T) {
 		got.HostUsername != "Alice" || got.GuestUsername != "Bob" {
 		t.Fatalf("unexpected participants: %#v", got)
 	}
-	if got.Format != string(match.RegularFormat) || got.Visible {
+	if got.Visible {
 		t.Fatalf("unexpected match metadata: %#v", got)
+	}
+	if got.FormatID != "standard:11111111-1111-4111-8111-111111111111" ||
+		got.FormatName != "Classic" {
+		t.Fatalf("unexpected format descriptor: %#v", got)
 	}
 	if got.CreatedAt == 0 {
 		t.Fatal("expected createdAt to be set")

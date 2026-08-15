@@ -32,3 +32,26 @@ func StarCryDragon(c *match.Card) {
 
 	})
 }
+
+// VelyrikaDragon ...
+func VelyrikaDragon(c *match.Card) {
+
+	c.Name = "Velyrika Dragon"
+	c.Power = 7000
+	c.Civs = []string{civ.Fire}
+	c.Family = []string{family.ArmoredDragon}
+	c.ManaCost = 7
+	c.ManaRequirement = []string{civ.Fire}
+
+	c.Use(fx.Creature, fx.Doublebreaker, fx.When(fx.Summoned, func(card *match.Card, ctx *match.Context) {
+
+		fx.SearchDeckTakeCards(
+			card,
+			ctx,
+			1,
+			func(x *match.Card) bool { return x.HasFamily(family.ArmoredDragon) },
+			"Armored Dragon",
+		)
+
+	}))
+}

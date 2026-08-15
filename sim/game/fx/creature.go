@@ -42,7 +42,7 @@ func Creature(card *match.Card, ctx *match.Context) {
 
 		// make sure we haven't attacked yet
 		if _, ok := ctx.Match.Step.(*match.AttackStep); ok {
-			ctx.Match.WarnPlayer(card.Player, "You can't summon creatures after attacking")
+			ctx.Match.WarnPlayer(card.Player, "You can't summon creatures after attacking or using tap ability.")
 			ctx.InterruptFlow()
 			return
 		}
@@ -184,7 +184,7 @@ func Creature(card *match.Card, ctx *match.Context) {
 					ctx.Match,
 					fmt.Sprintf("Do you CONFIRM to Attack your Opponent? This is irreversible and cannot be cancelled afterwards.\r\nYou will be prompted to select shields after %s's effect will be resolved.", card.Name),
 				) {
-					if !tapCardAndConfirmAttack(card, ctx, true) {
+					if !tapCardAndConfirmAttack(card, ctx, true, func() { event.Confirmed = true }) {
 						return
 					}
 
@@ -200,7 +200,7 @@ func Creature(card *match.Card, ctx *match.Context) {
 				selectShieldsCtx := match.NewContext(ctx.Match, &selectShieldsEvent)
 				ctx.Match.HandleFx(selectShieldsCtx)
 
-				if !tapCardAndConfirmAttack(card, selectShieldsCtx, true) {
+				if !tapCardAndConfirmAttack(card, selectShieldsCtx, true, func() { event.Confirmed = true }) {
 					return
 				}
 
@@ -300,7 +300,7 @@ func Creature(card *match.Card, ctx *match.Context) {
 
 			c := attackedCreatures[0]
 
-			if !tapCardAndConfirmAttack(card, ctx, false) {
+			if !tapCardAndConfirmAttack(card, ctx, false, func() { event.Confirmed = true }) {
 				return
 			}
 
@@ -568,6 +568,9 @@ func Creature(card *match.Card, ctx *match.Context) {
 			}
 
 			if f, ok := tapEffect.(func(card *match.Card, ctx *match.Context)); ok {
+				// Past the cancellable selection above, so the tap ability is being used
+				// and Match can move the game into the attack step.
+				event.Confirmed = true
 				ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s activates tap effect", card.Name))
 				f(card, ctx)
 			}
@@ -644,7 +647,11 @@ func handleBattle(ctx *match.Context, winner *match.Card, winnerPower int, loose
 	}
 }
 
-func tapCardAndConfirmAttack(card *match.Card, ctx *match.Context, attackPlayer bool) bool {
+// tapCardAndConfirmAttack taps the attacker and fires AttackConfirmed. confirm is called
+// once the attack is beyond cancelling, which is what tells Match to enter the attack step.
+// It is checked after the whole AttackConfirmed traversal so that the outcome cannot depend
+// on where a prevention effect happens to sit in the handler order.
+func tapCardAndConfirmAttack(card *match.Card, ctx *match.Context, attackPlayer bool, confirm func()) bool {
 	if ctx.Cancelled() {
 		return false
 	}
@@ -654,7 +661,12 @@ func tapCardAndConfirmAttack(card *match.Card, ctx *match.Context, attackPlayer 
 	// Broadcast state so that opponent can see that this card is tapped if they get any shield triggers
 	ctx.Match.BroadcastState()
 
-	ctx.Match.HandleFx(match.NewContext(ctx.Match, &match.AttackConfirmed{CardID: card.ID, Player: attackPlayer, Creature: !attackPlayer}))
+	confirmCtx := match.NewContext(ctx.Match, &match.AttackConfirmed{CardID: card.ID, Player: attackPlayer, Creature: !attackPlayer})
+	ctx.Match.HandleFx(confirmCtx)
+
+	if !confirmCtx.Cancelled() {
+		confirm()
+	}
 
 	// In case AttackConfirmed effect removes itself (current attacking card) from the Battlezone
 	return card.Zone == match.BATTLEZONE
