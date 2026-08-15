@@ -22,7 +22,8 @@ import (
 type Match struct {
 	ID                string                                   `json:"id"`
 	MatchName         string                                   `json:"name"`
-	Format            Format                                   `json:"format"`
+	FormatID          string                                   `json:"-"`
+	FormatName        string                                   `json:"-"`
 	HostID            string                                   `json:"-"`
 	HostDeck          []string                                 `json:"-"`
 	GuestID           string                                   `json:"-"`
@@ -496,7 +497,6 @@ func (m *Match) newDuelRecord(winner *Player, wonByDisconnect bool, endedAt int6
 
 	duel := DuelRecord{
 		UID:             m.ID,
-		Format:          string(m.Format),
 		Host:            p1id,
 		HostDeck:        p1deck,
 		Guest:           p2id,

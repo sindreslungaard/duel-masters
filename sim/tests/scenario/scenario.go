@@ -57,7 +57,7 @@ func New(options ...Option) *TestScenario {
 	}
 
 	matchSystem := match.NewSystem()
-	m := matchSystem.NewMatch("test-scenario", "test-host", "Player1", []string{}, "", "Player2", []string{}, true, true, match.RegularFormat)
+	m := matchSystem.NewMatch("test-scenario", "test-host", "Player1", []string{}, "", "Player2", []string{}, true, true, match.FormatDescriptor{})
 
 	config := scenarioConfig{deck: defaultDeck()}
 	for _, option := range options {
