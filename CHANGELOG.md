@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- "Choose a number" popups now have a slider and larger steps for wide ranges, so picking a power no longer means clicking + a thousand times
 - Shields shown in a popup now display their shield number (thanks @DragosIonita23)
 - Fixed cards rendering outside the card selection popup on narrow screens, and the grid leaving unused space on wide ones
 - Fixed being unable to scroll your hand and battle zone on touch screens without picking up the card you touched

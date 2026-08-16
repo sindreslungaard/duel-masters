@@ -525,7 +525,9 @@ export function Action({
             ))}
 
           {actionType === ActionType.Count && (
-            <div className="flex gap-4">
+            /* The stepper carries a slider under it, so Choose sits below the
+               whole control rather than beside it. */
+            <div className="mt-4 flex flex-col items-start gap-3">
               <CountInput
                 value={count}
                 onChange={setCount}
