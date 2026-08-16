@@ -16,6 +16,8 @@
 - Fixed an issue where cancelling an attack would move you into the AttackStep and prevent summoning/mana (thanks @DragosIonita23)
 - Fixed an issue where "Emergency Typhoon" could discard itself (thanks @DragosIonita23)
 - Fixed an issue where "Kilstine, Nebula Elemental" would only buff other creatures and not itself (thanks @DragosIonita23)
+- Fixed an issue where "Bingole, the Explorer" would have 4000 power instead of 3000 (thanks @DragosIonita23)
+- Fixed an issue where "Storm Wrangler, the Furious"'s block bonus would only last 1 turn
 
 ## 13/08/2026
 
