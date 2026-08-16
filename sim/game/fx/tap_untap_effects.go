@@ -1,6 +1,7 @@
 package fx
 
 import (
+	"duel-masters/game/cnd"
 	"duel-masters/game/match"
 	"fmt"
 )
@@ -21,7 +22,7 @@ func MayUntapSelf(card *match.Card, ctx *match.Context) {
 }
 
 func tapOpCreatureWithOptin(card *match.Card, ctx *match.Context, optional bool) {
-	Select(
+	SelectFilter(
 		card.Player,
 		ctx.Match,
 		ctx.Match.Opponent(card.Player),
@@ -30,6 +31,8 @@ func tapOpCreatureWithOptin(card *match.Card, ctx *match.Context, optional bool)
 		1,
 		1,
 		optional,
+		func(creature *match.Card) bool { return !creature.HasCondition(cnd.CantBeTappedByOpp) },
+		false,
 	).Map(func(creature *match.Card) {
 		TapCreature(creature, ctx, card)
 	})
@@ -57,7 +60,7 @@ func MayTapOpCreature(card *match.Card, ctx *match.Context) {
 // zone holding fewer than x creatures offers only the ones that are there.
 func TapUpToXOpCreatures(x int) match.HandlerFunc {
 	return func(card *match.Card, ctx *match.Context) {
-		Select(
+		SelectFilter(
 			card.Player,
 			ctx.Match,
 			ctx.Match.Opponent(card.Player),
@@ -66,6 +69,8 @@ func TapUpToXOpCreatures(x int) match.HandlerFunc {
 			1,
 			x,
 			true,
+			func(creature *match.Card) bool { return !creature.HasCondition(cnd.CantBeTappedByOpp) },
+			false,
 		).Map(func(creature *match.Card) {
 			TapCreature(creature, ctx, card)
 		})

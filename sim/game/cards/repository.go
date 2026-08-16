@@ -834,6 +834,7 @@ var DM10 = map[string]match.CardConstructor{
 	"ad428b55-4b0b-4a63-b48b-dfc1541b8b81": dm10.SanfistTheSavageVizier,
 	"a808b98c-2de7-412b-970c-a3b925bf43c2": dm10.DeklowazTheTerminator,
 	"c94b8b0a-5406-4d24-9ac9-333c5c077ccd": dm10.BombazarDragonOfDestiny,
+	"48799b4f-c7cd-4e06-9430-8a3782fd5084": dm10.UlexTheDauntless,
 }
 
 // DM11 is a map with all the card id's in the game and corresponding CardConstructor for dm11
