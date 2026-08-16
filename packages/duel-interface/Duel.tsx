@@ -57,6 +57,8 @@ export interface DuelProps {
    * Whether the opponent's cards are flipped from their natural orientation
    * towards the player looking at the screen. Defaults to false, which orients
    * them towards the opponent the way they would face across a physical table.
+   * The opponent's mana is exempt: it always faces the player looking at the
+   * screen, mirroring our own mana facing the opponent.
    */
   flipOpponentCards?: boolean;
   resolveChatUser?: DuelChatUserResolver;
@@ -335,12 +337,24 @@ export function Duel({
 
   const isCompact = useCompactViewport();
   const [chatOpen, setChatOpen] = useState(false);
+  /** The decks, graveyards and hand counts take real width away from the board,
+   * so a player who wants every pixel for their cards can fold them away. */
+  const [infoPanelOpen, setInfoPanelOpen] = useState(true);
 
   // The drawer only exists on narrow screens; leaving it "open" while resizing
   // to desktop would otherwise strand the state.
   useEffect(() => {
     if (!isCompact) {
       setChatOpen(false);
+    }
+  }, [isCompact]);
+
+  // A narrow screen has no width to spare for the decks and graveyards, so the
+  // panel folds itself away on the way in. Going back to a wide screen leaves
+  // it folded rather than second-guessing the player.
+  useEffect(() => {
+    if (isCompact) {
+      setInfoPanelOpen(false);
     }
   }, [isCompact]);
 
@@ -601,15 +615,22 @@ export function Duel({
       );
 
       if (zone === "myPlayzone") {
-        // Check if card can be played
-        return draggedCard && cardHasFlag(draggedCard.flags, PLAYABLE_FLAG)
+        // Check if card can be played. Attacking or using a tap ability moves
+        // the match into the attack step, after which nothing can be summoned.
+        return draggedCard &&
+          cardHasFlag(draggedCard.flags, PLAYABLE_FLAG) &&
+          !state?.hasAttackedThisRound
           ? "green"
           : "red";
       }
 
       if (zone === "myManazone") {
         // Check if mana can be added
-        return state?.hasAddedManaThisRound ? "red" : "green";
+        return !state?.hasAddedManaThisRound &&
+          !state?.hasAttackedThisRound &&
+          state?.canChargeManaThisRound
+          ? "green"
+          : "red";
       }
     }
 
@@ -631,6 +652,25 @@ export function Duel({
       return null;
     }
 
+    // Attacking or activating a tap ability moves the match into the attack
+    // step, and the server refuses summons, casts and mana charging from there
+    // on. Disabling the buttons blocks the click outright, so the reason the
+    // server would have replied with is surfaced as a tooltip instead.
+    const cantSummon = state.hasAttackedThisRound;
+    const summonDisabledTooltip = cantSummon
+      ? "You can't summon creatures after attacking or using a tap ability"
+      : "You don't have enough mana to play this card";
+
+    const cantChargeMana =
+      state.hasAddedManaThisRound ||
+      state.hasAttackedThisRound ||
+      !state.canChargeManaThisRound;
+    const chargeManaDisabledTooltip = state.hasAddedManaThisRound
+      ? "You've already added mana to your manazone this turn"
+      : state.hasAttackedThisRound
+        ? "You can't charge mana after attacking or using a tap ability"
+        : "You can't charge mana after playing creatures or spells";
+
     const cardActions = selectedCard && state.myTurn && (
       <div className={compact ? "flex items-center gap-2" : "flex flex-col gap-2"}>
         <div
@@ -649,7 +689,8 @@ export function Duel({
             <div className="flex-1 min-w-0">
               <Button
                 onClick={() => sendAddToBattlezone(selectedCard.virtualId)}
-                disabled={!selectedCard.canPlay}
+                disabled={!selectedCard.canPlay || cantSummon}
+                disabledTooltip={summonDisabledTooltip}
               >
                 Summon
               </Button>
@@ -657,7 +698,8 @@ export function Duel({
             <div className="flex-1 min-w-0">
               <Button
                 onClick={() => sendAddToManazone(selectedCard.virtualId)}
-                disabled={state.hasAddedManaThisRound}
+                disabled={cantChargeMana}
+                disabledTooltip={chargeManaDisabledTooltip}
               >
                 {compact ? "Mana" : "Add to manazone"}
               </Button>
@@ -894,8 +936,10 @@ export function Duel({
           />
         )}
 
+        {/* min-w-0 lets the board give width to the info column instead of
+            growing past it; the zones inside scroll horizontally. */}
         <div
-          className="flex flex-1 flex-col h-full w-full"
+          className="flex min-w-0 flex-1 flex-col h-full"
           style={isCompact && !isSpectating ? { paddingBottom: "3.25rem" } : undefined}
         >
           <div className="h-[10%] relative" data-dropzone="opponentManazone">
@@ -913,7 +957,8 @@ export function Duel({
               <div className="inline-flex w-max justify-start gap-5 h-full pb-1">
                 {state.opponent.manazone.map(
                   CreateCard({
-                    flipped: !flipOpponentCards,
+                    // Mana always faces the player looking at the screen
+                    flipped: false,
                     dragState,
                     zone: "opponentManazone",
                     onRightClick: (imageId, name) =>
@@ -1079,7 +1124,10 @@ export function Duel({
                       CreateCard({
                         selected: (id: string) => id === selectedCardId,
                         interactable: state?.myTurn,
-                        canAddToManazone: !state.hasAddedManaThisRound,
+                        canAddToManazone:
+                          !state.hasAddedManaThisRound &&
+                          !state.hasAttackedThisRound &&
+                          state.canChargeManaThisRound,
                         onAddToBattlezone: (virtualId) => {
                           sendAddToBattlezone(virtualId);
                         },
@@ -1167,150 +1215,212 @@ export function Duel({
           </div>
         )}
 
-        {/* Player Info Panel - Right Side */}
-        <div className="fixed right-[0.5vw] top-1/2 -translate-y-2/3 w-[16vw] min-w-[56px] max-w-[80px] min-[1200px]:w-[12vw] min-[1200px]:min-w-[100px] min-[1200px]:max-w-[160px] flex flex-col gap-[0.5vh] md:gap-[5vh] z-20">
-          {/* Opponent Section */}
-          <div className="rounded-lg flex flex-col gap-[1vh]">
-            {/* Opponent Hand Count */}
-            <div className="text-center">
-              <p className="text-[clamp(0.6rem,1.2vh,0.85rem)] text-white mb-[0.5vh]">
-                Hand [{state.opponent.handCount}]
-              </p>
-            </div>
+        {/* Player Info Panel - Right Side. It occupies real width beside the
+            board rather than floating over it, so a full mana or battle zone
+            scrolls behind the panel's edge instead of disappearing under it. */}
+        {/* The negative margins cancel the board container's padding so the
+            panel runs from the top of the screen to the bottom and sits flush
+            against the right edge. */}
+        <div
+          className="relative -my-1 -mr-1 flex shrink-0 items-stretch"
+          style={
+            isCompact && !isSpectating
+              ? { paddingBottom: "3.25rem" }
+              : undefined
+          }
+        >
+          {/* Collapse toggle: a half circle budding out of the panel's left
+              edge, sharing its background so the two read as one shape. */}
+          <button
+            type="button"
+            onClick={() => setInfoPanelOpen((open) => !open)}
+            aria-expanded={infoPanelOpen}
+            aria-label={
+              infoPanelOpen ? "Collapse player info" : "Expand player info"
+            }
+            title={
+              infoPanelOpen
+                ? "Hide decks and graveyards"
+                : "Show decks and graveyards"
+            }
+            /* The bump sits entirely outside the panel rather than overlapping
+               it: the panel's background is translucent, so any overlap would
+               stack into a darker patch instead of matching it. */
+            className="absolute left-0 top-1/2 z-30 flex h-10 w-5 -translate-x-full -translate-y-1/2 cursor-pointer items-center justify-center rounded-l-full bg-black/30 pl-1 text-gray-300 focus:outline-none"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className={`h-5 w-5 ${infoPanelOpen ? "" : "rotate-180"}`}
+              viewBox="0 0 20 20"
+              fill="currentColor"
+            >
+              <path
+                fillRule="evenodd"
+                d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+                clipRule="evenodd"
+              />
+            </svg>
+          </button>
 
-            {/* Opponent Deck */}
-            <div>
-              <p className="text-[clamp(0.6rem,1.2vh,0.85rem)] text-white mb-[0.5vh] text-center">
-                Deck [{state.opponent.deck}]
-              </p>
-              <div className="relative h-[12vh] min-h-[40px] max-h-[70px] min-[1200px]:min-h-[60px] min-[1200px]:max-h-[110px] flex items-center justify-center">
-                <img
-                  src="https://scans.shobu.io/backside.jpg"
-                  alt="Deck back"
-                  className="h-full"
-                  style={{ borderRadius: "5%" }}
-                />
-              </div>
-            </div>
+          {/* Collapsed, a sliver of the panel stays put: just enough to show
+              it is still there and to give the toggle an edge to bud from
+              rather than floating over the board. */}
+          {!infoPanelOpen && <div className="w-2 shrink-0 bg-black/30" />}
 
-            {/* Opponent Graveyard */}
-            <div>
-              <p className="text-[clamp(0.6rem,1.2vh,0.85rem)] text-white mb-[0.5vh] text-center">
-                Graveyard [{state.opponent.graveyard.length}]
-              </p>
-              <div className="relative h-[12vh] min-h-[40px] max-h-[70px] min-[1200px]:min-h-[60px] min-[1200px]:max-h-[110px] flex items-center justify-center">
-                {state.opponent.graveyard.length > 0 ? (
-                  <img
-                    src={`https://scans.shobu.io/${
-                      state.opponent.graveyard[
-                        state.opponent.graveyard.length - 1
-                      ].uid
-                    }.jpg`}
-                    alt="Top graveyard card"
-                    className="h-full cursor-pointer hover:scale-105 transition-transform"
-                    style={{ borderRadius: "5%" }}
-                    onClick={() => {
-                      setMultiCardView({
-                        cards: state.opponent.graveyard.map((card) => ({
-                          imageId: card.uid,
-                          name: card.name,
-                        })),
-                        title: "Opponent's Graveyard",
-                      });
-                    }}
-                    onContextMenu={(e) => {
-                      e.preventDefault();
-                      setMultiCardView({
-                        cards: state.opponent.graveyard.map((card) => ({
-                          imageId: card.uid,
-                          name: card.name,
-                        })),
-                        title: "Opponent's Graveyard",
-                      });
-                    }}
-                  />
-                ) : (
-                  <img
-                    src="https://scans.shobu.io/backside.jpg"
-                    alt="Empty graveyard"
-                    className="h-full opacity-30"
-                    style={{ borderRadius: "5%" }}
-                  />
-                )}
-              </div>
-            </div>
-          </div>
+          {infoPanelOpen && (
+            /* Wide enough for the longest label, "Graveyard [10]", to stay on
+               one line: that is about 6.6em, and the labels are 1.2vh, so the
+               text needs ~8vh. The pixel bounds match where the label's own
+               clamp() bottoms out and tops off, plus the 1rem of padding. */
+            <div className="flex w-[calc(8.8vh+1rem)] min-w-[90px] max-w-[116px] shrink-0 flex-col overflow-y-auto overflow-x-hidden bg-black/30 px-2 custom-scrollbar">
+              {/* m-auto rather than justify-center so the top stays reachable
+                  when the two sections are taller than the screen */}
+              <div className="m-auto flex w-full flex-col gap-[0.5vh] py-1 md:gap-[5vh]">
+                {/* Opponent Section */}
+                <div className="rounded-lg flex flex-col gap-[1vh]">
+                  {/* Opponent Hand Count */}
+                  <div className="text-center">
+                    <p className="text-[clamp(0.6rem,1.2vh,0.85rem)] leading-tight text-white mb-[0.5vh]">
+                      Hand [{state.opponent.handCount}]
+                    </p>
+                  </div>
 
-          {/* Player Section */}
-          <div className="rounded-lg flex flex-col gap-[1vh]">
-            {/* Player Hand Count (spectator only) */}
-            {isSpectating && (
-              <div className="text-center">
-                <p className="text-[clamp(0.6rem,1.2vh,0.85rem)] text-white mb-[0.5vh]">
-                  Hand [{state.me.handCount}]
-                </p>
-              </div>
-            )}
-            {/* Player Graveyard */}
-            <div>
-              <p className="text-[clamp(0.6rem,1.2vh,0.85rem)] text-white mb-[0.5vh] text-center">
-                Graveyard [{state.me.graveyard.length}]
-              </p>
-              <div className="relative h-[12vh] min-h-[40px] max-h-[70px] min-[1200px]:min-h-[60px] min-[1200px]:max-h-[110px] flex items-center justify-center">
-                {state.me.graveyard.length > 0 ? (
-                  <img
-                    src={`https://scans.shobu.io/${
-                      state.me.graveyard[state.me.graveyard.length - 1].uid
-                    }.jpg`}
-                    alt="Top graveyard card"
-                    className="h-full cursor-pointer hover:scale-105 transition-transform"
-                    style={{ borderRadius: "5%" }}
-                    onClick={() => {
-                      setMultiCardView({
-                        cards: state.me.graveyard.map((card) => ({
-                          imageId: card.uid,
-                          name: card.name,
-                        })),
-                        title: "My Graveyard",
-                      });
-                    }}
-                    onContextMenu={(e) => {
-                      e.preventDefault();
-                      setMultiCardView({
-                        cards: state.me.graveyard.map((card) => ({
-                          imageId: card.uid,
-                          name: card.name,
-                        })),
-                        title: "My Graveyard",
-                      });
-                    }}
-                  />
-                ) : (
-                  <img
-                    src="https://scans.shobu.io/backside.jpg"
-                    alt="Empty graveyard"
-                    className="h-full opacity-30"
-                    style={{ borderRadius: "5%" }}
-                  />
-                )}
-              </div>
-            </div>
+                  {/* Opponent Deck */}
+                  <div>
+                    <p className="text-[clamp(0.6rem,1.2vh,0.85rem)] leading-tight text-white mb-[0.5vh] text-center">
+                      Deck [{state.opponent.deck}]
+                    </p>
+                    <div className="relative h-[12vh] min-h-[40px] max-h-[70px] min-[1200px]:min-h-[60px] min-[1200px]:max-h-[110px] flex items-center justify-center">
+                      <img
+                        src="https://scans.shobu.io/backside.jpg"
+                        alt="Deck back"
+                        className="h-full"
+                        style={{ borderRadius: "5%" }}
+                      />
+                    </div>
+                  </div>
 
-            {/* Player Deck */}
-            <div>
-              <p className="text-[clamp(0.6rem,1.2vh,0.85rem)] text-white mb-[0.5vh] text-center">
-                Deck [{state.me.deck}]
-              </p>
-              <div className="relative h-[12vh] min-h-[40px] max-h-[70px] min-[1200px]:min-h-[60px] min-[1200px]:max-h-[110px] flex items-center justify-center">
-                <img
-                  src="https://scans.shobu.io/backside.jpg"
-                  alt="Deck back"
-                  className="h-full"
-                  style={{ borderRadius: "5%" }}
-                />
+                  {/* Opponent Graveyard */}
+                  <div>
+                    <p className="text-[clamp(0.6rem,1.2vh,0.85rem)] leading-tight text-white mb-[0.5vh] text-center">
+                      Graveyard [{state.opponent.graveyard.length}]
+                    </p>
+                    <div className="relative h-[12vh] min-h-[40px] max-h-[70px] min-[1200px]:min-h-[60px] min-[1200px]:max-h-[110px] flex items-center justify-center">
+                      {state.opponent.graveyard.length > 0 ? (
+                        <img
+                          src={`https://scans.shobu.io/${
+                            state.opponent.graveyard[
+                              state.opponent.graveyard.length - 1
+                            ].uid
+                          }.jpg`}
+                          alt="Top graveyard card"
+                          className="h-full cursor-pointer hover:scale-105 transition-transform"
+                          style={{ borderRadius: "5%" }}
+                          onClick={() => {
+                            setMultiCardView({
+                              cards: state.opponent.graveyard.map((card) => ({
+                                imageId: card.uid,
+                                name: card.name,
+                              })),
+                              title: "Opponent's Graveyard",
+                            });
+                          }}
+                          onContextMenu={(e) => {
+                            e.preventDefault();
+                            setMultiCardView({
+                              cards: state.opponent.graveyard.map((card) => ({
+                                imageId: card.uid,
+                                name: card.name,
+                              })),
+                              title: "Opponent's Graveyard",
+                            });
+                          }}
+                        />
+                      ) : (
+                        <img
+                          src="https://scans.shobu.io/backside.jpg"
+                          alt="Empty graveyard"
+                          className="h-full opacity-30"
+                          style={{ borderRadius: "5%" }}
+                        />
+                      )}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Player Section */}
+                <div className="rounded-lg flex flex-col gap-[1vh]">
+                  {/* Player Hand Count (spectator only) */}
+                  {isSpectating && (
+                    <div className="text-center">
+                      <p className="text-[clamp(0.6rem,1.2vh,0.85rem)] leading-tight text-white mb-[0.5vh]">
+                        Hand [{state.me.handCount}]
+                      </p>
+                    </div>
+                  )}
+                  {/* Player Graveyard */}
+                  <div>
+                    <p className="text-[clamp(0.6rem,1.2vh,0.85rem)] leading-tight text-white mb-[0.5vh] text-center">
+                      Graveyard [{state.me.graveyard.length}]
+                    </p>
+                    <div className="relative h-[12vh] min-h-[40px] max-h-[70px] min-[1200px]:min-h-[60px] min-[1200px]:max-h-[110px] flex items-center justify-center">
+                      {state.me.graveyard.length > 0 ? (
+                        <img
+                          src={`https://scans.shobu.io/${
+                            state.me.graveyard[state.me.graveyard.length - 1].uid
+                          }.jpg`}
+                          alt="Top graveyard card"
+                          className="h-full cursor-pointer hover:scale-105 transition-transform"
+                          style={{ borderRadius: "5%" }}
+                          onClick={() => {
+                            setMultiCardView({
+                              cards: state.me.graveyard.map((card) => ({
+                                imageId: card.uid,
+                                name: card.name,
+                              })),
+                              title: "My Graveyard",
+                            });
+                          }}
+                          onContextMenu={(e) => {
+                            e.preventDefault();
+                            setMultiCardView({
+                              cards: state.me.graveyard.map((card) => ({
+                                imageId: card.uid,
+                                name: card.name,
+                              })),
+                              title: "My Graveyard",
+                            });
+                          }}
+                        />
+                      ) : (
+                        <img
+                          src="https://scans.shobu.io/backside.jpg"
+                          alt="Empty graveyard"
+                          className="h-full opacity-30"
+                          style={{ borderRadius: "5%" }}
+                        />
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Player Deck */}
+                  <div>
+                    <p className="text-[clamp(0.6rem,1.2vh,0.85rem)] leading-tight text-white mb-[0.5vh] text-center">
+                      Deck [{state.me.deck}]
+                    </p>
+                    <div className="relative h-[12vh] min-h-[40px] max-h-[70px] min-[1200px]:min-h-[60px] min-[1200px]:max-h-[110px] flex items-center justify-center">
+                      <img
+                        src="https://scans.shobu.io/backside.jpg"
+                        alt="Deck back"
+                        className="h-full"
+                        style={{ borderRadius: "5%" }}
+                      />
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
-          </div>
+          )}
         </div>
 
         {/* Floating card that follows cursor */}
@@ -1477,6 +1587,9 @@ export function Duel({
               ? action.cards
               : undefined
           }
+          // Either player's shields can end up in a prompt, and a virtualId
+          // belongs to one card, so the two maps merge without colliding.
+          shieldMap={{ ...state.opponent.shieldMap, ...state.me.shieldMap }}
           showCards={action.showCards}
           text={action.text}
           minSelections={action.minSelections || 0}

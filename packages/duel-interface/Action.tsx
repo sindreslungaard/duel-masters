@@ -21,6 +21,8 @@ export interface ActionProps {
   actionType?: ActionType;
   cards?: CardState[];
   cardsObject?: Record<string, CardState[]>;
+  /** virtualId -> shield number, as shown in the shield zone. */
+  shieldMap?: Record<string, number>;
   showCards?: {
     cards: string[];
     dismissable: boolean;
@@ -40,6 +42,7 @@ export function Action({
   cards,
   unselectableCards,
   cardsObject,
+  shieldMap,
   showCards,
   cancellable,
   visible,
@@ -65,8 +68,34 @@ export function Action({
   const [isBrushing, setIsBrushing] = useState(false);
   const [selectedSearchValue, setSelectedSearchValue] = useState("-1");
   const brushedCardIdsRef = useRef(new Set<string>());
+  // A finger that lands on a card might be starting a brush or might be about
+  // to scroll the list, so the first card waits here until the gesture says
+  // which. Releasing without moving is a tap and selects it; reaching a second
+  // card is a brush; the browser taking the gesture for a scroll drops it.
+  const pendingCardIdRef = useRef<string | null>(null);
+
+  const flushPendingCard = () => {
+    const pendingCardId = pendingCardIdRef.current;
+
+    if (pendingCardId === null) {
+      return;
+    }
+
+    pendingCardIdRef.current = null;
+    toggleCard(pendingCardId);
+  };
 
   const handleBrushEnd = () => {
+    flushPendingCard();
+    setIsBrushing(false);
+    brushedCardIdsRef.current.clear();
+  };
+
+  // The browser claims the gesture once it starts scrolling. Whatever the
+  // finger was resting on was never a selection, so it is dropped rather than
+  // flushed, and a scroll that began on a card leaves the selection alone.
+  const handleBrushCancel = () => {
+    pendingCardIdRef.current = null;
     setIsBrushing(false);
     brushedCardIdsRef.current.clear();
   };
@@ -94,9 +123,16 @@ export function Action({
   // One pointer stream for mouse, touch and pen. Binding mouse and touch
   // separately meant a tap ran both paths, because a touch is followed by
   // compatibility mouse events, and the second toggle undid the first.
-  const handleCardPointerDown = (cardId: string) => {
+  const handleCardPointerDown = (cardId: string, e: React.PointerEvent) => {
     setIsBrushing(true);
-    toggleCard(cardId);
+
+    // A mouse press is unambiguous: there is no scrolling to compete with it.
+    if (e.pointerType === "mouse") {
+      toggleCard(cardId);
+      return;
+    }
+
+    pendingCardIdRef.current = cardId;
   };
 
   const handleCardHover = (cardId: string) => {
@@ -107,11 +143,11 @@ export function Action({
   useEffect(() => {
     if (isBrushing) {
       window.addEventListener("pointerup", handleBrushEnd);
-      window.addEventListener("pointercancel", handleBrushEnd);
+      window.addEventListener("pointercancel", handleBrushCancel);
 
       return () => {
         window.removeEventListener("pointerup", handleBrushEnd);
-        window.removeEventListener("pointercancel", handleBrushEnd);
+        window.removeEventListener("pointercancel", handleBrushCancel);
       };
     }
   }, [isBrushing]);
@@ -128,6 +164,13 @@ export function Action({
     if (cardElement) {
       const cardId = cardElement.getAttribute("data-card-id");
       if (cardId) {
+        // Still on the card the finger landed on. The gesture has not proven
+        // itself a brush yet, so that card stays pending.
+        if (pendingCardIdRef.current === cardId) {
+          return;
+        }
+
+        flushPendingCard();
         handleCardHover(cardId);
       }
     }
@@ -144,7 +187,16 @@ export function Action({
   // the popup horizontally on a phone with no way to scroll to the cards that
   // fell off the edge. Auto-fitting to a minimum card width instead means the
   // column count follows the space actually available.
-  const gridColumnCount = Math.max(3, Math.min(cardCount, 6));
+  //
+  // The cap below exists only to stop a handful of cards from being stretched
+  // across the whole popup, so it scales with the number of cards. The popup
+  // itself is then sized to the same figure, so the grid always reaches both
+  // edges of the content area instead of leaving the cap's slack as dead space.
+  const gridMaxCardsAcross = Math.max(3, cardCount);
+  const gridMaxWidthRem = gridMaxCardsAcross * 8;
+  // The content area's own horizontal padding, which the popup has to add back
+  // on top of the grid for the two to line up.
+  const contentPaddingRem = 3;
 
   const currentSelectableCardIds = new Set(
     (cardsObject ? Object.values(cardsObject).flat() : cards || []).map(
@@ -157,9 +209,11 @@ export function Action({
 
   const cardGridStyle = {
     // auto-fit keeps cards from ever being pushed outside the popup: columns
-    // shrink to the 5rem floor and then wrap onto the next row.
-    gridTemplateColumns: `repeat(auto-fit, minmax(5rem, 1fr))`,
-    maxWidth: `${gridColumnCount * 8}rem`,
+    // shrink to the 5rem floor and then wrap onto the next row. The floor is
+    // capped at 100% so that a popup narrower than one card still cannot be
+    // overflowed by the track itself.
+    gridTemplateColumns: `repeat(auto-fit, minmax(min(5rem, 100%), 1fr))`,
+    maxWidth: `${gridMaxWidthRem}rem`,
   };
   const isCardSelection = actionType === ActionType.None || !actionType;
 
@@ -183,12 +237,22 @@ export function Action({
       zIndex={1000}
       closeOnOutsideClick={false}
       // Prompts that show cards earn the extra room on a large monitor, where
-      // the old fixed 600px left the cards needlessly small.
-      maxWidth={cardCount > 0 ? "min(96vw, 900px)" : "min(96vw, 600px)"}
+      // the old fixed 600px left the cards needlessly small. A prompt with few
+      // enough cards to hit the grid's width cap shrinks to that instead, so
+      // the cards reach both edges rather than trailing off into empty popup.
+      maxWidth={
+        cardCount > 0
+          ? `min(96vw, ${gridMaxWidthRem + contentPaddingRem}rem, 900px)`
+          : "min(96vw, 600px)"
+      }
       contentClassName="flex min-h-0 flex-1 overflow-hidden"
       onClose={showCards ? acknowledgeShowCards : onClose}
     >
-      <div className="flex min-h-0 flex-1 flex-col select-none">
+      {/* min-w-0 is what keeps the cards inside the popup. A flex item defaults
+          to min-width:auto, so this column refused to be narrower than the card
+          grid's own minimum width, grew past the popup, and everything beyond
+          the edge was clipped by the popup's overflow-hidden. */}
+      <div className="flex min-h-0 min-w-0 flex-1 flex-col select-none">
         <div
           className="custom-scrollbar min-h-0 flex-1 overflow-y-auto px-4 py-4 sm:px-6"
           onPointerMove={handlePointerMove}
@@ -208,7 +272,7 @@ export function Action({
                       onCardRightClick?.(imageId, "");
                     }}
                     draggable={false}
-                    className="rounded-md"
+                    className="w-full rounded-md"
                     src={`https://scans.shobu.io/${imageId}.jpg`}
                     alt="Card preview"
                     style={{ borderRadius: "5%" }}
@@ -247,10 +311,16 @@ export function Action({
                   selectedCardsObjectCards.map((card) => (
                     <div
                       key={card.virtualId}
-                      className="w-full"
+                      className="relative w-full"
                       data-card-id={card.virtualId}
+                      // Brushing runs sideways along a row while the list
+                      // scrolls up and down, so the browser keeps the vertical
+                      // pan and leaves horizontal movement to the brush.
+                      style={{ touchAction: "pan-y" }}
                       onPointerEnter={() => handleCardHover(card.virtualId)}
-                      onPointerDown={() => handleCardPointerDown(card.virtualId)}
+                      onPointerDown={(event) =>
+                        handleCardPointerDown(card.virtualId, event)
+                      }
                     >
                       <img
                         onContextMenu={(event) => {
@@ -261,7 +331,7 @@ export function Action({
                         }}
                         onDragStart={(event) => event.preventDefault()}
                         draggable={false}
-                        className={`rounded-md ${
+                        className={`w-full rounded-md ${
                           selectedCardIds.has(card.virtualId)
                             ? "ring-1 ring-blue-100"
                             : ""
@@ -270,6 +340,7 @@ export function Action({
                         alt={card.name}
                         style={{ borderRadius: "5%" }}
                       />
+                      <ShieldNumber shieldMap={shieldMap} card={card} />
                     </div>
                   ))}
 
@@ -281,10 +352,13 @@ export function Action({
                   cards?.map((card) => (
                     <div
                       key={card.virtualId}
-                      className="w-full"
+                      className="relative w-full"
                       data-card-id={card.virtualId}
+                      style={{ touchAction: "pan-y" }}
                       onPointerEnter={() => handleCardHover(card.virtualId)}
-                      onPointerDown={() => handleCardPointerDown(card.virtualId)}
+                      onPointerDown={(event) =>
+                        handleCardPointerDown(card.virtualId, event)
+                      }
                     >
                       <img
                         onContextMenu={(event) => {
@@ -295,7 +369,7 @@ export function Action({
                         }}
                         onDragStart={(event) => event.preventDefault()}
                         draggable={false}
-                        className={`rounded-md ${
+                        className={`w-full rounded-md ${
                           selectedCardIds.has(card.virtualId)
                             ? "ring-1 ring-blue-100"
                             : ""
@@ -304,12 +378,13 @@ export function Action({
                         alt={card.name}
                         style={{ borderRadius: "5%" }}
                       />
+                      <ShieldNumber shieldMap={shieldMap} card={card} />
                     </div>
                   ))}
 
                 {!cardsObject &&
                   unselectableCards?.map((card) => (
-                    <div key={card.virtualId} className="w-full">
+                    <div key={card.virtualId} className="relative w-full">
                       <img
                         onContextMenu={(event) => {
                           event.preventDefault();
@@ -318,11 +393,12 @@ export function Action({
                           }
                         }}
                         draggable={false}
-                        className="cursor-not-allowed rounded-md opacity-50 grayscale"
+                        className="w-full cursor-not-allowed rounded-md opacity-50 grayscale"
                         src={`https://scans.shobu.io/${card.uid}.jpg`}
                         alt={card.name}
                         style={{ borderRadius: "5%" }}
                       />
+                      <ShieldNumber shieldMap={shieldMap} card={card} />
                     </div>
                   ))}
               </div>
@@ -344,8 +420,11 @@ export function Action({
                     key={card.virtualId}
                     className="relative w-full"
                     data-card-id={card.virtualId}
+                    style={{ touchAction: "pan-y" }}
                     onPointerEnter={() => handleCardHover(card.virtualId)}
-                    onPointerDown={() => handleCardPointerDown(card.virtualId)}
+                    onPointerDown={(event) =>
+                      handleCardPointerDown(card.virtualId, event)
+                    }
                   >
                     <img
                       onContextMenu={(event) => {
@@ -356,7 +435,7 @@ export function Action({
                       }}
                       onDragStart={(event) => event.preventDefault()}
                       draggable={false}
-                      className={`rounded-md ${
+                      className={`w-full rounded-md ${
                         isSelected ? "ring-1 ring-blue-100" : ""
                       }`}
                       src={`https://scans.shobu.io/${card.uid}.jpg`}
@@ -519,5 +598,28 @@ export function Action({
         </div>
       </div>
     </Popup>
+  );
+}
+
+// ShieldNumber mirrors the badge the shield zone draws in Card.tsx, so a
+// shield offered as a selection candidate (for example when choosing which
+// one to break) keeps the same index the player already knows it by.
+function ShieldNumber({
+  shieldMap,
+  card,
+}: {
+  shieldMap?: Record<string, number>;
+  card: CardState;
+}) {
+  const number = shieldMap?.[card.virtualId];
+
+  if (number === undefined) {
+    return null;
+  }
+
+  return (
+    <span className="pointer-events-none absolute top-[2%] right-[10%] text-[clamp(0.55rem,1.1vh,0.8rem)] leading-none text-white drop-shadow-[0_1px_2px_rgba(0,0,0,0.9)]">
+      {number}
+    </span>
   );
 }

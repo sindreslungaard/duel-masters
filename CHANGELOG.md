@@ -2,8 +2,24 @@
 
 ## Unreleased
 
+- Shields shown in a popup now display their shield number (thanks @DragosIonita23)
+- Fixed cards rendering outside the card selection popup on narrow screens, and the grid leaving unused space on wide ones
+- Fixed being unable to scroll your hand and battle zone on touch screens without picking up the card you touched
+- Fixed card selection popups on touch screens: dragging sideways across cards selects them again, and scrolling the list no longer selects the card you started on
+- The deck, graveyard and hand count panel no longer covers other cards, and can be collapsed to give the board the full width
+- Opponent's cards in their manazone now faces you
+- New card "Velyrika Dragon" (thanks @DragosIonita23)
+- New card "Cosmic Darts" (thanks @DragosIonita23)
 - Added the option to select a max deck size in custom formats
 - Added SpellResolved event to fix an issue with "Ice Vapor, Shadow of Anguish" and similar cards (thanks @DragosIonita23)
+- Fixed an issue where duel formats sometimes would show up as "constructed"
+- Fixed an issue where cancelling an attack would move you into the AttackStep and prevent summoning/mana (thanks @DragosIonita23)
+- Fixed an issue where "Emergency Typhoon" could discard itself (thanks @DragosIonita23)
+- Fixed an issue where "Kilstine, Nebula Elemental" would only buff other creatures and not itself (thanks @DragosIonita23)
+- Fixed an issue where "Bingole, the Explorer" would have 4000 power instead of 3000 (thanks @DragosIonita23)
+- Fixed an issue where "Storm Wrangler, the Furious"'s block bonus would only last 1 turn (thanks @DragosIonita23)
+- Fixed an issue where "Balesk Baj, the Timeburner" did not work properly when bounced/destroyed after attacking without being blocked (thanks @DragosIonita23)
+- Fixed an issue where "Bombazar, Dragon of Destiny"'s effect would not apply when put into play during the opponent's turn (thanks @DragosIonita23)
 
 ## 13/08/2026
 

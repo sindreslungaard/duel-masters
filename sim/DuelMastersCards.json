@@ -2675,7 +2675,7 @@
       "cost": 4,
       "name": "Bingole, the Explorer",
       "id": "ba6ad07e-eed3-49b9-8830-2df794b13066",
-      "power": "4000",
+      "power": "3000",
       "printings": [
         {
           "set": "DM-12 Thrash of the Hybrid Megacreatures",
@@ -12409,7 +12409,7 @@
       "subtypes": [
         "Angel Command"
       ],
-      "text": "Wave striker (While 2 or more other creatures in the battle zone have \"wave striker,\" this creature has its Wave striker ability.) : Each of your other creatures in battle zone gets +5000 power and has \"blocker\" and \"double breaker\".",
+      "text": "Wave striker (While 2 or more other creatures in the battle zone have \"wave striker,\" this creature has its Wave striker ability.) : Each of your creatures in the battle zone gets +5000 power and has \"blocker\" and \"double breaker\".",
       "type": "Creature"
     },
     {
@@ -24842,6 +24842,7 @@
       ],
       "cost": 7,
       "name": "Velyrika Dragon",
+      "id": "6c562252-75d9-4723-8316-e3dc4a303e3d",
       "power": "7000",
       "printings": [
         {

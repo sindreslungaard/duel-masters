@@ -20,7 +20,7 @@ func TestBingoleTheExplorer(t *testing.T) {
 		card := putCardInBattlezone(t, scn, player.Player, bingoleTheExplorerUID, bingoleSetupSrc)
 		passTurnToSelf(t, scn, player, opponent)
 
-		assertPrinted(t, card, "Bingole, the Explorer", 4000, 4, []string{civ.Light})
+		assertPrinted(t, card, "Bingole, the Explorer", 3000, 4, []string{civ.Light})
 		assert.True(t, card.HasFamily(family.Gladiator))
 	})
 

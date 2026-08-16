@@ -27,7 +27,7 @@ func TestKilstineNebulaElemental(t *testing.T) {
 		assert.True(t, card.HasCondition(cnd.WaveStriker))
 	})
 
-	t.Run("with the count it lifts its other creatures", func(t *testing.T) {
+	t.Run("with the count it lifts all of its controller's creatures, including itself", func(t *testing.T) {
 		scn, player, opponent := setupDuel(t)
 		kilstine := putCardInBattlezone(t, scn, player.Player, kilstineUID, kilstineSetupSrc)
 		ally := putCardInBattlezone(t, scn, player.Player, kilstineAllyUID, kilstineSetupSrc)
@@ -40,8 +40,11 @@ func TestKilstineNebulaElemental(t *testing.T) {
 		assert.True(t, ally.HasCondition(cnd.Blocker))
 		assert.True(t, ally.HasCondition(cnd.DoubleBreaker))
 
-		assert.Equal(t, 5000, scn.Match.GetPower(kilstine, false), "\"other\" spares itself")
-		assert.False(t, kilstine.HasCondition(cnd.DoubleBreaker))
+		// The printed text says "each of your creatures", with no "other"
+		// exclusion, so Kilstine grants itself the same bonus.
+		assert.Equal(t, 10000, scn.Match.GetPower(kilstine, false), "5000 plus its own 5000")
+		assert.True(t, kilstine.HasCondition(cnd.Blocker))
+		assert.True(t, kilstine.HasCondition(cnd.DoubleBreaker))
 
 		assert.Equal(t, 2000, scn.Match.GetPower(theirs, false), "only its controller's creatures")
 	})

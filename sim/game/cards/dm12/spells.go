@@ -2,6 +2,7 @@ package dm12
 
 import (
 	"duel-masters/game/civ"
+	"duel-masters/game/cnd"
 	"duel-masters/game/fx"
 	"duel-masters/game/match"
 	"fmt"
@@ -185,6 +186,57 @@ func ClonedNightmare(c *match.Card) {
 		for range discards {
 			fx.OpponentDiscardsRandomCard(card, ctx)
 		}
+	}))
+
+}
+
+// CosmicDarts ...
+func CosmicDarts(c *match.Card) {
+
+	c.Name = "Cosmic Darts"
+	c.Civs = []string{civ.Light}
+	c.ManaCost = 1
+	c.ManaRequirement = []string{civ.Light}
+
+	c.Use(fx.Spell, fx.When(fx.SpellCast, func(card *match.Card, ctx *match.Context) {
+		shields := fx.SelectBackside(
+			ctx.Match.Opponent(card.Player),
+			ctx.Match,
+			card.Player,
+			match.SHIELDZONE,
+			fmt.Sprintf("%s: Choose one of your opponent's shields", card.Name),
+			1,
+			1,
+			false,
+		)
+
+		if len(shields) < 1 {
+			return
+		}
+
+		shield := shields[0]
+
+		if !shield.HasCondition(cnd.Spell) {
+			ctx.Match.ShowCards(card.Player, fmt.Sprintf("%s: Your shield", card.Name), []string{shield.ImageID})
+			return
+		}
+
+		// Non-dismissible so the caster actually sees the revealed spell before
+		// being asked whether to cast it, instead of the preview being raced by
+		// the immediately-following prompt.
+		ctx.Match.ShowCardsNonDismissible(card.Player, fmt.Sprintf("%s: Your shield", card.Name), []string{shield.ImageID})
+
+		if !fx.BinaryQuestion(card.Player, ctx.Match, fmt.Sprintf("%s: You may cast %s immediately for no cost", card.Name, shield.Name)) {
+			return
+		}
+
+		moved, err := card.Player.MoveCard(shield.ID, match.SHIELDZONE, match.HAND, card.ID)
+
+		if err != nil || moved.Zone != match.HAND {
+			return
+		}
+
+		ctx.Match.CastSpell(moved, true)
 	}))
 
 }

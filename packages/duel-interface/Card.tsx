@@ -70,7 +70,14 @@ export function Card({
       return;
     }
 
-    e.preventDefault();
+    // Only the mouse needs its default suppressed, to stop a press from
+    // starting a native image drag or a text selection. Doing the same for
+    // touch would take the gesture away from the browser before it has had a
+    // chance to decide whether the finger is scrolling the row.
+    if (e.pointerType === "mouse") {
+      e.preventDefault();
+    }
+
     onDragStart(e);
   };
 
@@ -106,12 +113,14 @@ export function Card({
           onPointerDown={handlePointerDown}
           onContextMenu={handleContextMenu}
           style={{
-            // Draggable cards keep the gesture entirely, which is what makes
-            // dragging them reliable. Cards that cannot be dragged have nothing
-            // to protect, so they hand the gesture back and their row becomes
-            // scrollable by touching the cards themselves rather than only the
-            // gaps between them.
-            touchAction: draggable ? "none" : "auto",
+            // Rows scroll sideways while every drop target sits above or below
+            // them, so the two gestures split cleanly by direction: the browser
+            // keeps horizontal panning, and a drag has to start vertically.
+            // Without this a finger landing on one of your own cards could
+            // never scroll the row, because the card owned the whole gesture.
+            // When the browser claims the pan it fires pointercancel, which the
+            // board listens for to drop the half-started drag.
+            touchAction: draggable ? "pan-x" : "auto",
             borderRadius: "5%",
             marginLeft: rotated ? horizontalMargin : undefined,
             marginRight: rotated ? horizontalMargin : undefined,

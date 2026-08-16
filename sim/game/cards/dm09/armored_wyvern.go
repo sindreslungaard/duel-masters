@@ -35,8 +35,11 @@ func BaleskBajTheTimeburner(c *match.Card) {
 			attacked = true
 		}),
 		fx.When(fx.EndOfMyTurn, func(card *match.Card, ctx *match.Context) {
+			// The "return to hand" and "take an extra turn" clauses are
+			// independent triggered abilities. Whether this one can resolve
+			// must not affect the other, which checks attacked on the later
+			// EndOfTurnStep.
 			if card.Zone != match.BATTLEZONE {
-				attacked = false
 				return
 			}
 
@@ -45,8 +48,6 @@ func BaleskBajTheTimeburner(c *match.Card) {
 
 				if err == nil {
 					ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s was returned to the %s's hand", card.Name, card.Player.Username()))
-				} else {
-					attacked = false
 				}
 			})
 		}),

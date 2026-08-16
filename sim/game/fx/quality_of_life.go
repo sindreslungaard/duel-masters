@@ -662,6 +662,21 @@ func SpellCast(card *match.Card, ctx *match.Context) bool {
 
 }
 
+// SpellResolved returns true if this card is the spell that was just resolved
+func SpellResolved(card *match.Card, ctx *match.Context) bool {
+
+	if event, ok := ctx.Event.(*match.SpellResolved); ok {
+
+		if event.CardID == card.ID {
+			return true
+		}
+
+	}
+
+	return false
+
+}
+
 func IHaveCastASpell(card *match.Card, ctx *match.Context) bool {
 	if event, ok := ctx.Event.(*match.SpellCast); ok {
 
