@@ -1587,6 +1587,9 @@ export function Duel({
               ? action.cards
               : undefined
           }
+          // Either player's shields can end up in a prompt, and a virtualId
+          // belongs to one card, so the two maps merge without colliding.
+          shieldMap={{ ...state.opponent.shieldMap, ...state.me.shieldMap }}
           showCards={action.showCards}
           text={action.text}
           minSelections={action.minSelections || 0}

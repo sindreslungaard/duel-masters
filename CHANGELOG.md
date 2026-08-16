@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- Shields shown in a popup now display their shield number (thanks @DragosIonita23)
 - Fixed cards rendering outside the card selection popup on narrow screens, and the grid leaving unused space on wide ones
 - Fixed being unable to scroll your hand and battle zone on touch screens without picking up the card you touched
 - Fixed card selection popups on touch screens: dragging sideways across cards selects them again, and scrolling the list no longer selects the card you started on

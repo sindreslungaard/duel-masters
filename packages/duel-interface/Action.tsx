@@ -21,6 +21,8 @@ export interface ActionProps {
   actionType?: ActionType;
   cards?: CardState[];
   cardsObject?: Record<string, CardState[]>;
+  /** virtualId -> shield number, as shown in the shield zone. */
+  shieldMap?: Record<string, number>;
   showCards?: {
     cards: string[];
     dismissable: boolean;
@@ -40,6 +42,7 @@ export function Action({
   cards,
   unselectableCards,
   cardsObject,
+  shieldMap,
   showCards,
   cancellable,
   visible,
@@ -308,7 +311,7 @@ export function Action({
                   selectedCardsObjectCards.map((card) => (
                     <div
                       key={card.virtualId}
-                      className="w-full"
+                      className="relative w-full"
                       data-card-id={card.virtualId}
                       // Brushing runs sideways along a row while the list
                       // scrolls up and down, so the browser keeps the vertical
@@ -337,6 +340,7 @@ export function Action({
                         alt={card.name}
                         style={{ borderRadius: "5%" }}
                       />
+                      <ShieldNumber shieldMap={shieldMap} card={card} />
                     </div>
                   ))}
 
@@ -348,7 +352,7 @@ export function Action({
                   cards?.map((card) => (
                     <div
                       key={card.virtualId}
-                      className="w-full"
+                      className="relative w-full"
                       data-card-id={card.virtualId}
                       style={{ touchAction: "pan-y" }}
                       onPointerEnter={() => handleCardHover(card.virtualId)}
@@ -374,12 +378,13 @@ export function Action({
                         alt={card.name}
                         style={{ borderRadius: "5%" }}
                       />
+                      <ShieldNumber shieldMap={shieldMap} card={card} />
                     </div>
                   ))}
 
                 {!cardsObject &&
                   unselectableCards?.map((card) => (
-                    <div key={card.virtualId} className="w-full">
+                    <div key={card.virtualId} className="relative w-full">
                       <img
                         onContextMenu={(event) => {
                           event.preventDefault();
@@ -393,6 +398,7 @@ export function Action({
                         alt={card.name}
                         style={{ borderRadius: "5%" }}
                       />
+                      <ShieldNumber shieldMap={shieldMap} card={card} />
                     </div>
                   ))}
               </div>
@@ -592,5 +598,28 @@ export function Action({
         </div>
       </div>
     </Popup>
+  );
+}
+
+// ShieldNumber mirrors the badge the shield zone draws in Card.tsx, so a
+// shield offered as a selection candidate (for example when choosing which
+// one to break) keeps the same index the player already knows it by.
+function ShieldNumber({
+  shieldMap,
+  card,
+}: {
+  shieldMap?: Record<string, number>;
+  card: CardState;
+}) {
+  const number = shieldMap?.[card.virtualId];
+
+  if (number === undefined) {
+    return null;
+  }
+
+  return (
+    <span className="pointer-events-none absolute top-[2%] right-[10%] text-[clamp(0.55rem,1.1vh,0.8rem)] leading-none text-white drop-shadow-[0_1px_2px_rgba(0,0,0,0.9)]">
+      {number}
+    </span>
   );
 }
