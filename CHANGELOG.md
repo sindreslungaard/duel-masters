@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 16/08/2026
 
 - "Choose a number" popups now have a slider and larger steps for wide ranges, so picking a power no longer means clicking + a thousand times
 - Shields shown in a popup now display their shield number (thanks @DragosIonita23)
