@@ -199,12 +199,15 @@ func CosmicDarts(c *match.Card) {
 	c.ManaRequirement = []string{civ.Light}
 
 	c.Use(fx.Spell, fx.When(fx.SpellCast, func(card *match.Card, ctx *match.Context) {
+		opponent := ctx.Match.Opponent(card.Player)
+		chooser := fx.ResolveShieldChooser(ctx, opponent, card.Player)
+
 		shields := fx.SelectBackside(
-			ctx.Match.Opponent(card.Player),
+			chooser,
 			ctx.Match,
 			card.Player,
 			match.SHIELDZONE,
-			fmt.Sprintf("%s: Choose one of your opponent's shields", card.Name),
+			fmt.Sprintf("%s: Choose one of %s shields%s", card.Name, fx.ShieldPossessive(chooser, card.Player), fx.MeloppeNote(chooser, opponent)),
 			1,
 			1,
 			false,
@@ -216,15 +219,22 @@ func CosmicDarts(c *match.Card) {
 
 		shield := shields[0]
 
+		// Grabbed before either pop-up so the number still matches: whoever
+		// picked shield (the opponent, unless Meloppe redirected) never sees
+		// this reveal, so it's the only way card.Player can tell them which
+		// shield it was.
+		description := fx.DescribeShield(shield)
+		ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s was shown to %s", description, card.Player.Username()))
+
 		if !shield.HasCondition(cnd.Spell) {
-			ctx.Match.ShowCards(card.Player, fmt.Sprintf("%s: Your shield", card.Name), []string{shield.ImageID})
+			ctx.Match.ShowCards(card.Player, fmt.Sprintf("%s: Your %s", card.Name, description), []string{shield.ImageID})
 			return
 		}
 
 		// Non-dismissible so the caster actually sees the revealed spell before
 		// being asked whether to cast it, instead of the preview being raced by
 		// the immediately-following prompt.
-		ctx.Match.ShowCardsNonDismissible(card.Player, fmt.Sprintf("%s: Your shield", card.Name), []string{shield.ImageID})
+		ctx.Match.ShowCardsNonDismissible(card.Player, fmt.Sprintf("%s: Your %s", card.Name, description), []string{shield.ImageID})
 
 		if !fx.BinaryQuestion(card.Player, ctx.Match, fmt.Sprintf("%s: You may cast %s immediately for no cost", card.Name, shield.Name)) {
 			return

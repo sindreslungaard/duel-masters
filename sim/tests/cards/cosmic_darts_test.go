@@ -70,6 +70,23 @@ func TestCosmicDarts(t *testing.T) {
 		require.NoError(t, err)
 		require.NoError(t, scn.SubmitAction(opponent, shields[0].ID))
 		require.NoError(t, scn.WaitForMessage(player, playerMsgStart, "show_cards_non_dismissible"))
+
+		// The opponent picked blind and never sees this preview, so the pop-up
+		// and chat message are the only way they can tell which shield (their
+		// only one, shield #1) the caster ended up looking at.
+		popups, err := scn.ShowCardsMessages(player, playerMsgStart)
+		require.NoError(t, err)
+		require.Len(t, popups, 1)
+		assert.Contains(t, popups[0], "shield #1")
+		assert.Contains(t, popups[0], shields[0].Name)
+
+		chats, err := scn.ChatMessages(player, playerMsgStart)
+		require.NoError(t, err)
+		require.Len(t, chats, 1)
+		assert.Contains(t, chats[0], "shield #1")
+		assert.Contains(t, chats[0], shields[0].Name)
+		assert.Contains(t, chats[0], player.Player.Username())
+
 		playerMsgStart, err = scn.MessageCount(player)
 		require.NoError(t, err)
 		require.NoError(t, scn.CancelAction(player)) // dismiss preview

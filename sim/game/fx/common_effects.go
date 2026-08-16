@@ -5,6 +5,7 @@ import (
 	"duel-masters/game/match"
 	"fmt"
 	"math/rand"
+	"strings"
 )
 
 func GiveTapAbilityToAllies(card *match.Card, ctx *match.Context, alliesFilter func(card *match.Card) bool, tapAbility func(card *match.Card, ctx *match.Context)) {
@@ -180,6 +181,132 @@ func HaveSelfConditionsWhenNoShields(card *match.Card, ctx *match.Context, condi
 	})
 }
 
+// ResolveShieldChooser returns who should be prompted to choose a face-down
+// card out of shieldOwner's shield zone, honoring a persistent effect (e.g.
+// Meloppe) that redirects a cross-player shield choice back to the shield's
+// own owner.
+//
+// Choosing your own shields is never redirected, so callers that already pass
+// the shield owner as the chooser can skip this and call SelectBackside
+// directly; there is nothing for a persistent effect to reverse there.
+func ResolveShieldChooser(ctx *match.Context, defaultChooser *match.Player, shieldOwner *match.Player) *match.Player {
+	if defaultChooser == shieldOwner {
+		return defaultChooser
+	}
+
+	event := &match.ChooseShieldEvent{ShieldOwner: shieldOwner, Chooser: defaultChooser}
+	ctx.Match.HandleFx(match.NewContext(ctx.Match, event))
+
+	return event.Chooser
+}
+
+// ResolveShieldChoices re-delegates the picks of a combined, owner-agnostic
+// shield selection (an effect naming no specific owner, such as "choose a
+// shield") already made blind, for any pick that landed on someone other
+// than defaultChooser and that a persistent effect (e.g. Meloppe) says its
+// owner should have chosen instead.
+//
+// defaultChooser's own picks are returned unchanged, since there is nothing
+// to reverse when the chooser already owns the shield. Everything else is
+// grouped by owner; an owner Meloppe redirects to themselves gets a fresh,
+// mandatory backside pick of the same count from their own shield zone,
+// replacing what the original chooser blindly landed on. Nothing about that
+// original pick was ever revealed to the chooser, so swapping it out here
+// leaks no information.
+func ResolveShieldChoices(ctx *match.Context, defaultChooser *match.Player, picks CardCollection) CardCollection {
+	result := make(CardCollection, 0, len(picks))
+
+	byOwner := make(map[*match.Player][]*match.Card)
+	for _, card := range picks {
+		if card.Player == defaultChooser {
+			result = append(result, card)
+			continue
+		}
+
+		byOwner[card.Player] = append(byOwner[card.Player], card)
+	}
+
+	for owner, owned := range byOwner {
+		chooser := ResolveShieldChooser(ctx, defaultChooser, owner)
+		if chooser == defaultChooser {
+			result = append(result, owned...)
+			continue
+		}
+
+		replaced := SelectBackside(
+			chooser,
+			ctx.Match,
+			owner,
+			match.SHIELDZONE,
+			fmt.Sprintf("Meloppe's effect: Choose %d of your shields instead.", len(owned)),
+			len(owned),
+			len(owned),
+			false,
+		)
+
+		result = append(result, replaced...)
+	}
+
+	return result
+}
+
+// ShieldPossessive phrases a prompt about shieldOwner's shield zone from
+// chooser's point of view, so a chooser Meloppe redirected onto their own
+// shields reads "your shields" instead of a stale "your opponent's shields"
+// that assumed the default chooser.
+func ShieldPossessive(chooser *match.Player, shieldOwner *match.Player) string {
+	if chooser == shieldOwner {
+		return "your"
+	}
+
+	return "your opponent's"
+}
+
+// MeloppeNote returns a parenthetical to append to a shield-choice prompt
+// when chooser isn't the effect's usual chooser, so a player unfamiliar with
+// Meloppe isn't left wondering why they're the one being asked. Hardcoded to
+// name Meloppe: it is currently the only effect that reverses who chooses a
+// shield, so there is nothing more general to say here.
+func MeloppeNote(chooser *match.Player, defaultChooser *match.Player) string {
+	if chooser == defaultChooser {
+		return ""
+	}
+
+	return " (Meloppe's effect: you choose instead of your opponent.)"
+}
+
+// ShieldNumber returns a shield's 1-based position in its owner's shield
+// zone, the same order the owner sees their own face-down shields numbered
+// in. Call it before the shield moves out of that zone: a card that has
+// already broken, been discarded, or otherwise left the shield zone can no
+// longer be found there, and this returns 0.
+//
+// A player shown a shield's identity without having picked it themselves
+// (e.g. Meloppe redirected who chose) has no other way to know which one it
+// was, since nobody but the shield's owner ever sees that pick happen.
+func ShieldNumber(shield *match.Card) int {
+	shields, err := shield.Player.Container(match.SHIELDZONE)
+	if err != nil {
+		return 0
+	}
+
+	for i, s := range shields {
+		if s.ID == shield.ID {
+			return i + 1
+		}
+	}
+
+	return 0
+}
+
+// DescribeShield labels a shield with its owner-relative position and name,
+// e.g. "shield #2 (Aqua Surfer)", for a message about a shield shown to
+// someone other than its owner. Call it before the shield moves out of its
+// shield zone; see ShieldNumber.
+func DescribeShield(shield *match.Card) string {
+	return fmt.Sprintf("shield #%d (%s)", ShieldNumber(shield), shield.Name)
+}
+
 func RotateShields(card *match.Card, ctx *match.Context, max int) {
 
 	nrShields, err := card.Player.Container(match.SHIELDZONE)
@@ -242,13 +369,14 @@ func DestroyOpShield(card *match.Card, ctx *match.Context) {
 func BreakXOpShields(x int) match.HandlerFunc {
 	return func(card *match.Card, ctx *match.Context) {
 		opponent := ctx.Match.Opponent(card.Player)
+		chooser := ResolveShieldChooser(ctx, card.Player, opponent)
 
 		shields := SelectBackside(
-			card.Player,
+			chooser,
 			ctx.Match,
 			opponent,
 			match.SHIELDZONE,
-			fmt.Sprintf("%s effect: select %d shield(s) to break", card.Name, x),
+			fmt.Sprintf("%s effect: select %d shield(s) to break%s", card.Name, x, MeloppeNote(chooser, card.Player)),
 			x,
 			x,
 			false,
@@ -271,13 +399,14 @@ func BreakXOpShields(x int) match.HandlerFunc {
 // go to the opponent's hand and its shield trigger is not offered.
 func PutOpShieldIntoGraveyard(card *match.Card, ctx *match.Context) {
 	opponent := ctx.Match.Opponent(card.Player)
+	chooser := ResolveShieldChooser(ctx, card.Player, opponent)
 
 	SelectBackside(
-		card.Player,
+		chooser,
 		ctx.Match,
 		opponent,
 		match.SHIELDZONE,
-		fmt.Sprintf("%s's effect: Choose one of your opponent's shields and put it into their graveyard.", card.Name),
+		fmt.Sprintf("%s's effect: Choose one of %s shields and put it into their graveyard.%s", card.Name, ShieldPossessive(chooser, opponent), MeloppeNote(chooser, card.Player)),
 		1,
 		1,
 		false,
@@ -324,18 +453,26 @@ func ShowXShields(x int, cancellable bool) match.HandlerFunc {
 	return func(card *match.Card, ctx *match.Context) {
 
 		shieldsID := []string{}
+		descriptions := []string{}
+		opponent := ctx.Match.Opponent(card.Player)
+		chooser := ResolveShieldChooser(ctx, card.Player, opponent)
 
 		SelectBackside(
-			card.Player,
+			chooser,
 			ctx.Match,
-			ctx.Match.Opponent(card.Player),
+			opponent,
 			match.SHIELDZONE,
-			fmt.Sprintf("%s: Select %d of your opponent's shields that will be shown to you", card.Name, x),
+			fmt.Sprintf("%s: Select %d of %s shields that will be shown to you%s", card.Name, x, ShieldPossessive(chooser, opponent), MeloppeNote(chooser, card.Player)),
 			1,
 			x,
 			cancellable,
-		).Map(func(shields *match.Card) {
-			shieldsID = append(shieldsID, shields.ImageID)
+		).Map(func(shield *match.Card) {
+			// Grabbed before the pop-up so the numbers still match: whoever
+			// picked shield (its own owner, if Meloppe redirected) never sees
+			// this reveal, so it's the only way card.Player can tell them which
+			// shields they were.
+			shieldsID = append(shieldsID, shield.ImageID)
+			descriptions = append(descriptions, DescribeShield(shield))
 		})
 
 		// Nothing was chosen, either because the opponent has no shields or
@@ -346,9 +483,10 @@ func ShowXShields(x int, cancellable bool) match.HandlerFunc {
 
 		ctx.Match.ShowCards(
 			card.Player,
-			"Your opponent's shield:",
+			fmt.Sprintf("Your opponent's %s:", strings.Join(descriptions, ", ")),
 			shieldsID,
 		)
+		ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s of %s was shown to %s", strings.Join(descriptions, ", "), opponent.Username(), card.Player.Username()))
 	}
 
 }
