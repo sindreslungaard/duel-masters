@@ -19,6 +19,7 @@
 - Fixed an issue where "Bingole, the Explorer" would have 4000 power instead of 3000 (thanks @DragosIonita23)
 - Fixed an issue where "Storm Wrangler, the Furious"'s block bonus would only last 1 turn (thanks @DragosIonita23)
 - Fixed an issue where "Balesk Baj, the Timeburner" did not work properly when bounced/destroyed after attacking without being blocked (thanks @DragosIonita23)
+- Fixed an issue where "Bombazar, Dragon of Destiny"'s effect would not apply when put into play during the opponent's turn (thanks @DragosIonita23)
 
 ## 13/08/2026
 
