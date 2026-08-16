@@ -57,6 +57,8 @@ export interface DuelProps {
    * Whether the opponent's cards are flipped from their natural orientation
    * towards the player looking at the screen. Defaults to false, which orients
    * them towards the opponent the way they would face across a physical table.
+   * The opponent's mana is exempt: it always faces the player looking at the
+   * screen, mirroring our own mana facing the opponent.
    */
   flipOpponentCards?: boolean;
   resolveChatUser?: DuelChatUserResolver;
@@ -941,7 +943,8 @@ export function Duel({
               <div className="inline-flex w-max justify-start gap-5 h-full pb-1">
                 {state.opponent.manazone.map(
                   CreateCard({
-                    flipped: !flipOpponentCards,
+                    // Mana always faces the player looking at the screen
+                    flipped: false,
                     dragState,
                     zone: "opponentManazone",
                     onRightClick: (imageId, name) =>
