@@ -65,8 +65,34 @@ export function Action({
   const [isBrushing, setIsBrushing] = useState(false);
   const [selectedSearchValue, setSelectedSearchValue] = useState("-1");
   const brushedCardIdsRef = useRef(new Set<string>());
+  // A finger that lands on a card might be starting a brush or might be about
+  // to scroll the list, so the first card waits here until the gesture says
+  // which. Releasing without moving is a tap and selects it; reaching a second
+  // card is a brush; the browser taking the gesture for a scroll drops it.
+  const pendingCardIdRef = useRef<string | null>(null);
+
+  const flushPendingCard = () => {
+    const pendingCardId = pendingCardIdRef.current;
+
+    if (pendingCardId === null) {
+      return;
+    }
+
+    pendingCardIdRef.current = null;
+    toggleCard(pendingCardId);
+  };
 
   const handleBrushEnd = () => {
+    flushPendingCard();
+    setIsBrushing(false);
+    brushedCardIdsRef.current.clear();
+  };
+
+  // The browser claims the gesture once it starts scrolling. Whatever the
+  // finger was resting on was never a selection, so it is dropped rather than
+  // flushed, and a scroll that began on a card leaves the selection alone.
+  const handleBrushCancel = () => {
+    pendingCardIdRef.current = null;
     setIsBrushing(false);
     brushedCardIdsRef.current.clear();
   };
@@ -94,9 +120,16 @@ export function Action({
   // One pointer stream for mouse, touch and pen. Binding mouse and touch
   // separately meant a tap ran both paths, because a touch is followed by
   // compatibility mouse events, and the second toggle undid the first.
-  const handleCardPointerDown = (cardId: string) => {
+  const handleCardPointerDown = (cardId: string, e: React.PointerEvent) => {
     setIsBrushing(true);
-    toggleCard(cardId);
+
+    // A mouse press is unambiguous: there is no scrolling to compete with it.
+    if (e.pointerType === "mouse") {
+      toggleCard(cardId);
+      return;
+    }
+
+    pendingCardIdRef.current = cardId;
   };
 
   const handleCardHover = (cardId: string) => {
@@ -107,11 +140,11 @@ export function Action({
   useEffect(() => {
     if (isBrushing) {
       window.addEventListener("pointerup", handleBrushEnd);
-      window.addEventListener("pointercancel", handleBrushEnd);
+      window.addEventListener("pointercancel", handleBrushCancel);
 
       return () => {
         window.removeEventListener("pointerup", handleBrushEnd);
-        window.removeEventListener("pointercancel", handleBrushEnd);
+        window.removeEventListener("pointercancel", handleBrushCancel);
       };
     }
   }, [isBrushing]);
@@ -128,6 +161,13 @@ export function Action({
     if (cardElement) {
       const cardId = cardElement.getAttribute("data-card-id");
       if (cardId) {
+        // Still on the card the finger landed on. The gesture has not proven
+        // itself a brush yet, so that card stays pending.
+        if (pendingCardIdRef.current === cardId) {
+          return;
+        }
+
+        flushPendingCard();
         handleCardHover(cardId);
       }
     }
@@ -249,8 +289,14 @@ export function Action({
                       key={card.virtualId}
                       className="w-full"
                       data-card-id={card.virtualId}
+                      // Brushing runs sideways along a row while the list
+                      // scrolls up and down, so the browser keeps the vertical
+                      // pan and leaves horizontal movement to the brush.
+                      style={{ touchAction: "pan-y" }}
                       onPointerEnter={() => handleCardHover(card.virtualId)}
-                      onPointerDown={() => handleCardPointerDown(card.virtualId)}
+                      onPointerDown={(event) =>
+                        handleCardPointerDown(card.virtualId, event)
+                      }
                     >
                       <img
                         onContextMenu={(event) => {
@@ -283,8 +329,11 @@ export function Action({
                       key={card.virtualId}
                       className="w-full"
                       data-card-id={card.virtualId}
+                      style={{ touchAction: "pan-y" }}
                       onPointerEnter={() => handleCardHover(card.virtualId)}
-                      onPointerDown={() => handleCardPointerDown(card.virtualId)}
+                      onPointerDown={(event) =>
+                        handleCardPointerDown(card.virtualId, event)
+                      }
                     >
                       <img
                         onContextMenu={(event) => {
@@ -344,8 +393,11 @@ export function Action({
                     key={card.virtualId}
                     className="relative w-full"
                     data-card-id={card.virtualId}
+                    style={{ touchAction: "pan-y" }}
                     onPointerEnter={() => handleCardHover(card.virtualId)}
-                    onPointerDown={() => handleCardPointerDown(card.virtualId)}
+                    onPointerDown={(event) =>
+                      handleCardPointerDown(card.virtualId, event)
+                    }
                   >
                     <img
                       onContextMenu={(event) => {

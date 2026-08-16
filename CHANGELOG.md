@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Fixed being unable to scroll your hand and battle zone on touch screens without picking up the card you touched
+- Fixed card selection popups on touch screens: dragging sideways across cards selects them again, and scrolling the list no longer selects the card you started on
 - The deck, graveyard and hand count panel no longer covers other cards, and can be collapsed to give the board the full width
 - Opponent's cards in their manazone now faces you
 - New card "Velyrika Dragon" (thanks @DragosIonita23)
