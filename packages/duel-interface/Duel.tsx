@@ -938,7 +938,7 @@ export function Duel({
               <div className="absolute inset-0 bg-red-500/30 pointer-events-none z-20" />
             )}
             <div className="absolute inset-0 z-10 overflow-x-auto overflow-y-hidden">
-              <div className="inline-flex w-max justify-start gap-5 h-full pb-1">
+              <div className="inline-flex w-max justify-start gap-5 h-full pb-1 pr-[100px] min-[1200px]:pr-[180px]">
                 {state.opponent.manazone.map(
                   CreateCard({
                     flipped: !flipOpponentCards,
@@ -966,7 +966,7 @@ export function Duel({
               <div className="absolute inset-0 bg-red-500/30 pointer-events-none z-20" />
             )}
             <div className="absolute inset-0 z-10 overflow-x-auto overflow-y-hidden">
-              <div className="inline-flex w-max justify-start gap-5 h-full p-1">
+              <div className="inline-flex w-max justify-start gap-5 h-full p-1 pr-[100px] min-[1200px]:pr-[180px]">
                 {state.opponent.shieldzone.map(
                   CreateCard({
                     flipped: !flipOpponentCards,
@@ -995,7 +995,7 @@ export function Duel({
               <div className="absolute inset-0 bg-red-500/30 pointer-events-none z-20" />
             )}
             <div className="absolute inset-0 z-10 overflow-x-auto overflow-y-hidden">
-              <div className="inline-flex w-max justify-start gap-5 h-full p-1">
+              <div className="inline-flex w-max justify-start gap-5 h-full p-1 pr-[100px] min-[1200px]:pr-[180px]">
                 {state.opponent.playzone.map(
                   CreateCard({
                     flipped: !flipOpponentCards,
@@ -1017,7 +1017,7 @@ export function Duel({
               <div className="absolute inset-0 bg-red-500/30 pointer-events-none z-20" />
             )}
             <div className="absolute inset-0 z-10 overflow-x-auto overflow-y-hidden">
-              <div className="inline-flex w-max justify-start gap-5 h-full p-1">
+              <div className="inline-flex w-max justify-start gap-5 h-full p-1 pr-[100px] min-[1200px]:pr-[180px]">
                 {state.me.playzone.map(
                   CreateCard({
                     selected: (id: string) => id === selectedCardId,
@@ -1045,7 +1045,7 @@ export function Duel({
               <div className="absolute inset-0 bg-red-500/30 pointer-events-none z-20" />
             )}
             <div className="absolute inset-0 z-10 overflow-x-auto overflow-y-hidden">
-              <div className="inline-flex w-max justify-start gap-5 h-full p-1">
+              <div className="inline-flex w-max justify-start gap-5 h-full p-1 pr-[100px] min-[1200px]:pr-[180px]">
                 {state.me.shieldzone.map(
                   CreateCard({
                     shieldMap: state.me.shieldMap,
@@ -1067,7 +1067,7 @@ export function Duel({
               <div className="absolute inset-0 bg-red-500/30 pointer-events-none z-20" />
             )}
             <div className="absolute inset-0 z-10 overflow-x-auto overflow-y-hidden">
-              <div className="inline-flex w-max justify-start gap-5 h-full p-1">
+              <div className="inline-flex w-max justify-start gap-5 h-full p-1 pr-[100px] min-[1200px]:pr-[180px]">
                 {state.me.manazone.map(
                   CreateCard({
                     flipped: true,
@@ -1102,7 +1102,7 @@ export function Duel({
               <>
                 <div className="absolute inset-0 z-0" data-dropzone="hand" />
                 <div className="absolute inset-0 z-10 overflow-x-auto overflow-y-hidden">
-                  <div className="inline-flex w-max justify-start gap-5 h-full pt-1 p-px">
+                  <div className="inline-flex w-max justify-start gap-5 h-full pt-1 p-px pr-[100px] min-[1200px]:pr-[180px]">
                     {state.me.hand.map(
                       CreateCard({
                         selected: (id: string) => id === selectedCardId,
@@ -1508,6 +1508,7 @@ export function Duel({
               ? action.cards
               : undefined
           }
+          shieldMap={{ ...state.opponent.shieldMap, ...state.me.shieldMap }}
           showCards={action.showCards}
           text={action.text}
           minSelections={action.minSelections || 0}
