@@ -65,12 +65,19 @@ func BombazarDragonOfDestiny(c *match.Card) {
 				ctx.Match.Destroy(creature, card, match.DestroyedByMiscAbility)
 			}
 
-			if !ctx.Match.IsPlayerTurn(card.Player) {
+			if ctx.Match.IsPlayerTurn(card.Player) {
+				extraTurnPending = true
+				ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s's effect: %s will take an extra turn and then lose the game at the end of it", card.Name, card.Player.Username()))
 				return
 			}
 
-			extraTurnPending = true
-			ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s's effect: %s will take an extra turn and then lose the game at the end of it", card.Name, card.Player.Username()))
+			// Put into the battle zone on someone else's turn, for example by an
+			// effect that has its owner put it into play off-turn. "The turn
+			// after this one" is then the owner's own next turn, which already
+			// follows naturally, so no turn needs to be repeated: only the loss
+			// remains to be scheduled for the end of that turn.
+			loseAfterExtraTurn = true
+			ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s's effect: %s will lose the game at the end of their next turn", card.Name, card.Player.Username()))
 		}),
 		func(card *match.Card, ctx *match.Context) {
 
