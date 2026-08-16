@@ -462,10 +462,19 @@ func Creature(card *match.Card, ctx *match.Context) {
 		}
 
 		ctx.ScheduleAfter(func() {
+			chooser := card.Player
+			cancellable := event.Cancellable
+
+			if event.Chooser != nil {
+				chooser = event.Chooser
+				cancellable = false
+			}
+
 			shieldsAttacked := SelectAndReturnShields(
 				card,
+				chooser,
 				ctx,
-				event.Cancellable,
+				cancellable,
 			)
 
 			event.ShieldsAttacked = shieldsAttacked
@@ -676,7 +685,7 @@ func HasSummoningSickness(card *match.Card) bool {
 	return card.HasCondition(cnd.SummoningSickness) && !card.HasCondition(cnd.SpeedAttacker)
 }
 
-func SelectAndReturnShields(card *match.Card, ctx *match.Context, cancellable bool) []*match.Card {
+func SelectAndReturnShields(card *match.Card, chooser *match.Player, ctx *match.Context, cancellable bool) []*match.Card {
 	opponent := ctx.Match.Opponent(card.Player)
 	shieldzone, err := opponent.Container(match.SHIELDZONE)
 
@@ -710,19 +719,24 @@ func SelectAndReturnShields(card *match.Card, ctx *match.Context, cancellable bo
 
 	shieldsAttacked := make([]*match.Card, 0)
 
-	ctx.Match.NewBacksideAction(card.Player, shieldzone, noOfShields, noOfShields, fmt.Sprintf("Select %v shield(s) to break", noOfShields), cancellable)
+	ctx.Match.NewBacksideAction(chooser, shieldzone, noOfShields, noOfShields, fmt.Sprintf("Select %v shield(s) to break", noOfShields), cancellable)
+	defer ctx.Match.CloseAction(chooser)
+
+	if !ctx.Match.IsPlayerTurn(chooser) {
+		ctx.Match.Wait(ctx.Match.Opponent(chooser), "Waiting for your opponent to make an action")
+		defer ctx.Match.EndWait(ctx.Match.Opponent(chooser))
+	}
 
 	for {
-		action := card.Player.NextAction()
+		action := chooser.NextAction()
 
-		if action.Cancel {
+		if cancellable && action.Cancel {
 			ctx.InterruptFlow()
-			ctx.Match.CloseAction(card.Player)
 			return []*match.Card{}
 		}
 
 		if len(action.Cards) != noOfShields || !match.AssertCardsIn(shieldzone, action.Cards[0]) {
-			ctx.Match.ActionWarning(card.Player, "Your selection of cards does not fulfill the requirements")
+			ctx.Match.ActionWarning(chooser, "Your selection of cards does not fulfill the requirements")
 			continue
 		}
 
@@ -734,8 +748,6 @@ func SelectAndReturnShields(card *match.Card, ctx *match.Context, cancellable bo
 			}
 			shieldsAttacked = append(shieldsAttacked, shield)
 		}
-
-		ctx.Match.CloseAction(card.Player)
 
 		return shieldsAttacked
 	}

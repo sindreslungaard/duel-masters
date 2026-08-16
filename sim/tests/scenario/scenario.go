@@ -470,6 +470,25 @@ func (s *TestScenario) ActionAttackPlayer(player *match.PlayerReference, attacke
 	return s.waitForAttackPrompt(player, messageCount)
 }
 
+// ActionAttackPlayerAsync declares a player attack but, unlike ActionAttackPlayer,
+// does not assume the attacker is who gets prompted for the resulting shield
+// selection. Use it when a persistent effect (e.g. Meloppe) may redirect that
+// prompt to the defender instead; follow up with WaitForAction on whichever
+// player is expected to answer it.
+func (s *TestScenario) ActionAttackPlayerAsync(player *match.PlayerReference, attackerID string) error {
+	if _, err := player.Player.GetCard(attackerID, match.BATTLEZONE); err != nil {
+		return err
+	}
+
+	return s.send(player, struct {
+		Header string `json:"header"`
+		ID     string `json:"virtualId"`
+	}{
+		Header: "attack_player",
+		ID:     attackerID,
+	})
+}
+
 // ActionAttackCreaturePrompt attacks with a creature and returns the target
 // selection prompt without answering it, for tests that need to cancel it. The
 // caller must always answer that prompt through SubmitAction or CancelAction so

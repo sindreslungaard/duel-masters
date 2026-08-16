@@ -126,10 +126,17 @@ type AttackConfirmed struct {
 }
 
 // SelectShields is fired after the Attacker confirmed the AttackPlayer sequence
-// The opponent is prompted to select exactly NoOfShields from their Shieldzone
+// The Attacker's controller is prompted to select exactly NoOfShields from the
+// defending player's Shieldzone, unless Chooser is set.
 type SelectShields struct {
-	Attacker        *Card
-	Cancellable     bool
+	Attacker    *Card
+	Cancellable bool
+	// Chooser overrides who is prompted to pick the shields (normally the
+	// Attacker's controller). A persistent effect may set this before the
+	// prompt is shown; leave nil to keep the default chooser. A choice made
+	// by an overridden Chooser is never cancellable, since the attack itself
+	// is not theirs to call off.
+	Chooser         *Player
 	ShieldsAttacked []*Card // Will be populated AFTER the Event is handled (player prompted to choose shields)
 }
 
