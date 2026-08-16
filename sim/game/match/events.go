@@ -140,6 +140,20 @@ type SelectShields struct {
 	ShieldsAttacked []*Card // Will be populated AFTER the Event is handled (player prompted to choose shields)
 }
 
+// ChooseShieldEvent is fired immediately before a card lets one player choose
+// a face-down card out of a shield zone that belongs to someone else, outside
+// the attack/SelectShields flow (for example "put one of your opponent's
+// shields into their graveyard" or "look at one of your opponent's shields").
+// A persistent effect (e.g. Meloppe) may override Chooser before the prompt is
+// shown, the same way SelectShields.Chooser works for the shield-break
+// selection. Nothing needs to fire this for a player choosing their own
+// shields, since there is no "opponent chooses your shields" wrong to reverse
+// there.
+type ChooseShieldEvent struct {
+	ShieldOwner *Player
+	Chooser     *Player
+}
+
 // SelectBlockers is fired after the AttackConfirmed effects,
 // Here, blockers (both normal and conditional) are added into the blockers list
 // and cards that have conditional CantBeBlocked effects handles them.

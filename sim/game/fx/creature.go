@@ -719,7 +719,7 @@ func SelectAndReturnShields(card *match.Card, chooser *match.Player, ctx *match.
 
 	shieldsAttacked := make([]*match.Card, 0)
 
-	ctx.Match.NewBacksideAction(chooser, shieldzone, noOfShields, noOfShields, fmt.Sprintf("Select %v shield(s) to break", noOfShields), cancellable)
+	ctx.Match.NewBacksideAction(chooser, shieldzone, noOfShields, noOfShields, fmt.Sprintf("Select %v shield(s) to break%s", noOfShields, MeloppeNote(chooser, card.Player)), cancellable)
 	defer ctx.Match.CloseAction(chooser)
 
 	if !ctx.Match.IsPlayerTurn(chooser) {

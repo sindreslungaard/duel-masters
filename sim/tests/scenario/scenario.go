@@ -728,6 +728,34 @@ func (s *TestScenario) ChatMessages(player *match.PlayerReference, since int) ([
 	return messages, nil
 }
 
+// ShowCardsMessages returns the "message" text of every show_cards or
+// show_cards_non_dismissible pop-up sent to player since the given count, in
+// the order they arrived.
+func (s *TestScenario) ShowCardsMessages(player *match.PlayerReference, since int) ([]string, error) {
+	conn, err := s.connectionFor(player)
+	if err != nil {
+		return nil, err
+	}
+
+	messages := make([]string, 0)
+	for _, raw := range conn.JSONMessagesSince(since) {
+		var header server.Message
+		if err := json.Unmarshal([]byte(raw), &header); err != nil {
+			continue
+		}
+		if header.Header != "show_cards" && header.Header != "show_cards_non_dismissible" {
+			continue
+		}
+
+		message := &server.ShowCardsMessage{}
+		if err := json.Unmarshal([]byte(raw), message); err == nil {
+			messages = append(messages, message.Message)
+		}
+	}
+
+	return messages, nil
+}
+
 // MessageCount returns the number of JSON messages the server has sent to the player so far.
 // Capture this value BEFORE an action so that WaitForMessage can find the response.
 func (s *TestScenario) MessageCount(player *match.PlayerReference) (int, error) {
