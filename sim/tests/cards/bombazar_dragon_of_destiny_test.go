@@ -131,6 +131,29 @@ func TestBombazarDragonOfDestiny(t *testing.T) {
 		assert.Contains(t, headers, "duel_finished", "the opponent is told they won")
 	})
 
+	t.Run("entering play on another player's turn still loses at the end of the owner's next turn", func(t *testing.T) {
+		scn, player, opponent := setupDuel(t)
+
+		require.True(t, scn.Match.IsPlayerTurn(player.Player))
+
+		// The owner's own Bombazar enters their battle zone (for example via
+		// an effect like Soulswap, cast by the active player) while it is
+		// not the owner's turn. "The turn after this one" is the owner's own
+		// next turn, which already follows naturally, so no turn is repeated.
+		bombazar := putCardInBattlezone(t, scn, opponent.Player, bombazarUID, bombazarSetupSrc)
+		require.NoError(t, scn.WaitForEventLoop())
+		require.Equal(t, match.BATTLEZONE, bombazar.Zone)
+		require.True(t, scn.Match.IsPlayerTurn(player.Player), "no extra turn is inserted for the active player")
+
+		require.NoError(t, scn.ActionEndTurn(player))
+		require.True(t, scn.Match.IsPlayerTurn(opponent.Player), "the owner's next turn arrives normally")
+
+		require.NoError(t, scn.ActionEndTurn(opponent))
+
+		require.Eventually(t, scn.Match.IsClosed, 2*time.Second, 10*time.Millisecond,
+			"the owner loses at the end of their next turn even though Bombazar entered play on the opponent's turn")
+	})
+
 	t.Run("only one extra turn is taken", func(t *testing.T) {
 		scn, player, _ := setupDuel(t)
 
