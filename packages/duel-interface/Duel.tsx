@@ -349,6 +349,15 @@ export function Duel({
     }
   }, [isCompact]);
 
+  // A narrow screen has no width to spare for the decks and graveyards, so the
+  // panel folds itself away on the way in. Going back to a wide screen leaves
+  // it folded rather than second-guessing the player.
+  useEffect(() => {
+    if (isCompact) {
+      setInfoPanelOpen(false);
+    }
+  }, [isCompact]);
+
   const [previewCard, setPreviewCard] = useState<PreviewCard | null>(null);
   const [multiCardView, setMultiCardView] = useState<{
     cards: { imageId: string; name: string }[];
