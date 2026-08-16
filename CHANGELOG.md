@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- The deck, graveyard and hand count panel no longer covers other cards, and can be collapsed to give the board the full width
+- Opponent's cards in their manazone now faces you
 - New card "Velyrika Dragon" (thanks @DragosIonita23)
 - New card "Cosmic Darts" (thanks @DragosIonita23)
 - Added the option to select a max deck size in custom formats
