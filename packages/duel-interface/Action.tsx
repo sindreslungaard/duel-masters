@@ -184,7 +184,16 @@ export function Action({
   // the popup horizontally on a phone with no way to scroll to the cards that
   // fell off the edge. Auto-fitting to a minimum card width instead means the
   // column count follows the space actually available.
-  const gridColumnCount = Math.max(3, Math.min(cardCount, 6));
+  //
+  // The cap below exists only to stop a handful of cards from being stretched
+  // across the whole popup, so it scales with the number of cards. The popup
+  // itself is then sized to the same figure, so the grid always reaches both
+  // edges of the content area instead of leaving the cap's slack as dead space.
+  const gridMaxCardsAcross = Math.max(3, cardCount);
+  const gridMaxWidthRem = gridMaxCardsAcross * 8;
+  // The content area's own horizontal padding, which the popup has to add back
+  // on top of the grid for the two to line up.
+  const contentPaddingRem = 3;
 
   const currentSelectableCardIds = new Set(
     (cardsObject ? Object.values(cardsObject).flat() : cards || []).map(
@@ -197,9 +206,11 @@ export function Action({
 
   const cardGridStyle = {
     // auto-fit keeps cards from ever being pushed outside the popup: columns
-    // shrink to the 5rem floor and then wrap onto the next row.
-    gridTemplateColumns: `repeat(auto-fit, minmax(5rem, 1fr))`,
-    maxWidth: `${gridColumnCount * 8}rem`,
+    // shrink to the 5rem floor and then wrap onto the next row. The floor is
+    // capped at 100% so that a popup narrower than one card still cannot be
+    // overflowed by the track itself.
+    gridTemplateColumns: `repeat(auto-fit, minmax(min(5rem, 100%), 1fr))`,
+    maxWidth: `${gridMaxWidthRem}rem`,
   };
   const isCardSelection = actionType === ActionType.None || !actionType;
 
@@ -223,12 +234,22 @@ export function Action({
       zIndex={1000}
       closeOnOutsideClick={false}
       // Prompts that show cards earn the extra room on a large monitor, where
-      // the old fixed 600px left the cards needlessly small.
-      maxWidth={cardCount > 0 ? "min(96vw, 900px)" : "min(96vw, 600px)"}
+      // the old fixed 600px left the cards needlessly small. A prompt with few
+      // enough cards to hit the grid's width cap shrinks to that instead, so
+      // the cards reach both edges rather than trailing off into empty popup.
+      maxWidth={
+        cardCount > 0
+          ? `min(96vw, ${gridMaxWidthRem + contentPaddingRem}rem, 900px)`
+          : "min(96vw, 600px)"
+      }
       contentClassName="flex min-h-0 flex-1 overflow-hidden"
       onClose={showCards ? acknowledgeShowCards : onClose}
     >
-      <div className="flex min-h-0 flex-1 flex-col select-none">
+      {/* min-w-0 is what keeps the cards inside the popup. A flex item defaults
+          to min-width:auto, so this column refused to be narrower than the card
+          grid's own minimum width, grew past the popup, and everything beyond
+          the edge was clipped by the popup's overflow-hidden. */}
+      <div className="flex min-h-0 min-w-0 flex-1 flex-col select-none">
         <div
           className="custom-scrollbar min-h-0 flex-1 overflow-y-auto px-4 py-4 sm:px-6"
           onPointerMove={handlePointerMove}
@@ -248,7 +269,7 @@ export function Action({
                       onCardRightClick?.(imageId, "");
                     }}
                     draggable={false}
-                    className="rounded-md"
+                    className="w-full rounded-md"
                     src={`https://scans.shobu.io/${imageId}.jpg`}
                     alt="Card preview"
                     style={{ borderRadius: "5%" }}
@@ -307,7 +328,7 @@ export function Action({
                         }}
                         onDragStart={(event) => event.preventDefault()}
                         draggable={false}
-                        className={`rounded-md ${
+                        className={`w-full rounded-md ${
                           selectedCardIds.has(card.virtualId)
                             ? "ring-1 ring-blue-100"
                             : ""
@@ -344,7 +365,7 @@ export function Action({
                         }}
                         onDragStart={(event) => event.preventDefault()}
                         draggable={false}
-                        className={`rounded-md ${
+                        className={`w-full rounded-md ${
                           selectedCardIds.has(card.virtualId)
                             ? "ring-1 ring-blue-100"
                             : ""
@@ -367,7 +388,7 @@ export function Action({
                           }
                         }}
                         draggable={false}
-                        className="cursor-not-allowed rounded-md opacity-50 grayscale"
+                        className="w-full cursor-not-allowed rounded-md opacity-50 grayscale"
                         src={`https://scans.shobu.io/${card.uid}.jpg`}
                         alt={card.name}
                         style={{ borderRadius: "5%" }}
@@ -408,7 +429,7 @@ export function Action({
                       }}
                       onDragStart={(event) => event.preventDefault()}
                       draggable={false}
-                      className={`rounded-md ${
+                      className={`w-full rounded-md ${
                         isSelected ? "ring-1 ring-blue-100" : ""
                       }`}
                       src={`https://scans.shobu.io/${card.uid}.jpg`}
