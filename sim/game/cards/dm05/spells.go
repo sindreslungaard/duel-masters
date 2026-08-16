@@ -140,32 +140,22 @@ func SlimeVeil(c *match.Card) {
 				return
 			}
 
-			// on all events, add force attack to opponent's creatures
+			// fx.ForceAttack both blocks ending the turn with an eligible
+			// creature unattacked and, per the official ruling, blocks using a
+			// tap ability instead of attacking while attacking is legal.
 			fx.Find(
 				ctx2.Match.Opponent(card.Player),
 				match.BATTLEZONE,
 			).Map(func(c *match.Card) {
-				if _, ok := ctx2.Event.(*match.EndTurnEvent); ok && c.Zone == match.BATTLEZONE {
-					if ctx2.Match.IsPlayerTurn(c.Player) && !fx.HasSummoningSickness(c) && !c.Tapped {
-						if c.HasCondition(cnd.CantAttackPlayers) {
-							if c.HasCondition(cnd.CantAttackCreatures) {
-								return
-							}
-
-							attackableCreatures := fx.FindFilter(
-								ctx2.Match.Opponent(c.Player),
-								match.BATTLEZONE,
-								func(x *match.Card) bool { return x.Tapped || c.HasCondition(cnd.AttackUntapped) })
-
-							if len(attackableCreatures) == 0 {
-								return
-							}
-						}
-
-						ctx2.Match.WarnPlayer(c.Player, fmt.Sprintf("%s must attack before you can end your turn", c.Name))
-						ctx2.InterruptFlow()
-					}
+				if ctx2.Cancelled() {
+					// HandleFx checks ctx.cancel between card handlers, but not
+					// between persistent effects and never inside one. Once one
+					// creature has blocked the action, warning again for every
+					// other able creature would spam the player.
+					return
 				}
+
+				fx.ForceAttack(c, ctx2)
 			})
 		})
 	}))

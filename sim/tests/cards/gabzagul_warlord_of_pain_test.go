@@ -2,6 +2,7 @@ package cards
 
 import (
 	"duel-masters/game/civ"
+	"duel-masters/game/cnd"
 	"duel-masters/game/family"
 	"duel-masters/game/match"
 	"duel-masters/tests/scenario"
@@ -13,9 +14,10 @@ import (
 )
 
 const (
-	gabzagulWarlordOfPainUID      = "d53bb7b9-5d3e-44ed-a8ab-ab262ec23cb8"
-	gabzagulWarlordOfPainAllyUID  = "af3bc221-1cc2-4f58-83ea-2673ac2c66c5" // Immortal Baron, Vorg
-	gabzagulWarlordOfPainSetupSrc = "gabzagul_warlord_of_pain_test_setup"
+	gabzagulWarlordOfPainUID       = "d53bb7b9-5d3e-44ed-a8ab-ab262ec23cb8"
+	gabzagulWarlordOfPainAllyUID   = "af3bc221-1cc2-4f58-83ea-2673ac2c66c5" // Immortal Baron, Vorg
+	gabzagulWarlordOfPainTapperUID = "a808b98c-2de7-412b-970c-a3b925bf43c2" // Deklowaz, the Terminator (tap ability, no target needed)
+	gabzagulWarlordOfPainSetupSrc  = "gabzagul_warlord_of_pain_test_setup"
 )
 
 func TestGabzagulWarlordOfPain(t *testing.T) {
@@ -115,6 +117,34 @@ func TestGabzagulWarlordOfPain(t *testing.T) {
 			}
 		}
 		assert.Equal(t, 1, mustAttack)
+	})
+
+	t.Run("a creature cannot use a tap ability instead of attacking", func(t *testing.T) {
+		scn, owner, opponent := setupGabzagulWarlordOfPainTest(t)
+		gabzagul := putGabzagulWarlordOfPainTestCardInBattlezone(t, scn, owner.Player, gabzagulWarlordOfPainUID)
+		tapper := putGabzagulWarlordOfPainTestCardInBattlezone(t, scn, opponent.Player, gabzagulWarlordOfPainTapperUID)
+
+		// Simulate Gabzagul itself having already attacked, so ending owner's
+		// turn is only a matter of moving to the opponent's forced turn.
+		gabzagul.Tapped = true
+		require.NoError(t, scn.ActionEndTurn(owner))
+		require.False(t, scn.Match.IsPlayerTurn(owner.Player))
+		require.True(t, tapper.HasCondition(cnd.TapAbility), "the opponent's own untap step just ran")
+
+		// Official ruling (Slime Veil, the same "attacks if able" wording):
+		// "when you have the option either to attack with your creature or to
+		// use its tap ability... you must attack with it."
+		require.Error(t, scn.ActionUseTapAbility(opponent, tapper.ID), "the tap ability should be refused")
+		assert.False(t, tapper.Tapped, "a refused ability does not tap the creature")
+
+		shields, err := owner.Player.Container(match.SHIELDZONE)
+		require.NoError(t, err)
+		_, err = scn.ActionAttackPlayer(opponent, tapper.ID)
+		require.NoError(t, err, "attacking with it instead is allowed")
+		require.NoError(t, scn.ResolveAttack(opponent, shields[0].ID))
+
+		require.NoError(t, scn.ActionEndTurn(opponent))
+		assert.True(t, scn.Match.IsPlayerTurn(owner.Player), "attacking satisfied the requirement")
 	})
 
 	t.Run("two copies do not deadlock the turn", func(t *testing.T) {
