@@ -74,7 +74,7 @@ func BlockIfAbleWhenOppAttacks(card *match.Card, ctx *match.Context) {
 				if b.ID == card.ID {
 					// Force the battle between the attacker and this card
 					ctx.InterruptFlow()
-					card.Tapped = true
+					card.Player.TapCard(card)
 					ctx.Match.Battle(event.Attacker, card, true, len(event.ShieldsAttacked) > 0)
 					return
 				}

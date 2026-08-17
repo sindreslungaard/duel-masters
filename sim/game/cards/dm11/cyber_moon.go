@@ -128,7 +128,7 @@ func warpedLunatronTrade(card *match.Card, ctx *match.Context) {
 	}
 
 	for _, mana := range paid {
-		mana.Tapped = true
+		player.TapCard(mana)
 	}
 
 	fx.SelectFilter(

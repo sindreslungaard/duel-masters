@@ -326,7 +326,7 @@ func PangaeasWill(c *match.Card) {
 				baseCard.Player.MoveCard(baseCard.ID, match.HIDDENZONE, match.BATTLEZONE, card.ID)
 
 				if tapped {
-					baseCard.Tapped = true
+					baseCard.Player.TapCard(baseCard)
 				}
 			}
 
@@ -384,8 +384,9 @@ func BondsOfJustice(c *match.Card) {
 			}
 		}
 		for _, notblocker := range notblockers {
-			notblocker.Tapped = true
-			ctx.Match.ReportActionInChat(notblocker.Player, fmt.Sprintf("%s was tapped by %s", notblocker.Name, card.Name))
+			if card.Player.TapCard(notblocker) {
+				ctx.Match.ReportActionInChat(notblocker.Player, fmt.Sprintf("%s was tapped by %s", notblocker.Name, card.Name))
+			}
 		}
 
 	}))

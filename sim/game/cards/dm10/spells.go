@@ -166,7 +166,7 @@ func StaticWarp(c *match.Card) {
 						return y.ID != x.ID
 					},
 				).Map(func(y *match.Card) {
-					y.Tapped = true
+					p.TapCard(y)
 				})
 			})
 		}

@@ -669,6 +669,25 @@ func (p *Player) ReorderCardsInDeck(cards []*Card, orderedIDs []string, onBottom
 
 }
 
+// TapCard taps card as an effect controlled by p, and reports whether the tap
+// happened. Every place in the codebase that taps a card must go through
+// here so that a "can't be tapped by opponent" condition is honored no
+// matter which effect is doing the tapping. When p is the card's own
+// controller, or when p is tapping it as a cost or consequence of battling,
+// the tap always succeeds: the condition only ever blocks an opponent's
+// effect from choosing to tap the card.
+func (p *Player) TapCard(card *Card) bool {
+
+	if p != card.Player && card.HasCondition(cnd.CantBeTappedByOpp) {
+		return false
+	}
+
+	card.Tapped = true
+
+	return true
+
+}
+
 // CanPlayCard returns true or false based on if the specified card can be played with the specified mana
 func (p *Player) CanPlayCard(card *Card, mana []*Card) bool {
 

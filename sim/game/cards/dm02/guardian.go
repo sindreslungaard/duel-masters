@@ -91,8 +91,9 @@ func LarbaGeerTheImmaculate(c *match.Card) {
 				match.BATTLEZONE,
 				func(x *match.Card) bool { return x.HasCondition(cnd.Blocker) },
 			).Map(func(x *match.Card) {
-				x.Tapped = true
-				ctx.Match.ReportActionInChat(ctx.Match.Opponent(card.Player), fmt.Sprintf("%s was tapped by %s", x.Name, card.Name))
+				if card.Player.TapCard(x) {
+					ctx.Match.ReportActionInChat(ctx.Match.Opponent(card.Player), fmt.Sprintf("%s was tapped by %s", x.Name, card.Name))
+				}
 			})
 
 		})

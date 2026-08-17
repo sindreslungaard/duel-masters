@@ -148,3 +148,17 @@ func DeklowazTheTerminator(c *match.Card) {
 	c.Use(fx.Creature, fx.PutIntoManaZoneTapped, fx.TapAbility)
 
 }
+
+// UlexTheDauntless ...
+func UlexTheDauntless(c *match.Card) {
+
+	c.Name = "Ulex, the Dauntless"
+	c.Power = 3000
+	c.Civs = []string{civ.Darkness, civ.Fire}
+	c.Family = []string{family.SpiritQuartz}
+	c.ManaCost = 3
+	c.ManaRequirement = []string{civ.Darkness, civ.Fire}
+
+	c.Use(fx.Creature, fx.PutIntoManaZoneTapped, fx.CantBeTappedByOpp)
+
+}

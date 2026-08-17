@@ -37,8 +37,9 @@ func MizoyTheOracle(c *match.Card) {
 			1,
 			true,
 		).Map(func(chosen *match.Card) {
-			chosen.Tapped = true
-			ctx.Match.ReportActionInChat(chosen.Player, fmt.Sprintf("%s was tapped by %s", chosen.Name, card.Name))
+			if card.Player.TapCard(chosen) {
+				ctx.Match.ReportActionInChat(chosen.Player, fmt.Sprintf("%s was tapped by %s", chosen.Name, card.Name))
+			}
 		})
 	}))
 

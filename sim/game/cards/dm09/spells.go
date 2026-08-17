@@ -484,7 +484,7 @@ func ManaBonanza(c *match.Card) {
 
 		for _, deckCard := range card.Player.PeekDeck(manaLen) {
 			card.Player.MoveCard(deckCard.ID, match.DECK, match.MANAZONE, card.ID)
-			deckCard.Tapped = true
+			card.Player.TapCard(deckCard)
 			ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s was put into %s's manazone from the top of this deck due to %s's effect.", deckCard.Name, card.Player.Username(), card.Name))
 		}
 

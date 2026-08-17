@@ -57,7 +57,7 @@ func LuGilaSilverRiftGuardian(c *match.Card) {
 						return
 					}
 
-					playedCard.Tapped = true
+					playedCard.Player.TapCard(playedCard)
 				}
 			})
 		}),

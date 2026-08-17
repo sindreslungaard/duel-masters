@@ -64,7 +64,7 @@ func SilentSkill(ability match.HandlerFunc) match.HandlerFunc {
 					return
 				}
 
-				card.Tapped = true
+				card.Player.TapCard(card)
 
 				ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s used %s's silent skill", card.Player.Username(), card.Name))
 

@@ -34,7 +34,7 @@ func EmperorMaroll(c *match.Card) {
 			if event, ok := ctx.Event.(*match.Battle); ok {
 				if event.Blocked && event.Attacker == card {
 					ctx.InterruptFlow()
-					card.Tapped = true
+					card.Player.TapCard(card)
 
 					_, err := event.Defender.Player.MoveCard(event.Defender.ID, match.BATTLEZONE, match.HAND, card.ID)
 					if err != nil {
