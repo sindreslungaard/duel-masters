@@ -407,7 +407,7 @@ func ScreamingSunburst(c *match.Card) {
 	c.Use(fx.Spell, fx.When(fx.SpellCast, func(card *match.Card, ctx *match.Context) {
 
 		getNonLightCreatures(card, ctx).Map(func(x *match.Card) {
-			x.Tapped = true
+			card.Player.TapCard(x)
 		})
 	}))
 }

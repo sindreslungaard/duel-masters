@@ -86,8 +86,8 @@ func ChoyaTheUnheeding(c *match.Card) {
 
 			ctx.InterruptFlow()
 
-			event.Attacker.Tapped = true
-			event.Defender.Tapped = true
+			event.Attacker.Player.TapCard(event.Attacker)
+			event.Defender.Player.TapCard(event.Defender)
 
 		}
 	})

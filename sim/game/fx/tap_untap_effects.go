@@ -42,7 +42,9 @@ func tapOpCreatureWithOptin(card *match.Card, ctx *match.Context, optional bool)
 // silent, which leaves the affected player guessing at what just happened to
 // their board.
 func TapCreature(creature *match.Card, ctx *match.Context, source *match.Card) {
-	creature.Tapped = true
+	if !source.Player.TapCard(creature) {
+		return
+	}
 
 	ctx.Match.ReportActionInChat(creature.Player, fmt.Sprintf("%s was tapped by %s", creature.Name, source.Name))
 }

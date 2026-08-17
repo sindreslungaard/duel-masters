@@ -31,14 +31,12 @@ func JusticeJamming(c *match.Card) {
 		}
 
 		fx.Find(card.Player, match.BATTLEZONE).Map(func(x *match.Card) {
-			if x.HasCiv(civToTap) && !x.Tapped {
-				x.Tapped = true
+			if x.HasCiv(civToTap) && !x.Tapped && card.Player.TapCard(x) {
 				ctx.Match.ReportActionInChat(x.Player, fmt.Sprintf("%s was tapped", x.Name))
 			}
 		})
 		fx.Find(ctx.Match.Opponent(card.Player), match.BATTLEZONE).Map(func(x *match.Card) {
-			if x.HasCiv(civToTap) && !x.Tapped {
-				x.Tapped = true
+			if x.HasCiv(civToTap) && !x.Tapped && card.Player.TapCard(x) {
 				ctx.Match.ReportActionInChat(x.Player, fmt.Sprintf("%s was tapped", x.Name))
 			}
 		})

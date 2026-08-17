@@ -29,9 +29,10 @@ func CrazeValkyrieTheDrastic(c *match.Card) {
 			2,
 			true,
 		).Map(func(x *match.Card) {
-			x.Tapped = true
-			ctx.Match.BroadcastState()
-			ctx.Match.ReportActionInChat(x.Player, fmt.Sprintf("%s was tapped by %s's %s", x.Name, card.Player.Username(), card.Name))
+			if card.Player.TapCard(x) {
+				ctx.Match.BroadcastState()
+				ctx.Match.ReportActionInChat(x.Player, fmt.Sprintf("%s was tapped by %s's %s", x.Name, card.Player.Username(), card.Name))
+			}
 		})
 	}))
 
@@ -67,8 +68,8 @@ func ChekiculVizierOfEndurance(c *match.Card) {
 
 			ctx.InterruptFlow()
 
-			event.Attacker.Tapped = true
-			event.Defender.Tapped = true
+			event.Attacker.Player.TapCard(event.Attacker)
+			event.Defender.Player.TapCard(event.Defender)
 
 		}
 	})

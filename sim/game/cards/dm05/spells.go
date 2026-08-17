@@ -326,8 +326,9 @@ func ThunderNet(c *match.Card) {
 			n,
 			false,
 		).Map(func(c *match.Card) {
-			c.Tapped = true
-			ctx.Match.ReportActionInChat(ctx.Match.Opponent(card.Player), fmt.Sprintf("%s's %s was tapped by %s", c.Player.Username(), c.Name, card.Name))
+			if card.Player.TapCard(c) {
+				ctx.Match.ReportActionInChat(ctx.Match.Opponent(card.Player), fmt.Sprintf("%s's %s was tapped by %s", c.Player.Username(), c.Name, card.Name))
+			}
 		})
 
 	}))

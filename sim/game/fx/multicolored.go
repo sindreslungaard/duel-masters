@@ -18,6 +18,6 @@ func PutIntoManaZoneTapped(card *match.Card, ctx *match.Context) {
 		return
 	}
 
-	card.Tapped = true
+	card.Player.TapCard(card)
 
 }

@@ -90,7 +90,10 @@ func Dracobarrier(c *match.Card) {
 			1,
 			false,
 		).Map(func(x *match.Card) {
-			x.Tapped = true
+			if !card.Player.TapCard(x) {
+				return
+			}
+
 			ctx.Match.ReportActionInChat(ctx.Match.Opponent(card.Player), fmt.Sprintf("%s was tapped by %s", x.Name, card.Name))
 
 			if x.SharesAFamily(family.Dragons) {
@@ -120,9 +123,10 @@ func LaserWhip(c *match.Card) {
 			1,
 			false,
 		).Map(func(x *match.Card) {
-			x.Tapped = true
-			ctx.Match.BroadcastState()
-			ctx.Match.ReportActionInChat(ctx.Match.Opponent(card.Player), fmt.Sprintf("%s was tapped by %s", x.Name, card.Name))
+			if card.Player.TapCard(x) {
+				ctx.Match.BroadcastState()
+				ctx.Match.ReportActionInChat(ctx.Match.Opponent(card.Player), fmt.Sprintf("%s was tapped by %s", x.Name, card.Name))
+			}
 
 			fx.Select(
 				card.Player,

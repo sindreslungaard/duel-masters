@@ -64,7 +64,7 @@ func ThrumissZephyrGuardian(c *match.Card) {
 							1,
 							true,
 						).Map(func(creature *match.Card) {
-							creature.Tapped = true
+							card.Player.TapCard(creature)
 						})
 					}
 				}

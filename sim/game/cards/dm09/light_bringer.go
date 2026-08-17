@@ -30,8 +30,9 @@ func MicuteTheOracle(c *match.Card) {
 				1,
 				true,
 			).Map(func(x *match.Card) {
-				x.Tapped = true
-				ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s was tapped by %s's effect.", x.Name, card.Name))
+				if card.Player.TapCard(x) {
+					ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s was tapped by %s's effect.", x.Name, card.Name))
+				}
 			})
 		}))
 }
