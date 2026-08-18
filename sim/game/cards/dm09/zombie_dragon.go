@@ -22,13 +22,28 @@ func NecrodragonIzoristVhal(c *match.Card) {
 
 	c.Use(fx.Creature, fx.When(fx.InTheBattlezone, func(card *match.Card, ctx *match.Context) {
 		ctx.Match.ApplyPersistentEffect(func(ctx2 *match.Context, exit func()) {
-			c.Power = 0
-			c.RemoveConditionBySource(card.ID)
-
 			if card.Zone != match.BATTLEZONE {
+				c.Power = 0
+				c.RemoveConditionBySource(card.ID)
 				exit()
 				return
 			}
+
+			// fx.Creature clears every creature's conditions (cnd.Creature included)
+			// on EndOfTurnStep and only rebuilds cnd.Creature during UntapStep's own
+			// handler pass. BeginTurnStep, UntapManaEvent, and UntapStep itself all run
+			// with that identity still missing match-wide (persistent effects run
+			// before per-card handlers in the same event), so recomputing here would
+			// see an empty graveyard and destroy this creature every turn transition.
+			// Skip those and keep the last known-good power until StartOfTurnStep,
+			// once conditions are rebuilt. See fx.SilentSkill for the same gotcha.
+			switch ctx2.Event.(type) {
+			case *match.BeginTurnStep, *match.UntapManaEvent, *match.UntapStep:
+				return
+			}
+
+			c.Power = 0
+			c.RemoveConditionBySource(card.ID)
 
 			addPower = len(fx.FindFilter(
 				card.Player,
