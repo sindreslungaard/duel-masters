@@ -55,3 +55,17 @@ func VelyrikaDragon(c *match.Card) {
 
 	}))
 }
+
+// UberdragonZaschack ...
+func UberdragonZaschack(c *match.Card) {
+
+	c.Name = "Uberdragon Zaschack"
+	c.Power = 11000
+	c.Civs = []string{civ.Fire}
+	c.Family = []string{family.ArmoredDragon}
+	c.ManaCost = 9
+	c.ManaRequirement = []string{civ.Fire}
+
+	// Crew breaker-Armored Dragon
+	c.Use(fx.Creature, fx.Evolution, fx.CrewBreaker(fx.CountOtherOwnCreaturesWithFamily([]string{family.ArmoredDragon})))
+}
