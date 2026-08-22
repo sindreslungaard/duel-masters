@@ -33,6 +33,36 @@ func StarCryDragon(c *match.Card) {
 	})
 }
 
+// SuperDragonMachineDolzark ...
+func SuperDragonMachineDolzark(c *match.Card) {
+
+	c.Name = "Super Dragon Machine Dolzark"
+	c.Power = 7000
+	c.Civs = []string{civ.Fire, civ.Nature}
+	c.Family = []string{family.ArmoredDragon, family.EarthDragon}
+	c.ManaCost = 6
+	c.ManaRequirement = []string{civ.Fire, civ.Nature}
+
+	c.Use(fx.Creature, fx.PutIntoManaZoneTapped, fx.Doublebreaker, func(card *match.Card, ctx *match.Context) {
+
+		if card.Zone != match.BATTLEZONE {
+			return
+		}
+
+		event, ok := ctx.Event.(*match.AttackConfirmed)
+		if !ok {
+			return
+		}
+
+		attacker, err := card.Player.GetCard(event.CardID, match.BATTLEZONE)
+		if err != nil || attacker.ID == card.ID || attacker.Player != card.Player || !attacker.SharesAFamily(family.Dragons) {
+			return
+		}
+
+		fx.MayPutOpCreatureXPowerOrLessIntoMana(5000)(card, ctx)
+	})
+}
+
 // VelyrikaDragon ...
 func VelyrikaDragon(c *match.Card) {
 
