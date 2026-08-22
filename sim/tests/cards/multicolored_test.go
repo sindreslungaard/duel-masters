@@ -99,7 +99,14 @@ func TestMulticoloredCards(t *testing.T) {
 		assert.False(t, player.Player.CanPlayCard(vorg, natureMana))
 	})
 
-	t.Run("a multicolored mana card pays for all of its civilizations at once", func(t *testing.T) {
+	t.Run("a single multicolored mana card cannot pay for two of its civilizations at once", func(t *testing.T) {
+		// Official ruling: when tapped for mana, a multicolored card is used as
+		// only one of its civilizations, never several simultaneously. A report
+		// surfaced a live bug where Gonta, a fire/nature 2-drop, could be
+		// summoned by tapping a single fire/nature card (Wind Axe) plus any
+		// other unrelated card, because the old civilization check only asked
+		// "does some selected card have this civilization" per requirement
+		// without tracking which card had already been claimed.
 		scn := scenario.New()
 		player := scn.Match.CurrentPlayer()
 
@@ -111,8 +118,25 @@ func TestMulticoloredCards(t *testing.T) {
 		multicolorMana[0].Tapped = false
 		anyMana := spawnMulticolorTestMana(t, scn, player, multicolorWaterUID, 1)
 
-		assert.True(t, player.Player.CanPlayCard(gonta, append(multicolorMana, anyMana...)),
-			"one fire/nature mana card satisfies both the fire and the nature requirement")
+		assert.False(t, player.Player.CanPlayCard(gonta, append(multicolorMana, anyMana...)),
+			"the fire/nature mana card can only stand in for one requirement, and the water card fulfills neither")
+	})
+
+	t.Run("two separate multicolored mana cards may each cover a different civilization", func(t *testing.T) {
+		scn := scenario.New()
+		player := scn.Match.CurrentPlayer()
+
+		player.Player.SpawnCard(gontaTheWarriorSavageUID, match.HAND)
+		gonta, err := scn.FindCard(player.Player, match.HAND, gontaTheWarriorSavageUID)
+		require.NoError(t, err)
+
+		multicolorMana := spawnMulticolorTestMana(t, scn, player, gontaTheWarriorSavageUID, 2)
+		for _, mana := range multicolorMana {
+			mana.Tapped = false
+		}
+
+		assert.True(t, player.Player.CanPlayCard(gonta, multicolorMana),
+			"one fire/nature card can cover the fire requirement while a second, distinct fire/nature card covers nature")
 	})
 
 	t.Run("is put into the mana zone tapped, however it gets there", func(t *testing.T) {

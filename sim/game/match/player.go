@@ -697,27 +697,55 @@ func (p *Player) CanPlayCard(card *Card, mana []*Card) bool {
 		return false
 	}
 
-	// Every civilization the card requires must be present among the mana being
-	// paid, not just one of them: a multicolored card costs at least one card of
-	// each of its civilizations. A multicolored mana card is a card of all of its
-	// civilizations, so a single one can satisfy several requirements at once.
-	for _, required := range card.ManaRequirement {
-		paid := false
-
-		for _, manaCard := range untappedMana {
-			if manaCard.HasCiv(required) {
-				paid = true
-				break
-			}
-		}
-
-		if !paid {
-			return false
-		}
+	// Every civilization the card requires must be covered by its own,
+	// distinct mana card: when tapped for mana, a multicolored card is used as
+	// only one of its civilizations, never several at once, so it can satisfy
+	// at most one requirement no matter how many civilizations it has.
+	if !canFulfillManaRequirement(card.ManaRequirement, untappedMana) {
+		return false
 	}
 
 	return len(card.ManaRequirement) > 0
 
+}
+
+// canFulfillManaRequirement reports whether each required civilization can be
+// assigned its own mana card, i.e. whether a perfect matching exists from
+// requirements to distinct cards that have that civilization. Kuhn's
+// algorithm is used rather than a plain existence check so a multicolored
+// mana card already claimed by one requirement cannot also cover another.
+func canFulfillManaRequirement(requirements []string, mana []*Card) bool {
+
+	assignedRequirement := make([]int, len(mana))
+	for i := range assignedRequirement {
+		assignedRequirement[i] = -1
+	}
+
+	var tryAssign func(reqIdx int, visited []bool) bool
+	tryAssign = func(reqIdx int, visited []bool) bool {
+		for i, manaCard := range mana {
+			if visited[i] || !manaCard.HasCiv(requirements[reqIdx]) {
+				continue
+			}
+
+			visited[i] = true
+
+			if assignedRequirement[i] == -1 || tryAssign(assignedRequirement[i], visited) {
+				assignedRequirement[i] = reqIdx
+				return true
+			}
+		}
+
+		return false
+	}
+
+	for reqIdx := range requirements {
+		if !tryAssign(reqIdx, make([]bool, len(mana))) {
+			return false
+		}
+	}
+
+	return true
 }
 
 // Denormalized returns a server.PlayerState
