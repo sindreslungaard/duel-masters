@@ -53,11 +53,47 @@ func IceVaporShadowOfAnguish(c *match.Card) {
 	c.ManaCost = 5
 	c.ManaRequirement = []string{civ.Darkness}
 
-	// Both choices belong to the opponent, and both are mandatory when they have
-	// a card to give up.
-	c.Use(fx.Creature, fx.When(fx.OpponentCastASpell, func(card *match.Card, ctx *match.Context) {
-		fx.OpDiscardsXCards(1)(card, ctx)
-		fx.OpponentChoosesManaBurn(card, ctx)
+	// The trigger is latched from a persistent effect rather than from a plain
+	// handler because Match.HandleFx runs persistent effects before every card
+	// handler, while the spell being cast resolves from a handler of the active
+	// player, which is normally the caster. A card handler would therefore only
+	// be reached after the spell had already resolved, so a spell that destroys
+	// this creature would silently cancel its own trigger.
+	//
+	// Once the ability has triggered it is independent of its source, so the
+	// discard and the mana burn still happen if this creature leaves the battle
+	// zone in the meantime, and they resolve after the spell rather than in the
+	// middle of it, hence ScheduleAfter.
+	installed := false
+
+	c.Use(fx.Creature, fx.When(fx.InTheBattlezone, func(card *match.Card, ctx *match.Context) {
+
+		if installed {
+			return
+		}
+		installed = true
+
+		ctx.Match.ApplyPersistentEffect(func(ctx2 *match.Context, exit func()) {
+
+			if card.Zone != match.BATTLEZONE {
+				installed = false
+				exit()
+				return
+			}
+
+			if !fx.OpponentCastASpell(card, ctx2) {
+				return
+			}
+
+			ctx2.ScheduleAfter(func() {
+				// Both choices belong to the opponent, and both are mandatory when
+				// they have a card to give up.
+				fx.OpDiscardsXCards(1)(card, ctx2)
+				fx.OpponentChoosesManaBurn(card, ctx2)
+			})
+
+		})
+
 	}))
 
 }
