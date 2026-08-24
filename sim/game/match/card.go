@@ -239,10 +239,13 @@ func (c *Card) ClearAttachments() {
 	c.attachedCards = make([]*Card, 0)
 }
 
-// HasFamily returns true if the card has the input family, false otherwise
-func (c *Card) HasFamily(family string) bool {
+// effectiveFamilies returns the card's printed families plus any granted by an
+// AddFamily condition (for example "is a Survivor in addition to its other
+// races"). HasFamily and SharesAFamily both treat a granted race the same as a
+// printed one.
+func (c *Card) effectiveFamilies() []string {
 
-	families := c.Family
+	families := append([]string{}, c.Family...)
 
 	for _, condition := range c.conditions {
 		if condition.ID == cnd.AddFamily {
@@ -252,7 +255,14 @@ func (c *Card) HasFamily(family string) bool {
 		}
 	}
 
-	for _, f := range families {
+	return families
+
+}
+
+// HasFamily returns true if the card has the input family, false otherwise
+func (c *Card) HasFamily(family string) bool {
+
+	for _, f := range c.effectiveFamilies() {
 		if f == family {
 			return true
 		}
@@ -264,7 +274,7 @@ func (c *Card) HasFamily(family string) bool {
 
 // SharesAFamily returns true if the card has at least one of the input families, false otherwise
 func (c *Card) SharesAFamily(families []string) bool {
-	for _, f := range c.Family {
+	for _, f := range c.effectiveFamilies() {
 		for _, toCheck := range families {
 			if f == toCheck {
 				return true

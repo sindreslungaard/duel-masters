@@ -2,7 +2,6 @@ package dm05
 
 import (
 	"duel-masters/game/civ"
-	"duel-masters/game/cnd"
 	"duel-masters/game/family"
 	"duel-masters/game/fx"
 	"duel-masters/game/match"
@@ -27,7 +26,7 @@ func BalloonshroomQ(c *match.Card) {
 
 		if event, ok := ctx.Event.(*match.CreatureDestroyed); ok &&
 			event.Card.Player == card.Player &&
-			event.Card.HasCondition(cnd.Survivor) {
+			event.Card.HasFamily(family.Survivor) {
 
 			ctx.InterruptFlow()
 

@@ -2,7 +2,6 @@ package promo
 
 import (
 	"duel-masters/game/civ"
-	"duel-masters/game/cnd"
 	"duel-masters/game/family"
 	"duel-masters/game/fx"
 	"duel-masters/game/match"
@@ -37,7 +36,7 @@ func BrigadeShellQ(c *match.Card) {
 			return
 		}
 
-		if creature.HasCondition(cnd.Survivor) {
+		if creature.HasFamily(family.Survivor) {
 
 			topCard := card.Player.PeekDeck(1)
 

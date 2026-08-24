@@ -2,7 +2,6 @@ package dm05
 
 import (
 	"duel-masters/game/civ"
-	"duel-masters/game/cnd"
 	"duel-masters/game/family"
 	"duel-masters/game/fx"
 	"duel-masters/game/match"
@@ -67,7 +66,7 @@ func GalliaZohlIronGuardianQ(c *match.Card) {
 				fx.FindFilter(
 					card.Player,
 					match.BATTLEZONE,
-					func(x *match.Card) bool { return x.HasCondition(cnd.Survivor) },
+					func(x *match.Card) bool { return x.HasFamily(family.Survivor) },
 				).Map(func(x *match.Card) {
 					x.RemoveConditionBySource(card.ID)
 				})
@@ -79,7 +78,7 @@ func GalliaZohlIronGuardianQ(c *match.Card) {
 			fx.FindFilter(
 				card.Player,
 				match.BATTLEZONE,
-				func(x *match.Card) bool { return x.HasCondition(cnd.Survivor) },
+				func(x *match.Card) bool { return x.HasFamily(family.Survivor) },
 			).Map(func(x *match.Card) {
 				fx.ForceBlocker(x, ctx2, card.ID)
 			})
