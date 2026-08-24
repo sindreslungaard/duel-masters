@@ -99,7 +99,7 @@ func MayDrawAmount(card *match.Card, ctx *match.Context, amount int) {
 // HandCardToShield puts top 1 card from player's hand to shielzone
 func HandCardToShield(card *match.Card, ctx *match.Context) {
 
-	Select(
+	SelectFilter(
 		card.Player,
 		ctx.Match,
 		card.Player,
@@ -107,6 +107,8 @@ func HandCardToShield(card *match.Card, ctx *match.Context) {
 		fmt.Sprintf("%s's effect: Add a card from your hand to your shields face down.", card.Name),
 		1,
 		1,
+		false,
+		func(x *match.Card) bool { return x.ID != card.ID },
 		false,
 	).Map(func(x *match.Card) {
 		_, err := card.Player.MoveCard(x.ID, match.HAND, match.SHIELDZONE, card.ID)

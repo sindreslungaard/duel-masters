@@ -72,22 +72,7 @@ func SundropArmor(c *match.Card) {
 	c.ManaCost = 4
 	c.ManaRequirement = []string{civ.Light}
 
-	c.Use(fx.Spell, fx.When(fx.SpellCast, func(card *match.Card, ctx *match.Context) {
-		fx.SelectFilter(
-			card.Player,
-			ctx.Match,
-			card.Player,
-			match.HAND,
-			fmt.Sprintf("%s: Select 1 card from your hand that will be put as a shield", card.Name),
-			1,
-			1,
-			false,
-			func(x *match.Card) bool { return x.ID != card.ID },
-			false,
-		).Map(func(x *match.Card) {
-			x.Player.MoveCard(x.ID, match.HAND, match.SHIELDZONE, card.ID)
-		})
-	}))
+	c.Use(fx.Spell, fx.When(fx.SpellCast, fx.HandCardToShield))
 
 }
 
