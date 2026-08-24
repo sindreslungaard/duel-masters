@@ -2,7 +2,6 @@ package dm05
 
 import (
 	"duel-masters/game/civ"
-	"duel-masters/game/cnd"
 	"duel-masters/game/family"
 	"duel-masters/game/fx"
 	"duel-masters/game/match"
@@ -51,7 +50,7 @@ func SplitHeadHydroturtleQ(c *match.Card) {
 			return
 		}
 
-		if creature.HasCondition(cnd.Survivor) {
+		if creature.HasFamily(family.Survivor) {
 			fx.MayDraw1(card, ctx)
 			ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s drew a card when %s attacked due to %s's survivor ability", card.Player.Username(), creature.Name, card.Name))
 		}

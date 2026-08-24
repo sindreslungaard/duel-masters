@@ -24,7 +24,7 @@ func BlazosaurQ(c *match.Card) {
 				fx.FindFilter(
 					card.Player,
 					match.BATTLEZONE,
-					func(x *match.Card) bool { return x.HasCondition(cnd.Survivor) },
+					func(x *match.Card) bool { return x.HasFamily(family.Survivor) },
 				).Map(func(x *match.Card) {
 					x.RemoveConditionBySource(card.ID)
 				})
@@ -36,7 +36,7 @@ func BlazosaurQ(c *match.Card) {
 			fx.FindFilter(
 				card.Player,
 				match.BATTLEZONE,
-				func(x *match.Card) bool { return x.HasCondition(cnd.Survivor) },
+				func(x *match.Card) bool { return x.HasFamily(family.Survivor) },
 			).Map(func(x *match.Card) {
 				x.AddUniqueSourceCondition(cnd.PowerAttacker, 1000, card.ID)
 			})

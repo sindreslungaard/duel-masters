@@ -2,7 +2,6 @@ package dm05
 
 import (
 	"duel-masters/game/civ"
-	"duel-masters/game/cnd"
 	"duel-masters/game/family"
 	"duel-masters/game/fx"
 	"duel-masters/game/match"
@@ -40,7 +39,7 @@ func SkullsweeperQ(c *match.Card) {
 			return
 		}
 
-		if creature.HasCondition(cnd.Survivor) {
+		if creature.HasFamily(family.Survivor) {
 			fx.Select(
 				ctx.Match.Opponent(card.Player),
 				ctx.Match,
