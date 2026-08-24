@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- Added deck import & export
 - Added the option to choose custom formats when offering rematches on the post-duel summary page
 - Fixed an issue where "Ice Vapor"'s effect would not trigger when being removed by a spell (thanks @DragosIonita23)
 - Fixed an issue where "Izorist Vhal" would not always correctly count the cards in your graveyard (thanks @DragosIonita23)
