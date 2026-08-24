@@ -286,6 +286,32 @@ func OpponentChoosesCreatureToMana(card *match.Card, ctx *match.Context) {
 	})
 }
 
+// MayPutOpCreatureXPowerOrLessIntoMana lets card's controller choose one of the
+// opponent's creatures whose effective non-attacking power is at most x and put
+// it into the opponent's mana zone. The selection is cancellable to model the
+// printed "you may" wording, and the prompt is never opened when no opposing
+// creature is weak enough.
+func MayPutOpCreatureXPowerOrLessIntoMana(x int) match.HandlerFunc {
+	return func(card *match.Card, ctx *match.Context) {
+		opponent := ctx.Match.Opponent(card.Player)
+
+		SelectFilter(
+			card.Player, ctx.Match, opponent, match.BATTLEZONE,
+			fmt.Sprintf("%s: You may choose 1 of your opponent's creatures with power %d or less to put into their mana zone", card.Name, x),
+			1, 1, true,
+			func(creature *match.Card) bool { return ctx.Match.GetPower(creature, false) <= x }, false,
+		).Map(func(creature *match.Card) {
+			moved, err := opponent.MoveCard(creature.ID, match.BATTLEZONE, match.MANAZONE, card.ID)
+
+			if err != nil || moved.Zone != match.MANAZONE {
+				return
+			}
+
+			ctx.Match.ReportActionInChat(opponent, fmt.Sprintf("%s was put into %s's mana zone by %s", moved.Name, opponent.Username(), card.Name))
+		})
+	}
+}
+
 // PlayerChoosesAndDestroysOwnCreature makes the given player pick one of their
 // own creatures and destroy it. Unlike OwnChoosesAndDestroysCreature the chooser
 // is passed in, which is what an effect that fires on both players' turns needs.
