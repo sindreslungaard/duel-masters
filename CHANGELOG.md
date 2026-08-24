@@ -1,5 +1,12 @@
 # Changelog
 
+## Unreleased
+
+- Added the option to choose custom formats when offering rematches on the post-duel summary page
+- Fixed an issue where "Ice Vapor"'s effect would not trigger when being removed by a spell (thanks @DragosIonita23)
+- Fixed an issue where "Izorist Vhal" would not always correctly count the cards in your graveyard (thanks @DragosIonita23)
+- Fixed an issue where "Nexus Charger" would allow you to choose itself (thanks @DragosIonita23)
+
 ## 16/08/2026
 
 - "Choose a number" popups now have a slider and larger steps for wide ranges, so picking a power no longer means clicking + a thousand times
