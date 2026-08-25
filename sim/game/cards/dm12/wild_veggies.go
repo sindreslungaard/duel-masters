@@ -40,7 +40,8 @@ func FeverNuts(c *match.Card) {
 
 	c.Use(fx.Creature, fx.When(fx.InTheBattlezone, func(card *match.Card, ctx *match.Context) {
 		// Unusually for a cost reducer, this one helps the opponent too. The
-		// floor of 1 is enforced by fx.Creature when it works out what to pay.
+		// floor (1, or the number of required civilizations for a multicolored
+		// card) is enforced by Card.EffectiveManaCost.
 		discount := func(player *match.Player, live bool) {
 			fx.FindMultipleFilter(player, []string{match.HAND, match.MANAZONE, match.GRAVEYARD, match.DECK, match.SHIELDZONE},
 				func(x *match.Card) bool { return x.HasCondition(cnd.Creature) },

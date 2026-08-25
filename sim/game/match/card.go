@@ -308,6 +308,33 @@ func (c *Card) IsMulticolored() bool {
 	return len(c.Civs) > 1
 }
 
+// EffectiveManaCost returns the card's mana cost after applying ReducedCost
+// and IncreasedCost conditions. A cost reduction can never bring the cost
+// below the number of civilizations in the card's mana requirement, since
+// paying requires at least one distinct mana card per required civilization.
+func (c *Card) EffectiveManaCost() int {
+	minCost := len(c.ManaRequirement)
+	if minCost < 1 {
+		minCost = 1
+	}
+
+	manaCost := c.ManaCost
+	for _, condition := range c.Conditions() {
+		if condition.ID == cnd.ReducedCost {
+			manaCost -= condition.Val.(int)
+			if manaCost < minCost {
+				manaCost = minCost
+			}
+		}
+
+		if condition.ID == cnd.IncreasedCost {
+			manaCost += condition.Val.(int)
+		}
+	}
+
+	return manaCost
+}
+
 // PrimaryCiv returns the first civilization printed on the card. It exists for
 // presentation only, where a single value is required; rules logic must use
 // HasCiv so that every civilization of a multicolored card is honoured.

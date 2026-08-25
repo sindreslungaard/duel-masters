@@ -679,19 +679,7 @@ func (p *Player) CanPlayCard(card *Card, mana []*Card) bool {
 		}
 	}
 
-	manaCost := card.ManaCost
-	for _, condition := range card.Conditions() {
-		if condition.ID == cnd.ReducedCost {
-			manaCost -= condition.Val.(int)
-			if manaCost < 1 {
-				manaCost = 1
-			}
-		}
-
-		if condition.ID == cnd.IncreasedCost {
-			manaCost += condition.Val.(int)
-		}
-	}
+	manaCost := card.EffectiveManaCost()
 
 	if manaCost > len(untappedMana) {
 		return false

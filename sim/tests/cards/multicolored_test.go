@@ -250,6 +250,45 @@ func TestMulticoloredCards(t *testing.T) {
 		assert.True(t, melnia.HasCondition(cnd.CantBeBlocked))
 		assert.True(t, melnia.HasCondition(cnd.Slayer))
 	})
+
+	t.Run("cost reduction on a multicolored card floors at its number of civilizations, not 1", func(t *testing.T) {
+		// Gonta is fire/nature and must be paid with one distinct mana card of
+		// each civilization. A cost reduction that floored at a flat 1 would ask
+		// the player to select a single mana card, which can never satisfy two
+		// civilizations, making the card unplayable even with enough mana.
+		scn := scenario.New()
+		player := scn.Match.CurrentPlayer()
+
+		player.Player.SpawnCard(gontaTheWarriorSavageUID, match.HAND)
+		gonta, err := scn.FindCard(player.Player, match.HAND, gontaTheWarriorSavageUID)
+		require.NoError(t, err)
+		require.Equal(t, 2, gonta.ManaCost)
+
+		gonta.AddUniqueSourceCondition(cnd.ReducedCost, 5, multicolorSetupSrc)
+		assert.Equal(t, 2, gonta.EffectiveManaCost(), "cost cannot drop below one mana card per required civilization")
+
+		fireMana := spawnMulticolorTestMana(t, scn, player, multicolorFireUID, 1)
+		natureMana := spawnMulticolorTestMana(t, scn, player, multicolorNatureUID, 1)
+		fireMana[0].Tapped = false
+		natureMana[0].Tapped = false
+
+		require.NoError(t, scn.ActionPlayCard(player, gonta.ID))
+		assert.Equal(t, match.BATTLEZONE, gonta.Zone)
+		assert.True(t, fireMana[0].Tapped)
+		assert.True(t, natureMana[0].Tapped)
+	})
+
+	t.Run("cost reduction on a mono coloured card still floors at 1", func(t *testing.T) {
+		scn := scenario.New()
+		player := scn.Match.CurrentPlayer()
+
+		player.Player.SpawnCard(multicolorFireUID, match.HAND)
+		vorg, err := scn.FindCard(player.Player, match.HAND, multicolorFireUID)
+		require.NoError(t, err)
+
+		vorg.AddUniqueSourceCondition(cnd.ReducedCost, 99, multicolorSetupSrc)
+		assert.Equal(t, 1, vorg.EffectiveManaCost())
+	})
 }
 
 // TestEveryRegisteredCardMatchesItsCatalogCivilizations walks the whole card
