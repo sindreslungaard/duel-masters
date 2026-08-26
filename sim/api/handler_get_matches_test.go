@@ -69,6 +69,7 @@ func TestGetMatchesHandlerReturnsAllCurrentMatches(t *testing.T) {
 			ID:     "standard:11111111-1111-4111-8111-111111111111",
 			Name:   "Classic",
 		},
+		"host-1",
 	)
 	defer m.Dispose()
 

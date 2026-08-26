@@ -37,6 +37,7 @@ type Match struct {
 	Visible           bool `json:"visible"`
 	Step              interface{}
 
+	StartingPlayerID    string
 	PlayerSelectingToss string
 	TossPrediction      int
 	TossOutcome         int
@@ -1512,9 +1513,16 @@ func (m *Match) Parse(s *server.Socket, data []byte) {
 				m.Player1.Player.Ready = true
 				m.Player2.Player.Ready = true
 
-				m.Turn = 0
+				startingPlayer := m.Player1
+				m.Turn = 2
+
+				if m.StartingPlayerID == m.GuestID {
+					startingPlayer = m.Player2
+					m.Turn = 1
+				}
 
 				m.Chat("Server", "Duel has begun!")
+				m.Chat("Server", fmt.Sprintf("%s goes first", startingPlayer.Username))
 
 				m.Start()
 				return

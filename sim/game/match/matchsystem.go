@@ -2,6 +2,7 @@ package match
 
 import (
 	"duel-masters/internal"
+	"math/rand"
 	"time"
 
 	"github.com/google/uuid"
@@ -70,12 +71,20 @@ func ProcessMatch(m *Match) {
 }
 
 // New returns a new match object
-func (s *MatchSystem) NewMatch(matchName string, hostID string, hostUsername string, hostDeck []string, guestID string, guestUsername string, guestDeck []string, visible bool, matchmaking bool, format FormatDescriptor) *Match {
+func (s *MatchSystem) NewMatch(matchName string, hostID string, hostUsername string, hostDeck []string, guestID string, guestUsername string, guestDeck []string, visible bool, matchmaking bool, format FormatDescriptor, startingPlayerID string) *Match {
 
 	id, err := shortid.Generate()
 
 	if err != nil {
 		id = uuid.New().String()
+	}
+
+	if startingPlayerID != hostID && startingPlayerID != guestID {
+		startingPlayerID = hostID
+
+		if rand.Intn(2) == 1 {
+			startingPlayerID = guestID
+		}
 	}
 
 	m := &Match{
@@ -87,6 +96,7 @@ func (s *MatchSystem) NewMatch(matchName string, hostID string, hostUsername str
 		HostDeck:          hostDeck,
 		GuestID:           guestID,
 		GuestDeck:         guestDeck,
+		StartingPlayerID:  startingPlayerID,
 		spectators:        internal.NewConcurrentDictionary[Spectator](),
 		persistentEffects: make(map[int]PersistentEffect),
 		Turn:              1,

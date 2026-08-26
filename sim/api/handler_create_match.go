@@ -23,8 +23,9 @@ type matchReqBody struct {
 	// FormatID and FormatName are opaque to the simulator. It stores them on
 	// the match and reports them back in match summaries and the duel result
 	// webhook so the caller can identify the match's format.
-	FormatID   string `json:"formatId" binding:"max=100"`
-	FormatName string `json:"formatName" binding:"max=80"`
+	FormatID         string `json:"formatId" binding:"max=100"`
+	FormatName       string `json:"formatName" binding:"max=80"`
+	StartingPlayerID string `json:"startingPlayerId"`
 }
 
 var defaultMatchNames = []string{
@@ -86,6 +87,12 @@ func (api *API) createMatchHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	startingPlayerID := strings.TrimSpace(body.StartingPlayerID)
+	if startingPlayerID != "" && startingPlayerID != body.HostID && startingPlayerID != body.GuestID {
+		write(w, http.StatusBadRequest, Json{"message": "startingPlayerId must be hostId or guestId"})
+		return
+	}
+
 	visible := true
 	if body.Visibility == "private" {
 		visible = false
@@ -111,6 +118,7 @@ func (api *API) createMatchHandler(w http.ResponseWriter, r *http.Request) {
 		visible,
 		false,
 		format,
+		startingPlayerID,
 	)
 
 	write(w, http.StatusOK, m)

@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- Fixed an issue where the "I prefer to go first" option on the Get Ready screen did not affect who goes first. The logic behind this selection had simply been forgotten and was never implemented during the website update.
 - Added deck import & export
 - Added the option to choose custom formats when offering rematches on the post-duel summary page
 - Fixed an issue where "Ice Vapor"'s effect would not trigger when being removed by a spell (thanks @DragosIonita23)

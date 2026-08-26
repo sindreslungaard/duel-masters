@@ -334,3 +334,113 @@ func TestCreateMatchHandlerAcceptsEmptyDeckArrays(t *testing.T) {
 	}
 	matches[0].Dispose()
 }
+
+func createMatchRequestBodyWithStartingPlayer(startingPlayerID string) string {
+	body, err := json.Marshal(matchReqBody{
+		HostID:           "host-1",
+		HostUsername:     "Alice",
+		HostDeck:         testDeck("host-card"),
+		GuestID:          "guest-1",
+		GuestUsername:    "Bob",
+		GuestDeck:        testDeck("guest-card"),
+		Name:             "Authenticated duel",
+		Visibility:       "public",
+		StartingPlayerID: startingPlayerID,
+	})
+	if err != nil {
+		panic(err)
+	}
+	return string(body)
+}
+
+func TestCreateMatchHandlerStoresStartingPlayer(t *testing.T) {
+	t.Setenv("secret", "test-secret")
+
+	for _, startingPlayerID := range []string{"host-1", "guest-1"} {
+		t.Run(startingPlayerID, func(t *testing.T) {
+			system := match.NewSystem()
+			api := New(system)
+			req := httptest.NewRequest(
+				http.MethodPost,
+				"/api/match",
+				strings.NewReader(createMatchRequestBodyWithStartingPlayer(startingPlayerID)),
+			)
+			req.Header.Set("Authorization", "Bearer test-secret")
+			res := httptest.NewRecorder()
+
+			api.createMatchHandler(res, req)
+
+			if res.Code != http.StatusOK {
+				t.Fatalf("expected status %d, got %d: %s", http.StatusOK, res.Code, res.Body.String())
+			}
+
+			matches := system.Matches.Iter()
+			if len(matches) != 1 {
+				t.Fatalf("expected one match, got %d", len(matches))
+			}
+			defer matches[0].Dispose()
+
+			if matches[0].StartingPlayerID != startingPlayerID {
+				t.Fatalf("expected starting player %q, got %q", startingPlayerID, matches[0].StartingPlayerID)
+			}
+		})
+	}
+}
+
+func TestCreateMatchHandlerRejectsUnknownStartingPlayer(t *testing.T) {
+	t.Setenv("secret", "test-secret")
+
+	system := match.NewSystem()
+	api := New(system)
+	req := httptest.NewRequest(
+		http.MethodPost,
+		"/api/match",
+		strings.NewReader(createMatchRequestBodyWithStartingPlayer("someone-else")),
+	)
+	req.Header.Set("Authorization", "Bearer test-secret")
+	res := httptest.NewRecorder()
+
+	api.createMatchHandler(res, req)
+
+	if res.Code != http.StatusBadRequest {
+		t.Fatalf("expected status %d, got %d", http.StatusBadRequest, res.Code)
+	}
+	if len(system.Matches.Iter()) != 0 {
+		t.Fatal("a match was created for an unknown starting player")
+	}
+}
+
+func TestCreateMatchHandlerRandomisesOmittedStartingPlayer(t *testing.T) {
+	t.Setenv("secret", "test-secret")
+
+	seen := make(map[string]bool)
+
+	for i := 0; i < 200; i++ {
+		system := match.NewSystem()
+		api := New(system)
+		req := httptest.NewRequest(
+			http.MethodPost,
+			"/api/match",
+			strings.NewReader(validCreateMatchRequestBody()),
+		)
+		req.Header.Set("Authorization", "Bearer test-secret")
+		res := httptest.NewRecorder()
+
+		api.createMatchHandler(res, req)
+
+		if res.Code != http.StatusOK {
+			t.Fatalf("expected status %d, got %d: %s", http.StatusOK, res.Code, res.Body.String())
+		}
+
+		matches := system.Matches.Iter()
+		if len(matches) != 1 {
+			t.Fatalf("expected one match, got %d", len(matches))
+		}
+		seen[matches[0].StartingPlayerID] = true
+		matches[0].Dispose()
+	}
+
+	if len(seen) != 2 || !seen["host-1"] || !seen["guest-1"] {
+		t.Fatalf("expected both players to start at least once, saw %v", seen)
+	}
+}
