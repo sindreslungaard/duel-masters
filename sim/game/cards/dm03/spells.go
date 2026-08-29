@@ -31,7 +31,9 @@ func BoomerangComet(c *match.Card) {
 			ctx.Match.ReportActionInChat(x.Player, fmt.Sprintf("%s retrieved %s from the mana zone to their hand", x.Player.Username(), x.Name))
 		})
 
-		card.Player.MoveCard(card.ID, match.HAND, match.MANAZONE, card.ID)
+		// fx.Spell already moved this card to the graveyard as part of
+		// casting it, before this effect ran, so relocate it from there.
+		card.Player.MoveCard(card.ID, match.GRAVEYARD, match.MANAZONE, card.ID)
 	}))
 
 }

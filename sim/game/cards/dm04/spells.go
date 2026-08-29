@@ -79,11 +79,13 @@ func MegaDetonator(c *match.Card) {
 
 	c.Use(fx.Spell, fx.When(fx.SpellCast, func(card *match.Card, ctx *match.Context) {
 
-		handLen := len(fx.Find(card.Player, match.HAND)) - 1
+		// fx.Spell already moved this card to the graveyard before this
+		// effect ran, so the hand it counts here never includes itself.
+		handLen := len(fx.Find(card.Player, match.HAND))
 
 		chosenNumber := 0
 
-		fx.SelectFilter(
+		fx.Select(
 			card.Player,
 			ctx.Match,
 			card.Player,
@@ -92,8 +94,6 @@ func MegaDetonator(c *match.Card) {
 			1,
 			handLen,
 			true,
-			func(c *match.Card) bool { return c.ID != card.ID },
-			false,
 		).Map(func(x *match.Card) {
 			x.Player.MoveCard(x.ID, match.HAND, match.GRAVEYARD, card.ID)
 			ctx.Match.ReportActionInChat(x.Player, fmt.Sprintf("%s was moved to %s's graveyard from their hand by %s", x.Name, card.Player.Username(), card.Name))
