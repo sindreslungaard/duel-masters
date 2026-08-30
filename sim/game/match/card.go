@@ -104,6 +104,21 @@ func (c *Card) Conditions() []Condition {
 	return c.conditions
 }
 
+// LocalData returns a value previously stored on the card with SetLocalData,
+// and whether it was present. Unlike conditions, it is never cleared by a zone
+// or turn transition, so it is the right place for state that must survive
+// both, such as an obligation that outlives the creature that created it.
+func (c *Card) LocalData(key string) (string, bool) {
+	v, ok := c.localData[key]
+	return v, ok
+}
+
+// SetLocalData stores a value on the card that outlives conditions, zone
+// changes, and turn boundaries for as long as the card object exists.
+func (c *Card) SetLocalData(key string, val string) {
+	c.localData[key] = val
+}
+
 // AddCondition stores a string to the state of the card that will stay there until removed
 func (c *Card) AddCondition(cnd string, val interface{}, src interface{}) {
 	c.conditions = append(c.conditions, Condition{cnd, val, src})

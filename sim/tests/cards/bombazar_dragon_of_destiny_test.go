@@ -167,4 +167,53 @@ func TestBombazarDragonOfDestiny(t *testing.T) {
 		require.Eventually(t, scn.Match.IsClosed, 2*time.Second, 10*time.Millisecond,
 			"the second end of turn ends the game rather than granting another turn")
 	})
+
+	t.Run("a second Bombazar destroys the first but the first's loss still comes due", func(t *testing.T) {
+		scn, player, _ := setupDuel(t)
+
+		first := putCardInBattlezone(t, scn, player.Player, bombazarUID, bombazarSetupSrc)
+		require.NoError(t, scn.WaitForEventLoop())
+
+		// Matures the first Bombazar's promise: extra turn granted, lose at the
+		// end of it.
+		require.NoError(t, scn.ActionEndTurn(player))
+		require.True(t, scn.Match.IsPlayerTurn(player.Player), "the extra turn belongs to the same player")
+
+		// A second copy entering during that extra turn destroys the first
+		// (both are exactly 6000 power) and starts its own promise on top. The
+		// rulings say the first Bombazar's loss still happens: the third turn
+		// the second copy promises is only on paper, since the game is already
+		// over by the time it would start.
+		second := putCardInBattlezone(t, scn, player.Player, bombazarUID, bombazarSetupSrc)
+		require.NoError(t, scn.WaitForEventLoop())
+		require.Equal(t, match.GRAVEYARD, first.Zone, "the second copy destroys the first")
+		require.Equal(t, match.BATTLEZONE, second.Zone)
+
+		require.NoError(t, scn.ActionEndTurn(player))
+
+		require.Eventually(t, scn.Match.IsClosed, 2*time.Second, 10*time.Millisecond,
+			"the first Bombazar's loss resolves instead of being overridden by the second copy's fresh extra turn")
+	})
+
+	t.Run("destroying the opponent's Bombazar does not steal their promise", func(t *testing.T) {
+		scn, player, opponent := setupDuel(t)
+
+		// Entering on my turn puts the opponent's own copy straight into the
+		// "lose" stage: no extra turn is inserted for someone who isn't taking
+		// their turn right now.
+		theirs := putCardInBattlezone(t, scn, opponent.Player, bombazarUID, bombazarSetupSrc)
+		require.NoError(t, scn.WaitForEventLoop())
+
+		mine := putCardInBattlezone(t, scn, player.Player, bombazarUID, bombazarSetupSrc)
+		require.NoError(t, scn.WaitForEventLoop())
+		require.Equal(t, match.GRAVEYARD, theirs.Zone)
+		require.Equal(t, match.BATTLEZONE, mine.Zone)
+
+		// If the opponent's already-mature "lose" had transferred onto mine,
+		// this end of turn would end the game immediately instead of granting
+		// my own extra turn.
+		require.NoError(t, scn.ActionEndTurn(player))
+		assert.True(t, scn.Match.IsPlayerTurn(player.Player), "my own extra turn, unaffected by their promise")
+		assert.False(t, scn.Match.IsClosed(), "their promise does not end the game early")
+	})
 }
