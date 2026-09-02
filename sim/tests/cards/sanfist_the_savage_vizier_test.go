@@ -101,6 +101,76 @@ func TestSanfistTheSavageVizier(t *testing.T) {
 		assert.Equal(t, match.GRAVEYARD, sanfist.Zone)
 	})
 
+	t.Run("it can block the very attack whose trigger discarded it", func(t *testing.T) {
+		// Reported as a bug: Windmill Mutant's "whenever this creature
+		// attacks" ability discards Sanfist, and Sanfist's controller is then
+		// offered Sanfist as a blocker for that same attack. This is not a
+		// timing error: attack-trigger abilities resolve fully during the
+		// attack-declaration part of the sequence, before blockers are ever
+		// chosen, so Sanfist is already an untapped creature in the battle
+		// zone by the time blocking is decided (the same principle that lets
+		// a Ninja Strike creature ambush-block the attack that let it in).
+		scn, player, opponent := setupDuel(t)
+
+		windmill := putCardInBattlezone(t, scn, player.Player, windmillMutantUID, sanfistTheSavageVizierSetupSrc)
+
+		// One turn transition into the opponent's turn so they draw whatever
+		// they're going to draw, then the hand is cleared and reseeded with
+		// only Sanfist so the random discard can only ever hit it. Ending
+		// that turn (rather than using passTurnToSelf) gives Sanfist its
+		// intrinsic Blocker condition via the untap step without the
+		// opponent drawing another card on top of it.
+		require.NoError(t, scn.ActionEndTurn(player))
+		require.True(t, scn.Match.IsPlayerTurn(opponent.Player))
+
+		emptyHand(t, opponent, sanfistTheSavageVizierSetupSrc)
+		sanfist, err := opponent.Player.SpawnCard(sanfistTheSavageVizierUID, match.HAND)
+		require.NoError(t, err)
+
+		require.NoError(t, scn.ActionEndTurn(opponent))
+		require.True(t, scn.Match.IsPlayerTurn(player.Player))
+
+		shields, err := opponent.Player.Container(match.SHIELDZONE)
+		require.NoError(t, err)
+		shieldCount := len(shields)
+
+		questionStart, err := scn.MessageCount(opponent)
+		require.NoError(t, err)
+
+		action, err := scn.ActionAttackPlayer(player, windmill.ID)
+		require.NoError(t, err)
+		require.NoError(t, scn.ResolveAttack(player, action.Cards[0].CardID))
+
+		// Windmill Mutant's attack trigger discards Sanfist (the only card in
+		// hand), and Sanfist's controller is offered the discard replacement.
+		_, err = scn.WaitForAction(opponent, questionStart)
+		require.NoError(t, err, "expected Sanfist's discard-replacement question to be open")
+
+		blockPromptStart, err := scn.MessageCount(opponent)
+		require.NoError(t, err)
+		require.NoError(t, scn.SubmitAction(opponent))
+
+		blockAction, err := scn.WaitForAction(opponent, blockPromptStart)
+		require.NoError(t, err, "expected a blocker prompt offering Sanfist for this attack")
+
+		offered := make([]string, 0, len(blockAction.Cards))
+		for _, c := range blockAction.Cards {
+			offered = append(offered, c.CardID)
+		}
+		assert.Contains(t, offered, sanfist.ID)
+
+		require.NoError(t, scn.SubmitAction(opponent, sanfist.ID))
+		require.NoError(t, scn.WaitForEventLoop())
+
+		assert.Equal(t, match.BATTLEZONE, sanfist.Zone, "it survives the battle (3000 beats 2000)")
+		assert.True(t, sanfist.Tapped, "blocking taps it")
+		assert.Equal(t, match.GRAVEYARD, windmill.Zone, "the attacker loses the battle")
+
+		remainingShields, err := opponent.Player.Container(match.SHIELDZONE)
+		require.NoError(t, err)
+		assert.Len(t, remainingShields, shieldCount, "a blocked attack breaks no shields")
+	})
+
 	t.Run("moving it out of hand for another reason is not a discard", func(t *testing.T) {
 		scn, player, _ := setupDuel(t)
 
