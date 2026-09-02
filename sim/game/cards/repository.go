@@ -958,6 +958,11 @@ var DM12 = map[string]match.CardConstructor{
 	"05c5496d-e5fa-4691-8542-2d6c6919f402": dm12.UlarusPunishmentElemental,
 	"76310adb-f7c2-4545-8b71-2332b36fbb83": dm12.Gigavrand,
 	"0fe53ab5-bef9-4bbd-bb05-c94ccb9b1342": dm12.CosmicDarts,
+	"ba894f7e-b7d7-409e-8393-cab4285a879c": dm12.WiseStarnoidAvatarOfHope,
+	"23475e43-4cbd-4054-a90d-fde230a28db3": dm12.CruelNagaAvatarOfFate,
+	"dcc5ee70-bc60-420d-92e5-ed8bd7ff949f": dm12.DeathPhoenixAvatarOfDoom,
+	"5ffd2e9f-98bc-4e36-8454-8f822740f8eb": dm12.AuraPegasusAvatarOfLife,
+	"cfa7c730-2818-4f78-aa4b-1395060cd687": dm12.SoulPhoenixAvatarOfUnity,
 }
 
 // Promo is a map with all the card id's in the game and corresponding CardConstructor for promotional exclusive cards

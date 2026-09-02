@@ -647,6 +647,19 @@ func InTheBattlezone(card *match.Card, ctx *match.Context) bool {
 	return false
 }
 
+// LeftBattlezone returns true if the card itself just left the battle zone
+// for anywhere other than the hidden zone. Moving under a new evolution is
+// not "leaving the battle zone" - the pile is still considered in play.
+func LeftBattlezone(card *match.Card, ctx *match.Context) bool {
+	event, ok := ctx.Event.(*match.CardMoved)
+
+	return ok &&
+		event.CardID == card.ID &&
+		event.From == match.BATTLEZONE &&
+		event.To != match.BATTLEZONE &&
+		event.To != match.HIDDENZONE
+}
+
 // SpellCast returns true if the spell was cast
 func SpellCast(card *match.Card, ctx *match.Context) bool {
 
