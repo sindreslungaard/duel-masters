@@ -45,8 +45,11 @@ const (
 	MeltWarrior     = "Melt Warrior"
 	Merfolk         = "Merfolk"
 	MysteryTotem    = "Mystery Totem"
+	Naga            = "Naga"
 	PandorasBox     = "Pandora's Box"
 	ParasiteWorm    = "Parasite Worm"
+	Pegasus         = "Pegasus"
+	Phoenix         = "Phoenix"
 	RainbowPhantom  = "Rainbow Phantom"
 	RockBeast       = "Rock Beast"
 	SeaHacker       = "Sea Hacker"
@@ -54,6 +57,7 @@ const (
 	Soltrooper      = "Soltrooper"
 	SpiritQuartz    = "Spirit Quartz"
 	StarlightTree   = "Starlight Tree"
+	Starnoid        = "Starnoid"
 	Survivor        = "Survivor"
 	TreeFolk        = "Tree Folk"
 	VolcanoDragon   = "Volcano Dragon"
@@ -107,8 +111,11 @@ var Families = []string{
 	MeltWarrior,
 	Merfolk,
 	MysteryTotem,
+	Naga,
 	PandorasBox,
 	ParasiteWorm,
+	Pegasus,
+	Phoenix,
 	RainbowPhantom,
 	RockBeast,
 	SeaHacker,
@@ -116,6 +123,7 @@ var Families = []string{
 	Soltrooper,
 	SpiritQuartz,
 	StarlightTree,
+	Starnoid,
 	Survivor,
 	TreeFolk,
 	VolcanoDragon,
