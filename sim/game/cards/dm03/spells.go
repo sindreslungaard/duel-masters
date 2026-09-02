@@ -353,7 +353,7 @@ func AuroraOfReversal(c *match.Card) {
 	c.ManaRequirement = []string{civ.Nature}
 
 	c.Use(fx.Spell, fx.When(fx.SpellCast, func(card *match.Card, ctx *match.Context) {
-		shields, err := ctx.Match.Opponent(card.Player).Container(match.SHIELDZONE)
+		shields, err := card.Player.Container(match.SHIELDZONE)
 
 		if err != nil {
 			return
