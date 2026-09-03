@@ -759,6 +759,7 @@ var DM10 = map[string]match.CardConstructor{
 	"56ecfb42-15f2-4559-9cb5-0ea4c9e34fed": dm10.LemikVizierOfThought,
 	"e0fcacac-1394-4dff-8c58-ebf67fba7da4": dm10.MessaBahnaExpanseGuardian,
 	"a8e806e4-9675-49c1-b4c1-4c9ab2fa789d": dm10.PalaOlesisMorningGuardian,
+	"3231bac1-1bad-4991-9e7d-95249e11d4b6": dm10.BluumErkisFlareGuardian,
 	"b1651408-0b72-41d1-ab38-e7e65cac7d8d": dm10.PoltalesterTheSpydroid,
 	"e3d5a9f5-cfd1-491d-baa3-2b14b66171f2": dm10.RapidReincarnation,
 	"097ab46d-e7f0-4586-a179-c5f7ca4d3693": dm10.ArdentLunatron,
