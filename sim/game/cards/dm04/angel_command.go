@@ -65,6 +65,8 @@ func AlcadeiasLordOfSpirits(c *match.Card) {
 	c.ManaCost = 6
 	c.ManaRequirement = []string{civ.Light}
 
+	installed := false
+
 	c.Use(fx.Creature, fx.Evolution, fx.Doublebreaker, func(card *match.Card, ctx *match.Context) {
 
 		if card.Zone != match.BATTLEZONE {
@@ -86,6 +88,47 @@ func AlcadeiasLordOfSpirits(c *match.Card) {
 				ctx.Match.WarnPlayer(ctx.Match.Opponent(card.Player), "Only light spells may be cast while Alcadeias, Lord of Spirits is in the battle zone")
 				ctx.InterruptFlow()
 			}
+		}
+
+		// PlayCardEvent only covers a spell played from hand. A cast that skips
+		// it entirely — a shield trigger, or a "Spell Steal" effect such as
+		// Bluum Erkis, Flare Guardian forcing a cast of an opponent's spell —
+		// only ever fires SpellCast. A plain handler reacting to SpellCast
+		// would race the cast spell's own SpellCast handler (whichever card's
+		// handlers happen to be iterated first), while a persistent effect
+		// always runs before every card handler, so it reliably wins that race
+		// regardless of handler order. (A normal, undisguised shield trigger
+		// cast never reaches here as a non-light spell: FilterShieldTriggers
+		// already keeps it off the offered list before it can be chosen.)
+		if !installed {
+			installed = true
+
+			ctx.Match.ApplyPersistentEffect(func(ctx2 *match.Context, exit func()) {
+
+				if card.Zone != match.BATTLEZONE {
+					installed = false
+					exit()
+					return
+				}
+
+				event, ok := ctx2.Event.(*match.SpellCast)
+				if !ok {
+					return
+				}
+
+				caster := ctx2.Match.Player1.Player
+				if event.MatchPlayerID == 2 {
+					caster = ctx2.Match.Player2.Player
+				}
+
+				castCard, err := caster.GetCard(event.CardID, match.HAND)
+				if err != nil || castCard.HasCiv(civ.Light) {
+					return
+				}
+
+				ctx2.Match.WarnPlayer(caster, "Only light spells may be cast while Alcadeias, Lord of Spirits is in the battle zone")
+				ctx2.InterruptFlow()
+			})
 		}
 	})
 

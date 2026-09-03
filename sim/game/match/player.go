@@ -485,6 +485,69 @@ func (p *Player) MoveCard(cardID string, from string, to string, source string) 
 	return ref, nil
 }
 
+// GiveCardTo relocates a card from one of this player's zones directly into
+// another player's zone, without dispatching MoveCard/CardMoved.
+//
+// This is not an ordinary zone transition a card's own handlers should react
+// to: it exists for "Spell Steal" effects (see Bluum Erkis, Flare Guardian)
+// that let one player cast a spell belonging to their opponent. The spell
+// briefly sits in the caster's zone so the normal spell-casting machinery,
+// which always acts on card.Player's own zones, treats it as the caster's own
+// card, then it is handed back the same way once casting resolves.
+func (p *Player) GiveCardTo(cardID string, from string, to *Player, toZone string) (*Card, error) {
+
+	fromRef, err := p.ContainerRef(from)
+
+	if err != nil {
+		return nil, err
+	}
+
+	toRef, err := to.ContainerRef(toZone)
+
+	if err != nil {
+		return nil, err
+	}
+
+	// Lock both players' zones in a fixed order (Player1 before Player2) so a
+	// transfer in one direction can never deadlock against one in the other.
+	first, second := p, to
+	if p.match != nil && p.match.Player1 != nil && p.match.Player1.Player == to {
+		first, second = to, p
+	}
+
+	first.mutex.Lock()
+	defer first.mutex.Unlock()
+
+	if second != first {
+		second.mutex.Lock()
+		defer second.mutex.Unlock()
+	}
+
+	var ref *Card
+	temp := make([]*Card, 0, len(*fromRef))
+
+	for _, card := range *fromRef {
+		if card.ID == cardID {
+			ref = card
+			continue
+		}
+		temp = append(temp, card)
+	}
+
+	if ref == nil {
+		return nil, errors.New("Card is not in the specified container")
+	}
+
+	*fromRef = temp
+	*toRef = append(*toRef, ref)
+
+	ref.Player = to
+	ref.Zone = toZone
+	ref.Tapped = false
+
+	return ref, nil
+}
+
 // MoveCard tries to move a card from container a to the front of container b
 func (p *Player) MoveCardToFront(cardID string, from string, to string, source string) (*Card, error) {
 
