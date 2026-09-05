@@ -1,5 +1,11 @@
 # Changelog
 
+## Unreleased
+
+- New card "Ulex the Dauntless" (thanks @DragosIonita23)
+- New card "Uberdragon Zaschack" (thanks @DragosIonita23)
+- Fixed an issue where multicolored cards would satisfy 2 civilization's of a cards mana cost when the rules specify it should only count for 1 (thanks @DragosIonita23)
+
 ## 29/08/2026
 
 - Fixed an issue where the "I prefer to go first" option on the Get Ready screen did not affect who goes first. The logic behind this selection had simply been forgotten and was never implemented during the website update.
