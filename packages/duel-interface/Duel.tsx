@@ -327,6 +327,20 @@ export function Duel({
     };
   }, [duelFinished, onDuelFinished]);
 
+  // A disconnect (either side) can happen while this player is still waiting
+  // on the opponent's action (their turn, a block decision, etc.). Nothing
+  // ever sends a matching end_wait for that, so without this the "Wait"
+  // popup stays open on top of "Opponent Disconnected"/"Disconnected" and
+  // hides their Leave Duel button, since all three share the same z-index
+  // and "Wait" renders later in the DOM.
+  useEffect(() => {
+    if (!opponentDisconnected && !reconnecting) {
+      return;
+    }
+
+    setWait("");
+  }, [opponentDisconnected, reconnecting]);
+
   const duelFinishedWinner =
     duelFinished?.winner?.username ?? duelFinished?.winner?.uid ?? "No winner";
 
