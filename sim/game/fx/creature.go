@@ -69,19 +69,7 @@ func Creature(card *match.Card, ctx *match.Context) {
 				return
 			}
 
-			manaCost := card.ManaCost
-			for _, condition := range card.Conditions() {
-				if condition.ID == cnd.ReducedCost {
-					manaCost -= condition.Val.(int)
-					if manaCost < 1 {
-						manaCost = 1
-					}
-				}
-
-				if condition.ID == cnd.IncreasedCost {
-					manaCost += condition.Val.(int)
-				}
-			}
+			manaCost := card.EffectiveManaCost()
 
 			ctx.Match.NewAction(
 				card.Player,

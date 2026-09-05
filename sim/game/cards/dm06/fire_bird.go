@@ -48,20 +48,7 @@ func CoccoLupia(c *match.Card) {
 					return x.HasCondition(cnd.Creature) && x.SharesAFamily(family.Dragons)
 				},
 			).Map(func(x *match.Card) {
-				manaCost := x.ManaCost
-
-				for _, condition := range x.Conditions() {
-					if condition.ID == cnd.ReducedCost {
-						manaCost -= condition.Val.(int)
-						if manaCost < 1 {
-							manaCost = 1
-						}
-					}
-
-					if condition.ID == cnd.IncreasedCost {
-						manaCost += condition.Val.(int)
-					}
-				}
+				manaCost := x.EffectiveManaCost()
 
 				if manaCost <= 2 {
 					return
