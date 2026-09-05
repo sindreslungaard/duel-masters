@@ -48,8 +48,9 @@ func RimuelCloudbreakElemental(c *match.Card) {
 			toSelect,
 			false,
 		).Map(func(x *match.Card) {
-			x.Tapped = true
-			ctx.Match.ReportActionInChat(ctx.Match.Opponent(card.Player), fmt.Sprintf("%s's %s was tapped by Rimuel, Cloudbreak Elemental", x.Player.Username(), x.Name))
+			if card.Player.TapCard(x) {
+				ctx.Match.ReportActionInChat(ctx.Match.Opponent(card.Player), fmt.Sprintf("%s's %s was tapped by Rimuel, Cloudbreak Elemental", x.Player.Username(), x.Name))
+			}
 		})
 	}))
 

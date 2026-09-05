@@ -129,7 +129,7 @@ func Creature(card *match.Card, ctx *match.Context) {
 				if !cardPlayedCtx.Cancelled() {
 
 					for _, mana := range cards {
-						mana.Tapped = true
+						card.Player.TapCard(mana)
 					}
 
 					card.AddCondition(cnd.SummoningSickness, nil, nil)
@@ -375,7 +375,7 @@ func Creature(card *match.Card, ctx *match.Context) {
 							continue
 						}
 
-						c.Tapped = true
+						opponent.TapCard(c)
 
 						ctx.Match.EndWait(card.Player)
 						ctx.Match.CloseAction(opponent)
@@ -438,7 +438,7 @@ func Creature(card *match.Card, ctx *match.Context) {
 							continue
 						}
 
-						blocker.Tapped = true
+						opponent.TapCard(blocker)
 
 						ctx.Match.EndWait(card.Player)
 						ctx.Match.CloseAction(opponent)
@@ -575,7 +575,7 @@ func Creature(card *match.Card, ctx *match.Context) {
 				f(card, ctx)
 			}
 
-			card.Tapped = true
+			card.Player.TapCard(card)
 		})
 
 	}
@@ -656,7 +656,7 @@ func tapCardAndConfirmAttack(card *match.Card, ctx *match.Context, attackPlayer 
 		return false
 	}
 
-	card.Tapped = true
+	card.Player.TapCard(card)
 
 	// Broadcast state so that opponent can see that this card is tapped if they get any shield triggers
 	ctx.Match.BroadcastState()

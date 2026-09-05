@@ -144,7 +144,7 @@ func SwapHandAndMana(source *match.Card, player *match.Player) {
 	for _, handCard := range handCards {
 		moved, err := player.MoveCard(handCard.ID, match.HAND, match.MANAZONE, source.ID)
 		if err == nil && moved.Zone == match.MANAZONE {
-			moved.Tapped = true
+			player.TapCard(moved)
 		}
 	}
 }

@@ -42,7 +42,7 @@ func PouchShell(c *match.Card) {
 			for _, baseCard := range baseCards {
 				baseCard.Player.MoveCard(baseCard.ID, match.HIDDENZONE, match.BATTLEZONE, card.ID)
 				if tapped {
-					baseCard.Tapped = true
+					baseCard.Player.TapCard(baseCard)
 				}
 			}
 

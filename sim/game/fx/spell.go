@@ -108,7 +108,7 @@ func Spell(card *match.Card, ctx *match.Context) {
 				ctx.Match.CloseAction(card.Player)
 
 				for _, mana := range cards {
-					mana.Tapped = true
+					card.Player.TapCard(mana)
 				}
 
 				ctx.Match.CastSpell(card, false)

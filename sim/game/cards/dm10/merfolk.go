@@ -51,7 +51,7 @@ func MysticMagician(c *match.Card) {
 				return
 			}
 
-			arrival.Tapped = true
+			card.Player.TapCard(arrival)
 			ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s entered the battle zone tapped because of %s", arrival.Name, card.Name))
 
 			return

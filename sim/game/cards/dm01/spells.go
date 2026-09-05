@@ -267,8 +267,9 @@ func HolyAwe(c *match.Card) {
 			ctx.Match.Opponent(card.Player),
 			match.BATTLEZONE,
 		).Map(func(x *match.Card) {
-			x.Tapped = true
-			ctx.Match.ReportActionInChat(x.Player, fmt.Sprintf("%s was tapped by Holy Awe", x.Name))
+			if card.Player.TapCard(x) {
+				ctx.Match.ReportActionInChat(x.Player, fmt.Sprintf("%s was tapped by Holy Awe", x.Name))
+			}
 		})
 	}))
 
@@ -346,8 +347,9 @@ func MoonlightFlash(c *match.Card) {
 			2,
 			true,
 		).Map(func(x *match.Card) {
-			x.Tapped = true
-			ctx.Match.ReportActionInChat(x.Player, x.Name+" was tapped")
+			if card.Player.TapCard(x) {
+				ctx.Match.ReportActionInChat(x.Player, x.Name+" was tapped")
+			}
 		})
 	}))
 

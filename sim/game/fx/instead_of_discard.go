@@ -46,6 +46,6 @@ func TapSelfWhenAnotherCreatureArrives(card *match.Card, ctx *match.Context) {
 		return
 	}
 
-	card.Tapped = true
+	card.Player.TapCard(card)
 	ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s was tapped because another creature entered the battle zone", card.Name))
 }
