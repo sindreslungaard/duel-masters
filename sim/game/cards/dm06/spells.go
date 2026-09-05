@@ -103,12 +103,15 @@ func InvincibleCataclysm(c *match.Card) {
 	c.ManaRequirement = []string{civ.Fire}
 
 	c.Use(fx.Spell, fx.When(fx.SpellCast, func(card *match.Card, ctx *match.Context) {
+		opponent := ctx.Match.Opponent(card.Player)
+		chooser := fx.ResolveShieldChooser(ctx, card.Player, opponent)
+
 		fx.SelectBackside(
-			card.Player,
+			chooser,
 			ctx.Match,
-			ctx.Match.Opponent(card.Player),
+			opponent,
 			match.SHIELDZONE,
-			fmt.Sprintf("%s: Select up to 3 of your opponent's shields and send them to graveyard", card.Name),
+			fmt.Sprintf("%s: Select up to 3 of %s shields and send them to graveyard%s", card.Name, fx.ShieldPossessive(chooser, opponent), fx.MeloppeNote(chooser, card.Player)),
 			1,
 			3,
 			true,

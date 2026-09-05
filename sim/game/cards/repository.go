@@ -959,6 +959,7 @@ var DM12 = map[string]match.CardConstructor{
 	"05c5496d-e5fa-4691-8542-2d6c6919f402": dm12.UlarusPunishmentElemental,
 	"76310adb-f7c2-4545-8b71-2332b36fbb83": dm12.Gigavrand,
 	"0fe53ab5-bef9-4bbd-bb05-c94ccb9b1342": dm12.CosmicDarts,
+	"0451a36e-fe88-4817-ad94-3dbd9e460fb8": dm12.Meloppe,
 }
 
 // Promo is a map with all the card id's in the game and corresponding CardConstructor for promotional exclusive cards

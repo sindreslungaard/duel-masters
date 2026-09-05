@@ -6,6 +6,7 @@ import (
 	"duel-masters/game/fx"
 	"duel-masters/game/match"
 	"fmt"
+	"strings"
 )
 
 // BurstShot ...
@@ -98,28 +99,44 @@ func ReconOperation(c *match.Card) {
 
 	c.Use(fx.Spell, fx.When(fx.SpellCast, func(card *match.Card, ctx *match.Context) {
 
+		opponent := ctx.Match.Opponent(card.Player)
+		chooser := fx.ResolveShieldChooser(ctx, card.Player, opponent)
+
 		shields := fx.SelectBackside(
-			card.Player,
+			chooser,
 			ctx.Match,
-			ctx.Match.Opponent(card.Player),
+			opponent,
 			match.SHIELDZONE,
-			"Recon Operation: Select 3 of your opponent's shields that will be shown to you",
+			fmt.Sprintf("Recon Operation: Select 3 of %s shields that will be shown to you%s", fx.ShieldPossessive(chooser, opponent), fx.MeloppeNote(chooser, card.Player)),
 			1,
 			3,
 			true,
 		)
 
-		ids := make([]string, 0)
+		if len(shields) < 1 {
+			return
+		}
+
+		// Grabbed before the pop-up so the numbers still match: whoever picked
+		// these shields (their own owner, if Meloppe redirected) never sees this
+		// reveal, so it's the only way card.Player can tell them which shields
+		// they were.
+		ids := make([]string, 0, len(shields))
+		descriptions := make([]string, 0, len(shields))
 
 		for _, s := range shields {
 			ids = append(ids, s.ImageID)
+			descriptions = append(descriptions, fx.DescribeShield(s))
 		}
+
+		joined := strings.Join(descriptions, ", ")
 
 		ctx.Match.ShowCards(
 			card.Player,
-			"Your opponent's shields:",
+			fmt.Sprintf("Your opponent's %s:", joined),
 			ids,
 		)
+		ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s of %s was shown to %s", joined, opponent.Username(), card.Player.Username()))
 
 	}))
 
