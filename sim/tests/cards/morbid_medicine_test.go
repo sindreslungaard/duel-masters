@@ -66,18 +66,25 @@ func TestMorbidMedicine(t *testing.T) {
 		assert.Equal(t, match.GRAVEYARD, spellInGrave.Zone)
 	})
 
-	t.Run("an empty graveyard opens no prompt", func(t *testing.T) {
+	t.Run("an empty graveyard offers nothing selectable", func(t *testing.T) {
 		scn, player, _ := setupDuel(t)
 
 		promptStart, err := scn.MessageCount(player)
 		require.NoError(t, err)
 
 		spell := castSpell(t, scn, player, morbidMedicineUID)
-		require.NoError(t, scn.WaitForEventLoop())
 
-		headers, err := scn.MessageHeaders(player, promptStart)
-		require.NoError(t, err)
-		assert.Equal(t, 1, countHeaders(headers, "action"), "only the mana payment should ask anything")
+		// By the time Morbid Medicine's own text resolves, it is itself
+		// already sitting in the caster's graveyard (fx.Spell moves a cast
+		// spell there immediately, before its own effect body runs), so the
+		// return-creatures prompt still opens to show that graveyard - just
+		// with nothing selectable in it, since a spell isn't a creature.
+		action, err := scn.LatestAction(player, promptStart)
+		require.NoError(t, err, "expected the return-creatures prompt to be open")
+		assert.Empty(t, action.Cards, "nothing should be selectable in an otherwise empty graveyard")
+
+		cancelInTurn(t, scn, player)
+
 		assert.Equal(t, match.GRAVEYARD, spell.Zone)
 	})
 }

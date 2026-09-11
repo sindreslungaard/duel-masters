@@ -117,6 +117,17 @@ func Spell(card *match.Card, ctx *match.Context) {
 			return
 		}
 
+		// Once a spell is cast it is no longer in hand, by rule, even while its
+		// own text is still resolving: something that spell's effect puts into
+		// play can trigger another card's own ability re-entrantly (a creature's
+		// "put into the battle zone" trigger, for instance), and that nested
+		// ability must see this card already sitting in the graveyard rather
+		// than mid-cast in hand. Move it synchronously, before the card's own
+		// effect body (registered after fx.Spell in the same c.Use chain) runs.
+		// A card whose text sends it elsewhere instead of the graveyard
+		// (fx.Charger, etc.) relocates it again once SpellResolved fires below.
+		card.Player.MoveCard(card.ID, match.HAND, match.GRAVEYARD, card.ID)
+
 		ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s casted the spell %s", card.Player.Username(), card.Name))
 
 		ctx.ScheduleAfter(func() {
@@ -127,20 +138,6 @@ func Spell(card *match.Card, ctx *match.Context) {
 			}
 
 			ctx.Match.HandleFx(match.NewContext(ctx.Match, e))
-		})
-
-	}
-
-	// On spell resolved
-	if event, ok := ctx.Event.(*match.SpellResolved); ok {
-
-		// Is this event for me or someone else?
-		if event.CardID != card.ID {
-			return
-		}
-
-		ctx.ScheduleAfter(func() {
-			card.Player.MoveCard(card.ID, match.HAND, match.GRAVEYARD, card.ID)
 		})
 
 	}

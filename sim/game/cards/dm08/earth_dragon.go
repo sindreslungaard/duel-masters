@@ -76,14 +76,19 @@ func SuperTerradragonBailasGale(c *match.Card) {
 
 			if p == c.Player {
 
-				spell, err := p.GetCard(event.CardID, match.HAND)
+				// fx.Spell already moved the cast spell to the graveyard as
+				// part of casting it, before this card's own resolution
+				// finished, so relocate it from there instead of the hand.
+				spell, err := p.GetCard(event.CardID, match.GRAVEYARD)
 				if err != nil {
 					return
 				}
 
-				// prevents card from being sent to grave
-				// uses the fact that cards in the battlezone are handled before ones in hand
-				ctx.InterruptFlow()
+				moved, err := p.MoveCard(spell.ID, match.GRAVEYARD, match.HAND, card.ID)
+				if err != nil || moved.Zone != match.HAND {
+					return
+				}
+
 				ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s was returned to the hand instead of graveyard by %s", spell.Name, c.Name))
 
 			}

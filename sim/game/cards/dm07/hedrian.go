@@ -43,10 +43,11 @@ func PropellerMutant(c *match.Card) {
 
 	c.Use(fx.Creature, fx.When(fx.Destroyed, func(card *match.Card, ctx *match.Context) {
 
-		// Reimplementing here OpponentDiscardsRandomCard with a twist. Since the discard is activated when this creature is destroyed,
-		// if it is destoryed by a spell, witouht this, there is a chance you would discard that spell from the hand since we only
-		// move the card from hand after its effect was applied.
-		// The proper solution would be to use a spellzone for when spells are active. This is a work around.
+		// Reimplementing here OpponentDiscardsRandomCard with a twist: if this
+		// creature was destroyed by a spell, that spell has already left the
+		// destroying player's hand (fx.Spell moves a cast spell to the
+		// graveyard immediately), so event.Source is never actually a
+		// candidate any more. Kept as a defensive guard rather than relied on.
 
 		event, ok := ctx.Event.(*match.CardMoved)
 		if !ok {

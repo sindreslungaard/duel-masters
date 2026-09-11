@@ -55,13 +55,11 @@ func EmergencyTyphoon(c *match.Card) {
 	c.Use(fx.Spell, fx.ShieldTrigger,
 		fx.When(fx.SpellCast, fx.DrawUpTo2),
 		fx.When(fx.SpellResolved, func(card *match.Card, ctx *match.Context) {
-			// Scheduled to run after fx.Spell's own SpellResolved handler, which moves
-			// this card from hand to the graveyard as part of the same event. That
-			// ordering matters: Emergency Typhoon has already left the hand by the
-			// time the discard prompt opens, so it can't be chosen for its own
-			// "discard a card from your hand" effect. This also runs independently of
-			// the draw above, matching the printed text: drawing none still costs a
-			// card.
+			// fx.Spell already moved this card to the graveyard as part of
+			// casting it, well before SpellResolved fires, so it can't be
+			// chosen for its own "discard a card from your hand" effect. This
+			// also runs independently of the draw above, matching the printed
+			// text: drawing none still costs a card.
 			ctx.ScheduleAfter(func() {
 				fx.DiscardOwnXCards(1)(card, ctx)
 			})

@@ -20,18 +20,16 @@ func EnigmaticCascade(c *match.Card) {
 	c.ManaRequirement = []string{civ.Water}
 
 	c.Use(fx.Spell, fx.When(fx.SpellCast, func(card *match.Card, ctx *match.Context) {
-		// A spell is still in hand while it resolves, so it has to be kept out
-		// of its own offer.
-		notItself := func(x *match.Card) bool { return x.ID != card.ID }
-
-		others := fx.FindFilter(card.Player, match.HAND, notItself)
+		// fx.Spell already moved this card to the graveyard before this
+		// effect ran, so the hand it counts here never includes itself.
+		others := fx.Find(card.Player, match.HAND)
 
 		if len(others) < 1 {
 			return
 		}
 
 		// "Any number" includes none, so the whole thing is declinable.
-		discarded := fx.SelectFilter(
+		discarded := fx.Select(
 			card.Player,
 			ctx.Match,
 			card.Player,
@@ -40,8 +38,6 @@ func EnigmaticCascade(c *match.Card) {
 			1,
 			len(others),
 			true,
-			notItself,
-			false,
 		)
 
 		drawn := 0

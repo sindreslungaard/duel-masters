@@ -130,7 +130,8 @@ func ShuffleDeck(card *match.Card, ctx *match.Context, forOpponent bool) {
 
 // SwapHandAndMana simultaneously exchanges the cards that were in player's
 // hand and mana zone when the effect began. Cards entering the mana zone are
-// tapped. If source is still in hand while resolving, it is not moved.
+// tapped. source is excluded defensively in case a caller ever invokes this
+// while its own card is still in hand.
 func SwapHandAndMana(source *match.Card, player *match.Player) {
 	manaCards := Find(player, match.MANAZONE)
 	handCards := FindFilter(player, match.HAND, func(card *match.Card) bool {
