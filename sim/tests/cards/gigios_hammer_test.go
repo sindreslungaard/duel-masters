@@ -5,6 +5,7 @@ import (
 	"duel-masters/game/cnd"
 	"duel-masters/game/family"
 	"duel-masters/game/match"
+	"slices"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -18,9 +19,10 @@ const (
 	gigiosHammerSetupSrc = "gigios_hammer_test_setup"
 )
 
-// The full family list is offered in this order by fx.ChooseAFamily; Spirit
-// Quartz is Deklowaz's race.
-const gigiosHammerSpiritQuartzChoice = 51
+// fx.ChooseAFamily offers family.GetAllFamilies() in order; Spirit Quartz is
+// Deklowaz's race. Computed rather than hardcoded so a new family added
+// anywhere in that list cannot silently shift this index out from under the test.
+var gigiosHammerSpiritQuartzChoice = slices.Index(family.GetAllFamilies(), family.SpiritQuartz)
 
 func TestGigiosHammer(t *testing.T) {
 	t.Run("printed characteristics", func(t *testing.T) {

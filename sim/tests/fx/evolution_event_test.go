@@ -176,3 +176,35 @@ func TestEvolutionEventIsDispatchedWithTheBaseAlreadyHidden(t *testing.T) {
 	assert.Equal(t, match.HIDDENZONE, baseZone, "the base is under the evolution already")
 	assert.NotEqual(t, match.BATTLEZONE, evolutionZone, "and the evolution has not landed yet")
 }
+
+// TestEvolutionEntersTappedWhenItsBaseIsTapped guards against a regression
+// where an evolution creature's tap state was set while resolving
+// CardPlayedEvent, only for the unconditional Tapped = false every
+// Player.MoveCard applies on arrival to silently wipe it out once the
+// evolution creature itself moved from hand to the battle zone.
+func TestEvolutionEntersTappedWhenItsBaseIsTapped(t *testing.T) {
+	scn := scenario.New()
+	player := scn.Match.CurrentPlayer()
+
+	base := putInBattlezone(t, scn, player.Player, evolutionEventBaseUID)
+	base.Tapped = true
+
+	evolution := summonWithOwnMana(t, scn, player, evolutionEventEvolutionUID)
+
+	require.Equal(t, match.BATTLEZONE, evolution.Zone)
+	assert.True(t, evolution.Tapped, "it took the tap state of the base it evolved from")
+}
+
+// TestEvolutionEntersUntappedWhenItsBaseIsUntapped is the other half of the
+// rule: landing on an untapped base leaves the evolution creature untapped.
+func TestEvolutionEntersUntappedWhenItsBaseIsUntapped(t *testing.T) {
+	scn := scenario.New()
+	player := scn.Match.CurrentPlayer()
+
+	putInBattlezone(t, scn, player.Player, evolutionEventBaseUID)
+
+	evolution := summonWithOwnMana(t, scn, player, evolutionEventEvolutionUID)
+
+	require.Equal(t, match.BATTLEZONE, evolution.Zone)
+	assert.False(t, evolution.Tapped)
+}

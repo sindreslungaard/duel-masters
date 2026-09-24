@@ -21,6 +21,7 @@ const (
 	ReducedCost               = "reduced_cost"
 	IncreasedCost             = "increased_cost"
 	Evolution                 = "evolution"
+	PendingEvolutionTapState  = "pending_evolution_tap_state"
 	Survivor                  = "survivor"
 	SpeedAttacker             = "speed_attacker"
 	EvolveIntoAnyFamily       = "evolve_into_any_family"

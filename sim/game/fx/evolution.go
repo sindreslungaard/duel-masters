@@ -116,7 +116,7 @@ func handleEvolutionEvents(card *match.Card, ctx *match.Context, evolvableCreatu
 		creature := creatures[0]
 
 		card.ClearAttachments()
-		card.Tapped = creature.Tapped
+		stagePendingEvolutionTapState(card, creature.Tapped)
 		card.Player.MoveCard(creature.ID, match.BATTLEZONE, match.HIDDENZONE, card.ID)
 		card.Attach(creature)
 
@@ -135,20 +135,59 @@ func handleEvolutionEvents(card *match.Card, ctx *match.Context, evolvableCreatu
 		}))
 	}
 
-	// Card moved
-	if event, ok := ctx.Event.(*match.CardMoved); ok {
+	handleEvolutionCardMoved(card, ctx)
 
-		if event.CardID != card.ID || event.To == match.BATTLEZONE || event.To == match.HIDDENZONE {
-			return
-		}
+}
 
-		for _, creature := range card.Attachments() {
-			card.Player.MoveCard(creature.ID, match.HIDDENZONE, event.To, card.ID)
-			ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s was sent to the %s together with %s", creature.Name, event.To, card.Name))
-		}
+// stagePendingEvolutionTapState records the tap state an evolution creature
+// (regular or vortex) should have once it lands in the battle zone.
+//
+// It cannot just be assigned to card.Tapped directly: CardPlayedEvent, where
+// the base is chosen, fires before the evolution creature itself is moved
+// from hand to the battle zone, and every successful Player.MoveCard
+// unconditionally resets Tapped to false on arrival - wiping out an
+// assignment made here. Staging it as a condition lets
+// handleEvolutionCardMoved re-apply it once that reset has already happened.
+func stagePendingEvolutionTapState(card *match.Card, tapped bool) {
+	card.AddUniqueSourceCondition(cnd.PendingEvolutionTapState, tapped, card.ID)
+}
 
-		card.ClearAttachments()
+// handleEvolutionCardMoved keeps an evolution creature (regular or vortex) in
+// sync with its own CardMoved events:
+//   - arriving in the battle zone applies the tap state stagePendingEvolutionTapState
+//     recorded during CardPlayedEvent, undoing the Player.MoveCard reset;
+//   - leaving the battle zone for anywhere but the hidden zone takes every
+//     attached base along with it, however many there are. Neither regular
+//     nor vortex evolution cares how many cards are attached, only that the
+//     whole pile relocates together.
+func handleEvolutionCardMoved(card *match.Card, ctx *match.Context) {
 
+	event, ok := ctx.Event.(*match.CardMoved)
+
+	if !ok || event.CardID != card.ID {
+		return
 	}
+
+	if event.To == match.BATTLEZONE {
+		if condition, err := card.GetCondition(cnd.PendingEvolutionTapState); err == nil {
+			if tapped, ok := condition.Val.(bool); ok {
+				card.Tapped = tapped
+			}
+			card.RemoveSpecificConditionBySource(cnd.PendingEvolutionTapState, card.ID)
+		}
+
+		return
+	}
+
+	if event.To == match.HIDDENZONE {
+		return
+	}
+
+	for _, creature := range card.Attachments() {
+		card.Player.MoveCard(creature.ID, match.HIDDENZONE, event.To, card.ID)
+		ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s was sent to the %s together with %s", creature.Name, event.To, card.Name))
+	}
+
+	card.ClearAttachments()
 
 }
