@@ -5,6 +5,7 @@ import (
 	"duel-masters/game/family"
 	"duel-masters/game/fx"
 	"duel-masters/game/match"
+	"fmt"
 )
 
 // GeneralDarkFiend ...
@@ -19,16 +20,23 @@ func GeneralDarkFiend(c *match.Card) {
 
 	c.Use(fx.Creature, fx.Doublebreaker, fx.When(fx.Attacking, func(card *match.Card, ctx *match.Context) {
 
-		shields := fx.Find(
+		// Backside selection keeps the shield's face hidden from its own
+		// controller too, which is what "without looking" means here. The
+		// choice is mandatory, so it is not cancellable, and MoveCard (rather
+		// than BreakShields) never offers the shield trigger on the way to
+		// the graveyard.
+		fx.SelectBackside(
+			card.Player,
+			ctx.Match,
 			card.Player,
 			match.SHIELDZONE,
-		)
-
-		if len(shields) < 1 {
-			return
-		}
-
-		ctx.Match.MoveCard(shields[0], match.GRAVEYARD, card)
+			fmt.Sprintf("%s: Choose one of your shields without looking and put it into your graveyard.", card.Name),
+			1,
+			1,
+			false,
+		).Map(func(shield *match.Card) {
+			ctx.Match.MoveCard(shield, match.GRAVEYARD, card)
+		})
 
 	}))
 
