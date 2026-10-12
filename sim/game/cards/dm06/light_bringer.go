@@ -5,6 +5,7 @@ import (
 	"duel-masters/game/family"
 	"duel-masters/game/fx"
 	"duel-masters/game/match"
+	"fmt"
 )
 
 func VessTheOracle(c *match.Card) {
@@ -67,7 +68,7 @@ func AdomisTheOracle(c *match.Card) {
 		cards["Your shields"] = fx.Find(c.Player, match.SHIELDZONE)
 		cards["Opponent's shields"] = fx.Find(ctx.Match.Opponent(c.Player), match.SHIELDZONE)
 
-		fx.SelectMultipartBackside(
+		picked := fx.SelectMultipartBackside(
 			card.Player,
 			ctx.Match,
 			cards,
@@ -75,12 +76,24 @@ func AdomisTheOracle(c *match.Card) {
 			1,
 			1,
 			true,
-		).Map(func(x *match.Card) {
+		)
+
+		// A blind pick that landed on the opponent's shields may still belong to
+		// them to choose instead (e.g. Meloppe): nothing about it was revealed
+		// yet, so swapping it out here is safe.
+		fx.ResolveShieldChoices(ctx, card.Player, picked).Map(func(x *match.Card) {
+			// Grabbed before the pop-up so the number still matches: whoever
+			// picked x (its own owner, if Meloppe redirected) never sees this
+			// reveal, so it's the only way card.Player can tell them which shield
+			// it was.
+			description := fx.DescribeShield(x)
+
 			ctx.Match.ShowCards(
 				card.Player,
-				"The shield is:",
+				fmt.Sprintf("The %s is:", description),
 				[]string{x.ImageID},
 			)
+			ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s of %s was shown to %s", description, x.Player.Username(), card.Player.Username()))
 		})
 
 	}

@@ -126,11 +126,32 @@ type AttackConfirmed struct {
 }
 
 // SelectShields is fired after the Attacker confirmed the AttackPlayer sequence
-// The opponent is prompted to select exactly NoOfShields from their Shieldzone
+// The Attacker's controller is prompted to select exactly NoOfShields from the
+// defending player's Shieldzone, unless Chooser is set.
 type SelectShields struct {
-	Attacker        *Card
-	Cancellable     bool
+	Attacker    *Card
+	Cancellable bool
+	// Chooser overrides who is prompted to pick the shields (normally the
+	// Attacker's controller). A persistent effect may set this before the
+	// prompt is shown; leave nil to keep the default chooser. A choice made
+	// by an overridden Chooser is never cancellable, since the attack itself
+	// is not theirs to call off.
+	Chooser         *Player
 	ShieldsAttacked []*Card // Will be populated AFTER the Event is handled (player prompted to choose shields)
+}
+
+// ChooseShieldEvent is fired immediately before a card lets one player choose
+// a face-down card out of a shield zone that belongs to someone else, outside
+// the attack/SelectShields flow (for example "put one of your opponent's
+// shields into their graveyard" or "look at one of your opponent's shields").
+// A persistent effect (e.g. Meloppe) may override Chooser before the prompt is
+// shown, the same way SelectShields.Chooser works for the shield-break
+// selection. Nothing needs to fire this for a player choosing their own
+// shields, since there is no "opponent chooses your shields" wrong to reverse
+// there.
+type ChooseShieldEvent struct {
+	ShieldOwner *Player
+	Chooser     *Player
 }
 
 // SelectBlockers is fired after the AttackConfirmed effects,

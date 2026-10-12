@@ -100,9 +100,19 @@ func UlarusPunishmentElemental(c *match.Card) {
 			true,
 		)
 
+		// Whichever of those blindly landed on the opponent's shields may still
+		// belong to them to choose instead (e.g. Meloppe): nothing about the pick
+		// was revealed yet, so swapping it out here is safe.
+		turned = fx.ResolveShieldChoices(ctx, card.Player, turned)
+
 		turned.Map(func(shield *match.Card) {
+			// Grabbed before it's flipped face up: not that it matters here since
+			// the shield stays put, but it keeps this consistent with every other
+			// reveal that has to grab it before the shield can move or change.
+			description := fx.DescribeShield(shield)
+
 			shield.ShieldFaceUp = true
-			ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("A shield of %s was turned face up by %s", shield.Player.Username(), card.Name))
+			ctx.Match.ReportActionInChat(card.Player, fmt.Sprintf("%s of %s was turned face up by %s", description, shield.Player.Username(), card.Name))
 		})
 
 		if len(turned) > 0 {

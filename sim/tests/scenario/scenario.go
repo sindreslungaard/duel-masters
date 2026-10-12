@@ -470,6 +470,25 @@ func (s *TestScenario) ActionAttackPlayer(player *match.PlayerReference, attacke
 	return s.waitForAttackPrompt(player, messageCount)
 }
 
+// ActionAttackPlayerAsync declares a player attack but, unlike ActionAttackPlayer,
+// does not assume the attacker is who gets prompted for the resulting shield
+// selection. Use it when a persistent effect (e.g. Meloppe) may redirect that
+// prompt to the defender instead; follow up with WaitForAction on whichever
+// player is expected to answer it.
+func (s *TestScenario) ActionAttackPlayerAsync(player *match.PlayerReference, attackerID string) error {
+	if _, err := player.Player.GetCard(attackerID, match.BATTLEZONE); err != nil {
+		return err
+	}
+
+	return s.send(player, struct {
+		Header string `json:"header"`
+		ID     string `json:"virtualId"`
+	}{
+		Header: "attack_player",
+		ID:     attackerID,
+	})
+}
+
 // ActionAttackCreaturePrompt attacks with a creature and returns the target
 // selection prompt without answering it, for tests that need to cancel it. The
 // caller must always answer that prompt through SubmitAction or CancelAction so
@@ -701,6 +720,34 @@ func (s *TestScenario) ChatMessages(player *match.PlayerReference, since int) ([
 		}
 
 		message := &server.ChatMessage{}
+		if err := json.Unmarshal([]byte(raw), message); err == nil {
+			messages = append(messages, message.Message)
+		}
+	}
+
+	return messages, nil
+}
+
+// ShowCardsMessages returns the "message" text of every show_cards or
+// show_cards_non_dismissible pop-up sent to player since the given count, in
+// the order they arrived.
+func (s *TestScenario) ShowCardsMessages(player *match.PlayerReference, since int) ([]string, error) {
+	conn, err := s.connectionFor(player)
+	if err != nil {
+		return nil, err
+	}
+
+	messages := make([]string, 0)
+	for _, raw := range conn.JSONMessagesSince(since) {
+		var header server.Message
+		if err := json.Unmarshal([]byte(raw), &header); err != nil {
+			continue
+		}
+		if header.Header != "show_cards" && header.Header != "show_cards_non_dismissible" {
+			continue
+		}
+
+		message := &server.ShowCardsMessage{}
 		if err := json.Unmarshal([]byte(raw), message); err == nil {
 			messages = append(messages, message.Message)
 		}
