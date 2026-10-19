@@ -728,6 +728,33 @@ func (s *TestScenario) WaitForMessage(player *match.PlayerReference, since int, 
 		return err
 	}
 
+	return s.waitForHeaders(conn, since, headers...)
+}
+
+// JoinSpectator connects a new spectator to the started match by sending the
+// same join message a real client sends. It returns without waiting for the
+// join to complete; use WaitForSpectatorMessage to wait for its effects.
+func (s *TestScenario) JoinSpectator(uid string, username string) (*server.Socket, *MockConnection, error) {
+	conn := NewMockConnection()
+	socket := server.NewSocket(conn, s.Match, uid, username)
+
+	data, err := json.Marshal(server.Message{Header: "join_match"})
+	if err != nil {
+		return nil, nil, err
+	}
+
+	s.Match.Parse(socket, data)
+
+	return socket, conn, nil
+}
+
+// WaitForSpectatorMessage is WaitForMessage for a spectator connection
+// returned by JoinSpectator.
+func (s *TestScenario) WaitForSpectatorMessage(conn *MockConnection, since int, headers ...string) error {
+	return s.waitForHeaders(conn, since, headers...)
+}
+
+func (s *TestScenario) waitForHeaders(conn *MockConnection, since int, headers ...string) error {
 	return s.waitFor(func() bool {
 		for _, raw := range conn.JSONMessagesSince(since) {
 			var h server.Message

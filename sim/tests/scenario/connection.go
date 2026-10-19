@@ -19,7 +19,17 @@ type MockConnection struct {
 	LastJSONWritten interface{}
 	Closed          bool
 
+	hold *writeHold
+
 	mu sync.Mutex
+}
+
+// writeHold makes JSON writes wait until it is released, like a client whose
+// connection has stopped draining.
+type writeHold struct {
+	waiting chan struct{}
+	release chan struct{}
+	once    sync.Once
 }
 
 // NewMockConnection creates and returns a new instance of MockConnection.
@@ -73,8 +83,49 @@ func (m *MockConnection) WriteMessage(messageType int, data []byte) error {
 	return nil
 }
 
+// HoldWrites makes every following WriteJSON call wait until ReleaseWrites is
+// called, simulating a slow client. The returned channel is closed once a write
+// is waiting on the hold.
+func (m *MockConnection) HoldWrites() <-chan struct{} {
+	m.mu.Lock()
+	defer m.mu.Unlock()
+
+	if m.hold == nil {
+		m.hold = &writeHold{
+			waiting: make(chan struct{}),
+			release: make(chan struct{}),
+		}
+	}
+
+	return m.hold.waiting
+}
+
+// ReleaseWrites lets every write held by HoldWrites complete. It is safe to
+// call when no hold is active.
+func (m *MockConnection) ReleaseWrites() {
+	m.mu.Lock()
+	defer m.mu.Unlock()
+
+	if m.hold == nil {
+		return
+	}
+
+	close(m.hold.release)
+	m.hold = nil
+}
+
 // WriteJSON simulates writing a JSON message.
 func (m *MockConnection) WriteJSON(v interface{}) error {
+	m.mu.Lock()
+	hold := m.hold
+	m.mu.Unlock()
+
+	// Wait outside the lock so the message log stays readable while held.
+	if hold != nil {
+		hold.once.Do(func() { close(hold.waiting) })
+		<-hold.release
+	}
+
 	m.mu.Lock()
 	defer m.mu.Unlock()
 	data, err := json.Marshal(v)

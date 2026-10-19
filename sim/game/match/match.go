@@ -669,9 +669,8 @@ func (m *Match) BroadcastState() {
 	m.Player1.Socket.Send(p1state)
 	m.Player2.Socket.Send(p2state)
 
-	m.spectators.RLock()
-	defer m.spectators.RUnlock()
-
+	// Iter returns a copy, so the spectators are not kept locked while sending.
+	// Spectators joining or leaving would otherwise wait on every slow socket.
 	for _, spectator := range m.spectators.Iter() {
 		if spectator.Socket == nil {
 			continue
